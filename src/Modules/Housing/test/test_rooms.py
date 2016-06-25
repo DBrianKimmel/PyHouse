@@ -7,7 +7,7 @@
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Passed all 13 tests - DBK 2016-06-19
+Passed all 13 tests - DBK 2016-06-24
 """
 
 

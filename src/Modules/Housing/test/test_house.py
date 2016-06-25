@@ -8,7 +8,7 @@
 @summary:   Test handling the information for a house.
 
 
-Passed all 8 tests - DBK - 2015-09-23
+Passed all 9 tests - DBK - 2016-06-24
 """
 
 # Import system type stuff
@@ -36,7 +36,8 @@ class SetupMixin(object):
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local module can read/write.
+    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local
+        module can read/write.
     """
 
     def setUp(self):

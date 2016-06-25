@@ -29,7 +29,6 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
 from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'

@@ -38,15 +38,22 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_IS_DIMMABLE_0, \
         TESTING_LIGHT_NAME_1, \
         TESTING_LIGHT_CUR_LEVEL_1, \
-        TESTING_LIGHT_DIMMABLE_1, TESTING_LIGHT_KEY_0, TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_COMMENT_0, \
-        TESTING_LIGHT_ROOM_NAME_0, TESTING_LIGHT_UUID_0, \
-        TESTING_LIGHT_ROOM_X, TESTING_LIGHT_ROOM_Y, \
-        TESTING_LIGHT_ROOM_Z, TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_DEVICE_SUBTYPE_0, TESTING_LIGHT_DEVICE_FAMILY_0
+        TESTING_LIGHT_DIMMABLE_1, \
+        TESTING_LIGHT_KEY_0, \
+        TESTING_LIGHT_ACTIVE_0, \
+        TESTING_LIGHT_COMMENT_0, \
+        TESTING_LIGHT_ROOM_NAME_0, \
+        TESTING_LIGHT_UUID_0, \
+        TESTING_LIGHT_ROOM_X, \
+        TESTING_LIGHT_ROOM_Y, \
+        TESTING_LIGHT_ROOM_Z, \
+        TESTING_LIGHT_DEVICE_TYPE_0, \
+        TESTING_LIGHT_DEVICE_SUBTYPE_0, \
+        TESTING_LIGHT_DEVICE_FAMILY_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities import json_tools
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
 
 
 class SetupMixin(object):
@@ -241,7 +248,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
         self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
         self.assertEqual(l_xml.find('CurLevel').text, TESTING_LIGHT_CUR_LEVEL_0)
-        self.assertEqual(l_xml.find('IsDimmable').text, TESTING_LIGHT_DIMMABLE_0)
+        self.assertEqual(l_xml.find('IsDimmable').text, TESTING_LIGHT_IS_DIMMABLE_0)
         self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS_0)
         self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT_0)
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST_0)

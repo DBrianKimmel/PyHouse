@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/Lighting/test/test_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @note:      Created on Apr 9, 2013
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 12 tests.  DBK 2016-06-10
+Passed all 12 tests.  DBK 2016-06-24
 
 """
 
@@ -28,6 +28,7 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0, TESTING_LIGHT_NAME_1
+from Modules.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_0, TESTING_LIGHTING_BUTTON_NAME_1
 
 
 class SetupMixin(object):
@@ -49,16 +50,24 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_PyHouse(self):
+    def test_1_SetupLighting(self):
+        """Verify that we can find items we need in the test XML
+        """
+        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
+        self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
+        self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
+        self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
+
+    def test_2_PyHouse(self):
         self.assertIsNotNone(self.m_pyhouse_obj.Xml)
 
-    def test_02_XML(self):
+    def test_3_XML(self):
         self.assertIsNotNone(self.m_xml.house_div)
 
-    def test_03_Light(self):
+    def test_4_Light(self):
         self.assertEqual(self.m_light_obj.Name, 'undefined baseobject')
 
-    def test_04_Api(self):
+    def test_5_Api(self):
         self.assertIsNotNone(self.m_api)
 
 
@@ -82,22 +91,24 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.light.tag, 'Light')
 
 
-class A3_Utility(SetupMixin, unittest.TestCase):
+class B1_Read(SetupMixin, unittest.TestCase):
     """ This section tests the utility class
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_SetupLighting(self):
-        """Verify that we can find items we need in the test XML
+    def test_1_Button(self):
+        """Utility.
         """
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
-        self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
-        self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
+        l_buttons = self.m_api._read_buttons(self.m_pyhouse_obj, l_xml)
+        self.assertEqual(len(l_buttons), 2)
+        self.assertEqual(l_buttons[0].Name, TESTING_LIGHTING_BUTTON_NAME_0)
+        self.assertEqual(l_buttons[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_buttons[1].Name, TESTING_LIGHTING_BUTTON_NAME_1)
 
-    def test_02_Controller(self):
+    def test_2_Controller(self):
         """Utility.
         """
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
@@ -107,52 +118,54 @@ class A3_Utility(SetupMixin, unittest.TestCase):
         self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_dict[1].Name, TESTING_CONTROLLER_NAME_1)
 
-    def test_03_ReadLighting(self):
+    def test_3_Light(self):
+        """Utility.
+        """
+        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
+        l_lights = self.m_api._read_lights(self.m_pyhouse_obj, l_xml)
+        self.assertEqual(len(l_lights), 2)
+        self.assertEqual(l_lights[0].Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_lights[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_lights[1].Name, TESTING_LIGHT_NAME_1)
+
+    def test_4_Lighting(self):
         """Read all the lighting info (Buttons, Controllers, Lights)
         """
         l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         self.assertEqual(len(l_obj.Buttons), 2)
         self.assertEqual(len(l_obj.Controllers), 2)
         self.assertEqual(len(l_obj.Lights), 2)
-        self.assertEqual(l_obj.Buttons[0].Name, 'Insteon Button')
-        self.assertEqual(l_obj.Buttons[1].Name, 'UPB Button')
+        self.assertEqual(l_obj.Buttons[0].Name, TESTING_LIGHTING_BUTTON_NAME_0)
+        self.assertEqual(l_obj.Buttons[1].Name, TESTING_LIGHTING_BUTTON_NAME_1)
         self.assertEqual(l_obj.Controllers[0].Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_obj.Controllers[1].Name, TESTING_CONTROLLER_NAME_1)
         self.assertEqual(l_obj.Lights[0].Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_obj.Lights[1].Name, TESTING_LIGHT_NAME_1)
 
-    def test_04_Write(self):
+
+class B2_Write(SetupMixin, unittest.TestCase):
+    """ This section tests the utility class
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.House.Lighting = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+
+    def test_1_lighting(self):
         """Write out the 'LightingSection' which contains the 'LightSection',
         """
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_obj, 'House'))
         l_xml = ET.Element('HouseDivision')
         l_xml = self.m_api._write_lighting_xml(self.m_pyhouse_obj, l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'XML'))
+        print(PrettyFormatAny.form(l_xml, 'XML'))
+        self.assertEqual(len(l_xml), 3)
+        self.assertEqual(len(l_xml[0]), 2)
+        self.assertEqual(len(l_xml[1]), 2)
+        self.assertEqual(len(l_xml[2]), 2)
         self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
         self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
         self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
         self.assertEqual(l_xml.find('ControllerSection/Controller').tag, 'Controller')
-
-    def test_05_FamilyData(self):
-        """Family Data
-        """
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'FamilyData'))
-        pass
-
-
-class C1_Ops(SetupMixin, unittest.TestCase):
-    """ This section tests the operations
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def xxtest_01_GetApi(self):
-        l_light = self.m_light_obj
-        l_light.Name = 'Garage'
-        l_light.DeviceFamily = 'Insteon'
-        l_api = self.m_api._get_api_for_family(self.m_pyhouse_obj, self.m_light_obj)
-        print('Api = {0:}'.format(l_api))
 
 # ## END DBK

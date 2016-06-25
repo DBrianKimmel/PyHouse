@@ -35,6 +35,7 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info("Initialized.")
 
     def LoadXml(self, p_pyhouse_obj):
         l_obj = hvacXML.read_hvac_xml(p_pyhouse_obj)

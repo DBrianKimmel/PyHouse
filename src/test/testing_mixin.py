@@ -28,7 +28,7 @@ from Modules.Core.data_objects import \
             HouseAPIs, \
             LocationData, \
             TwistedInformation, \
-            XmlInformation
+            XmlInformation, LightingData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.house import Xml as housingXML
@@ -131,6 +131,7 @@ class SetupPyHouseObj(object):
         l_ret.Location = LocationData()
         #  Added family build 2015-08-19
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
+        l_ret.Lighting = LightingData()
         return l_ret
 
     def _build_computer(self):

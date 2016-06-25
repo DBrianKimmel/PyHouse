@@ -81,6 +81,7 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info("Initialized.")
 
     def Start(self):
         self.LoadXml(self.m_pyhouse_obj)

@@ -41,11 +41,9 @@ from Modules.Irrigation.irrigation import API as irrigationAPI
 from Modules.Lighting.lighting import API as lightingAPI
 from Modules.Pool.pool import API as poolAPI
 from Modules.Scheduling.schedule import API as scheduleAPI
-#  from Modules.Scheduling.sunrisesunset import API as sunriseAPI
 from Modules.Security.security import API as securityAPI
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.House          ')
 
@@ -97,11 +95,6 @@ class Utility(object):
     """
 
     m_pyhouse_obj = None
-
-    @staticmethod
-    def _init_components(p_pyhouse_obj):
-        p_pyhouse_obj.House = HouseInformation()
-        p_pyhouse_obj.APIs.House = HouseAPIs()
 
     @staticmethod
     def _init_component_apis(p_pyhouse_obj, p_api):
@@ -164,9 +157,10 @@ class API(Utility):
         """
         """
         LOG.info('Initializing')
-        self.m_pyhouse_obj = p_pyhouse_obj
-        Utility._init_components(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House = HouseAPIs()
+        p_pyhouse_obj.House = HouseInformation()
         Utility._init_component_apis(p_pyhouse_obj, self)
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):

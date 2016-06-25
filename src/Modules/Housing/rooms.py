@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 import datetime
 
 #  Import PyMh files
-from Modules.Core.data_objects import RoomData, CoordinateData
+from Modules.Core.data_objects import RoomData
 from Modules.Utilities.coordinate_tools import Coords
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
@@ -138,5 +138,10 @@ class Maint(object):
             LOG.error("web_rooms - Failed to delete - JSON: {}".format(p_json))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/delete", p_json)
         return
+
+
+class Sync(object):
+    """ Used to sync the rooms between all the nodes.
+    """
 
 #  ## END DBK

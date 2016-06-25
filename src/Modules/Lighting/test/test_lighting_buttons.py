@@ -22,7 +22,7 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Lighting.lighting_buttons import Utility, API as buttonsAPI
 from Modules.Lighting.test.xml_buttons import \
-        TESTING_LIGHTING_BUTTON_NAME_1
+        TESTING_LIGHTING_BUTTON_NAME_0
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
 from test.xml_data import XML_LONG
@@ -75,7 +75,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_button = Utility._read_base_device(self.m_xml.button, self.m_version)
-        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
+        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
@@ -86,10 +86,10 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_button = Utility._read_one_button_xml(self.m_pyhouse_obj, self.m_xml.button, self.m_version)
-        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
+        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Key, 0, 'Bad key')
-        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_1)
+        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_button.DeviceFamily, 'Insteon', 'Bad Lighting family')
         self.assertEqual(l_button.LightingType, 'Button', 'Bad LightingType')
         self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))

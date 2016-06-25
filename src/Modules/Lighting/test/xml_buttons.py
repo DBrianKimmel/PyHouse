@@ -19,11 +19,11 @@ from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 L_BUTTON_SECTION_START = '<ButtonSection>'
 L_BUTTON_SECTION_END = '</ButtonSection>'
-L_BUTTON_END = '</ButtonSection>'
+L_BUTTON_END = '</Button>'
 
 TESTING_LIGHTING_BUTTON_TYPE = 'Button'
-TESTING_LIGHTING_BUTTON_NAME_1 = 'Insteon Button'
-TESTING_LIGHTING_BUTTON_NAME_2 = 'UPB Button'
+TESTING_LIGHTING_BUTTON_NAME_0 = 'Insteon Button'
+TESTING_LIGHTING_BUTTON_NAME_1 = 'UPB Button'
 
 L_BUTTON_TYPE = '    <LightingType>' + TESTING_LIGHTING_BUTTON_TYPE + '</LightingType>'
 
@@ -33,22 +33,25 @@ L_BUTTON_BODY = '\n'.join([
     ])
 
 INSTEON_BUTTON_XML = '\n'.join([
-    '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_1 + '" Active="True" Key="0">',
+    '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_0 + '" Active="True" Key="0">',
     L_BUTTON_BODY,
     XML_INSTEON,
-    "</Button>"])
+    L_BUTTON_END
+    ])
 
 UPB_BUTTON_XML = '\n'.join([
-    '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_2 + '" Active="True" Key="1">',
+    '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_1 + '" Active="True" Key="1">',
     L_BUTTON_BODY,
     XML_UPB,
-    "</Button>"])
+    L_BUTTON_END
+    ])
 
 XML_BUTTON_SECTION = '\n'.join([
     L_BUTTON_SECTION_START,
     INSTEON_BUTTON_XML,
     UPB_BUTTON_XML,
-    L_BUTTON_SECTION_END])
+    L_BUTTON_SECTION_END
+    ])
 
 
 

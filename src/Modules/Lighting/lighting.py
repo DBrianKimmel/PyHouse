@@ -22,7 +22,7 @@ PyHouse.House.Lighting.
 import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
-from Modules.Core.data_objects import LightingData
+from Modules.Core.data_objects import LightingData, ControllerData
 from Modules.Families.family_utils import FamUtil
 from Modules.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Lighting.lighting_buttons import API as buttonsAPI
@@ -30,7 +30,6 @@ from Modules.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Lighting.lighting_lights import API as lightsAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class Utility(object):
@@ -94,7 +93,6 @@ class Utility(object):
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot
-        # l_xml_version = p_pyhouse_obj.Xml.XmlOldVersion
         l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
         p_pyhouse_obj.House.Lighting = LightingData()
         l_xml = l_xml.find('HouseDivision')
@@ -131,6 +129,8 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
+        p_pyhouse_obj.House.Lighting = LightingData()
+        # p_pyhouse_obj.House.Lighting.Controllers = ControllerData()
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
@@ -151,7 +151,6 @@ class API(Utility):
     def Start(self):
         """Allow loading of sub modules and drivers.
         """
-        #  self._read_lighting_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
         LOG.info("Started.")
 

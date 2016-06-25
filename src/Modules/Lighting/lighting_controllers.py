@@ -9,7 +9,14 @@
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
 
-Note that controllers have common light info and also have controller info, family info, and interface info.
+Reading and writing XML to save controller information is fairly comples.
+First we have the basic information about the controller.
+Then we have the Lighting system information.
+Then we have the information specific to the family of the controller (Insteon, USB, Zigbee, etc.).
+Then we have the interface information (Ethernet, USB, Serial, ...).
+And we also have information about the controller class of devices.
+
+
 """
 
 #  Import system type stuff

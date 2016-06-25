@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/housing/test/test_location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Passed all 4 tests - DBK - 2015-10-04
+Passed all 12 tests - DBK - 2016-06-24
 """
 
 # Import system type stuff
@@ -118,7 +118,7 @@ class S1_PyHouse(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
 
     def test_03_Location(self):
-       print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
 
     def test_04_find_xml(self):
         """ Be sure that the XML contains the right stuff.
@@ -139,7 +139,7 @@ class S2_PyHouse(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
 
     def test_03_Location(self):
-       print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
 
     def test_04_find_xml(self):
         """ Be sure that the XML contains the right stuff.

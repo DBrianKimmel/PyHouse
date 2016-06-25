@@ -39,10 +39,10 @@ class Xml(object):
         p_pyhouse_obj.House.Location = l_obj
         try:
             l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-            if l_xml == None:
+            if l_xml is None:
                 return l_obj
             l_xml = l_xml.find('LocationSection')
-            if l_xml == None:
+            if l_xml is None:
                 return l_obj
             l_obj.Street = PutGetXML.get_text_from_xml(l_xml, 'Street')
             l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City')
