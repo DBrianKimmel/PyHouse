@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 15 tests - DBK - 2016-06-09
+Passed all 15 tests - DBK - 2016-06-25
 
 """
 
@@ -27,17 +27,12 @@ from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_GROUP_NUM_0, \
         TESTING_INSTEON_PRODUCT_KEY_0
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_COMMENT, \
-        TESTING_DEVICE_FAMILY_INSTEON, \
-        TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_UUID
+        TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
         TESTING_LIGHT_TYPE_0, \
         TESTING_LIGHT_CUR_LEVEL_0, \
         TESTING_LIGHT_IS_DIMMABLE_0, \
-        TESTING_LIGHT_NAME_1, \
-        TESTING_LIGHT_CUR_LEVEL_1, \
         TESTING_LIGHT_DIMMABLE_1, \
         TESTING_LIGHT_KEY_0, \
         TESTING_LIGHT_ACTIVE_0, \
@@ -49,7 +44,7 @@ from Modules.Lighting.test.xml_lights import \
         TESTING_LIGHT_ROOM_Z, \
         TESTING_LIGHT_DEVICE_TYPE_0, \
         TESTING_LIGHT_DEVICE_SUBTYPE_0, \
-        TESTING_LIGHT_DEVICE_FAMILY_0
+        TESTING_LIGHT_DEVICE_FAMILY_0, TESTING_LIGHT_ROOM_UUID_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -107,20 +102,19 @@ class A2_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_find_xml(self):
+    def test_1_lights(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
-        self.assertEqual(self.m_xml.light.tag, 'Light')
+        l_xml = self.m_xml.light_sect
+        # print(PrettyFormatAny.form(l_xml, 'XML'))
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHT_NAME_0)
 
-    def test_02_lighting(self):
+    def test_2_light(self):
         """Ensure that the lighting objects are correct in the XML
         """
-        l_xml = self.m_xml.light_sect
+        l_xml = self.m_xml.light
         # print(PrettyFormatAny.form(l_xml, 'PyHouse'))
-        self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
 
 
 class R1_Read(SetupMixin, unittest.TestCase):
@@ -134,16 +128,17 @@ class R1_Read(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """Test the Base read - the device information
         """
-        l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.light)
-        print(PrettyFormatAny.form(l_obj, 'Base'))
+        l_xml = self.m_xml.light
+        # print(PrettyFormatAny.form(l_xml, 'Base'))
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
+        # print(PrettyFormatAny.form(l_obj, 'Base'))
         self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_obj.Key, int(TESTING_LIGHT_KEY_0))
         self.assertEqual(l_obj.Active, bool(TESTING_LIGHT_ACTIVE_0))
         self.assertEqual(l_obj.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_LIGHT_DEVICE_FAMILY_0)
-        self.assertEqual(l_obj.DeviceType, TESTING_LIGHT_DEVICE_TYPE_0)
+        self.assertEqual(str(l_obj.DeviceType), TESTING_LIGHT_DEVICE_TYPE_0)
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_LIGHT_DEVICE_SUBTYPE_0))
-        self.assertEqual(l_obj.IsDimmable, TESTING_LIGHT_IS_DIMMABLE_0)
         self.assertEqual(l_obj.LightingType, TESTING_LIGHT_TYPE_0)
         self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(l_obj.UUID, TESTING_LIGHT_UUID_0)
@@ -171,8 +166,8 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_obj.Key, int(TESTING_LIGHT_KEY_0))
-        self.assertEqual(l_obj.Active, bool(TESTING_LIGHT_ACTIVE_0))
+        self.assertEqual(str(l_obj.Key), TESTING_LIGHT_KEY_0)
+        self.assertEqual(str(l_obj.Active), TESTING_LIGHT_ACTIVE_0)
         self.assertEqual(l_obj.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
@@ -200,23 +195,21 @@ class W1_Write(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_base_device('Light', l_obj)
         print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_1)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '0')
         self.assertEqual(l_xml.attrib['Active'], 'True')
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_LIGHT_ROOM_UUID_0)
 
     def test_02_LightData(self):
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_base_device('Light', l_obj)
         Utility._write_light_data(l_obj, l_xml)
         print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.find('CurLevel').text, TESTING_LIGHT_CUR_LEVEL_1)
+        self.assertEqual(l_xml.find('CurLevel').text, TESTING_LIGHT_CUR_LEVEL_0)
         self.assertEqual(l_xml.find('IsDimmable').text, TESTING_LIGHT_DIMMABLE_1)
 
     def test_03_LightFamily(self):
@@ -237,19 +230,17 @@ class W1_Write(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_one_light_xml(self.m_pyhouse_obj, l_obj)
         print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_1)
-        self.assertEqual(l_xml.attrib['Key'], '0')
-        self.assertEqual(l_xml.attrib['Active'], 'True')
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_LIGHT_ROOM_UUID_0)
         self.assertEqual(l_xml.find('CurLevel').text, TESTING_LIGHT_CUR_LEVEL_0)
         self.assertEqual(l_xml.find('IsDimmable').text, TESTING_LIGHT_IS_DIMMABLE_0)
-        self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(l_xml.find('InsteonAddress').text, TESTING_INSTEON_ADDRESS_0)
         self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT_0)
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST_0)
         self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM_0)
@@ -265,8 +256,8 @@ class W1_Write(SetupMixin, unittest.TestCase):
         l_xml = lightsAPI.write_all_lights_xml(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(l_xml, 'Lights XML'))
         l_xml0 = l_xml.find('Light')
-        self.assertEqual(l_xml0.find('UUID').text, TESTING_DEVICE_UUID)
-        self.assertEqual(l_xml0.find('Comment').text, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_xml0.find('UUID').text, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_xml0.find('Comment').text, TESTING_LIGHT_COMMENT_0)
 
 
 class Z1_JSON(SetupMixin, unittest.TestCase):

@@ -44,8 +44,6 @@ class Utility(object):
         """
         l_obj = LightData()
         l_obj = LightingCoreAPI.read_core_lighting_xml(p_pyhouse_obj, l_obj, p_xml)
-        l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 2
         return l_obj
 
     @staticmethod
