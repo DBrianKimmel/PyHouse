@@ -28,9 +28,12 @@ TESTING_ROOM_FLOOR_0 = '1'
 TESTING_ROOM_SIZE_X_0 = '3.0'
 TESTING_ROOM_SIZE_0 = '[3.0,5.5,3.0]'
 TESTING_ROOM_TYPE_0 = 'Room'
-TESTING_ROOM_UUID_0 = '51c03dcc-2e69-Room-0000-Room00000000'
-L_ROOM_START_0 = '  <Room Name="' + TESTING_ROOM_NAME_0 + '" Key="' + TESTING_ROOM_KEY_0 + '" Active="' + \
-        TESTING_ROOM_ACTIVE_0 + '">'
+TESTING_ROOM_UUID_0 = 'Room....-0000-0000-0000-0123456789ab'
+L_ROOM_START_0 = '   ' + \
+        '<Room Name="' + TESTING_ROOM_NAME_0 + \
+        '" Key="' + TESTING_ROOM_KEY_0 + \
+        '" Active="' + TESTING_ROOM_ACTIVE_0 + \
+        '">'
 L_ROOM_COMMENT_0 = '  <Comment>' + TESTING_ROOM_COMMENT_0 + '</Comment>'
 L_ROOM_CORNER_0 = '  <Corner>' + TESTING_ROOM_CORNER_0 + '</Corner>'
 L_ROOM_FLOOR_0 = '    <Floor>' + TESTING_ROOM_FLOOR_0 + '</Floor>'
@@ -57,7 +60,7 @@ TESTING_ROOM_CORNER_1 = '[12.0,14.0,0.5]'
 TESTING_ROOM_FLOOR_1 = '1'
 TESTING_ROOM_SIZE_1 = '[3.0,5.5,3.0]'
 TESTING_ROOM_TYPE_1 = 'Room'
-TESTING_ROOM_UUID_1 = '51c03dcc-2e69-Room-0001-Room11111111'
+TESTING_ROOM_UUID_1 = 'Room....-0001-0001-0001-0123456789ab'
 
 L_ROOM_START_1 = '  <Room Name="' + TESTING_ROOM_NAME_1 + '" Key="' + TESTING_ROOM_KEY_1 + '" Active="' + \
         TESTING_ROOM_ACTIVE_1 + '">'
@@ -85,7 +88,7 @@ TESTING_ROOM_ACTIVE_2 = 'True'
 TESTING_ROOM_COMMENT_2 = 'Room comment # 2'
 TESTING_ROOM_CORNER_2 = '[12.0,14.0,0.5]'
 TESTING_ROOM_SIZE_2 = '[3.0,5.5,3.0]'
-TESTING_ROOM_UUID_2 = '51c03dcc-2e69-Room-0002-Room22222222'
+TESTING_ROOM_UUID_2 = 'Room....-0002-0002-0002-0123456789ab'
 
 L_ROOM_START_2 = '  <Room Name="' + TESTING_ROOM_NAME_2 + '" Key="' + TESTING_ROOM_KEY_2 + '" Active="' + \
         TESTING_ROOM_ACTIVE_2 + '">'
@@ -111,8 +114,13 @@ TESTING_ROOM_CORNER_3 = '[12.0,14.0,0.5]'
 TESTING_ROOM_FLOOR_3 = '1'
 TESTING_ROOM_SIZE_3 = '[ 3.0,5.5,3.0]'
 TESTING_ROOM_TYPE_3 = 'Room'
-TESTING_ROOM_UUID_3 = 'Room.dcc-2e69-Room-0003-Room33333333'
+TESTING_ROOM_UUID_3 = 'Room....-0003-0003-0003-0123456789ab'
 
+L_ROOM_START_3 = '   ' + \
+        '<Room Name="' + TESTING_ROOM_NAME_3 + \
+        '" Key="' + TESTING_ROOM_KEY_3 + \
+        '" Active="' + TESTING_ROOM_ACTIVE_3 + \
+        '">'
 
 XML_ROOMS = '\n'.join([
     L_ROOM_SECTION_START,

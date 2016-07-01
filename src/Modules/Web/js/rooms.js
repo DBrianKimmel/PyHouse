@@ -177,7 +177,7 @@ helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 		l_obj.Add = globals.Add;
 		l_obj.Delete = false;
 		switch(l_ix) {
-		case '10003':  // Change Button
+		case '10003':  // Add-or-Change Button
 	    	l_json = JSON.stringify(l_obj);
 	        l_defer = self.callRemote("saveRoomData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataEntryOnClick);

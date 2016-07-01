@@ -32,8 +32,6 @@ from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.uuid_tools import Uuid as toolUuid
-from Modules.Utilities.debug_tools import PrettyFormatAny
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
@@ -289,13 +287,12 @@ class Util(object):
         return p_role
 
     @staticmethod
-    def _get_node_info(p_pyhouse_obj):
+    def _get_node_base(p_pyhouse_obj):
         l_node = NodeData()
-        l_uuid = p_pyhouse_obj.Computer.UUID
         l_node.Name = platform.node()
-        l_node.Key = 0  # l_uuid
+        l_node.Key = 0
         l_node.Active = True
-        l_node.UUID = l_uuid
+        l_node.UUID = p_pyhouse_obj.Computer.UUID
         return l_node
 
     @staticmethod
@@ -343,7 +340,7 @@ class Util(object):
 
     @staticmethod
     def create_local_node(p_pyhouse_obj):
-        l_node = Util._get_node_info(p_pyhouse_obj)
+        l_node = Util._get_node_base(p_pyhouse_obj)
         l_interface, l_v4, l_v6 = Interfaces._get_all_interfaces()
         l_node.NodeInterfaces = l_interface
         l_node.ConnectionAddr_IPv4 = l_v4

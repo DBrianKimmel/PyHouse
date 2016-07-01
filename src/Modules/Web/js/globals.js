@@ -960,8 +960,8 @@ function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional 
 	if (p_options === undefined)
 		l_options = '';
 	if (p_value == undefined || p_value == null) {
-		l_value = '[0.11, 0.22, 0.33]';
-	} else {
+		l_value = '[0.01, 0.02, 0.03]';
+	} else if (typeof p_value === "string") {
 		var l_ary = trim(p_value, '\[\] ', 'g').split(',');
 		l_value = '[ ';
 		l_value += _putFloat(l_ary[0]);
@@ -969,6 +969,14 @@ function buildLcarCoOrdinatesWidget(self, p_id, p_caption, p_value, /* optional 
 		l_value += _putFloat(l_ary[1]);
 		l_value += ', ';
 		l_value += _putFloat(l_ary[2]);
+		l_value += ' ]';
+	} else {
+		l_value = '[ '
+		l_value += _putFloat(p_value.X_Easting);
+		l_value += ', ';
+		l_value += _putFloat(p_value.Y_Northing);
+		l_value += ', ';
+		l_value += _putFloat(p_value.Z_Height);
 		l_value += ' ]';
 	}
 	var l_html = buildTopDivs(p_caption);

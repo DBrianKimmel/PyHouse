@@ -147,6 +147,11 @@ function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */ na
 // Base entry data routines
 
 function buildBaseEntry(self, p_obj, /* optional */ noUuid) {
+	/*
+	 * Build a base entry - Name, Key, Active, UUID
+	 * If called with 'nouuid' then the UUID field will not be displayed.
+	 * If the UUID field is displayed, It will be unchangeable.
+	 */
 	var l_uuid = noUuid;
 	var l_html = '';
 	// Divmod.debug('---', 'lcars.build_lcars_top() was called. ' + noUuid);

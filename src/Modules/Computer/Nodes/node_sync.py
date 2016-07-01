@@ -87,12 +87,13 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def LoadXml(self, p_pyhouse_obj):
+        LOG.info("Initialized.")
         pass
 
     def Start(self):
         LOG.info('Starting')
-        self.m_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Util.send_who_is_there, self.m_pyhouse_obj)
-        pass
+        self.m_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(
+                        INITIAL_DELAY, Util.send_who_is_there, self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         pass

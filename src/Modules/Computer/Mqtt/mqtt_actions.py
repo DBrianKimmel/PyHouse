@@ -13,6 +13,7 @@
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
 from Modules.Computer.Nodes.node_sync import API as syncAPI
+from Modules.Housing.rooms import Rooms
 
 
 class Actions(object):
@@ -130,7 +131,7 @@ class Actions(object):
         elif p_topic[0] == 'lighting':
             l_logmsg = self._decode_lighting(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'room':
-            l_logmsg = self._decode_room(l_logmsg, p_topic, p_message)
+            l_logmsg = Rooms(self.m_pyhouse_obj)._decode_room(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
             l_logmsg = self._decode_schedule(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'weather':

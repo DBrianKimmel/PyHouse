@@ -77,7 +77,7 @@ class ComputerAPIs(object):
 class CoordinateData(object):
     """
     If applied to components of a house (facing the 'Front' of a house:
-        X or the distance to the Right from the rooms Left side.
+        X or the distance to the Right from the room's Left side.
         Y or the distance back from the Front of the room.
         Z or the Height above the floor.
     Preferably the distance is kept in Meters but for you die hard Imperial measurement people in Decimal feet (no inches)!
@@ -529,6 +529,8 @@ class RoomData(BaseObject):
         self.Size = ''  # CoordinateData()
         self.RoomType = 'Room'
         self.UUID = None
+        self._AddFlag = False
+        self._DeleteFlag = False
 
 
 class RulesData(BaseObject):

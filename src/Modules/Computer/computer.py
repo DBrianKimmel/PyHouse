@@ -66,7 +66,7 @@ class UuidFile(object):
 class Xml(object):
 
     @staticmethod
-    def create_computer(p_pyhouse_obj):
+    def create_computer(_p_pyhouse_obj):
         l_xml = ComputerInformation()
         l_xml.Name = platform.node()
         l_xml.Key = 0
@@ -164,10 +164,10 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         LOG.info('Initializing')
-        self.m_pyhouse_obj = p_pyhouse_obj
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         Utility._init_component_apis(p_pyhouse_obj, self)
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):

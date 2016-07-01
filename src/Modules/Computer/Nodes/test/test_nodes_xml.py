@@ -20,9 +20,13 @@ from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_NODE_NAME_0, \
+        TESTING_NODES_NODE_NAME_1, \
         TESTING_NODES_NODE_KEY_0, \
+        TESTING_NODES_NODE_KEY_1, \
         TESTING_NODES_NODE_ACTIVE_0, \
+        TESTING_NODES_NODE_ACTIVE_1, \
         TESTING_NODES_NODE_UUID_0, \
+        TESTING_NODES_NODE_UUID_1, \
         TESTING_NODES_INTERFACE_NAME_0_0, \
         TESTING_NODES_INTERFACE_KEY_0_0, \
         TESTING_NODES_INTERFACE_ACTIVE_0_0, \
@@ -30,8 +34,6 @@ from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_INTERFACE_ADDRESS_V4_0_0, \
         TESTING_NODES_INTERFACE_ADDRESS_V6_0_0, \
         TESTING_NODES_INTERFACE_NAME_0_1, \
-        TESTING_NODES_NODE_NAME_1, \
-        TESTING_NODES_NODE_UUID_1, \
         TESTING_NODES_INTERFACE_KEY_0_1, \
         TESTING_NODES_INTERFACE_ACTIVE_0_1, \
         TESTING_NODES_INTERFACE_NAME_0_2, \
@@ -48,9 +50,9 @@ from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_INTERFACE_ADDRESS_V6_0_2, \
         TESTING_NODES_CONNECTION_ADDRESS_V4_0, \
         TESTING_NODES_CONNECTION_ADDRESS_V6_0, \
+        TESTING_NODES_INTERFACE_TYPE_0_0, \
         TESTING_NODES_NODE_ROLL_0, \
-        TESTING_NODES_INTERFACE_TYPE_0_0, TESTING_NODES_NODE_KEY_1, TESTING_NODES_NODE_ACTIVE_1, \
-    TESTING_NODES_NODE_ROLL_1
+        TESTING_NODES_NODE_ROLL_1
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -243,12 +245,15 @@ class C1_Write(SetupMixin, unittest.TestCase):
 
     def test_4_AllNodes(self):
         l_nodes = nodesXml.read_all_nodes_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_nodes, 'C1-4-A All Nodes'))
         self.m_pyhouse_obj.Computer.Nodes = l_nodes
         l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C1-4-A All Nodes'))
+        print(PrettyFormatAny.form(l_xml, 'C1-4-B All Nodes'))
         self.assertEqual(l_count, 2)
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_NODES_NODE_NAME_1)
         self.assertEqual(l_xml[1].attrib['Name'], TESTING_NODES_NODE_NAME_0)
-        self.assertEqual(l_xml[1].attrib['Key'], TESTING_NODES_NODE_KEY_1)
+        self.assertEqual(l_xml[0].attrib['Key'], TESTING_NODES_NODE_KEY_1)
+        self.assertEqual(l_xml[1].attrib['Key'], TESTING_NODES_NODE_KEY_0)
         self.assertEqual(l_xml[1].attrib['Active'], TESTING_NODES_NODE_ACTIVE_0)
         self.assertEqual(l_xml[4][0].attrib['Name'], TESTING_NODES_INTERFACE_NAME_0_0)
         self.assertEqual(l_xml[4][0].attrib['Key'], TESTING_NODES_INTERFACE_KEY_0_0)

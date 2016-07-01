@@ -15,8 +15,8 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
+from Modules.Core.data_objects import RoomData
 from Modules.Web.web_utils import JsonUnicode, GetJSONComputerInfo
-from Modules.Housing import rooms
 from Modules.Computer import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
@@ -62,7 +62,7 @@ class NodesElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.Computer.Nodes[l_ix]
         except KeyError:
-            l_obj = rooms.RoomData()
+            l_obj = RoomData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix

@@ -20,6 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, XML_EMPTY
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_UUID_0
 
 
 class A1_Raw(unittest.TestCase):
@@ -74,7 +75,7 @@ class A2_Parsed(unittest.TestCase):
         l_nodes = l_div.find('NodeSection')
         l_node = l_nodes.find('Node')
         l_uuid = l_node.find('UUID')
-        self.assertEqual(l_uuid.text, '87654321-1001-11e3-b583-082e5f899999')
+        self.assertEqual(l_uuid.text, TESTING_NODES_NODE_UUID_0)
 
     def test_06_HouseDivision(self):
         l_div = self.m_root_element.find('HouseDivision')

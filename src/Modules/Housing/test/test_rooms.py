@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Housing.rooms import Xml as roomsXml
+from Modules.Housing.rooms import Rooms as roomsApi
 from Modules.Housing.rooms import Maint as roomsMaint
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -35,8 +35,17 @@ from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_2, \
     TESTING_ROOM_NAME_3, \
     TESTING_ROOM_CORNER_X_0, \
-    TESTING_ROOM_SIZE_X_0, TESTING_ROOM_KEY_3, TESTING_ROOM_ACTIVE_3, TESTING_ROOM_COMMENT_3, TESTING_ROOM_UUID_3, \
-    TESTING_ROOM_FLOOR_3, TESTING_ROOM_SIZE_3, TESTING_ROOM_TYPE_3, TESTING_ROOM_CORNER_3, L_ROOM_0
+    TESTING_ROOM_SIZE_X_0, \
+    TESTING_ROOM_KEY_3, \
+    TESTING_ROOM_ACTIVE_3, \
+    TESTING_ROOM_COMMENT_3, \
+    TESTING_ROOM_UUID_3, \
+    TESTING_ROOM_FLOOR_3, \
+    TESTING_ROOM_SIZE_3, \
+    TESTING_ROOM_TYPE_3, \
+    TESTING_ROOM_CORNER_3, \
+    TESTING_ROOM_UUID_2, \
+    TESTING_ROOM_UUID_1
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 JSON = {
@@ -59,7 +68,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = roomsXml
+        self.m_api = roomsApi
         self.m_maint = roomsMaint
 
 
@@ -184,12 +193,9 @@ class D1_Maint(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def _print(self, p_rooms):
-        for l_key, lval in p_rooms.iteritems():
-            l_key = p_rooms[l_key].Key
-            l_name = p_rooms[l_key].Name
-            l_uuid = p_rooms[l_key].UUID
-            l_update = p_rooms[l_key].LastUpdate
-            print(' {} {} {} {}'.format(l_key, l_name, l_uuid, l_update))
+        for l_obj in p_rooms.itervalues():
+            print(' Key:{}; Name:{}; UUID:{}; Update:{};'.format(
+                    l_obj.Key, l_obj.Name, l_obj.UUID, l_obj.LastUpdate))
         print
 
     def test_1_Extract(self):
@@ -213,10 +219,10 @@ class D1_Maint(SetupMixin, unittest.TestCase):
         """
         l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         self.m_pyhouse_obj.House.Rooms = l_rooms
-        l_json = JSON
+        l_obj = self.m_maint()._extract_json(JSON)
         self._print(l_rooms)
         # print(PrettyFormatAny.form(l_json, 'Json'))
-        l_rooms = self.m_maint()._add_room(self.m_pyhouse_obj, l_json)
+        l_rooms = self.m_maint()._add_change_room(self.m_pyhouse_obj, l_obj)
         self._print(l_rooms)
 
 
@@ -230,6 +236,35 @@ class E1_Json(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
         l_json = json_tools.encode_json(l_rooms)
-        # print(PrettyFormatAny.form(l_json, 'JSON'))
+        l_obj = json_tools.decode_json_unicode(l_json)
+        # print(PrettyFormatAny.form(l_json, 'JSON', 80))
+        # print(PrettyFormatAny.form(l_obj, 'JSON', 80))
+        self.assertEqual(len(l_obj), len(l_rooms))
+
+
+class F1_Match(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_1_ByName(self):
+        """ Create a JSON object for Rooms.
+        """
+        l_search = TESTING_ROOM_NAME_1
+        self.m_pyhouse_obj.House.Rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
+        l_obj = self.m_api(self.m_pyhouse_obj).find_room_name(self.m_pyhouse_obj, l_search)
+        print(PrettyFormatAny.form(l_obj, 'Room - {}'.format(l_search)))
+        self.assertEqual(l_obj.Name, TESTING_ROOM_NAME_1)
+        self.assertEqual(l_obj.UUID, TESTING_ROOM_UUID_1)
+
+    def test_2_ByUuid(self):
+        """ Create a JSON object for Rooms.
+        """
+        l_search = TESTING_ROOM_UUID_2
+        self.m_pyhouse_obj.House.Rooms = self.m_api.read_rooms_xml(self.m_xml.house_div)
+        l_obj = self.m_api(self.m_pyhouse_obj).find_room_uuid(self.m_pyhouse_obj, l_search)
+        print(PrettyFormatAny.form(l_obj, 'Room - {}'.format(l_search)))
+        self.assertEqual(l_obj.Name, TESTING_ROOM_NAME_2)
+        self.assertEqual(l_obj.UUID, TESTING_ROOM_UUID_2)
 
 # ## END DBK

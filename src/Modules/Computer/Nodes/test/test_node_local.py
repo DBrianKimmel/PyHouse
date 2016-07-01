@@ -22,7 +22,6 @@ from Modules.Computer.Nodes.node_local import Interfaces, API as localApi
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Communication.test.xml_communications import L_ACCESS_KEY
 
 
 AF_INET = 2
@@ -64,7 +63,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
-class A2_Netiface(SetupMixin, unittest.TestCase):
+class A3_Netiface(SetupMixin, unittest.TestCase):
     """
     This section tests the setup of the test
     """
