@@ -35,15 +35,19 @@ from Modules.Pool.test.xml_pool import XML_POOL
 TESTING_HOUSE_NAME = 'Pink Poppy'
 TESTING_HOUSE_KEY = '0'
 TESTING_HOUSE_ACTIVE = 'True'
-TESTING_HOUSE_UUID = '12345678-1002-11e3-b583-333e5f8cdfd2'
+TESTING_HOUSE_UUID = 'House...-0000-0000-0000-333e5f8cdfd2'
 
-L_HOUSE_DIV = "<HouseDivision Name='" + TESTING_HOUSE_NAME + "' Key='" + TESTING_HOUSE_KEY + "' Active='" + TESTING_HOUSE_ACTIVE + "'>"
+L_HOUSE_DIV = "<HouseDivision Name='" + TESTING_HOUSE_NAME + \
+            "' Key='" + TESTING_HOUSE_KEY + \
+            "' Active='" + TESTING_HOUSE_ACTIVE + \
+            "'>"
 L_HOUSE_UUID = '<UUID>' + TESTING_HOUSE_UUID + '</UUID>'
 
 L_HOUSE_DIVISION_END = '</HouseDivision>'
 
 HOUSE_DIVISION_XML = '\n'.join([
     L_HOUSE_DIV,
+    L_HOUSE_UUID,
     XML_LOCATION,
     XML_ROOMS,
     XML_SCHEDULE,

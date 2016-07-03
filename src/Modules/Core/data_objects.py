@@ -417,14 +417,14 @@ class HouseInformation(BaseObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.FamilyData = {}  # FamilyData['FamilyName']
-        self.Hvac = {}  # HvacData()
-        self.Irrigation = {}  # IrrigationData()
-        self.Lighting = {}  # LightingData()
-        self.Location = {}  # LocationData() - one location per house.
-        self.Pools = {}  # PoolData()
-        self.Rooms = {}  # RoomData()
-        self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleBaseData()
+        self.Hvac = None  # HvacData()
+        self.Irrigation = None  # IrrigationData()
+        self.Lighting = None  # LightingData()
+        self.Location = None  # LocationData() - one location per house.
+        self.Pools = None  # PoolData()
+        self.Rooms = None  # RoomData()
+        self.Rules = None  # RulesData()
+        self.Schedules = None  # ScheduleBaseData()
         self.UUID = None
 
 
@@ -519,16 +519,18 @@ class RoomData(BaseObject):
     """A room of the house.
     Used to draw pictures of the house
     Used to define the location of switches, lights etc.
+
+    ==> PyHouse.House.Rooms.xxx as in the def below
     """
     def __init__(self):
         super(RoomData, self).__init__()
+        self.UUID = None
         self.Comment = ''
         self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.LastUpdate = None
         self.Size = ''  # CoordinateData()
         self.RoomType = 'Room'
-        self.UUID = None
         self._AddFlag = False
         self._DeleteFlag = False
 

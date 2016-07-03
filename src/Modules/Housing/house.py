@@ -31,7 +31,7 @@ PyHouse.House.
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.data_objects import HouseAPIs, HouseInformation, LocationData
+from Modules.Core.data_objects import HouseAPIs, HouseInformation
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML
 from Modules.Entertainment.entertainment import API as entertainmentAPI
@@ -57,33 +57,27 @@ class Xml(object):
     """
 
     @staticmethod
-    def _read_base(p_xml):
+    def _read_house_base(p_pyhouse_obj):
         l_obj = HouseInformation()
-        XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        if l_xml is None:
+            return l_obj
+        XmlConfigTools.read_base_object_xml(l_obj, l_xml)
         return l_obj
 
     @staticmethod
     def read_house_xml(p_pyhouse_obj):
         """Read house information, location and rooms.
         """
-        l_house = HouseInformation()
-        l_house.Location = LocationData()
-        l_house.Rooms = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        if l_xml is None:
-            return l_house
-        l_house = Xml._read_base(l_xml)
-        l_house.Location = locationXML.read_location_xml(p_pyhouse_obj)
-        l_house.Rooms = roomsXML.read_rooms_xml(l_xml)
-        return l_house
+        l_obj = Xml._read_house_base(p_pyhouse_obj)
+        l_obj.Location = locationXML.read_location_xml(p_pyhouse_obj)
+        l_obj.Rooms = roomsXML.read_rooms_xml(p_pyhouse_obj)
+        return l_obj
 
     @staticmethod
     def write_house_xml(p_pyhouse_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        # print(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-        # l_house_obj = p_pyhouse_obj.House
-        # print(PrettyFormatAny.form(l_house_obj, 'PyHouse'))
         l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', p_pyhouse_obj.House)
         l_house_xml.append(locationXML.write_location_xml(p_pyhouse_obj.House.Location))
         l_house_xml.append(roomsXML.write_rooms_xml(p_pyhouse_obj.House.Rooms))

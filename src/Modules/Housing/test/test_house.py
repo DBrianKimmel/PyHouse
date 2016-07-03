@@ -8,7 +8,7 @@
 @summary:   Test handling the information for a house.
 
 
-Passed all 9 tests - DBK - 2016-06-24
+Passed all 7 tests - DBK - 2016-07-02
 """
 
 # Import system type stuff
@@ -21,7 +21,8 @@ from Modules.Utilities import json_tools
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_KEY, TESTING_HOUSE_ACTIVE
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_KEY, TESTING_HOUSE_ACTIVE, \
+    TESTING_HOUSE_UUID
 from Modules.Housing.test.xml_location import TESTING_LOCATION_STREET
 from Modules.Housing.test.xml_rooms import TESTING_ROOM_NAME_0
 
@@ -63,32 +64,22 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
+        self.assertEqual(self.m_pyhouse_obj.House.Rooms, None)
 
-    def test_02_Xml(self):
-        l_xml = houseXml.read_house_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.Name, TESTING_HOUSE_NAME)
+    def test_02_Base(self):
+        l_obj = houseXml._read_house_base(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_obj, 'XML'))
+        self.assertEqual(l_obj.Name, TESTING_HOUSE_NAME)
+        self.assertEqual(str(l_obj.Key), TESTING_HOUSE_KEY)
+        self.assertEqual(str(l_obj.Active), TESTING_HOUSE_ACTIVE)
+        self.assertEqual(l_obj.UUID, TESTING_HOUSE_UUID)
 
-    def test_03_Base(self):
-        l_xml = houseXml.read_house_xml(self.m_pyhouse_obj)
-        self.assertEqual(l_xml.Name, TESTING_HOUSE_NAME)
-        self.assertEqual(l_xml.Key, int(TESTING_HOUSE_KEY))
-        self.assertEqual(l_xml.Active, bool(TESTING_HOUSE_ACTIVE))
-
-    def test_06_ReadXml(self):
-        """ Read in the xml file and fill in x
-        """
-        l_house_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
-        self.assertEqual(l_house_obj.Name, TESTING_HOUSE_NAME)
-        self.assertEqual(l_house_obj.Location.Street, TESTING_LOCATION_STREET)
-        self.assertEqual(l_house_obj.Rooms[0].Name, TESTING_ROOM_NAME_0)
-
-    def test_07_Load(self):
-        """ Load all the XML for a house
-        """
-        l_xml = self.m_api.LoadXml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+    def test_03_House(self):
+        l_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_obj, 'XML'))
+        self.assertEqual(l_obj.Name, TESTING_HOUSE_NAME)
+        self.assertEqual(str(l_obj.Key), TESTING_HOUSE_KEY)
+        self.assertEqual(str(l_obj.Active), TESTING_HOUSE_ACTIVE)
 
 
 class C03_Write(SetupMixin, unittest.TestCase):
@@ -99,7 +90,7 @@ class C03_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
-    def test_01_write_house_xml(self):
+    def test_01_House(self):
         l_house_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House = l_house_obj
         l_xml = houseXml.write_house_xml(self.m_pyhouse_obj)
@@ -116,7 +107,7 @@ class C04_JSON(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
-    def test_01_CreateJson(self):
+    def test_01_Create(self):
         """ Create a JSON object for Location.5
         """
         l_house = houseXml.read_house_xml(self.m_pyhouse_obj)

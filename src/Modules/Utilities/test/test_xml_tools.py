@@ -45,9 +45,17 @@ from Modules.Utilities.test.xml_xml_tools import \
     TESTING_XML_TEXT_A0, \
     TESTING_XML_BOOL_A0, \
     TESTING_XML_FLOAT_A0, \
-    TESTING_XML_INT_A0, TESTING_XML_DATE_TIME_0, TESTING_XML_ROOM_X_1, TESTING_XML_ROOM_Y_1, TESTING_XML_ROOM_Z_1, \
-    TESTING_XML_ROOM_COORDS_1, TESTING_XML_ROOM_COORDS_0, TESTING_XML_ROOM_COORDS_2
-from test.xml_data import XML_LONG, XML_EMPTY
+    TESTING_XML_INT_A0, \
+    TESTING_XML_DATE_TIME_0, \
+    TESTING_XML_ROOM_X_1, \
+    TESTING_XML_ROOM_Y_1, \
+    TESTING_XML_ROOM_Z_1, \
+    TESTING_XML_ROOM_COORDS_1
+from Modules.Lighting.test.xml_lights import \
+    TESTING_LIGHT_NAME_0
+from test.xml_data import \
+    XML_LONG, \
+    XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -449,7 +457,7 @@ class E1_Read(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        self.assertEqual(l_base_obj.Name, 'Insteon Light')
+        self.assertEqual(l_base_obj.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, True)
         # self.assertEqual(l_base_obj.UUID, 'c15f7d76-092e-11e4-bffa-b827eb189eb4', 'Bad UUID')
@@ -498,7 +506,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         l_base_obj.UUID = l_uuid
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
         print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '43')
         self.assertEqual(l_xml.find('UUID').text, l_uuid)
 
@@ -510,7 +518,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         l_base_obj.Key = 44
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj, no_uuid = True)
         print(PrettyFormatAny.form(l_xml, 'XML'))
-        self.assertEqual(l_xml.attrib['Name'], 'Insteon Light')
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '44')
 
 

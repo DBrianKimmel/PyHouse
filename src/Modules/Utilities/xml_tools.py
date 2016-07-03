@@ -14,6 +14,7 @@
 #  Import system type stuff
 from xml.etree import ElementTree as ET
 import dateutil.parser as dparser
+import datetime
 import uuid
 
 #  Import PyMh files
@@ -248,6 +249,8 @@ class PutGetXML(object):
     @staticmethod
     def get_date_time_from_xml(p_xml, p_name):
         l_field = XML.get_any_field(p_xml, p_name)
+        if l_field is None:
+            l_field = datetime.datetime.now()
         l_ret = dparser.parse(l_field, fuzzy = True)
         return l_ret
 
