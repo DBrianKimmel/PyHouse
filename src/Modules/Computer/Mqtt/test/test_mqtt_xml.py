@@ -35,6 +35,7 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_USERNAME_1, \
     TESTING_BROKER_PASSWORD_1
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from src.Modules.Computer.Mqtt.test.xml_mqtt import TESTING_BROKER_UUID_0
 
 
 class SetupMixin(object):
@@ -53,7 +54,11 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        pass
+        print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
+        self.assertEqual(self.m_xml.broker.tag, 'Broker')
 
     def test_02_FindXML(self):
         """ Be sure that the XML contains the right stuff.
@@ -75,10 +80,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read one broker
         """
         l_obj = mqttXML._read_one_broker(self.m_xml.broker)
-        #  print(PrettyFormatAny.form(l_obj, 'Broker'))
+        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Broker'))
         self.assertEqual(l_obj.Name, TESTING_BROKER_NAME_0)
         self.assertEqual(l_obj.Key, int(TESTING_BROKER_KEY_0))
-        self.assertEqual(l_obj.Active, bool(TESTING_BROKER_ACTIVE_0 == 'True'))
+        self.assertEqual(str(l_obj.Active), TESTING_BROKER_ACTIVE_0)
+        self.assertEqual(l_obj.UUID, TESTING_BROKER_UUID_0)
         self.assertEqual(l_obj.BrokerAddress, TESTING_BROKER_ADDRESS_0)
         self.assertEqual(l_obj.BrokerPort, int(TESTING_BROKER_PORT_0))
         self.assertEqual(l_obj.UserName, TESTING_BROKER_USERNAME_0)
