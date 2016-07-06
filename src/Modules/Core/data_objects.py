@@ -34,7 +34,7 @@ class PyHouseData(object):
         self.House = None  # HouseInformation()
         self.Services = None  # CoreServicesInformation()
         self.Twisted = None  # TwistedInformation()
-        self.Uuids = {}  # UuidData()
+        self.Uuids = None  # UuidData()
         self.Xml = None  # XmlInformation()
 
 
@@ -259,19 +259,6 @@ class RiseSetData(object):
         self.Dusk = None
 
 
-class ScheduleLightData(object):
-    """A schedule piece for lighting events.
-    """
-    def __init__(self):
-        self.Level = 0
-        self.LightName = None
-        self.LightUUID = None
-        self.Rate = 0
-        self.RoomName = None
-        self.RoomUUID = None
-        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
-
-
 class ScheduleThermostatData(object):
     """
     """
@@ -324,8 +311,11 @@ class USBControllerData(object):
 
 class UuidData(object):
     """
+    a dict with the key = UUID and values of ...
+==> PyHouse.Uuids{} as in the def below
     """
     def __init__(self):
+        self.UUID = None
         self.UuidType = None  # Light, Thermostat, Room ...
 
 
@@ -546,15 +536,37 @@ class RulesData(BaseObject):
 
 class ScheduleBaseData(BaseObject):
     """A schedule of when events happen.
+
+    DOW is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
+            0 is no days of the week
+            1 is valid on Monday
+            2 is valid on Tuesday
+            64 is valid on Sunday
     """
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
-        self.DOW = None
+        self.UUID = None
+        self.DOW = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
         self.ScheduleMode = 'Home'  # Home, Away, Vacation,
         self.ScheduleType = ''
         self.Time = None
         #  for use by web browser - not saved in xml
+        self._AddFlag = False
         self._DeleteFlag = False
+
+
+class ScheduleLightData(ScheduleBaseData):
+    """A schedule piece for lighting events.
+    """
+    def __init__(self):
+        super(ScheduleLightData, self).__init__()
+        self.Level = 0
+        self.LightName = None
+        self.LightUUID = None
+        self.Rate = 0
+        self.RoomName = None
+        self.RoomUUID = None
+        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
 
 class SensorData(BaseObject):

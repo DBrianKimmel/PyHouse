@@ -40,15 +40,20 @@ L_CONTROLLER_END = '</Controller>'
 TESTING_CONTROLLER_NAME_0 = 'Insteon Serial Controller'
 TESTING_CONTROLLER_KEY_0 = '0'
 TESTING_CONTROLLER_ACTIVE_0 = 'True'
+TESTING_CONTROLLER_UUID_0 = 'Controlr-0000-0000-0000-2468acb6eb6f'
 TESTING_CONTROLLER_TYPE_0 = 'Controller'
 
-L_CONTROLLER_START_0 = '  <Controller Name="' + TESTING_CONTROLLER_NAME_0 + \
-                            '" Key="' + TESTING_CONTROLLER_KEY_0 + \
-                            '" Active="' + TESTING_CONTROLLER_ACTIVE_0 + '">'
+L_CONTROLLER_START_0 = '    ' + \
+        '<Controller Name="' + TESTING_CONTROLLER_NAME_0 + \
+        '" Key="' + TESTING_CONTROLLER_KEY_0 + \
+        '" Active="' + TESTING_CONTROLLER_ACTIVE_0 + \
+        '">'
 L_CONTROLLER_TYPE_0 = '    <LightingType>' + TESTING_CONTROLLER_TYPE_0 + '</LightingType>'
+L_CONTROLLER_UUID_0 = '    <UUID>' + TESTING_CONTROLLER_UUID_0 + '</UUID>'
 
 L_CONTROLLER_0 = '\n'.join([
     L_CONTROLLER_START_0,
+    L_CONTROLLER_UUID_0,
     L_CONTROLLER_TYPE_0,
     XML_DEVICE_INSTEON,
     XML_INSTEON,
@@ -61,15 +66,20 @@ L_CONTROLLER_0 = '\n'.join([
 TESTING_CONTROLLER_NAME_1 = 'UPB USB Controller'
 TESTING_CONTROLLER_KEY_1 = '1'
 TESTING_CONTROLLER_ACTIVE_1 = 'True'
+TESTING_CONTROLLER_UUID_1 = 'Controlr-0001-0001-0001-2468acb6eb6f'
 TESTING_CONTROLLER_TYPE_1 = 'Controller'
 
-L_CONTROLLER_START_1 = '  <Controller Name="' + TESTING_CONTROLLER_NAME_1 + \
-                            '" Key="' + TESTING_CONTROLLER_KEY_1 + \
-                            '" Active="' + TESTING_CONTROLLER_ACTIVE_1 + '">'
+L_CONTROLLER_START_1 = '    ' + \
+        '<Controller Name="' + TESTING_CONTROLLER_NAME_1 + \
+        '" Key="' + TESTING_CONTROLLER_KEY_1 + \
+        '" Active="' + TESTING_CONTROLLER_ACTIVE_1 + \
+        '">'
+L_CONTROLLER_UUID_1 = '    <UUID>' + TESTING_CONTROLLER_UUID_1 + '</UUID>'
 L_CONTROLLER_TYPE_1 = '    <LightingType>' + TESTING_CONTROLLER_TYPE_1 + '</LightingType>'
 
 L_CONTROLLER_1 = '\n'.join([
     L_CONTROLLER_START_1,
+    L_CONTROLLER_UUID_1,
     L_CONTROLLER_TYPE_1,
     XML_DEVICE_UPB,
     XML_UPB,

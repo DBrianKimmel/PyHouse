@@ -74,7 +74,13 @@ from twisted.internet import reactor
 
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core import setup_pyhouse
-from Modules.Core.data_objects import PyHouseData, PyHouseAPIs, TwistedInformation, CoreServicesInformation, XmlInformation
+from Modules.Core.data_objects import \
+    PyHouseData, \
+    PyHouseAPIs, \
+    UuidData, \
+    TwistedInformation, \
+    CoreServicesInformation, \
+    XmlInformation
 
 __author__ = "D. Brian Kimmel"
 __copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
@@ -187,25 +193,15 @@ class Utilities(object):
     """
     """
 
-    #  @staticmethod
-    #  def do_setup_stuff(p_self):
-    #    if platform.uname()[0] == 'Windows':
-    #        from Modules.Core import setup_windows
-    #        pass
-    #    else:
-    #        from Modules.Core.setup_linux import Linux
-    #        l_linux = Linux()
-    #    handle_signals()
-
     @staticmethod
     def _create_pyhouse_obj():
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = PyHouseAPIs()
         l_pyhouse_obj.Services = CoreServicesInformation()
-        l_pyhouse_obj.Xml = XmlInformation()
         l_pyhouse_obj.Twisted = TwistedInformation()
         l_pyhouse_obj.Twisted.Reactor = reactor
-        #  l_pyhouse_obj.Twisted.Application = Application('PyHouse')
+        l_pyhouse_obj.Uuids = UuidData()
+        l_pyhouse_obj.Xml = XmlInformation()
         return l_pyhouse_obj
 
 

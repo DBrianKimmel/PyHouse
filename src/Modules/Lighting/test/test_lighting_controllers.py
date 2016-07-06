@@ -7,7 +7,7 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 17 tests - DBK - 2016-06-24
+Passed all 17 tests - DBK - 2016-07-03
 """
 
 #  Import system type stuff
@@ -47,7 +47,7 @@ from Modules.Lighting.test.xml_controllers import \
         TESTING_CONTROLLER_NAME_0, \
         TESTING_CONTROLLER_ACTIVE_0, \
         TESTING_CONTROLLER_TYPE_0, \
-        TESTING_CONTROLLER_KEY_0
+        TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_UUID_0
 from Modules.Utilities import json_tools
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from test.testing_mixin import SetupPyHouseObj
@@ -130,7 +130,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.controller
         l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
         l_obj = Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
-        print(PrettyFormatAny.form(l_obj, 'AllControllers'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-2-A - AllControllers'))
         self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
         self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
 
@@ -167,7 +167,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_obj = Utility._read_one_controller_xml(self.m_pyhouse_obj, self.m_xml.controller)
-        print(PrettyFormatAny.form(l_obj, 'OneController', 100))
+        print(PrettyFormatAny.form(l_obj, 'B1-06-A - OneController', 100))
         self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_0 == 'True'))
         self.assertEqual(l_obj.LightingType, TESTING_CONTROLLER_TYPE_0)
@@ -193,8 +193,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_07_AllControllers(self):
         """Read all controllers.
         """
-        l_objs = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
-        #  print(PrettyFormatAny.form(l_objs[1], 'AllControllers'))
+        l_objs = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_objs, 'B1-07-A - AllControllers'))
         self.assertEqual(len(l_objs), 2)
         self.assertEqual(l_objs[0].BaudRate, int(TESTING_SERIAL_BAUD_RATE))
         self.assertEqual(l_objs[0].ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
@@ -213,13 +213,13 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_01_Base(self):
         """ Write out the XML file for the Base controller
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_xml = Utility._write_base_device(l_controllers[0])
         # print(PrettyFormatAny.form(l_xml, 'Base'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_0)
         self.assertEqual(bool(l_xml.attrib['Active']), TESTING_CONTROLLER_ACTIVE_0 == 'True')
-        self.assertEqual(l_xml.find('UUID').text, TESTING_DEVICE_UUID)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_CONTROLLER_UUID_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.find('DeviceType').text, TESTING_DEVICE_TYPE)
@@ -230,7 +230,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_02_Controller(self):
         """ Write out the XML file for the Base + Controller
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_xml = Utility._write_base_device(l_controllers[0])
         Utility._write_controller_data(l_controllers[0], l_xml)
         # print(PrettyFormatAny.form(l_xml, 'Base'))
@@ -240,11 +240,11 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_03_Interface(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_xml = Utility._write_base_device(l_controllers[0])
         Utility._write_controller_data(l_controllers[0], l_xml)
         Utility._write_interface_data(l_controllers[0], l_xml)
-        print(PrettyFormatAny.form(l_xml, 'w/ Interface', 100))
+        print(PrettyFormatAny.form(l_xml, 'C1-03-A - w/ Interface', 100))
         self.assertEqual(l_xml.find('BaudRate').text, TESTING_SERIAL_BAUD_RATE)
         self.assertEqual(l_xml.find('ByteSize').text, TESTING_SERIAL_BYTE_SIZE)
         self.assertEqual(l_xml.find('Parity').text, TESTING_SERIAL_PARITY)
@@ -256,7 +256,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_04_Family(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_xml = Utility._write_base_device(l_controllers[0])
         Utility._write_controller_data(l_controllers[0], l_xml)
         Utility._write_interface_data(l_controllers[0], l_xml)
@@ -270,7 +270,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_04_OneXml(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_xml = Utility._write_one_controller_xml(self.m_pyhouse_obj, l_controllers[0])
         #  print(PrettyFormatAny.form(l_xml, 'AllControllers', 100))
         self.assertEqual(l_xml.find('InsteonAddress').text, TESTING_INSTEON_ADDRESS_0)
@@ -281,7 +281,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_05_AllXml(self):
         """ Write out the XML file for the location section
         """
-        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
         l_xml = self.m_api.write_all_controllers_xml(self.m_pyhouse_obj)
         #  print(PrettyFormatAny.form(l_xml, 'AllControllers', 100))
@@ -301,7 +301,7 @@ class C2_JSON(SetupMixin, unittest.TestCase):
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_controller = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect)
+        l_controller = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_json = json_tools.encode_json(l_controller)
         print(l_json)
 

@@ -94,6 +94,8 @@ class SchedTime(object):
         DOW        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
         weekday()  mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
+        @param p_schedule_obj: is the schedule object we are working on
+        @param p_now: is a datetime.datetime.now()
         @return: the number of days till the next DOW - 0..6, 10 if never
         """
         l_dow = p_schedule_obj.DOW
@@ -146,7 +148,10 @@ class SchedTime(object):
     @staticmethod
     def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
         """Compute the seconds to go from now to the next scheduled time.
+        @param p_pyhouse_obj: Not used yet
+        @param p_schedule_obj: is the schedule object we are working on.
         @param p_now: is the datetime for now
+        @param p_rise_set: is the sunrise/sunset structure
         """
         l_dow_mins = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
         l_sched_mins = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)

@@ -2,10 +2,12 @@
 @name:      PyHouse/src/Modules/Irrigation/test/test_irrigation_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @summary:
+
+Passed all 7 tests - DBK - 2016-07-05
 
 """
 
@@ -17,6 +19,7 @@ from twisted.trial import unittest
 from Modules.Irrigation.irrigation_xml import Xml as irrigationXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -48,6 +51,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_zone
         l_obj = self.m_api._read_one_zone(l_xml)
+        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
         self.assertEqual(l_obj.Name, 'Front Rotors # 1')
 
     def test_02_System(self):

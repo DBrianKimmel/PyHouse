@@ -50,7 +50,7 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_0211_ExtractXML(self):
-        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_interface = interfaceXml.read_interface_xml(self.m_controller_obj, l_controllers[0])
 
 
@@ -89,7 +89,7 @@ class C03_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
 
     def test_0211_ExtractXML(self):
-        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+        l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_interface = interfaceXml.read_interface_xml(self.m_controller_obj, l_controllers[0])
 
 # ## END

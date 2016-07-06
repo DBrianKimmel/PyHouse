@@ -70,7 +70,7 @@ class Utility(object):
     def _read_controllers(self, p_pyhouse_obj, p_xml):
         try:
             l_xml = p_xml.find('ControllerSection')
-            l_ret = controllersAPI.read_all_controllers_xml(p_pyhouse_obj, l_xml)
+            l_ret = controllersAPI.read_all_controllers_xml(p_pyhouse_obj)
         except AttributeError as e_err:
             l_ret = {}
             l_msg = 'No Controllers found {}'.format(e_err)

@@ -209,11 +209,9 @@ class PutGetXML(object):
         UUIDs are always an element.
         """
         l_xml = XML.get_any_field(p_xml, p_name)
-        if l_xml is None:
-            return str(uuid.uuid1())
-        if len(l_xml) < 36:
-            l_xml = str(uuid.uuid1())
-            LOG.error("A valid UUID was not found - generating a new one. {}".format(l_xml))
+        if l_xml is None or len(l_xml) != 36:
+            l_xml = Uuid.create_uuid()
+            LOG.error("A valid UUID was not found for {} - generating a new one. {}".format(p_name, l_xml))
         return l_xml
 
     @staticmethod
@@ -296,7 +294,7 @@ class PutGetXML(object):
 class XmlConfigTools(object):
 
     @staticmethod
-    def read_base_object_xml(p_base_obj, p_entry_element_xml, no_uuid = False):
+    def read_base_object_xml(p_base_obj, p_entry_element_xml):
         """Get the BaseObject entries from the XML element.
         @param p_base_obj: is the object into which we will put the data.
         @param p_entry_element_xml: is the element we will extract data from (including children).
@@ -306,20 +304,13 @@ class XmlConfigTools(object):
             p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name')
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
+            p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
         except Exception as e_err:
             LOG.error('Base Object - {}'.format(e_err))
-        if no_uuid is False:
-            try:
-                p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
-            except AttributeError:
-                LOG.error('UUID missing for {}'.format(p_base_obj.Name))
-                p_base_obj.pUUID = Uuid.make_valid('246')
-        else:
-            LOG.warn('Not fetching uuid for {}'.format(p_base_obj.Name))
         return p_base_obj
 
     @staticmethod
-    def write_base_object_xml(p_element_name, p_object, no_uuid = False):
+    def write_base_object_xml(p_element_name, p_object):
         """
         Note that UUID is optional.
         @param p_element_name: is the name of the XML element (Light, Button, etc.)
@@ -333,14 +324,13 @@ class XmlConfigTools(object):
             PutGetXML.put_bool_attribute(l_elem, 'Active', p_object.Active)
         except AttributeError as e_err:
             PutGetXML.put_text_attribute(l_elem, 'Error: ', e_err)
-        if not no_uuid:
-            try:
-                PutGetXML.put_uuid_element(l_elem, 'UUID', p_object.UUID)
-            except AttributeError:
-                PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
-                LOG.error('UUID missing for {}'.format(p_object.Name))
-                l_UUID = Uuid.make_valid('246')
-                PutGetXML.put_uuid_element(l_elem, 'UUID', l_UUID)
+        try:
+            PutGetXML.put_uuid_element(l_elem, 'UUID', p_object.UUID)
+        except AttributeError:
+            PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
+            LOG.error('UUID missing for {}'.format(p_object.Name))
+            l_UUID = Uuid.make_valid('246')
+            PutGetXML.put_uuid_element(l_elem, 'UUID', l_UUID)
         return l_elem
 
 

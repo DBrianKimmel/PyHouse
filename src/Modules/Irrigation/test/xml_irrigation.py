@@ -2,91 +2,140 @@
 @name:      PyHouse/src/Modules/Irrigation/test/xml_irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c)  2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @Summary:
 
 """
 
+L_IRRIGATION_SECTION_START = '<IrrigationSection>'
+L_IRRIGATION_SECTION_END = '</IrrigationSection>'
+L_IRRIGATION_SYSTEM_END = '</IrrigationSystem>'
+L_IRRIGATION_ZONE_END = '</Zone>'
+
 TESTING_IRRIGATION_SYSTEM_NAME_0 = 'LawnSystem'
 TESTING_IRRIGATION_SYSTEM_KEY_0 = '0'
 TESTING_IRRIGATION_SYSTEM_ACTIVE_0 = 'True'
+TESTING_IRRIGATION_SYSTEM_UUID_0 = 'Irrigate-0000-0000-0000-0123456789ab'
 TESTING_IRRIGATION_SYSTEM_COMMENT_0 = 'Main yard system with Well Relay and 13 zones'
-
-TESTING_IRRIGATION_SYSTEM_NAME_1 = 'Lanai Drip'
-TESTING_IRRIGATION_SYSTEM_KEY_1 = '1'
-TESTING_IRRIGATION_SYSTEM_ACTIVE_1 = 'True'
-
-L_IRRIGATION_SECTION_START = '<IrrigationSection>'
-L_IRRIGATION_SECTION_END = '</IrrigationSection>'
 
 L_IRRIGATION_SYSTEM_START_0 = '<IrrigationSystem Name="' + TESTING_IRRIGATION_SYSTEM_NAME_0 + \
         '" Key="' + TESTING_IRRIGATION_SYSTEM_KEY_0 + \
         '" Active="' + TESTING_IRRIGATION_SYSTEM_ACTIVE_0 + \
         '">'
+L_IRRIGATION_SYSTEM_UUID_0 = '<UUID>' + TESTING_IRRIGATION_SYSTEM_UUID_0 + '</UUID>'
 L_IRRIGATION_SYSTEM_COMMENT_0 = '<Comment>' + TESTING_IRRIGATION_SYSTEM_COMMENT_0 + '</Comment>'
+
+# Zone 0
+TESTING_IRRIGATION_ZONE_NAME_0_0 = 'Front Rotors # 1'
+TESTING_IRRIGATION_ZONE_KEY_0_0 = '0'
+TESTING_IRRIGATION_ZONE_ACTIVE_0_0 = 'True'
+TESTING_IRRIGATION_ZONE_UUID_0_0 = 'Irrigate-Zone-0000-0000-0123456789ab'
+TESTING_IRRIGATION_ZONE_COMMENT_0_0 = 'Rotors on the West corner of the yard'
+TESTING_IRRIGATION_ZONE_DURATION_0_0 = '2700'
+
+L_IRRIGATION_ZONE_START_0_0 = '<Zone Name="' + TESTING_IRRIGATION_ZONE_NAME_0_0 + \
+        '" Key="' + TESTING_IRRIGATION_ZONE_KEY_0_0 + \
+        '" Active="' + TESTING_IRRIGATION_ZONE_ACTIVE_0_0 + \
+        '">'
+L_IRRIGATION_ZONE_UUID_0_0 = '<UUID>' + TESTING_IRRIGATION_ZONE_UUID_0_0 + '</UUID>'
+L_IRRIGATION_ZONE_COMMENT_0_0 = '<Comment>' + TESTING_IRRIGATION_ZONE_COMMENT_0_0 + '</Comment>'
+L_IRRIGATION_ZONE_DURATION_0_0 = '<Duration>' + TESTING_IRRIGATION_ZONE_DURATION_0_0 + '</Duration>'
+
+L_IRRIGATION_ZONE_0_0 = '\n'.join([
+    L_IRRIGATION_ZONE_START_0_0,
+    L_IRRIGATION_ZONE_UUID_0_0,
+    L_IRRIGATION_ZONE_COMMENT_0_0,
+    L_IRRIGATION_ZONE_DURATION_0_0,
+    L_IRRIGATION_ZONE_END
+])
+
+# Zone 1
+TESTING_IRRIGATION_ZONE_NAME_0_1 = 'Front Rotors # 2'
+TESTING_IRRIGATION_ZONE_KEY_0_1 = '1'
+TESTING_IRRIGATION_ZONE_ACTIVE_0_1 = 'True'
+TESTING_IRRIGATION_ZONE_UUID_0_1 = 'Irrigate-Zone-0001-0001-0123456789ab'
+TESTING_IRRIGATION_ZONE_COMMENT_0_1 = 'Rotors on the Driveway side of the yard'
+TESTING_IRRIGATION_ZONE_DURATION_0_1 = '2700'
+
+L_IRRIGATION_ZONE_START_0_1 = '<Zone Name="' + TESTING_IRRIGATION_ZONE_NAME_0_1 + \
+        '" Key="' + TESTING_IRRIGATION_ZONE_KEY_0_1 + \
+        '" Active="' + TESTING_IRRIGATION_ZONE_ACTIVE_0_1 + \
+        '">'
+L_IRRIGATION_ZONE_UUID_0_1 = '<UUID>' + TESTING_IRRIGATION_ZONE_UUID_0_1 + '</UUID>'
+L_IRRIGATION_ZONE_COMMENT_0_1 = '<Comment>' + TESTING_IRRIGATION_ZONE_COMMENT_0_1 + '</Comment>'
+L_IRRIGATION_ZONE_DURATION_0_1 = '<Duration>' + TESTING_IRRIGATION_ZONE_DURATION_0_1 + '</Duration>'
+
+L_IRRIGATION_ZONE_0_1 = '\n'.join([
+    L_IRRIGATION_ZONE_START_0_1,
+    L_IRRIGATION_ZONE_UUID_0_1,
+    L_IRRIGATION_ZONE_COMMENT_0_1,
+    L_IRRIGATION_ZONE_DURATION_0_1,
+    L_IRRIGATION_ZONE_END
+])
+
+L_IRRIGATION_SYSTEM_0 = '\n'.join([
+    L_IRRIGATION_SYSTEM_START_0,
+    L_IRRIGATION_SYSTEM_UUID_0,
+    L_IRRIGATION_SYSTEM_COMMENT_0,
+    L_IRRIGATION_ZONE_0_0,
+    L_IRRIGATION_ZONE_0_1,
+    L_IRRIGATION_SYSTEM_END
+])
+
+TESTING_IRRIGATION_SYSTEM_NAME_1 = 'Lanai Drip'
+TESTING_IRRIGATION_SYSTEM_KEY_1 = '1'
+TESTING_IRRIGATION_SYSTEM_ACTIVE_1 = 'True'
+TESTING_IRRIGATION_SYSTEM_UUID_1 = 'Irrigate-0001-0001-0001-0123456789ab'
 
 L_IRRIGATION_SYSTEM_START_1 = '<IrrigationSystem Name="' + TESTING_IRRIGATION_SYSTEM_NAME_1 + \
         '" Key="' + TESTING_IRRIGATION_SYSTEM_KEY_1 + \
         '" Active="' + TESTING_IRRIGATION_SYSTEM_ACTIVE_1 + \
         '">'
-L_IRRIGATION_SYSTEM_END = '</IrrigationSystem>'
+L_IRRIGATION_SYSTEM_UUID_1 = '<UUID>' + TESTING_IRRIGATION_SYSTEM_UUID_1 + '</UUID>'
 
-XXX_0 = """
-        <Comment>Main yard system with Well Relay and 13 zones</Comment>
-        <Zone Name="Front Rotors # 1" Key="0" Active="True">
-            <Comment>Rotors on the West corner of the yard,</Comment>
-            <Duration>2700</Duration>
-        </Zone>
-        <Zone Name="Front Rotors # 2" Key="1" Active="True">
-            <Comment>Rotors on the driveway side of the yard,</Comment>
-            <Duration>2700</Duration>
-        </Zone>
-        <Zone Name="Front Rotors # 3" Key="2" Active="True">
-        </Zone>
-        <Zone Name="Front Rotors # 4" Key="3" Active="True">
-        </Zone>
-        <Zone Name="Front Rotors # 5" Key="4" Active="True">
-        </Zone>
-        <Zone Name="Front Rotors # 6" Key="5" Active="True">
-        </Zone>
-        <Zone Name="Front Rotors # 7" Key="6" Active="True">
-        </Zone>
-"""
-XXX_1 = """
-        <Comment>Lanai area system</Comment>
-        <Zone Name="Flower Drips" Key="0" Active="True">
-        </Zone>
-        <Zone Name="Pool Filler" Key="1" Active="True">
-        </Zone>
-        <Zone Name="UnUsed" Key="2" Active="True">
-        </Zone>
-"""
 
-L_IRRIGATION_SYSTEM_0 = '\n'.join([
-    L_IRRIGATION_SYSTEM_START_0,
-        L_IRRIGATION_SYSTEM_COMMENT_0,
-        XXX_0,
-    L_IRRIGATION_SYSTEM_END
+# Zone 0
+TESTING_IRRIGATION_ZONE_NAME_1_0 = 'Front Rotors # 1'
+TESTING_IRRIGATION_ZONE_KEY_1_0 = '0'
+TESTING_IRRIGATION_ZONE_ACTIVE_1_0 = 'True'
+TESTING_IRRIGATION_ZONE_UUID_1_0 = 'Irrigate-Zone-0000-0000-0123456789ab'
+TESTING_IRRIGATION_ZONE_COMMENT_1_0 = 'Rotors on the West corner of the yard'
+TESTING_IRRIGATION_ZONE_DURATION_1_0 = '2700'
+
+L_IRRIGATION_ZONE_START_1_0 = '<Zone Name="' + TESTING_IRRIGATION_ZONE_NAME_1_0 + \
+        '" Key="' + TESTING_IRRIGATION_ZONE_KEY_1_0 + \
+        '" Active="' + TESTING_IRRIGATION_ZONE_ACTIVE_1_0 + \
+        '">'
+L_IRRIGATION_ZONE_UUID_1_0 = '<UUID>' + TESTING_IRRIGATION_ZONE_UUID_1_0 + '</UUID>'
+L_IRRIGATION_ZONE_COMMENT_1_0 = '<Comment>' + TESTING_IRRIGATION_ZONE_COMMENT_1_0 + '</Comment>'
+L_IRRIGATION_ZONE_DURATION_1_0 = '<Duration>' + TESTING_IRRIGATION_ZONE_DURATION_1_0 + '</Duration>'
+
+L_IRRIGATION_ZONE_1_0 = '\n'.join([
+    L_IRRIGATION_ZONE_START_1_0,
+    L_IRRIGATION_ZONE_UUID_1_0,
+    L_IRRIGATION_ZONE_COMMENT_1_0,
+    L_IRRIGATION_ZONE_DURATION_1_0,
+    L_IRRIGATION_ZONE_END
 ])
 
 L_IRRIGATION_SYSTEM_1 = '\n'.join([
     L_IRRIGATION_SYSTEM_START_1,
-        XXX_1,
+    L_IRRIGATION_SYSTEM_UUID_1,
+    L_IRRIGATION_ZONE_1_0,
     L_IRRIGATION_SYSTEM_END
 ])
 
 XML_IRRIGATION = '\n'.join([
     L_IRRIGATION_SECTION_START,
-        L_IRRIGATION_SYSTEM_0,
-        L_IRRIGATION_SYSTEM_1,
+    L_IRRIGATION_SYSTEM_0,
+    L_IRRIGATION_SYSTEM_1,
     L_IRRIGATION_SECTION_END
 ])
 
 
-
-IRRIGATION_XSD = """
+_IRRIGATION_XSD = """
 <xs:schema
     attributeFormDefault="unqualified"
     elementFormDefault="qualified"

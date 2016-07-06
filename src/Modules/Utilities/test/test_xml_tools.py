@@ -7,7 +7,7 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed 54 of 54 testa - DBK 2016-06-17
+Passed all 54 testa - DBK 2016-07-03
 
 """
 
@@ -516,7 +516,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         l_base_obj = CoreLightingData()
         XmlConfigTools.read_base_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 44
-        l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj, no_uuid = True)
+        l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
         print(PrettyFormatAny.form(l_xml, 'XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '44')

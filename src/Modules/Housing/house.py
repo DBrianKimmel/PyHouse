@@ -31,19 +31,20 @@ PyHouse.House.
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.data_objects import HouseAPIs, HouseInformation
-from Modules.Housing.location import Xml as locationXML
-from Modules.Housing.rooms import Xml as roomsXML
+from Modules.Computer import logging_pyh as Logger
+from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
 from Modules.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
+from Modules.Housing.location import Xml as locationXML
+from Modules.Housing.rooms import Xml as roomsXML
 from Modules.Hvac.hvac import API as hvacAPI
 from Modules.Irrigation.irrigation import API as irrigationAPI
 from Modules.Lighting.lighting import API as lightingAPI
 from Modules.Pool.pool import API as poolAPI
 from Modules.Scheduling.schedule import API as scheduleAPI
 from Modules.Security.security import API as securityAPI
+from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
-from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.House          ')
 
@@ -57,12 +58,20 @@ class Xml(object):
     """
 
     @staticmethod
+    def _add_uuid(p_pyhouse_obj, p_obj):
+        l_obj = UuidData()
+        l_obj.UUID = p_obj.UUID
+        l_obj.UuidType = 'House'
+        Uuid.add_uuid(p_pyhouse_obj, l_obj)
+
+    @staticmethod
     def _read_house_base(p_pyhouse_obj):
         l_obj = HouseInformation()
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml is None:
             return l_obj
         XmlConfigTools.read_base_object_xml(l_obj, l_xml)
+        Xml._add_uuid(p_pyhouse_obj, l_obj)
         return l_obj
 
     @staticmethod
@@ -107,6 +116,8 @@ class Utility(object):
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
+        """ Load the XML config file for all the components of the house.
+        """
         # p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.FamilyAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
@@ -118,7 +129,7 @@ class Utility(object):
         pass
 
     def start_house_parts(self, p_pyhouse_obj):
-        #  This must start before the other things
+        #  Family must start before the other things (that depend on family).
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()
@@ -133,6 +144,8 @@ class Utility(object):
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
+        """ Family does not get saved - it is created dynamically when XML is loaded.
+        """
         p_pyhouse_obj.APIs.House.EntertainmentAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.House.IrrigationAPI.SaveXml(p_xml)

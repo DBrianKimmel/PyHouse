@@ -28,7 +28,7 @@ from Modules.Core.data_objects import \
             HouseAPIs, \
             LocationData, \
             TwistedInformation, \
-            XmlInformation, LightingData
+            XmlInformation, LightingData, UuidData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.house import Xml as housingXML
@@ -202,6 +202,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj.House = SetupPyHouseObj._build_house(l_pyhouse_obj)
         l_pyhouse_obj.Services = self._build_services()
         l_pyhouse_obj.Twisted = self._build_twisted()
+        l_pyhouse_obj.Uuids = {}
         l_pyhouse_obj.Xml = self._build_xml(p_root)
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj

@@ -45,7 +45,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.FamilyData = familyAPI(
                             self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.Lighting.Controllers = controllerAPI().read_all_controllers_xml(
-                            self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+                            self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(
                             self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(

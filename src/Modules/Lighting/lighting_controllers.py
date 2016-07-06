@@ -133,7 +133,7 @@ class Utility(object):
 class API(object):
 
     @staticmethod
-    def read_all_controllers_xml(p_pyhouse_obj, p_controller_sect_xml):
+    def read_all_controllers_xml(p_pyhouse_obj):
         """Called from lighting.
         Get the entire configuration of all the controllers and place them in a holding dict.
 
@@ -144,12 +144,24 @@ class API(object):
         """
         l_count = 0
         l_dict = {}
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('HouseDivision')
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('LightingSection')
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('ControllerSection')
+        if l_xml is None:
+            return l_dict
         try:
-            for l_controller_xml in p_controller_sect_xml.iterfind('Controller'):
+            for l_controller_xml in l_xml.iterfind('Controller'):
                 l_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
-                p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Controller')
+                # p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Controller')
                 l_count += 1
         except AttributeError as e_error:  # No Controller section
             LOG.warning('No Controllers found - {}'.format(e_error))

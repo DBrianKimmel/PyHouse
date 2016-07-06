@@ -65,7 +65,7 @@ class Xml(object):
         """
         @param p_obj: is one login object
         """
-        l_xml = XmlConfigTools.write_base_object_xml('Login', p_obj, no_uuid = True)
+        l_xml = XmlConfigTools.write_base_object_xml('Login', p_obj)
         PutGetXML().put_text_element(l_xml, 'FullName', p_obj.LoginFullName)
         PutGetXML().put_text_element(l_xml, 'Password', p_obj.LoginPasswordCurrent)
         PutGetXML().put_text_element(l_xml, 'Role', p_obj.LoginRole)

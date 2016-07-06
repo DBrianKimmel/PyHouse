@@ -25,7 +25,7 @@ L_LIGHT_END = '</Light>'
 TESTING_LIGHT_NAME_0 = "Light, Insteon (xml_lights) "
 TESTING_LIGHT_KEY_0 = '0'
 TESTING_LIGHT_ACTIVE_0 = 'True'
-TESTING_LIGHT_UUID_0 = 'Light...-0000-11e6-0000-Light.b6eb6f'
+TESTING_LIGHT_UUID_0 = 'Light...-0000-0000-0000-0123456789ab'
 TESTING_LIGHT_COMMENT_0 = "SwitchLink On/Off Light Comment"
 TESTING_LIGHT_CUR_LEVEL_0 = "42"
 TESTING_LIGHT_DEVICE_FAMILY_0 = 'Insteon'
@@ -41,8 +41,11 @@ TESTING_LIGHT_ROOM_NAME_0 = 'Master Bath'
 TESTING_LIGHT_ROOM_UUID_0 = 'Light...-Room-0000-0000-Room.8b6eb6f'
 TESTING_LIGHT_TYPE_0 = 'Light'
 
-L_LIGHT_START_0 = '<Light Name="' + TESTING_LIGHT_NAME_0 + '" Key="' + TESTING_LIGHT_KEY_0 + '" Active="' + \
-        TESTING_LIGHT_ACTIVE_0 + '">'
+L_LIGHT_START_0 = \
+        '<Light Name="' + TESTING_LIGHT_NAME_0 + \
+        '" Key="' + TESTING_LIGHT_KEY_0 + \
+        '" Active="' + TESTING_LIGHT_ACTIVE_0 + \
+        '">'
 L_LIGHT_UUID_0 = '    <UUID>' + TESTING_LIGHT_UUID_0 + '</UUID>'
 L_LIGHT_COMMENT_0 = '    <Comment>' + TESTING_LIGHT_COMMENT_0 + '</Comment>'
 L_LIGHT_DEVICE_TYPE_0 = '    <DeviceType>' + TESTING_LIGHT_DEVICE_TYPE_0 + '</DeviceType>'
@@ -83,8 +86,11 @@ TESTING_LIGHT_CUR_LEVEL_1 = "12"
 TESTING_LIGHT_FAMILY_1 = 'UPB'
 TESTING_LIGHT_TYPE_1 = 'Light'
 
-L_LIGHT_START_1 = '<Light Name="' + TESTING_LIGHT_NAME_1 + '" Key="' + TESTING_LIGHT_KEY_1 + '" Active="' + \
-        TESTING_LIGHT_ACTIVE_1 + '">'
+L_LIGHT_START_1 = \
+        '<Light Name="' + TESTING_LIGHT_NAME_1 + \
+        '" Key="' + TESTING_LIGHT_KEY_1 + \
+        '" Active="' + TESTING_LIGHT_ACTIVE_1 + \
+        '">'
 L_LIGHT_UUID_1 = '    <UUID>' + TESTING_LIGHT_UUID_1 + '</UUID>'
 L_LIGHT_TYPE_1 = '    <LightingType>' + TESTING_LIGHT_TYPE_1 + '</LightingType>'
 L_LIGHT_DIMMABLE_1 = '    <IsDimmable>' + TESTING_LIGHT_DIMMABLE_1 + '</IsDimmable>'

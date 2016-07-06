@@ -27,27 +27,10 @@ SCHEDULE_ATTR = 'Schedule'
 class Xml(object):
 
     @staticmethod
-    def _read_one_lighting_schedule(p_schedule_element):
-        """Extract schedule information from a schedule xml element.
-        """
-        l_obj = ScheduleLightData()
-        l_obj.Level = PutGetXML.get_int_from_xml(p_schedule_element, 'Level')
-        l_obj.LightName = PutGetXML.get_text_from_xml(p_schedule_element, 'LightName')
-        try:
-            l_obj.LightUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'LightUUID')
-        except:
-            l_obj.LightUUID = ''
-        l_obj.Rate = PutGetXML.get_int_from_xml(p_schedule_element, 'Rate')
-        l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
-        try:
-            l_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'RoomUUID')
-        except:
-            l_obj.RoomUUID = ''
-        return l_obj  # for testing
-
-    @staticmethod
     def _read_one_base_schedule(p_schedule_element):
-        """Extract schedule information from a schedule xml element.
+        """Extract schedule information from a Base schedule xml element.
+
+        ScheduleBaseData()
         """
         l_obj = ScheduleBaseData()
         XmlConfigTools.read_base_object_xml(l_obj, p_schedule_element)
@@ -64,6 +47,20 @@ class Xml(object):
             l_obj.ScheduleType = 'Lighting'
         l_obj.Time = PutGetXML.get_text_from_xml(p_schedule_element, 'Time')
         return l_obj
+
+    @staticmethod
+    def _read_one_lighting_schedule(p_schedule_element):
+        """Extract schedule information from a schedule xml element.
+        """
+        l_obj = ScheduleLightData()
+        l_obj = Xml._read_one_base_schedule(p_schedule_element)
+        l_obj.Level = PutGetXML.get_int_from_xml(p_schedule_element, 'Level')
+        l_obj.LightName = PutGetXML.get_text_from_xml(p_schedule_element, 'LightName')
+        l_obj.LightUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'LightUUID')
+        l_obj.Rate = PutGetXML.get_int_from_xml(p_schedule_element, 'Rate')
+        l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
+        l_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'RoomUUID')
+        return l_obj  # for testing
 
     @staticmethod
     def _read_one_schedule(p_schedule_element):
@@ -119,8 +116,10 @@ class Xml(object):
         """
         PutGetXML.put_int_element(p_entry, 'Level', p_schedule_obj.Level)
         PutGetXML.put_text_element(p_entry, 'LightName', p_schedule_obj.LightName)
+        PutGetXML.put_text_element(p_entry, 'LightUUID', p_schedule_obj.LightUUID)
         PutGetXML.put_int_element(p_entry, 'Rate', p_schedule_obj.Rate)
         PutGetXML.put_text_element(p_entry, 'RoomName', p_schedule_obj.RoomName)
+        PutGetXML.put_text_element(p_entry, 'RoomUUID', p_schedule_obj.RoomUUID)
 
     @staticmethod
     def _write_one_schedule(p_schedule_obj):

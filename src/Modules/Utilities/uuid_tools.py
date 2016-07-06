@@ -15,7 +15,7 @@
 import uuid
 
 #  Import PyMh files
-from Modules.Core.data_objects import UuidData
+# from Modules.Core.data_objects import UuidData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UuidTools      ')
 
@@ -24,6 +24,8 @@ class Uuid(object):
 
     @staticmethod
     def create_uuid():
+        """ Create a new Type 1 UUID.
+        """
         return str(uuid.uuid1())
 
     @staticmethod
@@ -44,16 +46,15 @@ class Uuid(object):
         return p_uuid
 
     @staticmethod
-    def add_uuid(p_pyhouse_obj, p_type):
-        l_obj = UuidData()
-        l_obj.UuidType = p_type
+    def add_uuid(p_pyhouse_obj, p_uuid_obj):
+        p_pyhouse_obj.Uuids[p_uuid_obj.UUID] = p_uuid_obj
 
 
 class FileUuid(object):
     def __init__(self, p_path = '/etc/pyhouse'):
         self.m_path = p_path
 
-    def read_file(self, p_filename):
+    def XXXread_file(self, p_filename):
         l_uuid = ""
         try:
             l_file = open(p_filename, 'r')
@@ -62,7 +63,7 @@ class FileUuid(object):
             LOG.warn('UUID file {} error {}'.format(p_filename, e_err))
         return l_uuid
 
-    def write_file(self, p_filename, p_uuid):
+    def XXXwrite_file(self, p_filename, p_uuid):
         l_ret = 0
         return l_ret
 

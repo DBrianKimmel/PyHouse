@@ -26,9 +26,9 @@ Then start the House and all the sub systems.
 #  Import system type stuff
 
 #  Import PyMh files and modules.
+from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
-from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
 LOG = Logger.getLogger('PyHouse.CoreSetup      ')
@@ -61,17 +61,13 @@ class Utility(object):
         self.SaveXml()
 
     @staticmethod
-    def _init_components(p_pyhouse_obj):
-        pass
-
-    @staticmethod
     def init_uuids(p_pyhouse_obj):
         """be sure that all the uuid files exist in /etc/pyhouse
         Computer.uuid
         House.uuid
         Domain.uuid
         """
-        pass
+        p_pyhouse_obj.Uuids = {}
 
     @staticmethod
     def _sync_startup_logging(p_pyhouse_obj):
@@ -96,8 +92,7 @@ class API(Utility):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initializing')
-        #  Utility._init_components(p_pyhouse_obj)
-        #  Utility.init_uuids(p_pyhouse_obj)
+        Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)

@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/Pool/test/test_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 27, 2015
 @Summary:
 
-Passed all 10 tests - DBK - 2015-10-04
+Passed all 10 tests - DBK - 2016-07-05
 
 """
 
@@ -30,7 +30,7 @@ from Modules.Pool.test.xml_pool import \
         TESTING_POOL_KEY_1, \
         TESTING_POOL_ACTIVE_1, \
         TESTING_POOL_COMMENT_1, \
-        TESTING_POOL_TYPE_1
+        TESTING_POOL_UUID_0
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -52,7 +52,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.Pools, {})
+        self.assertEqual(self.m_pyhouse_obj.House.Pools, None)
 
     def test_02_FindXML(self):
         """ Be sure that the XML contains the right stuff.
@@ -86,12 +86,13 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read the base Pool Info
         """
         l_pool = poolXml._read_base(self.m_xml.pool)
-        # print(PrettyFormatAny.form(l_pool, 'Pool'))
+        # print(PrettyFormatAny.form(l_pool, 'B1-01-A - Pool'))
         self.assertEqual(l_pool.Name, TESTING_POOL_NAME_0)
         self.assertEqual(l_pool.Key, int(TESTING_POOL_KEY_0))
-        self.assertEqual(l_pool.Active, bool(TESTING_POOL_ACTIVE_0))
+        self.assertEqual(str(l_pool.Active), TESTING_POOL_ACTIVE_0)
+        self.assertEqual(l_pool.UUID, TESTING_POOL_UUID_0)
         l_pool = poolXml._read_base(self.m_xml.pool_sect[1])
-        # print(PrettyFormatAny.form(l_pool, 'Pool'))
+        # print(PrettyFormatAny.form(l_pool, B1-01-B - 'Pool'))
         self.assertEqual(l_pool.Name, TESTING_POOL_NAME_1)
         self.assertEqual(l_pool.Key, int(TESTING_POOL_KEY_1))
         self.assertEqual(l_pool.Active, bool(TESTING_POOL_ACTIVE_1))
@@ -100,7 +101,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read one entire pool
         """
         l_pool = poolXml._read_one_pool(self.m_xml.pool)
-        # print(PrettyFormatAny.form(l_pool, 'Pool'))
+        # print(PrettyFormatAny.form(l_pool, 'B1-02-A - Pool'))
         self.assertEqual(l_pool.Name, TESTING_POOL_NAME_0)
         self.assertEqual(l_pool.Key, int(TESTING_POOL_KEY_0))
         self.assertEqual(l_pool.Active, bool(TESTING_POOL_ACTIVE_0))
@@ -111,8 +112,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read all pool info
         """
         l_obj = poolXml.read_all_pools_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'Pool'))
-        # print(PrettyFormatAny.form(l_obj[0], 'Pool'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Pool'))
         self.assertEqual(len(l_obj), 2)
 
 
@@ -146,7 +146,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """ Write Pool Section with all pools.
         """
         l_xml = poolXml.write_all_pools_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'Pool'))
+        # print(PrettyFormatAny.form(l_xml, 'Pool'))
         l_xml1 = l_xml.find('Pool')
         l_xml2 = l_xml[1]
         self.assertEqual(l_xml2.attrib['Name'], TESTING_POOL_NAME_1)
