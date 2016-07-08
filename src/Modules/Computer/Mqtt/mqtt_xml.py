@@ -9,6 +9,8 @@
 
 """
 
+__updated__ = '2016-07-06'
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 

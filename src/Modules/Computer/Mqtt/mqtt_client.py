@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-07-07'
+
 #  Import system type stuff
 import copy
 import datetime
@@ -99,7 +101,7 @@ class Util(object):
         return l_topic
 
     @staticmethod
-    def _make_message(p_pyhouse_obj, p_message = None):
+    def _make_message(p_pyhouse_obj, p_message=None):
         """
         @param p_pyhouse_obj: is the entire PyHouse Data tree.
         @param message_json: is message that is already json encoded\
@@ -138,7 +140,7 @@ class API(Util):
         l_mqtt = MqttInformation()
         l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
         l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.Mqtt.Brokers = l_mqtt.Brokers
+        p_pyhouse_obj.Computer.Mqtt = l_mqtt
         LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
         if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
             #  LOG.info('Connecting to all MQTT Brokers.')

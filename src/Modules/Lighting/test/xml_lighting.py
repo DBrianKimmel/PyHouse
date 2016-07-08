@@ -13,6 +13,8 @@ Config File Version 1.4 placed this entire section under a new LightingSection e
 
 """
 
+__updated__ = '2016-07-07'
+
 # Import system type stuff
 
 # Import PyMh files

@@ -18,6 +18,8 @@ PyHouse.House.Lighting.
                        Lights
 """
 
+__updated__ = '2016-07-07'
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
@@ -161,7 +163,7 @@ class API(Utility):
         #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def ChangeLight(self, p_light_obj, p_source, p_new_level, _p_rate = None):
+    def ChangeLight(self, p_light_obj, p_source, p_new_level, _p_rate=None):
         """
         Set an Insteon controlled light to a value - On, Off, or Dimmed.
 

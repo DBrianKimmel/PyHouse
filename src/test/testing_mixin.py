@@ -33,12 +33,13 @@ from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.house import Xml as housingXML
 from Modules.Computer import logging_pyh as Logger
+from src.Modules.Core.data_objects import MqttInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #
 l_format = '\n [%(levelname)s] %(name)s: %(funcName)s %(lineno)s:\n\t%(message)s'
-l_formatter = logging.Formatter(fmt = l_format)
-l_handler = logging.StreamHandler(stream = sys.stderr)
+l_formatter = logging.Formatter(fmt=l_format)
+l_handler = logging.StreamHandler(stream=sys.stderr)
 l_handler.setFormatter(l_formatter)
 LOG = Logger.getLogger('PyHouse')
 LOG.addHandler(l_handler)
@@ -134,8 +135,10 @@ class SetupPyHouseObj(object):
         l_ret.Lighting = LightingData()
         return l_ret
 
-    def _build_computer(self):
+    @staticmethod
+    def _build_computer(p_pyhouse_obj):
         l_ret = ComputerInformation()
+        l_ret.Mqtt = MqttInformation()
         return l_ret
 
     def _build_apis(self):
@@ -198,7 +201,7 @@ class SetupPyHouseObj(object):
     def BuildPyHouseObj(self, p_root):
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = self._build_apis()
-        l_pyhouse_obj.Computer = self._build_computer()
+        l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
         l_pyhouse_obj.House = SetupPyHouseObj._build_house(l_pyhouse_obj)
         l_pyhouse_obj.Services = self._build_services()
         l_pyhouse_obj.Twisted = self._build_twisted()
@@ -214,7 +217,7 @@ class SetupPyHouseObj(object):
         self._house_xml(l_xml)
         return l_xml
 
-    def LoadComputer(self):
+    def LoadComputer(self, p_pyhouse_obj):
         pass
 
     def LoadHouse(self, p_pyhouse_obj):

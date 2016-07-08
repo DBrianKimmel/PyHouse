@@ -10,6 +10,8 @@
 Passed all 11 tests - DBK - 2016-01-29
 
 """
+from src.Modules.Core.data_objects import ComputerInformation
+__updated__ = '2016-07-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,6 +26,9 @@ from Modules.Core.data_objects import MqttBrokerData, \
 from test.xml_data import XML_LONG, XML_EMPTY
 from Modules.Computer.Mqtt.mqtt_client import Util, API as mqttAPI
 from test.testing_mixin import SetupPyHouseObj
+from src.Modules.Computer.Mqtt.test.xml_mqtt import \
+    TESTING_BROKER_UUID_0, \
+    TESTING_BROKER_UUID_1
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_0, \
     TESTING_BROKER_ACTIVE_0, \
@@ -36,7 +41,7 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_PORT_1, \
     TESTING_BROKER_ACTIVE_1
 from Modules.Utilities import json_tools
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
@@ -73,33 +78,38 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_FindXML(self):
+    def test_1_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
 
-    def test_02_Mqtt(self):
-        l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
-        self.assertEqual(l_mqtt.Prefix, platform.node())
-        self.assertEqual(len(l_mqtt.Brokers), 2)
 
-    def test_03_Broker(self):
-        l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
-        self.assertEqual(l_mqtt.Brokers[0].Name, TESTING_BROKER_NAME_0)
-        self.assertEqual(l_mqtt.Brokers[0].Key, int(TESTING_BROKER_KEY_0))
-        self.assertEqual(l_mqtt.Brokers[0].Active, TESTING_BROKER_ACTIVE_0 == 'True')
-        self.assertEqual(l_mqtt.Brokers[0].BrokerAddress, TESTING_BROKER_ADDRESS_0)
-        self.assertEqual(l_mqtt.Brokers[0].BrokerPort, int(TESTING_BROKER_PORT_0))
-        self.assertEqual(l_mqtt.Brokers[1].Name, TESTING_BROKER_NAME_1)
-        self.assertEqual(l_mqtt.Brokers[1].Key, int(TESTING_BROKER_KEY_1))
-        self.assertEqual(l_mqtt.Brokers[1].Active, TESTING_BROKER_ACTIVE_1 == 'True')
-        self.assertEqual(l_mqtt.Brokers[1].BrokerAddress, TESTING_BROKER_ADDRESS_1)
-        self.assertEqual(l_mqtt.Brokers[1].BrokerPort, int(TESTING_BROKER_PORT_1))
+class A2_XML(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_1_BrokerCnt(self):
+        l_xml = self.m_xml.mqtt_sect
+        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - Xml'))
+        self.assertEqual(len(l_xml), 2)
+
+    def test_2_PyHouse(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A2_2_A - PyHouse'))
+        self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
+
+    def test_3_Computer(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'A2_3_A - Init Computer'))
+
+    def test_4_Mqtt(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'A2_4_A - Init Mqtt'))
 
 
-class A2_EmptyXML(SetupMixin, unittest.TestCase):
+class A3_EmptyXML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
@@ -117,15 +127,16 @@ class B1_ConnectTCP(SetupMixin, unittest.TestCase):
         twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.BrokerPort = PORT
-        self.m_broker.Active = True
-        self.m_broker.Name = 'ClientTest'
+        self.m_broker.Active = TESTING_BROKER_ACTIVE_1
+        self.m_broker.Name = TESTING_BROKER_NAME_1
 
     def test_01_Broker(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
         self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
-        self.assertEqual(self.m_broker.Name, 'ClientTest')
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt.Brokers, 'B1-01-A - Broker', 80))
+        self.assertEqual(self.m_broker.Name, TESTING_BROKER_NAME_1)
 
 
 class B2_ConnectTLS(SetupMixin, unittest.TestCase):
@@ -146,6 +157,8 @@ class B2_ConnectTLS(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
         self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt.Brokers
+                                   , 'B2-01-A - Broker', 80))
         self.assertEqual(self.m_broker.Name, 'ClientTest')
 
 
@@ -188,7 +201,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         """ No payload (not too useful)
         """
         l_message = Util._make_message(self.m_pyhouse_obj)
-        #  print(PrettyFormatAny.form(l_message, 'Bare Message', 80))
+        # print(PrettyFormatAny.form(l_message, 'C2-02-A - Bare Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
 
@@ -200,7 +213,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'
         l_message = Util._make_message(self.m_pyhouse_obj, l_data)
-        #  print(PrettyFormatAny.form(l_message, 'Message', 80))
+        # print(PrettyFormatAny.form(l_message, 'C2-03-A - Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
         self.assertEqual(self.jsonPair(l_message, 'Name'), l_data.Name)
@@ -214,7 +227,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'
         l_message = Util._make_message(self.m_pyhouse_obj, l_data)
-        #  print(PrettyFormatAny.form(l_message, 'Message', 80))
+        print(PrettyFormatAny.form(l_message, 'C2-04-A - Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
         self.assertEqual(self.jsonPair(l_message, 'Name'), l_data.Name)

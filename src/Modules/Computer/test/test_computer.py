@@ -7,9 +7,10 @@
 @note:      Created on Jul 25, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2016-06-07
+Passed all 7 tests - DBK - 2016-07-06
 
 """
+__updated__ = "2016-07-06"
 
 # Import system type stuff
 import platform
@@ -87,7 +88,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """
         """
         l_xml = computerXML.create_computer(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'Computer Xml'))
+        print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
         self.assertEqual(l_xml.Name, platform.node())
         self.assertEqual(l_xml.Key, 0)
         self.assertEqual(l_xml.Active, True)
@@ -96,7 +97,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Read the config - it is minimal.
         """
         l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'Computer Xml'))
+        print(PrettyFormatAny.form(l_obj, 'C1-02-A - Computer Xml'))
         self.assertEqual(l_obj.Name, TESTING_COMPUTER_NAME_0)
 
 
@@ -110,7 +111,7 @@ class C2_Write(SetupMixin, unittest.TestCase):
         """
         _l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
         l_xml = computerXML.write_computer_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'Computer Xml'))
+        print(PrettyFormatAny.form(l_xml, 'C2-01-A - Computer Xml'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_COMPUTER_NAME_0)
 
 # # ## END DBK

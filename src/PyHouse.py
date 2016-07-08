@@ -62,6 +62,10 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
+__updated__ = '2016-07-06'
+__version_info__ = (1, 7, 2)
+__version__ = '.'.join(map(str, __version_info__))
+
 #  Import system type stuff
 import errno
 import fcntl
@@ -81,11 +85,6 @@ from Modules.Core.data_objects import \
     TwistedInformation, \
     CoreServicesInformation, \
     XmlInformation
-
-__author__ = "D. Brian Kimmel"
-__copyright__ = "(c) 2010-2016 by D. Brian Kimmel"
-__version_info__ = (1, 7, 2)
-__version__ = '.'.join(map(str, __version_info__))
 
 
 #  Import PyMh files and modules.

@@ -8,8 +8,10 @@
 @summary:   Test handling the information for a house.
 
 
-Passed all 7 tests - DBK - 2016-07-02
+Passed all 9 tests - DBK - 2016-07-07
 """
+
+__updated__ = '2016-07-07'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +22,8 @@ from Modules.Housing.house import \
     API as houseAPI, \
     Xml as houseXml, \
     Utility as houseUtil
-from Modules.Housing.test.xml_location import TESTING_LOCATION_STREET, TESTING_LOCATION_LATITUDE
+from Modules.Housing.test.xml_location import \
+    TESTING_LOCATION_LATITUDE
 from Modules.Housing.test.xml_rooms import TESTING_ROOM_NAME_0
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \

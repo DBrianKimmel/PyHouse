@@ -4,12 +4,14 @@
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
-@note:      Created on Jun 4, 2015
+@note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 8 tests - DBK - 2016-01-29
+Passed all 8 tests - DBK - 2016-07-06
 
 """
+
+__updated__ = '2016-07-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -54,7 +56,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
@@ -63,6 +65,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_02_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
+        # print(PrettyFormatAny.form(self.m_xml.mqtt_sect, 'A1-02-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
@@ -80,7 +83,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read one broker
         """
         l_obj = mqttXML._read_one_broker(self.m_xml.broker)
-        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Broker'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Broker'))
         self.assertEqual(l_obj.Name, TESTING_BROKER_NAME_0)
         self.assertEqual(l_obj.Key, int(TESTING_BROKER_KEY_0))
         self.assertEqual(str(l_obj.Active), TESTING_BROKER_ACTIVE_0)
@@ -94,6 +97,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """Here we should get a dict of brokers
         """
         l_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Broker'))
         self.assertEqual(l_obj[0].Name, TESTING_BROKER_NAME_0)
         self.assertEqual(l_obj[0].Key, int(TESTING_BROKER_KEY_0))
         self.assertEqual(l_obj[0].Active, bool(TESTING_BROKER_ACTIVE_0 == 'True'))
@@ -117,7 +121,7 @@ class B2_EmptyRead(SetupMixin, unittest.TestCase):
         """Here we should get a dict of brokers
         """
         l_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
-        #  print(PrettyFormatAny.form(l_obj, 'Mqtt'))
+        # print(PrettyFormatAny.form(l_obj, 'Mqtt'))
         self.assertEqual(l_obj, {})
 
 
@@ -134,6 +138,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_mqtt_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)[0]
         l_xml = mqttXML._write_one_broker(l_mqtt_obj)
+        # print(PrettyFormatAny.form(l_xml, 'C1-01-A - Broker'))
         self.assertEqual(l_mqtt_obj.BrokerAddress, TESTING_BROKER_ADDRESS_0)
         self.assertEqual(l_xml.attrib['Name'], TESTING_BROKER_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_BROKER_KEY_0)

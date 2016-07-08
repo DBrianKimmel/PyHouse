@@ -18,6 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
+__updated__ = '2016-07-07'
 
 
 class PyHouseData(object):
@@ -360,12 +361,12 @@ class ComputerInformation(BaseObject):
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
+        self.UUID = None
         self.Comm = {}  # CommunicationData()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Mqtt = {}  # MqttInformation()
         self.Nodes = {}  # NodeData()
         self.Primary = False
-        self.UUID = None
         self.Web = {}  # WebData()
 
 
@@ -376,6 +377,7 @@ class DeviceData(BaseObject):
     """
     def __init__(self):
         super(DeviceData, self).__init__()
+        self.UUID = None
         self.Comment = ''
         self.DeviceFamily = 'Null'
         self.DeviceType = 0
@@ -383,7 +385,6 @@ class DeviceData(BaseObject):
         self.RoomCoords = None  # CoordinateData()
         self.RoomName = ''
         self.RoomUUID = None
-        self.UUID = None
 
 
 class FamilyData(BaseObject):
@@ -406,6 +407,7 @@ class HouseInformation(BaseObject):
     """
     def __init__(self):
         super(HouseInformation, self).__init__()
+        self.UUID = None
         self.FamilyData = {}  # FamilyData['FamilyName']
         self.Hvac = None  # HvacData()
         self.Irrigation = None  # IrrigationData()
@@ -415,7 +417,6 @@ class HouseInformation(BaseObject):
         self.Rooms = None  # RoomData()
         self.Rules = None  # RulesData()
         self.Schedules = None  # ScheduleBaseData()
-        self.UUID = None
 
 
 class JsonHouseData(BaseObject):
@@ -437,6 +438,7 @@ class LoginData(BaseObject):
     """
     def __init__(self):
         super(LoginData, self).__init__()
+        self.UUID = None
         self.LoginFullName = 'Not logged in'
         self.LoginIP = None
         self.LoginPasswordChangeFlag = True
@@ -470,6 +472,7 @@ class NodeData(BaseObject):
     """
     def __init__(self):
         super(NodeData, self).__init__()
+        self.UUID = None
         self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
@@ -479,7 +482,6 @@ class NodeData(BaseObject):
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
-        self.UUID = None
 
 
 class NodeInterfaceData(BaseObject):
@@ -490,6 +492,7 @@ class NodeInterfaceData(BaseObject):
     """
     def __init__(self):
         super(NodeInterfaceData, self).__init__()
+        self.UUID = None
         self.NodeInterfaceType = None  # Ethernet | Wireless | Loopback | Tunnel | Other
         self.MacAddress = ''
         self.V4Address = []
@@ -501,6 +504,7 @@ class PoolData(BaseObject):
     """
     def __init__(self):
         super(PoolData, self).__init__()
+        self.UUID = None
         self.Comment = None
         self.PoolType = None  # 'Pool', 'Pond', 'HotTub'
 
