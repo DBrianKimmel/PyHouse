@@ -53,7 +53,7 @@ class Uuid(object):
         """
         l_uuid = p_uuid_obj.UUID
         if l_uuid in p_pyhouse_obj.Uuids:
-            LOG.war('Duplicate UUIDs Detected.  Old:{}  New:{}'.format(
+            LOG.warn('Duplicate UUIDs Detected.  Old:{}  New:{}'.format(
                         p_pyhouse_obj.Uuids[l_uuid].UuidType, p_uuid_obj.UuidType))
         p_pyhouse_obj.Uuids[l_uuid] = p_uuid_obj
 
