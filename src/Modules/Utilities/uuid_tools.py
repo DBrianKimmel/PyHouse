@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-07-09'
+
 #  Import system type stuff
 import uuid
 
@@ -47,11 +49,19 @@ class Uuid(object):
 
     @staticmethod
     def add_uuid(p_pyhouse_obj, p_uuid_obj):
-        p_pyhouse_obj.Uuids[p_uuid_obj.UUID] = p_uuid_obj
+        """ Add the given UuidData() object to PyHouse.
+        """
+        l_uuid = p_uuid_obj.UUID
+        if l_uuid in p_pyhouse_obj.Uuids:
+            LOG.error('Duplicate UUIDs Detected.  Old:{}  New:{}'.format(
+                        p_pyhouse_obj.Uuids[l_uuid].UuidType, p_uuid_obj.UuidType))
+            return
+        p_pyhouse_obj.Uuids[l_uuid] = p_uuid_obj
 
 
 class FileUuid(object):
-    def __init__(self, p_path = '/etc/pyhouse'):
+
+    def __init__(self, p_path='/etc/pyhouse'):
         self.m_path = p_path
 
     def XXXread_file(self, p_filename):

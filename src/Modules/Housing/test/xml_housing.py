@@ -19,6 +19,8 @@ Coords are the X, Y and Z offsets within the room for the device.
 Comments should not need explaining.  They are just present and can contain just about anything.
 """
 
+__updated__ = '2016-07-07'
+
 # Import system type stuff
 
 # Import PyMh files

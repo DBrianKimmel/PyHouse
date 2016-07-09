@@ -11,13 +11,17 @@ PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 
 """
+from Modules.Utilities import uuid_tools
+from Modules.Utilities.debug_tools import PrettyFormatAny
+
+__updated__ = '2016-07-09'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 import datetime
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeData, NodeInterfaceData, UuidData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
@@ -46,6 +50,7 @@ class Xml(object):
         PutGetXML.put_text_element(l_entry, 'MacAddress', p_interface_obj.MacAddress)
         PutGetXML.put_text_element(l_entry, 'IPv4Address', p_interface_obj.V4Address)
         PutGetXML.put_text_element(l_entry, 'IPv6Address', p_interface_obj.V6Address)
+        PutGetXML.put_text_element(l_entry, 'InterfaceType', p_interface_obj.NodeInterfaceType)
         return l_entry
 
     @staticmethod
@@ -66,6 +71,8 @@ class Xml(object):
     def _write_interfaces_xml(p_interfaces_obj):
         l_xml = ET.Element('InterfaceSection')
         l_count = 0
+        if p_interfaces_obj is None:
+            return l_xml
         for l_interface_obj in p_interfaces_obj.itervalues():
             l_entry = Xml._write_one_interface_xml(l_interface_obj)
             l_xml.append(l_entry)
@@ -73,9 +80,19 @@ class Xml(object):
         return l_xml
 
     @staticmethod
+    def update_add_node():
+        """ Put a node into the dict.
+        Be sure nodes with the same UUID does not create a duplicate.
+        """
+        pass
+
+    @staticmethod
     def _read_one_node_xml(p_node_xml):
         """
-        Read the existing XML file (if it exists) and get the node info.
+        Use the passed in xml to create a node entry.
+
+        @param p_node_xml: is the element in the Xml config file that describes a node.
+        @return: a node object filled in.
         """
         l_node_obj = NodeData()
         XmlConfigTools.read_base_object_xml(l_node_obj, p_node_xml)
@@ -118,12 +135,15 @@ class Xml(object):
             return l_ret
         try:
             l_xml = l_xml.find(NODE_SECTION)
-            # print(PrettyFormatAny.form(l_xml, 'Nodes Xml'))
             for l_node_xml in l_xml.iterfind(NODE_ATTR):
                 l_node_obj = Xml._read_one_node_xml(l_node_xml)
                 # l_node_obj.Key = l_count
                 # LOG.warn('Found Node {}'.format(l_node_obj.Name))
                 l_ret[l_node_obj.UUID] = l_node_obj
+                l_uuid_obj = UuidData()
+                l_uuid_obj.UUID = l_node_obj.UUID
+                l_uuid_obj.UuidType = 'Node'
+                uuid_tools.Uuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
                 l_count += 1
                 LOG.info('Loaded Node for {} '.format(l_node_obj.Name))
         except AttributeError as e_err:
@@ -140,11 +160,11 @@ class Xml(object):
         # print(PrettyFormatAny.form(l_nodes[0], 'xxx'))
         l_count = 0
         for l_node_obj in l_nodes.itervalues():
+            LOG.info('Writing entry for node {}'.format(l_node_obj.Name))
             try:
                 l_node_obj.Key = l_count
                 l_entry = Xml._write_one_node_xml(l_node_obj)
                 l_xml.append(l_entry)
-                LOG.info('Wrote entry for node {}'.format(l_node_obj.Name))
                 l_count += 1
             except AttributeError as e_err:
                 LOG.error('Error {}'.format(e_err))

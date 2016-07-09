@@ -20,6 +20,9 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
   so it will be possible to override the role via configuration.
 Once overridden the new role will "stick" by being written into the local XML file.
 """
+from datetime import datetime
+
+__updated__ = '2016-07-09'
 
 #  Import system type stuff
 import fnmatch  # Filename matching with shell patterns
@@ -346,6 +349,7 @@ class Util(object):
         l_node.ConnectionAddr_IPv4 = l_v4
         l_node.ConnectionAddr_IPv6 = l_v6
         l_node.NodeRole = Util.find_node_role()
+        l_node.LastUpdate = datetime.now()
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
         return l_node
 
@@ -370,7 +374,7 @@ class API(Util):
         self.init_node_type(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
-        pass
+        return p_xml
 
     def Stop(self):
         LOG.info("Stopped.")

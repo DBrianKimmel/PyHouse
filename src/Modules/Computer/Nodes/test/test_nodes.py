@@ -7,9 +7,11 @@
 @note:      Created on Sep 15, 2015
 @Summary:
 
-Passed all 6 tests - DBK - 2016-06-17
+Passed all 6 tests - DBK - 2016-07-09
 
 """
+
+__updated__ = '2016-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +24,7 @@ from Modules.Computer.Nodes.node_local import API as localApi
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_NAME_0
+from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_NAME_0, TESTING_NODES_NODE_UUID_0
 
 
 class SetupMixin(object):
@@ -43,7 +45,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.m_node_obj = NodeData()
 
     def test_01_PyHouse(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
 
 
@@ -60,9 +62,10 @@ class B1_Setup(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         nodesApi(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
         l_nodes = self.m_pyhouse_obj.Computer.Nodes
-        # print(PrettyFormatAny.form(l_nodes, 'PyHouse'))
-        # print(PrettyFormatAny.form(l_nodes[TESTING_NODES_NODE_NAME_0], 'PyHouse'))
-        self.assertEqual(l_nodes[TESTING_NODES_NODE_NAME_0].Name, TESTING_NODES_NODE_NAME_0)
+        # print(PrettyFormatAny.form(l_nodes, 'B1-01-A - Nodes'))
+        # print(PrettyFormatAny.form(l_nodes[TESTING_NODES_NODE_UUID_0], 'B1-01-B - PyHouse'))
+        self.assertEqual(l_nodes[TESTING_NODES_NODE_UUID_0].Name, TESTING_NODES_NODE_NAME_0)
+        pass
 
 
 class C1_Api(SetupMixin, unittest.TestCase):

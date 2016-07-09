@@ -7,9 +7,11 @@
 @note:      Created on Jun 22, 2015
 @Summary:
 
-Passed all 6 tests - DBK - 2016-07-03
+Passed all 6 tests - DBK - 2016-07-09
 
 """
+
+__updated__ = '2016-07-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -64,14 +66,14 @@ class B1_UUID(SetupMixin, unittest.TestCase):
         l_obj_0.UUID = '12345678-dead-beef-dead-fedcba987654'
         l_obj_0.UuidType = 'House'
         Uuid.add_uuid(self.m_pyhouse_obj, l_obj_0)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B1-4-A one'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B1-4-A - one'))
         self.assertEqual(self.m_pyhouse_obj.Uuids[l_obj_0.UUID].UuidType, l_obj_0.UuidType)
         #
         l_obj_1 = UuidData()
         l_obj_1.UUID = '01234567-dead-beef-dead-fedcba987654'
         l_obj_1.UuidType = 'Room'
         Uuid.add_uuid(self.m_pyhouse_obj, l_obj_1)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B1-4-B two'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B1-4-B - two'))
         self.assertEqual(self.m_pyhouse_obj.Uuids[l_obj_1.UUID].UuidType, l_obj_1.UuidType)
 
 

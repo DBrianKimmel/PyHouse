@@ -13,7 +13,7 @@
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import HvacData, ThermostatData
+from Modules.Core.data_objects import HvacData, ThermostatData, UuidData
 from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.uuid_tools import Uuid as UtilUuid
@@ -45,7 +45,7 @@ class Utility(object):
         """
         @return: a ThermostatData object.
         """
-        p_obj.CoolSetPoint = PutGetXML.get_float_from_xml(p_xml, 'CoolSetPoint', p_default = 76.0)
+        p_obj.CoolSetPoint = PutGetXML.get_float_from_xml(p_xml, 'CoolSetPoint', p_default=76.0)
         p_obj.HeatSetPoint = PutGetXML.get_float_from_xml(p_xml, 'HeatSetPoint', 68.0)
         p_obj.ThermostatMode = PutGetXML.get_text_from_xml(p_xml, 'ThermostatMode', 'Cool')
         p_obj.ThermostatScale = PutGetXML.get_text_from_xml(p_xml, 'ThermostatScale', 'F')
@@ -77,7 +77,10 @@ class Utility(object):
                 l_obj = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
-                p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Thermostat')
+                l_uuid_obj = UuidData()
+                l_uuid_obj.UUID = l_obj.UUID
+                l_uuid_obj.UuidType = 'Thermostat'
+                UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('Reading Hvac.Thermostat information - {}'.format(e_err))

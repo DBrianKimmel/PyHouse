@@ -7,9 +7,11 @@
 @note:      Created on Jun 27, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2015-11-16
+Passed all 11 tests - DBK - 2016-07-08
 
 """
+
+__updated__ = '2016-07-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +24,7 @@ from Modules.Web.test.xml_web import \
         TESTING_LOGIN_NAME_0, \
         TESTING_LOGIN_PASSWORD_0, \
         TESTING_LOGIN_ROLE_0, \
-        TESTING_LOGIN_FULL_NAME_0, TESTING_LOGIN_KEY_0, TESTING_LOGIN_ACTIVE_0
+        TESTING_LOGIN_FULL_NAME_0, TESTING_LOGIN_KEY_0, TESTING_LOGIN_ACTIVE_0, TESTING_LOGIN_UUID_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -74,9 +76,12 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.login_sect.find('Login')
         l_obj = webXml._read_one_login(l_xml)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
-        print(PrettyFormatAny.form(l_obj, 'One login'))
+        # print(PrettyFormatAny.form(l_xml, 'B1-01-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-B - One login'))
         self.assertEqual(l_obj.Name, TESTING_LOGIN_NAME_0)
+        self.assertEqual(str(l_obj.Key), TESTING_LOGIN_KEY_0)
+        self.assertEqual(str(l_obj.Active), TESTING_LOGIN_ACTIVE_0)
+        self.assertEqual(l_obj.UUID, TESTING_LOGIN_UUID_0)
         self.assertEqual(l_obj.LoginFullName, TESTING_LOGIN_FULL_NAME_0)
         self.assertEqual(l_obj.LoginPasswordCurrent, TESTING_LOGIN_PASSWORD_0)
         self.assertEqual(l_obj.LoginRole, TESTING_LOGIN_ROLE_0)
@@ -86,9 +91,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.web_sect
         l_obj, l_count = webXml._read_all_logins(l_xml)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
-        print(PrettyFormatAny.form(l_obj, 'All login'))
-        print(PrettyFormatAny.form(l_obj[0], 'All login'))
+        # print(PrettyFormatAny.form(l_xml, 'B1-03-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-B - All login'))
+        # print(PrettyFormatAny.form(l_obj[0], 'B1-03-C - All login'))
         self.assertEqual(l_count, 2)
         self.assertEqual(len(l_obj), 2)
 
@@ -97,7 +102,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.Computer.Web = webXml.read_web_xml(self.m_pyhouse_obj)
         l_obj = webXml.read_web_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'All Web'))
+        # print(PrettyFormatAny.form(l_obj, 'All Web'))
         self.assertEqual(l_obj.WebPort, int(TESTING_WEB_PORT))
         self.assertEqual(len(l_obj.Logins), 2)
 
@@ -128,6 +133,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Name'], TESTING_LOGIN_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LOGIN_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LOGIN_ACTIVE_0)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_LOGIN_UUID_0)
         self.assertEqual(l_xml.find('FullName').text, TESTING_LOGIN_FULL_NAME_0)
         self.assertEqual(l_xml.find('Password').text, TESTING_LOGIN_PASSWORD_0)
         self.assertEqual(l_xml.find('Role').text, TESTING_LOGIN_ROLE_0)
@@ -136,15 +142,16 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """ Write All logins.
         """
         l_obj = self.m_web_obj.Logins
+        print(PrettyFormatAny.form(l_obj, 'B2-03-A - Web'))
         l_xml = webXml._write_all_logins(l_obj)
-        print(PrettyFormatAny.form(l_xml, 'Web'))
+        print(PrettyFormatAny.form(l_xml, 'B2-03-B - Web'))
         self.assertEqual(l_xml.find('Login/FullName').text, TESTING_LOGIN_FULL_NAME_0)
 
     def test_04_Web(self):
         """ Write All logins.
         """
         l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'Web'))
+        print(PrettyFormatAny.form(l_xml, 'B2-04-A - Web'))
         self.assertEqual(l_xml.find('Port').text, TESTING_WEB_PORT)
         self.assertEqual(l_xml.find('LoginSection/Login/FullName').text, TESTING_LOGIN_FULL_NAME_0)
 

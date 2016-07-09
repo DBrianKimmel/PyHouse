@@ -13,14 +13,16 @@ PyHouse.Computer.Web
             Logins
             Port
             SecurePort
-
 """
+
+__updated__ = '2016-07-08'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import LoginData, WebData
+from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 import xml.etree.ElementTree as ET
 LOG = Logger.getLogger('PyHouse.WebXml         ')
@@ -77,6 +79,7 @@ class Xml(object):
         l_obj.Name = 'admin'
         l_obj.Key = 0
         l_obj.Active = True
+        l_obj.UUID = Uuid.create_uuid()
         l_obj.LoginFullName = 'Administrator'
         l_obj.LoginPasswordCurrent = 'admin'
         l_obj.LoginPasswordNew = ''
@@ -114,7 +117,7 @@ class Xml(object):
         @return: The entire LoginSection XML element tree
         """
         l_count = 0
-        l_logins = p_obj.Logins
+        l_logins = p_obj
         l_xml = ET.Element('LoginSection')
         if l_logins == {}:
             LOG.error('No logins available')
@@ -165,7 +168,7 @@ class Xml(object):
         l_obj = p_pyhouse_obj.Computer.Web
         l_web_xml = ET.Element("WebSection")
         Xml._write_port(l_obj, l_web_xml)
-        l_xml = Xml._write_all_logins(l_obj)
+        l_xml = Xml._write_all_logins(l_obj.Logins)
         l_web_xml.append(l_xml)
         return l_web_xml
 

@@ -27,12 +27,15 @@ PyHouse.Computer.
             Web
 
 """
+from Modules.Utilities import uuid_tools
+
+__updated__ = '2016-07-09'
 
 #  Import system type stuff
 import platform
 
 #  Import PyHouse files
-from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
+from Modules.Core.data_objects import ComputerAPIs, ComputerInformation, UuidData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
@@ -54,7 +57,7 @@ class UuidFile(object):
 
     def read_uuid_file(self):
         try:
-            _l_file = open(FILE_PATH, mode = 'r')
+            _l_file = open(FILE_PATH, mode='r')
         except IOError as e_err:
             LOG.error(" -- Error in open_config_file {}".format(e_err))
         pass
@@ -78,17 +81,22 @@ class Xml(object):
     @staticmethod
     def read_computer_xml(p_pyhouse_obj):
         """
-        The XML for all the sections within the division are read by the appropriate sub-module.
+        The XML for all the sections within the division UuidTypeare read by the appropriate sub-module.
         Therefore, there is not much to do here.
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
         if l_xml is None:
             l_obj = Xml.create_computer(p_pyhouse_obj)
             p_pyhouse_obj.Computer = l_obj
+            LOG.error('Creating NEW Uuid')
         else:
             l_obj = XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
             l_msg = 'Resuming Computers UUID is {}'.format(l_obj.UUID)
             LOG.warn(l_msg)
+        l_uuid_obj = UuidData()
+        l_uuid_obj.UUID = l_obj.UUID
+        l_uuid_obj.UuidType = 'Computer'
+        uuid_tools.Uuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
         return l_obj
 
     @staticmethod

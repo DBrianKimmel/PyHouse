@@ -9,7 +9,15 @@
 @note:      Created on Mar 6, 2014
 @summary:   This module does everything for nodes.
 
+Nodes are read in form the config Xml file.
+
+Then node local is run to update the local node
+
+Finally, the nodes are synced between each other.
+
 """
+
+__updated__ = '2016-07-08'
 
 #  Import system type stuff
 
@@ -30,7 +38,7 @@ class API(object):
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Load the Mqtt xml info.
+        """ Load the Node xml info.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)

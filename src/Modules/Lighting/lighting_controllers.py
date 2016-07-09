@@ -19,11 +19,13 @@ And we also have information about the controller class of devices.
 
 """
 
+__updated__ = '2016-07-09'
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerData, UuidData
 from Modules.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
@@ -161,7 +163,10 @@ class API(object):
                 l_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
-                # p_pyhouse_obj.Uuids[l_obj.UUID] = UtilUuid.add_uuid(p_pyhouse_obj, 'Controller')
+                l_uuid_obj = UuidData()
+                l_uuid_obj.UUID = l_obj.UUID
+                l_uuid_obj.UuidType = 'Controller'
+                UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
                 l_count += 1
         except AttributeError as e_error:  # No Controller section
             LOG.warning('No Controllers found - {}'.format(e_error))

@@ -23,6 +23,8 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
+__updated__ = '2016-07-09'
+
 #  Import system type stuff
 
 #  Import PyMh files and modules.
@@ -35,8 +37,8 @@ LOG = Logger.getLogger('PyHouse.CoreSetup      ')
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
-INITIAL_DELAY = 3 * MINUTES
-XML_SAVE_DELAY = 2 * HOURS  # 2 hours
+INITIAL_DELAY = 1 * MINUTES
+XML_SAVE_DELAY = 3 * HOURS  # 2 hours
 
 
 class PyHouseObj(object):
@@ -125,11 +127,12 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
+        LOG.info('Saving All XML info')
         l_xml = configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
         configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
-        LOG.info("Saved all XML sections to config file.\n")
+        LOG.info("Saved all XML sections to config file.\n----------\n")
 
     def Stop(self):
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])

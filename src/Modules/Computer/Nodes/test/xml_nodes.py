@@ -9,6 +9,8 @@
 
 """
 
+__updated__ = '2016-07-09'
+
 #  Import system type stuff
 import datetime
 

@@ -7,9 +7,11 @@
 @copyright:  2016-2016 by D. Brian Kimmel
 @date:       Created on Apr 27, 2016
 @licencse:   MIT License
-@summary:
+@summary:    Sync the nodes between all nodes.
 
 """
+
+__updated__ = '2016-07-09'
 
 #  Import system type stuff
 import datetime
@@ -20,8 +22,10 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeSync       ')
 
+MINUTES = 60
+HOURS = MINUTES * 60
 INITIAL_DELAY = 15
-REPEAT_DELAY = 60 * 60 * 4  # Every 4 hours
+REPEAT_DELAY = 4 * HOURS
 
 
 class Util(object):

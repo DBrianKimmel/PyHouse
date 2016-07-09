@@ -7,9 +7,11 @@
 @note:      Created on Jul 12, 2015
 @Summary:
 
-Passed all 16 tests - DBK - 2016-01-29
+Passed all 16 tests - DBK - 2016-07-09
 
 """
+
+__updated__ = '2016-07-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -87,7 +89,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """Read the base device XML
         """
         l_xml = self.m_xml.thermostat
-        l_obj = Utility._read_base(l_xml)
+        l_obj = Utility._read_base(self.m_pyhouse_obj, l_xml)
         self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
         self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE_0 == 'True')
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY_0))
@@ -96,7 +98,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """Read the base device XML
         """
         l_xml = self.m_xml.thermostat
-        l_obj = Utility._read_thermostat_base(l_xml)
+        l_obj = Utility._read_thermostat_base(self.m_pyhouse_obj, l_xml)
         self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
         self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE_0 == 'True')
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY_0))
@@ -108,8 +110,8 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """Read the thermostat specific data.
         """
         l_xml = self.m_xml.thermostat
-        l_obj = Utility._read_thermostat_base(l_xml)
-        Utility._read_thermostat_data(l_obj, l_xml)
+        l_obj = Utility._read_thermostat_base(self.m_pyhouse_obj, l_xml)
+        Utility._read_thermostat_data(self.m_pyhouse_obj, l_obj, l_xml)
         self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
         self.assertEqual(l_obj.CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
         self.assertEqual(l_obj.HeatSetPoint, float(TESTING_THERMOSTAT_HEAT_SETPOINT_0))
@@ -120,8 +122,8 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """Read and add the family specific parts.
         """
         l_xml = self.m_xml.thermostat
-        l_obj = Utility._read_thermostat_base(l_xml)
-        Utility._read_thermostat_data(l_obj, l_xml)
+        l_obj = Utility._read_thermostat_base(self.m_pyhouse_obj, l_xml)
+        Utility._read_thermostat_data(self.m_pyhouse_obj, l_obj, l_xml)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
         self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
         self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_0)

@@ -7,9 +7,11 @@
 @licencse:   MIT License
 @summary:
 
-Passed all 1 tests - DBK - 2016-06-02
+Passed all 3 tests - DBK - 2016-07-09
 
 """
+
+__updated__ = '2016-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +23,8 @@ from Modules.Computer.Nodes.node_sync import Util
 from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Nodes.test.xml_nodes import \
-        TESTING_NODES_NODE_NAME_0
+        TESTING_NODES_NODE_NAME_0, \
+        TESTING_NODES_NODE_UUID_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -52,7 +55,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_02_Data(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'PyHouse Computer Nodes'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes[TESTING_NODES_NODE_NAME_0], 'PyHouse Computer Nodes'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes[TESTING_NODES_NODE_UUID_0], 'PyHouse Computer Nodes'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
