@@ -170,8 +170,10 @@ class Interfaces(object):
         for l_interface_name in Interfaces.find_all_interface_names():
             #  print('\n160 All Interfaces: {}'.format(l_interface_name))
             l_iface, l_v4, l_v6 = Interfaces._get_one_interface(l_interface_name)
-            l_ipv4.append(l_v4)
-            l_ipv6.append(l_v6)
+            if l_v4 != []:
+                l_ipv4.append(l_v4)
+            if l_v6 != []:
+                l_ipv6.append(l_v6)
             l_iface.Key = l_count
             l_dict[l_count] = l_iface
             l_count += 1
