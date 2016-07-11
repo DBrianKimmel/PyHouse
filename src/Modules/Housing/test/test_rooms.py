@@ -10,6 +10,7 @@
 Passed all 14 tests - DBK 2016-07-02
 """
 
+__updated__ = '2016-07-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

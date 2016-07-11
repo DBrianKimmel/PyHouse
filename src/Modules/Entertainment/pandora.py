@@ -4,7 +4,7 @@
 @name: PyHouse/src/Modules/entertain/pandora.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
+@copyright: (c)2014-2016 by D. Brian Kimmel
 @note: Created on Feb 27, 2014
 @license: MIT License
 @summary: Controls pandora playback thru pianobar.
@@ -21,6 +21,8 @@ Further IR signals control the pianobar process as needed, volume, next station 
 When the remotes switches to another device (TV, BluRay, Tuner etc.), pianobar is terminated and
 this module goes back to its initial state ready for another session.
 """
+
+__updated__ = '2016-07-10'
 
 # Import system type stuff
 from twisted.internet import protocol

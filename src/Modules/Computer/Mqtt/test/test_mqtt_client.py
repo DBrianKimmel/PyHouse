@@ -10,35 +10,23 @@
 Passed all 11 tests - DBK - 2016-01-29
 
 """
-from src.Modules.Core.data_objects import ComputerInformation
-__updated__ = '2016-07-06'
+__updated__ = '2016-07-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.internet import reactor
 import twisted
-import platform
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import MqttBrokerData, \
-    LocationData, ScheduleLightData, ControllerData
+    LocationData, ScheduleLightData, ControllerData, \
+    ComputerInformation
 from test.xml_data import XML_LONG, XML_EMPTY
 from Modules.Computer.Mqtt.mqtt_client import Util, API as mqttAPI
 from test.testing_mixin import SetupPyHouseObj
-from src.Modules.Computer.Mqtt.test.xml_mqtt import \
-    TESTING_BROKER_UUID_0, \
-    TESTING_BROKER_UUID_1
 from Modules.Computer.Mqtt.test.xml_mqtt import \
-    TESTING_BROKER_NAME_0, \
-    TESTING_BROKER_ACTIVE_0, \
-    TESTING_BROKER_KEY_0, \
-    TESTING_BROKER_ADDRESS_0, \
-    TESTING_BROKER_PORT_0, \
     TESTING_BROKER_NAME_1, \
-    TESTING_BROKER_KEY_1, \
-    TESTING_BROKER_ADDRESS_1, \
-    TESTING_BROKER_PORT_1, \
     TESTING_BROKER_ACTIVE_1
 from Modules.Utilities import json_tools
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -98,7 +86,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(len(l_xml), 2)
 
     def test_2_PyHouse(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A2_2_A - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A2_2_A - PyHouse'))
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
 
@@ -174,7 +162,7 @@ class C1_Tools(SetupMixin, unittest.TestCase):
         l_obj.Street = '123 Test Street'
         l_obj.City = 'Beverly Hills'
         l_obj.State = 'Confusion'
-        l_json = json_tools.encode_json(l_obj)
+        _l_json = json_tools.encode_json(l_obj)
         #  print(PrettyFormatAny.form(l_json, 'Json', 80))
 
 

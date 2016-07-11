@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-07-07'
+__updated__ = '2016-07-10'
 
 
 class PyHouseData(object):
@@ -409,6 +409,7 @@ class HouseInformation(BaseObject):
         super(HouseInformation, self).__init__()
         self.UUID = None
         self.FamilyData = {}  # FamilyData['FamilyName']
+        self.HouseMode = 'Home'  # Home, Away, Vacation,
         self.Hvac = None  # HvacData()
         self.Irrigation = None  # IrrigationData()
         self.Lighting = None  # LightingData()

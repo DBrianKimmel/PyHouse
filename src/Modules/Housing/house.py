@@ -28,7 +28,7 @@ PyHouse.House.
 
 """
 
-__updated__ = '2016-07-07'
+__updated__ = '2016-07-11'
 
 #  Import system type stuff
 
@@ -120,7 +120,7 @@ class Utility(object):
     def _load_component_xml(p_pyhouse_obj):
         """ Load the XML config file for all the components of the house.
         """
-        # p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.EntertainmentAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.FamilyAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)
@@ -141,9 +141,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.SecurityAPI.Start()
         p_pyhouse_obj.APIs.House.ScheduleAPI.Start()
 
-    def stop_house_parts(self):
-        self.m_pyhouse_obj.APIs.House.ScheduleAPI.Stop()
-
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
         """ Family does not get saved - it is created dynamically when XML is loaded.
@@ -156,6 +153,10 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.ScheduleAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.House.SecurityAPI.SaveXml(p_xml)
         return p_xml
+
+    def stop_house_parts(self):
+        self.m_pyhouse_obj.APIs.House.EntertainmentAPI.Stop()
+        self.m_pyhouse_obj.APIs.House.ScheduleAPI.Stop()
 
 
 class API(Utility):

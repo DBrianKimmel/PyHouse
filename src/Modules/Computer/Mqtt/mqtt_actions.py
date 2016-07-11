@@ -13,6 +13,7 @@
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
 from Modules.Computer.Nodes.node_sync import API as syncAPI
+from Modules.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.rooms import Rooms
 
 
@@ -117,7 +118,7 @@ class Actions(object):
         return p_logmsg
 
     def mqtt_dispatch(self, p_topic, p_message):
-        """
+        """ This is the master dispatch table
         """
         self.m_sender = self._get_field(p_message, 'Sender')
         self.m_name = self._get_field(p_message, 'Name')
@@ -126,6 +127,8 @@ class Actions(object):
         l_logmsg += '\tSender: {}\n'.format(self.m_sender)
         if p_topic[0] == 'computer':
             l_logmsg = self._decode_computer(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'entertainment':
+            l_logmsg = entertainmentMqtt(self.m_pyhouse_obj).decode_entertainment(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'hvac':
             l_logmsg = self._decode_hvac(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'lighting':

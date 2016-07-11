@@ -29,7 +29,7 @@ PyHouse.Computer.
 """
 from Modules.Utilities import uuid_tools
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-07-11'
 
 #  Import system type stuff
 import platform
@@ -128,8 +128,8 @@ class Utility(object):
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages/
+        p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)

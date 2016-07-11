@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-07'
+__updated__ = '2016-07-11'
 
 #  Import system type stuff
 import copy
@@ -67,7 +67,7 @@ class Util(object):
         # l_password = p_broker.Password
         # l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
         LOG.info('Connecting via TLS...')
-        #  l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
+        # l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
         # l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
         # l_certData = PEM_FILE.getContent()
         # l_authority = Certificate.loadPEM(l_certData)
@@ -136,7 +136,7 @@ class API(Util):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        #  LOG.info("Loading XML")
+        LOG.info("Loading XML")
         l_mqtt = MqttInformation()
         l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
         l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj)

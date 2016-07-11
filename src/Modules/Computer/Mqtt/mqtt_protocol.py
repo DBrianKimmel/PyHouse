@@ -13,6 +13,8 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
+__updated__ = '2016-07-11'
+
 #  Import system type stuff
 import random
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -252,7 +254,7 @@ class MQTTProtocol(Protocol):
     def connackReceived(self, status):
         pass
 
-    def publishReceived(self, _topic, _message, _qos = 0, _dup = False, _retain = False, _messageId = None):
+    def publishReceived(self, _topic, _message, _qos=0, _dup=False, _retain=False, _messageId=None):
         raise NotImplementedError  # Subclasses must implement this.
         pass
 
@@ -291,11 +293,11 @@ class MQTTProtocol(Protocol):
 
     #  these are for sending Mqtt packets.
 
-    def connect(self, p_clientID, keepalive = 3000,
-                willTopic = None, willMessage = None, willQoS = 0, willRetain = False,
-                cleanStart = True,
-                username = None,
-                password = None
+    def connect(self, p_clientID, keepalive=3000,
+                willTopic=None, willMessage=None, willQoS=0, willRetain=False,
+                cleanStart=True,
+                username=None,
+                password=None
                 ):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
@@ -345,7 +347,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(header))
         self.transport.write(str(payload))
 
-    def publish(self, p_topic, p_message, qosLevel = 0, retain = False, dup = False, messageId = None):
+    def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
         #  LOG.info("Sending publish packet - Topic: {}".format(p_topic))
         header = bytearray()
         varHeader = bytearray()
@@ -400,7 +402,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(header))
         self.transport.write(str(varHeader))
 
-    def subscribe(self, p_topic, requestedQoS = 0, messageId = None):
+    def subscribe(self, p_topic, requestedQoS=0, messageId=None):
         """
         Only supports QoS = 0 subscribes
         Only supports one subscription per message
@@ -435,7 +437,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(str(varHeader))
         self.transport.write(str(payload))
 
-    def unsubscribe(self, topic, messageId = None):
+    def unsubscribe(self, topic, messageId=None):
         LOG.info("Sending unsubscribe packet")
         header = bytearray()
         varHeader = bytearray()
@@ -490,10 +492,10 @@ class MQTTClient(MQTTProtocol):
 
     m_pingPeriod = 50
 
-    def __init__(self, p_pyhouse_obj, p_broker, p_clientID = None,
-                 userName = None, passWord = None,
-                 keepalive = None,
-                 willQos = 0, willTopic = None, willMessage = None, willRetain = False
+    def __init__(self, p_pyhouse_obj, p_broker, p_clientID=None,
+                 userName=None, passWord=None,
+                 keepalive=None,
+                 willQos=0, willTopic=None, willMessage=None, willRetain=False
                  ):
         """
         At this point all config has been read in and Set-up
@@ -566,7 +568,7 @@ class MQTTClient(MQTTProtocol):
         """ Override """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
-    def publishReceived(self, p_topic, p_message, _qos = 0, _dup = False, _retain = False, _messageId = None):
+    def publishReceived(self, p_topic, p_message, _qos=0, _dup=False, _retain=False, _messageId=None):
         """ Override - This is where we receive all the pyhouse messages.
         Call the dispatcher to send them on to the correct place.
         """
@@ -576,7 +578,7 @@ class MQTTClient(MQTTProtocol):
 ###########################################
 
 class PyHouseMqttFactory(ReconnectingClientFactory):
-    """This factory holds the state for thhis broker (there may be more than one).
+    """This factory holds the state for this broker (there may be more than one).
     """
 
     def __init__(self, p_pyhouse_obj, p_client_id, p_broker, p_username, p_password):
