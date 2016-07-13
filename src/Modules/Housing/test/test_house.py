@@ -11,7 +11,7 @@
 Passed all 9 tests - DBK - 2016-07-07
 """
 
-__updated__ = '2016-07-07'
+__updated__ = '2016-07-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -74,7 +74,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     def test_2_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A2-2-A - House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A2-2-A - House'))
         self.assertEqual(self.m_pyhouse_obj.House.Rooms, None)
 
 
@@ -101,7 +101,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
 
     def test_3_House(self):
         l_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B1-3-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-3-A - XML'))
         self.assertEqual(l_obj.Name, TESTING_HOUSE_NAME)
         self.assertEqual(str(l_obj.Key), TESTING_HOUSE_KEY)
         self.assertEqual(str(l_obj.Active), TESTING_HOUSE_ACTIVE)
@@ -112,13 +112,13 @@ class B1_Read(SetupMixin, unittest.TestCase):
 
     def test_4_House(self):
         l_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B1-4-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-4-A - XML'))
         self.assertEqual(l_obj.Name, TESTING_HOUSE_NAME)
         self.assertEqual(str(l_obj.Key), TESTING_HOUSE_KEY)
         self.assertEqual(str(l_obj.Active), TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_obj.UUID, TESTING_HOUSE_UUID)
 
-class C03_Write(SetupMixin, unittest.TestCase):
+class C3_Write(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """
@@ -130,12 +130,12 @@ class C03_Write(SetupMixin, unittest.TestCase):
         l_house_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House = l_house_obj
         l_xml = houseXml.write_house_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
         self.assertEqual(l_xml.tag, 'HouseDivision')
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
 
 
-class Z1_JSON(SetupMixin, unittest.TestCase):
+class J1_JSON(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by house.
     """
@@ -147,8 +147,27 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.5
         """
         l_house = houseXml.read_house_xml(self.m_pyhouse_obj)
-        print('House: {0:}'.format(l_house))
+        # print('House: {0:}'.format(l_house))
         l_json = json_tools.encode_json(l_house)
-        print('JSON: {0:}'.format(l_json))
+        # print('JSON: {0:}'.format(l_json))
+
+
+class P1_API(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        self.m_api = houseAPI(self.m_pyhouse_obj)
+
+    def test_01_Init(self):
+        """ Create a JSON object for Location.5
+        """
+        # print(PrettyFormatAny.form(self.m_api, 'P1-01-A - API'))
+        pass
+
+    def test_02_Load(self):
+        l_xml = self.m_api.LoadXml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'P1-01-A - API'))
 
 # ## END DBK

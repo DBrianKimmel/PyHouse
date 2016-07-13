@@ -15,7 +15,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2016-07-08'
+__updated__ = '2016-07-12'
 
 #  Import system type stuff
 
@@ -97,6 +97,9 @@ class Xml(object):
         l_dict = {}
         l_count = 0
         l_xml = p_xml.find('LoginSection')
+        if l_xml is None:
+            l_dict[0] = Xml._add_default_login()
+            return l_dict, 1
         LOG.info('Reading Logins')
         try:
             for l_log_xml in l_xml.iterfind('Login'):

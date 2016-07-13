@@ -13,6 +13,7 @@ http://www.mikepoulson.com/2011/06/programmatically-controlling-pioneer.html
 https://dl.dropboxusercontent.com/u/3275573/2010%20USA%20AVR%20RS-232C%20%26%20IP%20Commands%20for%20CI.pdf
 
 
+
 Basic Commands (more commands to come in another post):
 ?P
 Is Device powered ON?

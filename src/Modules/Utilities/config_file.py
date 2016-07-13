@@ -11,6 +11,7 @@
 
 """
 
+__updated__ = '2016-07-12'
 
 #  Import system type stuff
 import datetime
@@ -50,7 +51,7 @@ class Util(object):
         if p_pyhouse_obj.Xml.XmlFileName is None:
             p_pyhouse_obj.Xml.XmlFileName = XML_FILE_NAME
         try:
-            l_file = open(p_pyhouse_obj.Xml.XmlFileName, mode = 'r')
+            l_file = open(p_pyhouse_obj.Xml.XmlFileName, mode='r')
         except IOError as e_err:
             LOG.error(" -- Error in open_config_file {}".format(e_err))
             l_file = None
@@ -99,7 +100,7 @@ class API(object):
         except (SyntaxError, IOError) as e_error:
             Util()._create_empty_config_file(p_pyhouse_obj)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
-            LOG.warning("No config file found - Error:{}\n   Empty config file created.".format(e_error))
+            LOG.warning("No config file found - Error:{}\n\n\tEmpty config file created.\n==========\n".format(e_error))
 
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
         l_version = p_pyhouse_obj.Xml.XmlRoot.attrib['Version']
@@ -129,10 +130,13 @@ class API(object):
         Note!
         @param p_xml_tree: is the tree body part to write
         """
+        l_file = p_pyhouse_obj.Xml.XmlFileName
         try:
             l_tree = ET.ElementTree()
             l_tree._setroot(p_xmltree)
-            l_tree.write(p_pyhouse_obj.Xml.XmlFileName, xml_declaration = True)
+            l_tree.write(l_file, xml_declaration=True)
+            l_size = os.stat(l_file).st_size
+            LOG.info('Wrote config File - XML={}'.format(l_size))
         except AttributeError as e_err:
             LOG.error('Err:{}\n\t{}'.format(e_err, repr(p_xmltree)))
 
