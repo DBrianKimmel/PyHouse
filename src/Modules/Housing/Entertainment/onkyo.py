@@ -17,7 +17,7 @@ __updated__ = '2016-07-14'
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet import error
-import eiscp
+# import eiscp
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
@@ -107,10 +107,10 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Start the onkyo factory See if we have any Onkyo devices.
         """
-        LOG.info("Loading Onkyo XML")
+        LOG.info("Loading XML")
         l_onkyo_obj = OnkyoData()
         l_onkyo_obj.Factory = OnkyoFactory(p_pyhouse_obj)
-        LOG.info("Loaded Onkyo XML")
+        LOG.info("Loaded XML")
         return l_onkyo_obj
 
     def Start(self):
