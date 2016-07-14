@@ -9,11 +9,12 @@
 
 """
 
+__updated__ = '2016-07-14'
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
 from Modules.Computer.Nodes.node_sync import API as syncAPI
-from Modules.Entertainment.entertainment import MqttActions as entertainmentMqtt
+from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.rooms import Rooms
 
 

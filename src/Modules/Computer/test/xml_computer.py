@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-07-06'
+__updated__ = '2016-07-14'
 
 # Import system type stuff
 
@@ -18,7 +18,7 @@ from Modules.Communication.test.xml_communications import XML_COMMUNICATION
 from Modules.Computer.Internet.test.xml_internet import XML_INTERNET
 from Modules.Computer.Mqtt.test.xml_mqtt import XML_MQTT
 from Modules.Computer.Nodes.test.xml_nodes import XML_NODES
-from Modules.Web.test.xml_web import XML_WEB_SERVER
+from Modules.Computer.Web.test.xml_web import XML_WEB_SERVER
 
 
 TESTING_COMPUTER_NAME_0 = 'TestingComputer'

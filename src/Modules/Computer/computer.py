@@ -29,7 +29,7 @@ PyHouse.Computer.
 """
 from Modules.Utilities import uuid_tools
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-07-14'
 
 #  Import system type stuff
 import platform
@@ -42,7 +42,7 @@ from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.weather import API as weatherAPI
-from Modules.Web.web import API as webAPI
+from Modules.Computer.Web.web import API as webAPI
 from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
 

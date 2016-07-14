@@ -20,14 +20,13 @@ from Modules.Core import conversions
 from Modules.Families import VALID_FAMILIES
 from Modules.Families.family import API as familyAPI
 from Modules.Families.family_utils import FamUtil
-from Modules.Lighting.lighting_core import API as LightingCoreAPI
+from Modules.Housing.Lighting.lighting_core import API as LightingCoreAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Lighting.test.xml_lights import \
+from Modules.Housing.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
         TESTING_LIGHT_NAME_1, \
-        TESTING_LIGHT_FAMILY_0, \
-        TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_CUR_LEVEL_0
+        TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_CUR_LEVEL_0, TESTING_LIGHT_FAMILY_1
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_PRODUCT_KEY_0, \
         TESTING_INSTEON_ADDRESS_0, \
@@ -50,7 +49,7 @@ class SetupMixin(object):
         self.m_device_obj.Active = TESTING_LIGHT_ACTIVE_0
         self.m_device_obj.Comment = TESTING_DEVICE_COMMENT
         self.m_device_obj.CurLevel = TESTING_LIGHT_CUR_LEVEL_0
-        self.m_device_obj.DeviceFamily = TESTING_LIGHT_FAMILY_0
+        self.m_device_obj.DeviceFamily = TESTING_LIGHT_FAMILY_1
         self.m_device_obj.DeviceType = 1
         self.m_device_obj.DeviceSubType = 234
         self.m_device_obj.RoomCoords = TESTING_DEVICE_ROOM_COORDS

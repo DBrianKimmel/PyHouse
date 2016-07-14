@@ -19,19 +19,19 @@ Coords are the X, Y and Z offsets within the room for the device.
 Comments should not need explaining.  They are just present and can contain just about anything.
 """
 
-__updated__ = '2016-07-07'
+__updated__ = '2016-07-14'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Housing.test.xml_location import XML_LOCATION
 from Modules.Housing.test.xml_rooms import XML_ROOMS
-from Modules.Scheduling.test.xml_schedule import XML_SCHEDULE
-from Modules.Lighting.test.xml_lighting import XML_LIGHTING
-from Modules.Hvac.test.xml_hvac import XML_HVAC
-from Modules.Entertainment.test.xml_entertainment import XML_ENTERTAINMENT
-from Modules.Irrigation.test.xml_irrigation import XML_IRRIGATION
-from Modules.Pool.test.xml_pool import XML_POOL
+from Modules.Housing.Scheduling.test.xml_schedule import XML_SCHEDULE
+from Modules.Housing.Lighting.test.xml_lighting import XML_LIGHTING
+from Modules.Housing.Hvac.test.xml_hvac import XML_HVAC
+from Modules.Housing.Entertainment.test.xml_entertainment import XML_ENTERTAINMENT
+from Modules.Housing.Irrigation.test.xml_irrigation import XML_IRRIGATION
+from Modules.Housing.Pool.test.xml_pool import XML_POOL
 
 
 TESTING_HOUSE_NAME = 'Pink Poppy'

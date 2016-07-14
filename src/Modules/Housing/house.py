@@ -28,23 +28,23 @@ PyHouse.House.
 
 """
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-07-14'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
-from Modules.Entertainment.entertainment import API as entertainmentAPI
+from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML
-from Modules.Hvac.hvac import API as hvacAPI
-from Modules.Irrigation.irrigation import API as irrigationAPI
-from Modules.Lighting.lighting import API as lightingAPI
-from Modules.Pool.pool import API as poolAPI
-from Modules.Scheduling.schedule import API as scheduleAPI
-from Modules.Security.security import API as securityAPI
+from Modules.Housing.Hvac.hvac import API as hvacAPI
+from Modules.Housing.Irrigation.irrigation import API as irrigationAPI
+from Modules.Housing.Lighting.lighting import API as lightingAPI
+from Modules.Housing.Pool.pool import API as poolAPI
+from Modules.Housing.Scheduling.schedule import API as scheduleAPI
+from Modules.Housing.Security.security import API as securityAPI
 from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
 

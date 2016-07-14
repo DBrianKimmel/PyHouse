@@ -22,6 +22,8 @@ Name    |  Code   |  Name   |  Action |  Name   |
 
 """
 
+__updated__ = '2016-07-14'
+
 #  Import system type stuff
 from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.protocol import Factory, Protocol
@@ -29,7 +31,7 @@ from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
 
 #  Import PyMh files and modules.
-from Modules.Entertainment import pandora
+from Modules.Housing.Entertainment import pandora
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.IrControl   ')
 
