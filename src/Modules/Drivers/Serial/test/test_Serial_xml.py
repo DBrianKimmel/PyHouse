@@ -7,9 +7,11 @@
 @note:      Created on Aug 5, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2016-06-25
+Passed all 7 tests - DBK - 2016-07-16
 
 """
+
+__updated__ = '2016-07-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,9 +24,9 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.xml_tools import stuff_new_attrs
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Lighting.test.xml_controllers import \
+from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
-    TESTING_CONTROLLER_NAME_1
+    TESTING_CONTROLLER_NAME_1, TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_ACTIVE_0
 from Modules.Drivers.Serial.test.xml_serial import \
     TESTING_SERIAL_BAUD_RATE, \
     TESTING_SERIAL_BYTE_SIZE, \
@@ -45,7 +47,6 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_controller_obj = ControllerData()
         self.m_controller_obj.InterfaceType = 'Serial'
-        self.m_version = '1.4.0'
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -78,8 +79,10 @@ class A2_Setup(SetupMixin, unittest.TestCase):
     def test_1_Xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(XML_LONG, "XML"))
+        # print(PrettyFormatAny.form(XML_LONG, "A2-1-A - XML"))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
 
@@ -87,7 +90,7 @@ class A2_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         l_xml = self.m_xml.controller_sect
-        print(PrettyFormatAny.form(l_xml, 'Controllers'))
+        # print(PrettyFormatAny.form(l_xml, 'Controllers'))
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_xml[1].attrib['Name'], TESTING_CONTROLLER_NAME_1)
 
@@ -95,11 +98,13 @@ class A2_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         l_xml = self.m_xml.controller
-        print(PrettyFormatAny.form(l_xml, 'Controller'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-2-A - Controller'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_CONTROLLER_ACTIVE_0)
 
 
-class B1_XML(SetupMixin, unittest.TestCase):
+class B1_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
@@ -107,15 +112,7 @@ class B1_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_controller_obj.InterfaceType = 'Serial'
 
-    def test_01_FindXml(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_xml, "Tags"))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
-        self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
-
-    def test_02_ReadSerialXml(self):
+    def test_021ReadSerialXml(self):
         l_interface = serialXML.read_interface_xml(self.m_xml.controller)
         # print(PrettyFormatAny.form(l_interface, "Interface"))
         self.assertEqual(str(l_interface.BaudRate), TESTING_SERIAL_BAUD_RATE)
@@ -135,7 +132,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_WriteSerialXml(self):
+    def test_01_SerialXml(self):
         l_interface = serialXML.read_interface_xml(self.m_xml.controller)
         stuff_new_attrs(self.m_controller_obj, l_interface)
         l_xml = ET.Element('TestOutput')

@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 15 tests - DBK - 2016-07-14
+Passed all 15 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
         TESTING_LIGHT_DEVICE_FAMILY_0, TESTING_LIGHT_ROOM_UUID_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities import json_tools
 
 
@@ -90,7 +90,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-2-A -PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
+        # # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
         self.assertNotEqual(self.m_pyhouse_obj, None)
         # self.assertEqual(self.m_pyhouse_obj.House.Name, TESTING_HOUSE_NAME)
 
@@ -107,18 +107,18 @@ class A2_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         l_xml = self.m_xml.light_sect
-        # print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - XML'))
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHT_NAME_0)
 
     def test_2_light(self):
         """Ensure that the lighting objects are correct in the XML
         """
         l_xml = self.m_xml.light
-        # print(PrettyFormatAny.form(l_xml, 'PyHouse'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-2-A - PyHouse'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
 
 
-class R1_Read(SetupMixin, unittest.TestCase):
+class B1_Read(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by lighting_lights.
     """
@@ -130,7 +130,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """Test the Base read - the device information
         """
         l_xml = self.m_xml.light
-        # print(PrettyFormatAny.form(l_xml, 'R1-1-A  Base'))
+        # print(PrettyFormatAny.form(l_xml, 'B1-1-A  Base'))
         l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_obj, 'R1-1-B - Base'))
         self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)
@@ -152,7 +152,7 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.light)
         Utility._read_light_data(self.m_pyhouse_obj, l_obj, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_obj, 'R1-2-A - Base'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-2-A - Base'))
         self.assertEqual(l_obj.CurLevel, int(TESTING_LIGHT_CUR_LEVEL_0))
         self.assertEqual(l_obj.IsDimmable, bool(TESTING_LIGHT_IS_DIMMABLE_0))
 
@@ -161,14 +161,15 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.light)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_obj, 'R1-3-A - Base'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-3-A - Base'))
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_4_OneLight(self):
         """ Read everything about one light.
         """
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_obj, 'R1-4-A - One Light'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-4-A - One Light'))
+        # print(PrettyFormatAny.form(l_obj.RoomCoords, 'B1-4-B - One Light'))
         self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_LIGHT_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_LIGHT_ACTIVE_0)
@@ -183,11 +184,13 @@ class R1_Read(SetupMixin, unittest.TestCase):
         """Read everything for all lights.
         """
         l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect)
-        # print(PrettyFormatAny.form(l_objs, 'R1-5-A - Base'))
+        # print(PrettyFormatAny.form(l_objs, 'B1-5-A - All Lights'))
+        # print(PrettyFormatAny.form(l_objs[0], 'B1-5-B - All Lights'))
+        # print(PrettyFormatAny.form(l_objs[0].RoomCoords, 'B1-5-c - All Lights'))
         self.assertEqual(len(l_objs), 2)
 
 
-class W1_Write(SetupMixin, unittest.TestCase):
+class B2_Write(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by lighting_lights.
     """
@@ -200,7 +203,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         """
         l_obj = Utility._read_one_light_xml(self.m_pyhouse_obj, self.m_xml.light)
         l_xml = Utility._write_base_device('Light', l_obj)
-        # print(PrettyFormatAny.form(l_xml, 'XW1-01-A - ML'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-01-A - ML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '0')
         self.assertEqual(l_xml.attrib['Active'], 'True')
@@ -281,6 +284,6 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'Z1-01-A - Lights'))
         l_json = json_tools.encode_json(l_obj)
         # print(PrettyFormatAny.form(l_json, 'Z1-01-B - JSON'))
-        #  self.assertEqual(l_json[0] ['Comment'], 'Switch')
+        self.assertEqual(l_json[0], '{')
 
 #  ## END DBK

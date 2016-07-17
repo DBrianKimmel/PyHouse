@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-07-10'
+__updated__ = '2016-07-15'
 
 
 class PyHouseData(object):
@@ -122,6 +122,19 @@ class EmailData(object):
         self.EmailToAddress = ''
         self.GmailLogin = ''
         self.GmailPassword = ''
+
+
+
+class EntertainmentData(object):
+    """
+    """
+    def __init__(self):
+        self.Onkyo = None
+        self.Panasonic = None
+        self.Pioneer = None
+        self.Samsung - None
+        self.Sharp = None
+        self.Sony = None
 
 
 class EthernetControllerData(object):
@@ -410,6 +423,7 @@ class HouseInformation(BaseObject):
         self.UUID = None
         self.FamilyData = {}  # FamilyData['FamilyName']
         self.HouseMode = 'Home'  # Home, Away, Vacation,
+        self.Entertainment = None  # EntertainmentData()
         self.Hvac = None  # HvacData()
         self.Irrigation = None  # IrrigationData()
         self.Lighting = None  # LightingData()

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/test/xml_location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014_2015 by D. Brian Kimmel
+@copyright: (c) 2014_2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 22, 2014
 @Summary:
@@ -13,14 +13,19 @@ The Olson Time Zone names are used and supported.
 
 """
 
-TESTING_LOCATION_STREET = '1234 N Gardinia Dr'
+__updated__ = '2016-07-16'
+
+L_LOCATION_SECTION_START = '  <LocationSection>'
+L_LOCATION_SECTION_END = '  </LocationSection>'
+
+TESTING_LOCATION_STREET = '1234 Nowhere Dr'
 TESTING_LOCATION_CITY = 'Beverly Hills'
 TESTING_LOCATION_STATE = 'Florida'
-TESTING_LOCATION_ZIP_CODE = '34123'
+TESTING_LOCATION_ZIP_CODE = '34465'
 TESTING_LOCATION_REGION = 'America'
 TESTING_LOCATION_PHONE = '(800) 555-1212'
-TESTING_LOCATION_LATITUDE = '28.938448'
-TESTING_LOCATION_LONGITUDE = '-82.517208'
+TESTING_LOCATION_LATITUDE = '28.938448'  # 28 56 18
+TESTING_LOCATION_LONGITUDE = '-82.517208'  # -82 31 00
 TESTING_LOCATION_ELEVATION = '33.3'
 TESTING_LOCATION_TIME_ZONE_NAME = 'America/New_York'
 
@@ -36,7 +41,7 @@ L_LOCATION_ELEVATION = '     <Elevation>' + TESTING_LOCATION_ELEVATION + '</Elev
 L_LOCATION_TIME_ZONE_NAME = '     <TimeZoneName>' + TESTING_LOCATION_TIME_ZONE_NAME + '</TimeZoneName>'
 
 XML_LOCATION = '\n'.join([
-    '  <LocationSection>',
+    L_LOCATION_SECTION_START,
     L_LOCATION_STREET,
     L_LOCATION_CITY,
     L_LOCATION_STATE,
@@ -47,7 +52,7 @@ XML_LOCATION = '\n'.join([
     L_LOCATION_LONGITUDE,
     L_LOCATION_ELEVATION,
     L_LOCATION_TIME_ZONE_NAME,
-    '  </LocationSection>'
+    L_LOCATION_SECTION_END
 ])
 
 

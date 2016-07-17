@@ -11,7 +11,7 @@ Passed all 12 tests.  DBK 2016-07-14
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-07-17'
 
 
 # Import system type stuff
@@ -126,6 +126,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
         l_lights = self.m_api._read_lights(self.m_pyhouse_obj, l_xml)
+        print(PrettyFormatAny.form(l_lights, 'B1-3-A - Light'))
         self.assertEqual(len(l_lights), 2)
         self.assertEqual(l_lights[0].Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_lights[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
@@ -135,6 +136,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """Read all the lighting info (Buttons, Controllers, Lights)
         """
         l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_obj, 'B1-4-A - Lighting'))
         self.assertEqual(len(l_obj.Buttons), 2)
         self.assertEqual(len(l_obj.Controllers), 2)
         self.assertEqual(len(l_obj.Lights), 2)
@@ -161,7 +163,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'House'))
         l_xml = ET.Element('HouseDivision')
         l_xml = self.m_api._write_lighting_xml(self.m_pyhouse_obj, l_xml)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-1-A - XML'))
         self.assertEqual(len(l_xml), 3)
         self.assertEqual(len(l_xml[0]), 2)
         self.assertEqual(len(l_xml[1]), 2)

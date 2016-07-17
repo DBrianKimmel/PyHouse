@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2016 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
@@ -17,10 +17,9 @@
     Geocentric means that the sun position is calculated with respect to the Earth center.
     Topocentric means that the sun position is calculated with respect to the observer local position at the Earth surface.
 
-
-
-TODO:Round sunset and sunrise to the nearest minute.
 """
+
+__updated__ = '2016-07-16'
 
 # Import system type stuff
 import datetime
@@ -53,24 +52,24 @@ class LocatTzinfo(datetime.tzinfo):
 class Util(object):
 
     @staticmethod
-    def _till_next(p_time = datetime.datetime.today()):
+    def _till_next(p_time=datetime.datetime.today()):
         """
         Get the number of seconds until we calculate sunrise again
         @return: the numbere of seconds till 0:12:12
         """
-        l_recalc = datetime.timedelta(days = 1, seconds = (12 * 60 + 12)).total_seconds()
+        l_recalc = datetime.timedelta(days=1, seconds=(12 * 60 + 12)).total_seconds()
         l_current = p_time
         l_seconds = (((l_current.hour * 60) + l_current.minute) * 60 + l_current.second)
         # print('xxx', l_recalc, l_seconds)
-        l_delay = datetime.timedelta(seconds = (l_recalc - l_seconds)).total_seconds()
+        l_delay = datetime.timedelta(seconds=(l_recalc - l_seconds)).total_seconds()
         return l_delay
 
     @staticmethod
-    def calc_solar_times(p_pyhouse_obj, p_date = datetime.date.today()):
+    def calc_solar_times(p_pyhouse_obj, p_date=datetime.date.today()):
         """
         @param p_date: is the datetime.date that we want sunrise and sunset for
         """
-        l_a = astral.Location(info = (
+        l_a = astral.Location(info=(
                 p_pyhouse_obj.House.Name,
                 p_pyhouse_obj.House.Location.Region,
                 p_pyhouse_obj.House.Location.Latitude,
@@ -85,7 +84,7 @@ class Util(object):
         else:
             l_date = p_date
         # print(PrettyFormatAny.form('{}'.format(l_a), 'AA'))
-        l_sun = l_a.sun(date = l_date, local = True)
+        l_sun = l_a.sun(date=l_date, local=True)
         l_ret = RiseSetData()
         l_ret.Dawn = l_sun['dawn']
         l_ret.SunRise = l_sun['sunrise']

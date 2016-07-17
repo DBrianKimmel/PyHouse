@@ -2,12 +2,14 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/test/xml_serial.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
 @Summary:
 
 """
+
+__updated__ = '2016-07-16'
 
 TESTING_SERIAL_BAUD_RATE = '19200'
 TESTING_SERIAL_BYTE_SIZE = '8'

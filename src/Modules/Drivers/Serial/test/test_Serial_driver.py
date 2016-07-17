@@ -2,13 +2,15 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/test/test_Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013_2015 by D. Brian Kimmel
+@copyright: (c) 2013_2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 4, 2013
 @summary:   This module is for testing local node data.
 
-Passed all 1 tests - DBK - 2015-07-30
+Passed all 7 tests - DBK - 2016-07-16
 """
+
+__updated__ = '2016-07-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -18,7 +20,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import ControllerData
 from Modules.Drivers.Serial import Serial_driver
 from Modules.Families.family import API as familyAPI
-from Modules.Lighting.lighting import API as lightingAPI
+from Modules.Housing.Lighting.lighting import API as lightingAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -49,7 +51,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         return l_obj
 
     def test_01_PyHouse(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
 
     def test_02_House(self):
@@ -65,6 +67,17 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
 
 
+class A2_Setup(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_FindPort(self):
+        pass
+
+
 class B1_Serial(SetupMixin, unittest.TestCase):
     """
     """
@@ -76,7 +89,7 @@ class B1_Serial(SetupMixin, unittest.TestCase):
     def test_01_Open(self):
         l_controller = self.m_pyhouse_obj.House.Lighting.Controllers[0]
         l_ret = self.m_api.open_serial_driver(self.m_pyhouse_obj, l_controller)
-        print(PrettyFormatAny.form(l_ret, 'open'))
+        print(PrettyFormatAny.form(l_ret, 'B1-01-A - open'))
 
 
 class B2_API(SetupMixin, unittest.TestCase):

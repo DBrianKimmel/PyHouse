@@ -14,11 +14,11 @@ Notice that devices have a lot of configuration entries in XML.
 This module only deals with the "Core" definitions.
 
 
-Passed all 15 tests - DBK - 2016-07-14
+Passed all 15 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -155,7 +155,7 @@ class B1_Parts(SetupMixin, unittest.TestCase):
     def test_2_Device(self):
         l_device = self.m_api._read_base(self.m_pyhouse_obj, self.m_light_obj, self.m_xml.light)
         l_device = self.m_api._read_device_latest(l_device, self.m_xml.light)
-        print(PrettyFormatAny.form(l_device, 'Base+Device'))
+        # print(PrettyFormatAny.form(l_device, 'B1-1-A - Base+Device'))
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(str(l_device.RoomCoords.X_Easting), TESTING_LIGHT_ROOM_X)
         self.assertEqual(str(l_device.RoomCoords.Y_Northing), TESTING_LIGHT_ROOM_Y)

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for driving serial devices
@@ -25,6 +25,8 @@ The overall logic is that:
 
 """
 
+__updated__ = '2016-07-16'
+
 #  Import system type stuff
 import pyudev
 from twisted.internet.protocol import Protocol
@@ -43,11 +45,12 @@ class FindPort(object):
         #  l_devices = subprocess.call(['lsusb'])
         #  print l_devices
         l_context = pyudev.Context()
-        for l_dev in l_context.list_devices(subsystem = 'tty'):
+        for l_dev in l_context.list_devices(subsystem='tty'):
             if 'ID_VENDOR' not in l_dev:
                 continue
             # print(l_dev.device_node)
             pass
+
 
 
 class SerialProtocol(Protocol):
@@ -95,7 +98,7 @@ class SerialAPI(object):
                 SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
                 p_controller_obj.Port,
                 p_pyhouse_obj.Twisted.Reactor,
-                baudrate = p_controller_obj.BaudRate)
+                baudrate=p_controller_obj.BaudRate)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
             p_controller_obj.Active = True
         except Exception as e_err:

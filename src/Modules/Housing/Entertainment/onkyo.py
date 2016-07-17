@@ -127,7 +127,7 @@ class API(object):
     def SaveXml(self, p_xml):
         l_xml = ''
         # p_xml.append(l_xml)
-        LOG.info("Saved Mqtt XML.")
+        LOG.info("Saved XML.")
         return p_xml
 
     def Stop(self):

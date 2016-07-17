@@ -28,7 +28,9 @@ from Modules.Core.data_objects import \
             HouseAPIs, \
             LocationData, \
             TwistedInformation, \
-            XmlInformation, LightingData, UuidData
+            XmlInformation, \
+            LightingData, \
+            UuidData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.house import Xml as housingXML
@@ -53,6 +55,11 @@ class XmlData(object):
         self.root = None
         #
         self.house_div = None
+        self.entertainment_sect = None
+        self.onkyo_sect = None
+        self.panasonic_sect = None
+        self.pioneer_sect = None
+        self.samsung_sect = None
         self.lighting_sect = None
         self.button_sect = None
         self.button = None
@@ -174,6 +181,11 @@ class SetupPyHouseObj(object):
         p_xml.house_div = p_xml.root.find('HouseDivision')
         if p_xml.house_div is None:
             return
+        #
+        p_xml.entertainment_sect = p_xml.house_div.find('EntertainmentSection')
+        p_xml.panasonic_sect = p_xml.entertainment_sect.find('PanasonicSection')
+        p_xml.pioneer_sect = p_xml.entertainment_sect.find('PioneerSection')
+        p_xml.samsung_sect = p_xml.entertainment_sect.find('SamsungSection')
         #
         p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')
         p_xml.location_sect = p_xml.house_div.find('LocationSection')
