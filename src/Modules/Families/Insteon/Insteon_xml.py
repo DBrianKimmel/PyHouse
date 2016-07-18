@@ -20,6 +20,8 @@ Read may need to check the version number to load the config information properl
 
 """
 
+__updated__ = '2016-07-17'
+
 #  Import system type stuff
 
 #  Import PyMh files
@@ -40,7 +42,7 @@ class Xml(object):
     """
 
     @staticmethod
-    def _read_product_key(p_entry_xml, p_default = '98.76.54'):
+    def _read_product_key(p_entry_xml, p_default='98.76.54'):
         l_ret = p_default
         try:
             l_prod = PutGetXML.get_text_from_xml(p_entry_xml, 'ProductKey', p_default)

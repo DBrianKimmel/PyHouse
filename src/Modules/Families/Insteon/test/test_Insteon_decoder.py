@@ -2,25 +2,27 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c)  2014 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 18, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2015-07-29
+Passed all 6 tests - DBK - 2016-07-17
 
 This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
+__updated__ = '2016-07-17'
+
 #  Import system type stuff
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Families.family import API as familyAPI
-from Modules.Hvac.hvac_xml import XML as hvacXML
-from Modules.Lighting.lighting_controllers import API as controllerAPI
-from Modules.Lighting.lighting_lights import API as lightsAPI
-from Modules.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
+from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
+from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
+from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
+from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
@@ -47,7 +49,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.Lighting.Controllers = controllerAPI().read_all_controllers_xml(
                             self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(
-                            self.m_pyhouse_obj, self.m_xml.controller_sect, self.m_version)
+                            self.m_pyhouse_obj, self.m_xml.controller_sect)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(
                             self.m_pyhouse_obj)
 

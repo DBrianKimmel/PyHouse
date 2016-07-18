@@ -20,6 +20,8 @@ serial_port
 
 """
 
+__updated__ = '2016-07-17'
+
 #  Import system type stuff
 
 #  Import PyMh files
@@ -119,7 +121,7 @@ class API(object):
         except AttributeError as e_err:
             LOG.info('Stop Warning - {0:}'.format(e_err))  #  no controllers for house(House is being added)
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate=0):
         """
         Do the Insteon thing to change the level of an Insteon light
         """

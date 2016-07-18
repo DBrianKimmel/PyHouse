@@ -11,6 +11,8 @@ This information will be present in a device's XML for Insteon type devices.
 
 """
 
+__updated__ = '2016-07-17'
+
 TESTING_INSTEON_ADDRESS_0 = '16.62.2D'
 TESTING_INSTEON_DEVCAT_0 = '02.1C'
 TESTING_INSTEON_ENGINE_VERSION_0 = '1'

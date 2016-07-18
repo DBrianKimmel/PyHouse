@@ -2,14 +2,16 @@
 @name:      PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2014 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @note:      Created on Apr 8, 2013
 @license:   MIT License
 @summary:   This module is for driving serial devices
 
-Passed all 10 tests - DBK - 2015-08-08
+Passed all 6 tests - DBK - 2016-07-17
 
 """
+
+__updated__ = '2016-07-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2016-07-16'
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 import pyudev
@@ -75,6 +75,10 @@ class SerialProtocol(Protocol):
         LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
 
     def dataReceived(self, p_data):
+        l_len = len(p_data)
+        if l_len > 0:
+            # LOG.info('Rxed {} bytes of data {}'.format(l_len, PrintBytes(p_data)))
+            pass
         self.m_controller_obj._Data += p_data
 
 

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   This module decodes insteon PLM response messages
@@ -23,6 +23,8 @@ The manual describes the fields in the message and not much more.
 PLEASE REFACTOR ME!
 
 """
+
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 
@@ -65,7 +67,7 @@ class DecodeResponses(object):
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                #  LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
+                LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
@@ -76,7 +78,7 @@ class DecodeResponses(object):
             else:
                 utilDecode.drop_first_byte(p_controller_obj)
 
-    def check_for_more_decoding(self, p_controller_obj, p_ret = True):
+    def check_for_more_decoding(self, p_controller_obj, p_ret=True):
         """Chop off the current message from the head of the buffered response stream from the controller.
         @param p_ret: is the result to return.
         """

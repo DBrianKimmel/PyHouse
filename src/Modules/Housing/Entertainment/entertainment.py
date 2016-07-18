@@ -12,7 +12,7 @@ Depending on node type, start up entertainment systems.
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-07-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -61,37 +61,37 @@ class MqttActions(object):
 class API(Utility):
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing.")
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_onkyo = onkyoApi(p_pyhouse_obj)
+        # self.m_pyhouse_obj = p_pyhouse_obj
+        # self.m_onkyo = onkyoApi(p_pyhouse_obj)
         self.m_samsung = samsungApi(p_pyhouse_obj)
         LOG.info("Initialized.")
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('XML Loading')
-        self.m_onkyo.LoadXml(p_pyhouse_obj)
-        self.m_samsung.LoadXml(p_pyhouse_obj)
+        # self.m_onkyo.LoadXml(p_pyhouse_obj)
+        # self.m_samsung.LoadXml(p_pyhouse_obj)
         LOG.info('XML Loaded')
 
     def Start(self):
         LOG.info("Starting.")
-        self.m_onkyo.Start()
-        self.m_samsung.Start()
+        # self.m_onkyo.Start()
+        # self.m_samsung.Start()
         LOG.info("Started.")
 
     def SaveXml(self, p_xml):
         LOG.info("Saving XML.")
-        l_xml = ET.Element('EntertainmentSection')
-        l_xml = self.m_onkyo.SaveXml(l_xml)
-        p_xml.append(l_xml)
-        l_xml = self.m_samsung.SaveXml(l_xml)
-        p_xml.append(l_xml)
+        # l_xml = ET.Element('EntertainmentSection')
+        # l_xml = self.m_onkyo.SaveXml(l_xml)
+        # p_xml.append(l_xml)
+        # l_xml = self.m_samsung.SaveXml(l_xml)
+        # p_xml.append(l_xml)
         LOG.info("Saved XML.")
         return p_xml
 
     def Stop(self):
         LOG.info("Stopping.")
-        self.m_onkyo.Stop()
-        self.m_samsung.Stop()
+        # self.m_onkyo.Stop()
+        # self.m_samsung.Stop()
         LOG.info("Stopped.")
 
 # ## END DBK

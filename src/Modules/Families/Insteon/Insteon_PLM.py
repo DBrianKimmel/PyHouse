@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for sending commands to and receiving responses from an Insteon Controller.
@@ -20,6 +20,8 @@ TODO:
     implement all-links
 
 """
+
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -561,7 +563,7 @@ class API(Utility):
         LOG.info('Stopped.')
 
 
-    def ChangeLight(self, p_device_obj, _p_source, p_level, p_rate = 0):
+    def ChangeLight(self, p_device_obj, _p_source, p_level, p_rate=0):
         """
         Send a command to change a device (light's level)
         """

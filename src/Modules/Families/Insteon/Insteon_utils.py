@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 27, 2013
 @summary:   This module is for Insteon conversion routines.
@@ -13,6 +13,8 @@ This is a bunch of routines to deal with Insteon devices.
 Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
+
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 
@@ -31,7 +33,7 @@ LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 class Util(object):
 
     @staticmethod
-    def int2message(p_int, p_message, p_index = 3):
+    def int2message(p_int, p_message, p_index=3):
         """Place an Insteon address (int internally) into a message at a given offset.
         The message must exist and be long enough to include a 3 byte area for the address.
         """

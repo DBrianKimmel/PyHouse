@@ -46,7 +46,8 @@ from Modules.Housing.Lighting.test.xml_lights import \
         TESTING_LIGHT_ROOM_Z, \
         TESTING_LIGHT_DEVICE_TYPE_0, \
         TESTING_LIGHT_DEVICE_SUBTYPE_0, \
-        TESTING_LIGHT_DEVICE_FAMILY_0, TESTING_LIGHT_ROOM_UUID_0
+        TESTING_LIGHT_DEVICE_FAMILY_0, \
+        TESTING_LIGHT_ROOM_UUID_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 # from Modules.Utilities.debug_tools import PrettyFormatAny

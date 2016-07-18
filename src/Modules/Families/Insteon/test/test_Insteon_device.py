@@ -2,13 +2,15 @@
 @name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2016 by D. Brian Kimmel
 @note:      Created on Apr 1, 2011
 @license:   MIT License
 @summary:   This module tests Insteon_device
 
 Passed all 1 tests - DBK - 2015-07-26
 """
+
+__updated__ = '2016-07-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

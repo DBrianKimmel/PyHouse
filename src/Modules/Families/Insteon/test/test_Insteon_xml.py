@@ -2,14 +2,17 @@
 @name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @note:      Created on Aug 5, 2014
 @license:   MIT License
 @summary:   This module test insteon xml
 
-Passed all 13 tests - DBK - 2015-08-20
+Passed all 13 tests - DBK - 2015-07-17
 
 """
+from src.Modules.Housing.Lighting.test.xml_lights import TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_ROOM_NAME_0
+
+__updated__ = '2016-07-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,15 +22,10 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import LightData, HouseInformation
 from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
 from Modules.Core import conversions
-from Modules.Lighting.lighting_core import API as lightingCoreAPI
+from Modules.Housing.Lighting.lighting_core import API as lightingCoreAPI
 from test.xml_data import XML_LONG
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_FAMILY_INSTEON, \
-        TESTING_DEVICE_COMMENT, \
-        TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_TYPE, \
-        TESTING_DEVICE_SUBTYPE, \
-        TESTING_DEVICE_UUID
+        TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_ADDRESS_0, \
         TESTING_INSTEON_DEVCAT_0, \
@@ -36,7 +34,14 @@ from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_PRODUCT_KEY_0
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_KEY_1, TESTING_LIGHT_ACTIVE_0
+from Modules.Housing.Lighting.test.xml_lights import \
+    TESTING_LIGHT_NAME_0, \
+    TESTING_LIGHT_KEY_0, \
+    TESTING_LIGHT_ACTIVE_0, \
+    TESTING_LIGHT_COMMENT_0, \
+    TESTING_LIGHT_DEVICE_SUBTYPE_0, \
+    TESTING_LIGHT_UUID_0, \
+    TESTING_LIGHT_DEVICE_FAMILY_0
 
 
 class SetupMixin(object):
@@ -104,42 +109,44 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_product_key, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_02_Core(self):
-        l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
-        # print(PrettyFormatAny.form(l_light, 'Light'))
+        l_light = self.m_core_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
+        # print(PrettyFormatAny.form(l_light, 'B1-02-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.Key, int(TESTING_LIGHT_KEY_0))
         self.assertEqual(l_light.Active, TESTING_LIGHT_ACTIVE_0 == 'True')
-        self.assertEqual(l_light.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_light.DeviceType, int(TESTING_DEVICE_TYPE))
-        self.assertEqual(l_light.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
-        self.assertEqual(l_light.RoomName, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_light.UUID, TESTING_DEVICE_UUID)
+        self.assertEqual(l_light.Comment, TESTING_LIGHT_COMMENT_0)
+        self.assertEqual(str(l_light.DeviceType), TESTING_LIGHT_DEVICE_TYPE_0)
+        self.assertEqual(str(l_light.DeviceSubType), TESTING_LIGHT_DEVICE_SUBTYPE_0)
+        self.assertEqual(l_light.RoomName, TESTING_LIGHT_ROOM_NAME_0)
+        self.assertEqual(l_light.UUID, TESTING_LIGHT_UUID_0)
 
     def test_03_Insteon(self):
         """Read the Insteon specific information.
         """
-        l_insteon = insteonXml._read_insteon(self.m_xml.light)
-        self.assertEqual(conversions.int2dotted_hex(l_insteon.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
-        self.assertEqual(conversions.int2dotted_hex(l_insteon.DevCat, 2), TESTING_INSTEON_DEVCAT_0)
-        self.assertEqual(l_insteon.GroupList, TESTING_INSTEON_GROUP_LIST_0)
-        self.assertEqual(l_insteon.GroupNumber, int(TESTING_INSTEON_GROUP_NUM_0))
-        self.assertEqual(conversions.int2dotted_hex(l_insteon.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
+        l_obj = insteonXml._read_insteon(self.m_xml.light)
+        print(PrettyFormatAny.form(l_obj, 'B1-03-A - Insteon'))
+        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_0)
+        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_0)
+        self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM_0))
+        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_04_InsteonLight(self):
-        l_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
+        l_light = self.m_core_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
         insteonXml.ReadXml(l_light, self.m_xml.light)
+        print(PrettyFormatAny.form(l_light, 'B1-04-A - Insteon Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
 
-class C01_Write(SetupMixin, unittest.TestCase):
+class C1_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_light = self.m_core_api.read_core_lighting_xml(self.m_device, self.m_xml.light, self.m_version)
+        self.m_light = self.m_core_api.read_core_lighting_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
         insteonXml.ReadXml(self.m_light, self.m_xml.light)
 
     def test_01_setup(self):
@@ -150,22 +157,22 @@ class C01_Write(SetupMixin, unittest.TestCase):
 
     def test_02_Core(self):
         l_xml = self.m_core_api.write_core_lighting_xml('Light', self.m_light)
-        # print(PrettyFormatAny.form(l_xml, 'Lights XML'))
+        print(PrettyFormatAny.form(l_xml, 'C1-02-A - Lights XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_1)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHT_COMMENT_0)
+        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_LIGHT_DEVICE_FAMILY_0)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHT_ROOM_NAME_0)
 
     def test_03_InsteonLight(self):
         l_xml = self.m_core_api.write_core_lighting_xml('Light', self.m_light)
         insteonXml.WriteXml(l_xml, self.m_light)
-        # print(PrettyFormatAny.form(l_xml, 'Lights XML'))
+        print(PrettyFormatAny.form(l_xml, 'C1_03-A - Lights XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)
-        self.assertEqual(l_xml.find('Address').text, TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(l_xml.find('InsteonAddress').text, TESTING_INSTEON_ADDRESS_0)
         self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT_0)
         self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST_0)
         self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM_0)

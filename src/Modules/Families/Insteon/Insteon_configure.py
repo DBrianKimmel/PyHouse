@@ -2,12 +2,14 @@
 @name:      PyHouse/src/Modules/Families/Insteon.Insteon_configure.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created Dec 21, 2015
 @Summary:   set and query the insteon configuration
 
 """
+
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 

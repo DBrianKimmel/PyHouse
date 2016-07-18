@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_HVAC.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   This module decodes Insteon PLM response messages
@@ -21,6 +21,8 @@ see: 2441xxx pdf guides
 
 My Device seems to put out codes 6E thru 72
 """
+
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 

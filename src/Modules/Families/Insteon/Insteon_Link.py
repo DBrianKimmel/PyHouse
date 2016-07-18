@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_Link.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2015 by D. Brian Kimmel
+@copyright: (c) 2010-2016 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   Handle the all-link database(s) in Insteon devices.
@@ -13,6 +13,8 @@ This will maintain the all-link database in all Insteon devices.
 
 Invoked periodically and when any Insteon device changes.
 """
+
+__updated__ = '2016-07-17'
 
 #  Import system type stuff
 
