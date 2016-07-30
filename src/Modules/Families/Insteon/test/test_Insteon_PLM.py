@@ -11,14 +11,15 @@ Passed all 6 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-07-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerData, HouseInformation
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
@@ -41,7 +42,20 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_Utility(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_House(self):
+        l_house = self.m_pyhouse_obj.House
+        self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
+        self.assertEqual(l_house.Name, TESTING_HOUSE_NAME)
+
+
+class C1_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))

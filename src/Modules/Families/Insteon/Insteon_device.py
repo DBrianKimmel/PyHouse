@@ -20,14 +20,13 @@ serial_port
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-07-25'
 
 #  Import system type stuff
 
 #  Import PyMh files
 #  from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
-
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
 
 
@@ -102,7 +101,7 @@ class Utility(object):
 
 class API(object):
     """
-    These are the public methods available to use Insteon devices.
+    These are the public methods available to use Devices from any family.
     """
 
     m_plm = None

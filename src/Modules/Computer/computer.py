@@ -29,7 +29,7 @@ PyHouse.Computer.
 """
 from Modules.Utilities import uuid_tools
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-07-23'
 
 #  Import system type stuff
 import platform
@@ -115,7 +115,7 @@ class Utility(object):
     @staticmethod
     def _init_component_apis(p_pyhouse_obj, p_api):
         """
-        Initialize all the computer APIs
+        Initialize all the computer division APIs
         """
         p_pyhouse_obj.APIs.Computer = ComputerAPIs()
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
@@ -171,6 +171,9 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
+        """ Initialize the computer section of PyHouse.
+
+        """
         LOG.info('Initializing')
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()

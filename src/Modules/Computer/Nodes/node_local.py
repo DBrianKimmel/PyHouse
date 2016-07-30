@@ -21,14 +21,17 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 from datetime import datetime
+import subprocess
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-07-25'
 
 #  Import system type stuff
 import fnmatch  # Filename matching with shell patterns
 import netifaces
 import os
 import platform
+import pyudev
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
@@ -55,6 +58,54 @@ NODE_V6ROUTER = 0x0010  # Iv6 Router node
 NODE_WINDOWS = 0x0020  # Windowd - not Linux
 NODE_TUNNEL = 0x0040  # IPv6 Tunnel
 NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
+
+
+class Devices(object):
+    """ Identify the controller devices attached to this node.
+
+    Here we want to find out what device type controllers (eg Insteon PLM) may be attached to this node.
+    We have looked at the node and select the udev characteristics that will identify the controller.
+    Then we search for that signature to mark this node as having the device.
+    In this way, we can get to the point where only the nodes having a control device can react and, say, turn on a light.
+    """
+
+    def _lsusb(self):
+        l_ret = subprocess.check_output('lsusb')
+        return l_ret
+
+    def _find_controllers(self):
+        """ Find out what controllers are attacvhed to this node.
+        """
+        l_ret = ''
+        l_context = pyudev.Context()
+        for l_dev in l_context.list_devices(subsystem='tty'):
+            if 'ID_VENDOR' not in l_dev:
+                continue
+            # if l_dev.subsystem == None:
+            #    continue
+            l_msg = '\nDevice found: {}\n'.format(l_dev.get('DEVNAME'))
+            # print(PrettyFormatAny.form(l_dev))
+            for k, v in l_dev.iteritems():
+                # print(k, v)
+                l_msg += '{} {}\n'.format(k, v)
+            print(l_msg)
+            LOG.info(l_msg)
+            l_id = '{}:{}'.format(l_dev.get('ID_VENDOR_ID'), l_dev.get('ID_MODEL_ID'))
+            if l_id == '0403:6001':
+                l_ret = 'Insteon'
+        return l_ret
+
+    def _add_controller(self, p_node, p_obj):
+        """
+        @param p_node: is the node obj for this node
+        @param p_obj: is the discovered controller type to be added to the list
+        """
+        p_node.ControllerCount += 1
+        p_node.ControllerType.append(p_obj)
+        return
+
+    def find_devices(self, p_node_obj):
+        return p_node_obj
 
 
 class Interfaces(object):
@@ -205,6 +256,13 @@ class Interfaces(object):
         l_ret = netifaces.interfaces()
         return l_ret
 
+    def add_interfaces(self, p_node_obj):
+        l_interface, l_v4, l_v6 = Interfaces._get_all_interfaces()
+        p_node_obj.NodeInterfaces = l_interface
+        p_node_obj.ConnectionAddr_IPv4 = l_v4
+        p_node_obj.ConnectionAddr_IPv6 = l_v6
+        return p_node_obj
+
 
 class HandleNodeType(object):
 
@@ -225,6 +283,9 @@ class HandleNodeType(object):
 
 
 class Util(object):
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     @staticmethod
     def _is_camera_node():
@@ -292,15 +353,6 @@ class Util(object):
         return p_role
 
     @staticmethod
-    def _get_node_base(p_pyhouse_obj):
-        l_node = NodeData()
-        l_node.Name = platform.node()
-        l_node.Key = 0
-        l_node.Active = True
-        l_node.UUID = p_pyhouse_obj.Computer.UUID
-        return l_node
-
-    @staticmethod
     def find_node_role():
         l_role = NODE_NOTHING
         try:
@@ -343,16 +395,17 @@ class Util(object):
         p_pyhouse_obj.Computer.Nodes[p_node.UUID] = p_node
         LOG.info('Nodes = {}'.format(p_pyhouse_obj.Compute.Nodes))
 
-    @staticmethod
-    def create_local_node(p_pyhouse_obj):
-        l_node = Util._get_node_base(p_pyhouse_obj)
-        l_interface, l_v4, l_v6 = Interfaces._get_all_interfaces()
-        l_node.NodeInterfaces = l_interface
-        l_node.ConnectionAddr_IPv4 = l_v4
-        l_node.ConnectionAddr_IPv6 = l_v6
+    def create_local_node(self):
+        l_node = NodeData()
+        l_node.Name = self.m_pyhouse_obj.Computer.Name
+        l_node.Key = 0
+        l_node.Active = True
+        l_node.UUID = self.m_pyhouse_obj.Computer.UUID
+        Interfaces().add_interfaces(l_node)
+        Devices().find_devices(l_node)
         l_node.NodeRole = Util.find_node_role()
         l_node.LastUpdate = datetime.now()
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
         return l_node
 
 
@@ -370,7 +423,7 @@ class API(Util):
 
     def Start(self):
         l_uuid = self.m_pyhouse_obj.Computer.UUID
-        l_local = Util.create_local_node(self.m_pyhouse_obj)
+        l_local = Util(self.m_pyhouse_obj).create_local_node()
         self.m_pyhouse_obj.Computer.Nodes[l_uuid] = l_local
         LOG.info('Adding node  {} {}'.format(l_local.Name, l_uuid))
         self.init_node_type(self.m_pyhouse_obj)

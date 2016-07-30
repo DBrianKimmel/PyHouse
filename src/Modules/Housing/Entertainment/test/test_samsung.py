@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/PyHouse/src/Modules/Housing/Entertainment/test/test_samsung.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/test/test_samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2016 by D. Brian Kimmel
@@ -11,7 +11,7 @@ Passed all 7 tests - DBK - 2016-07-15
 
 """
 
-__updated__ = '2016-07-15'
+__updated__ = '2016-07-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

@@ -7,11 +7,11 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 19 tests - DBK - 2016-07-08
+Passed all 22 tests - DBK - 2016-07-23
 
 """
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-07-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,8 +20,12 @@ from twisted.trial import unittest
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
-from Modules.Computer.Nodes.node_local import Interfaces, API as localApi
-from test import xml_data
+from Modules.Computer.Nodes.node_local import \
+    Interfaces, \
+    API as localApi, \
+    Devices as localDevices, \
+    Util as localUtil
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -47,7 +51,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
@@ -68,7 +72,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
@@ -89,7 +93,7 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
@@ -105,9 +109,9 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
         """ Check the gateways
         """
         l_gate = Interfaces._list_gateways()
-        # print(PrettyFormatAny.form(l_gate, 'A3-02-A - Gateways', 170))
+        # print(PrettyFormatAny.form(l_gate, 'A3-02-A - Gateways', 100))
         l_v4 = l_gate[2]
-        self.assertEqual(l_v4[0][0], '192.168.1.1')
+        self.assertEqual(l_v4[0][0], '192.168.2.1')
 
     def test_03_ListInterfaces(self):
         """ Check the interfaces in this computer
@@ -128,7 +132,7 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
 
     def test_05_All(self):
         l_all, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
-        for l_ix in l_all:
+        for _l_ix in l_all:
             # print('{} {}'.format(l_ix, PrettyFormatAny.form(l_all[l_ix], 'A3-05-A - Interface', 170)))
             pass
         # print(PrettyFormatAny.form(l_all, 'A3-05-B - Interfaces', 170))
@@ -139,7 +143,7 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
 class B1_Iface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
         self.m_node = NodeData()
         self.m_iface_api = Interfaces()
@@ -194,19 +198,35 @@ class B1_Iface(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
 
 
+class B2_Node(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
+
+    def test_01_Node(self):
+        """
+        """
+        l_node = localUtil(self.m_pyhouse_obj).create_local_node()
+        # print(PrettyFormatAny.form(l_node, 'B2-01-A - Node'))
+        self.assertEqual(l_node.Name, 'BriankLaptop')
+        self.assertEqual(l_node.Key, 0)
+        self.assertEqual(l_node.Active, True)
+
+
 class C1_Api(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_1_Api(self):
         _l_api = localApi(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1_1_A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1_1_A - PyHouse Computer'))
 
     def test_2_LoadXml(self):
         l_api = localApi(self.m_pyhouse_obj)
-        l_ret = l_api.LoadXml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_ret, 'C1-2-A - PyHouse Computer'))
+        _l_ret = l_api.LoadXml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_ret, 'C1-2-A - PyHouse Computer'))
 
     def test_3_Start(self):
         #  self.m_api.Start(self.m_pyhouse_obj)
@@ -220,5 +240,20 @@ class C1_Api(SetupMixin, unittest.TestCase):
     def test_5_Stop(self):
         localApi(self.m_pyhouse_obj).Stop()
         pass
+
+
+class D1_Devices(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_1_lsusb(self):
+        _l_usb = localDevices()._lsusb()
+        # print(l_usb, 'D1_1_A - PyHouse Computer')
+
+    def test_2_find(self):
+        """Find all controllers
+        """
+        _l_ret = localDevices()._find_controllers()
 
 #  ## END DBK

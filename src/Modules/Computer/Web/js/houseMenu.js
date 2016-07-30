@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/houseMenu.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @copyright: (c) 2012-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the house menu element
@@ -58,7 +58,8 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			['Controllers',  'Controllers',         'Controllers'     ],
 			['Schedules',    'Scheduling',          'Schedules'       ],
 			['Levels',       'Lighting Control',    'ControlLighting' ],
-			['Thermo',       'Thermostat',          'Thermostat'      ]
+			['Thermo',       'Thermostat',          'Thermostat'      ],
+			['Entertain',    'Entertainment',       'Entertain'       ]
 			];
 		return l_list;
 	},
@@ -110,6 +111,9 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			break;
 		case 'Thermo':
 			self.showWidget('Thermostat');
+			break;
+		case 'Entertain':
+			self.showWidget('EntertainmentMenu');
 			break;
 		case 'Back':
 			self.showWidget('RootMenu');

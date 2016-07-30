@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-07-25'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -32,11 +32,8 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities.tools import PrintBytes
+# from Modules.Utilities.tools import PrintBytes
 import Queue
-
-#  from Modules.Families.Insteon.Insteon_configure import Config as ConfigConfig
-
 
 #  Import PyMh files
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
@@ -105,7 +102,7 @@ class Commands(object):
 
     @staticmethod
     def queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2):
-        """Send Insteon Standard Length Message (8 bytes).
+        """Send Insteon Standard Length Message (8 bytes) (SD command).
         See page 243 of Insteon Developers Guide.
 
         @param p_obj: is the device object.
@@ -119,7 +116,7 @@ class Commands(object):
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
             Utility._queue_command(p_controller_obj, l_command)
-        except Exception as e_err:
+        except Exception as _e_err:
             LOG.error('Error creating command {}'.format(PrettyFormatAny.form(p_obj, 'Device')))
 
     @staticmethod
