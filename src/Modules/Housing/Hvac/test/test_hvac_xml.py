@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2016-07-09
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 from twisted.trial import unittest

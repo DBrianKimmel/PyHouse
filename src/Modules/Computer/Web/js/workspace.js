@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/workspace.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2012-2015 by D. Brian Kimmel
+ * @copyright: (c) 2012-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the elements
@@ -95,6 +95,7 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('controlLights', 'dummy');
 				self.attachWidget('house', 'dummy');
+				self.attachWidget('irrigation', 'dummy');
 				self.attachWidget('lights', 'dummy');
 				self.attachWidget('rooms', 'dummy');
 				self.attachWidget('schedules', 'dummy');

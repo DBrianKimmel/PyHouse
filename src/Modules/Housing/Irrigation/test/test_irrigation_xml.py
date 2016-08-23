@@ -7,11 +7,11 @@
 @note:      Created on Jun 30, 2015
 @summary:
 
-Passed all 7 tests - DBK - 2016-07-14
+Passed all 7 tests - DBK - 2016-08-20
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -53,7 +53,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_zone
         l_obj = self.m_api._read_one_zone(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
         self.assertEqual(l_obj.Name, 'Front Rotors # 1')
 
     def test_02_System(self):
@@ -68,7 +68,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_sect
         l_obj = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
-        self.assertEqual(len(l_obj), 2)
+        self.assertEqual(len(l_obj), 3)
 
 
 class C1_Write(SetupMixin, unittest.TestCase):

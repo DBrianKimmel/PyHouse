@@ -41,12 +41,12 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 import datetime
 import dateutil.parser as dparser
-import twisted
+# import twisted
 
 #  Import PyMh files
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI

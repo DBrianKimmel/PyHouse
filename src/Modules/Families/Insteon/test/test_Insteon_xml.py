@@ -10,9 +10,8 @@
 Passed all 13 tests - DBK - 2015-07-17
 
 """
-from src.Modules.Housing.Lighting.test.xml_lights import TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_ROOM_NAME_0
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-08-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -41,7 +40,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_COMMENT_0, \
     TESTING_LIGHT_DEVICE_SUBTYPE_0, \
     TESTING_LIGHT_UUID_0, \
-    TESTING_LIGHT_DEVICE_FAMILY_0
+    TESTING_LIGHT_DEVICE_FAMILY_0, TESTING_LIGHT_DEVICE_TYPE_0, TESTING_LIGHT_ROOM_NAME_0
 
 
 class SetupMixin(object):

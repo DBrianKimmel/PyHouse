@@ -11,13 +11,13 @@
 
 """
 
-__updated__ = '2016-07-13'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Core.data_objects import ScheduleBaseData, ScheduleLightData
+from Modules.Core.data_objects import ScheduleBaseData, ScheduleIrrigationData, ScheduleLightData
 from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
@@ -36,18 +36,22 @@ class Xml(object):
         """
         l_obj = ScheduleBaseData()
         XmlConfigTools.read_base_object_xml(l_obj, p_schedule_element)
-        try:
-            l_obj.DOW = PutGetXML.get_int_from_xml(l_obj, 'DayOfWeek', 0x7F)
-        except:
-            l_obj.DOW = 0x7F
-        try:
-            l_obj.ScheduleMode = PutGetXML.get_text_from_xml(l_obj, 'ScheduleMode', 0)
-        except:
-            l_obj.ScheduleMode = 'Home'
+        l_obj.DOW = PutGetXML.get_int_from_xml(p_schedule_element, 'DayOfWeek', '127')
+        l_obj.ScheduleMode = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleMode', 'Default Mode')
         l_obj.ScheduleType = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleType')
-        if l_obj.ScheduleType == 'LightingDevice':
-            l_obj.ScheduleType = 'Lighting'
         l_obj.Time = PutGetXML.get_text_from_xml(p_schedule_element, 'Time')
+        # if l_obj.ScheduleType == 'LightingDevice':
+        #    l_obj.ScheduleType = 'Lighting'
+        return l_obj
+
+    @staticmethod
+    def _read_one_irrigation_schedule(p_schedule_element):
+        """Extract schedule information from a schedule xml element.
+        """
+        l_obj = ScheduleIrrigationData()
+        l_obj.System = PutGetXML.get_text_from_xml(p_schedule_element, 'System')
+        l_obj.SystemUUID = None
+        l_obj.Duration = PutGetXML.get_int_from_xml(p_schedule_element, 'Duration')
         return l_obj
 
     @staticmethod
@@ -55,20 +59,21 @@ class Xml(object):
         """Extract schedule information from a schedule xml element.
         """
         l_obj = ScheduleLightData()
-        l_obj = Xml._read_one_base_schedule(p_schedule_element)
         l_obj.Level = PutGetXML.get_int_from_xml(p_schedule_element, 'Level')
         l_obj.LightName = PutGetXML.get_text_from_xml(p_schedule_element, 'LightName')
         l_obj.LightUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'LightUUID')
         l_obj.Rate = PutGetXML.get_int_from_xml(p_schedule_element, 'Rate')
         l_obj.RoomName = PutGetXML.get_text_from_xml(p_schedule_element, 'RoomName')
         l_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_schedule_element, 'RoomUUID')
-        return l_obj  # for testing
+        return l_obj
 
     @staticmethod
     def _read_one_schedule(p_schedule_element):
         l_obj = Xml._read_one_base_schedule(p_schedule_element)
         if l_obj.ScheduleType == 'Lighting':
             l_type = Xml._read_one_lighting_schedule(p_schedule_element)
+        elif l_obj.ScheduleType == 'Irrigation':
+            l_type = Xml._read_one_irrigation_schedule(p_schedule_element)
         else:
             LOG.error('ERROR - invalid device found - {} for {}'.format(l_obj.ScheduleType, l_obj.Name))
             l_type = {}
@@ -78,19 +83,18 @@ class Xml(object):
     @staticmethod
     def read_schedules_xml(p_pyhouse_obj):
         """
-        @param p_house_xml: is the e-tree XML house object
-        @return: a dict of the entry to be attached to a house object.
+        @param p_pyhouse_obj: is the big object of everything
+        @return: a dict of all the schedules.
         """
         l_count = 0
         l_dict = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml is None:
             return l_dict
+        l_xml = l_xml.find(SCHEDULE_SECTION)
+        if l_xml is None:
+            return l_dict
         try:
-            l_xml = l_xml.find(SCHEDULE_SECTION)
-            if l_xml is None:
-                return l_dict
-            # print(PrettyFormatAny.form(l_xml, 'Schedule Xml'))
             for l_entry in l_xml.iterfind(SCHEDULE_ATTR):
                 l_schedule_obj = Xml._read_one_schedule(l_entry)
                 l_schedule_obj.Key = l_count  # Renumber
@@ -112,6 +116,13 @@ class Xml(object):
         return l_entry
 
     @staticmethod
+    def _write_one_irrigation_schedule(p_schedule_obj, p_entry):
+        """
+        Shove our entries in.
+        """
+        PutGetXML.put_int_element(p_entry, 'Duration', p_schedule_obj.Duration)
+
+    @staticmethod
     def _write_one_light_schedule(p_schedule_obj, p_entry):
         """
         Shove our entries in.
@@ -130,6 +141,8 @@ class Xml(object):
         l_entry = Xml._write_one_base_schedule(p_schedule_obj)
         if p_schedule_obj.ScheduleType == 'Lighting':
             Xml._write_one_light_schedule(p_schedule_obj, l_entry)
+        elif p_schedule_obj.ScheduleType == 'Irrigation':
+            Xml._write_one_irrigation_schedule(p_schedule_obj, l_entry)
         else:
             LOG.error('ERROR - invalid schedule type {}'.format(p_schedule_obj.ScheduleType))
         return l_entry

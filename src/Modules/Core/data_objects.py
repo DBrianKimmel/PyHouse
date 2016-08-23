@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-07-15'
+__updated__ = '2016-08-22'
 
 
 class PyHouseData(object):
@@ -441,11 +441,13 @@ class JsonHouseData(BaseObject):
         super(JsonHouseData, self).__init__()
         self.Buttons = {}
         self.Controllers = {}
+        self.HVAC = {}
+        self.Irrigation = {}
         self.Lighting = {}
         self.Location = {}
         self.Rooms = {}
         self.Schedules = {}
-        self.Thermostats = {}
+        # self.Thermostats = {}
 
 
 class LoginData(BaseObject):
@@ -566,12 +568,24 @@ class ScheduleBaseData(BaseObject):
         super(ScheduleBaseData, self).__init__()
         self.UUID = None
         self.DOW = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
-        self.ScheduleMode = 'Home'  # Home, Away, Vacation,
-        self.ScheduleType = ''
+        self.ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
+        self.ScheduleType = ''  # Valid Schedule Type
         self.Time = None
         #  for use by web browser - not saved in xml
         self._AddFlag = False
         self._DeleteFlag = False
+
+
+class ScheduleIrrigationData(ScheduleBaseData):
+    """
+    """
+    def __init__(self):
+        super(ScheduleIrrigationData, self).__init__()
+        self.ScheduleType = 'Irrigation'
+        self.Duration = None
+        self.System = None
+        self.SystemUUID = None
+        self.Zone = None
 
 
 class ScheduleLightData(ScheduleBaseData):
@@ -614,11 +628,11 @@ class CoreLightingData(DeviceData):
 
 
 class IrrigationData(DeviceData):
-    """Info about irrigation systems for a house.
+    """Info about any/all irrigation systems for a house.
     """
     def __init__(self):
         super(IrrigationData, self).__init__()
-        self.Systems = None
+        self.Systems = {}  # IrrigationSystemData()
 
 
 class IrrigationSystemData(DeviceData):
@@ -627,7 +641,8 @@ class IrrigationSystemData(DeviceData):
     def __init__(self):
         super(IrrigationSystemData, self).__init__()
         self.UsesMasterValve = False  # Master valve and/or Pump Relay
-        self.Zones = {}
+        self.FirstZone = 0
+        self.Zones = {}  # IrrigationZoneData()
 
 
 class IrrigationZoneData(DeviceData):

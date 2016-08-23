@@ -14,13 +14,13 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import ThermostatData
+# from Modules.Core.data_objects import ThermostatData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 
 LOG = Logger.getLogger('PyHouse.Hvac           ')

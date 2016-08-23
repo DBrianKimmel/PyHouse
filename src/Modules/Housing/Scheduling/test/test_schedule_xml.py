@@ -7,11 +7,11 @@
 @note:      Created on Sep 2, 2014
 @Summary:
 
-Passed all 13 tests - DBK - 2016-07-13
+Passed all 15 tests - DBK - 2016-08-20
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,9 +22,14 @@ from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0
-from Modules.Housing.Scheduling.test.xml_schedule import TESTING_SCHEDULE_NAME_0, TESTING_SCHEDULE_KEY_0, \
-    TESTING_SCHEDULE_MODE_0, TESTING_SCHEDULE_ACTIVE_0, TESTING_SCHEDULE_TYPE_0, TESTING_SCHEDULE_TIME_0, \
+from Modules.Housing.Lighting.test.xml_lights import TESTING_LIGHT_NAME_1
+from Modules.Housing.Scheduling.test.xml_schedule import \
+    TESTING_SCHEDULE_NAME_0, \
+    TESTING_SCHEDULE_KEY_0, \
+    TESTING_SCHEDULE_MODE_0, \
+    TESTING_SCHEDULE_ACTIVE_0, \
+    TESTING_SCHEDULE_TYPE_0, \
+    TESTING_SCHEDULE_TIME_0, \
     TESTING_SCHEDULE_DOW_0, \
     TESTING_SCHEDULE_NAME_1, \
     TESTING_SCHEDULE_NAME_2, \
@@ -32,10 +37,23 @@ from Modules.Housing.Scheduling.test.xml_schedule import TESTING_SCHEDULE_NAME_0
     TESTING_SCHEDULE_DOW_1, \
     TESTING_SCHEDULE_DOW_2, \
     TESTING_SCHEDULE_DOW_3, \
-    TESTING_SCHEDULE_UUID_0, TESTING_SCHEDULE_ROOM_NAME_0, TESTING_SCHEDULE_ROOM_UUID_0, TESTING_SCHEDULE_LIGHT_UUID_0, \
-    TESTING_SCHEDULE_LIGHT_NAME_0, TESTING_SCHEDULE_LEVEL_0, TESTING_SCHEDULE_RATE_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_ACTIVE, TESTING_HOUSE_KEY, \
+    TESTING_SCHEDULE_UUID_0, \
+    TESTING_SCHEDULE_ROOM_NAME_0, \
+    TESTING_SCHEDULE_ROOM_UUID_0, \
+    TESTING_SCHEDULE_LIGHT_UUID_0, \
+    TESTING_SCHEDULE_LIGHT_NAME_0, \
+    TESTING_SCHEDULE_LEVEL_0, \
+    TESTING_SCHEDULE_RATE_0, \
+    TESTING_SCHEDULE_NAME_4, \
+    TESTING_SCHEDULE_ROOM_NAME_1, \
+    TESTING_SCHEDULE_KEY_4, \
+    TESTING_SCHEDULE_ACTIVE_4, \
+    TESTING_SCHEDULE_DURATION_4
+# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Housing.test.xml_housing import \
+    TESTING_HOUSE_NAME, \
+    TESTING_HOUSE_ACTIVE, \
+    TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID
 
 
@@ -99,7 +117,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.schedule_sect
         l_len = len(l_xml)
         # print(PrettyFormatAny.form(l_xml, 'A2-2-A - Schedule Sect'))
-        self.assertEqual(l_len, 4)
+        self.assertEqual(l_len, 5)
 
     def test_3_Schedule(self):
         """ Test
@@ -125,46 +143,51 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = scheduleXml._read_one_base_schedule(self.m_xml.schedule)
         # print(PrettyFormatAny.form(l_obj, 'B1-1-A - OneBase'))
+        # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-1-B - OneBase'))
         self.assertEqual(l_obj.Name, TESTING_SCHEDULE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_SCHEDULE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_SCHEDULE_ACTIVE_0)
         self.assertEqual(l_obj.UUID, TESTING_SCHEDULE_UUID_0)
         #
         self.assertEqual(str(l_obj.DOW), TESTING_SCHEDULE_DOW_0)
-        self.assertEqual(l_obj.ScheduleType, TESTING_SCHEDULE_TYPE_0)
         self.assertEqual(l_obj.ScheduleMode, TESTING_SCHEDULE_MODE_0)
+        self.assertEqual(l_obj.ScheduleType, TESTING_SCHEDULE_TYPE_0)
         self.assertEqual(l_obj.Time, TESTING_SCHEDULE_TIME_0)
 
     def test_2_OneLight(self):
         l_obj = scheduleXml._read_one_lighting_schedule(self.m_xml.schedule)
         # print(PrettyFormatAny.form(l_obj, 'B1-2-A - One Light'))
-        self.assertEqual(l_obj.Name, TESTING_SCHEDULE_NAME_0)
-        self.assertEqual(str(l_obj.Key), TESTING_SCHEDULE_KEY_0)
-        self.assertEqual(str(l_obj.Active), TESTING_SCHEDULE_ACTIVE_0)
-        self.assertEqual(l_obj.UUID, TESTING_SCHEDULE_UUID_0)
-        #
+        # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-1-B - OneBase'))
         self.assertEqual(str(l_obj.Level), TESTING_SCHEDULE_LEVEL_0)
-        self.assertEqual(l_obj.LightName, TESTING_SCHEDULE_LIGHT_NAME_0)
+        self.assertEqual(str(l_obj.LightName), TESTING_SCHEDULE_LIGHT_NAME_0)
         self.assertEqual(l_obj.LightUUID, TESTING_SCHEDULE_LIGHT_UUID_0)
         self.assertEqual(str(l_obj.Rate), TESTING_SCHEDULE_RATE_0)
         self.assertEqual(l_obj.RoomName, TESTING_SCHEDULE_ROOM_NAME_0)
         self.assertEqual(l_obj.RoomUUID, TESTING_SCHEDULE_ROOM_UUID_0)
 
     def test_3_OneSchedule(self):
-        l_sched = scheduleXml._read_one_schedule(self.m_xml.schedule)
+        l_sched = scheduleXml._read_one_schedule(self.m_xml.schedule_sect[1])
         # print(PrettyFormatAny.form(l_sched, 'B1-3-A - One Schedule'))
-        self.assertEqual(l_sched.Name, 'Evening 1')
-        self.assertEqual(l_sched.LightName, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_sched.RoomName, TESTING_SCHEDULE_ROOM_NAME_0)
+        self.assertEqual(l_sched.Name, TESTING_SCHEDULE_NAME_1)
+        self.assertEqual(l_sched.LightName, TESTING_LIGHT_NAME_1)
+        self.assertEqual(l_sched.RoomName, TESTING_SCHEDULE_ROOM_NAME_1)
 
-    def test_4_AllSchedules(self):
+    def test_4_OneSchedule(self):
+        l_sched = scheduleXml._read_one_schedule(self.m_xml.schedule_sect[4])
+        # print(PrettyFormatAny.form(l_sched, 'B1-3-A - One Schedule'))
+        self.assertEqual(str(l_sched.Name), TESTING_SCHEDULE_NAME_4)
+        self.assertEqual(str(l_sched.Key), TESTING_SCHEDULE_KEY_4)
+        self.assertEqual(str(l_sched.Active), TESTING_SCHEDULE_ACTIVE_4)
+        self.assertEqual(str(l_sched.Duration), TESTING_SCHEDULE_DURATION_4)
+
+    def test_5_AllSchedules(self):
         l_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_schedules, 'B1-4-A - Schedules'))
         # print(PrettyFormatAny.form(l_schedules[0], 'Schedules'))
         # print(PrettyFormatAny.form(l_schedules[1], 'Schedules'))
         # print(PrettyFormatAny.form(l_schedules[2], 'Schedules'))
         # print(PrettyFormatAny.form(l_schedules[3], 'Schedules'))
-        self.assertEqual(len(l_schedules), 4)
+        self.assertEqual(len(l_schedules), 5)
 
 
 class B2_Write(SetupMixin, unittest.TestCase):
@@ -214,10 +237,16 @@ class B2_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'B2-3-A - One Schedule'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_SCHEDULE_NAME_0)
 
-    def test_4_AllSchedules(self):
+    def test_4_OneSchedule(self):
+        l_schedule = scheduleXml._read_one_schedule(self.m_xml.schedule_sect[4])
+        l_xml = scheduleXml._write_one_schedule(l_schedule)
+        # print(PrettyFormatAny.form(l_xml, 'B2-3-A - One Schedule'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_SCHEDULE_NAME_4)
+
+    def test_5_AllSchedules(self):
         l_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
         l_xml, l_count = scheduleXml.write_schedules_xml(l_schedules)
-        print(PrettyFormatAny.form(l_xml, 'B2-4-A - All Interfaces'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-4-A - All Interfaces'))
         self.assertEqual(l_count, len(l_schedules))
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_SCHEDULE_NAME_0)
         self.assertEqual(l_xml[0][1].text, TESTING_SCHEDULE_DOW_0)

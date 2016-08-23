@@ -12,11 +12,11 @@
 """
 from twisted.internet.error import ConnectionDone
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
-from twisted.internet import error
+# from twisted.internet import error
 # import eiscp
 
 #  Import PyMh files and modules.

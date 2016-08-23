@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 import os
@@ -71,16 +71,25 @@ class SchedulesElement(athena.LiveElement):
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
         l_obj.DOW = l_json['DOW']
-        # print('fetched DOW {}'.format(l_obj.DOW))
         l_obj.ScheduleMode = l_json['ScheduleMode']
         #
-        l_obj.Level = int(l_json['Level'])
-        l_obj.LightName = l_json['LightName']
-        l_obj.Rate = l_json['Rate']
-        l_obj.RoomName = l_json['RoomName']
+        if l_obj.ScheduleType == 'Lighting':
+            l_obj = self._save_light(l_obj, p_json)
+        elif l_obj.ScheduleType == 'Irrigation':
+            l_obj = self._save_irrigation(l_obj, p_json)
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.Schedules[l_schedule_ix] = l_obj
         self.m_pyhouse_obj.APIs.House.ScheduleAPI.RestartSchedule()
+
+    def _save_light(self, p_obj, p_json):
+        p_obj.Level = int(p_json['Level'])
+        p_obj.LightName = p_json['LightName']
+        p_obj.Rate = p_json['Rate']
+        p_obj.RoomName = p_json['RoomName']
+        return p_obj
+
+    def _save_irrigation(self, p_obj, p_jason):
+        p_obj.Duration = int(p_jason['Duration'])
 
 #  ## END DBK

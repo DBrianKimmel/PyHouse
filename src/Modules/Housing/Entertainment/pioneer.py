@@ -122,9 +122,10 @@ There is a tone of other commands you can use, I believe this manual for the VSX
 
 """
 
-__updated__ = '2016-08-01'
+__updated__ = '2016-08-04'
 
 PORT = 8102
+IP = '192.168.9.76'
 
 
 

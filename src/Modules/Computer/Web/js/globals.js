@@ -743,8 +743,8 @@ function buildLcarProtocolTypeSelectWidget(self, p_id, p_caption, p_checked) {
 function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleMode, p_checked);
 }
-function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked);
+function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked, /* optional */ p_optionHandler) {
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked, p_optionHandler);
 }
 function buildLcarThermostatTypeSelectWidget(self, p_id, p_caption, p_checked) {
 	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);

@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2016-07-06
 
 """
 
-__updated__ = '2016-07-06'
+__updated__ = '2016-08-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -35,9 +35,8 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_USERNAME_0, \
     TESTING_BROKER_PASSWORD_0, \
     TESTING_BROKER_USERNAME_1, \
-    TESTING_BROKER_PASSWORD_1
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from src.Modules.Computer.Mqtt.test.xml_mqtt import TESTING_BROKER_UUID_0
+    TESTING_BROKER_PASSWORD_1, TESTING_BROKER_UUID_0
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

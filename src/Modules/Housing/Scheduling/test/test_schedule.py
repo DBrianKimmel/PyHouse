@@ -11,7 +11,7 @@ Passed all 21 tests - DBK - 2016-07-04
 
 """
 
-__updated__ = '2016-07-13'
+__updated__ = '2016-08-21'
 
 # Import system type stuff
 import datetime
@@ -24,12 +24,12 @@ import time
 from Modules.Core.data_objects import RiseSetData
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Families.family import API as familyAPI
-from Modules.Scheduling.schedule_xml import Xml as scheduleXml
-from Modules.Scheduling.schedule import \
+from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
+from Modules.Housing.Scheduling.schedule import \
         SchedTime, ScheduleExecution, \
         API as scheduleAPI, \
         Utility as scheduleUtility
-from Modules.Scheduling.test.xml_schedule import \
+from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_NAME_0, \
     TESTING_SCHEDULE_NAME_1, \
     TESTING_SCHEDULE_NAME_2, \
@@ -377,8 +377,8 @@ class C2_List(SetupMixin, unittest.TestCase):
         SetupPyHouseObj().LoadHouse(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House 1'))
         l_delay = 1
-        l_list = [0, 1]
-        l_id = scheduleUtility.schedule_next_event(self.m_pyhouse_obj, l_delay)
+        _l_list = [0, 1]
+        _l_id = scheduleUtility.schedule_next_event(self.m_pyhouse_obj, l_delay)
         time.sleep(2 * l_delay)
         # l_id.cancel()
 

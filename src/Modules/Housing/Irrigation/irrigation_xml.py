@@ -13,6 +13,8 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 
 """
 
+__updated__ = '2016-08-18'
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 

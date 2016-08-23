@@ -59,6 +59,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			['Schedules',    'Scheduling',          'Schedules'       ],
 			['Levels',       'Lighting Control',    'ControlLighting' ],
 			['Thermo',       'Thermostat',          'Thermostat'      ],
+			['Irrigation',   'Irrigation   ',       'Irrigation'      ],
 			['Entertain',    'Entertainment',       'Entertain'       ]
 			];
 		return l_list;
@@ -111,6 +112,9 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			break;
 		case 'Thermo':
 			self.showWidget('Thermostat');
+			break;
+		case 'Irrigation':
+			self.showWidget('Irrigation');
 			break;
 		case 'Entertain':
 			self.showWidget('EntertainmentMenu');

@@ -1,8 +1,8 @@
 /**
- * @name:      PyHouse/src/Modules/Web/js/web.js
+ * @name:      PyHouse/src/Modules/Computer/Web/js/web.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on June 18, 2014
  * @summary:   Displays the Web element

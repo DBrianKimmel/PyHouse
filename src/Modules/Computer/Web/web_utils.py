@@ -65,11 +65,12 @@ class UtilJson(object):
     @staticmethod
     def _get_AllHouseObjs(p_pyhouse_obj):
         l_ret = UtilJson._getHouseBase(p_pyhouse_obj)
+        l_ret.Hvac = p_pyhouse_obj.House.Hvac
+        l_ret.Irrigation = p_pyhouse_obj.House.Irrigation
         l_ret.Lighting = UtilJson._get_Lighting(p_pyhouse_obj)
         l_ret.Location = p_pyhouse_obj.House.Location
         l_ret.Rooms = p_pyhouse_obj.House.Rooms
         l_ret.Schedules = p_pyhouse_obj.House.Schedules
-        l_ret.Hvac = p_pyhouse_obj.House.Hvac
         return l_ret
 
 

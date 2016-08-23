@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2016-07-06'
+__updated__ = '2016-08-21'
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -104,7 +104,7 @@ class Singleton:
         try:
             self.fh = open(LOCK_PATH, 'w')
             fcntl.lockf(self.fh, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except EnvironmentError as e_err:
+        except EnvironmentError:
             if self.fh is not None:
                 self.is_running = True
             else:

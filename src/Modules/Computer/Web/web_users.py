@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-21'
 
 # Import system type stuff
 import os
@@ -20,7 +20,7 @@ from nevow import athena
 from Modules.Computer.Web.web_utils import JsonUnicode
 from Modules.Core.data_objects import LoginData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.

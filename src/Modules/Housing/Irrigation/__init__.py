@@ -8,7 +8,9 @@ A system may be devided into zones.  Each zone can take a part or all of the wat
 Within a system, only one zone may be active at a time.
 """
 
-__version_info__ = (1, 6, 0)
+__updated__ = '2016-08-22'
+
+__version_info__ = (1, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

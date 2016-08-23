@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-07-18'
+__updated__ = '2016-08-21'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -48,6 +48,6 @@ class B01_Decode(SetupMixin, unittest.TestCase):
         self.m_obj._Message = MSG_53
         print(FormatBytes(self.m_obj._Message))
         print(PrettyFormatAny.form(self.m_obj._Message, 'Obj'))
-        l_ret = linkDecode.decode_53(self.m_obj)
+        _l_ret = linkDecode.decode_53(self.m_obj)
 
 # ## END DBK

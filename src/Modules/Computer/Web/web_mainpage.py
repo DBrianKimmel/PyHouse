@@ -41,7 +41,7 @@ mainpage.py - this is the place where everything is happening, the user will nev
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-22'
 
 #  Import system type stuff
 import gc
@@ -84,6 +84,7 @@ from Modules.Computer.Web import web_buttons
 from Modules.Computer.Web import web_controllers
 from Modules.Computer.Web import web_controlLights
 from Modules.Computer.Web import web_house
+from Modules.Computer.Web import web_irrigation
 from Modules.Computer.Web import web_lights
 from Modules.Computer.Web import web_rooms
 from Modules.Computer.Web import web_schedules
@@ -413,6 +414,13 @@ class Workspace(athena.LiveElement):
     def internet(self, p_params):
         #  LOG.info("Internet loaded into browser")
         l_element = web_internet.InternetElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def irrigation(self, p_params):
+        #  LOG.info("Internet loaded into browser")
+        l_element = web_irrigation.IrrigationElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

@@ -1,18 +1,18 @@
 /**
- * @name:      PyHouse/src/Modules/Computer/Web/js/schedules.js
+ * @name:      PyHouse/src/Modules/Computer/Web/js/irrigation.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
  * @copyright: (c) 2014-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Mar 11, 2014
- * @summary:   Displays the Schedule widget.
+ * @summary:   Displays the irrigation widget.
  *
  */
 
-helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
+helpers.Widget.subclass(irrigation, 'IrrigationWidget').methods(
 
 	function __init__(self, node) {
-		schedules.SchedulesWidget.upcall(self, '__init__', node);
+		irrigation.IrrigationWidget.upcall(self, '__init__', node);
 	},
 
 
@@ -20,7 +20,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	/**
      * Place the widget in the workspace.
 	 * 
-	 * @param self is    <"Instance" of undefined.schedules.SchedulesWidget>
+	 * @param self is    <"Instance" of undefined.irrigation.IrrigationWidget>
 	 * @returns a deferred
 	 */
 	function ready(self) {
@@ -38,40 +38,33 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		showSelectionButtons(self);
 		self.fetchDataFromServer();
 	},
-	// Build up the test to be shown within the schedule selection button.
+	// Build up the test to be shown within the irrigation selection button.
 	function buildButtonName(self, p_obj) {
 		var l_html = p_obj.Name;
-		l_html += '<br>' + p_obj.ScheduleType;
-		if (p_obj.ScheduleType == 'Lighting') {
-			l_html += '<br>' + p_obj.RoomName;
-			l_html += '<br>' + p_obj.LightName;
-		} else if (p_obj.ScheduleType == 'Irrigation') {
-			l_html += '<br>';
-		}
 		// l_html += '<br>' + p_obj.Level + '% ';
 		return l_html;
 	},
 
 // ============================================================================
-	// Build a screen full of buttons - One for each schedule plus some actions.
+	// Build a screen full of buttons - One for each irrigation plus some actions.
 	function buildLcarSelectScreen(self){
-		// Divmod.debug('---', 'schedules.buildLcarSelectScreen() was called.');
-		var l_button_html = buildLcarSelectionButtonsTable(globals.House.Schedules, 'handleMenuOnClick', self.buildButtonName);
-		var l_html = build_lcars_top('Schedules', 'lcars-salmon-color');
+		// Divmod.debug('---', 'irrigation.buildLcarSelectScreen() was called.');
+		var l_button_html = buildLcarSelectionButtonsTable(globals.House.irrigation, 'handleMenuOnClick', self.buildButtonName);
+		var l_html = build_lcars_top('irrigation', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(15, l_button_html);
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-	// This triggers getting the schedule data from the server.
+	// This triggers getting the irrigation data from the server.
 	function fetchDataFromServer(self) {
 		function cb_fetchDataFromServer(p_json) {
 			globals.House = JSON.parse(p_json);
 			self.buildLcarSelectScreen();
 		}
 		function eb_fetchDataFromServer(res) {
-			Divmod.debug('---', 'schedules.eb_fetchDataFromServer() was called.  ERROR: ' + res);
+			Divmod.debug('---', 'irrigation.eb_fetchDataFromServer() was called.  ERROR: ' + res);
 		}
-        var l_defer = self.callRemote("getHouseData");  // call server @ web_schedules.py
+        var l_defer = self.callRemote("getHouseData");  // call server @ web_irrigation.py
 		l_defer.addCallback(cb_fetchDataFromServer);
 		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
@@ -79,30 +72,30 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 
 // ============================================================================
 	/**
-	 * Event handler for schedule selection buttons.
+	 * Event handler for irrigation selection buttons.
 	 * 
-	 * The user can click on a schedule button, the "Add" button or the "Back" button.
+	 * The user can click on a irrigation button, the "Add" button or the "Back" button.
 	 * 
-	 * @param self is    <"Instance" of undefined.schedules.SchedulesWidget>
+	 * @param self is    <"Instance" of undefined.irrigation.IrrigationWidget>
 	 * @param p_node is  the node of the button that was clicked.
 	 */
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
 	    var l_obj;
-		globals.House.ScheduleIx = l_ix;
-		globals.House.ScheduleName = l_name;
+		globals.House.IrrigationIx = l_ix;
+		globals.House.IrrigationName = l_name;
 		globals.Add = false;
-		if (l_ix <= 1000) {  // One of the schedule buttons.
+		if (l_ix <= 1000) {  // One of the irrigation buttons.
 			showDataEntryScreen(self);
-			l_obj = globals.House.Schedules[l_ix];
-			globals.House.ScheduleObj = l_obj;
+			l_obj = globals.House.Irrigation[l_ix];
+			globals.House.IrrigationObj = l_obj;
 			globals.House.Self = self;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
 			l_obj = self.createEntry();
-			globals.House.ScheduleObj = l_obj;
+			globals.House.IrrigationObj = l_obj;
 			globals.House.Self = self;
 			globals.Add = true;
 			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
@@ -117,7 +110,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 * Build a screen full of data entry fields.
 	 */
 	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		Divmod.debug('---', 'schedules.buildLcarDataEntryScreen() was called.');
+		Divmod.debug('---', 'irrigation.buildLcarDataEntryScreen() was called.');
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
@@ -125,59 +118,59 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler) {
-		Divmod.debug('---', 'schedules.buildEntry() was called.');
+		Divmod.debug('---', 'irrigation.buildEntry() was called.');
 		var l_html = buildBaseEntry(self, p_obj, 'nouuid'); 
-		l_html = self.buildScheduleEntry(p_obj, l_html);
+		l_html = self.buildIrrigationEntry(p_obj, l_html);
 		l_html += buildLcarEntryButtons(p_handler, true);
 		return l_html;
 	},
-	function buildScheduleEntry(self, p_obj, p_html) {
-		Divmod.debug('---', 'schedules.buildScheduleEntry() was called.');
-		console.log("schedules.buildScheduleEntry   Object %O", p_obj);
-		p_html += buildLcarScheduleTypeSelectWidget(self, 'ScheduleType', 'Type', p_obj.ScheduleType, 'handleScheduleTypeChange');
-		p_html += buildLcarTextWidget(self, 'ScheduleTime', 'Time',  p_obj.Time);
-		p_html += buildLcarDowWidget(self, 'ScheduleDOW', 'Day of Week', p_obj.DOW);
-		p_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'ScheduleMode', p_obj.ScheduleMode);
+	function buildIrrigationEntry(self, p_obj, p_html) {
+		Divmod.debug('---', 'irrigation.buildIrrigationEntry() was called.');
+		console.log("irrigation.buildIrrigationEntry   Object %O", p_obj);
+		p_html += buildLcarIrrigationTypeSelectWidget(self, 'IrrigationType', 'Type', p_obj.IrrigationType, 'handleIrrigationTypeChange');
+		p_html += buildLcarTextWidget(self, 'IrrigationTime', 'Time',  p_obj.Time);
+		p_html += buildLcarDowWidget(self, 'IrrigationDOW', 'Day of Week', p_obj.DOW);
+		p_html += buildLcarIrrigationModeSelectWidget(self, 'IrrigationMode', 'IrrigationMode', p_obj.IrrigationMode);
 		
-		if (p_obj.ScheduleType === 'Lighting')
+		if (p_obj.IrrigationType === 'Lighting')
 			p_html += self.buildLightingEntry(p_obj, p_html)
-		else if (p_obj.ScheduleType === 'Irrigation')
+		else if (p_obj.IrrigationType === 'Irrigation')
 			p_html += self.buildIrrigationEntry(p_obj, p_html)
 		return p_html;
 	},
 	function buildIrrigationEntry(self, p_obj, p_html) {
-		Divmod.debug('---', 'schedules.buildIrigationEntry() was called.');
+		Divmod.debug('---', 'irrigation.buildIrigationEntry() was called.');
 		p_html += buildLcarTextWidget(self, 'Duration', 'Duration', p_obj.Duration);
 		return p_html;
 	},
 	function buildLightingEntry(self, p_obj, p_html) {
-		Divmod.debug('---', 'schedules.buildLightingEntry() was called.');
-		p_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', p_obj.RoomName);
-		p_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', p_obj.LightName);
-		p_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', p_obj.Level, 'handleSliderChange');
-		p_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);
+		Divmod.debug('---', 'irrigation.buildLightingEntry() was called.');
+		p_html += buildLcarRoomSelectWidget(self, 'IrrigationRoomName', 'Room Name', p_obj.RoomName);
+		p_html += buildLcarLightNameSelectWidget(self, 'IrrigationLightName', 'Light Name', p_obj.LightName);
+		p_html += buildLcarLevelSliderWidget(self, 'IrrigationLevel', 'Level', p_obj.Level, 'handleSliderChange');
+		p_html += buildLcarTextWidget(self, 'IrrigationRate', 'Rate', p_obj.Rate);
 		return p_html;
 	},
 	function handleSliderChange(p_event){
-		Divmod.debug('---', 'schedules.handleSliderChange() was called.  ');
-		var l_obj = globals.House.ScheduleObj;
+		Divmod.debug('---', 'irrigation.handleSliderChange() was called.  ');
+		var l_obj = globals.House.IrrigationObj;
 		var l_self = globals.House.Self;
-		var l_level = fetchSliderWidget(l_self, 'ScheduleLevel');
-		updateSliderBoxValue(l_self, 'ScheduleLevel', l_level);
+		var l_level = fetchSliderWidget(l_self, 'IrrigationLevel');
+		updateSliderBoxValue(l_self, 'IrrigationLevel', l_level);
 	},
-	function handleScheduleTypeChange(p_event){
-		// change form when schedule type changes
-		Divmod.debug('---', 'schedules.handleScheduleTypeChange() was called.  ');
-		var l_obj = globals.House.ScheduleObj;
+	function handleIrrigationTypeChange(p_event){
+		// change form when irrigation type changes
+		Divmod.debug('---', 'irrigation.handleIrrigationTypeChange() was called.  ');
+		var l_obj = globals.House.IrrigationObj;
 		var l_self = globals.House.Self;
-		l_obj.ScheduleType = fetchSelectWidget(l_self, 'ScheduleType');
+		l_obj.IrrigationType = fetchSelectWidget(l_self, 'IrrigationType');
 		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 	},
 
 
 // ============================================================================
 	/**
-	 * Fill in the schedule entry screen with all of the data for this schedule.
+	 * Fill in the irrigation entry screen with all of the data for this irrigation.
 	 */
 	function fillEntry(self, p_entry) {
 		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick');
@@ -185,30 +178,30 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 
 	function fetchEntry(self) {
 		var l_data = fetchBaseEntry(self);
-		l_data = self.fetchScheduleEntry(l_data);
+		l_data = self.fetchIrrigationEntry(l_data);
 		return l_data;
 	},
-	function fetchScheduleEntry(self, p_data) {
-        p_data.ScheduleType = fetchSelectWidget(self, 'ScheduleType');
-        p_data.Time = fetchTextWidget(self, 'ScheduleTime');
-        p_data.DOW = fetchDowWidget(self, 'ScheduleDOW');
-        p_data.ScheduleMode = fetchSelectWidget(self, 'ScheduleMode');
-        p_data.Level = fetchSliderWidget(self, 'ScheduleLevel');
-        p_data.Rate = fetchTextWidget(self, 'ScheduleRate');
-        p_data.RoomName = fetchSelectWidget(self, 'ScheduleRoomName');
-        p_data.LightName = fetchSelectWidget(self, 'ScheduleLightName');
+	function fetchIrrigationEntry(self, p_data) {
+        p_data.IrrigationType = fetchSelectWidget(self, 'IrrigationType');
+        p_data.Time = fetchTextWidget(self, 'IrrigationTime');
+        p_data.DOW = fetchDowWidget(self, 'IrrigationDOW');
+        p_data.IrrigationMode = fetchSelectWidget(self, 'IrrigationMode');
+        p_data.Level = fetchSliderWidget(self, 'IrrigationLevel');
+        p_data.Rate = fetchTextWidget(self, 'IrrigationRate');
+        p_data.RoomName = fetchSelectWidget(self, 'IrrigationRoomName');
+        p_data.LightName = fetchSelectWidget(self, 'IrrigationLightName');
 		return p_data
 	},
 	function createEntry(self) {
-		//Divmod.debug('---', 'schedules.createEntry() was called.);
+		//Divmod.debug('---', 'irrigation.createEntry() was called.);
         var l_data = {
 			Name : 'Change Me',
-			Key : Object.keys(globals.House.Schedules).length,
+			Key : Object.keys(globals.House.Irrigation).length,
 			Active : true,
-			ScheduleType : 'Lighting',
+			IrrigationType : 'Lighting',
 			Time : '',
 			DOW : 127,
-			ScheduleMode : 0,
+			IrrigationMode : 0,
 			Level : 0,
 			Rate : 0,
 			RoomName : '',
@@ -229,7 +222,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			self.startWidget();
 		}
 		function eb_handleDataEntryOnClick(res){
-			Divmod.debug('---', 'schedules.eb_handleDataEntryOnClick() was called. ERROR =' + res);
+			Divmod.debug('---', 'irrigation.eb_handleDataEntryOnClick() was called. ERROR =' + res);
 		}
 		var l_json;
 		var l_defer;
@@ -240,7 +233,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		switch(l_ix) {
 		case '10003':  // Change Button
 	    	l_json = JSON.stringify(l_obj);
-	        l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_schedule
+	        l_defer = self.callRemote("saveIrrigationData", l_json);  // @ web_irrigation
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
@@ -250,17 +243,17 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		case '10004':  // Delete button
 			l_obj.Delete = true;
 	    	l_json = JSON.stringify(l_obj);
-	        l_defer = self.callRemote("saveScheduleData", l_json);  // @ web_rooms
+	        l_defer = self.callRemote("saveIrrigationData", l_json);  // @ web_rooms
 			l_defer.addCallback(cb_handleDataEntryOnClick);
 			l_defer.addErrback(eb_handleDataEntryOnClick);
 			break;
 		default:
-			Divmod.debug('---', 'schedules.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);
+			Divmod.debug('---', 'irrigation.handleDataEntryOnClick(Default) was called. l_ix:' + l_ix);
 			break;
 		}
         return false;  // return false stops the resetting of the server.
 	}
 );
-// Divmod.debug('---', 'schedules.handleDataEntryOnClick(Back) was called.  ');
-// console.log("schedules.fetchDataFromServer.cb_fetchDataFromServer   p1 %O", p_json);
+// Divmod.debug('---', 'irrigation.handleDataEntryOnClick(Back) was called.  ');
+// console.log("irrigation.fetchDataFromServer.cb_fetchDataFromServer   p1 %O", p_json);
 // ### END DBK

@@ -12,13 +12,13 @@ Depending on node type, start up entertainment systems.
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-08-21'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Housing.Entertainment.onkyo import API as onkyoApi
+# from Modules.Housing.Entertainment.onkyo import API as onkyoApi
 from Modules.Housing.Entertainment.samsung import API as samsungApi
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger

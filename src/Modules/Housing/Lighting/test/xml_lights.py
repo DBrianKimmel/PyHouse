@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-08-20'
 
 # Import system type stuff
 
@@ -39,7 +39,7 @@ TESTING_LIGHT_ROOM_Y = '4.56'
 TESTING_LIGHT_ROOM_Z = '7.89'
 # TESTING_LIGHT_ROOM_COORDS = '[' + TESTING_LIGHT_ROOM_X + ', ' + TESTING_LIGHT_ROOM_Y + ', ' + TESTING_LIGHT_ROOM_Z + ']'
 TESTING_LIGHT_ROOM_COORDS_0 = '[1.23,4.56,7.89]'
-TESTING_LIGHT_ROOM_NAME_0 = 'Master Bath'
+TESTING_LIGHT_ROOM_NAME_0 = 'Master Bath (xml_lights)'
 TESTING_LIGHT_ROOM_UUID_0 = 'Light...-Room-0000-0000-Room.8b6eb6f'
 TESTING_LIGHT_TYPE_0 = 'Light'
 
