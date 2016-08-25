@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-22'
+__updated__ = '2016-08-23'
 
 
 # Import system type stuff
@@ -20,7 +20,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import InternetConnectionData
+from Modules.Core.data_objects import IrrigationData
 from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logging
 
@@ -51,19 +51,16 @@ class IrrigationElement(athena.LiveElement):
         """Internet data is returned, so update the computer info.
         """
         l_json = JsonUnicode().decode_json(p_json)
-        l_dyndns_ix = int(l_json['Key'])
+        l_ix = int(l_json['Key'])
+        l_system = l_json['Name']
         try:
-            l_obj = self.m_pyhouse_obj.Computer.InternetConnection
+            l_obj = self.m_pyhouse_obj.House.Irrigation[l_ix]
         except KeyError:
-            l_obj = InternetConnectionData()
+            l_obj = IrrigationData()
             l_obj.DynDns = {}
         l_obj.Name = l_json['Name']
         l_obj.Key = 0
         l_obj.Active = True
-        # l_obj.ExternalDelay = l_json['ExternalDelay']
-        l_obj.DynDns[l_dyndns_ix].Name = l_json['Name']
-        l_obj.DynDns[l_dyndns_ix].Key = l_dyndns_ix
-        l_obj.DynDns[l_dyndns_ix].Active = l_json['Active']
-        self.m_pyhouse_obj.Computer.InternetConnection = l_obj
+        self.m_pyhouse_obj.House.Irrigation[l_ix] = l_obj
 
 # ## END DBK

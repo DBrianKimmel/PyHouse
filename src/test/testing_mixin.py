@@ -70,7 +70,8 @@ class XmlData(object):
         self.location_sect = None
         self.location = None
         self.irrigation_sect = None
-        self.irrigation = None
+        self.irrigation_system = None
+        self.irrigation_zone = None
         self.pool_sect = None
         self.pool = None
         self.room_sect = None

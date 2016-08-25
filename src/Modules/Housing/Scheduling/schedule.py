@@ -41,22 +41,19 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-08-25'
 
 #  Import system type stuff
 import datetime
 import dateutil.parser as dparser
-# import twisted
 
 #  Import PyMh files
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Housing.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
-from Modules.Computer import logging_pyh as Logger
 from Modules.Housing.Scheduling import sunrisesunset
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule       ')
 SECONDS_IN_MINUTE = 60
 SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  # 3600
@@ -64,9 +61,6 @@ SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  # 86400
 SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
-
-
-# twisted.internet.base.DelayedCall.debug = True
 
 
 class RiseSet(object):
@@ -233,7 +227,7 @@ class Utility(object):
         l_riseset = RiseSet()
         l_riseset.SunRise = l_sunrise
         l_riseset.SunSet = l_sunset
-        #  node_mqtt.API().doPublishMessage(p_pyhouse_obj.Computer.Mqtt, "pyhouse/schedule/sunrise", l_sunrise)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('sunrise_set', p_pyhouse_obj.House.Location.RiseSet)
         return l_riseset
 
     @staticmethod

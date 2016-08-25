@@ -2,12 +2,17 @@
 @name:      PyHouse/src/Modules/irrigation/test/test_irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2016 by briank
 @license:   MIT License
 @note:      Created on Jul 4, 2014
 @Summary:
 
+Passed all 1 tests - DBK - 2016-08-24
+
 """
+
+__updated__ = '2016-08-24'
+
 # Import system type stuff
 # import xml.etree.ElementTree as ET
 from twisted.trial import unittest

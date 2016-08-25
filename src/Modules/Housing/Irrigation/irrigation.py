@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-08-24'
 
 #  Import system type stuff
 
@@ -51,7 +51,7 @@ class API(Utility):
         return l_obj
 
     def Start(self):
-        pass
+        LOG.info('Started Irrigation')
 
     def SaveXml(self, p_xml):
         (l_xml, l_count) = irrigationXml.write_irrigation_xml(self.m_pyhouse_obj.House.Irrigation)
@@ -60,6 +60,6 @@ class API(Utility):
         return p_xml
 
     def Stop(self):
-        pass
+        LOG.info('Stopped Irrigation')
 
 #  ## END DBK

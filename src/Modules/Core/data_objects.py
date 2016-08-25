@@ -16,9 +16,9 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__version_info__ = (1, 7, 1)
+__version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-08-22'
+__updated__ = '2016-08-24'
 
 
 class PyHouseData(object):
@@ -645,12 +645,19 @@ class IrrigationSystemData(DeviceData):
         self.Zones = {}  # IrrigationZoneData()
 
 
-class IrrigationZoneData(DeviceData):
+class IrrigationZoneData(object):
     """Info about an irrigation zone
     """
     def __init__(self):
-        super(IrrigationZoneData, self).__init__()
+        # super(IrrigationZoneData, self).__init__()
+        self.Name = 'Default zone'
+        self.Key = 0
+        self.Rate = 0  # litres per Minute
         self.Duration = 0  # On time in seconds
+        self.Next = 0
+        self.Previous = -1
+        self.EmitterCount = 1
+        self.EmitterType = 'Rotor'
 
 
 class ThermostatData(DeviceData):

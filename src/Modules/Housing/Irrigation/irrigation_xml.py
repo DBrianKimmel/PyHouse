@@ -13,7 +13,7 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 
 """
 
-__updated__ = '2016-08-18'
+__updated__ = '2016-08-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -41,11 +41,33 @@ class Xml(object):
         @return: an IrrigationZone object filled in with data from the XML passed in
         """
         l_obj = IrrigationZoneData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+        XmlConfigTools.read_base_object_xml(l_obj, p_xml)  # Name, Key, Active
         l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_obj.Duration = PutGetXML.get_int_from_xml(p_xml, 'Duration', 0)
+        l_obj.EmitterCount = PutGetXML.get_int_from_xml(p_xml, 'EmitterCount', 0)
+        l_obj.EmitterType = PutGetXML.get_text_from_xml(p_xml, 'EmitterType')
+        l_obj.Next = PutGetXML.get_int_from_xml(p_xml, 'NextZone', 0)
+        l_obj.Previous = PutGetXML.get_int_from_xml(p_xml, 'PrevZone', 0)
+        l_obj.Rate = PutGetXML.get_int_from_xml(p_xml, 'Rate', 0)
         #  Expand with much more control data
         return l_obj
+
+    @staticmethod
+    def _write_one_zone(p_obj):
+        """
+        @param p_obj: is one zone object
+        @return the XML for one Zone
+        """
+        l_xml = XmlConfigTools.write_base_object_xml('Zone', p_obj)
+        PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
+        PutGetXML.put_int_element(l_xml, 'Duration', p_obj.Duration)
+        PutGetXML.put_int_element(l_xml, 'EmitterCount', p_obj.EmitterCount)
+        PutGetXML.put_int_element(l_xml, 'EmitterType', p_obj.EmitterType)
+        PutGetXML.put_int_element(l_xml, 'NextZone', p_obj.Next)
+        PutGetXML.put_int_element(l_xml, 'PrevZone', p_obj.Previous)
+        PutGetXML.put_int_element(l_xml, 'Rate', p_obj.Rate)
+        return l_xml
+
 
     @staticmethod
     def _read_one_irrigation_system(p_xml):
@@ -98,17 +120,6 @@ class Xml(object):
         return l_obj
 
 
-
-    @staticmethod
-    def _write_one_zone(p_obj):
-        """
-        @param p_obj: is one zone object
-        @return the XML for one Zone
-        """
-        l_xml = XmlConfigTools.write_base_object_xml('Zone', p_obj)
-        PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
-        PutGetXML.put_int_element(l_xml, 'Duration', p_obj.Duration)
-        return l_xml
 
     @staticmethod
     def _write_one_system(p_obj):
