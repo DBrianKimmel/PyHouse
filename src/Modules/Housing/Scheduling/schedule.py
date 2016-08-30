@@ -41,7 +41,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2016-08-25'
+__updated__ = '2016-08-29'
 
 #  Import system type stuff
 import datetime
@@ -98,7 +98,6 @@ class SchedTime(object):
         l_now_day = p_now.weekday()
         l_day = 2 ** l_now_day
         l_is_in_dow = (l_dow & l_day) != 0
-        #  print("A ", l_dow, l_now_day, l_day, l_is_in_dow)
         if l_is_in_dow:
             return 0
         l_days = 1
@@ -106,7 +105,6 @@ class SchedTime(object):
             l_now_day = (l_now_day + 1) % 7
             l_day = 2 ** l_now_day
             l_is_in_dow = (l_dow & l_day) != 0
-            #  print("B ", l_dow, l_now_day, l_day, l_is_in_dow)
             if l_is_in_dow:
                 return l_days
             l_days += 1
@@ -114,7 +112,7 @@ class SchedTime(object):
 
     @staticmethod
     def _extract_schedule_time(p_schedule_obj, p_rise_set):
-        """Find the number of minutes from midnight until the schedule time for action.
+        """ Find the number of minutes from midnight until the schedule time for action.
         @return: the number of minutes
         """
         l_timefield = p_schedule_obj.Time.lower()
@@ -143,16 +141,16 @@ class SchedTime(object):
 
     @staticmethod
     def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
-        """Compute the seconds to go from now to the next scheduled time.
+        """ Compute the seconds to go from now to the next scheduled time.
         @param p_pyhouse_obj: Not used yet
         @param p_schedule_obj: is the schedule object we are working on.
-        @param p_now: is the datetime for now
-        @param p_rise_set: is the sunrise/sunset structure
+        @param p_now: is the datetime for now.
+        @param p_rise_set: is the sunrise/sunset structure.
+        @return: The number of seconds from now to the scheduled time.
         """
         l_dow_mins = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
         l_sched_mins = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
         l_sched_secs = 60 * (l_dow_mins + l_sched_mins)
-        #  print(l_dow, l_minutes, l_seconds)
         l_now_secs = Utility.to_mins(p_now) * 60
         l_seconds = l_sched_secs - l_now_secs
         if l_seconds < 0:
@@ -221,13 +219,9 @@ class Utility(object):
 
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):
-        l_sunrise = p_pyhouse_obj.House.Location.RiseSet.SunRise
-        l_sunset = p_pyhouse_obj.House.Location.RiseSet.SunSet
-        LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_sunrise, l_sunset))
-        l_riseset = RiseSet()
-        l_riseset.SunRise = l_sunrise
-        l_riseset.SunSet = l_sunset
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('sunrise_set', p_pyhouse_obj.House.Location.RiseSet)
+        l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
+        LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('schedule/sunrise_set', l_riseset)
         return l_riseset
 
     @staticmethod

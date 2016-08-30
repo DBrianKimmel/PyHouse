@@ -10,7 +10,7 @@
 Passed all 17 tests - DBK - 2016-07-14
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-28'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -22,7 +22,8 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_TYPE, \
         TESTING_DEVICE_SUBTYPE, \
-        TESTING_DEVICE_ROOM_NAME, TESTING_DEVICE_ROOM_UUID, TESTING_DEVICE_UUID
+        TESTING_DEVICE_ROOM_NAME, \
+        TESTING_DEVICE_ROOM_UUID
 from Modules.Drivers.Serial.test.xml_serial import \
         TESTING_SERIAL_BAUD_RATE, \
         TESTING_SERIAL_BYTE_SIZE, \

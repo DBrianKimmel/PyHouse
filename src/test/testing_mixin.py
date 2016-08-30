@@ -29,8 +29,7 @@ from Modules.Core.data_objects import \
             LocationData, \
             TwistedInformation, \
             XmlInformation, \
-            LightingData, \
-            UuidData
+            LightingData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.house import Xml as housingXML

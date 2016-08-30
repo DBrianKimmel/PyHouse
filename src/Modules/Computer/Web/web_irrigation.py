@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-23'
+__updated__ = '2016-08-28'
 
 
 # Import system type stuff
@@ -52,7 +52,7 @@ class IrrigationElement(athena.LiveElement):
         """
         l_json = JsonUnicode().decode_json(p_json)
         l_ix = int(l_json['Key'])
-        l_system = l_json['Name']
+        _l_system = l_json['Name']
         try:
             l_obj = self.m_pyhouse_obj.House.Irrigation[l_ix]
         except KeyError:

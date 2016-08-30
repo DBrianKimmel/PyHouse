@@ -14,7 +14,7 @@ from Modules.Housing.Irrigation.test.xml_irrigation import TESTING_IRRIGATION_ZO
     TESTING_IRRIGATION_SYSTEM_NAME_0, TESTING_IRRIGATION_ZONE_KEY_0_0, TESTING_IRRIGATION_ZONE_ACTIVE_0_0, \
     TESTING_IRRIGATION_ZONE_COMMENT_0_0, TESTING_IRRIGATION_ZONE_DURATION_0_0
 
-__updated__ = '2016-08-24'
+__updated__ = '2016-08-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -85,7 +85,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_03_Irrigation(self):
         """
         """
-        l_xml = self.m_xml.irrigation_sect
+        _l_xml = self.m_xml.irrigation_sect
         l_obj = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(l_obj, 'B1-03-A - Irrigation'))
         self.assertEqual(len(l_obj), 3)

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-08-28'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -276,7 +276,7 @@ class PutGetXML(object):
             l_ret.X_Easting = _get_float(l_field[0])
             l_ret.Y_Northing = _get_float(l_field[1])
             l_ret.Z_Height = _get_float(l_field[2])
-        except Exception as e_err:
+        except Exception as _e_err:
             l_ret.X_Easting = 0.0
             l_ret.Y_Northing = 0.0
             l_ret.Z_Height = 0.0
