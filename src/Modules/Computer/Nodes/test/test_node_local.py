@@ -7,11 +7,11 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 22 tests - DBK - 2016-07-23
+Passed all 22 tests - DBK - 2016-08-30
 
 """
 
-__updated__ = '2016-07-24'
+__updated__ = '2016-08-30'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,7 +27,7 @@ from Modules.Computer.Nodes.node_local import \
     Util as localUtil
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 AF_INET = 2
@@ -111,7 +111,7 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
         l_gate = Interfaces._list_gateways()
         # print(PrettyFormatAny.form(l_gate, 'A3-02-A - Gateways', 100))
         l_v4 = l_gate[2]
-        self.assertEqual(l_v4[0][0], '192.168.2.1')
+        self.assertEqual(l_v4[0][0], '192.168.9.1')
 
     def test_03_ListInterfaces(self):
         """ Check the interfaces in this computer
@@ -209,7 +209,7 @@ class B2_Node(SetupMixin, unittest.TestCase):
         """
         l_node = localUtil(self.m_pyhouse_obj).create_local_node()
         # print(PrettyFormatAny.form(l_node, 'B2-01-A - Node'))
-        self.assertEqual(l_node.Name, 'BriankLaptop')
+        self.assertEqual(l_node.Name, 'briank-Laptop-3')
         self.assertEqual(l_node.Key, 0)
         self.assertEqual(l_node.Active, True)
 

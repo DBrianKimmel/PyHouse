@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-08-24'
+__updated__ = '2016-08-31'
 
 
 class PyHouseData(object):
@@ -28,15 +28,30 @@ class PyHouseData(object):
     The master object, contains all other 'configuration' objects.
 
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
+
+    The APIs are kept seperate as they should not be a part of the data sent to the browser.
     """
     def __init__(self):
         self.APIs = None  # PyHouseAPIs()
         self.Computer = None  # ComputerInformation()
         self.House = None  # HouseInformation()
-        self.Services = None  # CoreServicesInformation()
         self.Twisted = None  # TwistedInformation()
         self.Uuids = None  # UuidData()
         self.Xml = None  # XmlInformation()
+
+
+class PyHouseAPIs(object):
+    """
+    ==> PyHouse.APIs
+
+    Most of these have a single entry.
+    """
+
+    def __init__(self):
+        self.Computer = None  # ComputerAPIs()
+        self.House = None  # HouseAPIs()
+        self.CoreSetupAPI = None
+        self.PyHouseMainAPI = None
 
 
 class BaseObject(object):
@@ -99,19 +114,6 @@ class CommunicationData(object):
     def __init__(self):
         self.Email = None  # EmailData()
         self.Twitter = None  # TwitterData()
-
-
-class CoreServicesInformation(object):
-    """Various twisted services in PyHouse
-    """
-    def __init__(self):
-        self.NodeDiscoveryService = None
-        self.NodeDomainService = None
-        self.InterNodeComm = None
-        self.InternetDiscoveryService = None
-        self.InternetUpdateService = None
-        self.IrControlService = None
-        self.WebServerService = None
 
 
 class EmailData(object):
@@ -243,20 +245,6 @@ class NullControllerData(object):
     """
     def __init__(self):
         self.InterfaceType = 'Null'
-
-
-class PyHouseAPIs(object):
-    """
-    ==> PyHouse.APIs
-
-    Most of these have a single entry.
-    """
-
-    def __init__(self):
-        self.Computer = None  # ComputerAPIs()
-        self.House = None  # HouseAPIs()
-        self.CoreSetupAPI = None
-        self.PyHouseMainAPI = None
 
 
 class RiseSetData(object):

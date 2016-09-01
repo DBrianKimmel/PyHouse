@@ -9,11 +9,11 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-01'
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
-from Modules.Computer.Nodes.node_sync import API as syncAPI
+# from Modules.Computer.computer import MqttActions as computerMqtt
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.rooms import Rooms
 
@@ -44,36 +44,6 @@ class Actions(object):
         l_node.ControllerTypes = self._get_field(p_message, 'ControllerTypes')
         l_node.NodeId = self._get_field(p_message, 'NodeId')
         l_node.NodeRole = self._get_field(p_message, 'NodeRole')
-
-    def _decode_computer(self, p_logmsg, p_topic, p_message):
-        p_logmsg += '\tComputer:\n'
-        #  computer/browser/***
-        if p_topic[1] == 'browser':
-            l_name = 'unknown'
-            p_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        #  computer/ip
-        elif p_topic[1] == 'ip':
-            l_ip = self._get_field(p_message, 'ExternalIPv4Address')
-            p_logmsg += '\tIPv4: {}'.format(l_ip)
-        #  computer/startup
-        elif p_topic[1] == 'startup':
-            self._extract_node(p_message)
-            p_logmsg += '\tStartup {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-            if self.m_myname == self.m_sender:
-                p_logmsg += '\tMy own startup of PyHouse\n'
-            else:
-                p_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
-        #  computer/shutdown
-        elif p_topic[1] == 'shutdown':
-            del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
-            p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        #  computer/node/???
-        elif p_topic[1] == 'node':
-            p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
-        #  computer/***
-        else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        return p_logmsg
 
     def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'
@@ -127,9 +97,9 @@ class Actions(object):
         l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
         l_logmsg += '\tSender: {}\n'.format(self.m_sender)
         if p_topic[0] == 'computer':
-            l_logmsg = self._decode_computer(l_logmsg, p_topic, p_message)
+            l_logmsg = self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'entertainment':
-            l_logmsg = entertainmentMqtt(self.m_pyhouse_obj).decode_entertainment(l_logmsg, p_topic, p_message)
+            l_logmsg = entertainmentMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'hvac':
             l_logmsg = self._decode_hvac(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'lighting':

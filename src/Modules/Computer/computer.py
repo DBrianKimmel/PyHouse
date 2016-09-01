@@ -27,9 +27,8 @@ PyHouse.Computer.
             Web
 
 """
-from Modules.Utilities import uuid_tools
 
-__updated__ = '2016-07-23'
+__updated__ = '2016-09-01'
 
 #  Import system type stuff
 import platform
@@ -41,10 +40,13 @@ from Modules.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
+from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
 from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Utilities import uuid_tools
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
 COMPUTER_DIVISION = 'ComputerDivision'
@@ -64,6 +66,44 @@ class UuidFile(object):
 
     def write_uuid_file(self):
         pass
+
+
+class MqttActions(object):
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tComputer:\n'
+        #  computer/browser/***
+        if p_topic[1] == 'browser':
+            _l_name = 'unknown'
+            p_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        #  computer/ip
+        elif p_topic[1] == 'ip':
+            l_ip = self._get_field(p_message, 'ExternalIPv4Address')
+            p_logmsg += '\tIPv4: {}'.format(l_ip)
+        #  computer/startup
+        elif p_topic[1] == 'startup':
+            self._extract_node(p_message)
+            p_logmsg += '\tStartup {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+            if self.m_myname == self.m_sender:
+                p_logmsg += '\tMy own startup of PyHouse\n'
+            else:
+                p_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
+        #  computer/shutdown
+        elif p_topic[1] == 'shutdown':
+            del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
+            p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        #  computer/node/???
+        elif p_topic[1] == 'node':
+            p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
+        #  computer/***
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        return p_logmsg
 
 
 class Xml(object):
@@ -214,5 +254,8 @@ class API(Utility):
         """
         Utility._stop_component_apis(self.m_pyhouse_obj)
         LOG.info("Stopped.")
+
+    def DecodeMqtt(self, p_logmsg, p_topic, p_message):
+        MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
 
 # ## END DBK

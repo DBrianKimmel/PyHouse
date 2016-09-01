@@ -22,7 +22,7 @@ Name    |  Code   |  Name   |  Action |  Name   |
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-31'
 
 #  Import system type stuff
 from twisted.application.internet import StreamServerEndpointService
@@ -138,9 +138,9 @@ class Utility(LircConnection):
         l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
-        p_pyhouse_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
-        p_pyhouse_obj.Services.IrControlService.setName('IrControl')
-        p_pyhouse_obj.Services.IrControlService.setServiceParent(p_pyhouse_obj.Twisted.Application)
+        # p_pyhouse_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)
+        # p_pyhouse_obj.Services.IrControlService.setName('IrControl')
+        # p_pyhouse_obj.Services.IrControlService.setServiceParent(p_pyhouse_obj.Twisted.Application)
 
 
 class API(Utility):

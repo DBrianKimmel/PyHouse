@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-09-01'
 
 #  Import system type stuff
 import copy
@@ -165,7 +165,7 @@ class API(Util):
     def SaveXml(self, p_xml):
         l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt.Brokers)
         p_xml.append(l_xml)
-        LOG.info("Saved Mqtt XML.")
+        # LOG.info("Saved Mqtt XML.")
         return p_xml
 
     def Stop(self):

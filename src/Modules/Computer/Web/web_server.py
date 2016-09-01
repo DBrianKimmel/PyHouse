@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-08-31'
 
 #  Import system type stuff
 import ssl
@@ -105,7 +105,6 @@ class API(Utility):
         pass
 
     def Stop(self):
-        self.m_pyhouse_obj.Services.WebServerService.stopService()
         LOG.info('Stopped.')
 
 #  ## END DBK

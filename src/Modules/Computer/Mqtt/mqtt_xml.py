@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-07-06'
+__updated__ = '2016-09-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -104,7 +104,7 @@ class Xml(object):
         except AttributeError as e_err:
             LOG.error('Writing MQTT XML {}'.format(e_err))
             return l_xml
-        LOG.info('Wrote {} Mqyy XML entries'.format(l_count))
+        LOG.info('Wrote {} Mqtt XML entries'.format(l_count))
         return l_xml
 
 #  ## END DBK

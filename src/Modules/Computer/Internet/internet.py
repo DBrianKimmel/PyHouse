@@ -53,19 +53,6 @@ class Utility(object):
         pass
 
 
-    def _create_internet_discovery_service(self, p_pyhouse_obj):
-        """
-        Create the twisted service for Internet discovery.
-        """
-        #  try:
-        #    p_pyhouse_obj.Services.InternetDiscoveryService = service.Service()
-        #    p_pyhouse_obj.Services.InternetDiscoveryService.setName('NodeDiscovery')
-        #    p_pyhouse_obj.Services.InternetDiscoveryService.setServiceParent(p_pyhouse_obj.Twisted.Application)
-        #  RuntimeError:  # The service is already installed
-        #    LOG.warning('Internet Discovery Service already loaded.')
-        self.m_service_installed = True
-
-
     def _internet_loop(self, p_pyhouse_obj):
         API.FindExternalIp(p_pyhouse_obj)
         API.UpdateDynDnsSites(p_pyhouse_obj)
@@ -97,7 +84,6 @@ class API(Utility):
         """
         Start async operation of the Internet module.
         """
-        self._create_internet_discovery_service(self.m_pyhouse_obj)
         self._start_internet_discovery(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._internet_loop, self.m_pyhouse_obj)
         LOG.info("Started.")

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-08-30'
 
 #  Import system type stuff
 import datetime
@@ -26,6 +26,7 @@ MINUTES = 60
 HOURS = MINUTES * 60
 INITIAL_DELAY = 15
 REPEAT_DELAY = 4 * HOURS
+TOPIC = 'computer/node/'
 
 
 class Util(object):
@@ -34,7 +35,7 @@ class Util(object):
 
     @staticmethod
     def send_who_is_there(p_pyhouse_obj):
-        l_topic = "computer/node/whoisthere"
+        l_topic = TOPIC + "whoisthere"
         l_uuid = p_pyhouse_obj.Computer.UUID
         try:
             l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
