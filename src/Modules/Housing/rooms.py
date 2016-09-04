@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-09-04'
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 import datetime
@@ -144,9 +146,10 @@ class Maint(object):
             if l_val.UUID == p_room_obj.UUID:
                 LOG.info('Updating room {}'.format(p_room_obj.Name))
                 l_rooms[l_key] = l_val
-                l_rooms[l_key].LastUpda = datetime.datetime.now()
-                return
+                l_rooms[l_key].LastUpdate = datetime.datetime.now()
+                return l_rooms
 
+        LOG.info('Adding room {}'.format(p_room_obj.Name))
         if Rooms(p_pyhouse_obj).find_room_uuid(p_pyhouse_obj, p_room_obj.UUID) is None and p_room_obj._DeleteFlag:
             pass
         l_msg = 'Adding room {} {}'.format(p_room_obj.Name, p_room_obj.Key)
@@ -156,7 +159,7 @@ class Maint(object):
         print l_msg
         LOG.info(l_msg)
         p_pyhouse_obj.House.Rooms = l_rooms
-        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/add", l_obj)
+        Mqtt().send_message(p_pyhouse_obj, "add", p_room_obj)
         return l_rooms
 
     @staticmethod
@@ -166,16 +169,14 @@ class Maint(object):
             del p_pyhouse_obj.House.Rooms[l_room_ix]
         except AttributeError:
             LOG.error("web_rooms - Failed to delete - JSON: {}".format(p_room_obj.Name))
-        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("room/delete", p_json)
+        Mqtt().send_message(p_pyhouse_obj, "delete", p_room_obj)
         return
 
-    def sync_room(self, p_pyhouse_obj, p_room_obj):
+    def XXXsync_room(self, p_pyhouse_obj, p_room_obj):
         """ This can get to be a problem.
-        A node uses its own UUID for a room created on that node.
-        Room names might be slightly different on different nodes (Living Room vs Livingroom)
-        We need to get to a single UUID to identify a room somehow.
         """
-        pass
+        for l_room_object in p_room_obj.itervalues():
+            pass
 
 
 class Mqtt(object):
@@ -207,7 +208,7 @@ class Mqtt(object):
                 room/update - to add or modify a room
         """
         l_json = encode_json(p_room_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(p_topic, l_json)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('house/room/' + p_topic, l_json)
 
 
 class Sync(object):

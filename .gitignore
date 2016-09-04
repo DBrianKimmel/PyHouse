@@ -2,18 +2,18 @@
 *.py[cod]
 
 # Project
-build
 .buildpath
 .directory
-dist
-minimal
 .project
 .pydevproject
 .settings
-.SaveConfig/
-src/Android
-src/Certificates
-src/PyHouse.egg-info
-src/lock
+.SaveConfig
+Android
+Certificates
+PyHouse.egg-info
+lock
+build
+dist
+minimal
 
 ### END DBK

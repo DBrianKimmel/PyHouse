@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-08-31'
+__updated__ = '2016-09-04'
 
 
 class PyHouseData(object):
@@ -153,10 +153,9 @@ class HouseAPIs(object):
 ==> PyHouse.APIs.House
     """
     def __init__(self):
-        self.HouseAPI = None
-        #
         self.EntertainmentAPI = None
         self.FamilyAPI = None
+        self.HouseAPI = None
         self.HvacAPI = None
         self.IrrigationAPI = None
         self.LightingAPI = None

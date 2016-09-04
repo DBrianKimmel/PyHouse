@@ -9,13 +9,13 @@
 
 """
 
-__updated__ = '2016-09-01'
+__updated__ = '2016-09-04'
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
 # from Modules.Computer.computer import MqttActions as computerMqtt
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
-from Modules.Housing.rooms import Rooms
+# from Modules.Housing.rooms import Rooms
 
 
 class Actions(object):
@@ -104,8 +104,8 @@ class Actions(object):
             l_logmsg = self._decode_hvac(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'lighting':
             l_logmsg = self._decode_lighting(l_logmsg, p_topic, p_message)
-        elif p_topic[0] == 'room':
-            l_logmsg = Rooms(self.m_pyhouse_obj)._decode_room(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'house':
+            l_logmsg = self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
             l_logmsg = self._decode_schedule(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'weather':

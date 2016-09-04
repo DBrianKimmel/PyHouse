@@ -9,7 +9,10 @@
 
 """
 
+__updated__ = "2016-09-04"
+
 import datetime
+
 
 L_ROOM_SECTION_START = '  <RoomSection>'
 L_ROOM_SECTION_END = '  </RoomSection>'

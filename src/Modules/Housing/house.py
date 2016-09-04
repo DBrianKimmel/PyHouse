@@ -27,8 +27,9 @@ PyHouse.House.
               Schedules
 
 """
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-04'
 
 #  Import system type stuff
 
@@ -38,7 +39,7 @@ from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.location import Xml as locationXML
-from Modules.Housing.rooms import Xml as roomsXML
+from Modules.Housing.rooms import Xml as roomsXML, Mqtt as roomsMqtt
 from Modules.Housing.Hvac.hvac import API as hvacAPI
 from Modules.Housing.Irrigation.irrigation import API as irrigationAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI
@@ -51,6 +52,23 @@ from Modules.Utilities.xml_tools import XmlConfigTools
 LOG = Logger.getLogger('PyHouse.House          ')
 
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
+
+
+class MqttActions(object):
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        if p_topic[2] == 'room':
+            p_logmsg += roomsMqtt()._decode_room(p_logmsg, p_topic, p_message)
+        #  computer/***
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'House msg', 160))
+        return p_logmsg
 
 
 class Xml(object):
@@ -208,5 +226,8 @@ class API(Utility):
         LOG.info("Stopping House.")
         self.stop_house_parts()
         LOG.info("Stopped.")
+
+    def DecodeMqtt(self, p_logmsg, p_topic, p_message):
+        MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
 
 #  ##  END DBK

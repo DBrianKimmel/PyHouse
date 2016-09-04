@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-09-04'
+
 #  Import system type stuff
 import platform
 import logging
@@ -21,7 +23,6 @@ from twisted.internet import reactor
 from Modules.Core.data_objects import \
             PyHouseData, \
             PyHouseAPIs, \
-            CoreServicesInformation, \
             ComputerInformation, \
             ComputerAPIs, \
             HouseInformation, \
@@ -128,10 +129,6 @@ class SetupPyHouseObj(object):
         l_ret.Reactor = reactor
         return l_ret
 
-    def _build_services(self):
-        l_ret = CoreServicesInformation()
-        return l_ret
-
     @staticmethod
     def _build_house(p_pyhouse_obj):
         l_ret = HouseInformation()
@@ -215,7 +212,6 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj.APIs = self._build_apis()
         l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
         l_pyhouse_obj.House = SetupPyHouseObj._build_house(l_pyhouse_obj)
-        l_pyhouse_obj.Services = self._build_services()
         l_pyhouse_obj.Twisted = self._build_twisted()
         l_pyhouse_obj.Uuids = {}
         l_pyhouse_obj.Xml = self._build_xml(p_root)
