@@ -197,7 +197,9 @@ function createBaseEntry(self, p_key) {
 function buildLightingCoreEntry(self, p_obj, p_html, p_onchange) {
 	// console.log("lcars.buildLightingCoreEntry() - %O", p_obj);
 	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildLcarCoOrdinatesWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
+	
+	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
+	
 	p_html += buildLcarTrueFalseWidget(self, 'Dimmable', 'Light Dimmable ?', p_obj.IsDimmable);
 	p_html += buildLcarFamilySelectWidget(self, 'DeviceFamily', 'Family', p_obj.DeviceFamily, p_onchange);
 	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
@@ -205,23 +207,25 @@ function buildLightingCoreEntry(self, p_obj, p_html, p_onchange) {
 	return p_html;
 }
 function fetchLightingCoreEntry(self, p_data) {
-    p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
-    p_data.Comment = fetchTextWidget(self, 'Comment');
-    p_data.RoomCoords = fetchCoOrdinatesWidget(self, 'RoomCoords');
-    p_data.IsDimmable = fetchTrueFalseWidget(self, 'Dimmable');
-    var l_ix = fetchTextWidget(self, 'RoomName');
-    p_data.RoomName = globals.House.Rooms[l_ix].Name
-    p_data.LightingType = fetchSelectWidget(self, 'LightingType');
-    // console.log("lcars.fetchLightingCoreEntry() - %O", p_data);
+	p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
+	p_data.Comment = fetchTextWidget(self, 'Comment');
+	p_data.RoomCoords = fetchCoordinatesWidget(self, 'RoomCoords');
+	p_data.IsDimmable = fetchTrueFalseWidget(self, 'Dimmable');
+	var l_ix = fetchTextWidget(self, 'RoomName');
+	p_data.RoomName = globals.House.Rooms[l_ix].Name
+	p_data.LightingType = fetchSelectWidget(self, 'LightingType');
+	// console.log("lcars.fetchLightingCoreEntry() - %O", p_data);
 	return p_data;
 }
 function createLightingCoreEntry(self, p_data) {
-    p_data.DeviceFamily = 'Insteon';
-    p_data.Comment = '';
-    p_data.RoomCoords = "[0.0, '0', '0']";
-    p_data.IsDimmable = true;
-    p_data.RoomName = 'XXX Room';
-    p_data.LightingType = 'Light';
+	p_data.DeviceFamily = 'Insteon';
+	p_data.Comment = '';
+	p_data.IsDimmable = true;
+	p_data.RoomName = 'XXX Room';
+	p_data.RoomUUID = '';
+	p_data.RoomCoords = createCoordinates(self);
+	p_data.LightingType = 'Light';
+	// console.log("lcars.createLightingCoreEntry() - %O", p_data);
 	return p_data;
 }
 

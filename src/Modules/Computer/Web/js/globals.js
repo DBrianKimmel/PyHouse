@@ -495,7 +495,7 @@ function setSizeAttribute(p_size) {
 	return l_html;
 }
 function setValueAttribute(p_value) {
-	var l_html = " value='" + p_value + "'";
+	var l_html = " value='" + p_value + "' ";
 	return l_html;
 }
 function buildTopDivs(p_caption) {

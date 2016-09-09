@@ -11,22 +11,21 @@
 
 """
 
-__updated__ = '2016-09-04'
+__updated__ = '2016-09-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 import datetime
 
 #  Import PyMh files
+from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import RoomData
 from Modules.Utilities.coordinate_tools import Coords
 from Modules.Utilities.json_tools import encode_json
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Rooms          ')
-TOPIC_DELETE = 'room/delete'
 
 
 class Xml(object):
@@ -59,12 +58,12 @@ class Xml(object):
         PutGetXML.put_text_element(l_entry, 'RoomType', p_room_object.RoomType)
         return l_entry
 
-    @staticmethod
-    def read_rooms_xml(p_pyhouse_obj):
+    def read_rooms_xml(self, p_pyhouse_obj):
         """
         @param p_house_obj: is
         @param p_house_xml: is
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         l_ret = {}
         l_count = 0
         l_xml = p_pyhouse_obj.Xml.XmlRoot
@@ -81,6 +80,7 @@ class Xml(object):
                 l_room_obj.Key = l_count
                 l_ret[l_count] = l_room_obj
                 LOG.info('Loaded room {}'.format(l_room_obj.Name))
+                # Mqtt().send_message(p_pyhouse_obj, "sync", l_room_obj)
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR if getting rooms Data - {}'.format(e_err))
@@ -142,24 +142,23 @@ class Maint(object):
         """
         l_rooms = p_pyhouse_obj.House.Rooms
         l_len = len(l_rooms)
+
         for l_key, l_val in l_rooms.iteritems():
             if l_val.UUID == p_room_obj.UUID:
                 LOG.info('Updating room {}'.format(p_room_obj.Name))
                 l_rooms[l_key] = l_val
                 l_rooms[l_key].LastUpdate = datetime.datetime.now()
+                # Mqtt().send_message(p_pyhouse_obj, "update", p_room_obj)
                 return l_rooms
 
         LOG.info('Adding room {}'.format(p_room_obj.Name))
-        if Rooms(p_pyhouse_obj).find_room_uuid(p_pyhouse_obj, p_room_obj.UUID) is None and p_room_obj._DeleteFlag:
+        if RoomCls(p_pyhouse_obj).find_room_uuid(p_pyhouse_obj, p_room_obj.UUID) is None and p_room_obj._DeleteFlag:
             pass
-        l_msg = 'Adding room {} {}'.format(p_room_obj.Name, p_room_obj.Key)
         p_room_obj.Key = l_len
         p_room_obj.LastUpdate = datetime.datetime.now()
         l_rooms[len(l_rooms)] = p_room_obj
-        print l_msg
-        LOG.info(l_msg)
         p_pyhouse_obj.House.Rooms = l_rooms
-        Mqtt().send_message(p_pyhouse_obj, "add", p_room_obj)
+        # Mqtt().send_message(p_pyhouse_obj, "add", p_room_obj)
         return l_rooms
 
     @staticmethod
@@ -169,19 +168,15 @@ class Maint(object):
             del p_pyhouse_obj.House.Rooms[l_room_ix]
         except AttributeError:
             LOG.error("web_rooms - Failed to delete - JSON: {}".format(p_room_obj.Name))
-        Mqtt().send_message(p_pyhouse_obj, "delete", p_room_obj)
+        # Mqtt().send_message(p_pyhouse_obj, "delete", p_room_obj)
         return
-
-    def XXXsync_room(self, p_pyhouse_obj, p_room_obj):
-        """ This can get to be a problem.
-        """
-        for l_room_object in p_room_obj.itervalues():
-            pass
 
 
 class Mqtt(object):
     """
     """
+    def XX__init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj - p_pyhouse_obj
 
     def _decode_room(self, p_logmsg, p_topic, p_message):
         p_logmsg += '\tRooms:\n'
@@ -215,14 +210,16 @@ class Sync(object):
     """ Used to sync the rooms between all the nodes.
     """
 
-    def find_room_name(self, p_pyhouse_obj, p_name):
+    @staticmethod
+    def find_room_name(p_pyhouse_obj, p_name):
         l_rooms = p_pyhouse_obj.House.Rooms
         for l_room in l_rooms.itervalues():
             if l_room.Name == p_name:
                 return l_room
         return None
 
-    def find_room_uuid(self, p_pyhouse_obj, p_uuid):
+    @staticmethod
+    def find_room_uuid(p_pyhouse_obj, p_uuid):
         l_rooms = p_pyhouse_obj.House.Rooms
         for l_room in l_rooms.itervalues():
             if l_room.UUID == p_uuid:
@@ -230,7 +227,7 @@ class Sync(object):
         return None
 
 
-class Rooms(Sync, Xml, Maint):
+class RoomCls(Sync, Xml, Maint):
     """
     """
 

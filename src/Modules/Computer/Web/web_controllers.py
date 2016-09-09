@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-09'
 
 #  Import system type stuff
 import os
@@ -57,7 +57,7 @@ class ControllersElement(athena.LiveElement):
         l_interfaces = VALID_INTERFACES
         l_obj = {}
         for l_interface in l_interfaces:
-            l_name = l_interface + 'Data'
+            _l_name = l_interface + 'Data'
         l_json = json_tools.encode_json(l_obj)
         return unicode(l_json)
 

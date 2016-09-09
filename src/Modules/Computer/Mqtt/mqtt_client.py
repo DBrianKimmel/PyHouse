@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-01'
+__updated__ = '2016-09-05'
 
 #  Import system type stuff
 import copy
@@ -56,7 +56,8 @@ class Util(object):
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
             _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-            LOG.info('TCP Connected to broker: {}; Host:{}'.format(p_broker.Name, l_host))
+            LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker.Name, l_host))
+            LOG.info('Prefix: {}'.format(p_pyhouse_obj.Computer.Mqtt.Prefix))
         pass
 
     @defer.inlineCallbacks

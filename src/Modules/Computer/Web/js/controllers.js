@@ -137,6 +137,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		var l_html = buildBaseEntry(self, p_obj);
 		l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 		l_html = self.buildControllerEntry(p_obj, l_html);
+		// console.log("controllers.buildEntry() - p_obj = %O", p_obj);
 		if (p_obj.DeviceFamily === 'Insteon')
 			l_html = buildInsteonPart(self, p_obj, l_html);
 		else if (p_obj.DeviceFamily === 'UPB')
@@ -199,6 +200,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
     function createEntry(self) {
         var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Controllers).length);
         l_data = createLightingCoreEntry(self, l_data);
+        l_data = self.createControllerEntry(l_data);
         l_data.LightingType = 'Controller';
         if (l_data.DeviceFamily === 'Insteon')
         	l_data = createInsteonEntry(self, l_data);

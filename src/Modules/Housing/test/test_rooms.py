@@ -10,15 +10,14 @@
 Passed all 14 tests - DBK 2016-07-02
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Housing.rooms import Rooms as roomsApi
-from Modules.Housing.rooms import Maint as roomsMaint
+from Modules.Housing.rooms import RoomCls as roomsApi, Maint as roomsMaint
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
@@ -98,6 +97,12 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.room_sect.tag, 'RoomSection')
         self.assertEqual(self.m_xml.room.tag, 'Room')
 
+    def test_3_pyhouse(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'Base'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs, 'APIs'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs.Computer, 'APIs.Computer'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs.Computer.MqttAPI, 'MqttAPI'))
+
 
 class A2_XML(SetupMixin, unittest.TestCase):
     """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
@@ -172,8 +177,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_2_AllRooms(self):
         """ Read in the xml file and fill in the rooms dict
         """
-        l_rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
+        l_rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_rooms, 'B1-2-A - All Rooms'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-2-b - PyHouse_Obj'))
         self.assertEqual(len(l_rooms), 3)
         self.assertEqual(l_rooms[0].Name, TESTING_ROOM_NAME_0)
         self.assertEqual(l_rooms[1].Name, TESTING_ROOM_NAME_1)
@@ -211,9 +217,9 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def test_2_AllRooms(self):
         """ Write out the XML file for the location section
         """
-        l_rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
+        l_rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
         l_xml = self.m_api.write_rooms_xml(l_rooms)
-        print(PrettyFormatAny.form(l_xml, 'B2-2-A - All Rooms'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-2-A - All Rooms'))
         # self.assertEqual(l_xml[0].attrib['Name'], TESTING_ROOM_NAME_0)
         self.assertEqual(l_xml[1].attrib['Name'], TESTING_ROOM_NAME_1)
         self.assertEqual(l_xml[2].attrib['Name'], TESTING_ROOM_NAME_2)
@@ -227,7 +233,7 @@ class D1_Maint(SetupMixin, unittest.TestCase):
 
     def _print(self, p_rooms):
         for l_obj in p_rooms.itervalues():
-            print(' Key:{}; Name:{}; UUID:{}; Update:{};'.format(
+            print('D1-Print - Key:{}; Name:{}; UUID:{}; Update:{};'.format(
                     l_obj.Key, l_obj.Name, l_obj.UUID, l_obj.LastUpdate))
         print
 
@@ -250,7 +256,7 @@ class D1_Maint(SetupMixin, unittest.TestCase):
     def test_2_Add(self):
         """
         """
-        l_rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
+        l_rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Rooms = l_rooms
         l_obj = self.m_maint()._json_2_obj(JSON)
         self._print(l_rooms)
@@ -267,7 +273,7 @@ class E1_Json(SetupMixin, unittest.TestCase):
     def test_1_CreateJson(self):
         """ Create a JSON object for Rooms.
         """
-        self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Rooms = l_rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
         l_json = json_tools.encode_json(l_rooms)
         l_obj = json_tools.decode_json_unicode(l_json)
         # print(PrettyFormatAny.form(l_json, 'JSON', 80))
@@ -284,9 +290,9 @@ class F1_Match(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Rooms.
         """
         l_search = TESTING_ROOM_NAME_1
-        self.m_pyhouse_obj.House.Rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
         l_obj = self.m_api(self.m_pyhouse_obj).find_room_name(self.m_pyhouse_obj, l_search)
-        print(PrettyFormatAny.form(l_obj, 'Room - {}'.format(l_search)))
+        # print(PrettyFormatAny.form(l_obj, 'F1-1-A - Room - {}'.format(l_search)))
         self.assertEqual(l_obj.Name, TESTING_ROOM_NAME_1)
         self.assertEqual(l_obj.UUID, TESTING_ROOM_UUID_1)
 
@@ -294,9 +300,9 @@ class F1_Match(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Rooms.
         """
         l_search = TESTING_ROOM_UUID_2
-        self.m_pyhouse_obj.House.Rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
         l_obj = self.m_api(self.m_pyhouse_obj).find_room_uuid(self.m_pyhouse_obj, l_search)
-        print(PrettyFormatAny.form(l_obj, 'Room - {}'.format(l_search)))
+        # print(PrettyFormatAny.form(l_obj, 'F1-2-A - Room - {}'.format(l_search)))
         self.assertEqual(l_obj.Name, TESTING_ROOM_NAME_2)
         self.assertEqual(l_obj.UUID, TESTING_ROOM_UUID_2)
 

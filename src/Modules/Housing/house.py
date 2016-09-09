@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-09-04'
+__updated__ = '2016-09-09'
 
 #  Import system type stuff
 
@@ -100,7 +100,7 @@ class Xml(object):
         """
         l_obj = Xml._read_house_base(p_pyhouse_obj)
         l_obj.Location = locationXML.read_location_xml(p_pyhouse_obj)
-        l_obj.Rooms = roomsXML.read_rooms_xml(p_pyhouse_obj)
+        l_obj.Rooms = roomsXML().read_rooms_xml(p_pyhouse_obj)
         return l_obj
 
     @staticmethod

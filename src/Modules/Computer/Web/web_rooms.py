@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-04'
 
 # Import system type stuff
 import os
@@ -27,7 +27,6 @@ from Modules.Computer import logging_pyh as Logger
 webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.webRooms       ')
 
 
