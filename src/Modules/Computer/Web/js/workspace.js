@@ -69,6 +69,12 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	 * mainpage.py/.js   - the LivePage with the task of keeping up the nevow/athena RPC system
 	 * workspace.py/.js - the mother of all widgets which gets the startup call in the beginning then attaching
 	 *  whatever you please to attach to it.
+	 *  
+	 *  
+	 *  Files:
+	 *  	workspace.js
+	 *		web_mainpage.py
+	 *		web_xxxxxx.py
 	 */
 	function appStartup(self) {
 
@@ -95,6 +101,7 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('buttons', 'dummy');
 				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('controlLights', 'dummy');
+				self.attachWidget('garageDoors', 'dummy');
 				self.attachWidget('house', 'dummy');
 				self.attachWidget('irrigation', 'dummy');
 				self.attachWidget('lights', 'dummy');

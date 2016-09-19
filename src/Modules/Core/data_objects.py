@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-09-04'
+__updated__ = '2016-09-18'
 
 
 class PyHouseData(object):
@@ -686,6 +686,7 @@ class ControllerData(CoreLightingData):
         super(ControllerData, self).__init__()
         self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
+        self.Ret = None  # Return Code
         self.UUID = None
         #  The following are not in XML config file
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.

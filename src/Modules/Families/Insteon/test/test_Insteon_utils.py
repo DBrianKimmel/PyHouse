@@ -7,12 +7,12 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 4 tests - DBK - 2016-07-17
+Passed all 6 tests - DBK - 2016-09-19
 
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-19'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -26,9 +26,9 @@ from Modules.Core.data_objects import ControllerData
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
-ADDR_DR_SLAVE_INT = 1493456
+ADDR_DR_SLAVE_INT = (((0x16 * 256) + 0xc9) * 256) + 0xd0  # 1493456
 ADDR_NOOK_MSG = bytearray(b'\x17\xc2\x72')
-ADDR_NOOK_INT = 1557106
+ADDR_NOOK_INT = (((0x17 * 256) + 0xc2) * 256) + 0x72  #  1557106
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x02\x04\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
@@ -43,6 +43,22 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_obj = ControllerData()
         self.inst = Util
+
+
+class A1_Conversions(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Message2int(self):
+        """ Get 3 bytes and convert it ti a laww
+        """
+        result = self.inst.message2int(MSG_50[2:5])
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse'))
+        self.assertEqual(result, ADDR_DR_SLAVE_INT)
+        #
+        result = self.inst.message2int(MSG_62[2:5])
+        self.assertEqual(result, ADDR_NOOK_INT)
 
 
 class C1_Conversions(SetupMixin, unittest.TestCase):
@@ -93,11 +109,17 @@ class D1_Decode(SetupMixin, unittest.TestCase):
         l_ret = utilDecode._devcat(l_dev[5:7], self.m_obj)
         self.assertEqual(self.m_obj.DevCat, 0x0204)
 
+
+class D2_Decode(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
     def test_02_GetObj(self):
         """
         """
         l_msg = MSG_50
-        print(PrintBytes(l_msg), 'D1-02-A - Message')
+        print(PrintBytes(l_msg), 'D2-01-A - Message')
         l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_msg)
         print(l_ret)
         print(PrettyFormatAny.form(l_ret, 'Combined Dicts'))

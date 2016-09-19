@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-17'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -167,6 +167,7 @@ class API(object):
                 l_uuid_obj.UUID = l_obj.UUID
                 l_uuid_obj.UuidType = 'Controller'
                 UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
+                LOG.info('Loaded controller {}'.format(l_obj.Name))
                 l_count += 1
         except AttributeError as e_error:  # No Controller section
             LOG.warning('No Controllers found - {}'.format(e_error))

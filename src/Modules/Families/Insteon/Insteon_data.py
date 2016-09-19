@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-18'
 
 #  Import system type stuff
 
@@ -19,14 +19,15 @@ __updated__ = '2016-07-17'
 
 
 class InsteonData(object):
+
     def __init__(self):
         self.DevCat = 0  # DevCat and SubCat (2 bytes)
         self.EngineVersion = 2
+        self.FirmwareVersion = 0
         self.GroupList = ''
         self.GroupNumber = 0
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
         self.ProductKey = ''
-        # self.Version = '2'  #  the version of this data object.
         self.Links = {}
 
 #  ## END DBK

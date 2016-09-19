@@ -49,6 +49,7 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 """
 
+__updated__ = '2016-09-17'
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

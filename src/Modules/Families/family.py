@@ -33,6 +33,8 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
+__updated__ = '2016-09-17'
+
 # Import system type stuff
 import importlib
 

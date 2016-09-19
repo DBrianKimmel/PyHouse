@@ -9,18 +9,11 @@
 @license:   MIT License
 @summary:   This module is for Insteon
 
-This is a module for the Insteon family of devices.
-it provides the single interface into the family.
-
-This module loads the Insteon specific information about an Insteon device.
-The data is contained in Insteon_data and is versioned.
-
-Write always outputs the current version.
-Read may need to check the version number to load the config information properly.
-
+This module merges the Insteon specific information (InsteonData) with the generic controllerI Information (ControllerData)
+ giving an expanded ControllerData.
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-19'
 
 #  Import system type stuff
 
@@ -70,6 +63,11 @@ class Xml(object):
         except Exception as e_err:
             LOG.error('ERROR: {}'.format(e_err))
             l_insteon_obj.EngineVersion = 2
+        try:
+            l_insteon_obj.FirmwareVersion = PutGetXML.get_int_from_xml(p_in_xml, 'FirmwareVersion', 1)
+        except Exception as e_err:
+            LOG.error('ERROR: {}'.format(e_err))
+            l_insteon_obj.FirmwareVersion = 2
         return l_insteon_obj
 
     @staticmethod
@@ -92,12 +90,13 @@ class Xml(object):
         """
         @param p_xml_out: is a parent element to which the Insteon Specific information is appended.
         """
-        PutGetXML.put_text_element(p_out_xml, 'InsteonAddress', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
         PutGetXML.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
+        PutGetXML.put_int_element(p_out_xml, 'EngineVersion', p_device.EngineVersion)
+        PutGetXML.put_int_element(p_out_xml, 'FirmwareVersion', p_device.FirmwareVersion)
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
+        PutGetXML.put_text_element(p_out_xml, 'InsteonAddress', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
         PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
-        PutGetXML.put_int_element(p_out_xml, 'EngineVersion', p_device.EngineVersion)
         return p_out_xml
 
 #  ## END DBK

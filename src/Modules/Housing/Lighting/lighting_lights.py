@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-17'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -124,6 +124,7 @@ class API(object):
                 l_uuid_obj.UUID = l_obj.UUID
                 l_uuid_obj.UuidType = 'Light'
                 UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
+                LOG.info('Loaded light {}'.format(l_obj.Name))
                 l_count += 1
         except AttributeError as e_err:  # No Lights section
             LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))

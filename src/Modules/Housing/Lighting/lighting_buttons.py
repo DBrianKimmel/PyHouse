@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-17'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -85,6 +85,7 @@ class API(object):
                 l_obj = Utility._read_one_button_xml(p_pyhouse_obj, l_button_xml)
                 l_obj.Key = l_count  # Renumber
                 l_button_dict[l_count] = l_obj
+                LOG.info('Loaded button {}'.format(l_obj.Name))
                 l_count += 1
         except AttributeError as e_error:  # No Buttons
             LOG.warning('No Buttons defined - {}'.format(e_error))

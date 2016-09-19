@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-19'
 
 #  Import system type stuff
 
@@ -49,43 +49,56 @@ class Decode(object):
     @staticmethod
     def decode_53(p_controller_obj):
         """Insteon All-Linking completed (10 bytes).
-        See p 245(258) of 2007 developers guide.
+        See p 247(260) of 2009 developers guide.
+        [0] = x02
+        [1] = 0x53
+        [2] = LinkCode
+        [3] = LinkGroup
+        [4-6] = from address
+        [7-8] = DevCat
+        [9] = Firmwear Version
         """
         l_message = p_controller_obj._Message
         l_link_code = l_message[2]
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
-        utilDecode._devcat(l_message[7:9], p_controller_obj)
+        utilDecode._devcat(l_message[7:8], p_controller_obj)
+        l_version = l_message[9]
         LOG.info('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
-        return False
 
     @staticmethod
     def decode_54(p_controller_obj):
         """Insteon Button Press event (3 bytes).
         The PLM set button was pressed.
-        See p 260(273 of 2007 developers guide.
+        See p 263(276) of 2009 developers guide.
+        [0] = x02
+        [1] = 0x54
+        [2] = Button Event
         """
         l_message = p_controller_obj._Message
         l_event = l_message[2]
         LOG.info('The Set button was pressed {}'.format(l_event))
-        return False
 
     @staticmethod
     def decode_56(p_controller_obj):
         """Insteon All-Link cleanup failure report (7 bytes).
-        See p 241(254 of 2007 developers guide.
+        See p 243(256) of 2009 developers guide.
+        [0] = x02
+        [1] = 0x56
+        [2] = 0x01
+        [3] = LinkGroup
+        [4-6] = from address
         """
         l_message = p_controller_obj._Message
         l_link_code = l_message[2]
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
         LOG.info('All-Linking failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
-        return False
 
     @staticmethod
     def decode_57(p_pyhouse_obj, p_controller_obj):
         """All-Link Record Response (10 bytes).
-        See p 249)(262 of 2007 developers guide.
+        See p 249(262) of 2007 developers guide.
         """
         l_message = p_controller_obj._Message
         l_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_message[4:7])
@@ -99,8 +112,7 @@ class Decode(object):
         if l_flag_control != 0:
             l_type = 'Controller'
         LOG.info("All-Link response-57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
-        l_ret = True
-        return l_ret
+        return
 
     @staticmethod
     def decode_58(p_controller_obj):
@@ -110,7 +122,6 @@ class Decode(object):
         l_message = p_controller_obj._Message
         l_status = l_message[2]
         LOG.info('All-Linking cleanup {}, Group:{}, From:{} '.format(l_status))
-        return False
 
     @staticmethod
     def decode_64(p_controller_obj):

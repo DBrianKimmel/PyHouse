@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-18'
 
 #  Import system type stuff
 
@@ -32,9 +32,9 @@ __updated__ = '2016-07-17'
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_HVAC
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, NAK, STX
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as utilUtil
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.tools import PrintBytes
 
 
@@ -76,7 +76,15 @@ class DecodeResponses(object):
                     #  LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
-                utilDecode.drop_first_byte(p_controller_obj)
+                l_msg = "Dropping a leading char {:#x} - Rest. - {}".format(
+                        p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
+                if p_controller_obj._Message[0] != NAK:
+                    LOG.error(l_msg)
+                try:
+                    p_controller_obj._Message = p_controller_obj._Message[1:]
+                except IndexError:
+                    pass
+
 
     def check_for_more_decoding(self, p_controller_obj, p_ret=True):
         """Chop off the current message from the head of the buffered response stream from the controller.
@@ -109,12 +117,12 @@ class DecodeResponses(object):
         elif l_cmd == 0x50: l_ret = self._decode_50_record(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51_record(p_controller_obj)
         elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
-        elif l_cmd == 0x53: l_ret = self._decode_53_record(p_controller_obj)
-        elif l_cmd == 0x54: l_ret = self._decode_54_record(p_controller_obj)
+        elif l_cmd == 0x53: linkDecode.decode_53(p_controller_obj)
+        elif l_cmd == 0x54: linkDecode.decode_54(p_controller_obj)
         elif l_cmd == 0x55: l_ret = self._decode_55_record(p_controller_obj)
-        elif l_cmd == 0x56: l_ret = self._decode_56_record(p_controller_obj)
-        elif l_cmd == 0x57: l_ret = self._decode_57_record(p_controller_obj)
-        elif l_cmd == 0x58: l_ret = self._decode_58_record(p_controller_obj)
+        elif l_cmd == 0x56: linkDecode.decode_56(p_controller_obj)
+        elif l_cmd == 0x57: linkDecode.decode_57(p_controller_obj)
+        elif l_cmd == 0x58: linkDecode.decode_58(p_controller_obj)
         elif l_cmd == 0x60: l_ret = self._decode_60_record(p_controller_obj)
         elif l_cmd == 0x61: l_ret = self._decode_61_record(p_controller_obj)
         elif l_cmd == 0x62: l_ret = self._decode_62_record(p_controller_obj)
@@ -128,7 +136,8 @@ class DecodeResponses(object):
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
             LOG.error("Unknown message {}, Cmd:{}".format(PrintBytes(p_controller_obj._Message), l_cmd))
-            self.check_for_more_decoding(p_controller_obj, l_ret)
+            # self.check_for_more_decoding(p_controller_obj, l_ret)
+        self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
 
 
@@ -151,14 +160,13 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        l_flags = utilDecode._decode_message_flag(l_message[8])
+        _l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
-        #  print(PrettyFormatAny.form(l_device_obj, 'Insteon_decoder 156 - Device'))
         if l_device_obj.DeviceType == 2:
             Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
-            return self.check_for_more_decoding(p_controller_obj, True)
+            return  # self.check_for_more_decoding(p_controller_obj, True)
         l_debug_msg = 'Std Msg fm: {}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_cmd1, l_cmd2)
         #  Break down bits 7(msb), 6, 5 into message type
         if l_message[8] & 0xE0 == 0x80:  #  Broadcast/NAK Message (100)
@@ -211,9 +219,9 @@ class DecodeResponses(object):
                 LOG.warn('Decoding 50 tyoe {}'.format(l_debug_msg))
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
-        l_ret = True
+        p_controller_obj.Ret = True
         LOG.info('50 Resp; {}'.format(l_debug_msg))
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_51_record(self, p_controller_obj):
         """ Insteon Extended Message Received (25 bytes).
@@ -232,46 +240,22 @@ class DecodeResponses(object):
         LOG.info("51 Resp: Fm={}, To={}, Flags={:#x}, Data={} Extended={} ==".format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
         #  l_obj_from.ProductKey = l_product_key
         l_obj_from.DevCat = l_devcat
-        l_ret = True
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = True
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_52_record(self, p_controller_obj):
         """Insteon X-10 message received (4 bytes).
         See p 253 of developers guide.
         """
         LOG.warning("52 Resp: not decoded yet.")
-        l_ret = False
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
-
-    def _decode_53_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_53(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
-
-    def _decode_54_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_54(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_55_record(self, p_controller_obj):
         """Insteon User Reset detected (2 bytes).
         See p 269 of developers guide.
         """
         l_debug_msg = "User Reset Detected! "
-        l_ret = linkDecode.decode_53(p_controller_obj)
+        p_controller_obj.Ret = linkDecode.decode_53(p_controller_obj)
         LOG.info("".format(l_debug_msg))
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
-
-    def _decode_56_record(self, p_controller_obj):
-        l_ret = False
-        l_ret = linkDecode.decode_56(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
-
-    def _decode_57_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_57(self.m_pyhouse_obj, p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
-
-    def _decode_58_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_58(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_60_record(self, p_controller_obj):
         """Get Insteon Modem Info (9 bytes).
@@ -284,11 +268,11 @@ class DecodeResponses(object):
         l_firmver = l_message[7]
         LOG.info("== 60 - Insteon Modem Info - DevCat={}, DevSubCat={}, Firmware={} - Name={}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
         if l_message[8] == ACK:
-            l_ret = True
+            p_controller_obj.Ret = True
         else:
             LOG.error("== 60 - No ACK - Got {:#x}".format(l_message[8]))
-            l_ret = False
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+            p_controller_obj.Ret = False
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_61_record(self, p_controller_obj):
         """Get Insteon Modem Info (6 bytes).
@@ -301,11 +285,11 @@ class DecodeResponses(object):
         l_ack = l_message[5]
         LOG.info("All-Link Ack - Group:{}, Cmd:{}, Bcst:{}, Ack:{}".format(l_grp, l_cmd1, l_cmd2, l_ack))
         if l_ack == ACK:
-            l_ret = True
+            p_controller_obj.Ret = True
         else:
             LOG.error("== 61 - No ACK - Got {:#x}".format(l_ack))
-            l_ret = False
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+            p_controller_obj.Ret = False
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_62_record(self, p_controller_obj):
         """Get response to Send Insteon standard-length message (9 bytes).
@@ -328,15 +312,15 @@ class DecodeResponses(object):
         l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
         if l_ack == 'NAK':
             LOG.info("Got ACK(62); {}".format(l_debug_msg))
-        return self.check_for_more_decoding(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj)
 
     def _decode_64_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_64(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = linkDecode.decode_64(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_65_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_65(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = linkDecode.decode_65(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_67_record(self, p_controller_obj):
         """Reset IM ACK response (3 bytes).
@@ -346,15 +330,15 @@ class DecodeResponses(object):
         l_ack = utilDecode.get_ack_nak(l_message[2])
         l_debug_msg = "Reset IM(PLM) {}".format(l_ack)
         LOG.info("{}".format(l_debug_msg))
-        return self.check_for_more_decoding(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj)
 
     def _decode_69_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_69(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = linkDecode.decode_69(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6A_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_6A(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = linkDecode.decode_6A(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6B_record(self, p_controller_obj):
         """Get set IM configuration (4 bytes).
@@ -366,15 +350,15 @@ class DecodeResponses(object):
         l_debug_msg = "Config flag from PLM:{} - ConfigFlag:{:#02X}, {}".format(p_controller_obj.Name, l_flag, l_ack)
         LOG.info("Received from {}".format(l_debug_msg))
         if l_message[3] == ACK:
-            l_ret = True
+            p_controller_obj.Ret = True
         else:
             LOG.error("== 6B - NAK/Unknown message type {:#x}".format(l_flag))
-            l_ret = False
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+            p_controller_obj.Ret = False
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6C_record(self, p_controller_obj):
-        l_ret = linkDecode.decode_6C(p_controller_obj)
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = linkDecode.decode_6C(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_6F_record(self, p_controller_obj):
         """All-Link manage Record Response (12 bytes).
@@ -395,8 +379,8 @@ class DecodeResponses(object):
         l_message += " Group:{:#02X}, Name:{}, Flags:{:#02X}, Data:{}, CtlCode:{:#02x},".format(l_group, l_obj.Name, l_flags, l_data, l_code)
         l_message += " Ack:{}, Type:{}".format(l_ack, l_type)
         LOG.info("{}".format(l_message))
-        l_ret = True
-        return self.check_for_more_decoding(p_controller_obj, l_ret)
+        p_controller_obj.Ret = True
+        return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
     def _decode_73_record(self, p_controller_obj):
         """Get the PLM response of 'get config' (6 bytes).
@@ -409,6 +393,6 @@ class DecodeResponses(object):
         l_ack = utilDecode.get_ack_nak(l_message[5])
         LOG.info("== 73 Get IM configuration Flags={:#x}, Spare 1={:#x}, Spare 2={:#x} {} ".format(
                     l_flags, l_spare1, l_spare2, l_ack))
-        return self.check_for_more_decoding(p_controller_obj)
+        return  # self.check_for_more_decoding(p_controller_obj)
 
 #  ## END DBK

@@ -14,16 +14,16 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-18'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, NAK
+from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.tools import PrintBytes
+# from Modules.Utilities.tools import PrintBytes
 from Modules.Core.data_objects import DeviceData
 from Modules.Utilities import device_tools
 
@@ -98,20 +98,6 @@ class Util(object):
 
 
 class Decode(object):
-
-    @staticmethod
-    def drop_first_byte(p_controller_obj):
-        """The first byte is not legal, drop it and try again.
-        Silently drop 1st byte if it is a NAK otherwise log it.
-        """
-        l_msg = "Found a leading char {:#x} - Rest. - {}".format(
-                p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
-        if p_controller_obj._Message[0] != NAK:
-            LOG.error(l_msg)
-        try:
-            p_controller_obj._Message = p_controller_obj._Message[1:]
-        except IndexError:
-            pass
 
     @staticmethod
     def _decode_message_flag(p_byte):

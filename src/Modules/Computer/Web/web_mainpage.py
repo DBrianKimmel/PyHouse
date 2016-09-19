@@ -41,7 +41,7 @@ mainpage.py - this is the place where everything is happening, the user will nev
 
 """
 
-__updated__ = '2016-08-22'
+__updated__ = '2016-09-18'
 
 #  Import system type stuff
 import gc
@@ -68,7 +68,7 @@ from nevow.inevow import IRequest
 from twisted.internet import defer
 
 #  Import PyMh files and modules.
-from Modules.Computer.Web import web_clock, web_users, web_configMenu
+from Modules.Computer.Web import web_clock, web_users, web_configMenu, web_garageDoors
 from Modules.Computer.Web import web_login
 from Modules.Computer.Web import web_rootMenu
 from Modules.Computer.Web import web_computerMenu
@@ -386,6 +386,13 @@ class Workspace(athena.LiveElement):
     def controlLights(self, p_params):
         #  LOG.info("Control Lights loaded into browser")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def garageDoors(self, p_params):
+        #  LOG.info("House loaded into browser")
+        l_element = web_garageDoors.GarageDoorsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 

@@ -56,6 +56,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			['Lights',       'Lights',              'Lights'          ],
 			['Buttons',      'Buttons',             'Buttons'         ],
 			['Controllers',  'Controllers',         'Controllers'     ],
+			['GarageDoor',   'Garage Door',         'GarageDoor'      ],
 			['Schedules',    'Scheduling',          'Schedules'       ],
 			['Levels',       'Lighting Control',    'ControlLighting' ],
 			['Thermo',       'Thermostat',          'Thermostat'      ],

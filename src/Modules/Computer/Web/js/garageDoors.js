@@ -1,22 +1,22 @@
 /**
- * @name:      PyHouse/src/Modules/Web/js/controllers.js
+ * @name:      PyHouse/src/Modules/Web/js/garageDoor.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2016 by D. Brian Kimmel
+ * @copyright: (c) 2016-2016 by D. Brian Kimmel
  * @license:   MIT License
- * @note:      Created on Mar 11, 2014
- * @summary:   Displays the controller element
+ * @note:      Created on Sep 17, 2016
+ * @summary:   Displays the Garage Door element
  *
- * Note that a controller contains common light info, controller info, family info and interface info.
+ *
  */
 
 /**
- * The controller widget.
+ * The GarageDoor widget.
  */
-helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
+helpers.Widget.subclass(garageDoors, 'GarageDoorsWidget').methods(
 
 		function __init__(self, node) {
-			controllers.ControllersWidget.upcall(self, '__init__', node);
+			garageDoors.GarageDoorsWidget.upcall(self, '__init__', node);
 		},
 
 		// ============================================================================
@@ -48,10 +48,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			}
 			function eb_fetchInterfaceData(p_reason) {
 				Divmod.debug('---',
-						'ERROR - controllers.cb_fetchInterfaceData() - '
+						'ERROR - garageDoors.cb_fetchInterfaceData() - '
 								+ p_reason);
 			}
-			// Divmod.debug('---', 'controllers.fetchInterfaceData() was called.
+			// Divmod.debug('---', 'garageDoors.fetchInterfaceData() was called.
 			// ');
 			var l_defer = self.callRemote("getInterfaceData"); // call server @
 																// web_controllers.py
@@ -66,10 +66,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		 * actions.
 		 */
 		function buildLcarSelectScreen(self) {
-			// Divmod.debug('---', 'controllers.buildLcarSelectScreen() called
+			// Divmod.debug('---', 'garageDoors.buildLcarSelectScreen() called
 			// ');
 			var l_button_html = buildLcarSelectionButtonsTable(
-					globals.House.Lighting.Controllers, 'handleMenuOnClick');
+					globals.House.Lighting.GarageDoors, 'handleMenuOnClick');
 			var l_html = build_lcars_top('Controllers', 'lcars-salmon-color');
 			l_html += build_lcars_middle_menu(10, l_button_html);
 			l_html += build_lcars_bottom();
@@ -85,7 +85,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			}
 			function eb_fetchDataFromServer(p_reason) {
 				Divmod.debug('---',
-						'ERROR controllers.eb_fetchDataFromServer() - '
+						'ERROR garageDoors.eb_fetchDataFromServer() - '
 								+ p_reason);
 			}
 			var l_defer = self.callRemote("getHouseData"); // call server @
@@ -100,7 +100,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		 * Event handler for controller selection buttons.
 		 */
 		function handleMenuOnClick(self, p_node) {
-			// Divmod.debug('---', 'controllers.handleMenuOnClick() called ');
+			// Divmod.debug('---', 'garageDoors.handleMenuOnClick() called ');
 			var l_ix = p_node.name;
 			var l_name = p_node.value;
 			var l_obj;
@@ -130,10 +130,10 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		 * Build a screen full of data entry fields.
 		 */
 		function buildLcarDataEntryScreen(self, p_entry, p_handler) {
-			// Divmod.debug('---', 'controllers.buildLcarDataEntryScreen()
+			// Divmod.debug('---', 'garageDoors.buildLcarDataEntryScreen()
 			// called ');
 			var l_obj = arguments[1];
-			var l_html = build_lcars_top('Controller Data',
+			var l_html = build_lcars_top('Garage Door Data',
 					'lcars-salmon-color');
 			l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj,
 					p_handler));
@@ -141,25 +141,25 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			self.nodeById('DataEntryDiv').innerHTML = l_html;
 		},
 		function buildEntry(self, p_obj, p_handler, p_onchange) {
-			// Divmod.debug('---', 'controllers.buildEntry() called ');
+			// Divmod.debug('---', 'garageDoors.buildEntry() called ');
 			var l_html = buildBaseEntry(self, p_obj);
 			l_html = buildLightingCoreEntry(self, p_obj, l_html, p_onchange);
 			l_html = self.buildControllerEntry(p_obj, l_html);
-			// console.log("controllers.buildEntry() - p_obj = %O", p_obj);
+			// console.log("garageDoors.buildEntry() - p_obj = %O", p_obj);
 			if (p_obj.DeviceFamily === 'Insteon')
 				l_html = buildInsteonPart(self, p_obj, l_html);
 			else if (p_obj.DeviceFamily === 'UPB')
 				l_html = buildUpbPart(self, p_obj, l_html);
 			else
 				Divmod.debug('---',
-						'ERROR - controllers.buildEntry()  Invalid Family = '
+						'ERROR - garageDoors.buildEntry()  Invalid Family = '
 								+ p_obj.DeviceFamily);
 			//
 			if (p_obj.InterfaceType === 'Serial')
 				l_html = buildSerialPart(self, p_obj, l_html);
 			else
 				Divmod.debug('---',
-						'ERROR - controllers.buildEntry()  Invalid Interface = '
+						'ERROR - garageDoors.buildEntry()  Invalid Interface = '
 								+ p_obj.InterfaceType);
 			//
 			l_html += buildLcarEntryButtons(p_handler);
@@ -174,20 +174,20 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			return p_html;
 		},
 		function familyChanged() {
-			// Divmod.debug('---', 'controllers.familyChanged() was called.');
+			// Divmod.debug('---', 'garageDoors.familyChanged() was called.');
 			var l_obj = globals.House.ControllerObj;
 			var l_self = globals.House.Self;
 			l_obj.DeviceFamily = fetchSelectWidget(l_self, 'DeviceFamily');
 			l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
 		},
 		function interfaceChanged() {
-			// Divmod.debug('---', 'controllers.interfaceChanged() was
+			// Divmod.debug('---', 'garageDoors.interfaceChanged() was
 			// called.');
 			var l_obj = globals.House.ControllerObj;
 			var l_self = globals.House.Self;
-			// console.log("controllers.interfaceChanged() - l_obj = %O",
+			// console.log("garageDoors.interfaceChanged() - l_obj = %O",
 			// l_obj);
-			// console.log("controllers.interfaceChanged() - l_self = %O",
+			// console.log("garageDoors.interfaceChanged() - l_self = %O",
 			// l_self);
 			l_obj.InterfaceType = fetchSelectWidget(l_self, 'InterfaceType');
 			l_self.buildLcarDataEntryScreen(l_obj, 'handleDataOnClick');
@@ -203,7 +203,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 				l_data = fetchUpbEntry(self, l_data);
 			if (l_data.InterfaceType === 'Serial')
 				l_data = fetchSerialEntry(self, l_data);
-			// console.log("controllers.fetchEntry() - Data = %O", l_data);
+			// console.log("garageDoors.fetchEntry() - Data = %O", l_data);
 			return l_data;
 		},
 		function fetchControllerEntry(self, p_data) {
@@ -213,7 +213,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 		},
 		function createEntry(self) {
 			var l_data = createBaseEntry(self, Object
-					.keys(globals.House.Lighting.Controllers).length);
+					.keys(globals.House.Lighting.GarageDoors).length);
 			l_data = createLightingCoreEntry(self, l_data);
 			l_data = self.createControllerEntry(l_data);
 			l_data.LightingType = 'Controller';
@@ -241,7 +241,7 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 			}
 			function eb_handleDataOnClick(p_reason) {
 				Divmod.debug('---',
-						'ERROR controllers.eb_handleDataOnClick() - '
+						'ERROR garageDoors.eb_handleDataOnClick() - '
 								+ p_reason);
 			}
 			var l_ix = p_node.name;
@@ -270,12 +270,12 @@ helpers.Widget.subclass(controllers, 'ControllersWidget').methods(
 				break;
 			default:
 				Divmod.debug('---',
-						'controllers.handleDataOnClick(Default) was called. l_ix:'
+						'garageDoors.handleDataOnClick(Default) was called. l_ix:'
 								+ l_ix);
 				break;
 			}
 			return false; // false stops the chain.
 		});
-// Divmod.debug('---', 'controllers.handleMenuOnClick() was called.');
-// console.log("controllers.handleMenuOnClick() - l_obj = %O", l_obj);
+// Divmod.debug('---', 'garageDoors.handleMenuOnClick() was called.');
+// console.log("garageDoors.handleMenuOnClick() - l_obj = %O", l_obj);
 // ### END DBK

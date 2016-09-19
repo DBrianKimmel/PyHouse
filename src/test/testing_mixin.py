@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-04'
+__updated__ = '2016-09-19'
 
 #  Import system type stuff
 import platform
@@ -30,7 +30,7 @@ from Modules.Core.data_objects import \
             LocationData, \
             TwistedInformation, \
             XmlInformation, \
-            LightingData
+            LightingData, HvacData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.house import Xml as housingXML
@@ -134,9 +134,9 @@ class SetupPyHouseObj(object):
         l_ret = HouseInformation()
         l_ret.Name = 'Test House'
         l_ret.Location = LocationData()
-        #  Added family build 2015-08-19
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
         l_ret.Lighting = LightingData()
+        l_ret.Hvac = HvacData()
         return l_ret
 
     @staticmethod

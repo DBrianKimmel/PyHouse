@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2016-07-25'
+__updated__ = '2016-09-19'
 
 #  Import system type stuff
 
@@ -35,16 +35,16 @@ class Utility(object):
     """
 
     @staticmethod
-    def _is_insteon(p_obj):
+    def _is_insteon(p_controller_obj):
         try:
-            return p_obj.DeviceFamily == 'Insteon'
+            return p_controller_obj.DeviceFamily == 'Insteon'
         except AttributeError:
             return False
 
     @staticmethod
-    def _is_active(p_obj):
+    def _is_active(p_controller_obj):
         try:
-            return p_obj.Active == True
+            return p_controller_obj.Active == True
         except AttributeError:
             return False
 
@@ -59,7 +59,7 @@ class Utility(object):
         """
         from Modules.Families.Insteon import Insteon_PLM
         l_plmAPI = Insteon_PLM.API()
-        l_name = p_pyhouse_obj.Computer.Name
+        _l_name = p_pyhouse_obj.Computer.Name
         l_uuid = p_pyhouse_obj.Computer.UUID
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
@@ -108,7 +108,7 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Created an instance of Insteon_device.')
+        # LOG.info('Created an instance of Insteon_device.')
 
     def Start(self):
         self.m_plm = Utility._start_all_controllers(self.m_pyhouse_obj)
