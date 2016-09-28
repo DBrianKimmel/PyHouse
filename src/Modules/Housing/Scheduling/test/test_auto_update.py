@@ -11,12 +11,14 @@ Passed all 4 tests - DBK - 2015-09-12
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Scheduling import auto_update
+from Modules.Housing.Scheduling import auto_update
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
@@ -57,7 +59,7 @@ class C02_Local(SetupMixin, unittest.TestCase):
 
     def test_01_PyHouse(self):
         l_file = auto_update.FindLocalVersion()._find_pyhouse_version_file()
-        print('Local File = {0:}'.format(l_file))
+        print('Local File = {}'.format(l_file))
 
     def test_02_Version(self):
         l_version = auto_update.FindLocalVersion().get_version()

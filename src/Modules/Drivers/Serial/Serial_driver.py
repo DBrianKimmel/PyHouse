@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-09-22'
 
 #  Import system type stuff
 import pyudev

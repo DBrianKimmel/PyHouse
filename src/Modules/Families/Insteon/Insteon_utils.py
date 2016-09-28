@@ -14,20 +14,35 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-09-18'
+__updated__ = '2016-09-25'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH
+from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, \
+    COMMAND_LENGTH, \
+    PLM_COMMANDS, \
+    STX
+
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrintBytes
 from Modules.Core.data_objects import DeviceData
 from Modules.Utilities import device_tools
 
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
+
+
+def create_command_message(p_command):
+    l_cmd = PLM_COMMANDS[p_command]
+    l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
+    l_command_bytes[0] = STX
+    l_command_bytes[1] = l_cmd
+    return l_command_bytes
+
+def queue_command(p_controller, p_command):
+    p_controller._Queue.put(p_command)
 
 
 class Util(object):

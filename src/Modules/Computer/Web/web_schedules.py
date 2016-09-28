@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
 import os
@@ -58,7 +58,7 @@ class SchedulesElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.House.Schedules[l_schedule_ix]
             except AttributeError as e:
-                LOG.warning('Failed to delete schedule: {0:}, ix:{1:}').format(e, l_schedule_ix)
+                LOG.warning('Failed to delete schedule: {}, ix:{}').format(e, l_schedule_ix)
             return
         try:
             l_obj = self.m_pyhouse_obj.House.Schedules[l_schedule_ix]

@@ -7,12 +7,12 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 6 tests - DBK - 2016-09-19
+Passed all 7 tests - DBK - 2016-09-27
 
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-09-19'
+__updated__ = '2016-09-27'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -46,6 +46,19 @@ class SetupMixin(object):
 
 
 class A1_Conversions(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Message2int(self):
+        """ Get 3 bytes and convert it ti a laww
+        """
+        result = self.inst.message2int(MSG_50[2:5])
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse'))
+        self.assertEqual(result, ADDR_DR_SLAVE_INT)
+
+
+class B1_Conversions(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))

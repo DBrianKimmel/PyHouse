@@ -18,13 +18,15 @@ Instead of using callLater timers, it would be better to use deferred callbacks 
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import usb.core
 import usb.util
 
 # Import PyHouse modules
 from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
-from Modules.Utilities.tools import PrintBytes
+# from Modules.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -42,7 +44,7 @@ class Utility(object):
         """
         Printable Vendor, Product and controller name
         """
-        l_ret = "{0:#04x}:{1:#04x} {2:}".format(p_USB_obj.Vendor, p_USB_obj.Product, p_USB_obj.Name)
+        l_ret = "{:#04x}:{:#04x} {}".format(p_USB_obj.Vendor, p_USB_obj.Product, p_USB_obj.Name)
         return l_ret
 
     @staticmethod
@@ -71,7 +73,7 @@ class API(object):
         l_vpn = Utility.format_names(p_USB_obj)
         l_device = None
         try:
-            l_device = usb.core.find(idVendor = p_USB_obj.Vendor, idProduct = p_USB_obj.Product)
+            l_device = usb.core.find(idVendor=p_USB_obj.Vendor, idProduct=p_USB_obj.Product)
         except (usb.USBError, ValueError):
             LOG.error("ERROR no such USB device for {}".format(l_vpn))
             return None
@@ -123,12 +125,12 @@ class API(object):
         try:
             l_alternate_setting = usb.control.get_interface(p_USB_obj.UsbDevice, l_interface_number)
         except Exception as e:
-            LOG.error("   -- Error in alt setting {0:}".format(e))
+            LOG.error("   -- Error in alt setting {}".format(e))
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
             p_USB_obj.configs,
-            bInterfaceNumber = l_interface_number,
-            bAlternateSetting = l_alternate_setting)
+            bInterfaceNumber=l_interface_number,
+            bAlternateSetting=l_alternate_setting)
         p_USB_obj.num_endpoints = l_interface.bNumEndpoints
         p_USB_obj.interface_num = l_interface.bInterfaceNumber
         p_USB_obj.interface = l_interface
@@ -141,18 +143,18 @@ class API(object):
         """We will deal with 2 endpoints here - as that is what I expect a controller to have.
         No use in be too general if no device exists that is more complex.
         """
-        LOG.debug("_setup_endpoints() - Name: {0:},  endpoint count: {1:}".format(p_USB_obj.Name, p_USB_obj.num_endpoints))
+        LOG.debug("_setup_endpoints() - Name: {},  endpoint count: {}".format(p_USB_obj.Name, p_USB_obj.num_endpoints))
         p_USB_obj.ep_out = usb.util.find_descriptor(
             p_USB_obj.interface,
-            custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT)
-        LOG.debug("  Ep_Out: {0:}".format(p_USB_obj.ep_out.__dict__))
+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT)
+        LOG.debug("  Ep_Out: {}".format(p_USB_obj.ep_out.__dict__))
         p_USB_obj.epo_addr = p_USB_obj.ep_out.bEndpointAddress
         p_USB_obj.epo_type = p_USB_obj.ep_out.bmAttributes & 0x03
         p_USB_obj.epo_packet_size = p_USB_obj.ep_out.wMaxPacketSize
 
         p_USB_obj.ep_in = usb.util.find_descriptor(
             p_USB_obj.interface,
-            custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
         )
         LOG.debug("  Ep_In: {}".format(p_USB_obj.ep_in.__dict__))
         p_USB_obj.epi_addr = p_USB_obj.ep_in.bEndpointAddress
@@ -163,7 +165,7 @@ class API(object):
     def _setup_reports(p_USB_obj):
         _l_reports = usb.util.find_descriptor(
             p_USB_obj.interface,
-            custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN)
+            custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN)
 
     @staticmethod
     def open_device(p_USB_obj):
@@ -178,7 +180,7 @@ class API(object):
         API._setup_configurations(p_USB_obj)
         API._setup_interfaces(p_USB_obj)
         API._setup_endpoints(p_USB_obj)
-        l_control = usb5500API.Setup()
+        _l_control = usb5500API.Setup()
         # _l_msg = Utility.setup_hid_17DD_5500(p_USB_obj)
         return True
 

@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2016-09-19'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
 
@@ -118,7 +118,7 @@ class API(object):
         try:
             Utility._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
-            LOG.info('Stop Warning - {0:}'.format(e_err))  #  no controllers for house(House is being added)
+            LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
     def ChangeLight(self, p_light_obj, p_source, p_level, p_rate=0):
         """

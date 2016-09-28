@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 
 # Import PyMh files
@@ -32,7 +34,7 @@ class XML(object):
             l_usb.Product = PutGetXML.get_int_from_xml(p_controller_xml, 'Product')
             l_usb.Vendor = PutGetXML.get_int_from_xml(p_controller_xml, 'Vendor')
         except Exception as e_err:
-            LOG.error('Read Interface - {0:}'.format(e_err))
+            LOG.error('Read Interface - {}'.format(e_err))
         return l_usb
 
     @staticmethod

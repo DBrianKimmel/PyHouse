@@ -11,7 +11,7 @@ Passed all 6 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2016-07-18'
+__updated__ = '2016-09-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -85,14 +85,14 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
     #    self.assertEqual(utilUtil._get_message_length(MSG_99), 1)
 
     # def test_02_Command(self):
-    #    l_cmd = utilUtil._create_command_message('insteon_send')
+    #    l_cmd = utilUtil.create_command_message('insteon_send')
     #    self.assertEqual(l_cmd[0], 0x02)
     #    self.assertEqual(l_cmd[1], 0x62)
 
     def test_03_63Cmd(self):
         l_obj = self.m_pyhouse_obj.House.Lighting.Controllers
         # insteonPlmAPI._put_controller(l_obj)
-        # l_cmd = self.m_api.queue_62_command(l_obj, 0x02, 0x04)
+        # l_cmd = self.m_api._queue_62_command(l_obj, 0x02, 0x04)
         pass
 
 

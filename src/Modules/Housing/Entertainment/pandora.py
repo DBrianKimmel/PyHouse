@@ -22,7 +22,7 @@ When the remotes switches to another device (TV, BluRay, Tuner etc.), pianobar i
 this module goes back to its initial state ready for another session.
 """
 
-__updated__ = '2016-07-10'
+__updated__ = '2016-09-23'
 
 # Import system type stuff
 from twisted.internet import protocol
@@ -70,12 +70,12 @@ class BarProcessControl(protocol.ProcessProtocol):
         if l_data.startswith('Welcome to pianobar') or l_data.startswith('Press ? for') or l_data.startswith('Ok.'):
             return
         if l_data.startswith('|>'):  # This is selection information
-            LOG.info("Info = {0:}".format(l_data))
+            LOG.info("Info = {}".format(l_data))
             return
-        LOG.debug("Data = {0:}".format(l_data))
+        LOG.debug("Data = {}".format(l_data))
 
     def errReceived(self, p_data):
-        LOG.warning("StdErr received - {0:}".format(p_data))
+        LOG.warning("StdErr received - {}".format(p_data))
 
 
 class API(object):

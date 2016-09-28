@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 from twisted.web.client import getPage
 from twisted.internet.defer import Deferred
@@ -60,7 +62,7 @@ class DynDnsAPI(object):
         """
         if not self.m_running:
             return
-        LOG.info("Update DynDns - {0:}, {1:}".format(p_dyn_obj.Name, p_dyn_obj.UpdateUrl))
+        LOG.info("Update DynDns - {}, {}".format(p_dyn_obj.Name, p_dyn_obj.UpdateUrl))
         self.m_dyn_obj = p_dyn_obj
         self.m_deferred = getPage(p_dyn_obj.UpdateUrl)
         self.m_deferred.addCallback(self.cb_parse_dyndns)
@@ -76,7 +78,7 @@ class DynDnsAPI(object):
     def eb_parse_dyndns(self, p_response):
         """Afraid.org has no errors except no response in which case we can do nothing anyhow.
         """
-        LOG.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_pyhouse_obj.House.Name, p_response))
+        LOG.warning("Update DynDns for House:{} failed ERROR - {}.".format(self.m_pyhouse_obj.House.Name, p_response))
 
     def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.UpdateInterval, y = self.m_dyn_obj: self.update_loop(x, y)

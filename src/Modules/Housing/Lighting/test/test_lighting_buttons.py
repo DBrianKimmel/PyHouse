@@ -10,7 +10,7 @@
 Passed all 9 tests - DBK - 2016-07-14
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -132,9 +132,9 @@ class J1_Json(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Buttons.
         """
         l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect)
-        # print('ButtonsS: {0:}'.format(l_buttons))
-        # print('Button 0: {0:}'.format(vars(l_buttons[0])))
+        # print('ButtonsS: {}'.format(l_buttons))
+        # print('Button 0: {}'.format(vars(l_buttons[0])))
         l_json = json_tools.encode_json(l_buttons)
-        # print('JSON: {0:}'.format(l_json))
+        # print('JSON: {}'.format(l_json))
 
 # ## END DBK

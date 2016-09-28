@@ -22,10 +22,10 @@ Name    |  Code   |  Name   |  Action |  Name   |
 
 """
 
-__updated__ = '2016-08-31'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
-from twisted.application.internet import StreamServerEndpointService
+# from twisted.application.internet import StreamServerEndpointService
 from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.endpoints import TCP4ServerEndpoint, clientFromString
 from twisted.protocols.amp import AMP
@@ -81,10 +81,10 @@ class LircFactory(Factory):
         return LircProtocol()
 
     def clientConnectionLost(self, _connector, p_reason):
-        LOG.error('LircFactory - lost connection {0:}'.format(p_reason))
+        LOG.error('LircFactory - lost connection {}'.format(p_reason))
 
     def clientConnectionFailed(self, _connector, p_reason):
-        LOG.error('LircFactory - Connection failed {0:}'.format(p_reason))
+        LOG.error('LircFactory - Connection failed {}'.format(p_reason))
 
 
 class LircConnection(object):
@@ -95,10 +95,10 @@ class LircConnection(object):
     def start_lirc_connect(self, p_pyhouse_obj):
 
         def cb_connect(p_reason):
-            LOG.debug("LircConnection good {0:}".format(p_reason))
+            LOG.debug("LircConnection good {}".format(p_reason))
 
         def eb_connect(p_reason):
-            LOG.error("LircConnection Error {0:}".format(p_reason))
+            LOG.error("LircConnection Error {}".format(p_reason))
 
         l_endpoint = clientFromString(p_pyhouse_obj.Twisted.Reactor, LIRC_SOCKET)
         l_factory = LircFactory()
@@ -116,7 +116,7 @@ class IrDispatch(object):
         KeyCode_________ KeyName_______ Remote_________
         00000000a55ad02f KEY_VOLUMEDOWN pioneer-AXD7595
         """
-        LOG.debug("Received {0:} ({1:}) from {2:}".format(p_keycode, p_keyname, p_remote))
+        LOG.debug("Received {} ({}) from {}".format(p_keycode, p_keyname, p_remote))
         for l_dispatch in IR_KEYS:
             (l_keyname, l_module, l_command) = l_dispatch
             if p_keyname == l_keyname:
@@ -125,7 +125,7 @@ class IrDispatch(object):
                 pass
 
     def pandora_ctl(self, p_command):
-        LOG.debug('Pandora_ctl command - {0:}'.format(p_command))
+        LOG.debug('Pandora_ctl command - {}'.format(p_command))
         if p_command == 'start':
             g_pandora.Start(g_pyhouse_obj)
         elif p_command == 'stop':
@@ -135,7 +135,7 @@ class IrDispatch(object):
 class Utility(LircConnection):
 
     def start_AMP(self, p_pyhouse_obj):
-        l_endpoint = TCP4ServerEndpoint
+        _l_endpoint = TCP4ServerEndpoint
         l_factory = Factory()
         l_factory.protocol = AMP
         # p_pyhouse_obj.Services.IrControlService = StreamServerEndpointService(l_endpoint, l_factory)

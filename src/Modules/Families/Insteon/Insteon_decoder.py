@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-09-18'
+__updated__ = '2016-09-26'
 
 #  Import system type stuff
 
@@ -51,6 +51,7 @@ class DecodeResponses(object):
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
+        self.m_link = linkDecode(p_pyhouse_obj, p_controller_obj)
         LOG.info('Starting Decode')
 
     def decode_message(self, p_controller_obj):
@@ -67,13 +68,13 @@ class DecodeResponses(object):
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                LOG.info("{}".format(PrintBytes(p_controller_obj._Message)))
+                # LOG.info("RxMsg: {}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
                 else:
-                    #  LOG.warning('Message was too short - waiting for rest of message.')
+                    LOG.warning('Message was too short - waiting for rest of message.')
                     return
             else:
                 l_msg = "Dropping a leading char {:#x} - Rest. - {}".format(
@@ -111,17 +112,18 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
         l_ret = False
         l_cmd = p_controller_obj._Message[1]
+        # LOG.debug('  Dispatch: {:#02x}'.format(l_cmd))
         if l_cmd == 0:
             LOG.warning("Found a '0' record ->{}.".format(PrintBytes(l_message)))
             return l_ret
         elif l_cmd == 0x50: l_ret = self._decode_50_record(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51_record(p_controller_obj)
         elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
-        elif l_cmd == 0x53: linkDecode.decode_53(p_controller_obj)
+        elif l_cmd == 0x53: self.m_link.decode_53()
         elif l_cmd == 0x54: linkDecode.decode_54(p_controller_obj)
         elif l_cmd == 0x55: l_ret = self._decode_55_record(p_controller_obj)
         elif l_cmd == 0x56: linkDecode.decode_56(p_controller_obj)
-        elif l_cmd == 0x57: linkDecode.decode_57(p_controller_obj)
+        elif l_cmd == 0x57: self.m_link.decode_57()
         elif l_cmd == 0x58: linkDecode.decode_58(p_controller_obj)
         elif l_cmd == 0x60: l_ret = self._decode_60_record(p_controller_obj)
         elif l_cmd == 0x61: l_ret = self._decode_61_record(p_controller_obj)
@@ -149,7 +151,7 @@ class DecodeResponses(object):
     def _decode_50_record(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
-        See p 233(246) of developers guide.
+        See p 233(246) of 2009 developers guide.
         [0] = x02
         [1] = 0x50
         [2-4] = from address
@@ -254,7 +256,7 @@ class DecodeResponses(object):
         See p 269 of developers guide.
         """
         l_debug_msg = "User Reset Detected! "
-        p_controller_obj.Ret = linkDecode.decode_53(p_controller_obj)
+        p_controller_obj.Ret = linkDecode.decode_55(p_controller_obj)
         LOG.info("".format(l_debug_msg))
 
     def _decode_60_record(self, p_controller_obj):
@@ -294,7 +296,7 @@ class DecodeResponses(object):
     def _decode_62_record(self, p_controller_obj):
         """Get response to Send Insteon standard-length message (9 bytes).
         Basically, a response to the 62 command.
-        See p 243 of developers guide.
+        See p 230(243) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x62
         [2-4] = address
@@ -302,6 +304,22 @@ class DecodeResponses(object):
         [6] = command 1
         [7] = command 2
         [8] = ACK/NAK
+
+        [8] = User Data 1
+        [9] = User Data 2
+        [10] = User Data 3
+        [11] = User Data 4
+        [12] = User Data 5
+        [13] = User Data 6
+        [14] = User Data 7
+        [15] = User Data 8
+        [16] = User Data 9
+        [17] = User Data 10
+        [18] = User Data 11
+        [19] = User Data 12
+        [20] = User Data 13
+        [21] = User Data 14
+        [22] = ACK/NAK
         This is an ack/nak of the command and generally is not very interesting by itself.
         Depending on the command sent, another response MAY follow this message with further data.
         """
@@ -342,8 +360,12 @@ class DecodeResponses(object):
 
     def _decode_6B_record(self, p_controller_obj):
         """Get set IM configuration (4 bytes).
-        See p 271 of developers guide.
-        """
+        See p 258(271) of 2009 developers guide.
+        [0] = x02
+        [1] = 0x6B
+        [2] = Flags
+        [3] = ACK/NAK
+         """
         l_message = p_controller_obj._Message
         l_flag = l_message[2]
         l_ack = utilDecode.get_ack_nak(l_message[3])

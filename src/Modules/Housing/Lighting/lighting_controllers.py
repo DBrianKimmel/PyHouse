@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2016-09-17'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -119,7 +119,7 @@ class Utility(object):
             Utility._read_interface_data(p_pyhouse_obj, l_obj, p_xml)
             Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
         except Exception as e_err:
-            LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
+            LOG.error('ERROR - ReadOneController - {}'.format(e_err))
             l_obj = ControllerData()
         return l_obj
 

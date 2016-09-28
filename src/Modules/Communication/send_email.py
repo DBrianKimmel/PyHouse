@@ -16,6 +16,8 @@ If you don't have an account - get one or write another module to handle your ma
 
 """
 
+__updated__ = '2016-09-23'
+
 #  Import system type stuff
 import email.mime.application
 import xml.etree.ElementTree as ET
@@ -84,18 +86,18 @@ class Utility(ApiXml):
             l_xml = l_xml.find('ComputerDivision')
             l_xml = l_xml.find('EmailSection')
         except AttributeError as e_err:
-            LOG.error('SetupXML ERROR {0:}'.format(e_err))
+            LOG.error('SetupXML ERROR {}'.format(e_err))
         return l_xml
 
-    def create_email_message(self, p_pyhouse_obj, p_address, p_subject, p_body, p_attachment = None):
+    def create_email_message(self, p_pyhouse_obj, p_address, p_subject, p_body, p_attachment=None):
         l_msg = email.mime.Multipart.MIMEMultipart()
         l_msg['Subject'] = p_subject
         l_msg['From'] = p_pyhouse_obj.Computer.Email.EmailFromAddress
         l_msg['To'] = p_address
         l_body = email.mime.Text.MIMEText(p_body)
         l_msg.attach(l_body)
-        l_att = email.mime.application.MIMEApplication(p_attachment, _subtype = "binary")
-        l_att.add_header('Content-Disposition', 'attachment', filename = "data.bin")
+        l_att = email.mime.application.MIMEApplication(p_attachment, _subtype="binary")
+        l_att.add_header('Content-Disposition', 'attachment', filename="data.bin")
         l_msg.attach(l_att)
         #  Create a context factory which only allows SSLv3 and does not verify the peer's certificate.
         return str(l_msg)

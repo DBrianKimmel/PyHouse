@@ -14,6 +14,8 @@ address from some external device and check on the status of the house.
 This module will try to be fully twisted like and totally async (except for read/write of xml).
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import netifaces
 import xml.etree.ElementTree as ET
@@ -60,10 +62,10 @@ class InternetData(object):
         self.DynDns = {}
 
     def reprJSON(self):
-        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    ExternalDelay = self.ExternalDelay,
-                    ExternalIP = self.ExternalIP, ExternalUrl = self.ExternalUrl,
-                    DynDns = self.DynDns
+        return dict(Name=self.Name, Key=self.Key, Active=self.Active,
+                    ExternalDelay=self.ExternalDelay,
+                    ExternalIP=self.ExternalIP, ExternalUrl=self.ExternalUrl,
+                    DynDns=self.DynDns
                     )
 
 
@@ -77,8 +79,8 @@ class DynDnsData(object):
         self.UpdateUrl = None
 
     def reprJSON(self):
-        return dict(Name = self.Name, Key = self.Key, Active = self.Active,
-                    Interval = self.UpdateInterval, Url = self.UpdateUrl
+        return dict(Name=self.Name, Key=self.Key, Active=self.Active,
+                    Interval=self.UpdateInterval, Url=self.UpdateUrl
                     )
 
 
@@ -121,7 +123,7 @@ class FindAllInterfaceData(object):
                     m_interface.V4Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
                 if netifaces.address_families[l_af] == 'AF_INET6':
                     m_interface.V6Address = netifaces.ifaddresses(l_interface)[l_af][0]['addr']
-            LOG.info("Interface:{0}, Mac:{1:}, V4:{2:}, V6:{3:}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
+            LOG.info("Interface:{}, Mac:{}, V4:{}, V6:{}".format(m_interface.Name, m_interface.MacAddress, m_interface.V4Address, m_interface.V6Address))
             l_count += 1
         pass
 
@@ -140,7 +142,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         l_dyndns_obj.UpdateInterval = PutGetXML.get_int_from_xml(p_internet_xml, 'UpdateInterval')
         l_dyndns_obj.UpdateUrl = PutGetXML.get_text_from_xml(p_internet_xml, 'UpdateUrl')
         if g_debug >= 1:
-            LOG.debug("internet.extract_dyn_dns() - Name:{0:}, UpdateInterval:{1:}, UpdateUrl:{2:};".format(
+            LOG.debug("internet.extract_dyn_dns() - Name:{}, UpdateInterval:{}, UpdateUrl:{};".format(
                             l_dyndns_obj.Name, l_dyndns_obj.UpdateInterval, l_dyndns_obj.UpdateUrl))
         return l_dyndns_obj
 
@@ -168,7 +170,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         p_house_obj.Internet.ExternalIP = self.m_external_ip
         p_house_obj.Internet.ExternalUrl = self.m_external_url
         p_house_obj.Internet.ExternalDelay = self.m_external_delay
-        LOG.debug("Got external IP params.  URL:{0:}, Delay:{1:}".format(self.m_external_url, self.m_external_delay))
+        LOG.debug("Got external IP params.  URL:{}, Delay:{}".format(self.m_external_url, self.m_external_delay))
         try:
             l_list = l_sect.iterfind('DynamicDNS')
         except AttributeError:
@@ -179,7 +181,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             l_dyndns.Key = l_count  # Renumber
             p_house_obj.Internet.DynDns[l_count] = l_dyndns
             l_count += 1
-        LOG.info('Loaded UpdateUrl:{0:}, Delay:{1:}'.format(self.m_external_url, self.m_external_delay))
+        LOG.info('Loaded UpdateUrl:{}, Delay:{}'.format(self.m_external_url, self.m_external_delay))
         return p_house_obj.Internet
 
     def write_internet(self, p_house_obj):
@@ -292,9 +294,9 @@ class FindExternalIpAddress(object):
         callLater(l_delay, self.get_public_ip)
         self.m_url = self.m_house_obj.Internet.ExternalUrl
         if self.m_url == None:
-            LOG.error("URL is missing for House:{0:}".format(self.m_house_obj.Name))
+            LOG.error("URL is missing for House:{}".format(self.m_house_obj.Name))
             return
-        LOG.debug("About to get URL:{0:}".format(self.m_url))
+        LOG.debug("About to get URL:{}".format(self.m_url))
         l_ip_page_defer = getPage(self.m_url)
         l_ip_page_defer.addCallbacks(self.cb_parse_page, self.eb_no_page)
 
@@ -310,12 +312,12 @@ class FindExternalIpAddress(object):
         l_quad = p_ip_page
         self.m_house_obj.Internet.ExternalIP = l_quad
         l_addr = convert.str_to_long(l_quad)
-        LOG.info("Got External IP page for House:{0:}, Page:{1:}".format(self.m_house_obj.Name, p_ip_page))
+        LOG.info("Got External IP page for House:{}, Page:{}".format(self.m_house_obj.Name, p_ip_page))
         callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
         return l_addr
 
     def eb_no_page(self, p_reason):
-        LOG.error("Failed to Get External IP page for House:{0:}, {1:}".format(self.m_house_obj.Name, p_reason))
+        LOG.error("Failed to Get External IP page for House:{}, {}".format(self.m_house_obj.Name, p_reason))
         callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
 
 
@@ -352,7 +354,7 @@ class DynDnsAPI(object):
         """
         if not self.m_running:
             return
-        LOG.info("Update DynDns for House:{0:}, {1:}, {2:}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.UpdateUrl))
+        LOG.info("Update DynDns for House:{}, {}, {}".format(self.m_house_obj.Name, p_dyn_obj.Name, p_dyn_obj.UpdateUrl))
         self.m_dyn_obj = p_dyn_obj
         self.m_deferred = getPage(p_dyn_obj.UpdateUrl)
         self.m_deferred.addCallback(self.cb_parse_dyndns)
@@ -368,7 +370,7 @@ class DynDnsAPI(object):
     def eb_parse_dyndns(self, p_response):
         """Afraid.org has no errors except no response in which case we can do nothing anyhow.
         """
-        LOG.warning("Update DynDns for House:{0:} failed ERROR - {1:}.".format(self.m_house_obj.Name, p_response))
+        LOG.warning("Update DynDns for House:{} failed ERROR - {}.".format(self.m_house_obj.Name, p_response))
 
     def cb_do_delay(self, _p_response):
         l_cmd = lambda x = self.m_dyn_obj.UpdateInterval, y = self.m_dyn_obj: self.update_loop(x, y)
@@ -388,7 +390,7 @@ class API(ReadWriteConfigXml):
         self.read_internet_xml(p_house_obj, p_house_xml)
         self.m_house_obj = p_house_obj
         if p_house_obj.Active:
-            LOG.info("Starting for house:{0:}.".format(p_house_obj.Name))
+            LOG.info("Starting for house:{}.".format(p_house_obj.Name))
             FindAllInterfaceData()
             FindExternalIpAddress(p_house_obj)
             self.m_dyn_loop = DynDnsAPI(p_house_obj)
@@ -398,7 +400,7 @@ class API(ReadWriteConfigXml):
         write out the XML file.
         """
         if self.m_house_obj.Active:
-            LOG.info("Stopping for house:{0:}.".format(self.m_house_obj.Name))
+            LOG.info("Stopping for house:{}.".format(self.m_house_obj.Name))
             self.dyndns.stop_dyndns_process()
 
 # ## END DBK

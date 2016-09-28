@@ -12,6 +12,7 @@ This may be instanced as many times as there are USB devices to control.
 This should also allow control of many different houses.
 """
 
+__updated__ = '2016-09-23'
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
@@ -69,7 +70,7 @@ class UsbDeviceData(object):
         self.message = ''
 
     def __str__(self):
-        l_ret = "USB_driver.UsbDeviceData: Name: {0:}, Vendor: {1:#04x}, Product: {2:#04x}, Device: {3:}, Port: {4:}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
+        l_ret = "USB_driver.UsbDeviceData: Name: {:}, Vendor: {:#04x}, Product: {:#04x}, Device: {}, Port: {}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
         return l_ret
 
 class UsbDriverAPI(UsbDeviceData):
@@ -81,12 +82,12 @@ class UsbDriverAPI(UsbDeviceData):
         @return:  None if no such device or a pyusb device object
         """
         try:
-            l_device = usb.core.find(idVendor = p_usb.Vendor, idProduct = p_usb.Product)
+            l_device = usb.core.find(idVendor=p_usb.Vendor, idProduct=p_usb.Product)
         except usb.USBError:
             LOG.error("ERROR no such USB device")
             return None
         if l_device == None:
-            LOG.error('USB device not found  {0:X}:{1:X}, {2:}'.format(p_usb.Vendor, p_usb.Product, p_usb.Name))
+            LOG.error('USB device not found  {:X}:{:X}, {}'.format(p_usb.Vendor, p_usb.Product, p_usb.Name))
             return None
         p_usb.Device = l_device
         p_usb.num_configs = l_device.bNumConfigurations
@@ -107,7 +108,7 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             p_usb.Device.detach_kernel_driver(0)
         except Exception as e:
-            LOG.error("USB_driver - Error in detaching_kernel_driver {0:} ".format(e))
+            LOG.error("USB_driver - Error in detaching_kernel_driver {} ".format(e))
 
     def _setup_configurations(self, p_usb):
         """Now we deal with the USB configuration
@@ -132,11 +133,11 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_alternate_setting = usb.control.get_interface(p_usb.Device, l_interface_number)
         except Exception as e:
-            LOG.error("Error in alt setting {0:}".format(e))
+            LOG.error("Error in alt setting {}".format(e))
             l_alternate_setting = 0
         l_interface = usb.util.find_descriptor(
-            p_usb.configs, bInterfaceNumber = l_interface_number,
-            bAlternateSetting = l_alternate_setting)
+            p_usb.configs, bInterfaceNumber=l_interface_number,
+            bAlternateSetting=l_alternate_setting)
         p_usb.num_endpoints = l_interface.bNumEndpoints
         p_usb.interface_num = l_interface.bInterfaceNumber
         p_usb.interface = l_interface
@@ -147,14 +148,14 @@ class UsbDriverAPI(UsbDeviceData):
         No use in be too general if no device exists that is more complex.
         """
         p_usb.ep_out = usb.util.find_descriptor(
-            p_usb.interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT
+            p_usb.interface, custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_OUT
         )
         p_usb.epo_addr = p_usb.ep_out.bEndpointAddress
         p_usb.epo_type = p_usb.ep_out.bmAttributes & 0x03
         p_usb.epo_packet_size = p_usb.ep_out.wMaxPacketSize
 
         p_usb.ep_in = usb.util.find_descriptor(
-            p_usb.interface, custom_match = lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
+            p_usb.interface, custom_match=lambda e: usb.util.endpoint_direction(e.bEndpointAddress) == usb.util.ENDPOINT_IN
         )
         p_usb.epi_addr = p_usb.ep_in.bEndpointAddress
         p_usb.epi_type = p_usb.ep_in.bmAttributes & 0x03
@@ -169,7 +170,7 @@ class UsbDriverAPI(UsbDeviceData):
                                  l_par[2],
                                  l_par[3],
                                  l_par[4],
-                                 timeout = 100)
+                                 timeout=100)
         if l_ret < 0:
             return -1
         return
@@ -180,7 +181,7 @@ class UsbDriverAPI(UsbDeviceData):
         p_usb.Product = p_controller_obj.Product
         p_usb.Vendor = p_controller_obj.Vendor
         p_usb.message = bytearray()
-        LOG.info(" Initializing USB port - {0:#04X}:{1:#04X} - {2:} on port {3:}".format(
+        LOG.info(" Initializing USB port - {:#04X}:{:#04X} - {} on port {}".format(
             p_usb.Vendor, p_usb.Product, p_usb.Name, p_usb.Port))
         p_usb.Device = self._setup_find_device(p_usb)
         if p_usb.Device == None:
@@ -226,12 +227,12 @@ class UsbDriverAPI(UsbDeviceData):
         try:
             l_len = g_usb.Device.write(g_usb.epo_addr, l_message)
         except Exception as e:
-            LOG.error("USB_driver._write_bis_device() - Error in writing to USB device {0:}".format(e))
+            LOG.error("USB_driver._write_bis_device() - Error in writing to USB device {}".format(e))
             l_len = 0
         return l_len
 
     def _write_control_device(self, p_message):
-        l_len = g_usb.Device.write(0, p_message, timeout = 100)
+        l_len = g_usb.Device.write(0, p_message, timeout=100)
         return l_len
 
 class API(UsbDriverAPI):
@@ -250,7 +251,7 @@ class API(UsbDriverAPI):
         g_usb = UsbDeviceData()
         g_usb.Parent = p_parent
         if self.open_device(p_controller_obj, g_usb) != None:
-            callLater(RECEIVE_TIMEOUT, lambda x = g_usb: self.read_device(x))
+            callLater(RECEIVE_TIMEOUT, lambda x=g_usb: self.read_device(x))
 
     def Stop(self):
         self.close_device(g_usb)

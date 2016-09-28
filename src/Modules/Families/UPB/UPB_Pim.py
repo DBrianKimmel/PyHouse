@@ -13,6 +13,8 @@
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import Queue
 
@@ -306,7 +308,7 @@ class PimDriverInterface(DecodeResponses):
         self.receive_loop(p_controller_obj)
 
     def XXXqueue_pim_command(self, p_controller_obj, p_command):
-        l_msg = "Queue_pim_command {0:}".format(PrintBytes(p_command))
+        l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
         LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
@@ -426,7 +428,7 @@ class API(UpbPimAPI):
     def Stop(self, p_controller_obj):
         pass
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate=0):
         for l_obj in self.m_house_obj.Lights.itervalues():
             if l_obj.Active == False:
                 continue

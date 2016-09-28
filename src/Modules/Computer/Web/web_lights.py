@@ -12,7 +12,7 @@
 TODO: Change all references to a light if name changes.
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
 import os
@@ -60,12 +60,12 @@ class LightsElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.House.Lighting.Lights[l_light_ix]
             except AttributeError:
-                LOG.error("web_lights - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("web_lights - Failed to delete - JSON: {}".format(l_json))
             return
         try:
             l_obj = self.m_pyhouse_obj.House.Lighting.Lights[l_light_ix]
         except KeyError:
-            LOG.warning('Creating a new light for light {0:}'.format(l_light_ix))
+            LOG.warning('Creating a new light for light {}'.format(l_light_ix))
             l_obj = lighting_lights.LightData()
         #
         l_obj.Name = l_json['Name']

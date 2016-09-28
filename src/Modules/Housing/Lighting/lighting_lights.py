@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2016-09-17'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -91,7 +91,7 @@ class Utility(object):
             Utility._read_light_data(p_pyhouse_obj, l_obj, p_xml)
             Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
         except Exception as e_err:
-            LOG.error('ERROR - ReadOneController - {0:}'.format(e_err))
+            LOG.error('ERROR - ReadOneController - {}'.format(e_err))
             l_obj = LightData()
         return l_obj
 

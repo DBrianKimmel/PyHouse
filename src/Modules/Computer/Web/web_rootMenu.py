@@ -10,6 +10,8 @@
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import os
 from nevow import loaders
@@ -46,6 +48,6 @@ class RootMenuElement(athena.LiveElement):
     def doRootMenuQuit(self, p_json):
         """ Process a message for a browser logoff and quit that came from the browser/client.
         """
-        LOG.info("Self: {0:};  JSON: {1:}".format(self, p_json))
+        LOG.info("Self: {};  JSON: {}".format(self, p_json))
 
 # ## END DBK

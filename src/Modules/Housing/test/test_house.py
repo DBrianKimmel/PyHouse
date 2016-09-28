@@ -11,7 +11,7 @@
 Passed all 9 tests - DBK - 2016-07-07
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-09-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -147,9 +147,9 @@ class J1_JSON(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.5
         """
         l_house = houseXml.read_house_xml(self.m_pyhouse_obj)
-        # print('House: {0:}'.format(l_house))
+        # print('House: {}'.format(l_house))
         _l_json = json_tools.encode_json(l_house)
-        # print('JSON: {0:}'.format(l_json))
+        # print('JSON: {}'.format(l_json))
 
 
 class P1_API(SetupMixin, unittest.TestCase):

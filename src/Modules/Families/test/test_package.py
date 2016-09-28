@@ -10,6 +10,8 @@
 Passed all 6 tests - DBK 2015-07-28
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import inspect
 import os
@@ -37,7 +39,7 @@ class Test_01(unittest.TestCase):
         l_dir_list = os.listdir(l_dir)
         for l_name in VALID_FAMILIES:
             self.assertTrue(l_name in l_dir_list)
-            # print("found {0:}".format(l_name))
+            # print("found {}".format(l_name))
         # print(l_dir_list)
         # families = os.dirs
 
@@ -68,7 +70,7 @@ class Test_02_Insteon(unittest.TestCase):
         l_dir_list = os.listdir(l_dir)
         for l_name in VALID_FAMILIES:
             self.assertTrue(l_name in l_dir_list)
-            # print("found {0:}".format(l_name))
+            # print("found {}".format(l_name))
 
     def test_0109_allDefined(self):
         pass

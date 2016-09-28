@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-23'
 
 #  Import system type stuff
 import os
@@ -59,7 +59,7 @@ class ThermostatsElement(athena.LiveElement):
             try:
                 del self.m_pyhouse_obj.House.Hvac.Thermostats[l_ix]
             except AttributeError:
-                LOG.error("web_thermostats - Failed to delete - JSON: {0:}".format(l_json))
+                LOG.error("web_thermostats - Failed to delete - JSON: {}".format(l_json))
             return
         try:
             l_obj = self.m_pyhouse_obj.House.Hvac.Thermostats[l_ix]

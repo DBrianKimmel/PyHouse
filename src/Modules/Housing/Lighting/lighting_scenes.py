@@ -11,6 +11,8 @@ Handle the scenes component of the lighting system.
 
 """
 
+__updated__ = '2016-09-23'
+
 
 Scene_Data = {}
 
@@ -27,7 +29,7 @@ class ScenesData(object):
         self.Rate = None
 
     def __str__(self):
-        l_ret = "Scene Name:{0:} - Light:{1:}".format(self.Name, self.Light)
+        l_ret = "Scene Name:{} - Light:{}".format(self.Name, self.Light)
         return l_ret
 
 

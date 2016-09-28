@@ -11,6 +11,8 @@
 
 """
 
+__updated__ = '2016-09-23'
+
 # Import system type stuff
 import usb
 from twisted.internet.protocol import Protocol
@@ -36,13 +38,13 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_USB_obj
 
     def connectionFailed(self):
-        LOG.error("USB_driver.connectionFailed() - {0:}".format(self))
+        LOG.error("USB_driver.connectionFailed() - {}".format(self))
 
     def connectionMade(self):
         LOG.debug('USB_driver.connectionMade() - Connected to Serial Device')  # , dir(self), vars(self)
 
     def dataReceived(self, p_data):
-        LOG.debug("USB_driver.dataReceived() - {0:}".format(PrintBytes(p_data)))
+        LOG.debug("USB_driver.dataReceived() - {}".format(PrintBytes(p_data)))
         self.m_USB_obj.message += p_data
 
 
@@ -66,9 +68,9 @@ class UsbDriverAPI(object):
         for l_ix in range(len(l_msg)):
             self.m_USB_obj.message.append(l_msg[l_ix])
         if len(l_msg) > 0:
-            LOG.debug('Driver - ReadUSB  JustRead:{0:}'.format(PrintBytes(l_msg)))
+            LOG.debug('Driver - ReadUSB  JustRead:{}'.format(PrintBytes(l_msg)))
         if len(self.m_USB_obj.message) > 0:
-            LOG.debug('Driver - ReadUSB  Accumulated:{0:}'.format(PrintBytes(self.m_USB_obj.message)))
+            LOG.debug('Driver - ReadUSB  Accumulated:{}'.format(PrintBytes(self.m_USB_obj.message)))
         return l_msg
 
     def read_device(self, p_USB_obj):
@@ -77,13 +79,13 @@ class UsbDriverAPI(object):
         @return: the number of bytes fetched from the controller
         """
         try:
-            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)  # Note - No device to test with
-            LOG.debug("read_device() - Msg:{1:}".format(PrintBytes(l_msg)))
+            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout=100)  # Note - No device to test with
+            LOG.debug("read_device() - Msg:{}".format(PrintBytes(l_msg)))
         except usb.USBError as e_err:
-            LOG.error("ERROR - read_device() got USBError - {0:}".format(e_err))
+            LOG.error("ERROR - read_device() got USBError - {}".format(e_err))
             l_msg = bytearray(0)
         except Exception as e_err:
-            LOG.error("ERROR - read_device() {0:}".format(e_err))
+            LOG.error("ERROR - read_device() {}".format(e_err))
             l_msg = bytearray(0)
         return l_msg
 
@@ -101,7 +103,7 @@ class UsbDriverAPI(object):
             return l_ret
         l_len = p_message[0] & 0x0F
         if l_len > 0:
-            LOG.debug("read_hid_report() A - Msg:{0:}".format(PrintBytes(p_message)))
+            LOG.debug("read_hid_report() A - Msg:{}".format(PrintBytes(p_message)))
             l_ret = p_message[1:l_len + 1]
         return l_ret
 
@@ -119,12 +121,12 @@ class UsbDriverAPI(object):
         was available.
         """
         try:
-            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout = 100)
+            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout=100)
         except usb.USBError as e_err:
-            LOG.error("ERROR - read_hid_report() got USBError {0:}".format(e_err))
+            LOG.error("ERROR - read_hid_report() got USBError {}".format(e_err))
             l_msg = bytearray(0)
         except Exception as e_err:
-            LOG.error("ERROR - read_hid_report() {0:}".format(e_err))
+            LOG.error("ERROR - read_hid_report() {}".format(e_err))
             l_msg = bytearray(0)
         l_ret = self._extract_hid_report(l_msg)
         return l_ret
@@ -144,7 +146,7 @@ class UsbDriverAPI(object):
             self.write_device(p_USB_obj, p_message)
 
     def write_report(self, p_USB_obj, p_message):
-        LOG.debug("Write Report - {0:}".format(PrintBytes(p_message)))
+        LOG.debug("Write Report - {}".format(PrintBytes(p_message)))
         self._write_bis_device(p_USB_obj, p_message)
 
     def write_device(self, p_USB_obj, p_message):
@@ -155,7 +157,7 @@ class UsbDriverAPI(object):
 
         @return: the number of bytes written
         """
-        LOG.debug("write_device() - {0:}".format(PrintBytes(p_message)))
+        LOG.debug("write_device() - {}".format(PrintBytes(p_message)))
         if p_USB_obj.epi_type == 0:
             self._write_control_device(p_USB_obj, p_message)
         else:
@@ -165,17 +167,17 @@ class UsbDriverAPI(object):
         """Bulk, Interrupt, isoSynchronous
         """
         l_message = p_message
-        LOG.debug("write_bis_device() - Ep_out: {0:#04X}, - {1:}".format(p_USB_obj.epo_addr, PrintBytes(l_message)))
+        LOG.debug("write_bis_device() - Ep_out: {:#04X}, - {}".format(p_USB_obj.epo_addr, PrintBytes(l_message)))
         try:
             l_len = p_USB_obj.UsbDevice.write(p_USB_obj.epo_addr, l_message)
         except Exception as e:
-            LOG.error("_write_bis_device() - Error in writing to USB device {0:}".format(e))
+            LOG.error("_write_bis_device() - Error in writing to USB device {}".format(e))
             l_len = 0
         return l_len
 
     def _write_control_device(self, p_USB_obj, p_message):
         LOG.debug("_write_control_device() {}".format(p_USB_obj.UsbDevice))
-        l_len = p_USB_obj.UsbDevice.ctrl_transfer(0, p_message, timeout = 100)
+        l_len = p_USB_obj.UsbDevice.ctrl_transfer(0, p_message, timeout=100)
         return l_len
 
     @staticmethod

@@ -13,6 +13,8 @@ This module automatically updates PyHouse
 
 """
 
+__updated__ = '2016-09-23'
+
 
 # strategy:
 #
@@ -35,7 +37,7 @@ class FindLocalVersion(object):
         try:
             with open(self.m_filename) as f:
                 self.m_version = f.read().strip()
-                self.m_source = 'Local file {0:}'.format(self.m_filename)
+                self.m_source = 'Local file {}'.format(self.m_filename)
 
         except IOError:
             from subprocess import Popen, PIPE
@@ -45,14 +47,14 @@ class FindLocalVersion(object):
 
             try:
                 l_dir = os.path.dirname(os.path.abspath(__file__))
-                l_pipe = Popen(['git', 'describe', '--tags', '--always'], cwd = l_dir, stdout = PIPE, stderr = PIPE)
+                l_pipe = Popen(['git', 'describe', '--tags', '--always'], cwd=l_dir, stdout=PIPE, stderr=PIPE)
                 l_out = l_pipe.communicate()[0]
 
                 if (not l_pipe.returncode) and l_out:
                     l_ver = VERSION_MATCH.search(l_out)
                     if l_ver:
                         self.m_version = l_ver.group()
-                        self.m_source = 'Git repository {0:}, {1:}'.format(l_out, l_ver)
+                        self.m_source = 'Git repository {}, {}'.format(l_out, l_ver)
             except OSError:
                 pass
 

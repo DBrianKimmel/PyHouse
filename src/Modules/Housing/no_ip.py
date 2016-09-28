@@ -8,9 +8,9 @@
 @note:      Created on Feb 13, 2014
 @summary:
 
-
 """
 
+__updated__ = '2016-09-23'
 
 """
 #define DEBUG
@@ -2569,6 +2569,6 @@ def bdecode(p_in, p_out):
 pass
 
 def Msg(p_msg):
-    LOG.error('{0:}'.format(p_msg))
+    LOG.error('{}'.format(p_msg))
 
 # ## END DBK
