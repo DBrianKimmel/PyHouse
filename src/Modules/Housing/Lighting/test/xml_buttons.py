@@ -9,11 +9,13 @@
 
 """
 
+__updated__ = '2016-10-05'
+
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
-from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_2
 from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
@@ -35,7 +37,7 @@ L_BUTTON_BODY = '\n'.join([
 INSTEON_BUTTON_XML = '\n'.join([
     '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_0 + '" Active="True" Key="0">',
     L_BUTTON_BODY,
-    XML_INSTEON,
+    XML_INSTEON_2,
     L_BUTTON_END
     ])
 

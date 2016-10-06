@@ -18,17 +18,18 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-10-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
-from Modules.Core.data_objects import LightingData, ControllerData
+from Modules.Core.data_objects import LightingData
 from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
+from Modules.Housing.Lighting.lighting_garagedoor import API as garageAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
@@ -89,6 +90,16 @@ class Utility(object):
             LOG.warning(l_msg)
         return l_ret
 
+    def _read_garage(self, p_pyhouse_obj, p_xml):
+        try:
+            l_xml = p_xml.find('GarageSection')
+            l_ret = lightsAPI.read_all_lights_xml(p_pyhouse_obj, l_xml)
+        except AttributeError as e_err:
+            l_ret = {}
+            l_msg = 'No Lights found: {}'.format(e_err)
+            LOG.warning(l_msg)
+        return l_ret
+
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
         Get all the lighting components for a house
@@ -105,6 +116,7 @@ class Utility(object):
             return p_pyhouse_obj.House.Lighting
         p_pyhouse_obj.House.Lighting.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml)
         p_pyhouse_obj.House.Lighting.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml)
+        p_pyhouse_obj.House.Lighting.GarageDoors = self._read_garage(p_pyhouse_obj, l_lighting_xml)
         p_pyhouse_obj.House.Lighting.Lights = self._read_lights(p_pyhouse_obj, l_lighting_xml)
         #  print(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting, 'Lighting'))
         return p_pyhouse_obj.House.Lighting

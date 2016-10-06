@@ -54,7 +54,7 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 			globals.House = JSON.parse(p_json);
 			var l_obj = globals.House;
 			// console.log("house.buildLcarRoomDataEntryScreen() - Fetched Data = %O", l_obj);
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		}
 		function eb_fetchDataFromServer(p_reason) {
 			Divmod.debug('---', 'ERROR - house.eb_fetchDataFromServer() - ' + p_reason);
@@ -64,18 +64,19 @@ helpers.Widget.subclass(house, 'HouseWidget').methods(
 		l_defer.addErrback(eb_fetchDataFromServer);
         return false;
 	},
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+	function buildDataEntryScreen(self, p_entry, p_handler){
 		var l_obj = arguments[1];
-		// console.log("house.buildLcarDataEntryScreen() - Data = %O", l_obj);
+		// console.log("house.buildDataEntryScreen() - Data = %O", l_obj);
 		var l_html = build_lcars_top('Enter House Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler, p_onchange) {
-		var l_html = buildBaseEntry(self, p_obj);
+		var l_html = '';
+		l_html = buildBaseEntry(self, p_obj, l_html);
 		l_html = self.buildLocationEntry(p_obj.Location, l_html);
-		l_html += buildLcarEntryButtons(p_handler);
+		l_html = buildLcarEntryButtons(p_handler, l_html);
 		return l_html;
 	},
     function buildLocationEntry(self, p_obj, p_html) {

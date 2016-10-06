@@ -9,13 +9,13 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-09-30'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
-from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0
 
 L_HVAC_SECTION_START = '<HvacSection>'
 L_HVAC_SECTION_END = '</HvacSection>'
@@ -70,7 +70,7 @@ XML_INSTEON_THERMOSTAT_0 = '\n'.join([
     XML_DEVICE_INSTEON,
     L_THERMOSTAT_SETTINGS_0,
     L_THERMOSTAT_STATUS_0,
-    XML_INSTEON,
+    XML_INSTEON_0,
     L_THERMOSTAT_END
 ])
 
@@ -103,7 +103,7 @@ XML_INSTEON_THERMOSTAT_1 = '\n'.join([
     XML_DEVICE_INSTEON,
     L_THERMOSTAT_SETTINGS_0,
     L_THERMOSTAT_STATUS_1,
-    XML_INSTEON,
+    XML_INSTEON_0,
     L_THERMOSTAT_END
 ])
 

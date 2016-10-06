@@ -117,7 +117,6 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
 		var l_html = '';
 		l_html = self.buildLoginEntry(p_obj, l_html, p_onchange);
-		//l_html += buildLcarEntryButtons(p_handler, 1);
 		l_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
 		return l_html;
 	},

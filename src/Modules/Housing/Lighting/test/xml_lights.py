@@ -11,12 +11,12 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2016-08-20'
+__updated__ = '2016-09-30'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0
 from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
@@ -74,7 +74,7 @@ L_LIGHT_0 = '\n'.join([
     L_LIGHT_IS_DIMMABLE_0,
     L_LIGHT_TYPE_0,
     L_LIGHT_LEVEL_0,
-    XML_INSTEON,
+    XML_INSTEON_0,
     L_LIGHT_END
     ])
 

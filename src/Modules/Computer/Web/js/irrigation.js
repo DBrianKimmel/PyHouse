@@ -91,14 +91,14 @@ helpers.Widget.subclass(irrigation, 'IrrigationWidget').methods(
 			l_obj = globals.House.Irrigation[l_ix];
 			globals.House.IrrigationObj = l_obj;
 			globals.House.Self = self;
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
 			l_obj = self.createEntry();
 			globals.House.IrrigationObj = l_obj;
 			globals.House.Self = self;
 			globals.Add = true;
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -109,8 +109,8 @@ helpers.Widget.subclass(irrigation, 'IrrigationWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		Divmod.debug('---', 'irrigation.buildLcarDataEntryScreen() was called.');
+	function buildDataEntryScreen(self, p_entry, p_handler){
+		Divmod.debug('---', 'irrigation.buildDataEntryScreen() was called.');
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
@@ -119,9 +119,10 @@ helpers.Widget.subclass(irrigation, 'IrrigationWidget').methods(
 	},
 	function buildEntry(self, p_obj, p_handler) {
 		Divmod.debug('---', 'irrigation.buildEntry() was called.');
-		var l_html = buildBaseEntry(self, p_obj); 
+		var l_html = '';
+		l_html = buildBaseEntry(self, p_obj, l_html); 
 		l_html = self.buildIrrigationEntry(p_obj, l_html);
-		l_html += buildLcarEntryButtons(p_handler, true);
+		l_html = buildLcarEntryButtons(p_handler, l_html);
 		return l_html;
 	},
 	function buildIrrigationEntry(self, p_obj, p_html) {
@@ -136,7 +137,7 @@ helpers.Widget.subclass(irrigation, 'IrrigationWidget').methods(
 	 * Fill in the irrigation entry screen with all of the data for this irrigation.
 	 */
 	function fillEntry(self, p_entry) {
-		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick');
+		self.buildDataEntryScreen(p_entry, 'handleDataEntryOnClick');
 	},
 	function fetchEntry(self) {
 		var l_data = fetchBaseEntry(self);

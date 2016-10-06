@@ -13,7 +13,7 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerData.
 """
 
-__updated__ = '2016-09-19'
+__updated__ = '2016-10-05'
 
 #  Import system type stuff
 
@@ -51,7 +51,7 @@ class Xml(object):
         try:
             l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'InsteonAddress', '99.88.77'))
         except AttributeError:
-            l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'Address', '99.88.77'))
+            l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'Address', '99.88.66'))
         try:
             l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-09'
+__updated__ = '2016-10-05'
 
 #  Import system type stuff
 import os
@@ -99,6 +99,6 @@ class ControllersElement(athena.LiveElement):
         if l_obj.InterfaceType == 'Serial':
             l_obj.BaudRate = l_json['BaudRate']
         self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix] = l_obj
-        LOG.info('Controller Added - {}'.format(l_obj))
+        LOG.info('Controller Added - {}'.format(l_obj.Name))
 
 #  ## END DBK

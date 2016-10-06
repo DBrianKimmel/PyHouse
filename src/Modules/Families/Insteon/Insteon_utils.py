@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-09-25'
+__updated__ = '2016-10-05'
 
 #  Import system type stuff
 
@@ -105,9 +105,9 @@ class Util(object):
             p_obj.ProductKey = int(p_json['ProductKey'])
         except KeyError:
             p_obj.DevCat = 0
-            p_obj.GroupList = ''
+            p_obj.GroupList = 'Bad insteon_utils.get_json_data()'
             p_obj.GroupNumber = 0
-            p_obj.InsteonAddress = 0
+            p_obj.InsteonAddress = 1
             p_obj.ProductKey = 0
         return p_obj
 
@@ -187,7 +187,7 @@ class Decode(object):
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.Lighting.Controllers that we will look thru to find the object.
         @param p_addr: is the address that we want to find.
-        @return: the object that has the address.  None if not found
+        @return: the object that has the address.  None if not found in the given clss.
         """
         for l_obj in p_class.itervalues():
             if l_obj.DeviceFamily != 'Insteon':
@@ -201,8 +201,8 @@ class Decode(object):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
         l_dotted = conversions.int2dotted_hex(p_address, 3)
+        l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
         if l_ret == None:
@@ -222,9 +222,7 @@ class Decode(object):
         """ Here we have a message from the PLM.  Find out what device has that address.
 
         @param p_message_addr: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
-        @param p_index: is the index of the first byte in the message.
-                Various messages contain the address at different offsets.
-        @return: The object that contains the address -or- a dummy object with noname in Name
+        @return: The object that contains the address -OR- a dummy object with noname in Name
         """
         l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
         if l_address < (256 * 256):  #  First byte zero ?
@@ -235,5 +233,22 @@ class Decode(object):
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)
         return l_device_obj
+
+
+def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
+    """ Given some insteon object feched from its insteon address, update the p_pyhouse_obj storage to reflect
+    the new information gleaned from the insteon responses.
+    """
+    if p_insteon_obj.LightingType == 'Button':
+        pass
+    elif p_insteon_obj.LightingType == 'Controller':
+
+        pass
+    elif p_insteon_obj.LightingType == 'Light':
+        pass
+    elif p_insteon_obj.LightingType == 'Thermostat':
+        pass
+    else:
+        LOG.error('Unknown Insteon device to update: {}'.format(p_insteon_obj.LightingType))
 
 #  ## END DBK

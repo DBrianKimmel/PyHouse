@@ -73,14 +73,14 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 	function handleMenuOnClick(self, p_node) {
 		var l_ix = p_node.name;
 		var l_name = p_node.value;
-		globals.House.LightIx = l_ix;
-		globals.House.LightName = l_name;
+		globals.LightIx = l_ix;
+		globals.LightName = l_name;
 		if (l_ix <= 1000) {  // One of the controlLights buttons.
 			var l_obj = globals.House.Lighting.Lights[l_ix];
-			globals.House.LightObj = l_obj;
+			globals.LightObj = l_obj;
 			globals.House.Self = self;
 			showDataEntryScreen(self);
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -89,7 +89,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 
 // ============================================================================
 
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
+	function buildDataEntryScreen(self, p_entry, p_handler){
 		var l_light = arguments[1];
 		var l_entry_html = "";
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightName', 'Light Name', l_light.Name, 'disabled');
@@ -97,7 +97,7 @@ helpers.Widget.subclass(controlLights, 'ControlLightsWidget').methods(
 		l_entry_html += buildLcarTextWidget(self, 'CtlLightUUID', 'UUID', l_light.UUID, 'disabled');
 		l_entry_html += buildLcarRoomSelectWidget(self, 'CtlLightRoomName', 'Room Name', l_light.RoomName, 'disabled');
 		l_entry_html += buildLcarLevelSliderWidget(self, 'CtlLightLevel', 'Level', l_light.CurLevel, 'handleSliderChange');
-		l_entry_html += buildLcarEntryButtons(p_handler, 'NoAdd');
+		l_entry_html + buildLcarEntryButtons(p_handler, l_html, 'NoAdd, NoChange');
 		var l_html = build_lcars_top('Control Light', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(10, l_entry_html);
 		l_html += build_lcars_bottom();

@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-09-18'
+__updated__ = '2016-10-05'
 
 
 class PyHouseData(object):
@@ -191,6 +191,7 @@ class LightingData(object):
     def __init__(self):
         self.Buttons = {}  # ButtonData()
         self.Controllers = {}  # ControllerData()
+        self.GarageDoors = {}  # GarageDoorData(0
         self.Lights = {}  # LightData()
 
 
@@ -266,6 +267,13 @@ class ScheduleThermostatData(object):
     def __init__(self):
         self.HeatSetting = None
         self.CoolSetting = None
+
+
+class SecurityData(object):
+    """
+    """
+    def __init__(self):
+        self.GarageDoorOpener = None
 
 
 class SerialControllerData(object):
@@ -419,6 +427,7 @@ class HouseInformation(BaseObject):
         self.Rooms = None  # RoomData()
         self.Rules = None  # RulesData()
         self.Schedules = None  # ScheduleBaseData()
+        self.Security = None  # SecurityData()
 
 
 class JsonHouseData(BaseObject):
@@ -696,9 +705,20 @@ class ControllerData(CoreLightingData):
         self._Queue = None
 
 
+class GarageDoorData(CoreLightingData):
+    """
+ ==> PyHouse.House.Lighting.GarageDoors.xxx as in the def below
+   """
+    def __init__(self):
+        super(GarageDoorData, self).__init__()
+        self.GDOpenStatus = None  # Open | Closed
+        self.UUID = None
+
+
 class LightData(CoreLightingData):
     """This is the light info.
-    """
+ ==> PyHouse.House.Lighting.Lightss.xxx as in the def below
+   """
     def __init__(self):
         super(LightData, self).__init__()
         self.CurLevel = 0

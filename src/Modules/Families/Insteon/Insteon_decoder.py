@@ -24,13 +24,13 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-09-26'
+__updated__ = '2016-09-30'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_HVAC
+from Modules.Families.Insteon import Insteon_HVAC, Insteon_utils
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
 from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, NAK, STX
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as utilUtil
@@ -221,6 +221,7 @@ class DecodeResponses(object):
                 LOG.warn('Decoding 50 tyoe {}'.format(l_debug_msg))
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
+        Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
         p_controller_obj.Ret = True
         LOG.info('50 Resp; {}'.format(l_debug_msg))
         return  # self.check_for_more_decoding(p_controller_obj, l_ret)

@@ -97,15 +97,15 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 			showDataEntryScreen(self);
 			l_obj = globals.House.Schedules[l_ix];
 			globals.House.ScheduleObj = l_obj;
-			globals.House.Self = self;
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			globals.Self = self;
+			self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10001) {  // The "Add" button
 			showDataEntryScreen(self);
 			l_obj = self.createEntry();
 			globals.House.ScheduleObj = l_obj;
-			globals.House.Self = self;
+			globals.Self = self;
 			globals.Add = true;
-			self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+			self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 		} else if (l_ix == 10002) {  // The "Back" button
 			self.showWidget('HouseMenu');
 		}
@@ -116,19 +116,20 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	/**
 	 * Build a screen full of data entry fields.
 	 */
-	function buildLcarDataEntryScreen(self, p_entry, p_handler){
-		Divmod.debug('---', 'schedules.buildLcarDataEntryScreen() was called.');
+	function buildDataEntryScreen(self, p_entry, p_handler){
+		Divmod.debug('---', 'schedules.buildDataEntryScreen() was called.');
 		var l_obj = arguments[1];
-		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
+		var l_html = build_lcars_top('Schedule Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;
 	},
 	function buildEntry(self, p_obj, p_handler) {
 		Divmod.debug('---', 'schedules.buildEntry() was called.');
-		var l_html = buildBaseEntry(self, p_obj, 'nouuid'); 
+		var l_html = '';
+		l_html = buildBaseEntry(self, p_obj, l_html, 'nouuid'); 
 		l_html = self.buildScheduleEntry(p_obj, l_html);
-		l_html += buildLcarEntryButtons(p_handler, true);
+		l_html = buildLcarEntryButtons(p_handler, l_html);
 		return l_html;
 	},
 	function buildScheduleEntry(self, p_obj, p_html) {
@@ -161,7 +162,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	function handleSliderChange(p_event){
 		Divmod.debug('---', 'schedules.handleSliderChange() was called.  ');
 		var l_obj = globals.House.ScheduleObj;
-		var l_self = globals.House.Self;
+		var l_self = globals.Self;
 		var l_level = fetchSliderWidget(l_self, 'ScheduleLevel');
 		updateSliderBoxValue(l_self, 'ScheduleLevel', l_level);
 	},
@@ -169,9 +170,9 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 		// change form when schedule type changes
 		Divmod.debug('---', 'schedules.handleScheduleTypeChange() was called.  ');
 		var l_obj = globals.House.ScheduleObj;
-		var l_self = globals.House.Self;
+		var l_self = globals.Self;
 		l_obj.ScheduleType = fetchSelectWidget(l_self, 'ScheduleType');
-		l_self.buildLcarDataEntryScreen(l_obj, 'handleDataEntryOnClick');
+		l_self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 	},
 
 
@@ -180,7 +181,7 @@ helpers.Widget.subclass(schedules, 'SchedulesWidget').methods(
 	 * Fill in the schedule entry screen with all of the data for this schedule.
 	 */
 	function fillEntry(self, p_entry) {
-		self.buildLcarDataEntryScreen(p_entry, 'handleDataEntryOnClick');
+		self.buildDataEntryScreen(p_entry, 'handleDataEntryOnClick');
 	},
 
 	function fetchEntry(self) {
