@@ -7,9 +7,12 @@
 @note:      Created on Jun 25, 2015
 @Summary:
 
-Passed all 2 tests - DBK - 2015-08-07
+Passed all 2 tests - DBK - 20156-10-06
 
 """
+from Modules.Utilities.debug_tools import PrettyFormatAny
+
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,7 +31,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class A01_Json(SetupMixin, unittest.TestCase):
+class A1_Json(SetupMixin, unittest.TestCase):
     """
     This series tests the complex PutGetXML class methods
     """
@@ -37,16 +40,17 @@ class A01_Json(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_Encode(self):
-        l_json = json_tools.encode_json(self.m_pyhouse_obj)
+        l_json = json_tools.encode_json(self.m_pyhouse_obj.House.Location)
         print(l_json)
-        # PrettyFormatAny.form(l_json, "PyHouse_Obj")
-        self.assertSubstring('Xml', l_json)
-        self.assertSubstring('XmlOldVersion', l_json)
+        PrettyFormatAny.form(l_json, "A1-01-A - Location")
+        self.assertSubstring('State', l_json)
+        self.assertSubstring('City', l_json)
 
     def test_02_Decode(self):
         l_json = json_tools.encode_json(self.m_pyhouse_obj.Computer)
         l_dict = json_tools.decode_json_unicode(l_json)
-        # print(debug_tools.PrettyFormatAny.form(l_dict, 'Decoded Inof'))
+        print(l_dict)
+        print(PrettyFormatAny.form(l_dict, 'A1-02-A - Decoded Info'))
         self.assertEqual(l_dict['Name'], self.m_pyhouse_obj.Computer.Name)
 
 # ## END DBK

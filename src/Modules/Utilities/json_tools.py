@@ -13,6 +13,8 @@ Json is now used for Mqtt messages in addition to web browser.
 
 """
 
+__updated__ = '2016-10-06'
+
 
 # Import system type stuff
 import jsonpickle
@@ -27,7 +29,7 @@ def encode_json(p_obj):
     """Convert a python object to a valid json object.
     """
     try:
-        l_json = jsonpickle.encode(p_obj, unpicklable = False, max_depth = 5)
+        l_json = jsonpickle.encode(p_obj, unpicklable=False, max_depth=5)
     except (TypeError, ValueError) as l_error:
         LOG.error('ERROR encode_json{}'.format(l_error))
         l_json = u'{}'

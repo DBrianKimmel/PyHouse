@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-06'
 
 #  Import system type stuff
 import os
@@ -66,21 +66,22 @@ class ControllersElement(athena.LiveElement):
         """A new/changed controller is returned.  Process it and update the internal data via controller.py
         """
         l_json = json_tools.decode_json_unicode(p_json)
-        l_controller_ix = int(l_json['Key'])
+        l_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix]
+                del self.m_pyhouse_obj.House.Lighting.Controllers[l_ix]
             except AttributeError:
                 LOG.error("web_controllers - Failed to delete - JSON: {}".FORMAT(l_json))
             return
+        l_obj = ControllerData()
         try:
-            l_obj = self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix]
+            l_obj = self.m_pyhouse_obj.House.Lighting.Controllers[l_ix]
         except KeyError:
-            l_obj = ControllerData()
+            LOG.warning('Creating a new controller {}'.format(l_ix))
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_controller_ix
+        l_obj.Key = l_ix
         l_obj.Comment = l_json['Comment']
         l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.IsDimmable = l_json['IsDimmable']
@@ -98,7 +99,7 @@ class ControllersElement(athena.LiveElement):
             l_obj.UPBNetworkID = l_json['UPBNetworkID']
         if l_obj.InterfaceType == 'Serial':
             l_obj.BaudRate = l_json['BaudRate']
-        self.m_pyhouse_obj.House.Lighting.Controllers[l_controller_ix] = l_obj
+        self.m_pyhouse_obj.House.Lighting.Controllers[l_ix] = l_obj
         LOG.info('Controller Added - {}'.format(l_obj.Name))
 
 #  ## END DBK

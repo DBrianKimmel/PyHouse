@@ -43,11 +43,7 @@ class A1_EncodeDecode(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Encode(self):
-        y = web_utils.JsonUnicode().convert_to_unicode('abc')
-        self.assertEquals(y, u'abc')
-
-    def test_02_Decode(self):
+    def test_01_Decode(self):
         y = web_utils.JsonUnicode().convert_from_unicode(u'ABC')
         self.assertEquals(y, 'ABC', "Convert from unicode failed.")
 
@@ -63,12 +59,12 @@ class C01_Json(SetupMixin, unittest.TestCase):
 
     def test_11_Json_Decode(self):
         x = '{"de4" : "D E F"}'
-        y = web_utils.JsonUnicode().decode_json(x)
+        y = json_tools.decode_json_unicode(x)
         self.assertNotEqual(y, None)
 
     def test_12_Json_Decode(self):
         x = '[{"de4" : "D E F"}]'
-        y = web_utils.JsonUnicode().decode_json(x)
+        y = json_tools.decode_json_unicode(x)
         self.assertNotEqual(y, None)
 
     def test_13_Json_Decode(self):
@@ -76,7 +72,7 @@ class C01_Json(SetupMixin, unittest.TestCase):
         Expect this to fail and return None (missing ']')
         """
         x = '[{"de4" : "D E F"}'
-        y = web_utils.JsonUnicode().decode_json(x)
+        y = json_tools.decode_json_unicode(x)
         self.assertEqual(y, None)
 
 

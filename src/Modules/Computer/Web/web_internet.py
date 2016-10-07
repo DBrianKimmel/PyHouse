@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -20,8 +20,9 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONComputerInfo
+from Modules.Computer.Web.web_utils import GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -50,7 +51,7 @@ class InternetElement(athena.LiveElement):
     def saveInternetData(self, p_json):
         """Internet data is returned, so update the computer info.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_dyndns_ix = int(l_json['Key'])
         try:
             l_obj = self.m_pyhouse_obj.Computer.InternetConnection

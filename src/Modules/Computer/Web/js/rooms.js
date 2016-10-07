@@ -7,9 +7,7 @@
  * @note: Created on Mar 11, 2014
  * @summary: Displays the rooms
  */
-// import Nevow.Athena
-// import globals
-// import helpers
+
 helpers.Widget.subclass(rooms, 'RoomsWidget').methods(
 
 function __init__(self, node) {
@@ -32,7 +30,9 @@ function ready(self) {
 	var l_defer = loadImages(uris);
 	l_defer.addCallback(cb_widgetready);
 	return l_defer;
-}, function startWidget(self) {
+},
+
+function startWidget(self) {
 	self.node.style.display = 'block';
 	showSelectionButtons(self);
 	self.fetchDataFromServer();
@@ -55,6 +55,7 @@ function fetchDataFromServer(self) {
 	l_defer.addErrback(eb_fetchDataFromServer);
 	return false;
 },
+
 /**
  * Build a screen full of buttons - One for each room and some actions.
  */
@@ -65,6 +66,7 @@ function buildLcarSelectScreen(self) {
 	l_html += build_lcars_bottom();
 	self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 },
+
 /**
  * Event handler for room selection buttons.
  * 
@@ -206,8 +208,11 @@ function handleDataEntryOnClick(self, p_node) {
 	}
 	// return false stops the resetting of the server.
 	return false;
-});
-// Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' +
-// l_name);
+}
+
+);
+
+// Divmod.debug('---', 'rooms.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
 // console.log("rooms.handleMenuOnClick() - l_obj = %O", l_obj);
+
 // ### END DBK

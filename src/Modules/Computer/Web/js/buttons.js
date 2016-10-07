@@ -15,7 +15,6 @@ function __init__(self, node) {
 	buttons.ButtonsWidget.upcall(self, '__init__', node);
 },
 
-
 // ============================================================================
 /**
  * 
@@ -42,11 +41,9 @@ function startWidget(self) {
 	self.fetchDataFromServer();
 },
 
-
 // ============================================================================
 /**
- * This triggers getting the button data from the server. The server calls
- * displayButtonButtons with the buttons info.
+ * This triggers getting the button data from the server. The server calls displayButtonButtons with the buttons info.
  */
 function fetchDataFromServer(self) {
 	function cb_fetchDataFromServer(p_json) {
@@ -56,7 +53,7 @@ function fetchDataFromServer(self) {
 	function eb_fetchDataFromServer(p_reason) {
 		Divmod.debug('---', 'buttons.eb_fetchDataFromServer() was called.  ERROR - ' + p_reason);
 	}
-	
+
 	var l_defer = self.callRemote("getHouseData"); // call server @
 	// web_buttons.py
 	l_defer.addCallback(cb_fetchDataFromServer);
@@ -64,8 +61,7 @@ function fetchDataFromServer(self) {
 	return false;
 },
 
-
-//============================================================================
+// ============================================================================
 /**
  * Build a screen full of buttons - One for each Button and some actions.
  */
@@ -110,7 +106,6 @@ function handleMenuOnClick(self, p_node) {
 	}
 },
 
-
 // ============================================================================
 /**
  * Build a screen full of data entry fields.
@@ -127,16 +122,9 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
-	l_html = self.buildButtonEntry(p_obj, l_html);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
-},
-
-function buildButtonEntry(self, p_obj, p_html) {
-	Divmod.debug('---', 'buttons.buildButtonEntry() was called.');
-	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	return p_html;
 },
 
 function familyChanged() {
@@ -151,47 +139,32 @@ function fetchEntry(self) {
 	Divmod.debug('---', 'buttons.fetchEntry() was called.');
 	var l_data = fetchBaseEntry(self);
 	l_data = fetchDeviceEntry(self, l_data);
-	l_data = self.fetchButtonEntry(l_data);
 	l_data = fetchFamilyPart(self, l_data);
 	console.log("buttons.fetchEntry() - Data = %O", l_data);
 	return l_data;
-},
-
-function fetchButtonEntry(self, p_data) {
-	return p_data;
 },
 
 function createEntry(self) {
 	Divmod.debug('---', 'buttons.createEntry() was called.');
 	var l_key = Object.keys(globals.House.Lighting.Buttons).length;
 	var l_data = createBaseEntry(self, l_key);
-	l_data = createDeviceEntry(self, l_data);
 	l_data = self.createButtonEntry(l_data);
 	l_data = createFamilyPart(self, l_data);
 	l_data.LightingType = 'Button';
 	return l_data;
 },
 
-function createButtonEntry(self, p_data) {
-	Divmod.debug('---', 'buttons.createButtonEntry() was called.');
-	p_data.Comment = '';
-	p_data.DeviceFamily = 'Insteon';
-	return p_data;
-}, //
-
-
-//============================================================================
+// ============================================================================
 /**
  * Event handler for submit buttons at bottom of entry portion of this widget.
+ * 
  * Get the possibly changed data and send it to the server.
  */
 function handleDataEntryOnClick(self, p_node) {
 	function cb_handleDataOnClick(p_json) {
-		Divmod.debug('---', 'button.cb_handleDataOnClick() was called.');
+		self.startWidget();
 	}
 	function eb_handleDataOnClick(res) {
-		// Divmod.debug('---', 'button.eb_handleDataOnClick() was
-		// called. res=' + res);
 	}
 	var l_defer;
 	var l_ix = p_node.name;
@@ -199,23 +172,19 @@ function handleDataEntryOnClick(self, p_node) {
 	var l_obj = self.fetchEntry();
 	l_obj.Add = globals.Add;
 	switch (l_ix) {
-	case '10003': // Change Button
+	case '10003': // "Change" Button
 		l_json = JSON.stringify(self.fetchEntry(self));
-		l_defer = self.callRemote("saveButtonData", l_json); // @
-		// web_button
+		l_defer = self.callRemote("saveButtonData", l_json); // @ web_button
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;
-	case '10002': // Back button
+	case '10002': // "Back" button
 		showSelectionButtons(self);
 		break;
-	case '10004': // Delete button
+	case '10004': // "Delete" button
 		l_obj.Delete = true;
 		l_json = JSON.stringify(l_obj);
-		// Divmod.debug('---', 'buttons.handleDataOnClick(Delete) was
-		// called. JSON:' + l_json);
-		l_defer = self.callRemote("saveButtonData", l_json); // @
-		// web_rooms
+		l_defer = self.callRemote("saveButtonData", l_json); // @ web_button
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;
@@ -224,10 +193,11 @@ function handleDataEntryOnClick(self, p_node) {
 		break;
 	}
 	return false; // false stops the chain.
-});
+}
 
-// Divmod.debug('---', 'buttons.handleMenuOnClick(1) was called. ' + l_ix + ' '
-// + l_name);
+);
+
+// Divmod.debug('---', 'buttons.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
 // console.log("buttons.handleMenuOnClick() - l_obj = %O", l_obj);
 
 // ### END DBK

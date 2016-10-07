@@ -19,7 +19,7 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-10-06'
 
 #  Import system type stuff
 import os
@@ -35,7 +35,6 @@ from twisted.internet import defer
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData
-from Modules.Computer.Web import web_utils
 from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
 from Modules.Housing.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
 from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
@@ -79,7 +78,7 @@ class LoginElement(athena.LiveElement):
             @param p_json: is the username and password passed back by the client.
         """
         LOG.info("doLogin called {}.".format(PrettyFormatAny.form(p_json, 'Login From Browser')))
-        l_obj = web_utils.JsonUnicode().decode_json(p_json)
+        l_obj = json_tools.decode_json_unicode(p_json)
         l_login_obj = self.validate_user(l_obj)
         l_json = json_tools.encode_json(l_login_obj)
         return unicode(l_json)

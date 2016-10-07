@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -20,6 +20,7 @@ from nevow import loaders
 from Modules.Core.data_objects import MqttBrokerData
 from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities import json_tools
 from Modules.Utilities.uuid_tools import Uuid
 
 LOG = Logger.getLogger('PyHouse.webMqtt     ')
@@ -48,7 +49,7 @@ class MqttElement(athena.LiveElement):
     def saveMqttData(self, p_json):
         """Mqtt data is returned, so update the info.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_delete = l_json['Delete']
         l_ix = int(l_json['Key'])
         if l_delete:

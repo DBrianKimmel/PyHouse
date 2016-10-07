@@ -11,7 +11,7 @@ Passed all 14 tests - DBK - 2016-09-30
 
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -232,4 +232,16 @@ class F1_Update(SetupMixin, unittest.TestCase):
         l_garage = self.m_pyhouse_obj.House.Lighting.Buttons[0]
         print(PrettyFormatAny.form(l_garage, 'F1-05-A - Garage'))
 
-# ## END DBK
+class J1_Json(SetupMixin, unittest.TestCase):
+    """ Update the PyHouse store given an object with an insteon address.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        Utility()._read_lighting_xml(self.m_pyhouse_obj)
+
+    def test_01_get(self):
+        """
+        """
+
+ # ## END DBK

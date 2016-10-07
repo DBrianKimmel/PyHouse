@@ -18,7 +18,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -96,7 +96,7 @@ class Utility(object):
             l_ret = lightsAPI.read_all_lights_xml(p_pyhouse_obj, l_xml)
         except AttributeError as e_err:
             l_ret = {}
-            l_msg = 'No Lights found: {}'.format(e_err)
+            l_msg = 'No Garage Door found: {}'.format(e_err)
             LOG.warning(l_msg)
         return l_ret
 
@@ -107,7 +107,6 @@ class Utility(object):
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot
         l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
-        p_pyhouse_obj.House.Lighting = LightingData()
         l_xml = l_xml.find('HouseDivision')
         if l_xml is None:
             return p_pyhouse_obj.House.Lighting
@@ -128,9 +127,8 @@ class Utility(object):
         @param p_house_element: is the XML
         """
         l_lighting_xml = ET.Element('LightingSection')
+        l_lighting_xml.append(lightsAPI.write_all_lights_xml(p_pyhouse_obj))
         try:
-            l_xml = lightsAPI.write_all_lights_xml(p_pyhouse_obj)
-            l_lighting_xml.append(l_xml)
             l_lighting_xml.append(buttonsAPI.write_buttons_xml(p_pyhouse_obj))
             l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
         except AttributeError as e_err:
@@ -151,6 +149,7 @@ class API(Utility):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Lighting xml info.
         """
+        p_pyhouse_obj.House.Lighting = LightingData()
         self._read_lighting_xml(p_pyhouse_obj)
 
     def SaveXml(self, p_xml):

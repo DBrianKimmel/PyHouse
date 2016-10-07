@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-10-06'
 
 #  Import system type stuff
 import os
@@ -20,9 +20,10 @@ from nevow import loaders
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ThermostatData
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities import json_tools
 
 #  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -52,7 +53,7 @@ class ThermostatsElement(athena.LiveElement):
     def saveThermostatsData(self, p_json):
         """Thermostat data is returned, so update the info.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_delete = l_json['Delete']
         l_ix = int(l_json['Key'])
         if l_delete:

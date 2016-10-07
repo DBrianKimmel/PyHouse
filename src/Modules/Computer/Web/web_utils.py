@@ -120,25 +120,4 @@ class JsonUnicode(object):
         else:
             return p_input
 
-    def convert_to_unicode(self, p_input):
-        if isinstance(p_input, dict):
-            return {self.convert_to_unicode(key): self.convert_to_unicode(value) for key, value in p_input.iteritems()}
-        elif isinstance(p_input, list):
-            return [self.convert_to_unicode(element) for element in p_input]
-        elif isinstance(p_input, (int, bool)):
-            return unicode(str(p_input), 'iso-8859-1')
-        elif isinstance(p_input, unicode):
-            return p_input
-        else:
-            return unicode(p_input, 'iso-8859-1')
-
-    def decode_json(self, p_json):
-        """Convert a json object to a python object
-        """
-        try:
-            l_obj = self.convert_from_unicode(json.loads(p_json))
-        except (TypeError, ValueError):
-            l_obj = None
-        return l_obj
-
 #  ## END DBK

@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2016-09-30'
+__updated__ = '2016-10-07'
 
 # Import system type stuff
 
@@ -91,7 +91,7 @@ TESTING_LIGHT_TYPE_1 = 'Light'
 
 TESTING_LIGHT_DEVICE_FAMILY_1 = 'Insteon'
 TESTING_LIGHT_DEVICE_TYPE_1 = '1853'
-TESTING_LIGHT_DEVICE_SUBTYPE_1 = '23'
+TESTING_LIGHT_DEVICE_SUBTYPE_1 = '25'
 TESTING_LIGHT_IS_DIMMABLE_1 = 'True'
 TESTING_LIGHT_ROOM_X_1 = '1.23'
 TESTING_LIGHT_ROOM_Y_1 = '4.56'

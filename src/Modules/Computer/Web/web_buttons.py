@@ -12,7 +12,7 @@
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -20,10 +20,11 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_buttons
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -51,8 +52,21 @@ class ButtonsElement(athena.LiveElement):
     def saveButtonData(self, p_json):
         """A new/changed button is returned.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
+        l_delete = l_json['Delete']
+        l_ix = int(l_json['Key'])
+        if l_delete:
+            try:
+                del self.m_pyhouse_obj.House.Lighting.Buttons[l_ix]
+            except AttributeError:
+                LOG.error("Failed to delete - JSON: {}".format(l_json))
+            return
         l_obj = lighting_buttons.ButtonData()
+        try:
+            l_obj = self.m_pyhouse_obj.House.Lighting.Buttons[l_ix]
+        except KeyError:
+            LOG.warning('Creating a new button {}'.format(l_ix))
+        #
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_json['Key']

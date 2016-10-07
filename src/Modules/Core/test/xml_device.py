@@ -11,6 +11,8 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
+__updated__ = '2016-10-07'
+
 # Import system type stuff
 
 # Import PyMh files
@@ -20,7 +22,7 @@ TESTING_DEVICE_COMMENT = 'Device Comment 0'
 TESTING_DEVICE_FAMILY_INSTEON = 'Insteon'
 TESTING_DEVICE_FAMILY_UPB = 'UPB'
 TESTING_DEVICE_TYPE = '1247'
-TESTING_DEVICE_SUBTYPE = '2'
+TESTING_DEVICE_SUBTYPE = '28'
 TESTING_DEVICE_ROOM_X = '3.4'
 TESTING_DEVICE_ROOM_Y = '5.6'
 TESTING_DEVICE_ROOM_Z = '1.2'

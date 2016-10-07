@@ -12,7 +12,7 @@
 TODO: Change all references to a light if name changes.
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-10-06'
 
 #  Import system type stuff
 import os
@@ -22,10 +22,11 @@ from nevow import athena
 #  Import PyMh files and modules.
 #  from Modules.Core import conversions
 from Modules.Core.data_objects import CoordinateData
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_utils
+from Modules.Utilities import json_tools
 
 #  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -53,24 +54,23 @@ class LightsElement(athena.LiveElement):
     def saveLightData(self, p_json):
         """A new/changed light is returned.  Process it and update the internal data via light_xxxx.py
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_delete = l_json['Delete']
-        l_light_ix = int(l_json['Key'])
+        l_ix = int(l_json['Key'])
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.Lighting.Lights[l_light_ix]
+                del self.m_pyhouse_obj.House.Lighting.Lights[l_ix]
             except AttributeError:
                 LOG.error("web_lights - Failed to delete - JSON: {}".format(l_json))
             return
+        l_obj = lighting_lights.LightData()
         try:
-            l_obj = self.m_pyhouse_obj.House.Lighting.Lights[l_light_ix]
+            l_obj = self.m_pyhouse_obj.House.Lighting.Lights[l_ix]
         except KeyError:
-            LOG.warning('Creating a new light for light {}'.format(l_light_ix))
-            l_obj = lighting_lights.LightData()
-        #
+            LOG.warning('Creating a new light {}'.format(l_ix))
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
-        l_obj.Key = l_light_ix
+        l_obj.Key = l_ix
         l_obj.Comment = l_json['Comment']
         l_coords = CoordinateData()
         l_coords.X_Easting = l_json['RoomCoords'][0]
@@ -90,6 +90,6 @@ class LightsElement(athena.LiveElement):
             l_obj.UPBAddress = l_json['UPBAddress']
             l_obj.UPBPassword = l_json['UPBPassword']
             l_obj.UPBNetworkID = l_json['UPBNetworkID']
-        self.m_pyhouse_obj.House.Lighting.Lights[l_light_ix] = l_obj
+        self.m_pyhouse_obj.House.Lighting.Lights[l_ix] = l_obj
 
 #  ## END DBK

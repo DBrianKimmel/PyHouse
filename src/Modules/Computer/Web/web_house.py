@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -19,8 +19,9 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webHouse    ')
 
@@ -48,7 +49,7 @@ class HouseElement(athena.LiveElement):
     def saveHouseData(self, p_json):
         """House data has been returned, so update the house info.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         LOG.info('Update House info - {}'.format(l_json))
         l_delete = l_json['Delete']
         if l_delete:

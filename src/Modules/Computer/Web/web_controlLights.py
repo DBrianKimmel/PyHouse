@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -20,8 +20,9 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webCtlLigt  ')
 
@@ -53,7 +54,7 @@ class ControlLightsElement(athena.LiveElement):
     def saveControlLightData(self, p_json):
         """A changed Light is returned.  Process it and update the light level
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_light_ix = int(l_json['Key'])
         l_light_obj = LightData()
         l_light_obj.Name = l_json['Name']

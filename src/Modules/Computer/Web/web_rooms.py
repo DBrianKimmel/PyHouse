@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-04'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -19,9 +19,10 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.rooms import Maint as roomMaint
 from Modules.Computer import logging_pyh as Logger
+from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])
@@ -52,7 +53,7 @@ class RoomsElement(athena.LiveElement):
     def saveRoomData(self, p_json):
         """A new/changed/deleted room is returned.  Process it and update the internal data.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         roomMaint().from_web(self.m_pyhouse_obj, l_json)
 
 # ## END DBK

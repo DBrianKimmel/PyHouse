@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-10-06'
 
 # Import system type stuff
 import os
@@ -17,10 +17,8 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer.Web.web_utils import JsonUnicode
 from Modules.Core.data_objects import LoginData
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
@@ -67,7 +65,7 @@ class UsersElement(athena.LiveElement):
     def putUsersData(self, p_json):
         """A new/changed/deleted user is returned.  Process it and update the internal data.
         """
-        l_json = JsonUnicode().decode_json(p_json)
+        l_json = json_tools.decode_json_unicode(p_json)
         l_ix = int(l_json['Key'])
         l_delete = l_json['Delete']
         if l_delete:
