@@ -15,7 +15,7 @@ Invoked periodically and when any Insteon device changes.
 """
 from matplotlib.backends.backend_ps import ps_backend_helper
 
-__updated__ = '2016-09-25'
+__updated__ = '2016-10-09'
 
 #  Import system type stuff
 
@@ -147,7 +147,7 @@ class Decode(object):
         l_link_code = l_message[2]
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
-        utilDecode._devcat(l_message[7:8], self.m_controller_obj)
+        utilDecode._devcat(l_message[7:9], self.m_controller_obj)
         _l_version = l_message[9]
         LOG.info('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
 

@@ -19,17 +19,17 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData, UuidData
-from Modules.Housing.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers.interface import Xml as interfaceXML
+from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
 #  from Modules.Utilities import debug_tools
@@ -47,13 +47,14 @@ class Utility(object):
         @return: a Controller data object with the base info filled in
         """
         l_obj = ControllerData()  # Create an empty controller object.
-        l_obj = LightingCoreAPI.read_core_lighting_xml(p_pyhouse_obj, l_obj, p_xml)
-        #  l_obj.DeviceSubType = 1
+        l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod
     def _write_base_device(p_obj):
-        l_xml = LightingCoreAPI.write_core_lighting_xml('Controller', p_obj)
+        l_xml = deviceXML.write_base_device_object_xml('Controller', p_obj)
         return l_xml
 
     @staticmethod

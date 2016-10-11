@@ -178,12 +178,8 @@ function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.GarageDoors).length);
 	l_data = createDeviceEntry(self, l_data);
 	l_data = self.createControllerEntry(l_data);
-	l_data.LightingType = 'Controller';
-	if (l_data.DeviceFamily === 'Insteon')
-		l_data = createInsteonEntry(self, l_data);
-	//
-	if (l_data.InterfaceType === 'Serial')
-		l_data = createSerialEntry(self, l_data);
+	l_data = createFamilyPart(self, l_data);
+	l_data = createInterfacePart(self, l_data);
 	return l_data;
 },
 

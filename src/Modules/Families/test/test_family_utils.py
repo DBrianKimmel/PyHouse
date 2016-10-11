@@ -20,21 +20,25 @@ from Modules.Core import conversions
 from Modules.Families import VALID_FAMILIES
 from Modules.Families.family import API as familyAPI
 from Modules.Families.family_utils import FamUtil
-from Modules.Housing.Lighting.lighting_core import API as LightingCoreAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
-        TESTING_LIGHT_NAME_1, \
-        TESTING_LIGHT_ACTIVE_0, TESTING_LIGHT_KEY_0, TESTING_LIGHT_CUR_LEVEL_0, TESTING_LIGHT_FAMILY_1
+        TESTING_LIGHT_ACTIVE_0, \
+        TESTING_LIGHT_KEY_0, \
+        TESTING_LIGHT_CUR_LEVEL_0, \
+        TESTING_LIGHT_FAMILY_1
 from Modules.Families.Insteon.test.xml_insteon import \
         TESTING_INSTEON_PRODUCT_KEY_0, \
         TESTING_INSTEON_ADDRESS_0, \
         TESTING_INSTEON_DEVCAT_0
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_COMMENT, TESTING_DEVICE_ROOM_COORDS
+        TESTING_DEVICE_FAMILY_INSTEON, \
+        TESTING_DEVICE_COMMENT, \
+        TESTING_DEVICE_ROOM_COORDS
 from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.device_tools import XML as deviceXML
 
 
 class SetupMixin(object):
@@ -55,6 +59,7 @@ class SetupMixin(object):
         self.m_device_obj.RoomCoords = TESTING_DEVICE_ROOM_COORDS
         self.m_device_obj.RoomName = TESTING_DEVICE_ROOM_NAME
         self.m_version = '1.4.0'
+        self.m_api = deviceXML()
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -98,9 +103,9 @@ class B1_Utils(SetupMixin, unittest.TestCase):
     def test_02_GetFamilyObj(self):
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
         print(PrettyFormatAny.form(l_obj, 'Family'))
-        self.assertEqual(l_obj.Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_obj.Name, 'UPB')
         self.assertEqual(l_obj.Active, True)
-        self.assertEqual(l_obj.Key, 1)
+        self.assertEqual(l_obj.Key, 2)
         self.assertEqual(l_obj.FamilyDeviceModuleName, 'Insteon_device')
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'Insteon_xml')
@@ -165,7 +170,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
-        l_light = LightingCoreAPI.read_core_lighting_xml(self.m_pyhouse_obj, l_device, l_xml)
+        l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
         print(PrettyFormatAny.form(l_light, 'Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.RoomName, TESTING_DEVICE_ROOM_NAME)
@@ -176,7 +181,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         #
-        l_light = LightingCoreAPI.read_core_lighting_xml(self.m_pyhouse_obj, l_device, l_xml)
+        l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
         print(PrettyFormatAny.form(l_light, 'Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
@@ -194,7 +199,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_device_obj.DeviceFamily = TESTING_DEVICE_FAMILY_INSTEON
         self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        self.m_light = LightingCoreAPI.read_core_lighting_xml(self.m_pyhouse_obj, self.m_device_obj, self.m_xml.controller)
+        self.m_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device_obj, self.m_xml.controller)
 
     def test_01_Data(self):
         pass
@@ -204,9 +209,9 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """
         l_in_xml = self.m_xml.light
         l_device = self.m_device_obj
-        l_light = LightingCoreAPI.read_core_lighting_xml(self.m_pyhouse_obj, l_device, l_in_xml)
+        l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_in_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_in_xml)
-        l_out_xml = LightingCoreAPI.write_core_lighting_xml('Light', l_light)
+        l_out_xml = self.m_api.write_base_device_object_xml('Light', l_light)
         FamUtil.write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)

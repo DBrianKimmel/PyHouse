@@ -197,7 +197,6 @@ function buildDeviceEntry(self, p_obj, p_html) {
 	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
 	p_html += buildLcarTrueFalseWidget(self, 'Dimmable', 'Light Dimmable ?', p_obj.IsDimmable);
 	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
-	p_html += buildLcarLightTypeSelectWidget(self, 'LightingType', 'Type', p_obj.LightingType);
 	return p_html;
 }
 
@@ -208,7 +207,6 @@ function fetchDeviceEntry(self, p_data) {
 	p_data.IsDimmable = fetchTrueFalseWidget(self, 'Dimmable');
 	var l_ix = fetchTextWidget(self, 'RoomName');
 	p_data.RoomName = globals.House.Rooms[l_ix].Name
-	p_data.LightingType = fetchSelectWidget(self, 'LightingType');
 	return p_data;
 }
 
@@ -219,8 +217,7 @@ function createDeviceEntry(self, p_data) {
 	p_data.RoomName = 'XXX Room';
 	p_data.RoomUUID = '';
 	p_data.RoomCoords = createCoordinates(self);
-	p_data.LightingType = 'Light';
-	return p_data;
+return p_data;
 }
 
 // Divmod.debug('---', 'lcars.build_lcars_top() was called.');

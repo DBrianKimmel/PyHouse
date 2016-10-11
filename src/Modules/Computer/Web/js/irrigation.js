@@ -112,7 +112,7 @@ helpers.Widget.subclass(irrigation, 'IrrigationWidget').methods(
 	function buildDataEntryScreen(self, p_entry, p_handler){
 		Divmod.debug('---', 'irrigation.buildDataEntryScreen() was called.');
 		var l_obj = arguments[1];
-		var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
+		var l_html = build_lcars_top('Irrigation Data', 'lcars-salmon-color');
 		l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('DataEntryDiv').innerHTML = l_html;

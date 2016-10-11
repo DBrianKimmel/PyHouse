@@ -19,7 +19,7 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-10-08'
 
 #  Import system type stuff
 import os
@@ -103,12 +103,12 @@ class LoginElement(athena.LiveElement):
                      Devices=VALID_DEVICE_TYPES,
                      Families=VALID_FAMILIES,
                      Floors=VALID_FLOORS,
-                     InterfaceType=VALID_INTERFACES,
-                     LightType=VALID_LIGHTING_TYPE,
-                     ProtocolType=VALID_PROTOCOLS,
-                     ScheduleType=VALID_SCHEDULING_TYPES,
-                     ScheduleMode=VALID_SCHEDULE_MODES,
-                     TempSystem=VALID_TEMP_SYSTEMS,
+                     InterfaceTypes=VALID_INTERFACES,
+                     LightTypes=VALID_LIGHTING_TYPE,
+                     ProtocolTypes=VALID_PROTOCOLS,
+                     ScheduleTypes=VALID_SCHEDULING_TYPES,
+                     ScheduleModes=VALID_SCHEDULE_MODES,
+                     TempSystems=VALID_TEMP_SYSTEMS,
                      ThermostatModes=VALID_THERMOSTAT_MODES,
                      UserRoles=VALID_USER_ROLES
                      )

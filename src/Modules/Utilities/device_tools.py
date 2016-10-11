@@ -11,13 +11,13 @@
 
 """
 
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
 
 #  Import PyHouse files
 from Modules.Utilities.xml_tools import PutGetXML
-from Modules.Core.data_objects import DeviceData
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.DeviceTools    ')
@@ -46,7 +46,6 @@ class XML(object):
             p_obj.RoomUUID = PutGetXML.get_text_from_xml(p_xml, 'RoomUUID')
         except Exception as e_err:
             LOG.error('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
-            print('Error 111', e_err)
         return p_obj
 
     @staticmethod

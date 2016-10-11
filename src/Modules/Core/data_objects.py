@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-11'
 
 
 class PyHouseData(object):
@@ -167,6 +167,7 @@ class HouseAPIs(object):
 
 class HvacData(object):
     """
+    DeviceType = 2
 ==> PyHouse.House.Hvac.xxx as in the def below
     """
     def __init__(self):
@@ -186,13 +187,14 @@ class InternetConnectionData(object):
 
 class LightingData(object):
     """
+    DeviceType = 1
 ==> PyHouse.House.Lighting.xxx as in the def below
     """
     def __init__(self):
-        self.Buttons = {}  # ButtonData()
-        self.Controllers = {}  # ControllerData()
-        self.GarageDoors = {}  # GarageDoorData(0
-        self.Lights = {}  # LightData()
+        self.Buttons = {}  # ButtonData()  Sub = 3
+        self.Controllers = {}  # ControllerData()  Sub = 1
+        self.GarageDoors = {}  # GarageDoorData()  Sub = 4
+        self.Lights = {}  # LightData()  Sub = 2
 
 
 class LocationData(object):
@@ -619,8 +621,8 @@ class CoreLightingData(DeviceData):
 
     def __init__(self):
         super(CoreLightingData, self).__init__()
-        self.DeviceFamily = 'Null'
-        self.LightingType = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
+        # self. Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
+        pass
 
 
 class IrrigationData(DeviceData):
@@ -723,7 +725,6 @@ class LightData(CoreLightingData):
         super(LightData, self).__init__()
         self.CurLevel = 0
         self.IsDimmable = False
-        #  self.LightingType = 'Light'
 
 
 #  ## END DBK

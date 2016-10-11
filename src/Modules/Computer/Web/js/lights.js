@@ -121,7 +121,7 @@ function buildDataEntryScreen(self, p_entry, p_add_change, p_handler) {
 	var l_obj = arguments[1];
 	var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
 	// console.log("lights.buildDataEntryScreen() Light %O", l_obj);
-	l_html += build_lcars_middle_menu(40, self.buildEntry(l_obj, p_add_change, p_handler));
+	l_html += build_lcars_middle_menu(25, self.buildEntry(l_obj, p_add_change, p_handler));
 	l_html += build_lcars_bottom();
 	self.nodeById('DataEntryDiv').innerHTML = l_html;
 },
@@ -130,7 +130,7 @@ function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html);
-	l_html = buildFamilyEntry(self, p_obj, l_html);
+	l_html = buildFamilyPart(self, p_obj, l_html);
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
 },
@@ -140,7 +140,6 @@ function familyChanged() {
 	var l_self = globals.Self;
 	var l_family = fetchSelectWidget(l_self, 'Family');
 	l_obj.DeviceFamily = l_family;
-	l_data.LightingType = 'Controller';
 	l_self.buildDataEntryScreen(l_obj, 'handleDataEntryOnClick');
 },
 

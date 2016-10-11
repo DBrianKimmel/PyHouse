@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-09-30'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 
@@ -162,18 +162,21 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        _l_flags = utilDecode._decode_message_flag(l_message[8])
+        l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
         if l_device_obj.DeviceType == 2:
             Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return  # self.check_for_more_decoding(p_controller_obj, True)
-        l_debug_msg = 'Std Msg fm: {}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_cmd1, l_cmd2)
+        l_debug_msg = 'Std Msg fm: {}; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
+        #
         #  Break down bits 7(msb), 6, 5 into message type
-        if l_message[8] & 0xE0 == 0x80:  #  Broadcast/NAK Message (100)
+        #
+        if l_message[8] & 0xE0 == 0x80:  #  100 - SB [Broadcast]
             l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
-        elif l_message[8] & 0xE0 == 0xC0:  #  (110) all link broadcast of group id
+        #
+        elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += "All-Link broadcast - Group:{}, Data:{}; ".format(l_group, l_data)
             LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
@@ -218,7 +221,7 @@ class DecodeResponses(object):
 
             else:
                 l_debug_msg += "\n\tUnknown type - last command was {} - {}; ".format(l_device_obj._Command1, PrintBytes(l_message))
-                LOG.warn('Decoding 50 tyoe {}'.format(l_debug_msg))
+                LOG.warn('Decoding 50 type {}'.format(l_debug_msg))
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)

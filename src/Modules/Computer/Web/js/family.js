@@ -60,7 +60,7 @@ function int2hex(p_int, p_bytes) {
 // ============================================================================
 
 function buildInsteonPart(self, p_obj, p_html) {
-	Divmod.debug('---', 'family.buildInsteonPart() was called.');
+	// Divmod.debug('---', 'family.buildInsteonPart() was called.');
 	// console.log("family.buildInsteonPart() - self = %O", self);
 	p_html += buildLcarTextWidget(self, 'InsteonAddress', 'Insteon Address', int2hex(p_obj.InsteonAddress, 3));
 	p_html += buildLcarTextWidget(self, 'DevCat', 'Dev Cat', int2hex(p_obj.DevCat, 2), 'disable');
@@ -72,7 +72,7 @@ function buildInsteonPart(self, p_obj, p_html) {
 }
 
 function fetchInsteonEntry(self, p_data) {
-	Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
+	// Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
 	try {
 		p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
 		p_data.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
@@ -92,7 +92,7 @@ function fetchInsteonEntry(self, p_data) {
 }
 
 function createInsteonEntry(self, p_data) {
-	Divmod.debug('---', 'family.createInsteonEntry() was called.');
+	// Divmod.debug('---', 'family.createInsteonEntry() was called.');
 	p_data.InsteonAddress = hex2int('11.22.33', 3);
 	p_data.DevCat = 0;
 	p_data.GroupNumber = 0;
@@ -131,7 +131,7 @@ function createUpbEntry(self, p_data) {
 // ============================================================================
 
 function buildFamilyPart(self, p_obj, p_html, p_change) {
-	Divmod.debug('---', 'family.buildFamilyPart() called.');
+	// Divmod.debug('---', 'family.buildFamilyPart() called.');
 	// console.log("family.buildFamilyPart() - self = %O", self);
 	// console.log("family.buildFamilyPart() - p_obj = %O", p_obj);
 
@@ -147,7 +147,7 @@ function buildFamilyPart(self, p_obj, p_html, p_change) {
 }
 
 function fetchFamilyPart(self, p_data) {
-	Divmod.debug('---', 'family.fetchFamilyPart() called.');
+	// Divmod.debug('---', 'family.fetchFamilyPart() called.');
 	if (p_data.DeviceFamily === 'Insteon')
 		p_data = fetchInsteonEntry(self, p_data);
 	else if (p_data.DeviceFamily === 'UPB')
@@ -156,7 +156,7 @@ function fetchFamilyPart(self, p_data) {
 }
 
 function createFamilyPart(self, p_data) {
-	Divmod.debug('---', 'family.createFamilyPart() called.');
+	// Divmod.debug('---', 'family.createFamilyPart() called.');
 	if (p_data.DeviceFamily === 'Insteon')
 		p_data = createInsteonEntry(self, p_data);
 	else if (p_data.DeviceFamily === 'UPB')

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from Modules.Computer import logging_pyh as Logging
 from Modules.Core.data_objects import LightData, UuidData
 from Modules.Families.family_utils import FamUtil
-from Modules.Housing.Lighting.lighting_core import API as LightingCoreAPI
+from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.xml_tools import PutGetXML
 from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 
@@ -36,12 +36,14 @@ class Utility(object):
         @return: a Light data object with the base info filled in
         """
         l_obj = LightData()
-        l_obj = LightingCoreAPI.read_core_lighting_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 4
         return l_obj
 
     @staticmethod
     def _write_base_device(_p_pyhouse_obj, p_light_obj):
-        l_xml = LightingCoreAPI.write_core_lighting_xml('Light', p_light_obj)
+        l_xml = deviceXML.write_base_device_object_xml('Light', p_light_obj)
         return l_xml
 
     @staticmethod
@@ -87,7 +89,7 @@ class Utility(object):
         return l_obj
 
     @staticmethod
-    def _write_one_light_xml(p_pyhouse_obj, p_controller_obj):
+    def _write_one_door_xml(p_pyhouse_obj, p_controller_obj):
         l_xml = Utility._write_base_device(p_pyhouse_obj, p_controller_obj)
         Utility._write_light_data(p_controller_obj, l_xml)
         Utility._write_family_data(p_pyhouse_obj, p_controller_obj, l_xml)
@@ -125,7 +127,7 @@ class API(object):
         return l_dict
 
     @staticmethod
-    def write_all_lights_xml(p_pyhouse_obj):
+    def write_all_GarageDoors_xml(p_pyhouse_obj):
         l_xml = ET.Element('GarageDoorSection')
         l_count = 0
         for l_light_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():

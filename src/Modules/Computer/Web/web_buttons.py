@@ -12,7 +12,7 @@
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-10-10'
 
 # Import system type stuff
 import os
@@ -70,12 +70,16 @@ class ButtonsElement(athena.LiveElement):
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_json['Key']
-        l_obj.LightingType = l_json['LightingType']
+        l_obj.UUID = l_json['UUID']
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 3
         l_obj.Comment = l_json['Comment']
         l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.DeviceFamily = l_json['DeviceFamily']
+        l_obj.DeviceSubType = 1
+        l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.RoomName = l_json['RoomName']
-        l_obj.UUID = l_json['UUID']
+        l_obj.RoomUUID = l_json['RoomUUID']
         if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util.get_json_data(l_obj, l_json)
         self.m_pyhouse_obj.House.Lighting.Buttons[l_obj.Key] = l_obj

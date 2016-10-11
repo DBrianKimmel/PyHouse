@@ -11,7 +11,7 @@ There is a matrix of controllers to create here
 
 """
 
-__updated__ = '2016-09-30'
+__updated__ = '2016-10-10'
 
 # Import system type stuff
 
@@ -37,9 +37,6 @@ L_CONTROLLER_SECTION_START = '<ControllerSection>'
 L_CONTROLLER_SECTION_END = '</ControllerSection>'
 L_CONTROLLER_END = '</Controller>'
 
-TESTING_CONTROLLER_TYPE = 'Controller'
-L_CONTROLLER_TYPE = '    <LightingType>' + TESTING_CONTROLLER_TYPE + '</LightingType>'
-
 TESTING_CONTROLLER_NAME_0 = 'Insteon Serial Controller'
 TESTING_CONTROLLER_KEY_0 = '0'
 TESTING_CONTROLLER_ACTIVE_0 = 'True'
@@ -55,7 +52,6 @@ L_CONTROLLER_UUID_0 = '    <UUID>' + TESTING_CONTROLLER_UUID_0 + '</UUID>'
 L_CONTROLLER_0 = '\n'.join([
     L_CONTROLLER_START_0,
     L_CONTROLLER_UUID_0,
-    L_CONTROLLER_TYPE,
     XML_DEVICE_INSTEON,
     XML_INSTEON_1,
     L_SERIAL_INTERFACE,
@@ -75,11 +71,9 @@ L_CONTROLLER_START_1 = '    ' + \
         '" Active="' + TESTING_CONTROLLER_ACTIVE_1 + \
         '">'
 L_CONTROLLER_UUID_1 = '    <UUID>' + TESTING_CONTROLLER_UUID_1 + '</UUID>'
-L_CONTROLLER_TYPE_1 = '    <LightingType>' + TESTING_CONTROLLER_TYPE + '</LightingType>'
 L_CONTROLLER_1 = '\n'.join([
     L_CONTROLLER_START_1,
     L_CONTROLLER_UUID_1,
-    L_CONTROLLER_TYPE,
     XML_DEVICE_UPB,
     XML_UPB,
     XML_USB_INTERFACE,

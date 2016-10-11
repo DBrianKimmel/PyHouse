@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-10-10'
 
 # Import system type stuff
 import os
@@ -60,7 +60,6 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.Name = l_json['Name']
         l_light_obj.Key = l_light_ix
         l_light_obj.CurLevel = l_level = l_json['Level']
-        l_light_obj.LightingType = 'Light'
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {} device to level {}'.format(l_light_obj.Name, l_light_obj.CurLevel))
         l_topic = 'lighting/web/{}/control'.format(l_light_obj.Name)

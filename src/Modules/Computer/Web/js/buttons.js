@@ -84,6 +84,7 @@ function buildLcarSelectScreen(self) {
  *            is the node of the button that was clicked.
  */
 function handleMenuOnClick(self, p_node) {
+	// Divmod.debug('---', 'buttons.handleMenuOnClick() was called.');
 	var l_ix = p_node.name;
 	var l_name = p_node.value;
 	var l_obj;
@@ -111,6 +112,7 @@ function handleMenuOnClick(self, p_node) {
  * Build a screen full of data entry fields.
  */
 function buildDataEntryScreen(self, p_entry, p_handler) {
+	// Divmod.debug('---', 'buttons.buildDataEntryScreen() was called.');
 	var l_obj = arguments[1];
 	var l_html = build_lcars_top('Button Data', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(25, self.buildEntry(l_obj, p_handler));
@@ -119,6 +121,7 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 },
 
 function buildEntry(self, p_obj, p_handler, p_onchange) {
+	// Divmod.debug('---', 'buttons.buildEntry() was called.');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
@@ -128,7 +131,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function familyChanged() {
-	Divmod.debug('---', 'buttons.familyChanged() was called.');
+	// Divmod.debug('---', 'buttons.familyChanged() was called.');
 	var l_obj = globals.ButtonObj;
 	var l_self = globals.Self;
 	l_obj.DeviceFamily = fetchSelectWidget(l_self, 'DeviceFamily');
@@ -150,7 +153,6 @@ function createEntry(self) {
 	var l_data = createBaseEntry(self, l_key);
 	l_data = self.createButtonEntry(l_data);
 	l_data = createFamilyPart(self, l_data);
-	l_data.LightingType = 'Button';
 	return l_data;
 },
 

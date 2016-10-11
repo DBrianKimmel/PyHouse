@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 import os
@@ -87,7 +87,8 @@ class ControllersElement(athena.LiveElement):
         l_obj.IsDimmable = l_json['IsDimmable']
         l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
-        l_obj.LightingType = l_json['LightingType']
+        l_obj.DeviceType = 1
+        l_obj.DeviceSubType = 1
         l_obj.UUID = l_json['UUID']
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']

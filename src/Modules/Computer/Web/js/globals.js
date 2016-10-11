@@ -527,12 +527,14 @@ function buildLcarAddButton(p_handler) {
 		'Key' : BUTTON_ADD
 	}, p_handler, 'lcars-salmon-bg');
 }
+
 function buildLcarBackButton(p_handler) {
 	return buildLcarButton({
 		'Name' : 'Back',
 		'Key' : BUTTON_BACK
 	}, p_handler, 'lcars-salmon-bg');
 }
+
 function buildLcarChangeButton(p_handler) {
 	var l_name = 'Change';
 	if (globals.Add === true)
@@ -542,6 +544,7 @@ function buildLcarChangeButton(p_handler) {
 		'Key' : BUTTON_CHANGE
 	}, p_handler, 'lcars-salmon-bg');
 }
+
 function buildLcarDeleteButton(p_handler) {
 	return buildLcarButton({
 		'Name' : 'Delete',
@@ -691,7 +694,7 @@ function fetchTrueFalseWidget(self, p_name) {
  * @return: Html for field,
  */
 function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */p_optionHandler) {
-	Divmod.debug('---', 'globals.buildLcarSelectWidget(1) Id=' + p_id);
+	// Divmod.debug('---', 'globals.buildLcarSelectWidget(1) Id=' + p_id);
 	var l_option = p_optionHandler;
 	var l_html = "";
 	l_html += buildTopDivs(p_caption);
@@ -748,23 +751,23 @@ function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
 }
 
 function buildLcarLightTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
 }
 
 function buildLcarProtocolTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolType, p_checked);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolTypes, p_checked);
 }
 
 function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleMode, p_checked);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleModes, p_checked);
 }
 
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked, /* optional */p_optionHandler) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleType, p_checked, p_optionHandler);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleTypes, p_checked, p_optionHandler);
 }
 
 function buildLcarThermostatTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightType, p_checked);
+	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
 }
 
 function buildLcarUserRoleSelectWidget(self, p_id, p_caption, p_checked) {

@@ -13,8 +13,9 @@ This is a bunch of routines to deal with Insteon devices.
 Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-11'
 
 #  Import system type stuff
 
@@ -28,7 +29,7 @@ from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, \
 
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Utilities.tools import PrintBytes
-from Modules.Core.data_objects import DeviceData
+from Modules.Core.data_objects import CoreLightingData
 from Modules.Utilities import device_tools
 
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
@@ -119,18 +120,18 @@ class Decode(object):
         """ Get the message flag and convert it to a description of the message.
         """
         def decode_message_type_flag(p_type):
-            TYPE_X = ['Direct', 'Direct_ACK', 'AllCleanup', 'All_Cleanup_ACK', 'Broadcast', 'Direct_NAK', 'All_Broadcast', 'All_Cleanup_NAK']
-            return TYPE_X[p_type] + ' Msg, '
+            MESSAGE_TYPE_X = ['Direct(SD)', 'Direct_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Broadcast(SB)', 'Direct_NAK(SD-NAK)', 'All_Broadcast(SA)', 'All_Cleanup_NAK(SC-NAK)']
+            return MESSAGE_TYPE_X[p_type] + ' Msg, '
         def decode_extended_flag(p_extended):
-            TYPE_X = [' Standard Len,', ' Extended Len,']
-            return TYPE_X[p_extended]
+            MESSAGE_LENGTH_X = [' Standard Len,', ' Extended Len,']
+            return MESSAGE_LENGTH_X[p_extended]
         l_type = (p_byte & 0xE0) >> 5
         l_extended = (p_byte & 0x10)
         l_hops_left = (p_byte & 0x0C) >= 4
         l_max_hops = (p_byte & 0x03)
         l_ret = decode_message_type_flag(l_type)
         l_ret += decode_extended_flag(l_extended)
-        l_ret += " HopsLeft:{:d}, Hops:{:d} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
+        l_ret += " HopsLeft:{:d}, MaxHops:{:d} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
         return l_ret
 
     @staticmethod
@@ -212,7 +213,7 @@ class Decode(object):
         #  Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
-            l_ret = DeviceData()
+            l_ret = CoreLightingData()
             device_tools.stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
             l_ret.Name = '**NoName-' + l_dotted + '-**'
         return l_ret
@@ -227,7 +228,7 @@ class Decode(object):
         l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
         if l_address < (256 * 256):  #  First byte zero ?
             l_dotted = str(l_address)
-            l_device_obj = DeviceData()
+            l_device_obj = CoreLightingData()
             device_tools.stuff_new_attrs(l_device_obj, InsteonData())  #  an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
@@ -239,16 +240,29 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
     """ Given some insteon object feched from its insteon address, update the p_pyhouse_obj storage to reflect
     the new information gleaned from the insteon responses.
     """
-    if p_insteon_obj.LightingType == 'Button':
+    l_ix = p_insteon_obj.Key
+    if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
+        p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
+        print(PrettyFormatAny.form(p_insteon_obj, 'Util Controllers'))
         pass
-    elif p_insteon_obj.LightingType == 'Controller':
-
+    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
+        p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
+        print(PrettyFormatAny.form(p_insteon_obj, 'Util Lights'))
         pass
-    elif p_insteon_obj.LightingType == 'Light':
+    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
+        p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
+        print(PrettyFormatAny.form(p_insteon_obj, 'Util Buttons'))
         pass
-    elif p_insteon_obj.LightingType == 'Thermostat':
+    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 4:
+        p_pyhouse_obj.House.Lighting.GarageDoors[l_ix] = p_insteon_obj
+        print(PrettyFormatAny.form(p_insteon_obj, 'Util Garage Door'))
+        pass
+    elif p_insteon_obj.DeviceType == 2:
+        p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
+        print(PrettyFormatAny.form(p_insteon_obj, 'Util Thermostats'))
         pass
     else:
-        LOG.error('Unknown Insteon device to update: {}'.format(p_insteon_obj.LightingType))
+        LOG.error('Unknown Insteon device to update: {}'.format(p_insteon_obj.DeviceType))
+        print(PrettyFormatAny.form(p_insteon_obj, 'Util Unknown'))
 
 #  ## END DBK

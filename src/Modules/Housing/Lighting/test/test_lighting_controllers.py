@@ -10,7 +10,7 @@
 Passed all 17 tests - DBK - 2016-07-14
 """
 
-__updated__ = '2016-08-28'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -49,7 +49,6 @@ from Modules.Housing.Lighting.lighting_controllers import Utility, API as contro
 from Modules.Housing.Lighting.test.xml_controllers import \
         TESTING_CONTROLLER_NAME_0, \
         TESTING_CONTROLLER_ACTIVE_0, \
-        TESTING_CONTROLLER_TYPE_0, \
         TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_UUID_0
 from Modules.Utilities import json_tools
 from Modules.Utilities.debug_tools import PrettyFormatAny
@@ -120,7 +119,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'AllControllers'))
         self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(str(l_obj.Active), TESTING_CONTROLLER_ACTIVE_0)
-        self.assertEqual(l_obj.LightingType, TESTING_CONTROLLER_TYPE_0)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(str(l_obj.DeviceType), TESTING_DEVICE_TYPE)
@@ -173,7 +171,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_obj, 'B1-06-A - OneController', 100))
         self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_0 == 'True'))
-        self.assertEqual(l_obj.LightingType, TESTING_CONTROLLER_TYPE_0)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))

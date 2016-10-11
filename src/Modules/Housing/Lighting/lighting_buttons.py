@@ -11,16 +11,16 @@
 
 """
 
-__updated__ = '2016-09-17'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
 from Modules.Core.data_objects import ButtonData
-from Modules.Housing.Lighting.lighting_core import API as LightingCoreAPI
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
+from Modules.Utilities.device_tools import XML as deviceXML
 # from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
 LOG = Logging.getLogger('PyHouse.LightingButton ')
@@ -35,13 +35,14 @@ class Utility(object):
         @return: a Controller data object with the base info filled in
         """
         l_obj = ButtonData()  # Create an empty controller object.
-        l_obj = LightingCoreAPI.read_core_lighting_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj.DeviceType = 1
         l_obj.DeviceSubType = 3
         return l_obj
 
     @staticmethod
     def _write_base_device(p_obj):
-        l_xml = LightingCoreAPI.write_core_lighting_xml('Button', p_obj)
+        l_xml = deviceXML.write_base_device_object_xml('Button', p_obj)
         return l_xml
 
     @staticmethod

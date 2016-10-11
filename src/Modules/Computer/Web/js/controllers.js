@@ -105,18 +105,16 @@ function handleMenuOnClick(self, p_node) {
 	globals.ControllerIx = l_ix;
 	globals.ControllerName = l_name;
 	globals.Add = false;
+	globals.Self = self;
+	showDataEntryScreen(self);
 	if (l_ix <= 1000) { // One of the controller buttons
-		showDataEntryScreen(self);
 		l_obj = globals.House.Lighting.Controllers[l_ix];
 		globals.ControllerObj = l_obj;
-		globals.Self = self;
 		self.buildDataEntryScreen(l_obj, 'handleDataOnClick');
 	} else if (l_ix == 10001) { // The 'Add' button
-		showDataEntryScreen(self);
+		globals.Add = true;
 		l_obj = self.createEntry()
 		globals.ControllerObj = l_obj;
-		globals.Self = self;
-		globals.Add = true;
 		self.buildDataEntryScreen(l_obj, 'handleDataOnClick');
 	} else if (l_ix == 10002) { // The 'Back' button
 		self.showWidget('HouseMenu');
@@ -142,19 +140,13 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
 	l_html = self.buildControllerEntry(p_obj, l_html);
-	l_html = buildFamilyPart(p_obj, l_html, 'familyChanged');
-	//
-	if (p_obj.InterfaceType === 'Serial')
-		l_html = buildSerialPart(self, p_obj, l_html);
-	else
-		Divmod.debug('---', 'ERROR - controllers.buildEntry()  Invalid Interface = ' + p_obj.InterfaceType);
-	//
+	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
+	l_html = buildInterfacePart(self, p_obj, l_html, 'interfaceChanged');
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
 },
 
 function buildControllerEntry(self, p_obj, p_html) {
-	p_html += buildLcarInterfaceTypeSelectWidget(self, 'InterfaceType', 'Interface Type', p_obj.InterfaceType, 'interfaceChanged');
 	p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.Port);
 	return p_html;
 },
@@ -168,14 +160,9 @@ function familyChanged() {
 },
 
 function interfaceChanged() {
-	// Divmod.debug('---', 'controllers.interfaceChanged() was
-	// called.');
+	// Divmod.debug('---', 'controllers.interfaceChanged() was called.');
 	var l_obj = globals.ControllerObj;
 	var l_self = globals.Self;
-	// console.log("controllers.interfaceChanged() - l_obj = %O",
-	// l_obj);
-	// console.log("controllers.interfaceChanged() - l_self = %O",
-	// l_self);
 	l_obj.InterfaceType = fetchSelectWidget(l_self, 'InterfaceType');
 	l_self.buildDataEntryScreen(l_obj, 'handleDataOnClick');
 },
@@ -184,7 +171,7 @@ function fetchEntry(self) {
 	var l_data = fetchBaseEntry(self);
 	l_data = fetchDeviceEntry(self, l_data);
 	l_data = self.fetchControllerEntry(l_data);
-	l_data = fetchFamilyEntry(self, l_data);
+	l_data = fetchFamilyPart(self, l_data);
 	if (l_data.InterfaceType === 'Serial')
 		l_data = fetchSerialEntry(self, l_data);
 	// console.log("controllers.fetchEntry() - Data = %O", l_data);
@@ -199,12 +186,10 @@ function fetchControllerEntry(self, p_data) {
 
 function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Controllers).length);
-	l_data = createDeviceEntry(self, l_data);
+	l_data = createDeviceEntry(self, l_data);  // in lcars.js
 	l_data = self.createControllerEntry(l_data);
-	l_data.LightingType = 'Controller';
 	l_data = createFamilyPart(self, l_data)
-	if (l_data.InterfaceType === 'Serial')
-		l_data = createSerialEntry(self, l_data);
+	l_data = createInterfacePart(self, l_data);
 	return l_data;
 },
 

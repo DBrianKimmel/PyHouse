@@ -11,14 +11,14 @@ Passed all 15 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2016-10-07'
+__updated__ = '2016-10-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import LightData, LightingData
+from Modules.Core.data_objects import LightingData
 from Modules.Housing.Lighting.lighting_lights import Utility, API as lightsAPI
 from Modules.Core import conversions
 from Modules.Families.family import API as familyAPI
@@ -32,7 +32,6 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Housing.Lighting.test.xml_lights import \
         TESTING_LIGHT_NAME_0, \
-        TESTING_LIGHT_TYPE_0, \
         TESTING_LIGHT_CUR_LEVEL_0, \
         TESTING_LIGHT_IS_DIMMABLE_0, \
         TESTING_LIGHT_DIMMABLE_1, \
@@ -141,7 +140,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.DeviceFamily, TESTING_LIGHT_DEVICE_FAMILY_0)
         self.assertEqual(str(l_obj.DeviceType), TESTING_LIGHT_DEVICE_TYPE_0)
         self.assertEqual(str(l_obj.DeviceSubType), TESTING_LIGHT_DEVICE_SUBTYPE_0)
-        self.assertEqual(l_obj.LightingType, TESTING_LIGHT_TYPE_0)
         self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(str(l_obj.RoomCoords.X_Easting), TESTING_LIGHT_ROOM_X)
         self.assertEqual(str(l_obj.RoomCoords.Y_Northing), TESTING_LIGHT_ROOM_Y)
@@ -177,7 +175,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
-        self.assertEqual(l_obj.LightingType, TESTING_LIGHT_TYPE_0)
         self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_5_AllLights(self):

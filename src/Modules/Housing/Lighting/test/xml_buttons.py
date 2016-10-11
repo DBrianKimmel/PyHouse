@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-10'
 
 # Import system type stuff
 
@@ -23,15 +23,11 @@ L_BUTTON_SECTION_START = '<ButtonSection>'
 L_BUTTON_SECTION_END = '</ButtonSection>'
 L_BUTTON_END = '</Button>'
 
-TESTING_LIGHTING_BUTTON_TYPE = 'Button'
 TESTING_LIGHTING_BUTTON_NAME_0 = 'Insteon Button'
 TESTING_LIGHTING_BUTTON_NAME_1 = 'UPB Button'
 
-L_BUTTON_TYPE = '    <LightingType>' + TESTING_LIGHTING_BUTTON_TYPE + '</LightingType>'
-
 L_BUTTON_BODY = '\n'.join([
     XML_DEVICE_INSTEON,
-    L_BUTTON_TYPE
     ])
 
 INSTEON_BUTTON_XML = '\n'.join([

@@ -11,7 +11,7 @@ Passed all 9 tests - DBK - 2016-07-14
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-07'
+__updated__ = '2016-10-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,7 +25,7 @@ from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_TYPE
 from Modules.Housing.Lighting.lighting_buttons import Utility, API as buttonsAPI
 from Modules.Housing.Lighting.test.xml_buttons import \
-        TESTING_LIGHTING_BUTTON_NAME_0, TESTING_LIGHTING_BUTTON_TYPE
+        TESTING_LIGHTING_BUTTON_NAME_0
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
 from test.xml_data import XML_LONG
@@ -85,7 +85,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_button.DeviceSubType, 3)  # Fixed 3 == Button
         self.assertEqual(str(l_button.DeviceType), TESTING_DEVICE_TYPE)
-        self.assertEqual(l_button.LightingType, TESTING_LIGHTING_BUTTON_TYPE)
+        self.assertEqual(str(l_button.DeviceSubType), TESTING_DEVICE_TYPE)
         self.assertEqual(l_button.RoomName, TESTING_DEVICE_ROOM_NAME)
 
     def test_02_ReadOneButtonXml(self):
@@ -97,7 +97,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Key, 0, 'Bad key')
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_button.LightingType, TESTING_LIGHTING_BUTTON_TYPE)
         self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_03_ReadAllButtonsXml(self):
