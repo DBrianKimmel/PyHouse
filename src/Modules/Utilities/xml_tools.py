@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-28'
+__updated__ = '2016-10-12'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -306,15 +306,27 @@ class XmlConfigTools(object):
             p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name')
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
-            p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
         except Exception as e_err:
             LOG.error('Base Object - {}'.format(e_err))
         return p_base_obj
 
     @staticmethod
+    def read_base_UUID_object_xml(p_base_obj, p_entry_element_xml):
+        """Get the BaseUUIDObject entries from the XML element.
+        @param p_base_obj: is the object into which we will put the data.
+        @param p_entry_element_xml: is the element we will extract data from (including children).
+        @return: A base UUID object
+        """
+        XmlConfigTools().read_base_object_xml(p_base_obj, p_entry_element_xml)
+        try:
+            p_base_obj.UUID = PutGetXML.get_uuid_from_xml(p_entry_element_xml, 'UUID')
+        except Exception as e_err:
+            LOG.error('BaseUUID Object - {}'.format(e_err))
+        return p_base_obj
+
+    @staticmethod
     def write_base_object_xml(p_element_name, p_object):
         """
-        Note that UUID is optional.
         @param p_element_name: is the name of the XML element (Light, Button, etc.)
         @param p_object: is the device object that contains the info to be written.
         @return: An Element with Attributes filled in and perhaps sub-elements attached
@@ -326,12 +338,23 @@ class XmlConfigTools(object):
             PutGetXML.put_bool_attribute(l_elem, 'Active', p_object.Active)
         except AttributeError as e_err:
             PutGetXML.put_text_attribute(l_elem, 'Error: ', e_err)
+        return l_elem
+
+    @staticmethod
+    def write_base_UUID_object_xml(p_element_name, p_object):
+        """
+        Note that UUID is optional.
+        @param p_element_name: is the name of the XML element (Light, Button, etc.)
+        @param p_object: is the device object that contains the info to be written.
+        @return: An Element with Attributes filled in and perhaps sub-elements attached
+        """
+        l_elem = XmlConfigTools().write_base_object_xml(p_element_name, p_object)
         try:
             PutGetXML.put_uuid_element(l_elem, 'UUID', p_object.UUID)
         except AttributeError:
             PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
             LOG.error('UUID missing for {}'.format(p_object.Name))
-            l_UUID = Uuid.make_valid('246')
+            l_UUID = Uuid.create_uuid()
             PutGetXML.put_uuid_element(l_elem, 'UUID', l_UUID)
         return l_elem
 
@@ -341,23 +364,6 @@ def stuff_new_attrs(p_target_obj, p_data_obj):
     Put the NEW information from the data object into the target object.
     Preserve any attributes already in the target object.
     Skip system '__' and private '_' attributes
-
-    @param p_target_obj: is the object that eill receive the attrs
-    @param p_data_obj: is the obj whose public attrs will be pushed into the target obj
-    """
-    l_attrs = filter(lambda aname: not aname.startswith('_'), dir(p_data_obj))
-    for l_attr in l_attrs:
-        if not hasattr(p_target_obj, l_attr):
-            setattr(p_target_obj, l_attr, getattr(p_data_obj, l_attr))
-
-
-def XXXstuff_new_attr_values(p_target_obj, p_data_obj):
-    """
-    Put the NEW information from the data object into the target object.
-    Preserve any attributes already in the target object.
-    Skip system '__' and private '_' attributes
-
-    setattr = Set a named attribute on an object; setattr(x, 'y', v) is equivalent to ``x.y = v''.
 
     @param p_target_obj: is the object that eill receive the attrs
     @param p_data_obj: is the obj whose public attrs will be pushed into the target obj

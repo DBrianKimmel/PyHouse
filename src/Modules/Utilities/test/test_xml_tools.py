@@ -7,9 +7,10 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 54 testa - DBK 2016-07-03
-
+Passed all 54 testa - DBK 2016-10-11
 """
+
+__updated__ = '2016-10-11'
 
 # Import system type stuff
 # import copy
@@ -19,6 +20,14 @@ import datetime
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import CoreLightingData, LocationData
+from Modules.Housing.Lighting.test.xml_lights import \
+    TESTING_LIGHT_NAME_0, \
+    TESTING_LIGHT_UUID_0, \
+    TESTING_LIGHT_ACTIVE_0
+from Modules.Housing.Lighting.test.xml_controllers import \
+    TESTING_CONTROLLER_NAME_0, \
+    TESTING_CONTROLLER_KEY_0, \
+    TESTING_CONTROLLER_ACTIVE_0
 from Modules.Utilities.xml_tools import XML, PutGetXML, XmlConfigTools, stuff_new_attrs
 from Modules.Utilities import convert
 from Modules.Utilities.test.xml_xml_tools import \
@@ -51,13 +60,11 @@ from Modules.Utilities.test.xml_xml_tools import \
     TESTING_XML_ROOM_Y_1, \
     TESTING_XML_ROOM_Z_1, \
     TESTING_XML_ROOM_COORDS_1
-from Modules.Lighting.test.xml_lights import \
-    TESTING_LIGHT_NAME_0
 from test.xml_data import \
     XML_LONG, \
     XML_EMPTY
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -250,7 +257,7 @@ class C2_Integer(SetupMixin, unittest.TestCase):
 
     def test_2_GetIntAttribute(self):
         l_result = self.m_api.get_int_from_xml(self.m_fields, 'IntA0')
-        print(PrettyFormatAny.form(l_result, 'Fields C2-2'))
+        # print(PrettyFormatAny.form(l_result, 'Fields C2-2-A Attr'))
         self.assertEqual(l_result, int(TESTING_XML_INT_A0))
 
     def test_3_PutIntElement(self):
@@ -319,11 +326,11 @@ class C4_Float(SetupMixin, unittest.TestCase):
 
     def test_01_GetFloatElement(self):
         result = self.m_api.get_float_from_xml(self.m_fields, 'Float0')
-        self.assertAlmostEqual(result, float(TESTING_XML_FLOAT_0), places = 5)
+        self.assertAlmostEqual(result, float(TESTING_XML_FLOAT_0), places=5)
 
     def test_02_GetFloatAttribute(self):
         result = self.m_api.get_float_from_xml(self.m_fields, 'FloatA0')
-        self.assertAlmostEqual(result, float(TESTING_XML_FLOAT_A0), places = 5, msg = 'get_float_from_xml failed')
+        self.assertAlmostEqual(result, float(TESTING_XML_FLOAT_A0), places=5, msg='get_float_from_xml failed')
 
 
 class D1_UUID(SetupMixin, unittest.TestCase):
@@ -454,20 +461,21 @@ class E1_Read(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = XmlConfigTools()
 
-    def test_01_BaseObject(self):
+    def test_01_BaseUUIDObject(self):
         l_base_obj = CoreLightingData()
-        self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
+        self.m_api.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
+        # print(PrettyFormatAny.form(l_base_obj, 'E1-01-A - Base Obj'))
         self.assertEqual(l_base_obj.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_base_obj.Key, 0)
-        self.assertEqual(l_base_obj.Active, True)
-        # self.assertEqual(l_base_obj.UUID, 'c15f7d76-092e-11e4-bffa-b827eb189eb4', 'Bad UUID')
+        self.assertEqual(str(l_base_obj.Active), TESTING_LIGHT_ACTIVE_0)
+        self.assertEqual(l_base_obj.UUID, TESTING_LIGHT_UUID_0)
 
     def test_02_readBaseObject(self):
         l_base_obj = CoreLightingData()
-        self.m_api.read_base_object_xml(l_base_obj, self.m_xml.controller)
-        self.assertEqual(l_base_obj.Name, 'Insteon Serial Controller')
-        self.assertEqual(l_base_obj.Key, 0)
-        self.assertEqual(l_base_obj.Active, True)
+        self.m_api.read_base_UUID_object_xml(l_base_obj, self.m_xml.controller)
+        self.assertEqual(str(l_base_obj.Name), TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(str(l_base_obj.Key), TESTING_CONTROLLER_KEY_0)
+        self.assertEqual(str(l_base_obj.Active), TESTING_CONTROLLER_ACTIVE_0)
 
 
 class E2_ReadEmpty(SetupMixin, unittest.TestCase):
@@ -482,7 +490,7 @@ class E2_ReadEmpty(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        print(PrettyFormatAny.form(l_base_obj))
+        # print(PrettyFormatAny.form(l_base_obj, 'E2-01-A Base))
         self.assertEqual(l_base_obj.Name, 'None')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
@@ -500,12 +508,12 @@ class E3_Write(SetupMixin, unittest.TestCase):
         """Write Base Object XML w/UUID
         """
         l_base_obj = CoreLightingData()
-        XmlConfigTools.read_base_object_xml(l_base_obj, self.m_xml.light)
+        XmlConfigTools.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 43
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_xml, 'XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '43')
         self.assertEqual(l_xml.find('UUID').text, l_uuid)
@@ -514,10 +522,10 @@ class E3_Write(SetupMixin, unittest.TestCase):
         """Write Base Object XML w/ NO UUID
         """
         l_base_obj = CoreLightingData()
-        XmlConfigTools.read_base_object_xml(l_base_obj, self.m_xml.light)
+        XmlConfigTools.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 44
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_xml, 'E3-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '44')
 

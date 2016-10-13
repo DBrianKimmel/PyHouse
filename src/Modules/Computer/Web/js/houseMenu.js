@@ -56,7 +56,7 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			['Lights',       'Lights',              'Lights'          ],
 			['Buttons',      'Buttons',             'Buttons'         ],
 			['Controllers',  'Controllers',         'Controllers'     ],
-			['GarageDoor',   'Garage Door',         'GarageDoor'      ],
+			['GarageDoors',  'Garage Doors',        'GarageDoors'     ],
 			['Schedules',    'Scheduling',          'Schedules'       ],
 			['Levels',       'Lighting Control',    'ControlLighting' ],
 			['Thermo',       'Thermostat',          'Thermostat'      ],
@@ -104,6 +104,9 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 			break;
 		case 'Controllers':
 			self.showWidget('Controllers');
+			break;
+		case 'GarageDoors':
+			self.showWidget('GarageDoors');
 			break;
 		case 'Schedules':
 			self.showWidget('Schedules');

@@ -15,7 +15,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-11'
+__updated__ = '2016-10-12'
 
 #  Import system type stuff
 
@@ -243,26 +243,26 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
     l_ix = p_insteon_obj.Key
     if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
         p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
-        print(PrettyFormatAny.form(p_insteon_obj, 'Util Controllers'))
+        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Controllers'))
         pass
     elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
         p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
-        print(PrettyFormatAny.form(p_insteon_obj, 'Util Lights'))
+        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Lights'))
         pass
     elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
         p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
-        print(PrettyFormatAny.form(p_insteon_obj, 'Util Buttons'))
+        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Buttons'))
         pass
     elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 4:
         p_pyhouse_obj.House.Lighting.GarageDoors[l_ix] = p_insteon_obj
-        print(PrettyFormatAny.form(p_insteon_obj, 'Util Garage Door'))
+        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
         pass
     elif p_insteon_obj.DeviceType == 2:
         p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
-        print(PrettyFormatAny.form(p_insteon_obj, 'Util Thermostats'))
+        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Thermostats'))
         pass
     else:
         LOG.error('Unknown Insteon device to update: {}'.format(p_insteon_obj.DeviceType))
-        print(PrettyFormatAny.form(p_insteon_obj, 'Util Unknown'))
+        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
 
 #  ## END DBK

@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-10-11'
+__updated__ = '2016-10-12'
 
 
 class PyHouseData(object):
@@ -360,42 +360,17 @@ class XmlInformation(object):
         self.XmlOldVersion = None  # Version of the file read in at program start.
 
 
+class BaseUUIDObject(BaseObject):
+    """
+    """
+    def __init__(self):
+        super(BaseUUIDObject, self).__init__()
+        self.UUID = None
+
+
 """
 BaseObject dependent.
 """
-
-
-class ComputerInformation(BaseObject):
-    """
-    ==> PyHouse.Computer.xxx - as in the def below.
-    """
-    def __init__(self):
-        super(ComputerInformation, self).__init__()
-        self.UUID = None
-        self.Comm = {}  # CommunicationData()
-        self.InternetConnection = {}  # InternetConnectionData()
-        self.Mqtt = {}  # MqttInformation()
-        self.Nodes = {}  # NodeData()
-        self.Primary = False
-        self.Web = {}  # WebData()
-
-
-class DeviceData(BaseObject):
-    """
-    This data is in every other device object.
-    Do not use this object, derive objects from it.
-    """
-    def __init__(self):
-        super(DeviceData, self).__init__()
-        self.UUID = None
-        self.Comment = ''
-        self.DeviceFamily = 'Null'
-        self.DeviceType = 0
-        self.DeviceSubType = 0
-        self.RoomCoords = None  # CoordinateData()
-        self.RoomName = ''
-        self.RoomUUID = None
-
 
 class FamilyData(BaseObject):
     """A container for every family that has been defined in modules.
@@ -407,29 +382,6 @@ class FamilyData(BaseObject):
         self.FamilyXmlModuleName = None  # Insteon_xml
         self.FamilyXmlModuleAPI = None  # Address of Insteon_xml
         self.FamilyPackageName = None  # Modules.Families.Insteon
-
-
-class HouseInformation(BaseObject):
-    """The collection of information about a house.
-    Causes JSON errors due to API type data methinks.
-
-    ==> PyHouse.House.xxx as in the def below.
-    """
-    def __init__(self):
-        super(HouseInformation, self).__init__()
-        self.UUID = None
-        self.FamilyData = {}  # FamilyData['FamilyName']
-        self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = None  # EntertainmentData()
-        self.Hvac = None  # HvacData()
-        self.Irrigation = None  # IrrigationData()
-        self.Lighting = None  # LightingData()
-        self.Location = None  # LocationData() - one location per house.
-        self.Pools = None  # PoolData()
-        self.Rooms = None  # RoomData()
-        self.Rules = None  # RulesData()
-        self.Schedules = None  # ScheduleBaseData()
-        self.Security = None  # SecurityData()
 
 
 class JsonHouseData(BaseObject):
@@ -448,22 +400,6 @@ class JsonHouseData(BaseObject):
         # self.Thermostats = {}
 
 
-class LoginData(BaseObject):
-    """ bout the Logged in user
-    """
-    def __init__(self):
-        super(LoginData, self).__init__()
-        self.UUID = None
-        self.LoginFullName = 'Not logged in'
-        self.LoginIP = None
-        self.LoginPasswordChangeFlag = True
-        self.LoginPasswordCurrent = None
-        self.LoginPasswordNew = None
-        self.LoginRole = 'None'
-        self.IsLoggedIn = False
-        self.ServerState = None
-
-
 class MqttBrokerData(BaseObject):
     """ 0-N
     """
@@ -478,7 +414,87 @@ class MqttBrokerData(BaseObject):
         self._isTLS = False
 
 
-class NodeData(BaseObject):
+class RulesData(BaseObject):
+    """
+    """
+    def __init__(self):
+        self.Device = None
+        self.Condition = None
+        self.Action = None
+
+
+"""
+BaseUUIDObject dependent.
+"""
+
+class ComputerInformation(BaseUUIDObject):
+    """
+    ==> PyHouse.Computer.xxx - as in the def below.
+    """
+    def __init__(self):
+        super(ComputerInformation, self).__init__()
+        self.Comm = {}  # CommunicationData()
+        self.InternetConnection = {}  # InternetConnectionData()
+        self.Mqtt = {}  # MqttInformation()
+        self.Nodes = {}  # NodeData()
+        self.Primary = False
+        self.Web = {}  # WebData()
+
+
+class DeviceData(BaseUUIDObject):
+    """
+    This data is in every other device object.
+    Do not use this object, derive objects from it.
+    """
+    def __init__(self):
+        super(DeviceData, self).__init__()
+        self.Comment = ''
+        self.DeviceFamily = 'Null'
+        self.DeviceType = 0
+        self.DeviceSubType = 0
+        self.RoomCoords = None  # CoordinateData()
+        self.RoomName = ''
+        self.RoomUUID = None
+
+
+class HouseInformation(BaseUUIDObject):
+    """The collection of information about a house.
+    Causes JSON errors due to API type data methinks.
+
+    ==> PyHouse.House.xxx as in the def below.
+    """
+    def __init__(self):
+        super(HouseInformation, self).__init__()
+        self.FamilyData = {}  # FamilyData['FamilyName']
+        self.HouseMode = 'Home'  # Home, Away, Vacation,
+        self.Entertainment = None  # EntertainmentData()
+        self.Hvac = None  # HvacData()
+        self.Irrigation = None  # IrrigationData()
+        self.Lighting = None  # LightingData()
+        self.Location = None  # LocationData() - one location per house.
+        self.Pools = None  # PoolData()
+        self.Rooms = None  # RoomData()
+        self.Rules = None  # RulesData()
+        self.Schedules = None  # ScheduleBaseData()
+        self.Security = None  # SecurityData()
+
+
+class LoginData(BaseUUIDObject):
+    """ bout the Logged in user
+    """
+    def __init__(self):
+        super(LoginData, self).__init__()
+        self.LoginFullName = 'Not logged in'
+        self.LoginIP = None
+        self.LoginPasswordChangeFlag = True
+        self.LoginPasswordCurrent = None
+        self.LoginPasswordNew = None
+        self.LoginRole = 'None'
+        self.IsLoggedIn = False
+        self.ServerState = None
+
+
+class NodeData(BaseUUIDObject):
     """Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
@@ -487,7 +503,6 @@ class NodeData(BaseObject):
     """
     def __init__(self):
         super(NodeData, self).__init__()
-        self.UUID = None
         self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
@@ -499,7 +514,7 @@ class NodeData(BaseObject):
         self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
-class NodeInterfaceData(BaseObject):
+class NodeInterfaceData(BaseUUIDObject):
     """
     Holds information about each of the interfaces on the *local* node.
 
@@ -507,24 +522,22 @@ class NodeInterfaceData(BaseObject):
     """
     def __init__(self):
         super(NodeInterfaceData, self).__init__()
-        self.UUID = None
         self.NodeInterfaceType = None  # Ethernet | Wireless | Loopback | Tunnel | Other
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
 
 
-class PoolData(BaseObject):
+class PoolData(BaseUUIDObject):
     """
     """
     def __init__(self):
         super(PoolData, self).__init__()
-        self.UUID = None
         self.Comment = None
         self.PoolType = None  # 'Pool', 'Pond', 'HotTub'
 
 
-class RoomData(BaseObject):
+class RoomData(BaseUUIDObject):
     """A room of the house.
     Used to draw pictures of the house
     Used to define the location of switches, lights etc.
@@ -533,7 +546,6 @@ class RoomData(BaseObject):
     """
     def __init__(self):
         super(RoomData, self).__init__()
-        self.UUID = None
         self.Comment = ''
         self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
@@ -544,16 +556,7 @@ class RoomData(BaseObject):
         self._DeleteFlag = False
 
 
-class RulesData(BaseObject):
-    """
-    """
-    def __init__(self):
-        self.Device = None
-        self.Condition = None
-        self.Action = None
-
-
-class ScheduleBaseData(BaseObject):
+class ScheduleBaseData(BaseUUIDObject):
     """A schedule of when events happen.
 
     DOW is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
@@ -564,7 +567,6 @@ class ScheduleBaseData(BaseObject):
     """
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
-        self.UUID = None
         self.DOW = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
         self.ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
         self.ScheduleType = ''  # Valid Schedule Type
@@ -573,6 +575,20 @@ class ScheduleBaseData(BaseObject):
         self._AddFlag = False
         self._DeleteFlag = False
 
+
+class SensorData(BaseUUIDObject):
+    """
+    This data is in almost every other Sensor object.
+    Do not use this object, derive objects from it.
+    """
+    def __init__(self):
+        super(SensorData, self).__init__()
+        self.Sensor = None
+
+
+"""
+ScheduleBaseData dependent
+"""
 
 class ScheduleIrrigationData(ScheduleBaseData):
     """
@@ -598,16 +614,6 @@ class ScheduleLightData(ScheduleBaseData):
         self.RoomName = None
         self.RoomUUID = None
         self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
-
-
-class SensorData(BaseObject):
-    """
-    This data is in almost every other Sensor object.
-    Do not use this object, derive objects from it.
-    """
-    def __init__(self):
-        super(SensorData, self).__init__()
-        self.UUID = None
 
 
 """
@@ -685,7 +691,6 @@ class ButtonData(CoreLightingData):
     """
     def __init__(self):
         super(ButtonData, self).__init__()
-        self.UUID = None
 
 
 class ControllerData(CoreLightingData):
@@ -698,7 +703,6 @@ class ControllerData(CoreLightingData):
         self.InterfaceType = ''  # Serial | USB | Ethernet
         self.Port = ''
         self.Ret = None  # Return Code
-        self.UUID = None
         #  The following are not in XML config file
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
@@ -713,8 +717,7 @@ class GarageDoorData(CoreLightingData):
    """
     def __init__(self):
         super(GarageDoorData, self).__init__()
-        self.GDOpenStatus = None  # Open | Closed
-        self.UUID = None
+        self.Status = None  # Open | Closed
 
 
 class LightData(CoreLightingData):

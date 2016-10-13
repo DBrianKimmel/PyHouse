@@ -15,7 +15,7 @@ Invoked periodically and when any Insteon device changes.
 """
 from matplotlib.backends.backend_ps import ps_backend_helper
 
-__updated__ = '2016-10-09'
+__updated__ = '2016-10-12'
 
 #  Import system type stuff
 
@@ -166,15 +166,17 @@ class Decode(object):
 
     @staticmethod
     def decode_55(p_controller_obj):
-        """Insteon
-        See p 2xx(2xx) of 2009 developers guide.
+        """Insteon Reset Detected. (2 bytes)
+        See p 256(269) of 2009 developers guide.
+
+        Reports that the user manually put the IM into factory default state.
+        Takes about 20 seconds to respond.
+
         [0] = x02
-        [1] = 0x54
-        [2] = Button Event
+        [1] = 0x55
         """
-        l_message = p_controller_obj._Message
-        l_event = l_message[2]
-        LOG.info('The Set button was pressed {}'.format(l_event))
+        _l_message = p_controller_obj._Message
+        LOG.info('The Set button was pressed')
 
     @staticmethod
     def decode_56(p_controller_obj):
@@ -197,7 +199,7 @@ class Decode(object):
         See p 251(264) of 2009 developers guide.
         [0] = x02
         [1] = 0x57
-        [2] = AllLink Record Flag
+        [2] = AllLink Record Flags
         [3] = AllLink Group
         [4-6] = from address
         [7] = Link Data 1

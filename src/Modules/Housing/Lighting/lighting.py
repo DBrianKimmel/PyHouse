@@ -18,7 +18,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-10-07'
+__updated__ = '2016-10-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,7 +29,7 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
-from Modules.Housing.Lighting.lighting_garagedoor import API as garageAPI
+from Modules.Housing.Lighting.lighting_garagedoors import API as garageAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
@@ -92,8 +92,8 @@ class Utility(object):
 
     def _read_garage(self, p_pyhouse_obj, p_xml):
         try:
-            l_xml = p_xml.find('GarageSection')
-            l_ret = lightsAPI.read_all_lights_xml(p_pyhouse_obj, l_xml)
+            l_xml = p_xml.find('GarageDoorSection')
+            l_ret = garageAPI.read_all_GarageDoors_xml(p_pyhouse_obj, l_xml)
         except AttributeError as e_err:
             l_ret = {}
             l_msg = 'No Garage Door found: {}'.format(e_err)
@@ -127,14 +127,10 @@ class Utility(object):
         @param p_house_element: is the XML
         """
         l_lighting_xml = ET.Element('LightingSection')
+        l_lighting_xml.append(buttonsAPI.write_buttons_xml(p_pyhouse_obj))
+        l_lighting_xml.append(garageAPI.write_all_GarageDoors_xml(p_pyhouse_obj))
         l_lighting_xml.append(lightsAPI.write_all_lights_xml(p_pyhouse_obj))
-        try:
-            l_lighting_xml.append(buttonsAPI.write_buttons_xml(p_pyhouse_obj))
-            l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
-        except AttributeError as e_err:
-            l_msg = 'ERROR-109: {}'.format(e_err)
-            LOG.error(l_msg)
-            p_house_element.append(l_lighting_xml)
+        l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
         return l_lighting_xml
 
 

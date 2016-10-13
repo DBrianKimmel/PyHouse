@@ -59,6 +59,7 @@ class UtilJson(object):
         l_ret = LightingData()
         l_ret.Buttons = p_pyhouse_obj.House.Lighting.Buttons
         l_ret.Controllers = p_pyhouse_obj.House.Lighting.Controllers
+        l_ret.GarageDoors = p_pyhouse_obj.House.Lighting.GarageDoors
         l_ret.Lights = p_pyhouse_obj.House.Lighting.Lights
         return l_ret
 

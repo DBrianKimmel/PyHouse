@@ -13,9 +13,9 @@
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML
-from Modules.Core.data_objects import BaseObject
+from Modules.Core.data_objects import BaseUUIDObject
 
-__updated__ = '2016-07-15'
+__updated__ = '2016-10-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,7 +30,7 @@ SAMSUNG_ADDRESS = '192.168.1.120'
 SAMSUNG_PORT = 55000
 
 
-class SamsungData(BaseObject):
+class SamsungData(BaseUUIDObject):
     def __init__(self):
         self.DeviceCount = 0
         self.Factory = None

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-19'
+__updated__ = '2016-10-11'
 
 #  Import system type stuff
 import platform
@@ -65,6 +65,8 @@ class XmlData(object):
         self.button = None
         self.controller_sect = None
         self.controller = None
+        self.garagedoor_sect = None
+        self.garagedoor = None
         self.light_sect = None
         self.light = None
         self.location_sect = None
@@ -194,10 +196,12 @@ class SetupPyHouseObj(object):
         p_xml.lighting_sect = p_xml.house_div.find('LightingSection')
         p_xml.button_sect = p_xml.lighting_sect.find('ButtonSection')
         p_xml.controller_sect = p_xml.lighting_sect.find('ControllerSection')
+        p_xml.garagedoor_sect = p_xml.lighting_sect.find('GarageDoorSection')
         p_xml.light_sect = p_xml.lighting_sect.find('LightSection')
         #
         p_xml.button = p_xml.button_sect.find('Button')
         p_xml.controller = p_xml.controller_sect.find('Controller')
+        p_xml.garagedoor = p_xml.garagedoor_sect.find('GarageDoor')
         p_xml.irrigation_system = p_xml.irrigation_sect.find('IrrigationSystem')
         p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
         p_xml.light = p_xml.light_sect.find('Light')

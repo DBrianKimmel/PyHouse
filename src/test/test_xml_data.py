@@ -10,8 +10,10 @@
 This test should always be run as the very first test.
 It will check the XML file for being fundamentally correct for all other tests that use the XML data.
 
-Tests all working OK - DBK 2014-06-22
+Passed all 11 tests - DBK - 2016-10-11
 """
+
+__updated__ = '2016-10-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

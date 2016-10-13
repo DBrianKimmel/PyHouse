@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-12'
 
 #  Import system type stuff
 
@@ -274,6 +274,7 @@ class DecodeResponses(object):
         l_firmver = l_message[7]
         LOG.info("== 60 - Insteon Modem Info - DevCat={}, DevSubCat={}, Firmware={} - Name={}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
         if l_message[8] == ACK:
+            Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj)
             p_controller_obj.Ret = True
         else:
             LOG.error("== 60 - No ACK - Got {:#x}".format(l_message[8]))
@@ -388,8 +389,22 @@ class DecodeResponses(object):
 
     def _decode_6F_record(self, p_controller_obj):
         """All-Link manage Record Response (12 bytes).
-        See p 267 of developers guide.
-        """
+        See p 252(265) of 2009 developers guide.
+
+        Modify the IM's All-Link Database (ALDB) with the All-Link data you send.
+        Use caution with this command - the IM does not check the validity of the data you send.
+
+        [0] = x02
+        [1] = 0x6F
+        [2] = Control Code
+        [3] = All-Link Record Flag
+        [4] = All Lpink Grou
+        [5-7] = ID
+        [8] = Link Data 1
+        [9] = Link Data 2
+        [10] = Link Data 3
+        [11] = ACK/NAK
+         """
         l_message = p_controller_obj._Message
         l_code = l_message[2]
         l_flags = l_message[3]
@@ -410,7 +425,12 @@ class DecodeResponses(object):
 
     def _decode_73_record(self, p_controller_obj):
         """Get the PLM response of 'get config' (6 bytes).
-        See p 270 of developers guide.
+        See p 257(270) of the 2009 developers guide.
+        [0] = x02
+        [1] = IM Control Flag
+        [2] = Spare 1
+        [3] = Spare 2
+        [4] = ACK/NAK
         """
         l_message = p_controller_obj._Message
         l_flags = l_message[2]
