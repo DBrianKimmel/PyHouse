@@ -18,7 +18,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-18'
 
 
 class PyHouseData(object):
@@ -181,8 +181,9 @@ class InternetConnectionData(object):
         self.ExternalIPv4 = None
         self.ExternalIPv6 = None
         self.LastChanged = None
-        self.LocateUrls = {}
-        self.UpdateUrls = {}
+        self.UpdateInterval = 86400  # Seconds
+        self.LocateUrls = []
+        self.UpdateUrls = []
 
 
 class LightingData(object):

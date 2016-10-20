@@ -10,6 +10,10 @@
 @Summary:
 
 """
+
+__updated__ = '2016-10-19'
+
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
@@ -27,30 +31,48 @@ class Util(object):
     """
 
     @staticmethod
-    def _read_locates_xml(p_locater_sect_xml):
-        l_dict = {}
+    def _read_locates_xml(p_xml):
+        l_list = []
         l_count = 0
         try:
-            for l_xml in p_locater_sect_xml.iterfind('LocateUrl'):
+            for l_xml in p_xml.iterfind('LocateUrl'):
                 l_url = str(l_xml.text)
-                l_dict[l_count] = l_url
+                l_list.append(l_url)
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in read_locates_xml - {}'.format(e_err))
-        return l_dict
+        return l_list
+
+    @staticmethod
+    def _write_locates_xml(p_obj):
+        l_xml = ET.Element('LocaterUrlSection')
+        l_urls = p_obj.LocateUrls
+        for l_url in l_urls:
+            PutGetXML.put_text_element(l_xml, 'LocateUrl', l_url)
+        return l_xml
+
 
     @staticmethod
     def _read_updates_xml(p_updater_sect_xml):
-        l_dict = {}
+        l_list = []
         l_count = 0
         try:
             for l_xml in p_updater_sect_xml.iterfind('UpdateUrl'):
                 l_url = str(l_xml.text)
-                l_dict[l_count] = l_url
+                l_list.append(l_url)
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR in read_updates_xml - {}'.format(e_err))
-        return l_dict
+        return l_list
+
+    @staticmethod
+    def _write_updates_xml(p_obj):
+        l_xml = ET.Element('UpdaterUrlSection')
+        l_urls = p_obj.UpdateUrls
+        for l_url in l_urls:
+            PutGetXML.put_text_element(l_xml, 'UpdateUrl', l_url)
+        return l_xml
+
 
     @staticmethod
     def _read_derived(p_internet_sect_xml):
@@ -59,31 +81,18 @@ class Util(object):
             l_icd.ExternalIPv4 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv4')
             l_icd.ExternalIPv6 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv6')
             l_icd.LastChanged = PutGetXML.get_date_time_from_xml(p_internet_sect_xml, 'LastChanged')
+            l_icd.UpdateInterval = PutGetXML.get_text_from_xml(p_internet_sect_xml, 'UpdateInterval')
         except:
             pass
         return l_icd
 
-
-    @staticmethod
-    def _write_locates_xml(p_internet_obj):
-        l_xml = ET.Element('LocaterUrlSection')
-        for l_url in p_internet_obj.LocateUrls.itervalues():
-            PutGetXML.put_text_element(l_xml, 'LocateUrl', l_url)
-        return l_xml
-
-    @staticmethod
-    def _write_updates_xml(p_dns_obj):
-        l_xml = ET.Element('UpdaterUrlSection')
-        for l_url in p_dns_obj.UpdateUrls.itervalues():
-            PutGetXML.put_text_element(l_xml, 'UpdateUrl', l_url)
-        return l_xml
-
     @staticmethod
     def _write_derived_xml(p_internet_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'ExternalIPv4', p_internet_obj.ExternalIPv4)
-        PutGetXML.put_text_element(p_xml, 'ExternalIPv6', p_internet_obj.ExternalIPv6)
-        PutGetXML.put_text_element(p_xml, 'LastChanged', p_internet_obj.LastChanged)
-
+        PutGetXML.put_ip_element(p_xml, 'ExternalIPv4', p_internet_obj.ExternalIPv4)
+        PutGetXML.put_ip_element(p_xml, 'ExternalIPv6', p_internet_obj.ExternalIPv6)
+        PutGetXML.put_date_time_element(p_xml, 'LastChanged', p_internet_obj.LastChanged)
+        PutGetXML.put_text_element(p_xml, 'UpdateInterval', p_internet_obj.UpdateInterval)
+        return p_xml
 
 
 class API(object):
@@ -94,23 +103,22 @@ class API(object):
         """
         l_icd = InternetConnectionData()
         l_xml = p_pyhouse_obj.Xml.XmlRoot
+        l_xml = l_xml.find('ComputerDivision')
+        if l_xml == None:
+            return l_icd
+        l_internet_sect_xml = l_xml.find('InternetSection')
+        if l_xml == None:
+            return l_icd
         try:
-            l_xml = l_xml.find('ComputerDivision')
-            if l_xml == None:
-                return l_icd
-            l_internet_sect_xml = l_xml.find('InternetSection')
-        except AttributeError as e_err:
-            l_internet_sect_xml = None
-            LOG.error('Internet section missing from XML - {}'.format(e_err))
-        try:
+            l_locate = Util._read_locates_xml(l_internet_sect_xml.find('LocateUrlSection'))
+            l_update = Util._read_updates_xml(l_internet_sect_xml.find('UpdateUrlSection'))
             l_icd = Util._read_derived(l_internet_sect_xml)
-            l_icd.LocateUrls = Util._read_locates_xml(l_internet_sect_xml.find('LocaterUrlSection'))
-            l_icd.UpdateUrls = Util._read_updates_xml(l_internet_sect_xml.find('UpdaterUrlSection'))
+            l_icd.LocateUrls = list(l_locate)
+            l_icd.UpdateUrls = list(l_update)
         except AttributeError as e_err:
             LOG.error('ERROR ReadInternet - {}'.format(e_err))
         LOG.info('Loaded Internet XML')
         return l_icd
-
 
     def write_internet_xml(self, p_internet_obj):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.

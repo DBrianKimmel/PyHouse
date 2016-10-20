@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-19'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -241,7 +241,9 @@ class PutGetXML(object):
 
     @staticmethod
     def put_ip_element(p_parent_element, p_name, p_ip):
-        pass
+        l_ip = convert.long_to_str(p_ip)
+        PutGetXML.put_text_element(p_parent_element, p_name, l_ip)
+
 
 # -----
 #  DateTime
@@ -257,6 +259,7 @@ class PutGetXML(object):
     @staticmethod
     def put_date_time_element(p_parent_element, p_name, p_date_time):
         PutGetXML.put_text_element(p_parent_element, p_name, p_date_time)
+
 
 # -----
 #  Coords

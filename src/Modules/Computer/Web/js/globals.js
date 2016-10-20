@@ -465,6 +465,13 @@ function setNameAttribute(p_name) {
 	return l_html;
 }
 
+/**
+ * Allow calling function to set a size (width) of the widget.
+ * Size may range from 001 to 999.
+ * 
+ * @param p_options is the entire option list which may contail a size element.
+ * @returns - HTML that will set the width.
+ */
 function setSizeOption(p_options) {
 	var l_size = 40;
 	if (p_options !== undefined) {

@@ -22,13 +22,12 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-09-25'
+__updated__ = '2016-10-15'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core import conversions
 from Modules.Families.Insteon import Insteon_decoder, Insteon_utils, Insteon_Link
-from Modules.Families.Insteon.Insteon_constants import COMMAND_LENGTH, MESSAGE_TYPES, PLM_COMMANDS, STX
+from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family_utils import FamUtil
@@ -142,18 +141,6 @@ class Commands(object):
     @staticmethod
     def queue_6E_command(p_controller_obj):
         pass
-
-    @staticmethod
-    def queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data):
-        """Manage All-Link Record (11 bytes)"""
-        LOG.info("Command to manage all-link record (6F).")
-        l_command = Insteon_utils.create_command_message('manage_all_link_record')
-        l_command[2] = p_code
-        l_command[3] = p_flag
-        l_command[4] = p_light_obj.GroupNumber
-        Util.int2message(p_light_obj.InsteonAddress, l_command, 5)
-        l_command[8:11] = p_data
-        Insteon_utils.queue_command(p_controller_obj, l_command)
 
     @staticmethod
     def queue_70_command(p_controller_obj):
@@ -358,26 +345,35 @@ class LightHandlerAPI(object):
         self._get_engine_version(p_controller_obj, p_obj)
         self._get_one_thermostat_status(p_controller_obj, p_obj)
 
+    def _get_garage_door_info(self, p_controller_obj, p_obj):
+        self._get_id_request(p_controller_obj, p_obj)
+        self._get_engine_version(p_controller_obj, p_obj)
+        self._get_one_device_status(p_controller_obj, p_obj)
+        InsteonPlmAPI().get_link_records(p_controller_obj)
+
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
         """
         LOG.info('Getting information for all Insteon devices.')
-        LOG.info('Getting device information of all Insteon Controllers')
+
+        for l_obj in p_pyhouse_obj.House.Lighting.Buttons.itervalues():
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_obj_info(p_controller_obj, l_obj)
+
         for l_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_controller_info(p_controller_obj, l_obj)
-        LOG.info('Getting device information of all Insteon Lights')
+
+        for l_obj in p_pyhouse_obj.House.Lighting.GarageDoors.itervalues():
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_garage_door_info(p_controller_obj, l_obj)
+
         for l_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
                 InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
                 Insteon_Link.InsteonAllLinks().get_all_allinks(p_controller_obj)
 
-        LOG.info('Getting device information of all Insteon Buttons')
-        for l_obj in p_pyhouse_obj.House.Lighting.Buttons.itervalues():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
-        LOG.info('Getting device information of all Insteon Thermostats')
         for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_thermostat_obj_info(p_controller_obj, l_obj)

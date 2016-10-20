@@ -7,16 +7,17 @@
 @copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
-@summary:   Handle the Internet information for a house.
+@summary:   Handle the "Internet" information for a house.
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-10-19'
 
 # Import system type stuff
-import os
+from datetime import datetime
 from nevow import athena
 from nevow import loaders
+import os
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
@@ -43,7 +44,7 @@ class InternetElement(athena.LiveElement):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
     @athena.expose
-    def getHouseData(self):
+    def getInternetData(self):
         l_computer = GetJSONComputerInfo(self.m_pyhouse_obj)
         return l_computer
 
@@ -52,22 +53,15 @@ class InternetElement(athena.LiveElement):
         """Internet data is returned, so update the computer info.
         """
         l_json = json_tools.decode_json_unicode(p_json)
-        l_dyndns_ix = int(l_json['Key'])
+        # l_ix = int(l_json['Key'])
         try:
             l_obj = self.m_pyhouse_obj.Computer.InternetConnection
         except KeyError:
             l_obj = InternetConnectionData()
-            l_obj.DynDns = {}
-        l_obj.Name = l_json['Name']
-        l_obj.Key = 0
-        l_obj.Active = True
-        # l_obj.ExternalDelay = l_json['ExternalDelay']
-        l_obj.ExternalUrl = l_json['ExternalUrl']
-        l_obj.DynDns[l_dyndns_ix].Name = l_json['Name']
-        l_obj.DynDns[l_dyndns_ix].Key = l_dyndns_ix
-        l_obj.DynDns[l_dyndns_ix].Active = l_json['Active']
-        l_obj.DynDns[l_dyndns_ix].UpdateInterval = l_json['UpdateInterval']
-        l_obj.DynDns[l_dyndns_ix].UpdateUrl = l_json['UpdateUrl']
+        l_obj.LastChanged = datetime.now()
+        l_obj.LocateUrls = l_json['LocateUrls']
+        l_obj.UpdateUrls = l_json['UpdateUrls']
+        l_obj.UpdateInterval = l_json['UpdateInterval']
         self.m_pyhouse_obj.Computer.InternetConnection = l_obj
 
 # ## END DBK

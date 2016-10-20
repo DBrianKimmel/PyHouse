@@ -67,6 +67,7 @@ function buildLcarSelectScreen(self) {
 	self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 },
 
+// ============================================================================
 /**
  * Event handler for room selection buttons.
  * 

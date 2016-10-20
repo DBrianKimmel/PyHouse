@@ -14,8 +14,10 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 from matplotlib.backends.backend_ps import ps_backend_helper
+from Modules.Families.Insteon.Insteon_data import InsteonData
+from Modules.Core import conversions
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-15'
 
 #  Import system type stuff
 
@@ -82,14 +84,14 @@ class InsteonAllLinks(object):
         #  p_flag = 0xE2
         p_data = bytearray(b'\x00\x00\x00')
         LOG.info("Delete All-link record - Address:{}, Group:{:#02X}".format(p_light_obj.InsteonAddress, p_group))
-        l_ret = Commands.queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
+        l_ret = Send().queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
         return l_ret
 
     def reset_plm(self, p_controller_obj):
         """This will clear out the All-Links database.
         """
         l_debug_msg = "Resetting PLM - Name:{}".format(p_controller_obj)
-        Commands._queue_67_command(p_controller_obj)
+        Send().queue_67_command(p_controller_obj)
         LOG.info(l_debug_msg)
 
 
@@ -99,7 +101,7 @@ class Send(object):
     """
 
     @staticmethod
-    def _queue_67_command(p_controller_obj):
+    def queue_67_command(p_controller_obj):
         """Reset the PLM (2 bytes)
         Puts the IM into the factory reset state which clears the All-Link Database.
         See p 255(268) of 2009 developers guide.
@@ -122,6 +124,18 @@ class Send(object):
         """Get the next record - will get a NAK if no more (2 bytes).
         See p 262 of developers guide.
         """
+
+    @staticmethod
+    def queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data):
+        """Manage All-Link Record (11 bytes)"""
+        LOG.info("Command to manage all-link record (6F).")
+        l_command = Insteon_utils.create_command_message('manage_all_link_record')
+        l_command[2] = p_code
+        l_command[3] = p_flag
+        l_command[4] = p_light_obj.GroupNumber
+        Util.int2message(p_light_obj.InsteonAddress, l_command, 5)
+        l_command[8:11] = p_data
+        Insteon_utils.queue_command(p_controller_obj, l_command)
 
 
 class Decode(object):
@@ -265,14 +279,15 @@ class Decode(object):
         [2] = ACK/NAK
         """
         l_message = p_controller_obj._Message
-        LOG.info("All-Link first record - ACK")
         if l_message[2] == ACK:
-            l_ret = True
-            Send.queue_6A_command(p_controller_obj)
+            l_ack = 'ACK'
+            InsteonAllLinks()._get_next_allink(p_controller_obj)
+            # Send.queue_6A_command(p_controller_obj)
         else:
             LOG.info("All-Link first record - NAK")
-            l_ret = False
-        return l_ret
+            l_ack = 'NAK'
+        LOG.info("All-Link first record -{}".format(l_ack))
+        return
 
     @staticmethod
     def decode_6A(p_controller_obj):
@@ -283,14 +298,14 @@ class Decode(object):
         [2] = ACK/NAK
         """
         l_message = p_controller_obj._Message
-        LOG.info("All-Link Next record - ACK")
         if l_message[2] == ACK:
-            l_ret = True
-            Send.queue_6A_command()
+            l_ack = 'ACK'
+            InsteonAllLinks()._get_next_allink(p_controller_obj)
+            # Send.queue_6A_command()
         else:
-            LOG.info("All-Link Next record - NAK")
-            l_ret = False
-        return l_ret
+            l_ack = 'NAK'
+        LOG.info("All-Link Next record - {}".format(l_ack))
+        return
 
     @staticmethod
     def decode_6C(p_controller_obj):

@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-15'
 
 #  Import system type stuff
 
@@ -116,8 +116,8 @@ class DecodeResponses(object):
         if l_cmd == 0:
             LOG.warning("Found a '0' record ->{}.".format(PrintBytes(l_message)))
             return l_ret
-        elif l_cmd == 0x50: l_ret = self._decode_50_record(p_controller_obj)
-        elif l_cmd == 0x51: l_ret = self._decode_51_record(p_controller_obj)
+        elif l_cmd == 0x50: l_ret = self._decode_50(p_controller_obj)
+        elif l_cmd == 0x51: l_ret = self._decode_51(p_controller_obj)
         elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
         elif l_cmd == 0x53: self.m_link.decode_53()
         elif l_cmd == 0x54: linkDecode.decode_54(p_controller_obj)
@@ -148,7 +148,7 @@ class DecodeResponses(object):
         l_topic = "lighting/{}/info".format(p_device_obj.Name)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
-    def _decode_50_record(self, p_controller_obj):
+    def _decode_50(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
         See p 233(246) of 2009 developers guide.
@@ -229,7 +229,7 @@ class DecodeResponses(object):
         LOG.info('50 Resp; {}'.format(l_debug_msg))
         return  # self.check_for_more_decoding(p_controller_obj, l_ret)
 
-    def _decode_51_record(self, p_controller_obj):
+    def _decode_51(self, p_controller_obj):
         """ Insteon Extended Message Received (25 bytes).
         See p 247 of developers guide.
         """

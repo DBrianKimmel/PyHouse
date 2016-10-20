@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-11'
+__updated__ = '2016-10-18'
 
 #  Import system type stuff
 import platform
@@ -89,8 +89,8 @@ class XmlData(object):
         self.email_sect = None
         self.twitter_sect = None
         self.internet_sect = None
-        self.locater_sect = None
-        self.updater_sect = None
+        self.internet_locater_sect = None
+        self.internet_updater_sect = None
         self.mqtt_sect = None
         self.log_sect = None
         self.web_sect = None
@@ -167,9 +167,8 @@ class SetupPyHouseObj(object):
         p_xml.interface = p_xml.interface_sect.find('Interface')
         #
         p_xml.internet_sect = p_xml.computer_div.find('InternetSection')
-        p_xml.internet = p_xml.internet_sect.find('Internet')
-        p_xml.locater_sect = p_xml.internet_sect.find('LocaterUrlSection')
-        p_xml.updater_sect = p_xml.internet_sect.find('UpdaterUrlSection')
+        p_xml.internet_locater_sect = p_xml.internet_sect.find('LocateUrlSection')
+        p_xml.internet_updater_sect = p_xml.internet_sect.find('UpdateUrlSection')
         #
         p_xml.mqtt_sect = p_xml.computer_div.find('MqttSection')
         p_xml.broker = p_xml.mqtt_sect.find('Broker')

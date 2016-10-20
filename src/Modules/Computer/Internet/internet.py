@@ -21,6 +21,8 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
+__updated__ = '2016-10-18'
+
 #  Import system type stuff
 #  from twisted.application import service
 

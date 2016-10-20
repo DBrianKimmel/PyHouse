@@ -52,8 +52,7 @@ class FindExternalIpAddress(object):
 
     def _get_url(self, p_key):
         l_ret = [
-                 'http://snar.co/ip/',
-                 'http://checkip.dyndns.com/'
+                 'http://ipv4bot.whatismyipaddress.com/'
                  ]
         return l_ret[p_key]
 
@@ -121,7 +120,7 @@ class API(Utility):
         return a defered that fires with an external IP address or errors with a none found error
         """
         l_defer = Deferred()
-        for l_key in p_pyhouse_obj.Computer.InternetConnection.LocateUrls.iterkeys():
+        for l_key in p_pyhouse_obj.Computer.InternetConnection.LocateUrls:
             l_ret = self.get_public_ip(p_pyhouse_obj, l_key)
             LOG.info('Get ip addr {}'.format(l_ret))
         return l_defer
