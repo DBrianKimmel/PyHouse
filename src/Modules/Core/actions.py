@@ -11,8 +11,19 @@
 
 """
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-20'
 
+
+#  Import system type stuff
+
+#  Import PyHouse files
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.CoreActions    ')
+
+
+class Actions(object):
+    """
+    """
 
 
 # ## END DBK

@@ -18,7 +18,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,6 +31,7 @@ from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Housing.Lighting.lighting_garagedoors import API as garageAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
+from Modules.Housing.Lighting.lighting_motion import API as motionAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
@@ -54,51 +55,11 @@ class Utility(object):
         try:
             l_lighting_xml = l_house_xml.find('LightingSection')
         except AttributeError as e_err:
-            LOG.warning('Old version of Config file found.  No LightingSection {}'.format(e_err))
+            LOG.warning('No LightingSection {}'.format(e_err))
         #  We have an old version
         if l_lighting_xml is None or l_lighting_xml == 'None':
             l_lighting_xml = l_house_xml
         return l_lighting_xml
-
-    def _read_buttons(self, p_pyhouse_obj, p_xml):
-        try:
-            l_xml = p_xml.find('ButtonSection')
-            l_ret = buttonsAPI.read_all_buttons_xml(p_pyhouse_obj, l_xml)
-        except AttributeError as e_err:
-            l_ret = {}
-            l_msg = 'No Buttons found {}'.format(e_err)
-            LOG.warning(l_msg)
-        return l_ret
-
-    def _read_controllers(self, p_pyhouse_obj, p_xml):
-        try:
-            l_xml = p_xml.find('ControllerSection')
-            l_ret = controllersAPI.read_all_controllers_xml(p_pyhouse_obj)
-        except AttributeError as e_err:
-            l_ret = {}
-            l_msg = 'No Controllers found {}'.format(e_err)
-            LOG.warning(l_msg)
-        return l_ret
-
-    def _read_lights(self, p_pyhouse_obj, p_xml):
-        try:
-            l_xml = p_xml.find('LightSection')
-            l_ret = lightsAPI.read_all_lights_xml(p_pyhouse_obj, l_xml)
-        except AttributeError as e_err:
-            l_ret = {}
-            l_msg = 'No Lights found: {}'.format(e_err)
-            LOG.warning(l_msg)
-        return l_ret
-
-    def _read_garage(self, p_pyhouse_obj, p_xml):
-        try:
-            l_xml = p_xml.find('GarageDoorSection')
-            l_ret = garageAPI.read_all_GarageDoors_xml(p_pyhouse_obj, l_xml)
-        except AttributeError as e_err:
-            l_ret = {}
-            l_msg = 'No Garage Door found: {}'.format(e_err)
-            LOG.warning(l_msg)
-        return l_ret
 
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
@@ -113,11 +74,11 @@ class Utility(object):
         l_xml = l_xml.find('LightingSection')
         if l_xml is None:
             return p_pyhouse_obj.House.Lighting
-        p_pyhouse_obj.House.Lighting.Controllers = self._read_controllers(p_pyhouse_obj, l_lighting_xml)
-        p_pyhouse_obj.House.Lighting.Buttons = self._read_buttons(p_pyhouse_obj, l_lighting_xml)
-        p_pyhouse_obj.House.Lighting.GarageDoors = self._read_garage(p_pyhouse_obj, l_lighting_xml)
-        p_pyhouse_obj.House.Lighting.Lights = self._read_lights(p_pyhouse_obj, l_lighting_xml)
-        #  print(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting, 'Lighting'))
+        p_pyhouse_obj.House.Lighting.Buttons = buttonsAPI.read_all_buttons_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Lighting.Controllers = controllersAPI.read_all_controllers_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Lighting.GarageDoors = garageAPI.read_all_GarageDoors_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Lighting.Motion = motionAPI.read_all_MotionSensors_xml(p_pyhouse_obj)
         return p_pyhouse_obj.House.Lighting
 
     @staticmethod
@@ -127,10 +88,11 @@ class Utility(object):
         @param p_house_element: is the XML
         """
         l_lighting_xml = ET.Element('LightingSection')
-        l_lighting_xml.append(buttonsAPI.write_buttons_xml(p_pyhouse_obj))
+        l_lighting_xml.append(buttonsAPI.write_all_buttons_xml(p_pyhouse_obj))
+        l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
         l_lighting_xml.append(garageAPI.write_all_GarageDoors_xml(p_pyhouse_obj))
         l_lighting_xml.append(lightsAPI.write_all_lights_xml(p_pyhouse_obj))
-        l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
+        l_lighting_xml.append(motionAPI.write_all_MotionSensors_xml(p_pyhouse_obj))
         return l_lighting_xml
 
 
@@ -138,7 +100,6 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         p_pyhouse_obj.House.Lighting = LightingData()
-        # p_pyhouse_obj.House.Lighting.Controllers = ControllerData()
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 

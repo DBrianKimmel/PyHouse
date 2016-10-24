@@ -17,7 +17,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from Modules.Core.data_objects import InternetConnectionData
 from Modules.Computer.Internet.internet import API as internetAPI
-from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4
+from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4_0
 from Modules.Utilities import convert
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -38,12 +38,11 @@ class C01_Util(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_internet_obj = InternetConnectionData()
-        # self.m_dyn_dns_obj = InternetConnectionDynDnsData()
         self.m_api = internetAPI(self.m_pyhouse_obj)
 
     def test_01_Config(self):
         l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
-        self.assertEqual(l_config.ExternalIPv4, convert.str_to_long(TESTING_INTERNET_IPv4))
+        self.assertEqual(l_config.ExternalIPv4, convert.str_to_long(TESTING_INTERNET_IPv4_0))
 
     def test_02_WriteConfig(self):
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)

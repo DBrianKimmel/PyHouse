@@ -9,12 +9,14 @@
 
 """
 
+__updated__ = '2016-10-20'
+
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Web import web_house
+from Modules.Computer.Web import web_house
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 

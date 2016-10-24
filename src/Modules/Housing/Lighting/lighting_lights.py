@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -108,18 +108,29 @@ class Utility(object):
 class API(object):
 
     @staticmethod
-    def read_all_lights_xml(p_pyhouse_obj, p_light_sect_xml):
+    def read_all_lights_xml(p_pyhouse_obj):
         """
         @param p_pyhouse_obj: is the master information store
-        @param p_light_sect_xml: the "LightSection" of the config
         @param p_version: is the XML version of the file to use.
         @return: a dict of lights info
         """
         l_count = 0
         l_dict = {}
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('HouseDivision')
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('LightingSection')
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('LightSection')
+        if l_xml is None:
+            return l_dict
         try:
-            for l_xml in p_light_sect_xml.iterfind('Light'):
-                l_obj = Utility._read_one_light_xml(p_pyhouse_obj, l_xml)
+            for l_one_xml in l_xml.iterfind('Light'):
+                l_obj = Utility._read_one_light_xml(p_pyhouse_obj, l_one_xml)
                 l_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_obj
                 l_uuid_obj = UuidData()

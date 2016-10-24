@@ -72,10 +72,20 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 	 *  
 	 *  
 	 *  Files:
-	 *  	workspace.js
+	 *  	workspace.js (this file)
+	 *  	houseMenu.js (or whetever menu is affected)
 	 *		web_mainpage.py
+	 *		web_utils.py
+	 *
 	 *		web_xxxxxx.py
+	 *		xxxxxxx.js
+	 *		xxxxxxx.html
+	 *
+	 *		In addition, depending on what the new routine is for, there will be some other mods needed.
+	 *		
+	 *
 	 */
+
 	function appStartup(self) {
 
 		function ready() { // we're now ready for action
@@ -86,28 +96,29 @@ helpers.Widget.subclass(workspace, 'Workspace').methods(
 				self.attachWidget('clock', 'dummy');
 				self.attachWidget('login', 'dummy');
 				self.attachWidget('rootMenu', 'dummy');
-				//
+//
 				self.attachWidget('computerMenu', 'dummy');
 				self.attachWidget('internet', 'dummy');
 				self.attachWidget('mqtt', 'dummy');
 				self.attachWidget('nodes', 'dummy');
 				self.attachWidget('update', 'dummy');
 				self.attachWidget('webs', 'dummy');
-				//
-				self.attachWidget('configMenu', 'dummy');
-				self.attachWidget('users', 'dummy');
-				//
+//
 				self.attachWidget('houseMenu', 'dummy');
 				self.attachWidget('buttons', 'dummy');
 				self.attachWidget('controllers', 'dummy');
 				self.attachWidget('controlLights', 'dummy');
 				self.attachWidget('garageDoors', 'dummy');
+				self.attachWidget('motionSensors', 'dummy');
 				self.attachWidget('house', 'dummy');
 				self.attachWidget('irrigation', 'dummy');
 				self.attachWidget('lights', 'dummy');
 				self.attachWidget('rooms', 'dummy');
 				self.attachWidget('schedules', 'dummy');
 				self.attachWidget('thermostats', 'dummy');
+//
+				self.attachWidget('configMenu', 'dummy');
+				self.attachWidget('users', 'dummy');
 				self.hideWaitRoller();
 			}
 			function eb_ready(p_reason) {

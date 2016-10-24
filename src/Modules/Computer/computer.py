@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2016-09-01'
+__updated__ = '2016-10-22'
 
 #  Import system type stuff
 import platform
@@ -115,7 +115,6 @@ class Xml(object):
         l_xml.Key = 0
         l_xml.Active = True
         l_xml.UUID = Uuid.create_uuid()
-        LOG.warn('Created a new UUID for computer!')
         return l_xml
 
     @staticmethod
@@ -128,7 +127,7 @@ class Xml(object):
         if l_xml is None:
             l_obj = Xml.create_computer(p_pyhouse_obj)
             p_pyhouse_obj.Computer = l_obj
-            LOG.error('Creating NEW Uuid')
+            LOG.warn('Creating NEW Uuid')
         else:
             l_obj = XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
             l_msg = 'Resuming Computers UUID is {}'.format(l_obj.UUID)
@@ -187,7 +186,7 @@ class Utility(object):
     @staticmethod
     def _stop_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
+        # p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
         p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()

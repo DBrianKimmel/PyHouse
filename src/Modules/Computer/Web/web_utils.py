@@ -61,6 +61,7 @@ class UtilJson(object):
         l_ret.Controllers = p_pyhouse_obj.House.Lighting.Controllers
         l_ret.GarageDoors = p_pyhouse_obj.House.Lighting.GarageDoors
         l_ret.Lights = p_pyhouse_obj.House.Lighting.Lights
+        l_ret.Motion = p_pyhouse_obj.House.Lighting.Motion
         return l_ret
 
     @staticmethod

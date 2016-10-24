@@ -50,18 +50,19 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		 */
 	function menuItems(self){
 		var l_list = [
-		    // Key,           Caption,               Widget Name
-			['Location',     'House Information',   'House'           ],
-			['Rooms',        'Rooms',               'Rooms'           ],
-			['Lights',       'Lights',              'Lights'          ],
-			['Buttons',      'Buttons',             'Buttons'         ],
-			['Controllers',  'Controllers',         'Controllers'     ],
-			['GarageDoors',  'Garage Doors',        'GarageDoors'     ],
-			['Schedules',    'Scheduling',          'Schedules'       ],
-			['Levels',       'Lighting Control',    'ControlLighting' ],
-			['Thermo',       'Thermostat',          'Thermostat'      ],
-			['Irrigation',   'Irrigation   ',       'Irrigation'      ],
-			['Entertain',    'Entertainment',       'Entertain'       ]
+		    // Key,        		   Caption,               Widget Name
+			['Location',     	'House Information',   'House'           ],
+			['Rooms',        	'Rooms',               'Rooms'           ],
+			['Lights',       	'Lights',              'Lights'          ],
+			['Buttons',      	'Buttons',             'Buttons'         ],
+			['Controllers',  	'Controllers',         'Controllers'     ],
+			['GarageDoors',  	'Garage Doors',        'GarageDoors'     ],
+			['MotionSensors',	'Motion Sensors',      'MotionSensors'   ],
+			['Schedules',    	'Scheduling',          'Schedules'       ],
+			['Levels',       	'Lighting Control',    'ControlLighting' ],
+			['Thermo',       	'Thermostat',          'Thermostat'      ],
+			['Irrigation',   	'Irrigation   ',       'Irrigation'      ],
+			['Entertain',    	'Entertainment',       'Entertain'       ]
 			];
 		return l_list;
 	},
@@ -108,6 +109,9 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		case 'GarageDoors':
 			self.showWidget('GarageDoors');
 			break;
+		case 'MotionSensors':
+			self.showWidget('MotionSensors');
+			break;
 		case 'Schedules':
 			self.showWidget('Schedules');
 			break;
@@ -132,6 +136,8 @@ helpers.Widget.subclass(houseMenu, 'HouseMenuWidget').methods(
 		}
 	}
 );
+
 // Divmod.debug('---', 'houseMenu.doHandleOnClick(Default) was called.');
 // console.log("houseMenu.handleDataOnClick()  json  %O", l_json);
+
 // END DBK

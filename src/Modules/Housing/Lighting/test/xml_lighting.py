@@ -13,7 +13,7 @@ Config File Version 1.4 placed this entire section under a new LightingSection e
 
 """
 
-__updated__ = '2016-10-11'
+__updated__ = '2016-10-22'
 
 # Import system type stuff
 
@@ -22,6 +22,7 @@ from Modules.Housing.Lighting.test.xml_buttons import XML_BUTTON_SECTION
 from Modules.Housing.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION
 from Modules.Housing.Lighting.test.xml_garagedoors import XML_GARAGE_DOOR_SECTION
 from Modules.Housing.Lighting.test.xml_lights import XML_LIGHT_SECTION
+from Modules.Housing.Lighting.test.xml_motion import XML_LIGHTING_MOTION_SECTION
 
 
 L_LIGHTING_SECTION_START = '<LightingSection>'
@@ -33,6 +34,7 @@ XML_LIGHTING = '\n'.join([
     XML_CONTROLLER_SECTION,
     XML_LIGHT_SECTION,
     XML_GARAGE_DOOR_SECTION,
+    XML_LIGHTING_MOTION_SECTION,
     L_LIGHTING_SECTION_END
 ])
 

@@ -15,7 +15,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-23'
 
 #  Import system type stuff
 
@@ -211,6 +211,8 @@ class Decode(object):
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.GarageDoors, p_address)
         if l_ret == None:
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Motion, p_address)
+        if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
         #  Add additional classes in here
         if l_ret == None:
@@ -259,12 +261,16 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
         p_pyhouse_obj.House.Lighting.GarageDoors[l_ix] = p_insteon_obj
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
         pass
+    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 5:
+        p_pyhouse_obj.House.Lighting.Motion[l_ix] = p_insteon_obj
+        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
+        pass
     elif p_insteon_obj.DeviceType == 2:
         p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Thermostats'))
         pass
     else:
         LOG.error('Unknown Insteon device to update: {}'.format(p_insteon_obj.DeviceType))
-        print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
+        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
 
 #  ## END DBK

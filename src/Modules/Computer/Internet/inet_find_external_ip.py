@@ -16,6 +16,8 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
+__updated__ = '2016-10-21'
+
 # Import system type stuff
 import re
 from twisted.internet.defer import Deferred
@@ -119,10 +121,13 @@ class API(Utility):
         return that address
         return a defered that fires with an external IP address or errors with a none found error
         """
+        l_internet = p_pyhouse_obj.Computer.InternetConnection
         l_defer = Deferred()
-        for l_key in p_pyhouse_obj.Computer.InternetConnection.LocateUrls:
-            l_ret = self.get_public_ip(p_pyhouse_obj, l_key)
-            LOG.info('Get ip addr {}'.format(l_ret))
+        for l_test in l_internet.itervalues():
+            if l_test.Active:
+                for l_url in l_test.LocateUrls:
+                    l_ret = Utility.get_public_ip(l_url)
+                    LOG.info('Get ip addr {}'.format(l_ret))
         return l_defer
 
 # ## END DBK

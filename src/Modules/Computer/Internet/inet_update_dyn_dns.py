@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-22'
 
 # Import system type stuff
 from twisted.web.client import getPage
@@ -20,7 +20,6 @@ from twisted.internet.defer import Deferred
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh
 
-g_debug = 1
 LOG = logging_pyh.getLogger('PyHouse.Internet    ')
 INITIAL_DELAY = 1 * 60
 

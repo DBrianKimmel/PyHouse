@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -160,8 +160,8 @@ class API(object):
         if l_xml is None:
             return l_dict
         try:
-            for l_controller_xml in l_xml.iterfind('Controller'):
-                l_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_controller_xml)
+            for l_one_xml in l_xml.iterfind('Controller'):
+                l_obj = Utility._read_one_controller_xml(p_pyhouse_obj, l_one_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
                 l_uuid_obj = UuidData()

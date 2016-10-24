@@ -7,15 +7,20 @@
 @note:      Created on Jun 20, 2014
 @Summary:
 
+Passed all 2 tests - DBK - 2016-10-20
+
 """
+from Modules.Utilities.debug_tools import PrettyFormatAny
+
+__updated__ = '2016-10-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import ControllerData
-from Modules.Families.family import API as familyAPI
+from Modules.Computer.Web import web_internet
+from Modules.Computer.Web.web import WorkspaceData
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
@@ -27,20 +32,37 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_XML(SetupMixin, unittest.TestCase):
+class A1_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.FamilyData = familyAPI().build_lighting_family_info()
-        self.m_controller_obj = ControllerData()
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection', 'XML - No Controllers section')
-        self.assertEqual(self.m_xml.controller.tag, 'Controller', 'XML - No Controller section')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')
+
+
+class B1_Data(SetupMixin, unittest.TestCase):
+    """ This section tests the reading and writing of XML used by lighting_controllers.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_worksapce = WorkspaceData
+        self.m_worksapce.m_pyhouse_obj = self.m_pyhouse_obj
+
+    def test_01_Get(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_comp = web_internet.InternetElement(self.m_worksapce, None).getInternetData()
+        print(PrettyFormatAny.form(l_comp, 'B1-01-A - Data'))
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')
 
 # ## END DBK

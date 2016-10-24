@@ -122,7 +122,7 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 function buildEntry(self, p_obj, p_handler, p_onchange) {
 	// console.log("internet.buildEntry() - p_obj = %O", p_obj);
 	var l_html = '';
-	// l_html = buildBaseEntry(self, p_obj, l_html);
+	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = self.buildInternetEntry(p_obj, l_html);
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
@@ -141,7 +141,7 @@ function fetchEntry(self) {
 	// Divmod.debug('---', 'internet.fetchEntry() was called. ');
 	var l_data = {};
 	l_data.Delete = false;
-	// l_data = fetchBaseEntry(self);
+	l_data = fetchBaseEntry(self);
 	l_data = self.fetchInternetEntry(l_data);
 	// console.log("internet.fetchEntry() - Data = %O", l_data);
 	return l_data;
@@ -165,8 +165,8 @@ function fetchInternetEntry(self, p_data) {
 function createEntry(self) {
 	// Divmod.debug('---', 'internet.createEntry() was called.');
 	var l_data = {};
-	// var l_key = 0;
-	// var l_data = createBaseEntry(self, l_key);
+	var l_key = 0;
+	var l_data = createBaseEntry(self, l_key);
 	self.createInternetEntry(l_data);
 	return l_data;
 },

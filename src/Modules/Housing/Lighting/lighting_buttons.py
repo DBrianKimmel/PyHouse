@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -78,24 +78,36 @@ class Utility(object):
 class API(object):
 
     @staticmethod
-    def read_all_buttons_xml(p_pyhouse_obj, p_button_sect_xml):
+    def read_all_buttons_xml(p_pyhouse_obj):
         l_count = 0
-        l_button_dict = {}
+        l_dict = {}
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('HouseDivision')
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('LightingSection')
+        if l_xml is None:
+            return l_dict
+        l_xml = l_xml.find('ButtonSection')
+        if l_xml is None:
+            return l_dict
         try:
-            for l_button_xml in p_button_sect_xml.iterfind('Button'):
+            for l_button_xml in l_xml.iterfind('Button'):
                 l_obj = Utility._read_one_button_xml(p_pyhouse_obj, l_button_xml)
                 l_obj.Key = l_count  # Renumber
-                l_button_dict[l_count] = l_obj
+                l_dict[l_count] = l_obj
                 LOG.info('Loaded button {}'.format(l_obj.Name))
                 l_count += 1
         except AttributeError as e_error:  # No Buttons
             LOG.warning('No Buttons defined - {}'.format(e_error))
-            l_button_dict = {}
+            l_dict = {}
         LOG.info("Loaded {} buttons".format(l_count))
-        return l_button_dict
+        return l_dict
 
     @staticmethod
-    def write_buttons_xml(p_pyhouse_obj):
+    def write_all_buttons_xml(p_pyhouse_obj):
         l_count = 0
         l_buttons_xml = ET.Element('ButtonSection')
         for l_button_obj in p_pyhouse_obj.House.Lighting.Buttons.itervalues():

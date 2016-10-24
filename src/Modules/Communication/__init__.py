@@ -39,6 +39,7 @@ Perhaps these should go in here or perhaps in entertainment:
 
 """
 
+__updated__ = '2016-10-20'
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

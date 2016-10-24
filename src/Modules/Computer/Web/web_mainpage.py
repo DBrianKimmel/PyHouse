@@ -41,7 +41,7 @@ mainpage.py - this is the place where everything is happening, the user will nev
 
 """
 
-__updated__ = '2016-09-18'
+__updated__ = '2016-10-23'
 
 #  Import system type stuff
 import gc
@@ -68,30 +68,31 @@ from nevow.inevow import IRequest
 from twisted.internet import defer
 
 #  Import PyMh files and modules.
-from Modules.Computer.Web import web_clock, web_users, web_configMenu, web_garageDoors
-from Modules.Computer.Web import web_login
-from Modules.Computer.Web import web_rootMenu
-from Modules.Computer.Web import web_computerMenu
-from Modules.Computer.Web import web_internet
-from Modules.Computer.Web import web_mqtt
-from Modules.Computer.Web import web_nodes
-from Modules.Computer.Web import web_update
-from Modules.Computer.Web import web_webs
-
-from Modules.Computer.Web import web_houseMenu
-
 from Modules.Computer.Web import web_buttons
+from Modules.Computer.Web import web_clock
+from Modules.Computer.Web import web_computerMenu
+from Modules.Computer.Web import web_configMenu
 from Modules.Computer.Web import web_controllers
 from Modules.Computer.Web import web_controlLights
+from Modules.Computer.Web import web_garageDoors
 from Modules.Computer.Web import web_house
+from Modules.Computer.Web import web_houseMenu
+from Modules.Computer.Web import web_internet
 from Modules.Computer.Web import web_irrigation
 from Modules.Computer.Web import web_lights
+from Modules.Computer.Web import web_login
+from Modules.Computer.Web import web_motionSensors
+from Modules.Computer.Web import web_mqtt
+from Modules.Computer.Web import web_nodes
+from Modules.Computer.Web import web_rootMenu
 from Modules.Computer.Web import web_rooms
 from Modules.Computer.Web import web_schedules
 from Modules.Computer.Web import web_thermostats
-#  from Modules.Web import web_houseSelect
-from Modules.Computer import logging_pyh as Logger
+from Modules.Computer.Web import web_update
+from Modules.Computer.Web import web_users
+from Modules.Computer.Web import web_webs
 
+from Modules.Computer import logging_pyh as Logger
 
 #  Handy helper for finding external resources nearby.
 modulepath = os.path.join(os.path.split(__file__)[0], '..')
@@ -101,7 +102,6 @@ imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.WebMainpage    ')
 
 
@@ -160,13 +160,6 @@ class mainPageFactory:
     def addClient(self, client):
         l_clientID = self._newClientID()
         self.Clients[l_clientID] = client
-        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(self, 'Self', 160)))
-        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(l_clientID, 'l_clientID', 160)))
-        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client, 'Client', 160)))
-        #  LOG.info('Add Client {}'.format(PrettyFormatAny.form(client._transportResource, 'Client._transportResource')))
-        #  LOG.info('Add Client {}'.format(PrettyFormatAny.form(client.toremember, 'Client.toremember')))
-        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client.transportRoot, 'Client.transportRoot')))
-        #  LOG.warn('Add Client {}'.format(PrettyFormatAny.form(client.rootObject, 'Client.rootObject')))
         return l_clientID
 
     def getClient(self, p_clientID):
@@ -346,6 +339,9 @@ class Workspace(athena.LiveElement):
 
 #-----------------
 #  Calls from browser JS to load an element (fragment)
+    """
+    #  NOTE!  Tne name of the def MUST be the same as the widget name as used in workspace.js attachWidget's first argument.
+    """
 
     @athena.expose
     def inject_404(self):
@@ -356,84 +352,72 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def buttons(self, p_params):
-        #  LOG.info("Buttons loaded into browser")
         l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def clock(self, p_params):
-        #  LOG.info("Clock loaded into browser")
         l_element = web_clock.ClockElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
-    def controllers(self, p_params):
-        #  LOG.info("Controllers loaded into browser")
-        l_element = web_controllers.ControllersElement(self, p_params)
+    def computerMenu(self, _p_params):
+        l_element = web_computerMenu.ComputerMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def configMenu(self, p_params):
-        #  LOG.info("Config Menu loaded into browser")
         l_element = web_configMenu.ConfigMenuElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
+    def controllers(self, p_params):
+        l_element = web_controllers.ControllersElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def controlLights(self, p_params):
-        #  LOG.info("Control Lights loaded into browser")
         l_element = web_controlLights.ControlLightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def garageDoors(self, p_params):
-        #  LOG.info("House loaded into browser")
         l_element = web_garageDoors.GarageDoorsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def house(self, _p_params):
-        #  LOG.info("House loaded into browser")
         l_element = web_house.HouseElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def houseMenu(self, _p_params):
-        #  LOG.info("House Menu loaded into browser")
         l_element = web_houseMenu.HouseMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
-    def computerMenu(self, _p_params):
-        #  LOG.info("Computer Menu loaded into browser")
-        l_element = web_computerMenu.ComputerMenuElement(self)
-        l_element.setFragmentParent(self)
-        return l_element
-
-    @athena.expose
     def internet(self, p_params):
-        #  LOG.info("Internet loaded into browser")
         l_element = web_internet.InternetElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def irrigation(self, p_params):
-        #  LOG.info("Internet loaded into browser")
         l_element = web_irrigation.IrrigationElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def lights(self, p_params):
-        #  LOG.info("Lights loaded into browser")
         l_element = web_lights.LightsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -442,8 +426,15 @@ class Workspace(athena.LiveElement):
     def login(self, _p_params):
         """ Place and display the login widget.
         """
-        #  LOG.info("Login loaded into browser")
         l_element = web_login.LoginElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
+    def motionSensors(self, p_params):
+        """ Place and display the Motion Sensor widget.
+        """
+        l_element = web_motionSensors.MotionSensorsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
@@ -451,63 +442,54 @@ class Workspace(athena.LiveElement):
     def mqtt(self, p_params):
         """ Place and display the mqtt widget.
         """
-        #  LOG.info("Mqtt loaded into browser")
         l_element = web_mqtt.MqttElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
-    def rooms(self, p_params):
-        #  LOG.info("Rooms loaded into browser")
-        l_element = web_rooms.RoomsElement(self, p_params)
-        l_element.setFragmentParent(self)
-        return l_element
-
-    @athena.expose
     def nodes(self, p_params):
-        #  LOG.info("Nodes loaded into browser")
         l_element = web_nodes.NodesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
+    def rooms(self, p_params):
+        l_element = web_rooms.RoomsElement(self, p_params)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @athena.expose
     def rootMenu(self, _p_params):
-        #  LOG.info("Root Menu loaded into browser")
         l_element = web_rootMenu.RootMenuElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def schedules(self, p_params):
-        #  LOG.info("schedules loaded into browser")
         l_element = web_schedules.SchedulesElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def thermostats(self, p_params):
-        #  LOG.info("Thermostats loaded into browser")
         l_element = web_thermostats.ThermostatsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def users(self, p_params):
-        #  LOG.info("Users loaded into browser")
         l_element = web_users.UsersElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def update(self, p_params):
-        #  LOG.info("Update loaded into browser")
         l_element = web_update.UpdateElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def webs(self, p_params):
-        #  LOG.info("Web-s loaded into browser")
         l_element = web_webs.WebsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element

@@ -11,19 +11,21 @@ Passed 3 of 4 tests - DBK - 2015-11-16
 
 """
 
+__updated__ = '2016-10-20'
+
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
-from Modules.Web.web_xml import Xml as webXml
-from Modules.Web import web_login
+from Modules.Computer.Web.web_xml import Xml as webXml
+from Modules.Computer.Web import web_login
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Web.test.xml_web import TESTING_LOGIN_NAME_0
-from Modules.Web.web import WorkspaceData
+from Modules.Computer.Web.test.xml_web import TESTING_LOGIN_NAME_0
+from Modules.Computer.Web.web import WorkspaceData
 from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_NAME_0
 from Modules.Utilities import json_tools
 

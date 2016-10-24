@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-10-15'
+__updated__ = '2016-10-23'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -351,6 +351,12 @@ class LightHandlerAPI(object):
         self._get_one_device_status(p_controller_obj, p_obj)
         InsteonPlmAPI().get_link_records(p_controller_obj)
 
+    def _get_motion_sensors_info(self, p_controller_obj, p_obj):
+        self._get_id_request(p_controller_obj, p_obj)
+        self._get_engine_version(p_controller_obj, p_obj)
+        self._get_one_device_status(p_controller_obj, p_obj)
+        InsteonPlmAPI().get_link_records(p_controller_obj)
+
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
         """
@@ -373,6 +379,10 @@ class LightHandlerAPI(object):
                 self._get_obj_info(p_controller_obj, l_obj)
                 InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
                 Insteon_Link.InsteonAllLinks().get_all_allinks(p_controller_obj)
+
+        for l_obj in p_pyhouse_obj.House.Lighting.Motion.itervalues():
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_motion_sensors_info(p_controller_obj, l_obj)
 
         for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:

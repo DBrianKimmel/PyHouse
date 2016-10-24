@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-10-21'
 
 
 #  Import system type stuff
@@ -31,11 +31,43 @@ class Util(object):
     """
 
     @staticmethod
+    def _read_derived(p_xml):
+        """
+        @param p_xml: points to a single "Internet" element
+        """
+        l_obj = InternetConnectionData()
+        try:
+            l_obj.Name = PutGetXML.get_text_from_xml(p_xml, 'Name')
+            l_obj.Key = PutGetXML.get_int_from_xml(p_xml, 'Key', 0)
+            l_obj.Active = PutGetXML.get_bool_from_xml(p_xml, 'Active', False)
+            l_obj.ExternalIPv4 = PutGetXML.get_ip_from_xml(p_xml, 'ExternalIPv4')
+            l_obj.ExternalIPv6 = PutGetXML.get_ip_from_xml(p_xml, 'ExternalIPv6')
+            l_obj.LastChanged = PutGetXML.get_date_time_from_xml(p_xml, 'LastChanged')
+            l_obj.UpdateInterval = PutGetXML.get_text_from_xml(p_xml, 'UpdateInterval')
+        except:
+            pass
+        return l_obj
+
+    @staticmethod
+    def _write_derived_xml(p_obj):
+        l_xml = ET.Element('Internet')
+        PutGetXML.put_text_attribute(l_xml, 'Name', p_obj.Name)
+        PutGetXML.put_int_attribute(l_xml, 'Key', p_obj.Key)
+        PutGetXML.put_bool_attribute(l_xml, 'Active', p_obj.Active)
+        PutGetXML.put_ip_element(l_xml, 'ExternalIPv4', p_obj.ExternalIPv4)
+        PutGetXML.put_ip_element(l_xml, 'ExternalIPv6', p_obj.ExternalIPv6)
+        PutGetXML.put_date_time_element(l_xml, 'LastChanged', p_obj.LastChanged)
+        PutGetXML.put_text_element(l_xml, 'UpdateInterval', p_obj.UpdateInterval)
+        return l_xml
+
+
+    @staticmethod
     def _read_locates_xml(p_xml):
         l_list = []
         l_count = 0
+        l_xml = p_xml.find('LocateUrlSection')
         try:
-            for l_xml in p_xml.iterfind('LocateUrl'):
+            for l_xml in l_xml.iterfind('LocateUrl'):
                 l_url = str(l_xml.text)
                 l_list.append(l_url)
                 l_count += 1
@@ -53,11 +85,12 @@ class Util(object):
 
 
     @staticmethod
-    def _read_updates_xml(p_updater_sect_xml):
+    def _read_updates_xml(p_xml):
         l_list = []
         l_count = 0
+        l_xml = p_xml.find('UpdateUrlSection')
         try:
-            for l_xml in p_updater_sect_xml.iterfind('UpdateUrl'):
+            for l_xml in l_xml.iterfind('UpdateUrl'):
                 l_url = str(l_xml.text)
                 l_list.append(l_url)
                 l_count += 1
@@ -75,24 +108,18 @@ class Util(object):
 
 
     @staticmethod
-    def _read_derived(p_internet_sect_xml):
-        l_icd = InternetConnectionData()
-        try:
-            l_icd.ExternalIPv4 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv4')
-            l_icd.ExternalIPv6 = PutGetXML.get_ip_from_xml(p_internet_sect_xml, 'ExternalIPv6')
-            l_icd.LastChanged = PutGetXML.get_date_time_from_xml(p_internet_sect_xml, 'LastChanged')
-            l_icd.UpdateInterval = PutGetXML.get_text_from_xml(p_internet_sect_xml, 'UpdateInterval')
-        except:
-            pass
-        return l_icd
+    def _read_one_internet(p_xml):
+        l_obj = Util._read_derived(p_xml)
+        l_obj.LocateUrls = Util._read_locates_xml(p_xml)
+        l_obj.UpdateUrls = Util._read_updates_xml(p_xml)
+        return l_obj
 
     @staticmethod
-    def _write_derived_xml(p_internet_obj, p_xml):
-        PutGetXML.put_ip_element(p_xml, 'ExternalIPv4', p_internet_obj.ExternalIPv4)
-        PutGetXML.put_ip_element(p_xml, 'ExternalIPv6', p_internet_obj.ExternalIPv6)
-        PutGetXML.put_date_time_element(p_xml, 'LastChanged', p_internet_obj.LastChanged)
-        PutGetXML.put_text_element(p_xml, 'UpdateInterval', p_internet_obj.UpdateInterval)
-        return p_xml
+    def _write_one_internet(p_obj):
+        l_xml = Util._write_derived_xml(p_obj)
+        l_xml.append(Util._write_locates_xml(p_obj))
+        l_xml.append(Util._write_updates_xml(p_obj))
+        return l_xml
 
 
 class API(object):
@@ -101,34 +128,32 @@ class API(object):
         """Reads zero or more <Internet> entries within the <InternetSection>
         @param p_internet_section_xml: is the <InternetSection> element
         """
-        l_icd = InternetConnectionData()
+        l_dict = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot
         l_xml = l_xml.find('ComputerDivision')
         if l_xml == None:
-            return l_icd
-        l_internet_sect_xml = l_xml.find('InternetSection')
+            return l_dict
+        l_xml = l_xml.find('InternetSection')
         if l_xml == None:
-            return l_icd
-        try:
-            l_locate = Util._read_locates_xml(l_internet_sect_xml.find('LocateUrlSection'))
-            l_update = Util._read_updates_xml(l_internet_sect_xml.find('UpdateUrlSection'))
-            l_icd = Util._read_derived(l_internet_sect_xml)
-            l_icd.LocateUrls = list(l_locate)
-            l_icd.UpdateUrls = list(l_update)
-        except AttributeError as e_err:
-            LOG.error('ERROR ReadInternet - {}'.format(e_err))
-        LOG.info('Loaded Internet XML')
-        return l_icd
+            return l_dict
+        l_count = 0
+        for l_internet in l_xml.iterfind('Internet'):
+            l_obj = Util._read_one_internet(l_internet)
+            l_dict[l_count] = l_obj
+            l_count += 1
+        LOG.info('Loaded {} Internet XML '.format(l_count))
+        return l_dict
 
-    def write_internet_xml(self, p_internet_obj):
+    def write_internet_xml(self, p_pyhouse_obj):
         """Create a sub tree for 'Internet' - the sub elements do not have to be present.
         @param p_internet_obj: is pyhouse_obj.Computer.InternetConnection
         @return: a sub tree ready to be appended to tree
         """
-        l_xml = ET.Element('InternetSection')
-        Util._write_derived_xml(p_internet_obj, l_xml)
-        l_xml.append(Util._write_locates_xml(p_internet_obj))
-        l_xml.append(Util._write_updates_xml(p_internet_obj))
-        return l_xml
+        l_ret = ET.Element('InternetSection')
+        for l_obj in p_pyhouse_obj.Computer.InternetConnection.itervalues():
+            l_ret.append(Util._write_derived_xml(l_obj))
+            l_ret.append(Util._write_locates_xml(l_obj))
+            l_ret.append(Util._write_updates_xml(l_obj))
+        return l_ret
 
 #  ## END DBK
