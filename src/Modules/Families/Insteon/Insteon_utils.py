@@ -13,25 +13,22 @@ This is a bunch of routines to deal with Insteon devices.
 Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-23'
+__updated__ = '2016-10-24'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core import conversions
+from Modules.Core.data_objects import CoreLightingData
 from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Families.Insteon.Insteon_constants import MESSAGE_LENGTH, \
+from Modules.Families.Insteon.Insteon_constants import \
+    MESSAGE_LENGTH, \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
     STX
-
-from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.tools import PrintBytes
-from Modules.Core.data_objects import CoreLightingData
 from Modules.Utilities import device_tools
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
 
@@ -120,18 +117,18 @@ class Decode(object):
         """ Get the message flag and convert it to a description of the message.
         """
         def decode_message_type_flag(p_type):
-            MESSAGE_TYPE_X = ['Direct(SD)', 'Direct_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Broadcast(SB)', 'Direct_NAK(SD-NAK)', 'All_Broadcast(SA)', 'All_Cleanup_NAK(SC-NAK)']
-            return MESSAGE_TYPE_X[p_type] + ' Msg, '
+            MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']
+            return MESSAGE_TYPE_X[p_type] + '-Msg, '
         def decode_extended_flag(p_extended):
-            MESSAGE_LENGTH_X = [' Standard Len,', ' Extended Len,']
+            MESSAGE_LENGTH_X = [' Std-Len,', ' Ext-Len,']
             return MESSAGE_LENGTH_X[p_extended]
         l_type = (p_byte & 0xE0) >> 5
         l_extended = (p_byte & 0x10)
         l_hops_left = (p_byte & 0x0C) >= 4
-        l_max_hops = (p_byte & 0x03)
+        l_hops_max = (p_byte & 0x03)
         l_ret = decode_message_type_flag(l_type)
         l_ret += decode_extended_flag(l_extended)
-        l_ret += " HopsLeft:{:d}, MaxHops:{:d} ({:#X}); ".format(l_hops_left, l_max_hops, p_byte)
+        l_ret += " Hops:{:d}/{:d}({:#X})".format(l_hops_left, l_hops_max, p_byte)
         return l_ret
 
     @staticmethod

@@ -10,9 +10,14 @@
 
 This interfaces PyHouse to the Insteon family of products.
 This includes light switches, thermostats and a number of other devices.
+
+Insteon Developer:
+
+
 """
 
-__version_info__ = (1, 6, 0)
+__updated__ = '2016-10-24'
+__version_info__ = (1, 7, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

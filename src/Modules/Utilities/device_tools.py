@@ -11,10 +11,9 @@
 
 """
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-24'
 
 #  Import system type stuff
-from xml.etree import ElementTree as ET
 
 #  Import PyHouse files
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
@@ -58,10 +57,6 @@ class XML(object):
         PutGetXML.put_int_attribute(l_elem, 'Key', p_obj.Key)
         PutGetXML.put_bool_attribute(l_elem, 'Active', p_obj.Active)
         #  add sub elements
-        try:
-            PutGetXML.put_uuid_element(l_elem, 'UUID', p_obj.UUID)
-        except AttributeError:
-            PutGetXML.put_uuid_element(l_elem, 'UUID', 'No UUID Given')
         PutGetXML.put_text_element(l_elem, 'Comment', p_obj.Comment)
         PutGetXML.put_text_element(l_elem, 'DeviceFamily', p_obj.DeviceFamily)
         PutGetXML.put_int_element(l_elem, 'DeviceType', p_obj.DeviceType)

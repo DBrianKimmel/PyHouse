@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-06'
+__updated__ = '2016-10-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,7 +36,7 @@ class Xml(object):
     def read_one_room(p_room_element):
         l_room_obj = RoomData()
         try:
-            XmlConfigTools.read_base_object_xml(l_room_obj, p_room_element)
+            XmlConfigTools.read_base_UUID_object_xml(l_room_obj, p_room_element)
             l_room_obj.Comment = PutGetXML.get_text_from_xml(p_room_element, 'Comment')
             l_room_obj.Corner = PutGetXML.get_coords_from_xml(p_room_element, 'Corner')
             l_room_obj.Floor = PutGetXML.get_text_from_xml(p_room_element, 'Floor', '1')
@@ -49,7 +49,7 @@ class Xml(object):
 
     @staticmethod
     def write_one_room(p_room_object):
-        l_entry = XmlConfigTools.write_base_object_xml('Room', p_room_object)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml('Room', p_room_object)
         PutGetXML.put_text_element(l_entry, 'Comment', p_room_object.Comment)
         PutGetXML.put_coords_element(l_entry, 'Corner', p_room_object.Corner)
         PutGetXML.put_text_element(l_entry, 'Floor', p_room_object.Floor)

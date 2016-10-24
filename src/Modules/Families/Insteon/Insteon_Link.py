@@ -13,19 +13,18 @@ This will maintain the all-link database in all Insteon devices.
 
 Invoked periodically and when any Insteon device changes.
 """
-from matplotlib.backends.backend_ps import ps_backend_helper
-from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Core import conversions
 
-__updated__ = '2016-10-15'
+__updated__ = '2016-10-24'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_utils
+from Modules.Core import conversions
+from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_constants import ACK
+from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Link   ')
 
 
@@ -328,6 +327,5 @@ class Decode(object):
 class API(object):
     """
     """
-
 
 #  ## END DBK

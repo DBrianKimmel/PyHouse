@@ -137,7 +137,7 @@ function fetchEntry(self) {
 	l_data = fetchDeviceEntry(self, l_data);
 	l_data = self.fetchMotionEntry(l_data);
 	l_data = fetchFamilyPart(self, l_data);
-	// console.log("motionSensors.fetchEntry() - Data = %O", l_data);
+	console.log("motionSensors.fetchEntry() - Data = %O", l_data);
 	return l_data;
 },
 
