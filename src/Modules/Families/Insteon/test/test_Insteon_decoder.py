@@ -13,7 +13,7 @@ This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-10-26'
 
 #  Import system type stuff
 from Modules.Core.data_objects import ControllerData
@@ -49,7 +49,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.Lighting.Controllers = controllerAPI().read_all_controllers_xml(
                             self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(
-                            self.m_pyhouse_obj, self.m_xml.controller_sect)
+                            self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(
                             self.m_pyhouse_obj)
 

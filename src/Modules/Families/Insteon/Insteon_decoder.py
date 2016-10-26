@@ -74,7 +74,7 @@ class DecodeResponses(object):
                     LOG.warning('Message was too short - waiting for rest of message.')
             elif l_stx == NAK:
                 LOG.warn("Dropping a leading char {:#x}".format(l_stx))
-            else l_stx == 0:
+            else:
                 LOG.warn("Dropping a leading char {:#x}".format(l_stx))
             p_controller_obj._Message = p_controller_obj._Message[1:]
 
