@@ -72,16 +72,11 @@ class DecodeResponses(object):
                     self._decode_dispatch(p_controller_obj)
                 else:
                     LOG.warning('Message was too short - waiting for rest of message.')
-                    return
             elif l_stx == NAK:
                 LOG.warn("Dropping a leading char {:#x}".format(l_stx))
-                continue
-            elif l_stx == 0:
+            else l_stx == 0:
                 LOG.warn("Dropping a leading char {:#x}".format(l_stx))
-                continue
-            else:
-                p_controller_obj._Message = p_controller_obj._Message[1:]
-                continue
+            p_controller_obj._Message = p_controller_obj._Message[1:]
 
 
     def check_for_more_decoding(self, p_controller_obj, p_ret=True):
