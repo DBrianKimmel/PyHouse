@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-10-23'
+__updated__ = '2016-10-26'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -263,7 +263,7 @@ class InsteonPlmAPI(object):
         """
         return Commands._queue_60_command(p_controller_obj)
 
-    def get_link_records(self, p_controller_obj):
+    def get_link_records(self, p_controller_obj, p_obj):
         return Insteon_Link.InsteonAllLinks().get_all_allinks(p_controller_obj)
 
 
@@ -325,37 +325,9 @@ class LightHandlerAPI(object):
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  #  0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
-        if p_obj.DeviceFamily != 'Insteon':
-            return
-        if p_obj.Active != True:
-            return
-        #  LOG.info('Device:{}'.format(p_obj.Name))
         self._get_engine_version(p_controller_obj, p_obj)
         self._get_id_request(p_controller_obj, p_obj)
         self._get_one_device_status(p_controller_obj, p_obj)
-
-    def _get_controller_info(self, p_controller_obj, p_obj):
-        self._get_engine_version(p_controller_obj, p_obj)
-        self._get_id_request(p_controller_obj, p_obj)
-        self._get_one_device_status(p_controller_obj, p_obj)
-        InsteonPlmAPI().get_link_records(p_controller_obj)
-
-    def _get_thermostat_obj_info(self, p_controller_obj, p_obj):
-        self._get_id_request(p_controller_obj, p_obj)
-        self._get_engine_version(p_controller_obj, p_obj)
-        self._get_one_thermostat_status(p_controller_obj, p_obj)
-
-    def _get_garage_door_info(self, p_controller_obj, p_obj):
-        self._get_id_request(p_controller_obj, p_obj)
-        self._get_engine_version(p_controller_obj, p_obj)
-        self._get_one_device_status(p_controller_obj, p_obj)
-        InsteonPlmAPI().get_link_records(p_controller_obj)
-
-    def _get_motion_sensors_info(self, p_controller_obj, p_obj):
-        self._get_id_request(p_controller_obj, p_obj)
-        self._get_engine_version(p_controller_obj, p_obj)
-        self._get_one_device_status(p_controller_obj, p_obj)
-        InsteonPlmAPI().get_link_records(p_controller_obj)
 
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
@@ -368,25 +340,25 @@ class LightHandlerAPI(object):
 
         for l_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_controller_info(p_controller_obj, l_obj)
+                self._get_obj_info(p_controller_obj, l_obj)
+                InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
 
         for l_obj in p_pyhouse_obj.House.Lighting.GarageDoors.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_garage_door_info(p_controller_obj, l_obj)
+                self._get_obj_info(p_controller_obj, l_obj)
 
         for l_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
-                InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
-                Insteon_Link.InsteonAllLinks().get_all_allinks(p_controller_obj)
+                # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
 
         for l_obj in p_pyhouse_obj.House.Lighting.Motion.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_motion_sensors_info(p_controller_obj, l_obj)
+                self._get_obj_info(p_controller_obj, l_obj)
 
         for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_thermostat_obj_info(p_controller_obj, l_obj)
+                self._get_obj_info(p_controller_obj, l_obj)
 
 
 

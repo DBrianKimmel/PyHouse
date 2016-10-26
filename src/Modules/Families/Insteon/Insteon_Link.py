@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-10-26'
 
 #  Import system type stuff
 
@@ -117,12 +117,6 @@ class Send(object):
         LOG.info("Command to get First all-link record (69).")
         l_command = Insteon_utils.create_command_message('plm_first_all_link')
         Insteon_utils.queue_command(p_controller_obj, l_command)
-
-    @staticmethod
-    def queue_6A_command(p_controller_obj):
-        """Get the next record - will get a NAK if no more (2 bytes).
-        See p 262 of developers guide.
-        """
 
     @staticmethod
     def queue_6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data):
@@ -281,7 +275,6 @@ class Decode(object):
         if l_message[2] == ACK:
             l_ack = 'ACK'
             InsteonAllLinks()._get_next_allink(p_controller_obj)
-            # Send.queue_6A_command(p_controller_obj)
         else:
             LOG.info("All-Link first record - NAK")
             l_ack = 'NAK'
@@ -300,7 +293,6 @@ class Decode(object):
         if l_message[2] == ACK:
             l_ack = 'ACK'
             InsteonAllLinks()._get_next_allink(p_controller_obj)
-            # Send.queue_6A_command()
         else:
             l_ack = 'NAK'
         LOG.info("All-Link Next record - {}".format(l_ack))

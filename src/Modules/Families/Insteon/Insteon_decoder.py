@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-10-26'
 
 #  Import system type stuff
 
@@ -63,11 +63,9 @@ class DecodeResponses(object):
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
-        #  LOG.info('Message = {}'.format(PrintBytes(p_controller_obj._Message)))
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                # LOG.info("RxMsg: {}".format(PrintBytes(p_controller_obj._Message)))
                 l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
@@ -75,15 +73,15 @@ class DecodeResponses(object):
                 else:
                     LOG.warning('Message was too short - waiting for rest of message.')
                     return
+            elif l_stx == NAK:
+                LOG.warn("Dropping a leading char {:#x}".format(l_stx))
+                continue
+            elif l_stx == 0:
+                LOG.warn("Dropping a leading char {:#x}".format(l_stx))
+                continue
             else:
-                l_msg = "Dropping a leading char {:#x} - Rest. - {}".format(
-                        p_controller_obj._Message[0], PrintBytes(p_controller_obj._Message))
-                if p_controller_obj._Message[0] != NAK:
-                    LOG.error(l_msg)
-                try:
-                    p_controller_obj._Message = p_controller_obj._Message[1:]
-                except IndexError:
-                    pass
+                p_controller_obj._Message = p_controller_obj._Message[1:]
+                continue
 
 
     def check_for_more_decoding(self, p_controller_obj, p_ret=True):
@@ -238,18 +236,21 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_obj_from = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        l_obj_to = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
-        l_flags = l_message[8]
-        l_data = [l_message[9], l_message[10]]
+        _l_obj_to = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
+        _l_flags = l_message[8]
+        l_cmd1 = l_message[9]
+        l_cmd2 = l_message[10]
         l_extended = "{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}.{:X}".format(
                     l_message[11], l_message[12], l_message[13], l_message[14], l_message[15], l_message[16], l_message[17],
                     l_message[18], l_message[19], l_message[20], l_message[21], l_message[22], l_message[23], l_message[24])
-        #  l_product_key = self._get_addr_from_message(l_message, 12)
-        l_devcat = l_message[15] * 256 + l_message[16]
-        LOG.info('Fm:"{}", To:"{}"; Flags:"{:#x}"; Data:"{}"; Extended:"{}"'.format(l_obj_from.Name, l_obj_to.Name, l_flags, l_data, l_extended))
-        #  l_obj_from.ProductKey = l_product_key
-        l_obj_from.DevCat = l_devcat
+        if l_cmd1 == 0x03 and l_cmd2 == 0:  # Product Data request response
+            l_product_key = self._get_addr_from_message(l_message, 12)
+            l_devcat = l_message[15] * 256 + l_message[16]
+            LOG.info('ProdData Fm:"{}"; ProductID:"{}"; DevCat:"{}"; Data:"{}"'.format(l_obj_from.Name, l_product_key, l_devcat, l_extended))
+            l_obj_from.ProductKey = l_product_key
+            l_obj_from.DevCat = l_devcat
         p_controller_obj.Ret = True
+        Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj_from)
         return
 
     def _decode_52_record(self, p_controller_obj):

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-09-05'
+__updated__ = '2016-10-26'
 
 #  Import system type stuff
 import copy
@@ -213,6 +213,5 @@ class API(Util):
         except (KeyError, TypeError):
             l_node = NodeData()
         l_node.NodeInterfaces = {}
-        # self.MqttPublish('computer/startup', l_node)
 
 # ## END DBK
