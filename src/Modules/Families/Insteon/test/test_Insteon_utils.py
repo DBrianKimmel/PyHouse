@@ -7,11 +7,12 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 14 tests - DBK - 2016-09-30
+Passed all 15 tests - DBK - 2016-10-27
 
 """
+from src.Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-10-27'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,12 +21,14 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Core import conversions
+from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_utils import Util, Decode as utilDecode
-from Modules.Housing.Lighting.lighting import Utility
+from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
+from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS_0, \
-    TESTING_INSTEON_ADDRESS_1
+from Modules.Families.Insteon.test.xml_insteon import \
+    TESTING_INSTEON_ADDRESS_0
 from test.xml_data import XML_LONG
 from Modules.Utilities.debug_tools import PrettyFormatAny
 # from Modules.Utilities.tools import PrintBytes
@@ -39,7 +42,7 @@ ADDR_NOOK_INT = (((0x17 * 256) + 0xc2) * 256) + 0x72  #  1557106
 INSTEON_0_MSG = bytearray(b'\x16\x62\x2d')
 INSTEON_1_MSG = bytearray(b'\x21\x34\x1F')
 
-MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x02\x04\x81\x27\x09\x00')
+MSG_50 = bytearray(b'\x02\x50\x53\x22\x56\x02\x04\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 
 PORT_NAME = 'Updated Port Name'
@@ -54,6 +57,9 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_obj = ControllerData()
         self.inst = Util
+        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
 class A1_Command(SetupMixin, unittest.TestCase):
@@ -62,12 +68,14 @@ class A1_Command(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Create(self):
-        """ Get 3 bytes and convert it ti a laww
+        """
         """
         result = Insteon_utils.create_command_message('insteon_send')
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-01-A - PyHouse'))
+        # print(PrintBytes(result))
         self.assertEqual(len(result), 8)
-
+        self.assertEqual(result[0], 0x02)
+        self.assertEqual(result[1], 0x62)
 
 
 class A2_Queue(SetupMixin, unittest.TestCase):
@@ -76,10 +84,10 @@ class A2_Queue(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Create(self):
-        """ Get 3 bytes and convert it ti a laww
+        """
         """
         result = Insteon_utils.create_command_message('insteon_send')
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A2-01-A - PyHouse'))
         self.assertEqual(len(result), 8)
 
 
@@ -89,10 +97,11 @@ class B1_Conversions(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Message2int(self):
-        """ Get 3 bytes and convert it ti a laww
+        """ Get 3 bytes and convert it t0 a long
         """
         result = self.inst.message2int(MSG_50[2:5])
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse'))
+        # print(PrettyFormatAny.form(result, 'B1-01-A - PyHouse'))
+        # print((result))
         self.assertEqual(result, ADDR_DR_SLAVE_INT)
         #
         result = self.inst.message2int(MSG_62[2:5])
@@ -138,7 +147,7 @@ class D1_Decode(SetupMixin, unittest.TestCase):
     def test_01_Devcat(self):
         l_dev = b'\x02\x04'
         _l_ret = utilDecode._devcat(l_dev, self.m_obj)
-        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - xxx'))
+        # print(PrettyFormatAny.form(_l_ret, 'D1-01-A - xxx'))
         self.assertEqual(self.m_obj.DevCat, 0x0204)
         #
         l_dev = MSG_50
@@ -153,14 +162,13 @@ class D2_Decode(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_02_GetObj(self):
+    def test_01_GetObj(self):
         """
         """
         l_msg = MSG_50
-        # print(PrintBytes(l_msg), 'D2-01-A - Message')
-        _l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_msg)
-        # print(l_ret)
-        # print(PrettyFormatAny.form(l_ret, 'Combined Dicts'))
+        print(PrintBytes(l_msg), 'D2-01-A - Message')
+        _l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_msg[2:5])
+        print(PrettyFormatAny.form(_l_ret, 'D2-01-B - Combined Dicts'))
 
 
 class E1_Lookup(SetupMixin, unittest.TestCase):
@@ -169,7 +177,7 @@ class E1_Lookup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        Utility()._read_lighting_xml(self.m_pyhouse_obj)
+        lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
 
     def test_01_GetObj(self):
         """
@@ -188,7 +196,7 @@ class F1_Update(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        Utility()._read_lighting_xml(self.m_pyhouse_obj)
+        lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
 
     def test_01_PutLight(self):
         """
@@ -238,10 +246,10 @@ class J1_Json(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        Utility()._read_lighting_xml(self.m_pyhouse_obj)
+        lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
 
     def test_01_get(self):
         """
         """
 
- # ## END DBK
+# ## END DBK

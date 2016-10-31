@@ -214,7 +214,7 @@ class DecodeResponses(object):
                 l_debug_msg += ' Controller-Set-Button-Pressed '
 
             else:
-                l_debug_msg += '\n\tUnknown-type-last-command"{}"-"{}"; '.format(l_device_obj._Command1, PrintBytes(l_message))
+                l_debug_msg += '\n\tUnknown-type -"{}"; '.format(PrintBytes(l_message))
                 LOG.warn('Decoding 50 type {}'.format(l_debug_msg))
 
         except AttributeError as e_err:

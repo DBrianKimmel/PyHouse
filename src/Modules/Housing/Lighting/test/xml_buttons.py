@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-27'
 
 # Import system type stuff
 
@@ -50,18 +50,5 @@ XML_BUTTON_SECTION = '\n'.join([
     UPB_BUTTON_XML,
     L_BUTTON_SECTION_END
     ])
-
-
-
-XSD_BUTTON_SECTION = """
-<xs:schema
-    attributeFormDefault="unqualified"
-    elementFormDefault="qualified"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="ControllerSection">
-  </xs:element>
-</xs:schema>
-"""
 
 # ## END DBK

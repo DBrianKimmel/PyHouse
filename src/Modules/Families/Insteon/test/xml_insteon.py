@@ -11,7 +11,7 @@ This information will be present in a device's XML for Insteon type devices.
 
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-10-27'
 
 # Insteon Light
 
@@ -73,7 +73,7 @@ XML_INSTEON_1 = '\n'.join([
 
 # Insteon Button
 
-TESTING_INSTEON_ADDRESS_2 = '53.22.22'
+TESTING_INSTEON_ADDRESS_2 = '53.22.56'
 
 L_INSTEON_ADDRESS_2 = '    <InsteonAddress>' + TESTING_INSTEON_ADDRESS_2 + '</InsteonAddress>'
 

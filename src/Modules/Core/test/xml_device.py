@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-27'
 
 # Import system type stuff
 
@@ -20,9 +20,8 @@ __updated__ = '2016-10-12'
 
 TESTING_DEVICE_COMMENT_0 = 'Device Comment 0'
 TESTING_DEVICE_FAMILY_INSTEON = 'Insteon'
-TESTING_DEVICE_FAMILY_UPB = 'UPB'
-TESTING_DEVICE_TYPE = '1247'
-TESTING_DEVICE_SUBTYPE = '28'
+TESTING_DEVICE_TYPE = '1'
+TESTING_DEVICE_SUBTYPE = '2'
 TESTING_DEVICE_ROOM_X = '3.4'
 TESTING_DEVICE_ROOM_Y = '5.6'
 TESTING_DEVICE_ROOM_Z = '1.2'
@@ -33,7 +32,6 @@ TESTING_DEVICE_UUID = 'Device..-Dev.-0001-0002-deadbeef1234'
 
 L_COMMENT_0 = "    <Comment>" + TESTING_DEVICE_COMMENT_0 + "</Comment>"
 L_DEVICE_FAMILY_INSTEON = "    <DeviceFamily>" + TESTING_DEVICE_FAMILY_INSTEON + "</DeviceFamily>"
-L_DEVICE_FAMILY_UPB = "    <DeviceFamily>" + TESTING_DEVICE_FAMILY_UPB + "</DeviceFamily>"
 L_DEVICE_TYPE = '    <DeviceType>' + TESTING_DEVICE_TYPE + '</DeviceType>'
 L_DEVICE_SUBTYPE = '    <DeviceSubType>' + TESTING_DEVICE_SUBTYPE + '</DeviceSubType>'
 L_ROOM_COORD = "    <RoomCoords>" + TESTING_DEVICE_ROOM_COORDS + "</RoomCoords>"
@@ -52,6 +50,11 @@ XML_DEVICE_INSTEON = '\n'.join([
     L_ROOM_UUID,
     L_UUID
     ])
+
+
+TESTING_DEVICE_FAMILY_UPB = 'UPB'
+
+L_DEVICE_FAMILY_UPB = "    <DeviceFamily>" + TESTING_DEVICE_FAMILY_UPB + "</DeviceFamily>"
 
 XML_DEVICE_UPB = '\n'.join([
     '    <!-- xml_device -->',

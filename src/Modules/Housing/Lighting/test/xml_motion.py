@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-22'
+__updated__ = '2016-10-27'
 
 # Import system type stuff
 
@@ -41,8 +41,8 @@ TESTING_LIGHTING_MOTION_ROOM_UUID_0 = 'LR......-Room-0000-0000-Room.8b6eb6f'
 
 L_LIGHTING_MOTION_START_0 = \
         '<Motion Name="' + TESTING_LIGHTING_MOTION_NAME_0 + \
-        '" Key="' + TESTING_LIGHTING_MOTION_ACTIVE_0 + \
-        '" Active="' + TESTING_LIGHTING_MOTION_KEY_0 + \
+        '" Key="' + TESTING_LIGHTING_MOTION_KEY_0 + \
+        '" Active="' + TESTING_LIGHTING_MOTION_ACTIVE_0 + \
         '">'
 L_LIGHTING_MOTION_UUID_0 = '    <UUID>' + TESTING_LIGHTING_MOTION_UUID_0 + '</UUID>'
 L_LIGHTING_MOTION_COMMENT_0 = '    <Comment>' + TESTING_LIGHTING_MOTION_COMMENT_0 + '</Comment>'

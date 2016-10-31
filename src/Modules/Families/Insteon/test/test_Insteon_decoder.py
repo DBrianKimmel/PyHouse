@@ -7,21 +7,20 @@
 @note:      Created on Jul 18, 2014
 @Summary:
 
-Passed all 6 tests - DBK - 2016-07-17
+Passed all 6 tests - DBK - 2016-10-27
 
 This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2016-10-26'
+__updated__ = '2016-10-27'
 
 #  Import system type stuff
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
-from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
-from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
+from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from test.testing_mixin import SetupPyHouseObj
@@ -44,14 +43,9 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_version = '1.4.0'
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.House.FamilyData = familyAPI(
-                            self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.House.Lighting.Controllers = controllerAPI().read_all_controllers_xml(
-                            self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(
-                            self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(
-                            self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -64,8 +58,15 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """Test that PyHouse_obj has the needed info.
         """
-        #  print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - PyHouse.House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-01-C - PyHouse.House.Lighting', 80))
         self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
+        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Buttons), 2)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.GarageDoors), 1)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Lights), 2)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Motion), 1)
 
     def test_02_House(self):
         #  print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))
@@ -73,11 +74,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_03_Controller(self):
         l_ctlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
-        #  print(PrettyFormatAny.form(l_ctlr, 'PyHouse.House.Lighting.Controllers[0]'))
+        # print(PrettyFormatAny.form(l_ctlr, 'A1-03-A - PyHouse.House.Lighting.Controllers[0]'))
         self.assertEqual(l_ctlr.Name, TESTING_CONTROLLER_NAME_0)
 
 
-class C1_Util(SetupMixin, unittest.TestCase):
+class B1_Util(SetupMixin, unittest.TestCase):
     """This tests the utility section of decoding
     """
 
@@ -88,7 +89,8 @@ class C1_Util(SetupMixin, unittest.TestCase):
     def test_01_GetObjFromMsg(self):
         self.m_ctrlr._Message = MSG_50
         l_ctlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
-        print(PrettyFormatAny.form(l_ctlr, 'C1-01 Controller'))
+        print(PrettyFormatAny.form(l_ctlr, 'B1-01-A Controller'))
+        self.assertEqual(self.m_ctrlr.Name, TESTING_CONTROLLER_NAME_0)
 
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
