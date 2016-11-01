@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 
@@ -206,11 +206,11 @@ class Decode(object):
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Buttons, p_address)
         if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.GarageDoors, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Motion, p_address)
-        if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
+        if l_ret == None:
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.GarageDoors, p_address)
+        if l_ret == None:
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
         #  Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
@@ -255,11 +255,11 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Buttons'))
         pass
     elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 4:
-        p_pyhouse_obj.House.Lighting.GarageDoors[l_ix] = p_insteon_obj
+        p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
         pass
     elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 5:
-        p_pyhouse_obj.House.Lighting.Motion[l_ix] = p_insteon_obj
+        p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
         pass
     elif p_insteon_obj.DeviceType == 2:

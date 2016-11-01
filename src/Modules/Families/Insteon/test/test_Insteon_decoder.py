@@ -14,7 +14,7 @@ also Light data and Thermostat data.
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-10-31'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -71,9 +71,9 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Buttons), 2)
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
-        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.GarageDoors), 1)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Security.GarageDoors), 1)
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Lights), 2)
-        self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Motion), 1)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Security.MotionSensors), 1)
 
     def test_02_House(self):
         #  print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))

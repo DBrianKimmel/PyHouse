@@ -42,7 +42,7 @@ function startWidget(self) {
 function buildLcarSelectScreen(self) {
 	// Divmod.debug('---', 'motionSensors.buildLcarSelectScreen() called
 	// ');
-	var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Motion, 'handleMenuOnClick');
+	var l_button_html = buildLcarSelectionButtonsTable(globals.House.Security.MotionSensors, 'handleMenuOnClick');
 	var l_html = build_lcars_top('Motion Sensors', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(10, l_button_html);
 	l_html += build_lcars_bottom();
@@ -82,7 +82,7 @@ function handleMenuOnClick(self, p_node) {
 	globals.Add = false;
 	showDataEntryScreen(self);
 	if (l_ix <= 1000) { // One of the motion sensor buttons
-		l_obj = globals.House.Lighting.Motion[l_ix];
+		l_obj = globals.House.Security.MotionSensors[l_ix];
 		globals.MotionSensorObj = l_obj;
 		self.buildDataEntryScreen(l_obj, 'handleDataOnClick');
 	} else if (l_ix == 10001) { // The 'Add' button
@@ -147,7 +147,7 @@ function fetchMotionEntry(self, p_data) {
 },
 
 function createEntry(self) {
-	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Motion).length);
+	var l_data = createBaseEntry(self, Object.keys(globals.House.Security.MotionSensors).length);
 	l_data = createDeviceEntry(self, l_data);
 	l_data = self.createMotionEntry(l_data);
 	l_data = createFamilyPart(self, l_data);

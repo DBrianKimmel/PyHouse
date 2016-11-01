@@ -42,7 +42,7 @@ function startWidget(self) {
 function buildLcarSelectScreen(self) {
 	// Divmod.debug('---', 'garageDoors.buildLcarSelectScreen() called
 	// ');
-	var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.GarageDoors, 'handleMenuOnClick');
+	var l_button_html = buildLcarSelectionButtonsTable(globals.House.Security.GarageDoors, 'handleMenuOnClick');
 	var l_html = build_lcars_top('Garage Doors', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(10, l_button_html);
 	l_html += build_lcars_bottom();
@@ -82,7 +82,7 @@ function handleMenuOnClick(self, p_node) {
 	globals.Add = false;
 	showDataEntryScreen(self);
 	if (l_ix <= 1000) { // One of the controller buttons
-		l_obj = globals.House.Lighting.GarageDoors[l_ix];
+		l_obj = globals.House.Security.GarageDoors[l_ix];
 		globals.GarageDoorObj = l_obj;
 		self.buildDataEntryScreen(l_obj, 'handleDataOnClick');
 	} else if (l_ix == 10001) { // The 'Add' button
@@ -147,7 +147,7 @@ function fetchDoorEntry(self, p_data) {
 },
 
 function createEntry(self) {
-	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.GarageDoors).length);
+	var l_data = createBaseEntry(self, Object.keys(globals.House.Security.GarageDoors).length);
 	l_data = createDeviceEntry(self, l_data);
 	l_data = self.createDoorEntry(l_data);
 	l_data = createFamilyPart(self, l_data);

@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-10-26'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -343,23 +343,22 @@ class LightHandlerAPI(object):
                 self._get_obj_info(p_controller_obj, l_obj)
                 InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
 
-        for l_obj in p_pyhouse_obj.House.Lighting.GarageDoors.itervalues():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
-
         for l_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
                 # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Lighting.Motion.itervalues():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
-
         for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
 
+        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.itervalues():
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_obj_info(p_controller_obj, l_obj)
+
+        for l_obj in p_pyhouse_obj.House.Security.MotionSensors.itervalues():
+            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+                self._get_obj_info(p_controller_obj, l_obj)
 
 
 class Utility(LightHandlerAPI):

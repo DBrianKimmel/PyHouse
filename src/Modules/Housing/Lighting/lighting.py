@@ -9,8 +9,7 @@
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
 
-This is called from 'house'.
-for every house.
+Lighting Device type is "1".
 
 PyHouse.House.Lighting.
                        Buttons
@@ -18,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-10-22'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,7 +28,6 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
-from Modules.Housing.Lighting.lighting_garagedoors import API as garageAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
 from Modules.Housing.Lighting.lighting_motion import API as motionAPI
 from Modules.Computer import logging_pyh as Logger
@@ -76,9 +74,7 @@ class Utility(object):
             return p_pyhouse_obj.House.Lighting
         p_pyhouse_obj.House.Lighting.Buttons = buttonsAPI.read_all_buttons_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Lighting.Controllers = controllersAPI.read_all_controllers_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Lighting.GarageDoors = garageAPI.read_all_GarageDoors_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Lighting.Motion = motionAPI.read_all_MotionSensors_xml(p_pyhouse_obj)
         return p_pyhouse_obj.House.Lighting
 
     @staticmethod
@@ -90,9 +86,7 @@ class Utility(object):
         l_lighting_xml = ET.Element('LightingSection')
         l_lighting_xml.append(buttonsAPI.write_all_buttons_xml(p_pyhouse_obj))
         l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
-        l_lighting_xml.append(garageAPI.write_all_GarageDoors_xml(p_pyhouse_obj))
         l_lighting_xml.append(lightsAPI.write_all_lights_xml(p_pyhouse_obj))
-        l_lighting_xml.append(motionAPI.write_all_MotionSensors_xml(p_pyhouse_obj))
         return l_lighting_xml
 
 

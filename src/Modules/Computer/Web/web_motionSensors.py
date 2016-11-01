@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-23'
+__updated__ = '2016-11-01'
 
 
 
@@ -60,12 +60,12 @@ class MotionSensorsElement(athena.LiveElement):
         l_delete = l_json['Delete']
         if l_delete:
             try:
-                del self.m_pyhouse_obj.House.Lighting.Motion[l_ix]
+                del self.m_pyhouse_obj.House.Security.MotionSensors[l_ix]
             except AttributeError:
                 LOG.error("web_controllers - Failed to delete - JSON: {}".FORMAT(l_json))
             return
         try:
-            l_obj = self.m_pyhouse_obj.House.Lighting.Motion[l_ix]
+            l_obj = self.m_pyhouse_obj.House.Security.MotionSensors[l_ix]
         except KeyError:
             l_obj = MotionSensorData()
         l_obj.Name = l_json['Name']
@@ -81,7 +81,7 @@ class MotionSensorsElement(athena.LiveElement):
         l_obj.Status = l_json['Status']
         if l_obj.DeviceFamily == 'Insteon':
             Insteon_utils.Util().get_json_data(l_obj, l_json)
-        self.m_pyhouse_obj.House.Lighting.Motion[l_ix] = l_obj
+        self.m_pyhouse_obj.House.Security.MotionSensors[l_ix] = l_obj
         LOG.info('Motion Sensor Added - {}'.format(l_obj.Name))
 
 # ## END DBK

@@ -1,17 +1,17 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Housing/Lighting/test/xml_garagedoors.py -*-
+-*- test-case-name: /home/briank/PyHouse/src/Modules/Housing/Security/test/xml_garage_door.py -*-
 
-@name:      /home/briank/PyHouse/src/Modules/Housing/Lighting/test/xml_garagedoors.py
+@name:      /home/briank/PyHouse/src/Modules/Housing/Security/test/xml_garage_door.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2016 by D. Brian Kimmel
-@note:      Created on Oct 11, 2016
+@note:      Created on Nov 1, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2016-11-01'
 
 # Import system type stuff
 
@@ -30,8 +30,8 @@ TESTING_GARAGE_DOOR_UUID_0 = 'GarageDr-0000-0000-0000-0123456789ab'
 TESTING_GARAGE_DOOR_COMMENT_0 = "I/O-Link Comment"
 TESTING_GARAGE_DOOR_STATUS_0 = "Open"
 TESTING_GARAGE_DOOR_DEVICE_FAMILY_0 = 'Insteon'
-TESTING_GARAGE_DOOR_DEVICE_TYPE_0 = '1'
-TESTING_GARAGE_DOOR_DEVICE_SUBTYPE_0 = '4'
+TESTING_GARAGE_DOOR_DEVICE_TYPE_0 = '3'
+TESTING_GARAGE_DOOR_DEVICE_SUBTYPE_0 = '1'
 TESTING_GARAGE_DOOR_ROOM_X = '1.23'
 TESTING_GARAGE_DOOR_ROOM_Y = '4.56'
 TESTING_GARAGE_DOOR_ROOM_Z = '7.89'

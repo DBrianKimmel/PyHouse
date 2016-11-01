@@ -103,7 +103,7 @@ class C1_Build(SetupMixin, unittest.TestCase):
         self.m_api = SetupPyHouseObj()
 
     def test_01_Computer(self):
-        l_config = self.m_api._build_computer()
+        l_config = self.m_api._build_computer(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(l_config, 'Config'))
         # self.assertDictEqual(l_config.Email, {})
         # self.assertDictEqual(l_config.InternetConnection, {})

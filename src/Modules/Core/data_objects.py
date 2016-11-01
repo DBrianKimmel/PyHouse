@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2016-10-23'
+__updated__ = '2016-11-01'
 __version_info__ = (1, 7, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -182,9 +182,7 @@ class LightingData(object):
     def __init__(self):
         self.Buttons = {}  # ButtonData()  Sub = 3
         self.Controllers = {}  # ControllerData()  Sub = 1
-        self.GarageDoors = {}  # GarageDoorData()  Sub = 4
         self.Lights = {}  # LightData()  Sub = 2
-        self.Motion = {}  # MotionSensorData()   Sub = 5
 
 
 class LocationData(object):
@@ -263,9 +261,12 @@ class ScheduleThermostatData(object):
 
 class SecurityData(object):
     """
+    DeviceType = 3
+==> PyHouse.House.Security.xxx as in the def below
     """
     def __init__(self):
-        self.GarageDoorOpener = None
+        self.GarageDoors = {}
+        self.MotionSensors = {}
 
 
 class SerialControllerData(object):
@@ -715,7 +716,7 @@ class ControllerData(CoreLightingData):
 
 class GarageDoorData(CoreLightingData):
     """
- ==> PyHouse.House.Lighting.GarageDoors.xxx as in the def below
+ ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
    """
     def __init__(self):
         super(GarageDoorData, self).__init__()
@@ -734,7 +735,7 @@ class LightData(CoreLightingData):
 
 class MotionSensorData(CoreLightingData):
     """ This is the motion sensor data
- ==> PyHouse.House.Lighting.Motion.xxx as in the def below
+ ==> PyHouse.House.Security.Motion.xxx as in the def below
     SubType = 5
     """
     def __init__(self):

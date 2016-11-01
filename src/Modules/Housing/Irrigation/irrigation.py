@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-24'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 
@@ -43,7 +43,7 @@ class API(Utility):
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Load the Mqtt xml info.
+        """ Load the Irrigations xml info.
         """
         l_obj = irrigationXml.read_irrigation_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Irrigation = l_obj

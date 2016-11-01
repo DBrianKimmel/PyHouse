@@ -59,9 +59,9 @@ class UtilJson(object):
         l_ret = LightingData()
         l_ret.Buttons = p_pyhouse_obj.House.Lighting.Buttons
         l_ret.Controllers = p_pyhouse_obj.House.Lighting.Controllers
-        l_ret.GarageDoors = p_pyhouse_obj.House.Lighting.GarageDoors
+        l_ret.GarageDoors = p_pyhouse_obj.House.Security.GarageDoors
         l_ret.Lights = p_pyhouse_obj.House.Lighting.Lights
-        l_ret.Motion = p_pyhouse_obj.House.Lighting.Motion
+        l_ret.Motion = p_pyhouse_obj.House.Security.MotionSensors
         return l_ret
 
     @staticmethod
@@ -73,6 +73,7 @@ class UtilJson(object):
         l_ret.Location = p_pyhouse_obj.House.Location
         l_ret.Rooms = p_pyhouse_obj.House.Rooms
         l_ret.Schedules = p_pyhouse_obj.House.Schedules
+        l_ret.Security = p_pyhouse_obj.House.Security
         return l_ret
 
 
