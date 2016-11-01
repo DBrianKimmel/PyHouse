@@ -9,9 +9,8 @@
 
 Passed all 9 tests - DBK - 2016-07-14
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,19 +18,25 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ButtonData
-from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_COMMENT, \
-        TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_TYPE
 from Modules.Housing.Lighting.lighting_buttons import Utility, API as buttonsAPI
 from Modules.Housing.Lighting.test.xml_buttons import \
-        TESTING_LIGHTING_BUTTON_NAME_0
+    TESTING_LIGHTING_BUTTON_NAME_0, \
+    TESTING_LIGHTING_BUTTON_COMMENT_0, \
+    TESTING_LIGHTING_BUTTON_FAMILY_0, \
+    TESTING_LIGHTING_BUTTON_ACTIVE_0, \
+    TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0, \
+    TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0, \
+    TESTING_LIGHTING_BUTTON_ROOM_NAME_0, \
+    TESTING_LIGHTING_BUTTON_KEY_0, \
+    TESTING_LIGHTING_BUTTON_UUID_0, \
+    TESTING_LIGHTING_BUTTON_ROOM_UUID_0, \
+    TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
 from test.xml_data import XML_LONG
-from Modules.Families.Insteon.test.xml_insteon import TESTING_INSTEON_ADDRESS_0
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -78,15 +83,14 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read in the xml file and fill in the lights
         """
         l_button = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.button)
-        print(PrettyFormatAny.form(l_button, 'B1-01-A - Button'))
+        # print(PrettyFormatAny.form(l_button, 'B1-01-A - Button'))
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(l_button.Active, True)
-        self.assertEqual(l_button.Comment, TESTING_DEVICE_COMMENT)
-        self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_button.DeviceSubType, 3)  # Fixed 3 == Button
-        self.assertEqual(str(l_button.DeviceType), TESTING_DEVICE_TYPE)
-        self.assertEqual(str(l_button.DeviceSubType), TESTING_DEVICE_TYPE)
-        self.assertEqual(l_button.RoomName, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(str(l_button.Active), TESTING_LIGHTING_BUTTON_ACTIVE_0)
+        self.assertEqual(l_button.Comment, TESTING_LIGHTING_BUTTON_COMMENT_0)
+        self.assertEqual(l_button.DeviceFamily, TESTING_LIGHTING_BUTTON_FAMILY_0)
+        self.assertEqual(str(l_button.DeviceType), TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0)
+        self.assertEqual(str(l_button.DeviceSubType), TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0)
+        self.assertEqual(l_button.RoomName, TESTING_LIGHTING_BUTTON_ROOM_NAME_0)
 
     def test_02_ReadOneButtonXml(self):
         """ Read in the xml file and fill in the lights
@@ -96,11 +100,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Active, True)
         self.assertEqual(l_button.Key, 0, 'Bad key')
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(l_button.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_button.DeviceFamily, TESTING_LIGHTING_BUTTON_FAMILY_0)
+        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0))
 
     def test_03_ReadAllButtonsXml(self):
-        l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect)
+        l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj)
         self.assertEqual(len(l_buttons), 2)
 
 
@@ -115,13 +119,27 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the button section
         """
         l_button = Utility._read_one_button_xml(self.m_pyhouse_obj, self.m_xml.button)
+        self.m_pyhouse_obj.House.Lighting.Buttons = l_button
         l_xml = Utility._write_one_button_xml(self.m_pyhouse_obj, l_button)
+        # print(PrettyFormatAny.form(l_xml, 'B2-01-A - Button'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_BUTTON_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHTING_BUTTON_KEY_0)
+        self.assertEqual(str(l_xml.attrib['Active']), TESTING_LIGHTING_BUTTON_ACTIVE_0)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_LIGHTING_BUTTON_UUID_0)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHTING_BUTTON_COMMENT_0)
+        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_LIGHTING_BUTTON_FAMILY_0)
+        self.assertEqual(l_xml.find('DeviceType').text, TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0)
+        self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHTING_BUTTON_ROOM_NAME_0)
+        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_LIGHTING_BUTTON_ROOM_UUID_0)
 
     def test_02_AllButtons(self):
         """ Write out the XML file for the Buttons section
         """
-        l_button = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect)
-        l_xml = self.m_api.write_buttons_xml(self.m_pyhouse_obj)
+        l_button = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Lighting.Buttons = l_button
+        l_xml = self.m_api.write_all_buttons_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_xml, 'B2-02-A - Button'))
 
 
 class J1_Json(SetupMixin, unittest.TestCase):
@@ -134,10 +152,11 @@ class J1_Json(SetupMixin, unittest.TestCase):
     def test_06_CreateJson(self):
         """ Create a JSON object for Buttons.
         """
-        l_buttons = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj, self.m_xml.button_sect)
-        # print('ButtonsS: {}'.format(l_buttons))
-        # print('Button 0: {}'.format(vars(l_buttons[0])))
-        l_json = json_tools.encode_json(l_buttons)
+        l_button = self.m_api.read_all_buttons_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Lighting.Buttons = l_button
+        # print('Buttons: {}'.format(l_button))
+        # print('Button 0: {}'.format(vars(l_button[0])))
+        l_json = json_tools.encode_json(l_button)
         # print('JSON: {}'.format(l_json))
 
 # ## END DBK

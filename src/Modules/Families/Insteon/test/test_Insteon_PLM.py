@@ -10,8 +10,9 @@
 Passed all 6 tests - DBK - 2016-07-17
 
 """
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-09-25'
+__updated__ = '2016-10-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,6 +43,13 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_Insteon_PLM')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
     """
@@ -51,8 +59,9 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_01_House(self):
         l_house = self.m_pyhouse_obj.House
+        # print(PrettyFormatAny.form(l_house, 'A1-01-A - House'))
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
-        self.assertEqual(l_house.Name, TESTING_HOUSE_NAME)
+        self.assertEqual(l_house.Name, 'Test House')  # Default name
 
 
 class C1_Utility(SetupMixin, unittest.TestCase):

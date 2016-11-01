@@ -7,30 +7,30 @@
 @note:      Created on Jul 18, 2014
 @Summary:
 
-Passed all 6 tests - DBK - 2016-10-27
+Passed all 6 tests - DBK - 2016-10-31
 
 This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
+from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-10-27'
+__updated__ = '2016-10-31'
 
 #  Import system type stuff
+from twisted.trial import unittest
+import xml.etree.ElementTree as ET
+
+
+#  Import PyMh files
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from twisted.trial import unittest
-import xml.etree.ElementTree as ET
 
-
-
-#  Import PyMh files
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_50T = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x6e\x4f')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
@@ -46,6 +46,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_Insteon_decoder')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -89,13 +96,13 @@ class B1_Util(SetupMixin, unittest.TestCase):
     def test_01_GetObjFromMsg(self):
         self.m_ctrlr._Message = MSG_50
         l_ctlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
-        print(PrettyFormatAny.form(l_ctlr, 'B1-01-A Controller'))
-        self.assertEqual(self.m_ctrlr.Name, TESTING_CONTROLLER_NAME_0)
+        # print(PrettyFormatAny.form(l_ctlr, 'B1-01-A Controller'))
+        self.assertEqual(l_ctlr.Name, TESTING_CONTROLLER_NAME_0)
 
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
-        #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        #  print(PrintBytes(l_msg))
+        l_msg = self.m_util.get_next_message(self.m_ctrlr)
+        print(PrintBytes(l_msg))
         #  self.assertEqual(l_msg[1], 0x50)
         #  self.m_ctrlr._Message = bytearray()
         #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
@@ -122,7 +129,7 @@ class T1_HVAC(SetupMixin, unittest.TestCase):
         self.m_ctrlr._Message = MSG_50T
         self.m_pyhouse_obj.House.Lighting.Controllers[0]
         self.m_decode.decode_message(self.m_ctrlr)
-        print(PrettyFormatAny.form(self.m_ctrlr, "Controller"))
+        # print(PrettyFormatAny.form(self.m_ctrlr, "T1-01-A - Controller"))
         self.assertEqual(len(self.m_ctrlr._Message), 0)
 
 #  ## END DBK

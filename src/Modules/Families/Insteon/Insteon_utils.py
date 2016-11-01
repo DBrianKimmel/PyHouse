@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-10-31'
 
 #  Import system type stuff
 
@@ -267,7 +267,7 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Thermostats'))
         pass
     else:
-        LOG.error('Unknown Insteon device to update: {}'.format(p_insteon_obj.DeviceType))
+        LOG.warn('Unknown Insteon device to update: {}'.format(p_insteon_obj.DeviceType))
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
 
 #  ## END DBK

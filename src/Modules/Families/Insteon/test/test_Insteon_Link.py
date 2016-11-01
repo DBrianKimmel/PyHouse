@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-10-31'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -21,7 +21,7 @@ from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
 # from Modules.Families.Insteon.Insteon_utils import Decode
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Utilities.debug_tools import PrettyFormatAny, FormatBytes
+# from Modules.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_53 = bytearray(b'\x02\x53\x00\x01\x12\x34\x56\x02\x04\x06\xFF')
@@ -38,6 +38,13 @@ class SetupMixin(object):
         self.m_obj = ControllerData()
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_Insteon_Link')
+
+
 class B01_Decode(SetupMixin, unittest.TestCase):
 
 
@@ -46,8 +53,8 @@ class B01_Decode(SetupMixin, unittest.TestCase):
 
     def test_53_Decode(self):
         self.m_obj._Message = MSG_53
-        print(FormatBytes(self.m_obj._Message))
-        print(PrettyFormatAny.form(self.m_obj._Message, 'Obj'))
+        # print(FormatBytes(self.m_obj._Message))
+        # print(PrettyFormatAny.form(self.m_obj._Message, 'B01-53-A - Obj'))
         _l_ret = linkDecode.decode_53(self.m_obj)
 
 # ## END DBK

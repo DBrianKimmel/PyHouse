@@ -7,22 +7,22 @@
 @license:   MIT License
 @summary:   This module test insteon xml
 
-Passed all 13 tests - DBK - 2015-10-10
+Passed all 14 tests - DBK - 2015-10-31
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-10-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG
 from Modules.Core.data_objects import LightData, HouseInformation
 from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
 from Modules.Core import conversions
-from Modules.Housing.Lighting.lighting_core import API as lightingCoreAPI
-from test.xml_data import XML_LONG
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Families.Insteon.test.xml_insteon import \
@@ -33,7 +33,6 @@ from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_PRODUCT_KEY_0, \
     TESTING_INSTEON_ENGINE_VERSION_0, \
     TESTING_INSTEON_FIRMWARE_VERSION_0
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_KEY_0, \
@@ -56,10 +55,16 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_core_api = lightingCoreAPI()
         self.m_device = LightData()
         self.m_version = '1.4.0'
         self.m_api = deviceXML
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_Insteon_xml')
 
 
 class A1_Prep(SetupMixin, unittest.TestCase):

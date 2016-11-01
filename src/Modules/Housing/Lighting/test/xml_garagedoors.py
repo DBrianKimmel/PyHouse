@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-10-31'
 
 # Import system type stuff
 
@@ -69,8 +69,6 @@ L_GARAGE_DOOR_0 = '\n'.join([
     XML_INSTEON_0,
     L_GARAGE_DOOR_END
     ])
-
-
 
 
 XML_GARAGE_DOOR_SECTION = '\n'.join([

@@ -10,7 +10,7 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-10-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,6 +28,13 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_Insteon_device')
 
 
 class C01_API(SetupMixin, unittest.TestCase):
