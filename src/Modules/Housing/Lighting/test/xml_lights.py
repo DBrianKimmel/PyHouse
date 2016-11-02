@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-11-01'
 
 # Import system type stuff
 
@@ -31,8 +31,8 @@ TESTING_LIGHT_UUID_0 = 'Light...-0000-0000-0000-0123456789ab'
 TESTING_LIGHT_COMMENT_0 = "SwitchLink On/Off Light Comment"
 TESTING_LIGHT_CUR_LEVEL_0 = "42"
 TESTING_LIGHT_DEVICE_FAMILY_0 = 'Insteon'
-TESTING_LIGHT_DEVICE_TYPE_0 = '1853'
-TESTING_LIGHT_DEVICE_SUBTYPE_0 = '23'
+TESTING_LIGHT_DEVICE_TYPE_0 = '1'
+TESTING_LIGHT_DEVICE_SUBTYPE_0 = '3'
 TESTING_LIGHT_IS_DIMMABLE_0 = 'True'
 TESTING_LIGHT_ROOM_X = '1.23'
 TESTING_LIGHT_ROOM_Y = '4.56'

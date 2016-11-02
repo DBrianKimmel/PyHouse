@@ -13,7 +13,7 @@ Note! This is designed for 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-11-01'
 
 STX = 0x02
 ACK = 0x06
@@ -51,6 +51,7 @@ MESSAGE_TYPES = {
     'assign_to_group': 0x01,
     'delete_from_group': 0x02,
     'product_data_request': 0x03,
+    'cleanup_success': 0x06,
     'linking_mode': 0x09,
     'unlinking_mode': 0x0A,
     'engine_version': 0x0D,

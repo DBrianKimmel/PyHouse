@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2015-10-21
 
 """
 
-__updated__ = '2016-10-21'
+__updated__ = '2016-11-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -214,7 +214,7 @@ class D1_JSON(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Internets.
         """
         l_internet = internetAPI().read_internet_xml(self.m_pyhouse_obj)
-        l_json = json_tools.encode_json(l_internet)
+        _l_json = json_tools.encode_json(l_internet)
         # print(PrettyFormatAny.form(l_json, 'JSON', 70))
         # self.assertEqual(self.jsonPair(l_json, 'ExternalIPv4'), convert.str_to_long(TESTING_INTERNET_IPv4_0))
         # self.assertEqual(self.jsonPair(l_json, 'ExternalIPv6'), convert.str_to_long(TESTING_INTERNET_IPv6_0))

@@ -12,7 +12,7 @@
 TODO: Change all references to a light if name changes.
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import os
@@ -81,7 +81,7 @@ class LightsElement(athena.LiveElement):
         l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
         l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 2
+        l_obj.DeviceSubType = 3
         l_obj.UUID = l_json['UUID']
         #  if len(l_obj.UUID) < 8:
         #    l_obj.UUID = str(uuid.uuid1())

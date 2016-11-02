@@ -10,7 +10,7 @@
 Passed all 17 tests - DBK - 2016-07-14
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -18,12 +18,12 @@ from twisted.trial import unittest
 from Modules.Core import conversions
 from Modules.Core.data_objects import ControllerData
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_COMMENT, \
         TESTING_DEVICE_FAMILY_INSTEON, \
         TESTING_DEVICE_TYPE, \
         TESTING_DEVICE_SUBTYPE, \
         TESTING_DEVICE_ROOM_NAME, \
-        TESTING_DEVICE_ROOM_UUID
+        TESTING_DEVICE_ROOM_UUID, \
+        TESTING_DEVICE_COMMENT_0
 from Modules.Drivers.Serial.test.xml_serial import \
         TESTING_SERIAL_BAUD_RATE, \
         TESTING_SERIAL_BYTE_SIZE, \
@@ -119,7 +119,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'AllControllers'))
         self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(str(l_obj.Active), TESTING_CONTROLLER_ACTIVE_0)
-        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(str(l_obj.DeviceType), TESTING_DEVICE_TYPE)
         self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE)
@@ -171,7 +171,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_obj, 'B1-06-A - OneController', 100))
         self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_0 == 'True'))
-        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
@@ -220,7 +220,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_0)
         self.assertEqual(bool(l_xml.attrib['Active']), TESTING_CONTROLLER_ACTIVE_0 == 'True')
         self.assertEqual(l_xml.find('UUID').text, TESTING_CONTROLLER_UUID_0)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.find('DeviceType').text, TESTING_DEVICE_TYPE)
         self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_DEVICE_SUBTYPE)

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import os
@@ -20,7 +20,7 @@ from nevow import loaders
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONHouseInfo
+from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
 

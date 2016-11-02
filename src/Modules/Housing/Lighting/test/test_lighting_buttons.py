@@ -10,7 +10,7 @@
 Passed all 9 tests - DBK - 2016-07-14
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2016-11-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,7 +36,7 @@ from Modules.Core import conversions
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

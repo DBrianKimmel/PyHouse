@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2016-10-22'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -47,7 +47,7 @@ class Utility(object):
         l_obj = LightData()
         l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
         l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 2
+        l_obj.DeviceSubType = 3
         return l_obj
 
     @staticmethod

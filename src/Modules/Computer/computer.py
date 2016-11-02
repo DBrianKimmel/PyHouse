@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2016-10-22'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import platform
@@ -224,6 +224,8 @@ class API(Utility):
         """
         """
         LOG.info('Loading XML')
+        p_pyhouse_obj.Computer = ComputerInformation()  # Clear before loading.
+        p_pyhouse_obj.Computer.Name = platform.node()
         l_comp = Xml.read_computer_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.UUID = l_comp.UUID
         Utility._load_component_xml(p_pyhouse_obj)

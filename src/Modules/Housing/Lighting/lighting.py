@@ -29,7 +29,6 @@ from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
-from Modules.Housing.Lighting.lighting_motion import API as motionAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
@@ -65,7 +64,7 @@ class Utility(object):
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot
-        l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
+        _l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
         l_xml = l_xml.find('HouseDivision')
         if l_xml is None:
             return p_pyhouse_obj.House.Lighting
@@ -93,14 +92,13 @@ class Utility(object):
 class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.Lighting = LightingData()
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Lighting xml info.
         """
-        p_pyhouse_obj.House.Lighting = LightingData()
+        p_pyhouse_obj.House.Lighting = LightingData()  # Clear before loading
         self._read_lighting_xml(p_pyhouse_obj)
 
     def SaveXml(self, p_xml):

@@ -37,7 +37,7 @@ class Utility(object):
     def _read_thermostat_base(p_pyhouse_obj, p_xml):
         l_obj = Utility._read_base(p_pyhouse_obj, p_xml)
         l_obj.DeviceType = 2
-        l_obj.DeviceSubType = 73
+        l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod

@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-10-26'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 
@@ -161,7 +161,7 @@ class DecodeResponses(object):
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
-        l_debug_msg = 'Std-Msg-fm:"{}"; Flags:{}; Cmd1:{:#x}, Cmd2:{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
+        l_debug_msg = 'Fm:"{}"; Flg:{}; C1:{:#x},{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
         #
         #  Break down bits 7(msb), 6, 5 into message type
         #
@@ -170,12 +170,16 @@ class DecodeResponses(object):
         #
         elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
             l_group = l_message[7]
-            l_debug_msg += 'All-Link-brdcst-Group:"{}", Data:"{}"; '.format(l_group, l_data)
+            l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
             # LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
         #
         try:
             if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
+
+            elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
+                l_debug_msg += 'CleanupSuccess:"{}"; '.format(l_cmd2)
+                # self._publish(self.m_pyhouse_obj, l_device_obj)
 
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
                 l_device_obj.EngineVersion = l_cmd2
@@ -187,12 +191,12 @@ class DecodeResponses(object):
 
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.CurLevel = 100
-                l_debug_msg += 'Device:"{}"-turned-Full-ON; '.format(l_device_obj.Name)
+                l_debug_msg += 'Turn ON; '.format(l_device_obj.Name)
                 # self._publish(self.m_pyhouse_obj, l_device_obj)
 
             elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
                 l_device_obj.CurLevel = 0
-                l_debug_msg += 'Device:"{}"-turned-Full-OFF; '.format(l_device_obj.Name)
+                l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
                 # self._publish(self.m_pyhouse_obj, l_device_obj)
 
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
@@ -215,7 +219,6 @@ class DecodeResponses(object):
 
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(PrintBytes(l_message))
-                LOG.warn('Decoding 50 type {}'.format(l_debug_msg))
 
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))

@@ -46,13 +46,13 @@ class C01_Util(SetupMixin, unittest.TestCase):
 
     def test_02_WriteConfig(self):
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
-        l_xml = self.m_api._write_xml_config(self.m_pyhouse_obj)
+        _l_xml = self.m_api._write_xml_config(self.m_pyhouse_obj)
 
     def test_03_SaveConfig(self):
         # self.m_api._save_pyhouse_obj(self.m_pyhouse_obj)
         l_comp = ET.Element('ComputerSection')
         _l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)
-        l_xml = self.m_api.SaveXml(l_comp)
+        _l_xml = self.m_api.SaveXml(l_comp)
 
     def test_11_CreateService(self):
         self.m_api._create_internet_discovery_service(self.m_pyhouse_obj)

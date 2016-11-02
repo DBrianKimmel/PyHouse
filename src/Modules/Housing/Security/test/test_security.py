@@ -10,11 +10,6 @@
 Passed all 10 tests - DBK - 2016-11-01
 
 """
-from Modules.Housing.Security.test.xml_motion_sensors import TESTING_MOTION_SENSOR_NAME_0, TESTING_MOTION_SENSOR_ACTIVE_0, \
-    TESTING_MOTION_SENSOR_KEY_0, TESTING_MOTION_SENSOR_UUID_0, TESTING_MOTION_SENSOR_COMMENT_0, \
-    TESTING_MOTION_SENSOR_DEVICE_TYPE_0, TESTING_MOTION_SENSOR_DEVICE_SUBTYPE_0, TESTING_MOTION_SENSOR_ROOM_NAME_0, \
-    TESTING_MOTION_SENSOR_ROOM_UUID_0
-from src.Modules.Housing.Security.test.xml_motion_sensors import TESTING_MOTION_SENSOR_DEVCAT_0, TESTING_MOTION_SENSOR_ADDRESS_0
 
 __updated__ = '2016-11-01'
 
@@ -28,7 +23,6 @@ from Modules.Housing.Security.security import Utility, XML, API as securityAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
 from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.Security.test.xml_garage_door import \
     TESTING_GARAGE_DOOR_NAME_0, \
     TESTING_GARAGE_DOOR_ACTIVE_0, \
@@ -37,15 +31,29 @@ from Modules.Housing.Security.test.xml_garage_door import \
     TESTING_GARAGE_DOOR_DEVICE_TYPE_0, \
     TESTING_GARAGE_DOOR_DEVICE_SUBTYPE_0, \
     TESTING_GARAGE_DOOR_ROOM_NAME_0, \
-    TESTING_GARAGE_DOOR_ROOM_UUID_0, TESTING_GARAGE_DOOR_UUID_0
+    TESTING_GARAGE_DOOR_ROOM_UUID_0, \
+    TESTING_GARAGE_DOOR_UUID_0
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_DEVCAT_0, \
     TESTING_INSTEON_ENGINE_VERSION_0, \
     TESTING_INSTEON_ADDRESS_0
+from Modules.Housing.Security.test.xml_motion_sensors import \
+    TESTING_MOTION_SENSOR_NAME_0, \
+    TESTING_MOTION_SENSOR_ACTIVE_0, \
+    TESTING_MOTION_SENSOR_KEY_0, \
+    TESTING_MOTION_SENSOR_UUID_0, \
+    TESTING_MOTION_SENSOR_COMMENT_0, \
+    TESTING_MOTION_SENSOR_DEVICE_TYPE_0, \
+    TESTING_MOTION_SENSOR_DEVICE_SUBTYPE_0, \
+    TESTING_MOTION_SENSOR_ROOM_NAME_0, \
+    TESTING_MOTION_SENSOR_ROOM_UUID_0, \
+    TESTING_MOTION_SENSOR_DEVCAT_0, \
+    TESTING_MOTION_SENSOR_ADDRESS_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

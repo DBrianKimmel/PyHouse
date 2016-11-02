@@ -243,31 +243,19 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
     """
     l_ix = p_insteon_obj.Key
     if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
-        p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Controllers'))
-        pass
-    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
-        p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Lights'))
-        pass
-    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
         p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Buttons'))
-        pass
-    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 4:
-        p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
-        pass
-    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 5:
-        p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Garage Door'))
-        pass
+    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
+        p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
+    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
+        p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
     elif p_insteon_obj.DeviceType == 2:
         p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Thermostats'))
-        pass
+    elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 1:
+        p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
+    elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 2:
+        p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
     else:
-        LOG.warn('Unknown Insteon device to update: {}'.format(p_insteon_obj.DeviceType))
+        LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
         # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
 
 #  ## END DBK

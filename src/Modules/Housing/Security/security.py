@@ -253,7 +253,6 @@ class API(object):
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.Security = SecurityData()
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_api = cameraApi(p_pyhouse_obj)
         LOG.info('Initialized')
@@ -262,11 +261,9 @@ class API(object):
         """ Load the Security Information
         """
         LOG.info('Loading XML')
-        p_pyhouse_obj.House.Security = SecurityData()
-        l_dict = XML.read_all_GarageDoors_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Security.GarageDoors = l_dict
-        l_dict = XML.read_all_MotionSensors_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Security.MotionSensors = l_dict
+        p_pyhouse_obj.House.Security = SecurityData()  # Clear before loading
+        p_pyhouse_obj.House.Security.GarageDoors = XML.read_all_GarageDoors_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Security.MotionSensors = XML.read_all_MotionSensors_xml(p_pyhouse_obj)
         LOG.info('Loaded XML')
         return p_pyhouse_obj.House.Security
 

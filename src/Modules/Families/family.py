@@ -33,7 +33,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2016-09-17'
+__updated__ = '2016-11-01'
 
 # Import system type stuff
 import importlib
@@ -153,7 +153,7 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_family = Utility._init_component_apis(p_pyhouse_obj)
-        p_pyhouse_obj.House.FamilyData = self.m_family
+        # p_pyhouse_obj.House.FamilyData = self.m_family
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):

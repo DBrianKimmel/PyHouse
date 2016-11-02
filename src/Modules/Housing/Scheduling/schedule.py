@@ -41,7 +41,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2016-08-29'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import datetime
@@ -208,7 +208,8 @@ class Utility(object):
 
     @staticmethod
     def _setup_components(p_pyhouse_obj):
-        p_pyhouse_obj.House.Schedules = {}
+        # p_pyhouse_obj.House.Schedules = {}
+        pass
 
     @staticmethod
     def to_mins(p_datetime):
@@ -298,6 +299,7 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Schedule xml info.
         """
+        p_pyhouse_obj.House.Schedules = {}
         l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Schedules = l_schedules
         LOG.info('Loaded {} Schedules XML'.format(len(l_schedules)))

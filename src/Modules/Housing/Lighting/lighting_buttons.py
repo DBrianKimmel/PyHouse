@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-22'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -37,7 +37,7 @@ class Utility(object):
         l_obj = ButtonData()  # Create an empty controller object.
         l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
         l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 3
+        l_obj.DeviceSubType = 1
         return l_obj
 
     @staticmethod
@@ -65,7 +65,7 @@ class Utility(object):
         l_button_obj = Utility._read_base_device(p_pyhouse_obj, p_button_xml)
         Utility._read_family_data(p_pyhouse_obj, l_button_obj, p_button_xml)
         l_button_obj.DeviceType = 1
-        l_button_obj.DeviceSubType = 3
+        l_button_obj.DeviceSubType = 1
         return l_button_obj
 
     @staticmethod

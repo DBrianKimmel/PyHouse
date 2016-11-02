@@ -88,8 +88,8 @@ class GarageDoorsElement(athena.LiveElement):
         l_obj.IsDimmable = l_json['IsDimmable']
         l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
-        l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 4
+        l_obj.DeviceType = 3
+        l_obj.DeviceSubType = 1
         l_obj.UUID = l_json['UUID']
         l_obj.Status = l_json['Status']
         if l_obj.DeviceFamily == 'Insteon':

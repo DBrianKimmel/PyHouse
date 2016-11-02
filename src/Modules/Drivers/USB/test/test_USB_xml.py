@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2016-10-10
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-11-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,7 +19,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Drivers.USB.USB_xml import XML as usbXML
-from Modules.Housing.Lighting.lighting_core import API as lightingcoreAPI
+# from Modules.Housing.Lighting.lighting_core import API as lightingcoreAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ControllerData

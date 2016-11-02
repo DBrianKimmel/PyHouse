@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-09-09'
+__updated__ = '2016-11-01'
 
 #  Import system type stuff
 
@@ -186,13 +186,13 @@ class API(Utility):
         """
         LOG.info('Initializing')
         p_pyhouse_obj.APIs.House = HouseAPIs()
-        p_pyhouse_obj.House = HouseInformation()
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('Loading XML')
+        p_pyhouse_obj.House = HouseInformation()  # Clear before loading
         l_house = Xml.read_house_xml(p_pyhouse_obj)
         p_pyhouse_obj.House = l_house
         Utility._load_component_xml(p_pyhouse_obj)
