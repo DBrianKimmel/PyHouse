@@ -15,7 +15,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2016-07-12'
+__updated__ = '2016-11-05'
 
 #  Import system type stuff
 
@@ -85,7 +85,7 @@ class Xml(object):
         l_obj.LoginPasswordNew = ''
         l_obj.LoginPasswordChangeFlag = False
         l_obj.LoginRole = 1
-        LOG.warn('Adding admin login.')
+        LOG.info('Adding admin login.')
         return l_obj
 
     @staticmethod
@@ -145,20 +145,17 @@ class Xml(object):
         @param p_pyhouse_xml: is the entire PyHouse Object
         """
         l_obj = WebData()
-        l_obj.Logins = {}
+        l_obj.Logins = Xml._add_default_login()
         l_obj.WebPort = 8580
         l_obj.SecurePort = 8588
-        l_count = 0
-        try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-            if l_xml != None:
-                l_xml = l_xml.find('WebSection')
-            if l_xml != None:
-                l_obj.Logins, l_count = Xml._read_all_logins(l_xml)
-                l_obj.WebPort = Xml._read_port(l_xml)
-        except Exception as e_err:
-            LOG.error('ERROR reading web : {}'.format(e_err))
-        p_pyhouse_obj.Computer.Web = l_obj
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        if l_xml == None:
+            return l_obj
+        l_xml = l_xml.find('WebSection')
+        if l_xml == None:
+            return l_obj
+        l_obj.Logins, l_count = Xml._read_all_logins(l_xml)
+        l_obj.WebPort = Xml._read_port(l_xml)
         LOG.info('Loaded {} logins.'.format(l_count))
         return l_obj
 

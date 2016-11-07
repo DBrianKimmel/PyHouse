@@ -13,7 +13,7 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerData.
 """
 
-__updated__ = '2016-10-05'
+__updated__ = '2016-11-05'
 
 #  Import system type stuff
 
@@ -57,6 +57,7 @@ class Xml(object):
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
             l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
         except Exception as e_err:
+            l_insteon_obj.GroupList = 'Error reading Insteon Group List.'
             LOG.error('ERROR: {}'.format(e_err))
         try:
             l_insteon_obj.EngineVersion = PutGetXML.get_int_from_xml(p_in_xml, 'EngineVersion', 1)
@@ -83,7 +84,7 @@ class Xml(object):
         """
         l_insteon_obj = Xml._read_insteon(p_in_xml)
         stuff_new_attrs(p_device_obj, l_insteon_obj)
-        return l_insteon_obj  # For testing only
+        return p_device_obj  # For testing only
 
     @staticmethod
     def WriteXml(p_out_xml, p_device):

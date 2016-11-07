@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   This module test insteon xml
 
-Passed all 14 tests - DBK - 2015-10-31
+Passed all 15 tests - DBK - 2015-11-05
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2016-11-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Core.data_objects import LightData, HouseInformation
+from Modules.Core.data_objects import LightData, HouseInformation, ButtonData
 from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
 from Modules.Core import conversions
 from Modules.Core.test.xml_device import \
@@ -45,7 +45,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_NAME_0, \
     TESTING_LIGHT_ROOM_UUID_0
 from Modules.Utilities.device_tools import XML as deviceXML
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -141,7 +141,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """Read the Insteon specific information.
         """
         l_obj = insteonXml._read_insteon(self.m_xml.light)
-        # print(PrettyFormatAny.form(l_obj, 'C1-03-A - Insteon'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-03-A - Insteon (only)'))
         self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_0)
         self.assertEqual(str(l_obj.EngineVersion), TESTING_INSTEON_ENGINE_VERSION_0)
         self.assertEqual(str(l_obj.FirmwareVersion), TESTING_INSTEON_FIRMWARE_VERSION_0)
@@ -150,10 +150,24 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
         self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
-    def test_04_InsteonLight(self):
+    def test_04_Insteon(self):
+        """Read the Insteon specific information.
+        """
+        l_dev = ButtonData()
+        l_obj = insteonXml.ReadXml(l_dev, self.m_xml.light)
+        # print(PrettyFormatAny.form(l_obj, 'C1-04-A - Insteon Device'))
+        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_0)
+        self.assertEqual(str(l_obj.EngineVersion), TESTING_INSTEON_ENGINE_VERSION_0)
+        self.assertEqual(str(l_obj.FirmwareVersion), TESTING_INSTEON_FIRMWARE_VERSION_0)
+        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_0)
+        self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_0)
+        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
+
+    def test_05_InsteonLight(self):
         l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
         insteonXml.ReadXml(l_light, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_light, 'C1-04-A - Insteon Light'))
+        print(PrettyFormatAny.form(l_light, 'C1-04-A - Insteon Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))

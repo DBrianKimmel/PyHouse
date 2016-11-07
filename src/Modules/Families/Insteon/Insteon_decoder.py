@@ -24,19 +24,19 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-04'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_HVAC, Insteon_utils
+from Modules.Families.Insteon import Insteon_utils
+from Modules.Families.Insteon.Insteon_HVAC import DecodeResponses as DecodeHvac
+from Modules.Families.Insteon.Insteon_Security import DecodeResponses as DecodeSecurity
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, NAK, STX
-from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as utilUtil
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX
+from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Utilities.tools import PrintBytes
-
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
 #  OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
@@ -66,17 +66,18 @@ class DecodeResponses(object):
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
+                l_need_len = Insteon_utils.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     self._decode_dispatch(p_controller_obj)
+                    return 'Ok'
                 else:
-                    LOG.warning('Message was too short - waiting for rest of message.')
-            elif l_stx == NAK:
-                LOG.warn("Dropping a leading char {:#x}".format(l_stx))
+                    LOG.warning('Message was too short - waiting for rest of message. {}'.format(PrintBytes(p_controller_obj._Message)))
+                    return 'Short'
             else:
-                LOG.warn("Dropping a leading char {:#x}".format(l_stx))
-            p_controller_obj._Message = p_controller_obj._Message[1:]
+                LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, PrintBytes(p_controller_obj._Message)))
+                p_controller_obj._Message = p_controller_obj._Message[1:]
+                return 'Drop'
 
 
     def check_for_more_decoding(self, p_controller_obj, p_ret=True):
@@ -85,7 +86,7 @@ class DecodeResponses(object):
         """
         l_ret = p_ret
         l_cur_len = len(p_controller_obj._Message)
-        l_chop = utilUtil.get_message_length(p_controller_obj._Message)
+        l_chop = Insteon_utils.get_message_length(p_controller_obj._Message)
         if l_cur_len >= l_chop:
             p_controller_obj._Message = p_controller_obj._Message[l_chop:]
             l_ret = self.decode_message(p_controller_obj)
@@ -155,7 +156,10 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         if l_device_obj.DeviceType == 2:
-            Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            DecodeHvac().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            return
+        if l_device_obj.DeviceType == 3:
+            DecodeSecurity().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
@@ -171,14 +175,13 @@ class DecodeResponses(object):
         elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
-            # LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
         #
         try:
             if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
 
             elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
-                l_debug_msg += 'CleanupSuccess:"{}"; '.format(l_cmd2)
+                l_debug_msg += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
                 # self._publish(self.m_pyhouse_obj, l_device_obj)
 
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
@@ -203,13 +206,6 @@ class DecodeResponses(object):
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
-                # LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_device_obj.Name, l_level))
-
-            elif l_cmd1 >= MESSAGE_TYPES['thermostat_temp_up'] and l_cmd1 <= MESSAGE_TYPES['thermostat_report']:  #  0x6e
-                Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
-
-            elif l_cmd1 >= 0x68 and l_cmd1 <= 0x75:  #  0x6e
-                Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
 
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
                 l_debug_msg += ' Device-Set-Button-Pressed '

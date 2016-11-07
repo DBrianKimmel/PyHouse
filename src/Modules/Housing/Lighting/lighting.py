@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -37,7 +37,7 @@ class Utility(object):
     """Commands we can run from high places.
     """
 
-    def _setup_lighting(self, p_pyhouse_obj):
+    def XXX_setup_lighting(self, p_pyhouse_obj):
         """
         Find the lighting information
         Config file version 1.4 moved the lighting information into a separate LightingSection
@@ -64,7 +64,7 @@ class Utility(object):
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
         l_xml = p_pyhouse_obj.Xml.XmlRoot
-        _l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
+        # _l_lighting_xml = self._setup_lighting(p_pyhouse_obj)  # in case of old style file
         l_xml = l_xml.find('HouseDivision')
         if l_xml is None:
             return p_pyhouse_obj.House.Lighting

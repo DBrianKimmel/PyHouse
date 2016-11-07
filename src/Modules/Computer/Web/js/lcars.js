@@ -194,26 +194,23 @@ function createBaseEntry(self, p_key) {
 
 function buildDeviceEntry(self, p_obj, p_html) {
 	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'RoomCoords', p_obj.RoomCoords);
-	p_html += buildLcarTrueFalseWidget(self, 'Dimmable', 'Light Dimmable ?', p_obj.IsDimmable);
-	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
+	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'Room Coords', p_obj.RoomCoords);
+	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room Name', p_obj.RoomName);
+	p_html += buildLcarTextWidget(self, 'RoomUUID', 'Room UUID', p_obj.RoomUUID, 'disablef');
 	return p_html;
 }
 
 function fetchDeviceEntry(self, p_data) {
-	p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
 	p_data.Comment = fetchTextWidget(self, 'Comment');
 	p_data.RoomCoords = fetchCoordinatesWidget(self, 'RoomCoords');
-	p_data.IsDimmable = fetchTrueFalseWidget(self, 'Dimmable');
 	var l_ix = fetchTextWidget(self, 'RoomName');
 	p_data.RoomName = globals.House.Rooms[l_ix].Name
+	p_data.RoomUUID = fetchTextWidget(self, 'RoomUUID');
 	return p_data;
 }
 
 function createDeviceEntry(self, p_data) {
-	p_data.DeviceFamily = 'Insteon';
 	p_data.Comment = '';
-	p_data.IsDimmable = true;
 	p_data.RoomName = 'XXX Room';
 	p_data.RoomUUID = '';
 	p_data.RoomCoords = createCoordinates(self);

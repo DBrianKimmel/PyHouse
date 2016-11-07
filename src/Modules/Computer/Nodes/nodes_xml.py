@@ -12,9 +12,9 @@ PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
 from Modules.Utilities import uuid_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-11-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -131,7 +131,7 @@ class Xml(object):
         l_ret = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
         if l_xml is None:
-            LOG.warn('No ComputerDivision')
+            LOG.info('No ComputerDivision')
             return l_ret
         try:
             l_xml = l_xml.find(NODE_SECTION)

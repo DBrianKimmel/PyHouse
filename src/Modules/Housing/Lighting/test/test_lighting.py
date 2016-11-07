@@ -7,31 +7,34 @@
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 12 tests.  DBK 2016-07-14
+Passed all 13 tests.  DBK 2016-11-05
 
 """
 
-__updated__ = '2016-07-17'
-
+__updated__ = '2016-11-05'
 
 # Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightData
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.test.xml_controllers import \
         TESTING_CONTROLLER_NAME_0, \
         TESTING_CONTROLLER_NAME_1
 from Modules.Core.test.xml_device import \
         TESTING_DEVICE_FAMILY_INSTEON
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Housing.Lighting.test.xml_lights import TESTING_LIGHT_NAME_0, TESTING_LIGHT_NAME_1
-from Modules.Housing.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_0, TESTING_LIGHTING_BUTTON_NAME_1
+from Modules.Housing.Lighting.test.xml_lights import \
+    TESTING_LIGHT_NAME_0, \
+    TESTING_LIGHT_NAME_1
+from Modules.Housing.Lighting.test.xml_buttons import \
+    TESTING_LIGHTING_BUTTON_NAME_0, \
+    TESTING_LIGHTING_BUTTON_NAME_1
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -43,7 +46,13 @@ class SetupMixin(object):
         self.m_api = lightingAPI(self.m_pyhouse_obj)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.FamilyData = self.m_family
-        self.m_version = '1.4.0'
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_lighting')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -56,10 +65,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_1_SetupLighting(self):
         """Verify that we can find items we need in the test XML
         """
-        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
-        self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
-        self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
+        pass
 
     def test_2_PyHouse(self):
         self.assertIsNotNone(self.m_pyhouse_obj.Xml)
@@ -91,6 +97,8 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
+        self.assertEqual(self.m_xml.button.tag, 'Button')
+        self.assertEqual(self.m_xml.controller.tag, 'Controller')
         self.assertEqual(self.m_xml.light.tag, 'Light')
 
 
@@ -104,39 +112,36 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_1_Button(self):
         """Utility.
         """
-        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        l_buttons = self.m_api._read_buttons(self.m_pyhouse_obj, l_xml)
-        self.assertEqual(len(l_buttons), 2)
-        self.assertEqual(l_buttons[0].Name, TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(l_buttons[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_buttons[1].Name, TESTING_LIGHTING_BUTTON_NAME_1)
+        l_xml = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        self.assertEqual(len(l_xml.Buttons), 2)
+        self.assertEqual(l_xml.Buttons[0].Name, TESTING_LIGHTING_BUTTON_NAME_0)
+        self.assertEqual(l_xml.Buttons[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_xml.Buttons[1].Name, TESTING_LIGHTING_BUTTON_NAME_1)
 
     def test_2_Controller(self):
         """Utility.
         """
-        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        l_dict = self.m_api._read_controllers(self.m_pyhouse_obj, l_xml)
-        self.assertEqual(len(l_dict), 2)
-        self.assertEqual(l_dict[0].Name, TESTING_CONTROLLER_NAME_0)
-        self.assertEqual(l_dict[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_dict[1].Name, TESTING_CONTROLLER_NAME_1)
+        l_xml = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        self.assertEqual(len(l_xml.Controllers), 2)
+        self.assertEqual(l_xml.Controllers[0].Name, TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(l_xml.Controllers[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_xml.Controllers[1].Name, TESTING_CONTROLLER_NAME_1)
 
     def test_3_Light(self):
         """Utility.
         """
-        l_xml = self.m_api._setup_lighting(self.m_pyhouse_obj)
-        l_lights = self.m_api._read_lights(self.m_pyhouse_obj, l_xml)
-        print(PrettyFormatAny.form(l_lights, 'B1-3-A - Light'))
-        self.assertEqual(len(l_lights), 2)
-        self.assertEqual(l_lights[0].Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_lights[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_lights[1].Name, TESTING_LIGHT_NAME_1)
+        l_xml = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_xml.Lights, 'B1-3-A - Light'))
+        self.assertEqual(len(l_xml.Lights), 2)
+        self.assertEqual(l_xml.Lights[0].Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_xml.Lights[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_xml.Lights[1].Name, TESTING_LIGHT_NAME_1)
 
     def test_4_Lighting(self):
         """Read all the lighting info (Buttons, Controllers, Lights)
         """
         l_obj = self.m_api._read_lighting_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B1-4-A - Lighting'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-4-A - Lighting'))
         self.assertEqual(len(l_obj.Buttons), 2)
         self.assertEqual(len(l_obj.Controllers), 2)
         self.assertEqual(len(l_obj.Lights), 2)

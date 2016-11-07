@@ -12,9 +12,8 @@ Passed all 6 tests - DBK - 2016-10-31
 This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
-from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-04'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -22,14 +21,18 @@ import xml.etree.ElementTree as ET
 
 
 #  Import PyMh files
+from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
+from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from Modules.Housing.Security.security import XML as securityXML
+from Modules.Utilities.tools import PrintBytes
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_50T = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x6e\x4f')
@@ -41,10 +44,11 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_version = '1.4.0'
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Security.GarageDoors = securityXML().read_all_GarageDoors_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Security.MotionSensors = securityXML().read_all_MotionSensors_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
@@ -66,8 +70,9 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """Test that PyHouse_obj has the needed info.
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - PyHouse.House'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - PyHouse.House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-01-C - PyHouse.House.Lighting', 80))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Security, 'A1-01-D - PyHouse.House.Security', 80))
         self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Buttons), 2)
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
@@ -101,7 +106,7 @@ class B1_Util(SetupMixin, unittest.TestCase):
 
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
-        l_msg = self.m_util.get_next_message(self.m_ctrlr)
+        l_msg = Util().get_next_message(self.m_ctrlr)
         print(PrintBytes(l_msg))
         #  self.assertEqual(l_msg[1], 0x50)
         #  self.m_ctrlr._Message = bytearray()
@@ -113,6 +118,21 @@ class B1_Util(SetupMixin, unittest.TestCase):
         #  print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
         #  self.assertEqual(l_msg[1], 0x62)
         self.assertEqual(self.m_ctrlr._Message[1], 0x50)
+
+
+class B2_Decode(SetupMixin, unittest.TestCase):
+    """This tests the utility section of decoding
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_ctrlr = ControllerData()
+        self.m_decode = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_ctrlr)
+
+    def test_01_GetObjFromMsg(self):
+        self.m_ctrlr._Message = MSG_50
+        l_ctlr = self.m_decode.decode_message(self.m_ctrlr)
+        print(l_ctlr, 'B2-01-A Controller')
 
 
 class T1_HVAC(SetupMixin, unittest.TestCase):

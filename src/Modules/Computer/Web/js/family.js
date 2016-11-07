@@ -93,11 +93,12 @@ function fetchInsteonEntry(self, p_data) {
 
 function createInsteonEntry(self, p_data) {
 	// Divmod.debug('---', 'family.createInsteonEntry() was called.');
-	p_data.InsteonAddress = hex2int('11.22.33', 3);
-	p_data.DevCat = 0;
+	// p_data.InsteonAddress = hex2int('11.22.33', 3);
+	p_data.InsteonAddress = '11.22.33';
+	p_data.DevCat = '01.01';
 	p_data.GroupNumber = 0;
 	p_data.GroupList = '';
-	p_data.ProductKey = 0;
+	p_data.ProductKey = '00.00.00';
 	p_data.EngineVersion = 2;
 	p_data.FirmwareVersion = 0;
 	return p_data;
@@ -148,6 +149,7 @@ function buildFamilyPart(self, p_obj, p_html, p_change) {
 
 function fetchFamilyPart(self, p_data) {
 	// Divmod.debug('---', 'family.fetchFamilyPart() called.');
+	p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
 	if (p_data.DeviceFamily === 'Insteon')
 		p_data = fetchInsteonEntry(self, p_data);
 	else if (p_data.DeviceFamily === 'UPB')

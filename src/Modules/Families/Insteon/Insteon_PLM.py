@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-04'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -230,7 +230,7 @@ class PlmDriverProtocol(Commands):
             if l_cur_len < 2:
                 return
             #  LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
-            l_response_len = Util.get_message_length(p_controller_obj._Message)
+            l_response_len = Insteon_utils.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)
         else:

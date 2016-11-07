@@ -29,12 +29,11 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-05'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
@@ -48,7 +47,7 @@ from Modules.Housing.Scheduling.schedule import API as scheduleAPI
 from Modules.Housing.Security.security import API as securityAPI
 from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']

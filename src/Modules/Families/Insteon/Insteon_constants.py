@@ -13,11 +13,13 @@ Note! This is designed for 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-02'
 
 STX = 0x02
 ACK = 0x06
 NAK = 0x15
+
+DEVICE_TYPE = ['N/A', 'Lighting', 'HVAC', 'Security']  # documenting it
 
 # PLM Serial Commands
 PLM_COMMANDS = {

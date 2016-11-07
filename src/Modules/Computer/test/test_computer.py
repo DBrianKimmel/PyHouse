@@ -7,10 +7,11 @@
 @note:      Created on Jul 25, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2016-07-06
+Passed all 8 tests - DBK - 2016-11-05
 
 """
-__updated__ = "2016-07-06"
+
+__updated__ = "2016-11-05"
 
 # Import system type stuff
 import platform
@@ -18,15 +19,11 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Computer.computer import API as computerAPI, Xml as computerXML
-
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer.computer import API as computerAPI, Xml as computerXML
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_NAME_0
-
-DIVISION = 'ComputerDivision'
-MQTT_SECTION = 'MqttSection'
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -37,6 +34,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = computerAPI(self.m_pyhouse_obj)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_computer')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -50,8 +54,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
-        self.assertEqual(self.m_xml.mqtt_sect.tag, MQTT_SECTION)
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
 
     def test_02_Computer(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse'))
@@ -71,8 +75,8 @@ class B1_XML(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
-        self.assertEqual(self.m_xml.mqtt_sect.tag, MQTT_SECTION)
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
 
     def test_02_Computer(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse'))
@@ -88,7 +92,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """
         """
         l_xml = computerXML.create_computer(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
         self.assertEqual(l_xml.Name, platform.node())
         self.assertEqual(l_xml.Key, 0)
         self.assertEqual(l_xml.Active, True)
@@ -97,7 +101,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Read the config - it is minimal.
         """
         l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'C1-02-A - Computer Xml'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-02-A - Computer Xml'))
         self.assertEqual(l_obj.Name, TESTING_COMPUTER_NAME_0)
 
 
@@ -111,7 +115,7 @@ class C2_Write(SetupMixin, unittest.TestCase):
         """
         _l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
         l_xml = computerXML.write_computer_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C2-01-A - Computer Xml'))
+        # print(PrettyFormatAny.form(l_xml, 'C2-01-A - Computer Xml'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_COMPUTER_NAME_0)
 
 # # ## END DBK

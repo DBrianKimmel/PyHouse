@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-11-07'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -166,7 +166,7 @@ class PutGetXML(object):
 #  text
 # -----
     @staticmethod
-    def get_text_from_xml(p_xml, p_name, default=None):
+    def get_text_from_xml(p_xml, p_name, default=''):
         """
         @param p_xml: is the xml where we will find the field
         @param p_name: is the name of the field to fetch

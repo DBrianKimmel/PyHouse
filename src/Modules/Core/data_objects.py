@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-05'
 __version_info__ = (1, 7, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -484,6 +484,8 @@ class HouseInformation(BaseUUIDObject):
 
 class LoginData(BaseUUIDObject):
     """ bout the Logged in user
+
+    ==> PyHouse.Computer.Web.Logins.xxx - as in the def below.
     """
     def __init__(self):
         super(LoginData, self).__init__()

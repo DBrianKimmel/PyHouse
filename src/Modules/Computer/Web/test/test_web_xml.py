@@ -7,27 +7,29 @@
 @note:      Created on Jun 27, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2016-07-08
+Passed all 12 tests - DBK - 2016-11-05
 
 """
 
-__updated__ = '2016-07-08'
+__updated__ = '2016-11-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Web.web_xml import Xml as webXml
-from Modules.Web.test.xml_web import \
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Web.web_xml import Xml as webXml
+from Modules.Computer.Web.test.xml_web import \
         TESTING_WEB_PORT, \
         TESTING_LOGIN_NAME_0, \
         TESTING_LOGIN_PASSWORD_0, \
         TESTING_LOGIN_ROLE_0, \
-        TESTING_LOGIN_FULL_NAME_0, TESTING_LOGIN_KEY_0, TESTING_LOGIN_ACTIVE_0, TESTING_LOGIN_UUID_0
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+        TESTING_LOGIN_FULL_NAME_0, \
+        TESTING_LOGIN_KEY_0, \
+        TESTING_LOGIN_ACTIVE_0
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -36,6 +38,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = webXml()
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_web_xml')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
@@ -81,7 +90,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Name, TESTING_LOGIN_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_LOGIN_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_LOGIN_ACTIVE_0)
-        self.assertEqual(l_obj.UUID, TESTING_LOGIN_UUID_0)
+        # UUID is generated and can not be compared
         self.assertEqual(l_obj.LoginFullName, TESTING_LOGIN_FULL_NAME_0)
         self.assertEqual(l_obj.LoginPasswordCurrent, TESTING_LOGIN_PASSWORD_0)
         self.assertEqual(l_obj.LoginRole, TESTING_LOGIN_ROLE_0)
@@ -133,7 +142,6 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Name'], TESTING_LOGIN_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LOGIN_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LOGIN_ACTIVE_0)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_LOGIN_UUID_0)
         self.assertEqual(l_xml.find('FullName').text, TESTING_LOGIN_FULL_NAME_0)
         self.assertEqual(l_xml.find('Password').text, TESTING_LOGIN_PASSWORD_0)
         self.assertEqual(l_xml.find('Role').text, TESTING_LOGIN_ROLE_0)
@@ -142,16 +150,16 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """ Write All logins.
         """
         l_obj = self.m_web_obj.Logins
-        print(PrettyFormatAny.form(l_obj, 'B2-03-A - Web'))
+        # print(PrettyFormatAny.form(l_obj, 'B2-03-A - Web'))
         l_xml = webXml._write_all_logins(l_obj)
-        print(PrettyFormatAny.form(l_xml, 'B2-03-B - Web'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-03-B - Web'))
         self.assertEqual(l_xml.find('Login/FullName').text, TESTING_LOGIN_FULL_NAME_0)
 
     def test_04_Web(self):
         """ Write All logins.
         """
         l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'B2-04-A - Web'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-04-A - Web'))
         self.assertEqual(l_xml.find('Port').text, TESTING_WEB_PORT)
         self.assertEqual(l_xml.find('LoginSection/Login/FullName').text, TESTING_LOGIN_FULL_NAME_0)
 

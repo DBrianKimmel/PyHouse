@@ -122,27 +122,25 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 },
 
 function buildEntry(self, p_obj, p_handler, p_onchange) {
-	Divmod.debug('---', 'thermostats.buildEntry() was called.');
+	//Divmod.debug('---', 'thermostats.buildEntry() was called.');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
-	l_html = self.buildThermostatEntry(p_obj, l_html);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
+	l_html = self.buildThermostatEntry(p_obj, l_html);
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
 },
 
 function buildThermostatEntry(self, p_obj, p_html, p_onchange) {
-	Divmod.debug('---', 'thermostats.buildThermostatEntry() was called.');
-	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room', p_obj.RoomName);
+	//Divmod.debug('---', 'thermostats.buildThermostatEntry() was called.');
 	p_html += buildLcarHvacSliderWidget(self, 'CoolSetting', 'Cool', p_obj.CoolSetPoint, 'handleSliderChangeCool');
 	p_html += buildLcarHvacSliderWidget(self, 'HeatSetting', 'Heat', p_obj.HeatSetPoint, 'handleSliderChangeHeat');
 	return p_html;
 },
 
 function handleSliderChangeCool(p_event) {
-	Divmod.debug('---', 'thermostats.handleSliderChangeCool() was called.');
+	// Divmod.debug('---', 'thermostats.handleSliderChangeCool() was called.');
 	var l_obj = globals.House.ThermostatObj;
 	var l_self = globals.Self;
 	var l_level = fetchSliderWidget(l_self, 'CoolSetting');
@@ -150,7 +148,7 @@ function handleSliderChangeCool(p_event) {
 },
 
 function handleSliderChangeHeat(p_event) {
-	Divmod.debug('---', 'thermostats.handleSliderChangeHeat() was called.');
+	// Divmod.debug('---', 'thermostats.handleSliderChangeHeat() was called.');
 	var l_obj = globals.House.ThermostatObj;
 	var l_self = globals.Self;
 	var l_level = fetchSliderWidget(l_self, 'HeatSetting');
@@ -158,7 +156,7 @@ function handleSliderChangeHeat(p_event) {
 },
 
 function familyChanged() {
-	Divmod.debug('---', 'thermostats.familyChanged() was called.');
+	// Divmod.debug('---', 'thermostats.familyChanged() was called.');
 	var l_obj = globals.House.ThermostatObj;
 	var l_self = globals.Self;
 	l_obj.DeviceFamily = fetchSelectWidget(l_self, 'Family');
@@ -166,43 +164,35 @@ function familyChanged() {
 },
 
 function fetchEntry(self) {
-	Divmod.debug('---', 'thermostats.fetchEntry() was called.');
+	// Divmod.debug('---', 'thermostats.fetchEntry() was called.');
 	var l_data = fetchBaseEntry(self);
-	l_data = self.fetchDeviceEntry(l_data);
+	l_data = fetchDeviceEntry(self, l_data);
+	l_data = fetchFamilyPart(self, l_data);
 	l_data = self.fetchThermostatEntry(l_data);
-	l_data = self.fetch(l_data);
-	if (l_data.DeviceFamily === 'Insteon')
-		l_data = fetchInsteonEntry(self, l_data);
-	if (l_data.DeviceFamily === 'UPB')
-		l_data = fetchUpbEntry(self, l_data);
 	return l_data;
 },
 
 function fetchThermostatEntry(self, p_data) {
-	Divmod.debug('---', 'thermostats.fetchThermostatEntry() was called.');
-	p_data.Comment = fetchTextWidget(self, 'Comment');
-	p_data.RoomName = fetchTextWidget(self, 'RoomName');
-	p_data.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
+	// Divmod.debug('---', 'thermostats.fetchThermostatEntry() was called.');
 	p_data.CoolSetPoint = fetchSliderWidget(self, 'CoolSetting');
 	p_data.HeatSetPoint = fetchSliderWidget(self, 'HeatSetting');
 	return p_data;
 },
 
 function createEntry(self) {
-	Divmod.debug('---', 'thermostats.createEntry() was called.');
+	// Divmod.debug('---', 'thermostats.createEntry() was called.');
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Hvac.Thermostats).length);
 	l_data = createDeviceEntry(self, l_data);
 	l_data.DeviceFamily = "Insteon";
 	l_data = self.createThermostatEntry(l_data);
 	l_data = createFamilyPart(self, l_data);
+	// console.log("thermostats.createEntry() - Obj = %O", p_data);
 	return l_data;
 },
 
 function createThermostatEntry(self, p_data) {
-	Divmod.debug('---', 'thermostats.createThermostatEntry() was called.');
+	// Divmod.debug('---', 'thermostats.createThermostatEntry() was called.');
 	// console.log("thermostats.createThermostatEntry() - p_data = %O", p_data);
-	p_data.Comment = '';
-	p_data.RoomName = '';
 	p_data.CoolSetPoint = 78;
 	p_data.HeatSetPoint = 70;
 	return p_data;
@@ -223,7 +213,7 @@ function handleDataOnClick(self, p_node) {
 	var l_ix = p_node.name;
 	var l_defer;
 	var l_json;
-	Divmod.debug('---', 'thermostats.handleDataOnClick() was called. Node:' + l_ix);
+	// Divmod.debug('---', 'thermostats.handleDataOnClick() was called. Node:' + l_ix);
 	switch (l_ix) {
 	case '10003': // Add/Change Button
 		l_json = JSON.stringify(self.fetchEntry());
