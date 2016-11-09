@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-11-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -233,5 +233,12 @@ class RoomCls(Sync, Xml, Maint):
 
     def __init__(self, p_pyHouse_obj):
         self.m_pyhouse_obj = p_pyHouse_obj
+
+
+def all_rooms_getter(p_pyhouse_obj):
+    return p_pyhouse_obj.House.Rooms
+
+def all_rooms_setter(p_pyhouse, p_rooms):
+    p_pyhouse.House.Rooms = p_rooms
 
 #  ## END DBK

@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-11-04'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -116,7 +116,7 @@ class Commands(object):
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
             Insteon_utils.queue_command(p_controller_obj, l_command)
-            LOG.info('Send Command: {}'.format(PrintBytes(l_command)))
+            # LOG.info('Send Command: {}'.format(PrintBytes(l_command)))
         except Exception as _e_err:
             LOG.error('Error creating command {}'.format(PrettyFormatAny.form(p_obj, 'Device')))
 
@@ -201,7 +201,7 @@ class PlmDriverProtocol(Commands):
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            #  LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
+            LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -306,7 +306,7 @@ class LightHandlerAPI(object):
         Get the status of a thermostat.
         """
         LOG.info('Request Status from thermostat device: {}'.format(p_obj.Name))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_get_zone_temp'], 0)  #  0x6A
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_status'], 0)  #  0x6A
 
     @staticmethod
     def _get_engine_version(p_controller_obj, p_obj):

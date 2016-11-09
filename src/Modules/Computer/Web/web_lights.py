@@ -12,7 +12,7 @@
 TODO: Change all references to a light if name changes.
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 import os
@@ -22,10 +22,10 @@ from nevow import athena
 #  Import PyMh files and modules.
 #  from Modules.Core import conversions
 from Modules.Core.data_objects import CoordinateData
+from Modules.Computer.Web import web_family
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_lights
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_utils
 from Modules.Utilities import json_tools
 
 #  Handy helper for finding external resources nearby.
@@ -78,19 +78,14 @@ class LightsElement(athena.LiveElement):
         l_coords.Z_Height = l_json['RoomCoords'][2]
         l_obj.RoomCoords = l_coords
         l_obj.IsDimmable = l_json['IsDimmable']
-        l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.RoomName = l_json['RoomName']
+        l_obj.RoomUUID = l_json['RoomUUID']
+        l_obj.DeviceFamily = l_json['DeviceFamily']
         l_obj.DeviceType = 1
         l_obj.DeviceSubType = 3
         l_obj.UUID = l_json['UUID']
-        #  if len(l_obj.UUID) < 8:
-        #    l_obj.UUID = str(uuid.uuid1())
-        if l_obj.DeviceFamily == 'Insteon':
-            Insteon_utils.Util().get_json_data(l_obj, l_json)
-        elif l_obj.DeviceFamily == 'UPB':
-            l_obj.UPBAddress = l_json['UPBAddress']
-            l_obj.UPBPassword = l_json['UPBPassword']
-            l_obj.UPBNetworkID = l_json['UPBNetworkID']
+        web_family.get_family_json_data(l_obj, l_json)
         self.m_pyhouse_obj.House.Lighting.Lights[l_ix] = l_obj
+        LOG.info('Light Added - {}'.format(l_obj.Name))
 
 #  ## END DBK

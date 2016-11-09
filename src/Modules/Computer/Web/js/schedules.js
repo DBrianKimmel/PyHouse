@@ -160,7 +160,7 @@ function buildIrrigationEntry(self, p_obj, p_html) {
 
 function buildLightingEntry(self, p_obj, p_html) {
 	Divmod.debug('---', 'schedules.buildLightingEntry() was called.');
-	p_html += buildLcarRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', p_obj.RoomName);
+	p_html += buildRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', p_obj.RoomName);
 	p_html += buildLcarLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', p_obj.LightName);
 	p_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', p_obj.Level, 'handleSliderChange');
 	p_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);

@@ -1,5 +1,5 @@
 /**
- * @name:      PyHouse/src/Modules/Web/js/family.js
+ * @name:      PyHouse/src/Modules/Computer/Web/js/family.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
  * @copyright: (c) 2014-2016 by D. Brian Kimmel
@@ -93,13 +93,12 @@ function fetchInsteonEntry(self, p_data) {
 
 function createInsteonEntry(self, p_data) {
 	// Divmod.debug('---', 'family.createInsteonEntry() was called.');
-	// p_data.InsteonAddress = hex2int('11.22.33', 3);
-	p_data.InsteonAddress = '11.22.33';
-	p_data.DevCat = '01.01';
+	p_data.InsteonAddress = 1;
+	p_data.DevCat = 17;
 	p_data.GroupNumber = 0;
 	p_data.GroupList = '';
-	p_data.ProductKey = '00.00.00';
-	p_data.EngineVersion = 2;
+	p_data.ProductKey = 49;
+	p_data.EngineVersion = 1;
 	p_data.FirmwareVersion = 0;
 	return p_data;
 }

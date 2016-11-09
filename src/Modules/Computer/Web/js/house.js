@@ -91,7 +91,7 @@ function buildLocationEntry(self, p_obj, p_html) {
 	p_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', p_obj.Longitude);
 	p_html += buildLcarTextWidget(self, 'Elevation', 'Elevation', p_obj.Elevation);
 	p_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', p_obj.TimeZoneName);
-	p_html += buildLcarTrueFalseWidget(self, 'Master', 'Master', p_obj.Master);
+	p_html += buildTrueFalseWidget(self, 'Master', 'Master', p_obj.Master);
 	return p_html;
 },
 

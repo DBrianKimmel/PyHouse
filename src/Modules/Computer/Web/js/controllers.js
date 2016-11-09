@@ -1,5 +1,5 @@
 /**
- * @name:      PyHouse/src/Modules/Web/js/controllers.js
+ * @name:      PyHouse/src/Modules/Computer/Web/js/controllers.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
  * @copyright: (c) 2014-2016 by D. Brian Kimmel
@@ -186,7 +186,8 @@ function fetchControllerEntry(self, p_data) {
 
 function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Controllers).length);
-	l_data = createDeviceEntry(self, l_data);  // in lcars.js
+	l_data = createDeviceEntry(self, l_data);  // in lcars.js,
+	l_data.DeviceFamily = 'Insteon';
 	l_data = self.createControllerEntry(l_data);
 	l_data = createFamilyPart(self, l_data)
 	l_data = createInterfacePart(self, l_data);

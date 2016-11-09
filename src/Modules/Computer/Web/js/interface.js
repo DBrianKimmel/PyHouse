@@ -62,7 +62,7 @@ function fetchSerialEntry(self, p_data) {
 }
 
 function createSerialEntry(self, p_data) {
-	p_data.BaudRate = 9600;
+	p_data.BaudRate = 19200;
 	p_data.ByteSize = 8;
 	p_data.Parity = 'N';
 	p_data.StopBits = 1.0;

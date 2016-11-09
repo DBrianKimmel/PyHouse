@@ -1,5 +1,5 @@
 /**
- * @name: PyHouse/src/Modules/Web/js/rooms.js
+ * @name: PyHouse/src/Modules/Computer/Web/js/rooms.js
  * @author: D. Brian Kimmel
  * @contact: D.BrianKimmel@gmail.com
  * @copyright: (c) 2014-2016 by D. Brian Kimmel

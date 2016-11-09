@@ -10,9 +10,8 @@
 @summary:   Web interface to buttons for the selected house.
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-08'
 
 # Import system type stuff
 import os
@@ -20,10 +19,10 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
+from Modules.Computer.Web import web_family
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_buttons
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_utils
 from Modules.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
@@ -79,10 +78,8 @@ class ButtonsElement(athena.LiveElement):
         l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.RoomName = l_json['RoomName']
         l_obj.RoomUUID = l_json['RoomUUID']
-        if l_obj.DeviceFamily == 'Insteon':
-            Insteon_utils.Util.get_json_data(l_obj, l_json)
+        web_family.get_family_json_data(l_obj, l_json)
         self.m_pyhouse_obj.House.Lighting.Buttons[l_obj.Key] = l_obj
         LOG.info('Button Added - {}'.format(l_obj.Name))
-        LOG.info(PrettyFormatAny.form(l_obj, 'Button'))
 
 # ## END DBK

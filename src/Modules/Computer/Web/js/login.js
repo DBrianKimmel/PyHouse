@@ -123,7 +123,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function buildLoginEntry(self, p_obj, p_html, p_onchange) {
 		p_html += buildLcarTextWidget(self, 'LoginName', 'Name', p_obj.Name);
 		p_html += buildLcarPasswordWidget(self, 'PasswordCurrent', 'Current Password', 'size=20', p_obj.PasswordCurrent);
-		p_html += buildLcarTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
+		p_html += buildTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
 		if (p_obj.ChangeFlag === true) {
 			p_html += buildLcarPasswordWidget(self, 'PasswordNew', 'New Password', 'size=20', p_obj.PasswordNew);
 			p_html += buildLcarPasswordWidget(self, 'PasswordVerify', 'Verify Password', 'size=20', p_obj.PasswordVerify);

@@ -154,7 +154,7 @@ function buildBaseEntry(self, p_obj, p_html, /* optional */noUuid) {
 	// Divmod.debug('---', 'lcars.build_lcars_top() was called. ' + noUuid);
 	p_html += buildLcarTextWidget(self, 'Name', 'Device Name', p_obj.Name);
 	p_html += buildLcarTextWidget(self, 'Key', 'Index', p_obj.Key, 'size=10 disabled');
-	p_html += buildLcarTrueFalseWidget(self, 'Active', 'Active ?', p_obj.Active);
+	p_html += buildTrueFalseWidget(self, 'Active', 'Active ?', p_obj.Active);
 	if (l_uuid === undefined)
 		p_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
 	return p_html;
@@ -195,7 +195,7 @@ function createBaseEntry(self, p_key) {
 function buildDeviceEntry(self, p_obj, p_html) {
 	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
 	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'Room Coords', p_obj.RoomCoords);
-	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room Name', p_obj.RoomName);
+	p_html += buildRoomSelectWidget(self, 'RoomName', 'Room Name', p_obj.RoomName);
 	p_html += buildLcarTextWidget(self, 'RoomUUID', 'Room UUID', p_obj.RoomUUID, 'disablef');
 	return p_html;
 }

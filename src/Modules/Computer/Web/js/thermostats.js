@@ -192,7 +192,6 @@ function createEntry(self) {
 
 function createThermostatEntry(self, p_data) {
 	// Divmod.debug('---', 'thermostats.createThermostatEntry() was called.');
-	// console.log("thermostats.createThermostatEntry() - p_data = %O", p_data);
 	p_data.CoolSetPoint = 78;
 	p_data.HeatSetPoint = 70;
 	return p_data;
@@ -217,8 +216,7 @@ function handleDataOnClick(self, p_node) {
 	switch (l_ix) {
 	case '10003': // Add/Change Button
 		l_json = JSON.stringify(self.fetchEntry());
-		l_defer = self.callRemote("saveThermostatsData", l_json); // @
-		// web_thermostat
+		l_defer = self.callRemote("saveThermostatsData", l_json); // @ web_thermostat
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;
@@ -229,8 +227,7 @@ function handleDataOnClick(self, p_node) {
 		var l_obj = self.fetchEntry();
 		l_obj.Delete = true;
 		l_json = JSON.stringify(l_obj);
-		l_defer = self.callRemote("saveThermostatsData", l_json); // @
-		// web_rooms
+		l_defer = self.callRemote("saveThermostatsData", l_json); // @web_thermostat
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;

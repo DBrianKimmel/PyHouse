@@ -11,8 +11,7 @@
 
 """
 
-__updated__ = '2016-11-01'
-
+__updated__ = '2016-11-08'
 
 
 #  Import system type stuff
@@ -22,10 +21,10 @@ from nevow import athena
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import GarageDoorData
+from Modules.Computer.Web import web_family
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Drivers import VALID_INTERFACES
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_utils
 from Modules.Utilities import json_tools
 
 
@@ -92,8 +91,7 @@ class GarageDoorsElement(athena.LiveElement):
         l_obj.DeviceSubType = 1
         l_obj.UUID = l_json['UUID']
         l_obj.Status = l_json['Status']
-        if l_obj.DeviceFamily == 'Insteon':
-            Insteon_utils.Util().get_json_data(l_obj, l_json)
+        web_family.get_family_json_data(l_obj, l_json)
         self.m_pyhouse_obj.House.Security.GarageDoors[l_ix] = l_obj
         LOG.info('Garage Door Added - {}'.format(l_obj.Name))
 

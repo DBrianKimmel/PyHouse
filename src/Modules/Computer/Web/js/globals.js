@@ -664,7 +664,7 @@ function _buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal, /* op
 /**
  * Note the name is athenaid:xx-Name
  */
-function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value, /* optional */p_optionHandler) {
+function buildTrueFalseWidget(self, p_id, p_caption, p_value, /* optional */p_optionHandler) {
 	var l_html = '';
 	var l_name = buildAthenaId(self, p_id);
 	var l_value = p_value !== false; // force to be a bool
@@ -737,7 +737,7 @@ function _makeNamesList(p_obj) {
 	return l_list;
 }
 
-function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
+function buildRoomSelectWidget(self, p_id, p_caption, p_checked) {
 	var l_obj = globals.House.Rooms;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)

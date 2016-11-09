@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-07'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 import os
@@ -20,10 +20,10 @@ from nevow import athena
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
+from Modules.Computer.Web import web_family
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Drivers import VALID_INTERFACES
 from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_utils
 from Modules.Utilities import json_tools
 
 
@@ -91,12 +91,7 @@ class ControllersElement(athena.LiveElement):
         l_obj.UUID = l_json['UUID']
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']
-        if l_obj.DeviceFamily == 'Insteon':
-            Insteon_utils.Util().get_json_data(l_obj, l_json)
-        elif l_obj.DeviceFamily == 'UPB':
-            l_obj.UPBAddress = l_json['UPBAddress']
-            l_obj.UPBPassword = l_json['UPBPassword']
-            l_obj.UPBNetworkID = l_json['UPBNetworkID']
+        web_family.get_family_json_data(l_obj, l_json)
         if l_obj.InterfaceType == 'Serial':
             l_obj.BaudRate = l_json['BaudRate']
         self.m_pyhouse_obj.House.Lighting.Controllers[l_ix] = l_obj

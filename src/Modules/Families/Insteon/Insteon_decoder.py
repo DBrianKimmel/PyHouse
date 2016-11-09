@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-11-04'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 
@@ -69,13 +69,13 @@ class DecodeResponses(object):
                 l_need_len = Insteon_utils.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
-                    self._decode_dispatch(p_controller_obj)
+                    self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
                     return 'Ok'
                 else:
                     LOG.warning('Message was too short - waiting for rest of message. {}'.format(PrintBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
-                LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, PrintBytes(p_controller_obj._Message)))
+                # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, PrintBytes(p_controller_obj._Message)))
                 p_controller_obj._Message = p_controller_obj._Message[1:]
                 return 'Drop'
 
@@ -96,7 +96,7 @@ class DecodeResponses(object):
             LOG.error(l_msg)
         return l_ret
 
-    def _decode_dispatch(self, p_controller_obj):
+    def _decode_dispatch(self, p_pyhouse_obj, p_controller_obj):
         """Decode a message that was ACKed / NAked.
         see IDM pages 238-241
 
@@ -112,21 +112,21 @@ class DecodeResponses(object):
         elif l_cmd == 0x50: l_ret = self._decode_50(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51(p_controller_obj)
         elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
-        elif l_cmd == 0x53: self.m_link.decode_53()
-        elif l_cmd == 0x54: linkDecode.decode_54(p_controller_obj)
-        elif l_cmd == 0x55: l_ret = self._decode_55_record(p_controller_obj)
-        elif l_cmd == 0x56: linkDecode.decode_56(p_controller_obj)
-        elif l_cmd == 0x57: self.m_link.decode_57()
-        elif l_cmd == 0x58: linkDecode.decode_58(p_controller_obj)
+        elif l_cmd == 0x53: linkDecode.decode_53(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x54: linkDecode.decode_54(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x55: linkDecode.decode_55(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x56: linkDecode.decode_56(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x57: linkDecode.decode_57(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x58: linkDecode.decode_58(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x60: l_ret = self._decode_60_record(p_controller_obj)
         elif l_cmd == 0x61: l_ret = self._decode_61_record(p_controller_obj)
         elif l_cmd == 0x62: l_ret = self._decode_62_record(p_controller_obj)
-        elif l_cmd == 0x64: l_ret = self._decode_64_record(p_controller_obj)
-        elif l_cmd == 0x65: l_ret = self._decode_65_record(p_controller_obj)
-        elif l_cmd == 0x69: l_ret = self._decode_69_record(p_controller_obj)
-        elif l_cmd == 0x6A: l_ret = self._decode_6A_record(p_controller_obj)
+        elif l_cmd == 0x64: linkDecode.decode_64(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x65: linkDecode.decode_65(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x69: linkDecode.decode_69(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x6A: linkDecode.decode_6A(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6B: l_ret = self._decode_6B_record(p_controller_obj)
-        elif l_cmd == 0x6C: l_ret = self._decode_6C_record(p_controller_obj)
+        elif l_cmd == 0x6C: linkDecode.decode_6C(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
@@ -253,14 +253,6 @@ class DecodeResponses(object):
         """
         LOG.warning("52 Resp: not decoded yet.")
 
-    def _decode_55_record(self, p_controller_obj):
-        """Insteon User Reset detected (2 bytes).
-        See p 269 of developers guide.
-        """
-        l_debug_msg = "User Reset Detected! "
-        p_controller_obj.Ret = linkDecode.decode_55(p_controller_obj)
-        LOG.info("".format(l_debug_msg))
-
     def _decode_60_record(self, p_controller_obj):
         """Get Insteon Modem Info (9 bytes).
         See p 273 of developers guide.
@@ -335,14 +327,6 @@ class DecodeResponses(object):
             LOG.info("Got ACK(62); {}".format(l_debug_msg))
         return
 
-    def _decode_64_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_64(p_controller_obj)
-        return
-
-    def _decode_65_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_65(p_controller_obj)
-        return
-
     def _decode_67_record(self, p_controller_obj):
         """Reset IM ACK response (3 bytes).
         See p 258 of developers guide.
@@ -351,14 +335,6 @@ class DecodeResponses(object):
         l_ack = utilDecode.get_ack_nak(l_message[2])
         l_debug_msg = "Reset IM(PLM) {}".format(l_ack)
         LOG.info("{}".format(l_debug_msg))
-        return
-
-    def _decode_69_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_69(p_controller_obj)
-        return
-
-    def _decode_6A_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_6A(p_controller_obj)
         return
 
     def _decode_6B_record(self, p_controller_obj):
@@ -379,10 +355,6 @@ class DecodeResponses(object):
         else:
             LOG.error("== 6B - NAK/Unknown message type {:#x}".format(l_flag))
             p_controller_obj.Ret = False
-        return
-
-    def _decode_6C_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_6C(p_controller_obj)
         return
 
     def _decode_6F_record(self, p_controller_obj):
