@@ -15,7 +15,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2016-11-13'
 
 #  Import system type stuff
 
@@ -120,13 +120,11 @@ class Xml(object):
         @return: The entire LoginSection XML element tree
         """
         l_count = 0
-        l_logins = p_obj
         l_xml = ET.Element('LoginSection')
-        if l_logins == {}:
-            LOG.error('No logins available')
+        if p_obj == {}:
             return l_xml
         try:
-            for l_obj in l_logins.itervalues():
+            for l_obj in p_obj.itervalues():
                 l_sys = Xml._write_one_login(l_obj)
                 l_xml.append(l_sys)
                 l_count += 1
@@ -168,8 +166,7 @@ class Xml(object):
         l_obj = p_pyhouse_obj.Computer.Web
         l_web_xml = ET.Element("WebSection")
         Xml._write_port(l_obj, l_web_xml)
-        l_xml = Xml._write_all_logins(l_obj.Logins)
-        l_web_xml.append(l_xml)
+        l_web_xml.append(Xml._write_all_logins(l_obj.Logins))
         return l_web_xml
 
 #  ## END DBK

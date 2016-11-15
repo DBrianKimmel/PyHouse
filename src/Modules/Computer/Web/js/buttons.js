@@ -32,13 +32,15 @@ function ready(self) {
 	return l_defer;
 },
 
-/**
- * routines for showing and hiding parts of the screen.
- */
 function startWidget(self) {
 	self.node.style.display = 'block';
 	showSelectionButtons(self);
 	self.fetchDataFromServer();
+},
+
+function buildButtonName(self, p_obj) {
+	var l_html = p_obj.Name + '<br>' + p_obj.RoomName;
+	return l_html;
 },
 
 // ============================================================================
@@ -66,7 +68,7 @@ function fetchDataFromServer(self) {
  * Build a screen full of buttons - One for each Button and some actions.
  */
 function buildLcarSelectScreen(self) {
-	var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Buttons, 'handleMenuOnClick');
+	var l_button_html = buildLcarSelectionButtonsTable(globals.House.Lighting.Buttons, 'handleMenuOnClick', self.buildButtonName);
 	var l_html = build_lcars_top('Buttons', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(10, l_button_html);
 	l_html += build_lcars_bottom();
@@ -121,10 +123,11 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 },
 
 function buildEntry(self, p_obj, p_handler, p_onchange) {
-	// Divmod.debug('---', 'buttons.buildEntry() was called.');
+	Divmod.debug('---', 'buttons.buildEntry() was called.');
+	console.log("buttons.buildEntry() - Object = %O", p_obj);
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
-	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
+	l_html = buildDeviceEntry(self, p_obj, l_html);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
@@ -152,8 +155,14 @@ function createEntry(self) {
 	var l_key = Object.keys(globals.House.Lighting.Buttons).length;
 	var l_data = createBaseEntry(self, l_key);
 	l_data = self.createButtonEntry(l_data);
+	l_data = createDeviceEntry(self, l_data);  // in lcars.js
+	l_data.DeviceFamily = 'Insteon';
 	l_data = createFamilyPart(self, l_data);
 	return l_data;
+},
+
+function createButtonEntry(self, p_data) {
+	return p_data;
 },
 
 // ============================================================================

@@ -112,7 +112,7 @@ function handleMenuOnClick(self, p_node) {
 function buildDataEntryScreen(self, p_entry, p_handler) {
 	var l_obj = arguments[1];
 	var l_html = build_lcars_top('Login', 'lcars-salmon-color');
-	l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, 'change', p_handler));
+	l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, p_handler));
 	l_html += build_lcars_bottom();
 	self.nodeById('DataEntryDiv').innerHTML = l_html;
 },

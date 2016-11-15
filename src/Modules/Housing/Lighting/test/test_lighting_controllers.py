@@ -7,10 +7,10 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 18 tests - DBK - 2016-11-05
+Passed all 18 tests - DBK - 2016-11-14
 """
 
-__updated__ = '2016-11-07'
+__updated__ = '2016-11-14'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -79,7 +79,7 @@ class A0(unittest.TestCase):
     def setUp(self):
         pass
     def test_00_Print(self):
-        print('Id: test_lighting_controller')
+        print('Id: test_lighting_controllers')
 
 
 class A1_SetUp(SetupMixin, unittest.TestCase):

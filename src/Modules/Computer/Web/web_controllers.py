@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-15'
 
 #  Import system type stuff
 import os
@@ -20,7 +20,7 @@ from nevow import athena
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Computer.Web import web_family
+from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Drivers import VALID_INTERFACES
 from Modules.Computer import logging_pyh as Logger
@@ -79,21 +79,17 @@ class ControllersElement(athena.LiveElement):
             l_obj = self.m_pyhouse_obj.House.Lighting.Controllers[l_ix]
         except KeyError:
             LOG.warning('Creating a new controller {}'.format(l_ix))
-        l_obj.Name = l_json['Name']
-        l_obj.Active = l_json['Active']
-        l_obj.Key = l_ix
+        web_utils.get_base_info(l_obj, l_json)
         l_obj.Comment = l_json['Comment']
-        l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.DeviceFamily = l_json['DeviceFamily']
-        l_obj.RoomName = l_json['RoomName']
         l_obj.DeviceType = 1
         l_obj.DeviceSubType = 2
-        l_obj.UUID = l_json['UUID']
         l_obj.InterfaceType = l_json['InterfaceType']
         l_obj.Port = l_json['Port']
-        web_family.get_family_json_data(l_obj, l_json)
         if l_obj.InterfaceType == 'Serial':
             l_obj.BaudRate = l_json['BaudRate']
+        web_family.get_family_json_data(l_obj, l_json)
+        web_utils.get_room_info(l_obj, l_json)
         self.m_pyhouse_obj.House.Lighting.Controllers[l_ix] = l_obj
         LOG.info('Controller Added - {}'.format(l_obj.Name))
 

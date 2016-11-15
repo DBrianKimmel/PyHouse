@@ -10,8 +10,9 @@
 Passed all 12 tests - DBK - 2016-11-05
 
 """
+from Modules.Core.data_objects import WebData, LoginData
 
-__updated__ = '2016-11-05'
+__updated__ = '2016-11-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,7 +30,7 @@ from Modules.Computer.Web.test.xml_web import \
         TESTING_LOGIN_FULL_NAME_0, \
         TESTING_LOGIN_KEY_0, \
         TESTING_LOGIN_ACTIVE_0
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -37,6 +38,8 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+        self.m_pyhouse_obj.Computer.Web = WebData()
+        self.m_pyhouse_obj.Computer.Web.Logins = LoginData()
         self.m_api = webXml()
 
 
@@ -154,6 +157,9 @@ class B2_Write(SetupMixin, unittest.TestCase):
         l_xml = webXml._write_all_logins(l_obj)
         # print(PrettyFormatAny.form(l_xml, 'B2-03-B - Web'))
         self.assertEqual(l_xml.find('Login/FullName').text, TESTING_LOGIN_FULL_NAME_0)
+        #
+        l_xml = webXml._write_all_logins({})
+        # print(PrettyFormatAny.form(l_xml, 'B2-03-C - Web'))
 
     def test_04_Web(self):
         """ Write All logins.

@@ -150,6 +150,7 @@ function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Security.MotionSensors).length);
 	l_data = createDeviceEntry(self, l_data);
 	l_data = self.createMotionEntry(l_data);
+	l_data.DeviceFamily = 'Insteon';
 	l_data = createFamilyPart(self, l_data);
 	return l_data;
 },

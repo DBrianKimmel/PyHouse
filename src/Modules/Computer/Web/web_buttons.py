@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-15'
 
 # Import system type stuff
 import os
@@ -19,7 +19,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer.Web import web_family
+from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_buttons
 from Modules.Computer import logging_pyh as Logger
@@ -66,19 +66,13 @@ class ButtonsElement(athena.LiveElement):
         except KeyError:
             LOG.warning('Creating a new button {}'.format(l_ix))
         #
-        l_obj.Name = l_json['Name']
-        l_obj.Active = l_json['Active']
-        l_obj.Key = l_json['Key']
-        l_obj.UUID = l_json['UUID']
+        web_utils.get_base_info(l_obj, l_json)
+        l_obj.Comment = l_json['Comment']
         l_obj.DeviceType = 1
         l_obj.DeviceSubType = 1
-        l_obj.Comment = l_json['Comment']
-        l_obj.RoomCoords = l_json['RoomCoords']
         l_obj.DeviceFamily = l_json['DeviceFamily']
-        l_obj.RoomCoords = l_json['RoomCoords']
-        l_obj.RoomName = l_json['RoomName']
-        l_obj.RoomUUID = l_json['RoomUUID']
         web_family.get_family_json_data(l_obj, l_json)
+        web_utils.get_room_info(l_obj, l_json)
         self.m_pyhouse_obj.House.Lighting.Buttons[l_obj.Key] = l_obj
         LOG.info('Button Added - {}'.format(l_obj.Name))
 

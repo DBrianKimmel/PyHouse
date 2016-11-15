@@ -11,30 +11,42 @@
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-15'
+
+#  Import system type stuff
+
+#  Import PyMh files and modules.
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.webFamily   ')
 
 
 def _get_insteon_json_data(p_obj, p_json):
     try:
+        p_obj.InsteonAddress = int(p_json['InsteonAddress'])
+    except:
+        p_obj.InsteonAddress = 17
+    try:
         p_obj.DevCat = int(p_json['DevCat'])
-    except KeyError:
+    except:
         p_obj.DevCat = 0
     try:
         p_obj.GroupList = p_json['GroupList']
-    except KeyError:
+    except:
         p_obj.GroupList = 'Bad insteon_utils.get_json_data()'
     try:
         p_obj.GroupNumber = p_json['GroupNumber']
-    except KeyError:
+    except:
         p_obj.GroupNumber = 0
     try:
-        p_obj.InsteonAddress = int(p_json['InsteonAddress'])
-    except KeyError:
-        p_obj.InsteonAddress = 1
-    try:
         p_obj.ProductKey = int(p_json['ProductKey'])
-    except KeyError:
+    except:
         p_obj.ProductKey = 0
+    try:
+        p_obj.EngineVersion = int(p_json['EngineVersion'])
+        p_obj.FirmwareVersion = int(p_json['FirmwareVersion'])
+    except:
+        p_obj.EngineVersion = 0
+        p_obj.FirmwareVersion = 0
     return p_obj
 
 def _get_upb_json_data(p_obj, p_json):
@@ -48,5 +60,8 @@ def get_family_json_data(p_obj, p_json):
         _get_insteon_json_data(p_obj, p_json)
     elif p_obj.DeviceFamily == 'UPB':
         _get_upb_json_data(p_obj, p_json)
+    else:
+        LOG.error('Invalid Family :{}.'.format(p_obj.DeviceFamily))
+    return p_obj
 
 # ## END DBK

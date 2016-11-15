@@ -7,12 +7,12 @@
 @note:      Created on Jun 25, 2015
 @Summary:
 
-Passed all 2 tests - DBK - 20156-10-06
+Passed all 3 tests - DBK - 20156-11-14
 
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-11-15'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,6 +31,13 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_json_tools')
+
+
 class A1_Json(SetupMixin, unittest.TestCase):
     """
     This series tests the complex PutGetXML class methods
@@ -40,7 +47,8 @@ class A1_Json(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
 
     def test_01_Encode(self):
-        l_json = json_tools.encode_json(self.m_pyhouse_obj.House.Location)
+        l_obj = self.m_pyhouse_obj.House.Location
+        l_json = json_tools.encode_json(l_obj)
         print(l_json)
         PrettyFormatAny.form(l_json, "A1-01-A - Location")
         self.assertSubstring('State', l_json)

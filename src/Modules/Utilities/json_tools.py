@@ -13,7 +13,7 @@ Json is now used for Mqtt messages in addition to web browser.
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2016-11-14'
 
 
 # Import system type stuff
@@ -36,7 +36,7 @@ def encode_json(p_obj):
     return l_json
 
 def decode_json_unicode(p_json):
-    """Convert a json object to a valid object.
+    """Convert a json object to a valid python object.
     The object keys and values are all encoded in unicode
     """
     try:

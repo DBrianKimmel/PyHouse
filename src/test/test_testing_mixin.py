@@ -7,9 +7,11 @@
 @note:      Created on Oct 6, 2014
 @Summary:
 
-Passed all 15 tests - DBK - 2016-06-09
+Passed all 16 tests - DBK - 2016-11-15
 
 """
+
+__updated__ = '2016-11-15'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,23 +36,31 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_testing_mixin')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
     """ This section tests the SetupMixin Class
     """
 
     def setUp(self):
-        # SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         pass
 
     def test_01_RawXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        print(XML_LONG)
+        # print(XML_LONG)
+        pass
 
     def test_02_XML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        print(PrettyFormatAny.form(XML_LONG, 'XML', 90))
+        # print(PrettyFormatAny.form(XML_LONG, 'A1-02-A - XML', 90))
+        pass
 
 
 class B1_Empty(SetupMixin, unittest.TestCase):
@@ -62,16 +72,20 @@ class B1_Empty(SetupMixin, unittest.TestCase):
         pass
 
     def test_01_Obj(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-01-A - PyHouse'))
+        pass
 
     def test_02_Computer(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse.Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'B1-02-A - PyHouse.Computer'))
+        pass
 
     def test_03_House(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'B1-03-A - PyHouse.House'))
+        pass
 
     def test_04_Location(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse.House.Location'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'B1-04-A - PyHouse.House.Location'))
+        pass
 
 
 class B2_Long(SetupMixin, unittest.TestCase):
@@ -83,16 +97,20 @@ class B2_Long(SetupMixin, unittest.TestCase):
         pass
 
     def test_01_Obj(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B2-01-A - PyHouse'))
+        pass
 
     def test_02_Computer(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse.Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'B2-02-A - PyHouse.Computer'))
+        pass
 
     def test_03_House(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'B2-03-A - PyHouse.House'))
+        pass
 
     def test_04_Location(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse.House.Location'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'B2-04-A - PyHouse.House.Location'))
+        pass
 
 
 class C1_Build(SetupMixin, unittest.TestCase):
@@ -103,31 +121,31 @@ class C1_Build(SetupMixin, unittest.TestCase):
         self.m_api = SetupPyHouseObj()
 
     def test_01_Computer(self):
+        l_pyhouse = self.m_pyhouse_obj
         l_config = self.m_api._build_computer(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_config, 'Config'))
+        # print(PrettyFormatAny.form(l_config, 'C1-01-A - Config'))
         # self.assertDictEqual(l_config.Email, {})
         # self.assertDictEqual(l_config.InternetConnection, {})
         # self.assertDictEqual(l_config.Nodes, {})
         # self.assertDictEqual(l_config.Web, {})
+        pass
 
     def test_02_House(self):
         l_obj = {}
         l_config = self.m_api._build_house(l_obj)
-        print(PrettyFormatAny.form(l_config, 'Config'))
+        # print(PrettyFormatAny.form(l_config, 'C1-02-A - Config'))
         self.assertEqual(l_config.Key, 0)
 
     def test_03_PyHouse(self):
         l_root = None
         l_config = self.m_api.BuildPyHouseObj(l_root)
-        print(PrettyFormatAny.form(l_config, 'Config'))
-
-    def test_04_Root(self):
-        l_root = ET.fromstring(XML_LONG)
-        print(PrettyFormatAny.form(l_root, 'Root'))
+        # #print(PrettyFormatAny.form(l_root, 'C1-04-A - Root'))
+        pass
 
     def test_05_XML(self):
         l_root = ET.fromstring(XML_LONG)
         l_config = self.m_api.BuildXml(l_root)
-        print(PrettyFormatAny.form(l_config, 'Config'))
+        # print(PrettyFormatAny.form(l_config, 'C1-05-A - Config'))
+        pass
 
 # ## END DBK

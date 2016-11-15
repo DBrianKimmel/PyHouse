@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-26'
+__updated__ = '2016-11-10'
 
 #  Import system type stuff
 import copy
@@ -189,7 +189,7 @@ class API(Util):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                LOG.info('Mqtt publishing:\n\tBroker: {}\t\tTopic:{}\n'.format(l_broker.Name, l_topic))
+                # LOG.info('Mqtt publishing:\n\tBroker: {}\t\tTopic:{}\n'.format(l_broker.Name, l_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt Unpublished.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}\n".format(e_err, l_topic, l_message))
 

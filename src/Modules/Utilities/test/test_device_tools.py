@@ -7,14 +7,15 @@
 @note:      Created on Jun 26, 2015
 @Summary:
 
-Passed all 10 tests - DBK - 2016-10-12
+Passed all 11 tests - DBK - 2016-11-12
 
 """
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0, TESTING_CONTROLLER_ACTIVE_0, \
     TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_UUID_0
-from Modules.Housing.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_0
+from Modules.Housing.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_0, TESTING_LIGHTING_BUTTON_NAME_1, \
+    TESTING_LIGHTING_BUTTON_COMMENT_0
 
-__updated__ = '2016-10-12'
+__updated__ = '2016-11-12'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -55,6 +56,13 @@ class SetupMixin(object):
         self.m_button_obj = ButtonData()
         self.m_controller_obj = ControllerData()
         self.m_light_obj = LightData()
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_device_tools')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -142,10 +150,10 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_obj = ButtonData()
         l_base = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_obj, self.m_xml.button)
-        self.assertEqual(l_base.Name, 'Insteon Button')
+        self.assertEqual(l_base.Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_base.Key, 0)
         self.assertEqual(l_base.Active, True)
-        self.assertEqual(l_base.Comment, TESTING_DEVICE_COMMENT_0)
+        self.assertEqual(l_base.Comment, TESTING_LIGHTING_BUTTON_COMMENT_0)
         self.assertEqual(l_base.RoomCoords.X_Easting, float(TESTING_DEVICE_ROOM_X))
         self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.RoomName, TESTING_DEVICE_ROOM_NAME)

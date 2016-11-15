@@ -7,11 +7,11 @@
 @note:      Created on Jul 14, 2016
 @summary:
 
-Passed all 7 tests - DBK - 2016-07-15
+Passed all 11 tests - DBK - 2016-11-11
 
 """
 
-__updated__ = '2016-07-29'
+__updated__ = '2016-11-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,6 +43,14 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_samsung')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
     """Test that we have set up properly for the rest of the testing classes.
     """
@@ -50,21 +58,21 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_BuildObjects(self):
+    def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, None)
+        l_xml = self.m_xml.entertainment_sect
+        # print(PrettyFormatAny.form(l_xml, 'A1-01-A - Entertainment XML'))
+        self.assertIsNotNone(l_xml.find('SamsungSection'))
 
-    def test_2_FindXml(self):
+    def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.entertainment_sect.tag, 'EntertainmentSection')
         self.assertEqual(self.m_xml.samsung_sect.tag, 'SamsungSection')
-        self.assertEqual(self.m_xml.room.tag, 'Room')
 
 
 class A2_XML(SetupMixin, unittest.TestCase):
@@ -74,28 +82,28 @@ class A2_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_HouseDivXml(self):
+    def test_01_HouseDivXml(self):
         """ Test
         """
         l_xml = self.m_xml.house_div
-        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - House'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - House'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
         self.assertEqual(l_xml.find('UUID').text, TESTING_HOUSE_UUID)
 
-    def test_2_EntertainmentXml(self):
+    def test_02_EntertainmentXml(self):
         """ Test
         """
         l_xml = self.m_xml.entertainment_sect
-        print(PrettyFormatAny.form(l_xml, 'A2-2-A - Entertainment'))
-        self.assertEqual(len(l_xml), 1)
+        # print(PrettyFormatAny.form(l_xml, 'A2-02-A - Entertainment'))
+        self.assertEqual(len(l_xml), 2)
 
-    def test_3_SamsungXml(self):
+    def test_03_SamsungXml(self):
         """ Test
         """
         l_xml = self.m_xml.samsung_sect
-        # print(PrettyFormatAny.form(l_xml, 'A2-3-A - Samsung'))
+        print(PrettyFormatAny.form(l_xml, 'A2-03-A - Samsung'))
         self.assertEqual(len(l_xml), 1)
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
 

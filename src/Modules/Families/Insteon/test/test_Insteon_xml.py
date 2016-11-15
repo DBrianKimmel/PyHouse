@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2015-11-05
 
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2016-11-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -167,7 +167,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_05_InsteonLight(self):
         l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
         insteonXml.ReadXml(l_light, self.m_xml.light)
-        print(PrettyFormatAny.form(l_light, 'C1-04-A - Insteon Light'))
+        # print(PrettyFormatAny.form(l_light, 'C1-05-A - Insteon Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))

@@ -121,12 +121,12 @@ function buildDataEntryScreen(self, p_entry, p_add_change, p_handler) {
 	var l_obj = arguments[1];
 	var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
 	// console.log("lights.buildDataEntryScreen() Light %O", l_obj);
-	l_html += build_lcars_middle_menu(27, self.buildEntry(l_obj, p_add_change, p_handler));
+	l_html += build_lcars_middle_menu(27, self.buildEntry(l_obj, p_handler));
 	l_html += build_lcars_bottom();
 	self.nodeById('DataEntryDiv').innerHTML = l_html;
 },
 
-function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+function buildEntry(self, p_obj, p_handler, p_onchange) {
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html);
@@ -164,13 +164,16 @@ function fetchEntry(self) {
 function fetchLightEntry(self, p_data) {
 	p_data.CurLevel = fetchTextWidget(self, 'CurLevel');
 	p_data.IsDimmable = fetchTrueFalseWidget(self, 'IsDimmable');
+	// Get non displayed fields
+	p_data.DeviceSubType = 3;
+	p_data.DeviceType = 1;
 	return p_data;
 },
 
 function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Lights).length);
 	// Divmod.debug('---', 'lights.createEntry() was called ' + l_ix);
-	l_data = createDeviceEntry(self, l_data);
+	l_data = createDeviceEntry(self, l_data);    // in lcars.js
 	l_data = self.createLightEntry(l_data);
 	l_data.DeviceFamily = 'Insteon';
 	l_data = createFamilyPart(self, l_data);
@@ -197,6 +200,7 @@ function handleDataEntryOnClick(self, p_node) {
 	}
 	var l_ix = p_node.name;
 	var l_obj = self.fetchEntry();
+	// console.log("lights.handleDataEntryOnClick() Obj %O", l_obj);
 	var l_json = '';
 	var l_defer = '';
 	l_obj.Add = globals.Add;

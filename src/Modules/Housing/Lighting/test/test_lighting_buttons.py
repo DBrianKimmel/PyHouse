@@ -7,10 +7,10 @@
 @note:      Created on May 22, 2014
 @summary:   This module is for testing lighting buttons data.
 
-Passed all 9 tests - DBK - 2016-07-14
+Passed all 10 tests - DBK - 2016-11-14
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,6 +49,13 @@ class SetupMixin(object):
         self.m_api = buttonsAPI()
         self.m_button_obj = ButtonData()
         self.m_version = '1.4.0'
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_lighting_buttons')
 
 
 class A1(SetupMixin, unittest.TestCase):

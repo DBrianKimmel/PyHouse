@@ -14,9 +14,9 @@
 
 
 function createCoordinates(self){
-	X_Easting = 0.0;
-	Y_Northing = 0.0;
-	Z_Height = 0.0;
+	var X_Easting = 0.0;
+	var Y_Northing = 0.0;
+	var Z_Height = 0.0;
 	var l_ret = [X_Easting, Y_Northing, Z_Height]
 	return l_ret;
 }

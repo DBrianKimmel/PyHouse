@@ -8,18 +8,18 @@
 @note:      Created on Jun 3, 2013
 @summary:   Entertainment component access module.
 
-Depending on node type, start up entertainment systems.
+Start up entertainment systems.
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-11-13'
 
 # Import system type stuff
-# import xml.etree.ElementTree as ET
+import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-# from Modules.Housing.Entertainment.onkyo import API as onkyoApi
-from Modules.Housing.Entertainment.samsung import API as samsungApi
+from src.Modules.Core.data_objects import EntertainmentData
+from Modules.Housing.Entertainment.onkyo import API as onkyoApi
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
@@ -59,30 +59,32 @@ class MqttActions(object):
 
 
 class API(Utility):
+
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing.")
-        # self.m_pyhouse_obj = p_pyhouse_obj
-        # self.m_onkyo = onkyoApi(p_pyhouse_obj)
-        self.m_samsung = samsungApi(p_pyhouse_obj)
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_onkyo = onkyoApi(p_pyhouse_obj)
+        # self.m_samsung = samsungApi(p_pyhouse_obj)
         LOG.info("Initialized.")
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('XML Loading')
-        # self.m_onkyo.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
+        self.m_onkyo.LoadXml(p_pyhouse_obj)
         # self.m_samsung.LoadXml(p_pyhouse_obj)
         LOG.info('XML Loaded')
 
     def Start(self):
         LOG.info("Starting.")
-        # self.m_onkyo.Start()
+        self.m_onkyo.Start()
         # self.m_samsung.Start()
         LOG.info("Started.")
 
     def SaveXml(self, p_xml):
         LOG.info("Saving XML.")
-        # l_xml = ET.Element('EntertainmentSection')
-        # l_xml = self.m_onkyo.SaveXml(l_xml)
-        # p_xml.append(l_xml)
+        l_xml = ET.Element('EntertainmentSection')
+        l_xml = self.m_onkyo.SaveXml(l_xml)
+        p_xml.append(l_xml)
         # l_xml = self.m_samsung.SaveXml(l_xml)
         # p_xml.append(l_xml)
         LOG.info("Saved XML.")
@@ -90,7 +92,7 @@ class API(Utility):
 
     def Stop(self):
         LOG.info("Stopping.")
-        # self.m_onkyo.Stop()
+        self.m_onkyo.Stop()
         # self.m_samsung.Stop()
         LOG.info("Stopped.")
 

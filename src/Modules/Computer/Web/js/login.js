@@ -110,11 +110,11 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function buildLcarLoginScreen(self, p_obj, p_handler) {
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, 'change', p_handler));
+		l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+	function buildEntry(self, p_obj, p_handler, p_onchange) {
 		var l_html = '';
 		l_html = self.buildLoginEntry(p_obj, l_html, p_onchange);
 		l_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');

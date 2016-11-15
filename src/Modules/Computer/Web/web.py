@@ -14,12 +14,12 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2016-11-13'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import WebData
+from Modules.Core.data_objects import WebData, LoginData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.web_server import API as WebAPI
@@ -41,7 +41,8 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        p_pyhouse_obj.Computer.Web = WebData()
+        p_pyhouse_obj.Computer.Web = WebData()  # Clear before loading.
+        p_pyhouse_obj.Computer.Web.Logins = LoginData()  # Clear before loading.
         l_ret = webXml.read_web_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Web = l_ret
         LOG.info('Loaded XML')

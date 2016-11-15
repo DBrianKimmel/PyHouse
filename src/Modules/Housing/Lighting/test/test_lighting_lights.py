@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 15 tests - DBK - 2016-07-17
+Passed all 16 tests - DBK - 2016-11-14
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2016-11-14'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -62,6 +62,13 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.FamilyData = self.m_family
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_lighting_lights')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -180,7 +187,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_5_AllLights(self):
         """Read everything for all lights.
         """
-        l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect)
+        l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_objs, 'B1-5-A - All Lights'))
         # print(PrettyFormatAny.form(l_objs[0], 'B1-5-B - All Lights'))
         # print(PrettyFormatAny.form(l_objs[0].RoomCoords, 'B1-5-c - All Lights'))
@@ -250,7 +257,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_05_AllLights(self):
-        l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect)
+        l_objs = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting = LightingData()
         self.m_pyhouse_obj.House.Lighting.Lights = l_objs
         l_xml = lightsAPI.write_all_lights_xml(self.m_pyhouse_obj)
@@ -271,7 +278,7 @@ class Z1_JSON(SetupMixin, unittest.TestCase):
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.
         """
-        l_obj = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj, self.m_xml.light_sect)
+        l_obj = lightsAPI.read_all_lights_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_obj, 'Z1-01-A - Lights'))
         l_json = json_tools.encode_json(l_obj)
         # print(PrettyFormatAny.form(l_json, 'Z1-01-B - JSON'))
