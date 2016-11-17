@@ -21,6 +21,8 @@
  * function waitForModules(module, f) { modulesWaiting[module] = f; for (var m
  * in modulesWaiting) { if (modulesWaiting[m]) modulesWaiting[m](); } }
  * 
+ * 
+ * This MUST be imported in workspace.js
  */
 // import Divmod.Runtime
 // import helpers
@@ -566,15 +568,13 @@ function buildLcarDeleteButton(p_handler) {
  * 
  * @param p_obj =
  *            a dict of item dicts to build from
- * @param p_handler =
- *            is a literal name of a handler function { 'handleMenuOnClick' )
+ * @param p_handler
+ *            is a literal text name of a handler function { 'handleMenuOnClick' )
  * @param p_nameFunction
- *            (optional) is the name of a function used to build a more complex
- *            caption for the buttons. Omit this parameter if it is not used -
- *            no need for a placeholder
+ *            (optional) is the name of a function used to build a more complex caption for the buttons.
+ *             Omit this parameter if it is not used - no need for a placeholder
  * @param p_noOptions
- *            (optional) is the things to skip ('NoAdd' will omit the add
- *            button).
+ *            (optional) is the things to skip ('NoAdd' will omit the add button).
  * 
  * @returns = innerHTML of a table filled in with buttons
  */
@@ -700,8 +700,8 @@ function fetchTrueFalseWidget(self, p_name) {
  * @param: p_optionHandler is the optional onchange handler function name.
  * @return: Html for field,
  */
-function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */p_optionHandler) {
-	// Divmod.debug('---', 'globals.buildLcarSelectWidget(1) Id=' + p_id);
+function buildSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */p_optionHandler) {
+	// Divmod.debug('---', 'globals.buildSelectWidget(1) Id=' + p_id);
 	var l_option = p_optionHandler;
 	var l_html = "";
 	l_html += buildTopDivs(p_caption);
@@ -742,43 +742,53 @@ function buildRoomSelectWidget(self, p_id, p_caption, p_checked) {
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
-	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 
-function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
+/** Show the (Room) lightname
+ * 
+ * Since there may be several rooms that have "Can" lights, we need to disambiguate them ith the room name.
+ * 
+ * @param self
+ * @param p_id is the ID used for the field.
+ * @param p_caption Is the caption for the select box.
+ * @param p_checked is the 
+ * @returns
+ */
+function buildLightNameSelectWidget(self, p_id, p_caption, p_checked) {
 	var l_obj = globals.House.Lighting.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
-	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 
 function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
 }
 
 function buildLcarLightTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
 }
 
 function buildLcarProtocolTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolTypes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolTypes, p_checked);
 }
 
 function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleModes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleModes, p_checked);
 }
 
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked, /* optional */p_optionHandler) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleTypes, p_checked, p_optionHandler);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleTypes, p_checked, p_optionHandler);
 }
 
 function buildLcarThermostatTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
 }
 
 function buildLcarUserRoleSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.UserRoles, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.UserRoles, p_checked);
 }
 
 // ========== Slider Widgets

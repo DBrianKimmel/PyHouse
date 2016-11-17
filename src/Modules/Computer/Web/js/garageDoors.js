@@ -109,7 +109,7 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 },
 
 function buildEntry(self, p_obj, p_handler, p_onchange) {
-	Divmod.debug('---', 'garageDoors.buildEntry() called ');
+	// Divmod.debug('---', 'garageDoors.buildEntry() called ');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);

@@ -8,6 +8,8 @@
  * @summary:   Displays the elements
  * 
  * This script is the live element functionality.
+ * 
+ * This MUST be imported in workspace.js
  */
 // import Nevow.Athena
 

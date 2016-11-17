@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-09-04'
+__updated__ = '2016-11-15'
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
@@ -80,6 +80,18 @@ class Actions(object):
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Schedule msg', 160))
         return p_logmsg
 
+    def _decode_security(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tSecurity:\n'
+        p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+        # if p_topic[1] == 'execute':
+        #    p_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
+        #    p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+        #    p_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
+        #    p_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
+        # else:
+        #    p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Schedule msg', 160))
+        return p_logmsg
+
     def _decode_weather(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tWeather:\n'
         l_temp = float(self._get_field(p_message, 'Temperature'))
@@ -108,6 +120,8 @@ class Actions(object):
             l_logmsg = self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
             l_logmsg = self._decode_schedule(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'security':
+            l_logmsg = self._decode_security(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'weather':
             l_logmsg = self._decode_weather(l_logmsg, p_topic, p_message)
         else:

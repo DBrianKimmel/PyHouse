@@ -14,10 +14,11 @@
  * If you plan for yet another sequencing of events on startup then please change the code here.
  * 
  * The actual implementation starts and then waits for all images to be loaded (assuming that all images are loaded before user interaction is allowed).
- * That's why there is a waitroller shown during image loading and after all is said and done a READY message is displayed.
+ * That's why there is a waitroller shown during image loading and, after all is said and done, a READY message is displayed.
  */
 // import Nevow.Athena
 // import globals
+// import handle_rooms
 // import helpers
 // import lcars
 // import interface

@@ -109,7 +109,7 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 },
 
 function buildEntry(self, p_obj, p_handler, p_onchange) {
-	Divmod.debug('---', 'motionSensors.buildEntry() called ');
+	// Divmod.debug('---', 'motionSensors.buildEntry() called ');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
@@ -137,7 +137,7 @@ function fetchEntry(self) {
 	l_data = fetchDeviceEntry(self, l_data);
 	l_data = self.fetchMotionEntry(l_data);
 	l_data = fetchFamilyPart(self, l_data);
-	console.log("motionSensors.fetchEntry() - Data = %O", l_data);
+	// console.log("motionSensors.fetchEntry() - Data = %O", l_data);
 	return l_data;
 },
 

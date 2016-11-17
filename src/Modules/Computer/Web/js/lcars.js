@@ -6,6 +6,8 @@
  * @license: MIT License
  * @note: Created on Sep 12, 2014
  * @summary: Lcars components.
+ * 
+ * This MUST be imported in workspace.js
  */
 
 lcarsDefs = {
@@ -162,6 +164,7 @@ function buildBaseEntry(self, p_obj, p_html, /* optional */noUuid) {
 
 function fetchBaseEntry(self) {
 	var l_data = {
+		Add : false,
 		Delete : false
 	};
 	l_data.Name = fetchTextWidget(self, 'Name');
@@ -196,7 +199,7 @@ function buildDeviceEntry(self, p_obj, p_html) {
 	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
 	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'Room Coords', p_obj.RoomCoords);
 	p_html += buildRoomSelectWidget(self, 'RoomName', 'Room Name', p_obj.RoomName);
-	p_html += buildLcarTextWidget(self, 'RoomUUID', 'Room UUID', p_obj.RoomUUID, 'disablef');
+	p_html += buildLcarTextWidget(self, 'RoomUUID', 'Room UUID', p_obj.RoomUUID, 'disable');
 	return p_html;
 }
 

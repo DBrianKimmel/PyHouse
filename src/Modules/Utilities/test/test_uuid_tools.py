@@ -7,11 +7,11 @@
 @note:      Created on Jun 22, 2015
 @Summary:
 
-Passed all 6 tests - DBK - 2016-07-09
+Passed all 7 tests - DBK - 2016-11-16
 
 """
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-11-16'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -33,6 +33,13 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_uuid_tools')
 
 
 class B1_UUID(SetupMixin, unittest.TestCase):

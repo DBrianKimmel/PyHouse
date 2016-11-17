@@ -20,7 +20,7 @@
  */
 function buildFamilySelectWidget(self, p_id, p_caption, p_obj, p_change) {
 	// Divmod.debug('---', 'family.buildFamilySelectWidget() was called.');
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_obj.DeviceFamily, p_change);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_obj.DeviceFamily, p_change);
 }
 
 // ============================================================================

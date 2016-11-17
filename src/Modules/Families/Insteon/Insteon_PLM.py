@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-17'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -96,6 +96,7 @@ class Commands(object):
     @staticmethod
     def _queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes) (SD command).
+        or Extended length (22 Bytes) (ED command)
         See page 230(243) of 2009 developers guide.
 
         @param p_obj: is the device object.
@@ -108,6 +109,7 @@ class Commands(object):
         [5] = Message Flags
         [6] = Command 1
         [7] = Command 2
+        (8-21) = Extended data in ED type
         """
         try:
             l_command = Insteon_utils.create_command_message('insteon_send')

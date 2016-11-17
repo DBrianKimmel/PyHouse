@@ -10,6 +10,8 @@
  * Room coordinates are a list of three real values.
  * They are X, Y and Z or Easting, Northing and Height
  * They are in Meteres.
+ * 
+ * This MUST be imported in workspace.js
  */
 
 
