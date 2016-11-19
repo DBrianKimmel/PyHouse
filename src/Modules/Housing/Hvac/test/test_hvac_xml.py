@@ -18,25 +18,32 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Core import conversions
-from Modules.Core.test.xml_device import \
-            TESTING_DEVICE_COMMENT, TESTING_DEVICE_ROOM_NAME, \
-            TESTING_DEVICE_FAMILY_INSTEON, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_ROOM_UUID
-from Modules.Families.Insteon.test.xml_insteon import \
-            TESTING_INSTEON_ADDRESS_0, TESTING_INSTEON_DEVCAT_0, \
-            TESTING_INSTEON_GROUP_LIST_0, TESTING_INSTEON_GROUP_NUM_0, \
-            TESTING_INSTEON_PRODUCT_KEY_0
-from Modules.Housing.Hvac.hvac_xml import Utility, XML as hvacXML
-from Modules.Housing.Hvac.test.xml_hvac import \
-            TESTING_THERMOSTAT_NAME_0, TESTING_THERMOSTAT_ACTIVE_0, \
-            TESTING_THERMOSTAT_KEY_0, TESTING_THERMOSTAT_COOL_SETPOINT_0, \
-            TESTING_THERMOSTAT_DEVICE_FAMILY_0, \
-            TESTING_THERMOSTAT_HEAT_SETPOINT_0, \
-            TESTING_THERMOSTAT_MODE_0, \
-            TESTING_THERMOSTAT_SCALE_0, TESTING_THERMOSTAT_UUID_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, XML_EMPTY
+from Modules.Core import conversions
+from Modules.Core.test.xml_device import \
+    TESTING_DEVICE_ROOM_NAME, \
+    TESTING_DEVICE_FAMILY_INSTEON, \
+    TESTING_DEVICE_SUBTYPE, \
+    TESTING_DEVICE_ROOM_UUID, TESTING_DEVICE_COMMENT_0
+from Modules.Families.Insteon.test.xml_insteon import \
+    TESTING_INSTEON_ADDRESS_0, \
+    TESTING_INSTEON_DEVCAT_0, \
+    TESTING_INSTEON_GROUP_LIST_0, \
+    TESTING_INSTEON_GROUP_NUM_0, \
+    TESTING_INSTEON_PRODUCT_KEY_0
+from Modules.Housing.Hvac.hvac_xml import Utility, XML as hvacXML
+from Modules.Housing.Hvac.test.xml_hvac import \
+    TESTING_THERMOSTAT_NAME_0, \
+    TESTING_THERMOSTAT_ACTIVE_0, \
+    TESTING_THERMOSTAT_KEY_0, \
+    TESTING_THERMOSTAT_COOL_SETPOINT_0, \
+    TESTING_THERMOSTAT_DEVICE_FAMILY_0, \
+    TESTING_THERMOSTAT_HEAT_SETPOINT_0, \
+    TESTING_THERMOSTAT_MODE_0, \
+    TESTING_THERMOSTAT_SCALE_0, \
+    TESTING_THERMOSTAT_UUID_0
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -95,7 +102,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE_0 == 'True')
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY_0))
         self.assertEqual(l_obj.UUID, TESTING_THERMOSTAT_UUID_0)
-        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE)
         self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY_0)
@@ -110,7 +117,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Name, TESTING_THERMOSTAT_NAME_0)
         self.assertEqual(l_obj.Active, TESTING_THERMOSTAT_ACTIVE_0 == 'True')
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY_0))
-        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT)
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY_0)
         self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
 

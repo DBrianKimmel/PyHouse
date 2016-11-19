@@ -11,7 +11,7 @@
 
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Hvac import test as I_test
+from Modules.Housing.Hvac import test as I_test
 
 
 class Z_Suite(unittest.TestCase):
