@@ -22,7 +22,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-18'
 
 #  Import system type stuff
 
@@ -34,6 +34,36 @@ LOG = Logger.getLogger('PyHouse.InsteonHVAC    ')
 
 FACTOR = 1.0  #  Multiplier to convert Thermostat units to Real World units
 HALF = 0.5
+
+THERMOSTAT_CMD_1 = {
+    'assign_to_group' : 0x01,  # Assign to All Link Group
+    'delete_from_group' : 0x02,  # Delete from all link group
+    'cleanup_success' : 0x06,  # Broadcast Cleanup
+    'engine_version' : 0x0d,  # Insteon Engine version
+    'ping' : 0x0F,
+    'id_request' : 0x10,
+    'on_status' : 0x11,  #
+    'off_status' : 0x13,  #
+    'increase_setpoints' : 0x15,  # Increase set points by 1 degree
+    'decrease_setpoints' : 0x16,  #
+    'read_operating_flag' : 0x1f,  #
+    'set_operating_flags' : 0x20,  #
+    'read_and_set_data' : 0x2e,  #
+    'get_database' : 0x2f,  #
+    'beep' : 0x30,
+
+    'thermostat_temp_up' : 0x68,
+    'thermostat_temp_down' : 0x69,
+    'thermostat_status' : 0x6a,
+    'thermostat_control' : 0x6b,
+    'thermostat_setpoint_cool' : 0x6c,
+    'thermostat_setpoint_heat' : 0x6d,
+    'thermostat_report_temperature' : 0x6e,
+    'thermostat_report_humidity' : 0x6f,
+    'thermostat_report_mode' : 0x70,
+    'thermostat_report_cool_setpoint' : 0x71,
+    'thermostat_report_heat_setpoint' : 0x72
+}
 
 
 class Util(object):
@@ -83,6 +113,7 @@ class DecodeResponses(object):
         elif l_cmd1 == MESSAGE_TYPES['id_request']:  # 0x10
             p_device_obj.FirmwareVersion = l_firmware
             l_mqtt_message += " id_request:{}; ".format(l_firmware)
+
         elif l_cmd1 == MESSAGE_TYPES['on']:  # 0x11
             p_device_obj.ThermostatStatus = 'On'
             l_mqtt_message += " On; "

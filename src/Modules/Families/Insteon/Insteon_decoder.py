@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-18'
 
 #  Import system type stuff
 
@@ -190,7 +190,8 @@ class DecodeResponses(object):
                 # self._publish(self.m_pyhouse_obj, l_device_obj)
 
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
-                l_debug_msg += 'Request-ID-From:"{}"; '.format(l_device_obj.Name)
+                l_device_obj.FirmwareVersion = l_cmd2
+                l_debug_msg += 'Request-ID:"{}"; '.format(l_device_obj.FirmwareVersion)
 
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.CurLevel = 100
