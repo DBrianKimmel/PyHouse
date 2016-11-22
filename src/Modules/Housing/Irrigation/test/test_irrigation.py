@@ -7,11 +7,11 @@
 @note:      Created on Jul 4, 2014
 @Summary:
 
-Passed all 1 tests - DBK - 2016-08-24
+Passed all 2 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-08-24'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 # import xml.etree.ElementTree as ET
@@ -29,6 +29,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj.Xml.XmlRoot = self.m_root_xml
         self.m_irrigation_obj = IrrigationData()
         return self.m_pyhouse_obj
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_irrigation')
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):

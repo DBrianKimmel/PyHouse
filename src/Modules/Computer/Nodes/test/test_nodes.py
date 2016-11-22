@@ -11,7 +11,7 @@ Passed all 6 tests - DBK - 2016-07-09
 
 """
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -75,13 +75,15 @@ class C1_Api(SetupMixin, unittest.TestCase):
 
     def test_01_init(self):
         _l_api = localApi(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
+        pass
 
     def test_02_LoadXml(self):
         l_api = localApi(self.m_pyhouse_obj)
         l_ret = l_api.LoadXml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_ret, 'PyHouse Computer'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
+        # print(PrettyFormatAny.form(l_ret, 'PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
+        pass
 
     def test_02_Start(self):
         #  self.m_api.Start(self.m_pyhouse_obj)

@@ -13,7 +13,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-11-21'
 
 
 # strategy:
@@ -64,7 +64,7 @@ class FindLocalVersion(object):
         PyHouse/src/VERSION
         """
         l_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../VERSION')
-        l_filename = os.path.splitunc(l_filename)[1]
+        # l_filename = os.path.splitunc(l_filename)[1]
         l_filename = os.path.normpath(l_filename)
         return l_filename
 

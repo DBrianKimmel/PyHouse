@@ -7,8 +7,10 @@
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Passed all 12 tests - DBK - 2016-06-24
+Passed all 13 tests - DBK - 2016-11-21
 """
+
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -45,6 +47,13 @@ class SetupMixin(object):
 
     def setUpXml(self, p_root):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_location')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):

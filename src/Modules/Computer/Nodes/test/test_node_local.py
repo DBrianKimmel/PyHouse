@@ -7,11 +7,11 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 22 tests - DBK - 2016-08-30
+Passed all 23 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-08-30'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -45,6 +45,13 @@ class FakeNetiface(object):
     """
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_node_local')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
     This section tests the setup of the test
@@ -76,14 +83,14 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
-    def test_1_Nodes(self):
+    def test_01_Nodes(self):
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
-        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - Nodes Xml'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - Nodes Xml'))
         self.assertEqual(len(l_xml), 2)
 
-    def test_2_Nodes(self):
+    def test_02_Nodes(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-2-A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
@@ -111,7 +118,7 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
         l_gate = Interfaces._list_gateways()
         # print(PrettyFormatAny.form(l_gate, 'A3-02-A - Gateways', 100))
         l_v4 = l_gate[2]
-        self.assertEqual(l_v4[0][0], '192.168.9.1')
+        self.assertEqual(l_v4[0][0], '192.168.1.1')
 
     def test_03_ListInterfaces(self):
         """ Check the interfaces in this computer

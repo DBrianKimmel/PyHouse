@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-09-01'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -35,7 +35,7 @@ class Xml(object):
         """
         l_obj = MqttBrokerData()
         try:
-            XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)
             l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
             l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
             l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'BrokerUser')
@@ -79,7 +79,7 @@ class Xml(object):
         @param p_obj: is one broker object.
         @return: the XML for one Broker System
         """
-        l_entry = XmlConfigTools.write_base_object_xml('Broker', p_mqtt)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml('Broker', p_mqtt)
         PutGetXML().put_int_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
         PutGetXML().put_int_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
         PutGetXML().put_text_element(l_entry, 'BrokerUser', p_mqtt.UserName)

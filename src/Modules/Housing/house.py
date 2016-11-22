@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-05'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 
@@ -89,7 +89,7 @@ class Xml(object):
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml is None:
             return l_obj
-        XmlConfigTools.read_base_object_xml(l_obj, l_xml)
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, l_xml)
         Xml._add_uuid(p_pyhouse_obj, l_obj)
         return l_obj
 

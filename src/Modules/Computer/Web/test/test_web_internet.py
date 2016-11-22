@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/Web/test/test_web_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c)  2014 by D. Brian Kimmel
+@copyright: (c)  2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 20, 2014
 @Summary:
 
-Passed all 2 tests - DBK - 2016-10-20
+Passed all 3 tests - DBK - 2016-11-21
 
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-20'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,6 +30,13 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_web_internet')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
@@ -53,14 +60,14 @@ class B1_Data(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_worksapce = WorkspaceData
-        self.m_worksapce.m_pyhouse_obj = self.m_pyhouse_obj
+        self.m_workspace = WorkspaceData
+        self.m_workspace.m_pyhouse_obj = self.m_pyhouse_obj
 
     def test_01_Get(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_comp = web_internet.InternetElement(self.m_worksapce, None).getInternetData()
-        print(PrettyFormatAny.form(l_comp, 'B1-01-A - Data'))
+        l_comp = web_internet.InternetElement(self.m_workspace, None).getInternetData()
+        # print(PrettyFormatAny.form(l_comp, 'B1-01-A - Data'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')

@@ -7,18 +7,22 @@
 @note:      Created on Nov 21, 2014
 @Summary:
 
-"""
+Passed all 3 tests - DBK - 2016-11-21
 
-__updated__ = '2016-10-20'
+"""
+from Modules.Utilities.debug_tools import PrettyFormatAny
+
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Computer.Web import web_house
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Web import web_house
+from Modules.Computer.Web.web import WorkspaceData
 
 
 class Workspace(object):
@@ -33,14 +37,21 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_XML(SetupMixin, unittest.TestCase):
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_web_house')
+
+
+class B1_XML(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
-        # self.m_controller_obj = ControllerData()
+        self.m_workspace = WorkspaceData
+        self.m_workspace.m_pyhouse_obj = self.m_pyhouse_obj
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -50,7 +61,8 @@ class C01_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
 
     def test_02_Json(self):
-        l_api = web_house.HouseElement(self.m_workspace_obj, None)
-        l_json = l_api.getServerData()
+        l_api = web_house.HouseElement(self.m_workspace)
+        l_json = l_api.getHouseData()
+        print(PrettyFormatAny.form(l_json, 'B1-02-A - JSON'))
 
 # ## END DBK

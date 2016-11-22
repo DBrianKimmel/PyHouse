@@ -10,7 +10,7 @@
 Passed all 14 tests - DBK - 2016-11-14
 
 """
-__updated__ = '2016-11-14'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -87,21 +87,23 @@ class A2_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_BrokerCnt(self):
+    def test_01_BrokerCnt(self):
         l_xml = self.m_xml.mqtt_sect
         # print(PrettyFormatAny.form(l_xml, 'A2-1-A - Xml'))
         self.assertEqual(len(l_xml), 2)
 
-    def test_2_PyHouse(self):
+    def test_02_PyHouse(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A2_2_A - PyHouse'))
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
 
-    def test_3_Computer(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'A2_3_A - Init Computer'))
+    def test_03_Computer(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'A2_3_A - Init Computer'))
+        pass
 
-    def test_4_Mqtt(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'A2_4_A - Init Mqtt'))
+    def test_04_Mqtt(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'A2_4_A - Init Mqtt'))
+        pass
 
 
 class A3_EmptyXML(SetupMixin, unittest.TestCase):
@@ -152,8 +154,7 @@ class B2_ConnectTLS(SetupMixin, unittest.TestCase):
         """
         self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
         self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt.Brokers
-                                   , 'B2-01-A - Broker', 80))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt.Brokers, 'B2-01-A - Broker', 80))
         self.assertEqual(self.m_broker.Name, 'ClientTest')
 
 
@@ -222,7 +223,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'
         l_message = Util._make_message(self.m_pyhouse_obj, l_data)
-        print(PrettyFormatAny.form(l_message, 'C2-04-A - Message', 80))
+        # print(PrettyFormatAny.form(l_message, 'C2-04-A - Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
         self.assertEqual(self.jsonPair(l_message, 'Name'), l_data.Name)

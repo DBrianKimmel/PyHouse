@@ -2,10 +2,12 @@
 @name:      PyHouse/src/Modules/Computer/test/test_logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @note:      Created on Apr 30, 2014
 @license:   MIT License
 @summary:
+
+Passed all 2 tests - DBK - 2016-11-21
 
 """
 
@@ -29,7 +31,14 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class Test_04_SetupLogging(SetupMixin, unittest.TestCase):
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_logging_pyh')
+
+
+class Test_A1_SetupLogging(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by node_local.
     """

@@ -2,12 +2,14 @@
 @name:      PyHouse/src/Modules/web/test/test_web_clock.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2016 by briank
 @license:   MIT License
 @note:      Created on Jun 21, 2014
 @Summary:
 
 """
+
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -25,6 +27,13 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_web_clock')
 
 
 class Test(SetupMixin, unittest.TestCase):

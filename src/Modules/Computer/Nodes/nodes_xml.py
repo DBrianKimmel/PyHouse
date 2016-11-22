@@ -14,7 +14,7 @@ PyHouse_obj.Computer.Nodes is a dict of nodes.
 from Modules.Utilities import uuid_tools
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-05'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,7 +27,6 @@ from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
-COMPUTER_DIVISION = 'ComputerDivision'
 NODE_SECTION = 'NodeSection'
 NODE_ATTR = 'Node'
 
@@ -37,7 +36,7 @@ class Xml(object):
     @staticmethod
     def _read_one_interface_xml(p_interface_element):
         l_interface_obj = NodeInterfaceData()
-        XmlConfigTools.read_base_object_xml(l_interface_obj, p_interface_element)
+        XmlConfigTools.read_base_UUID_object_xml(l_interface_obj, p_interface_element)
         l_interface_obj.MacAddress = PutGetXML.get_text_from_xml(p_interface_element, 'MacAddress')
         l_interface_obj.V4Address = PutGetXML.get_text_from_xml(p_interface_element, 'IPv4Address')
         l_interface_obj.V6Address = PutGetXML.get_text_from_xml(p_interface_element, 'IPv6Address')
@@ -46,7 +45,7 @@ class Xml(object):
 
     @staticmethod
     def _write_one_interface_xml(p_interface_obj):
-        l_entry = XmlConfigTools.write_base_object_xml('Interface', p_interface_obj)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml('Interface', p_interface_obj)
         PutGetXML.put_text_element(l_entry, 'MacAddress', p_interface_obj.MacAddress)
         PutGetXML.put_text_element(l_entry, 'IPv4Address', p_interface_obj.V4Address)
         PutGetXML.put_text_element(l_entry, 'IPv6Address', p_interface_obj.V6Address)
@@ -95,7 +94,7 @@ class Xml(object):
         @return: a node object filled in.
         """
         l_node_obj = NodeData()
-        XmlConfigTools.read_base_object_xml(l_node_obj, p_node_xml)
+        XmlConfigTools.read_base_UUID_object_xml(l_node_obj, p_node_xml)
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')
         l_node_obj.NodeRole = PutGetXML.get_int_from_xml(p_node_xml, 'NodeRole')
@@ -113,7 +112,7 @@ class Xml(object):
 
     @staticmethod
     def _write_one_node_xml(p_node_obj):
-        l_entry = XmlConfigTools.write_base_object_xml(NODE_ATTR, p_node_obj)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml(NODE_ATTR, p_node_obj)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
         PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
@@ -129,26 +128,25 @@ class Xml(object):
         """
         l_count = 0
         l_ret = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         if l_xml is None:
-            LOG.info('No ComputerDivision')
+            LOG.warn('No ComputerDivision')
             return l_ret
-        try:
-            l_xml = l_xml.find(NODE_SECTION)
-            for l_node_xml in l_xml.iterfind(NODE_ATTR):
-                l_node_obj = Xml._read_one_node_xml(l_node_xml)
-                # l_node_obj.Key = l_count
-                # LOG.warn('Found Node {}'.format(l_node_obj.Name))
-                l_ret[l_node_obj.UUID] = l_node_obj
-                l_uuid_obj = UuidData()
-                l_uuid_obj.UUID = l_node_obj.UUID
-                l_uuid_obj.UuidType = 'Node'
-                uuid_tools.Uuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
-                l_count += 1
-                LOG.info('Loaded Node for {} '.format(l_node_obj.Name))
-        except AttributeError as e_err:
-            # l_ret[0] = NodeData()  # Create an empty Nodes[<name>]
-            LOG.error('ERROR - Node read error - {}'.format(e_err))
+        l_xml = l_xml.find(NODE_SECTION)
+        if l_xml is None:
+            LOG.warn('No NodeSection')
+            return l_ret
+        for l_node_xml in l_xml.iterfind(NODE_ATTR):
+            l_node_obj = Xml._read_one_node_xml(l_node_xml)
+            # l_node_obj.Key = l_count
+            # LOG.warn('Found Node {}'.format(l_node_obj.Name))
+            l_ret[l_node_obj.UUID] = l_node_obj
+            l_uuid_obj = UuidData()
+            l_uuid_obj.UUID = l_node_obj.UUID
+            l_uuid_obj.UuidType = 'Node'
+            uuid_tools.Uuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
+            l_count += 1
+            LOG.info('Loaded Node for {} '.format(l_node_obj.Name))
         LOG.info('Loaded {} Nodes'.format(l_count))
         p_pyhouse_obj.Computer.Nodes = l_ret
         return l_ret

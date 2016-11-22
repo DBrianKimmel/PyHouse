@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2016 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
-Passed all 6 tests - DBK - 2015-09-12
+Passed all 9 tests - DBK - 2016-11-21
 
 http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2016-07-16'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import datetime
@@ -85,6 +85,13 @@ class SetupMixin(object):
         return p_pyhouse_obj
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_sunrisesunset')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
     """
@@ -94,7 +101,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_Earth(self):
         SetupMixin.load_earth(self.m_pyhouse_obj)
         l_loc = self.m_pyhouse_obj.House.Location
-        print(PrettyFormatAny.form(l_loc, 'A1-01-A - Loc'))
+        # print(PrettyFormatAny.form(l_loc, 'A1-01-A - Loc'))
         self.assertEqual(l_loc.Latitude, float(TESTING_LOCATION_LATITUDE))
 
 
@@ -107,46 +114,46 @@ class B1_Astral(SetupMixin, unittest.TestCase):
 
     def test_01_Loc(self):
         l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_0)
-        print('Sun Rise', l_ret.SunRise)
+        # print('Sun Rise', l_ret.SunRise)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_0.hour)
         self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_0.minute, 1)
-        print('Sun Set', l_ret.SunSet)
+        # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_0.hour)
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_0.minute, 1)
 
     def test_02_Loc(self):
         l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_1)
-        print('Sun Rise', l_ret.SunRise)
+        # print('Sun Rise', l_ret.SunRise)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_1.hour)
         self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_1.minute, 1)
-        print('Sun Set', l_ret.SunSet)
+        # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_1.hour)
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_1.minute, 1)
 
     def test_03_Loc(self):
         l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_2)
-        print('Sun Rise', l_ret.SunRise)
+        # print('Sun Rise', l_ret.SunRise)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_2.hour)
         self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_2.minute, 1)
-        print('Sun Set', l_ret.SunSet)
+        # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_2.hour)
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_2.minute, 1)
 
     def test_04_Loc(self):
         l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_3)
-        print('Sun Rise', l_ret.SunRise)
+        # print('Sun Rise', l_ret.SunRise)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_3.hour)
         self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_3.minute, 1)
-        print('Sun Set', l_ret.SunSet)
+        # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_3.hour)
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_3.minute, 1)
 
     def test_05_Loc(self):
         l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_4)
-        print('Sun Rise', l_ret.SunRise)
+        # print('Sun Rise', l_ret.SunRise)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_4.hour)
         self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_4.minute, 1)
-        print('Sun Set', l_ret.SunSet)
+        # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_4.hour)
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_4.minute, 1)
 
@@ -162,7 +169,7 @@ class C1_Delay(SetupMixin, unittest.TestCase):
 
     def test_01_Loc(self):
         l_delay = sunrisesunset.Util._till_next()
-        print(PrettyFormatAny.form(l_delay, 'Next'))
+        # print(PrettyFormatAny.form(l_delay, 'Next'))
 
     def test_02(self):
         pass

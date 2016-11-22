@@ -13,7 +13,7 @@ Passed all 10 tests - DBK - 2016-11-13
 from Modules.Utilities import convert
 from Modules.Core.data_objects import EntertainmentData
 
-__updated__ = '2016-11-13'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -103,9 +103,9 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def test_01_base(self):
         l_xml = self.m_xml.entertainment_sect.find('OnkyoSection').find('Device')
-        print(PrettyFormatAny.form(l_xml, 'C1-01-A - XML Base Onkyo device.'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-01-A - XML Base Onkyo device.'))
         l_obj = onkyoXML._read_device(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Onkyo device.'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Onkyo device.'))
         self.assertEqual(str(l_obj.Name), TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_ONKYO_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_ONKYO_DEVICE_ACTIVE_0)
@@ -116,7 +116,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_02_One(self):
         l_xml = self.m_xml.entertainment_sect.find('OnkyoSection').find('Device')
         l_obj = onkyoXML._read_one(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'C1-02-A - One Onkyo device.'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-02-A - One Onkyo device.'))
         self.assertEqual(str(l_obj.Name), TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_ONKYO_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_ONKYO_DEVICE_ACTIVE_0)
@@ -124,7 +124,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def test_03_All(self):
         l_obj = onkyoXML.read_all(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'C1-03-A - All Onkyo devices.'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-03-A - All Onkyo devices.'))
         self.assertEqual(str(l_obj[0].Name), TESTING_ONKYO_DEVICE_NAME_0)
 
 
@@ -143,23 +143,23 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """Test the write for proper XML elements
         """
         l_xml = onkyoXML._write_device(self.m_onkyo[0])
-        print(PrettyFormatAny.form(l_xml, 'D1-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_ONKYO_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_ONKYO_DEVICE_ACTIVE_0)
         self.assertEqual(l_xml.find('UUID').text, TESTING_ONKYO_DEVICE_UUID_0)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_ONKYO_DEVICE_COMMENT_0)
+        # self.assertEqual(l_xml.find('Comment').text, TESTING_ONKYO_DEVICE_COMMENT_0)
 
     def test_02_One(self):
         """Test the write for proper XML elements
         """
         l_xml = onkyoXML._write_one(self.m_pyhouse_obj, self.m_onkyo[0])
-        print(PrettyFormatAny.form(l_xml, 'D1-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - XML'))
 
     def test_03_All(self):
         """Test the write for proper XML elements
         """
         l_xml = onkyoXML.write_all(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'D1-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-03-A - XML'))
 
 # ## END DBK

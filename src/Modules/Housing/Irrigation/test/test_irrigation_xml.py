@@ -7,23 +7,27 @@
 @note:      Created on Jun 30, 2015
 @summary:
 
-Passed all 8 tests - DBK - 2016-08-24
+Passed all 9 tests - DBK - 2016-11-21
 
 """
-from Modules.Housing.Irrigation.test.xml_irrigation import TESTING_IRRIGATION_ZONE_NAME_0_0, \
-    TESTING_IRRIGATION_SYSTEM_NAME_0, TESTING_IRRIGATION_ZONE_KEY_0_0, TESTING_IRRIGATION_ZONE_ACTIVE_0_0, \
-    TESTING_IRRIGATION_ZONE_COMMENT_0_0, TESTING_IRRIGATION_ZONE_DURATION_0_0
 
-__updated__ = '2016-08-28'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
+from Modules.Housing.Irrigation.test.xml_irrigation import \
+    TESTING_IRRIGATION_ZONE_NAME_0_0, \
+    TESTING_IRRIGATION_SYSTEM_NAME_0, \
+    TESTING_IRRIGATION_ZONE_KEY_0_0, \
+    TESTING_IRRIGATION_ZONE_ACTIVE_0_0, \
+    TESTING_IRRIGATION_ZONE_COMMENT_0_0, \
+    TESTING_IRRIGATION_ZONE_DURATION_0_0
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -33,6 +37,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = irrigationXml
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_irrigation_xml')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
@@ -67,7 +78,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_zone
         l_obj = self.m_api._read_one_zone(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
         self.assertEqual(str(l_obj.Name), TESTING_IRRIGATION_ZONE_NAME_0_0)
         self.assertEqual(str(l_obj.Key), TESTING_IRRIGATION_ZONE_KEY_0_0)
         self.assertEqual(str(l_obj.Active), TESTING_IRRIGATION_ZONE_ACTIVE_0_0)
@@ -79,7 +90,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_system
         l_obj = self.m_api._read_one_irrigation_system(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'B1-01-A - System'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - System'))
         self.assertEqual(l_obj.Name, TESTING_IRRIGATION_SYSTEM_NAME_0)
 
     def test_03_Irrigation(self):
@@ -87,7 +98,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         _l_xml = self.m_xml.irrigation_sect
         l_obj = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B1-03-A - Irrigation'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Irrigation'))
         self.assertEqual(len(l_obj), 3)
 
 
@@ -103,8 +114,8 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_sys = l_irr[0]
         l_obj = l_sys.Zones[0]
         l_xml = self.m_api._write_one_zone(l_obj)
-        print(PrettyFormatAny.form(l_obj, 'C1-01-A - Zone'))
-        print(PrettyFormatAny.form(l_xml, 'C1-01-B - Zone'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-01-A - Zone'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-01-B - Zone'))
         self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
     def test_02_System(self):
@@ -113,7 +124,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_sys = l_irr[0]
         l_xml = self.m_api._write_one_system(l_sys)
-        print(PrettyFormatAny.form(l_xml, 'C1-02-A - System'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-02-A - System'))
         self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
     def test_03_Irrigation(self):
@@ -121,7 +132,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_irr = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         l_obj = self.m_api.write_irrigation_xml(l_irr)
-        print(PrettyFormatAny.form(l_obj, 'C1-03-A - Irrigate'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-03-A - Irrigate'))
         self.assertEqual(self.m_pyhouse_obj.House.Irrigation, None)
 
 # ## END DBK

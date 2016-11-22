@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2016-11-14
 
 """
 
-__updated__ = '2016-11-14'
+__updated__ = '2016-11-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -50,7 +50,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -79,10 +79,10 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_Objects(self):
+    def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
@@ -92,10 +92,10 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
         self.assertEqual(self.m_xml.button.tag, 'Button')
 
-    def test_2_Family(self):
+    def test_02_Family(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-2-A -PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-02-A -PyHouse'))
         # # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
         self.assertNotEqual(self.m_pyhouse_obj, None)
         # self.assertEqual(self.m_pyhouse_obj.House.Name, TESTING_HOUSE_NAME)
@@ -109,18 +109,18 @@ class A2_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_lights(self):
+    def test_01_lights(self):
         """ Be sure that the XML contains the right stuff.
         """
         l_xml = self.m_xml.light_sect
-        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - XML'))
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHT_NAME_0)
 
-    def test_2_light(self):
+    def test_02_light(self):
         """Ensure that the lighting objects are correct in the XML
         """
         l_xml = self.m_xml.light
-        # print(PrettyFormatAny.form(l_xml, 'A2-2-A - PyHouse'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-02-A - PyHouse'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
 
 
@@ -261,7 +261,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Lighting = LightingData()
         self.m_pyhouse_obj.House.Lighting.Lights = l_objs
         l_xml = lightsAPI.write_all_lights_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'W1-05-A - Lights XML'))
+        # print(PrettyFormatAny.form(l_xml, 'W1-05-A - Lights XML'))
         l_xml0 = l_xml.find('Light')
         self.assertEqual(l_xml0.find('UUID').text, TESTING_LIGHT_UUID_0)
         self.assertEqual(l_xml0.find('Comment').text, TESTING_LIGHT_COMMENT_0)

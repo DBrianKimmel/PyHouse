@@ -2,12 +2,14 @@
 @name:      PyHouse/src/Modules/Web/test/test_root_menu.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
+@copyright: 2013-2016 by D. Brian Kimmel
 @note:      Created on Jul 12, 2013
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
 
 """
+
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -23,6 +25,13 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_root_menu')
 
 
 class Test_02_XML(SetupMixin, unittest.TestCase):

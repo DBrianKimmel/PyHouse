@@ -9,6 +9,8 @@
 
 """
 
+__updated__ = '2016-11-21'
+
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
@@ -25,7 +27,7 @@ class Xml(object):
     @staticmethod
     def _read_base(p_pool_element):
         l_pool_obj = PoolData()
-        XmlConfigTools.read_base_object_xml(l_pool_obj, p_pool_element)
+        XmlConfigTools.read_base_UUID_object_xml(l_pool_obj, p_pool_element)
         return l_pool_obj
 
     @staticmethod
