@@ -10,8 +10,9 @@
 @summary:   Web interface to schedules for the selected house.
 
 """
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-23'
 
 #  Import system type stuff
 import os
@@ -74,15 +75,16 @@ class SchedulesElement(athena.LiveElement):
         l_obj.ScheduleMode = l_json['ScheduleMode']
         #
         if l_obj.ScheduleType == 'Lighting':
-            l_obj = self._save_light(l_obj, p_json)
+            l_obj = self._save_light(l_obj, l_json)
         elif l_obj.ScheduleType == 'Irrigation':
-            l_obj = self._save_irrigation(l_obj, p_json)
+            l_obj = self._save_irrigation(l_obj, l_json)
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.Schedules[l_schedule_ix] = l_obj
         self.m_pyhouse_obj.APIs.House.ScheduleAPI.RestartSchedule()
 
     def _save_light(self, p_obj, p_json):
+        LOG.info(PrettyFormatAny.form(p_json, 'JSON'))
         p_obj.Level = int(p_json['Level'])
         p_obj.LightName = p_json['LightName']
         p_obj.Rate = p_json['Rate']

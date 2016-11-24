@@ -7,11 +7,11 @@
 @licencse:   MIT License
 @summary:
 
-All 3 tests ran OK - DBK 2016-06-21
+Passed all 5 tests - DBK 2016-11-22
 
 """
 
-__updated__ = '2016-10-08'
+__updated__ = '2016-11-22'
 
 
 # Import system type stuff
@@ -22,7 +22,6 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.coordinate_tools import Coords
-from Modules.Utilities import json_tools
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_3, \
@@ -33,7 +32,14 @@ from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_CORNER_3, \
     TESTING_ROOM_FLOOR_3, \
     TESTING_ROOM_SIZE_3, \
-    TESTING_ROOM_TYPE_3
+    TESTING_ROOM_TYPE_3, \
+    TESTING_ROOM_NAME_0, \
+    TESTING_ROOM_CORNER_X_3, \
+    TESTING_ROOM_CORNER_Y_3, \
+    TESTING_ROOM_CORNER_Z_3, \
+    TESTING_ROOM_SIZE_X_3, \
+    TESTING_ROOM_SIZE_Y_3, \
+    TESTING_ROOM_SIZE_Z_3
 
 JSON = {
         'Name': TESTING_ROOM_NAME_3,
@@ -58,39 +64,65 @@ class SetupMixin(object):
         self.m_api = Coords
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_coordinate_tools')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_BuildObjects(self):
-        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
+    def test_01_Tags(self):
+        """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {}, 'No Rooms{}')
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
+        self.assertEqual(self.m_xml.button.tag, 'Button')
 
 
-class C1_Coords(SetupMixin, unittest.TestCase):
+class A2_XML(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by lighting_lights.
+    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_Corner(self):
+    def test_01_Room(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_xml = self.m_xml.room_sect
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - XML'))
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_ROOM_NAME_0)
+
+
+class B1_Coords(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Corner(self):
         """
         """
-        # print(PrettyFormatAny.form(JSON, 'C1-1 A - Corner'))
-        # print(PrettyFormatAny.form(JSON['Corner'], 'C1-1 B - Corner'))
+        # print(PrettyFormatAny.form(JSON, 'B1-01 A - Corner'))
+        # print(PrettyFormatAny.form(JSON['Corner'], 'B1-01 B - Corner'))
         l_ret = self.m_api._get_coords(JSON['Corner'])
-        # print(PrettyFormatAny.form(l_ret, 'C1-1 C - Corner'))
-        self.assertEqual(l_ret.X_Easting, float(12.0))
-        self.assertEqual(l_ret.Y_Northing, float(14.0))
-        self.assertEqual(l_ret.Z_Height, float(0.5))
+        # print(PrettyFormatAny.form(l_ret, 'B1-01 C - Corner'))
+        self.assertEqual(str(l_ret.X_Easting), TESTING_ROOM_CORNER_X_3)
+        self.assertEqual(str(l_ret.Y_Northing), TESTING_ROOM_CORNER_Y_3)
+        self.assertEqual(str(l_ret.Z_Height), TESTING_ROOM_CORNER_Z_3)
 
     def test_2_Size(self):
         """
         """
         l_ret = self.m_api._get_coords(JSON['Size'])
-        # print(PrettyFormatAny.form(l_ret, 'Size'))
-
+        # print(PrettyFormatAny.form(l_ret, 'B1-02-A - Size'))
+        self.assertEqual(str(l_ret.X_Easting), TESTING_ROOM_SIZE_X_3)
+        self.assertEqual(str(l_ret.Y_Northing), TESTING_ROOM_SIZE_Y_3)
+        self.assertEqual(str(l_ret.Z_Height), TESTING_ROOM_SIZE_Z_3)
 
 # ## END DBK

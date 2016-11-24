@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2016-11-14
 
 """
 
-__updated__ = '2016-11-15'
+__updated__ = '2016-11-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -120,13 +120,13 @@ class C1_Rooms(SetupMixin, unittest.TestCase):
     def test_01_Room(self):
         l_rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
         l_json = unicode(json_tools.encode_json(l_rooms))
-        print(PrettyFormatAny.form(l_json, 'C1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_json, 'C1-01-A - Decode'))
         # self.assertEqual(self.jsonPair(l_json, 0), l_rooms)
 
     def test_02_Rooms(self):
         l_rooms = self.m_api.read_rooms_xml(self.m_pyhouse_obj)
         l_json = unicode(json_tools.encode_json(l_rooms))
-        print(PrettyFormatAny.form(l_json, 'C1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_json, 'C1-02-A - Decode'))
 
 
 class C2_House(SetupMixin, unittest.TestCase):
@@ -135,27 +135,27 @@ class C2_House(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Before(self):
-        # print(PrettyFormatAny.form(l_json, 'C1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_json, 'C2-01-A - Decode'))
         pass
 
     def test_02_Base(self):
         l_data = web_utils.UtilJson._getHouseBase(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_data, 'C2-01-A - Decode'))
+        print(PrettyFormatAny.form(l_data, 'C2-02-A - Decode'))
 
     def test_03_LocRoom(self):
         l_data = web_utils.UtilJson._getHouseBase(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_data, 'C1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_data, 'C2-03-A - Decode'))
         # web_utils.UtilJson._get_LocRoom(self.m_pyhouse_obj, l_data)
 
     def test_04_Modules(self):
         l_data = web_utils.UtilJson._getHouseBase(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_data, 'C1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_data, 'C2-04-A - Decode'))
         # web_utils.UtilJson._get_LocRoom(self.m_pyhouse_obj, l_data)
         # web_utils.UtilJson._get_Modules(self.m_pyhouse_obj, l_data)
 
     def test_05_All(self):
         l_data = web_utils.UtilJson._get_AllHouseObjs(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_data, 'C1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_data, 'C2-05-A - Decode'))
 
 
 class D1_Json(SetupMixin, unittest.TestCase):
@@ -166,6 +166,7 @@ class D1_Json(SetupMixin, unittest.TestCase):
     def test_01_HouseInfo(self):
         l_json = web_utils.GetJSONHouseInfo(self.m_pyhouse_obj)
         l_obj = jsonpickle.decode(l_json)
+        print(PrettyFormatAny.form(l_obj, 'D1-01-A - House'))
         self.assertEquals(l_obj['Name'], TESTING_HOUSE_NAME)
         self.assertEquals(l_obj['Key'], TESTING_HOUSE_KEY)
         self.assertEquals(l_obj['Active'], TESTING_HOUSE_ACTIVE)
@@ -184,6 +185,6 @@ class E1_Json(SetupMixin, unittest.TestCase):
     def test_01_RoomInfo(self):
         l_json = web_utils.GetJSONHouseInfo(self.m_pyhouse_obj)
         l_obj = jsonpickle.decode(l_json)
-        print(PrettyFormatAny.form(l_obj, 'E1-01-A - Decode'))
+        # print(PrettyFormatAny.form(l_obj, 'E1-01-A - Decode'))
 
 # ## END DBK

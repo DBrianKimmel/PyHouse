@@ -7,8 +7,11 @@
 @note:      Created on Aug 8, 2015
 @Summary:
 
-Passed all 7 tests - DBK - 2015-09-11
+Passed all 9 tests - DBK - 2016-11-22
+
 """
+
+__updated__ = '2016-11-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -38,7 +41,14 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class A_NL(SetupMixin, unittest.TestCase):
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_debug_tools')
+
+
+class B1_X(SetupMixin, unittest.TestCase):
     """Test PrintBytes functionality.
     """
 
@@ -52,13 +62,12 @@ class A_NL(SetupMixin, unittest.TestCase):
     def test_01_Line(self):
         """Testing _nuke_newlines().
         """
-        print("A_01")
         l_ret = debug_tools._nuke_newlines(LOTS_NLS)
-        print(l_ret)
+        # print('B1-01-A Line', l_ret)
         self.assertEqual(len(l_ret), 43)
 
 
-class B_Format(SetupMixin, unittest.TestCase):
+class B2_Format(SetupMixin, unittest.TestCase):
     """Test PrintBytes functionality.
     """
 
@@ -72,34 +81,33 @@ class B_Format(SetupMixin, unittest.TestCase):
     def test_01_Line(self):
         """Testing _format_line().
         """
-        print('B_01')
-        l_ret = debug_tools._format_line(self.m_long, maxlen = 40)
-        print(l_ret)
+        l_ret = debug_tools._format_line(self.m_long, maxlen=40)
+        # print('B2-01-A - Line', l_ret)
         self.assertEqual(len(l_ret), 12)
 
     def test_02_Newlines(self):
         """Teting _nuke_newlines().
         """
         l_ret = debug_tools._nuke_newlines(self.m_long)
-        print(l_ret)
+        # print('B2_02-A - NewLine', l_ret)
         self.assertEqual(len(l_ret), 426)
 
     def test_03_Cols(self):
         l_strings = ['1', '22', '333', '4444']
         l_widths = [10, 10, 10, 10]
         l_ret_1 = debug_tools._format_cols(l_strings, l_widths)
-        print(l_ret_1)
+        # print('B2-03-A - Cols', l_ret_1)
         self.assertEqual(len(l_ret_1), 40 - (10 - 4))
         l_strings = ['1', 'now is the time for all good men', 'to come to the aid', 'of their party']
         l_ret_2 = debug_tools._format_cols(l_strings, l_widths)
-        print(l_ret_2)
+        # print(l_ret_2)
 
     def test_04_Object(self):
-        l_ret = debug_tools._format_object('PyHouse', self.m_pyhouse_obj, maxlen = 120, lindent = 20)
-        print(l_ret)
+        l_ret = debug_tools._format_object('PyHouse', self.m_pyhouse_obj, maxlen=120, lindent=20)
+        # print(l_ret)
 
 
-class B_PFA(SetupMixin, unittest.TestCase):
+class B3_PFA(SetupMixin, unittest.TestCase):
     """
     PrettyFormatAll
     """
@@ -109,17 +117,17 @@ class B_PFA(SetupMixin, unittest.TestCase):
     def test_01_String(self):
         l_str = "The quick brown fox jumpped over the lazy dog's back"
         l_len = len(l_str)
-        l_ret = debug_tools.PrettyFormatAny._format_string(l_str, maxlen = 40, indent = 10)
-        print(l_ret)
+        l_ret = debug_tools.PrettyFormatAny._format_string(l_str, maxlen=40, indent=10)
+        # print(l_ret)
         self.assertEqual(len(l_str), l_len)
         self.assertEqual(len(l_ret), l_len + 20 + 1)
 
     def test_02_Lists(self):
         l_ret = debug_tools.PrettyFormatAny._format_list(LISTS, 50, 0)
-        print(l_ret)
+        # print(l_ret)
 
     def test_03_Dicts(self):
         l_ret = debug_tools.PrettyFormatAny._format_dict(DICTS, 50, 0)
-        print(l_ret)
+        # print(l_ret)
 
 #  ## END DBK

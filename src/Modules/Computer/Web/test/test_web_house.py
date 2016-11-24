@@ -12,7 +12,7 @@ Passed all 3 tests - DBK - 2016-11-21
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -63,6 +63,6 @@ class B1_XML(SetupMixin, unittest.TestCase):
     def test_02_Json(self):
         l_api = web_house.HouseElement(self.m_workspace)
         l_json = l_api.getHouseData()
-        print(PrettyFormatAny.form(l_json, 'B1-02-A - JSON'))
+        # print(PrettyFormatAny.form(l_json, 'B1-02-A - JSON'))
 
 # ## END DBK

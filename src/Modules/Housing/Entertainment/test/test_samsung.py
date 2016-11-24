@@ -7,11 +7,11 @@
 @note:      Created on Jul 14, 2016
 @summary:
 
-Passed all 11 tests - DBK - 2016-11-11
+Passed all 11 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

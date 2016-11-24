@@ -10,7 +10,7 @@
 Passed all 13 tests - DBK - 2016-11-21
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -121,19 +121,23 @@ class S1_PyHouse(SetupMixin, unittest.TestCase):
         SetupMixin.setUpObj(self, ET.fromstring(XML_EMPTY))
 
     def test_01_Obj(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'S1-01-A - PyHouse_obj'))
+        pass
 
     def test_02_House(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
+        pass
 
     def test_03_Location(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+        pass
 
     def test_04_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         l_location = location.Xml().read_location_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_location, 'Location'))
+        # print(PrettyFormatAny.form(l_location, 'Location'))
+        pass
 
 
 class S2_PyHouse(SetupMixin, unittest.TestCase):
@@ -142,18 +146,22 @@ class S2_PyHouse(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
 
     def test_01_Obj(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj'))
+        pass
 
     def test_02_House(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse_obj.House'))
+        pass
 
     def test_03_Location(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'PyHouse_obj.House.Location'))
+        pass
 
     def test_04_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
         l_location = location.Xml().read_location_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_location, 'Location'))
+        # print(PrettyFormatAny.form(l_location, 'Location'))
+        pass
 
 # ## END DBK

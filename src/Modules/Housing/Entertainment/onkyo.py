@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-13'
+__updated__ = '2016-11-23'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -41,8 +41,11 @@ class OnkyoDeviceData(BaseUUIDObject):
     def __init__(self):
         super(OnkyoDeviceData, self).__init__()
         self.Comment = None
-        self.Ipv4 = None
+        self.IPv4 = None
         self.Port = None
+        self.RoomCoords = None
+        self.RoomName = None
+        self.RoomUUID = None
         self.Status = None
         self.Type = None
         self.Volume = None
@@ -58,13 +61,18 @@ class XML(object):
         l_device = OnkyoDeviceData()
         XmlConfigTools().read_base_UUID_object_xml(l_device, p_xml)
         l_device.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
-        l_device.Ipv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
+        l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
         l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
+        l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
         return l_device
 
     @staticmethod
     def _write_device(p_obj):
         l_xml = XmlConfigTools().write_base_UUID_object_xml('Device', p_obj)
+        PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
+        PutGetXML().put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
+        PutGetXML().put_int_element(l_xml, 'Port', p_obj.Port)
+        PutGetXML().put_text_element(l_xml, 'Type', p_obj.Type)
         return l_xml
 
     @staticmethod
@@ -89,17 +97,17 @@ class XML(object):
     def read_all(p_pyhouse_obj):
         """ Get the entire OnkyoData object from the xml.
         """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        if l_xml == None:
-            return {}
-        l_xml = l_xml.find('EntertainmentSection')
-        if l_xml == None:
-            return {}
-        l_xml = l_xml.find('OnkyoSection')
-        if l_xml == None:
-            return {}
         l_dict = {}
         l_count = 0
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        if l_xml == None:
+            return l_dict
+        l_xml = l_xml.find('EntertainmentSection')
+        if l_xml == None:
+            return l_dict
+        l_xml = l_xml.find('OnkyoSection')
+        if l_xml == None:
+            return l_dict
         for l_dev_xml in l_xml.iterfind('Device'):
             l_dict[l_count] = XML._read_one(l_dev_xml)
             LOG.info('Loaded Onkyo device {}'.format(l_dict[l_count]))
@@ -126,7 +134,7 @@ class OnkyoProtocol(Protocol):
 
     def dataReceived(self, p_data):
         Protocol.dataReceived(self, p_data)
-        LOG.info('Data Received.\n\tData:{}'.format(p_data))
+        # LOG.info('Data Received.\n\tData:{}'.format(p_data))
 
     def connectionMade(self):
         Protocol.connectionMade(self)

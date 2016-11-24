@@ -9,6 +9,8 @@
 
 """
 
+__updated__ = '2016-11-22'
+
 TESTING_XML_BOOL_0 = 'False'
 TESTING_XML_BOOL_1 = 'True'
 TESTING_XML_BOOL_2 = 'Howdy'

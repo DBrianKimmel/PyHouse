@@ -11,11 +11,12 @@
 
 """
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-11-23'
 
 #  Import system type stuff
 
 #  Import PyHouse files
+from Modules.Housing import utils
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
@@ -37,9 +38,7 @@ class XML(object):
             p_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_xml, 'DeviceFamily')
             p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType')
             p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType')
-            p_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_xml, 'RoomCoords')
-            p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-            p_obj.RoomUUID = PutGetXML.get_text_from_xml(p_xml, 'RoomUUID')
+            utils.read_room_reference_xml(p_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
         return p_obj

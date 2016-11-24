@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2015-10-21
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -197,7 +197,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the location section
         """
         l_xml = internetAPI().write_internet_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C1-06-A - Locate'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-06-A - Locate'))
         self.assertEqual(l_xml.find('Internet/ExternalIPv6').text, TESTING_INTERNET_IPv6_0)
 
 

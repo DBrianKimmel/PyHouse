@@ -2,13 +2,15 @@
 @name: PyHouse/src/Modules/Utilities/test/test_convert.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2014 by D. Brian Kimmel
+@copyright: 2013-2016 by D. Brian Kimmel
 @license: MIT License
 @note: Created on Apr 4, 2013
 @summary: This module is for testing conversion tools.
 
-Passed all 4 tests - DBK - 2015-08-07
+Passed all 5 tests - DBK - 2016-11-22
 """
+
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -37,7 +39,14 @@ class SetupMixin(object):
 
 
 
-class C_01_RawConvert(SetupMixin, unittest.TestCase):
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_convert')
+
+
+class B1_Convert(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))

@@ -10,7 +10,7 @@
 Passed all 16 tests - DBK 2016-07-02
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -105,10 +105,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.room.tag, 'Room')
 
     def test_3_pyhouse(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'Base'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs, 'APIs'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs.Computer, 'APIs.Computer'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs.Computer.MqttAPI, 'MqttAPI'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'Base'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs, 'APIs'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs.Computer, 'APIs.Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.APIs.Computer.MqttAPI, 'MqttAPI'))
+        pass
 
 
 class A2_XML(SetupMixin, unittest.TestCase):
@@ -239,10 +240,11 @@ class D1_Maint(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def _print(self, p_rooms):
-        for l_obj in p_rooms.itervalues():
-            print('D1-Print - Key:{}; Name:{}; UUID:{}; Update:{};'.format(
-                    l_obj.Key, l_obj.Name, l_obj.UUID, l_obj.LastUpdate))
-        print
+        # for l_obj in p_rooms.itervalues():
+        #    print('D1-Print - Key:{}; Name:{}; UUID:{}; Update:{};'.format(
+        #            l_obj.Key, l_obj.Name, l_obj.UUID, l_obj.LastUpdate))
+        # print
+        pass
 
     def test_1_Extract(self):
         """ Test extracting information passed back by the browser.

@@ -92,9 +92,10 @@ class A2_XML(SetupMixin, unittest.TestCase):
     def test_04_WriteXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Web = l_web
-        print(PrettyFormatAny.form(l_web, 'A2-04-A - Web Data'))
-        l_xml = webXml.write_web_xml(l_web)
-        print(PrettyFormatAny.form(l_xml, 'A2-04-B - XML'))
+        # print(PrettyFormatAny.form(l_web, 'A2-04-A - Web Data'))
+        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_xml, 'A2-04-B - XML'))
+        pass
 
 
 class C1_Element(SetupMixin, unittest.TestCase):
@@ -114,7 +115,7 @@ class C1_Element(SetupMixin, unittest.TestCase):
     def test_02_ValidList(self):
         l_json = web_login.LoginElement(self.m_worksapce).getValidLists()
         l_test = json_tools.decode_json_unicode(l_json)
-        print(PrettyFormatAny.form(l_test, 'C1-01-A - JSON', 40))
+        # print(PrettyFormatAny.form(l_test, 'C1-02-A - JSON', 40))
         self.assertEqual(l_test['Families'], VALID_FAMILIES)
 
 # ## END DBK

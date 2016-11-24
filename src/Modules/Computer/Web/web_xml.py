@@ -15,7 +15,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2016-11-13'
+__updated__ = '2016-11-22'
 
 #  Import system type stuff
 
@@ -33,20 +33,22 @@ class Xml(object):
     """
 
     @staticmethod
-    def _read_port(p_xml):
+    def _read_ports(p_xml):
         """
         @param p_xml: is the web section
         @return: the Port Number
         """
         l_port = PutGetXML.get_int_from_xml(p_xml, 'WebPort', 8580)
-        return l_port
+        l_secure = PutGetXML.get_int_from_xml(p_xml, 'SecurePort', 8580)
+        return l_port, l_secure
 
     @staticmethod
-    def _write_port(p_obj, p_xml):
+    def _write_ports(p_obj, p_xml):
         """
         @param p_obj: is the Computer.Web object
         """
         l_xml = PutGetXML.put_int_element(p_xml, 'Port', p_obj.WebPort)
+        l_xml = (PutGetXML.put_int_element(p_xml, 'SecurePort', p_obj.SecurePort))
         return l_xml
 
     @staticmethod
@@ -153,7 +155,7 @@ class Xml(object):
         if l_xml == None:
             return l_obj
         l_obj.Logins, l_count = Xml._read_all_logins(l_xml)
-        l_obj.WebPort = Xml._read_port(l_xml)
+        l_obj.WebPort, l_obj.SecurePort = Xml._read_ports(l_xml)
         LOG.info('Loaded {} logins.'.format(l_count))
         return l_obj
 
@@ -165,7 +167,7 @@ class Xml(object):
         """
         l_obj = p_pyhouse_obj.Computer.Web
         l_web_xml = ET.Element("WebSection")
-        Xml._write_port(l_obj, l_web_xml)
+        Xml._write_ports(l_obj, l_web_xml)
         l_web_xml.append(Xml._write_all_logins(l_obj.Logins))
         return l_web_xml
 

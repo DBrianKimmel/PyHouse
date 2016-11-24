@@ -7,27 +7,28 @@
 @note:      Created on Jun 26, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2016-11-12
+Passed all 11 tests - DBK - 2016-11-23
 
 """
-from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0, TESTING_CONTROLLER_ACTIVE_0, \
-    TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_UUID_0
-from Modules.Housing.Lighting.test.xml_buttons import TESTING_LIGHTING_BUTTON_NAME_0, TESTING_LIGHTING_BUTTON_NAME_1, \
-    TESTING_LIGHTING_BUTTON_COMMENT_0
 
-__updated__ = '2016-11-12'
+__updated__ = '2016-11-23'
 
 # Import system type stuff
 from twisted.trial import unittest
 from xml.etree import ElementTree as ET
 
 # Import PyMh files and modules.
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightData, ButtonData, ControllerData
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_ROOM_NAME, \
     TESTING_DEVICE_ROOM_X, \
-    TESTING_DEVICE_COMMENT_0, TESTING_DEVICE_SUBTYPE, TESTING_DEVICE_TYPE, TESTING_DEVICE_ROOM_UUID
+    TESTING_DEVICE_COMMENT_0, \
+    TESTING_DEVICE_SUBTYPE, \
+    TESTING_DEVICE_TYPE, \
+    TESTING_DEVICE_ROOM_UUID
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_KEY_0, \
@@ -38,10 +39,16 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_DEVICE_TYPE_0, \
     TESTING_LIGHT_ROOM_COORDS_0, \
     TESTING_LIGHT_ROOM_NAME_0, \
-    TESTING_LIGHT_ROOM_UUID_0
+    TESTING_LIGHT_ROOM_UUID_0, TESTING_LIGHT_ROOM_X, TESTING_LIGHT_ROOM_Z, TESTING_LIGHT_ROOM_Y
+from Modules.Housing.Lighting.test.xml_controllers import \
+    TESTING_CONTROLLER_NAME_0, \
+    TESTING_CONTROLLER_ACTIVE_0, \
+    TESTING_CONTROLLER_KEY_0, \
+    TESTING_CONTROLLER_UUID_0
+from Modules.Housing.Lighting.test.xml_buttons import \
+    TESTING_LIGHTING_BUTTON_NAME_0, \
+    TESTING_LIGHTING_BUTTON_COMMENT_0
 from Modules.Utilities.device_tools import XML as deviceXML
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -128,7 +135,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.DeviceSubType, int(TESTING_LIGHT_DEVICE_SUBTYPE_0))
         self.assertEqual(l_base.DeviceType, int(TESTING_LIGHT_DEVICE_TYPE_0))
-        # self.assertEqual(l_base.RoomCoords, TESTING_LIGHT_ROOM_COORDS_0)
+        self.assertEqual(str(l_base.RoomCoords.X_Easting), TESTING_LIGHT_ROOM_X)
+        self.assertEqual(str(l_base.RoomCoords.Y_Northing), TESTING_LIGHT_ROOM_Y)
+        self.assertEqual(str(l_base.RoomCoords.Z_Height), TESTING_LIGHT_ROOM_Z)
         self.assertEqual(l_base.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(l_base.RoomUUID, TESTING_LIGHT_ROOM_UUID_0)
 
