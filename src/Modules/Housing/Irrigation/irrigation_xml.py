@@ -13,7 +13,7 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 
 """
 
-__updated__ = '2016-08-24'
+__updated__ = '2016-11-28'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -41,7 +41,7 @@ class Xml(object):
         @return: an IrrigationZone object filled in with data from the XML passed in
         """
         l_obj = IrrigationZoneData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_xml)  # Name, Key, Active
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name, Key, Active
         l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_obj.Duration = PutGetXML.get_int_from_xml(p_xml, 'Duration', 0)
         l_obj.EmitterCount = PutGetXML.get_int_from_xml(p_xml, 'EmitterCount', 0)
@@ -58,7 +58,7 @@ class Xml(object):
         @param p_obj: is one zone object
         @return the XML for one Zone
         """
-        l_xml = XmlConfigTools.write_base_object_xml('Zone', p_obj)
+        l_xml = XmlConfigTools.write_base_UUID_object_xml('Zone', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_int_element(l_xml, 'Duration', p_obj.Duration)
         PutGetXML.put_int_element(l_xml, 'EmitterCount', p_obj.EmitterCount)
@@ -77,7 +77,7 @@ class Xml(object):
         """
         l_sys = IrrigationSystemData()
         l_count = 0
-        XmlConfigTools.read_base_object_xml(l_sys, p_xml)
+        XmlConfigTools.read_base_UUID_object_xml(l_sys, p_xml)
         try:
             l_sys.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             for l_zone in p_xml.iterfind(ZONE):
@@ -127,7 +127,7 @@ class Xml(object):
         @param p_obj: is one irrigation system object.
         @return: the XML for one complete IrrigationSystem
         """
-        l_xml = XmlConfigTools.write_base_object_xml('IrrigationSystem', p_obj)
+        l_xml = XmlConfigTools.write_base_UUID_object_xml('IrrigationSystem', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         for l_obj in p_obj.Zones.itervalues():
             l_zone = Xml._write_one_zone(l_obj)

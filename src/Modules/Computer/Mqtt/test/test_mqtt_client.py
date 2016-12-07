@@ -10,7 +10,7 @@
 Passed all 14 tests - DBK - 2016-11-14
 
 """
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-29'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,12 +19,12 @@ from twisted.internet import reactor
 import twisted
 
 #  Import PyMh files and modules.
+from test.xml_data import XML_LONG, XML_EMPTY
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import MqttBrokerData, \
     LocationData, ScheduleLightData, ControllerData, \
     ComputerInformation
-from test.xml_data import XML_LONG, XML_EMPTY
 from Modules.Computer.Mqtt.mqtt_client import Util, API as mqttAPI
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
     TESTING_BROKER_ACTIVE_1
@@ -33,7 +33,7 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
-BROKER_TLS = '192.168.1.3'
+BROKER_TLS = '192.168.1.10'
 PORT = 1883
 PORT_TLS = 8883
 SUBSCRIBE = 'pyhouse/#'

@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Internet/test/test_internet_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 29, 2014
 @Summary:
 
-Passed all 15 tests - DBK - 2015-10-21
+Passed all 16 tests - DBK - 2016-11-27
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2016-11-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -59,6 +59,13 @@ class SetupMixin(object):
         return l_val
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_internet_xml')
+
+
 class A1_Setup(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by inernet.
     """
@@ -72,7 +79,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
 
     def test_02_FindXml(self):
         """ Be sure that the XML contains the right stuff.

@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-28'
 
 #  Import system type stuff
 
@@ -106,7 +106,7 @@ class Xml(object):
     def write_house_xml(p_pyhouse_obj):
         """Replace the data in the 'Houses' section with the current data.
         """
-        l_house_xml = XmlConfigTools.write_base_object_xml('HouseDivision', p_pyhouse_obj.House)
+        l_house_xml = XmlConfigTools.write_base_UUID_object_xml('HouseDivision', p_pyhouse_obj.House)
         l_house_xml.append(locationXML.write_location_xml(p_pyhouse_obj.House.Location))
         l_house_xml.append(roomsXML.write_rooms_xml(p_pyhouse_obj.House.Rooms))
         return l_house_xml

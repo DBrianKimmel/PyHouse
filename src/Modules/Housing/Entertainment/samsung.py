@@ -15,7 +15,7 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.data_objects import BaseUUIDObject
 
-__updated__ = '2016-11-21'
+__updated__ = '2016-11-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -79,7 +79,7 @@ class Xml(object):
 
     @staticmethod
     def _write_one_device(p_obj):
-        l_entry = XmlConfigTools.write_base_object_xml('Device', p_obj)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml('Device', p_obj)
         return l_entry
 
     @staticmethod

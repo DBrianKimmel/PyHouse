@@ -10,10 +10,8 @@
 Passed all 12 tests - DBK - 2016-11-05
 
 """
-from Modules.Core.data_objects import WebData, LoginData
-from src.Modules.Computer.Web.test.xml_web import TESTING_WEB_SECURE_PORT
 
-__updated__ = '2016-11-22'
+__updated__ = '2016-11-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,6 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import WebData, LoginData
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.test.xml_web import \
         TESTING_WEB_PORT, \
@@ -30,7 +29,8 @@ from Modules.Computer.Web.test.xml_web import \
         TESTING_LOGIN_ROLE_0, \
         TESTING_LOGIN_FULL_NAME_0, \
         TESTING_LOGIN_KEY_0, \
-        TESTING_LOGIN_ACTIVE_0
+        TESTING_LOGIN_ACTIVE_0, \
+        TESTING_WEB_SECURE_PORT
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 

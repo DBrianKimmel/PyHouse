@@ -11,7 +11,7 @@
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_ACTIVE, TESTING_HOUSE_KEY, TESTING_HOUSE_UUID
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-23'
+__updated__ = '2016-11-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -139,7 +139,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         """ Test
         """
         l_xml = self.m_xml.house_div
-        print(PrettyFormatAny.form(l_xml, 'A2-01-A - House'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - House'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)

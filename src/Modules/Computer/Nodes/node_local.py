@@ -20,25 +20,23 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
   so it will be possible to override the role via configuration.
 Once overridden the new role will "stick" by being written into the local XML file.
 """
-from datetime import datetime
-import subprocess
-from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-07-25'
+__updated__ = '2016-12-04'
 
 #  Import system type stuff
+from datetime import datetime
 import fnmatch  # Filename matching with shell patterns
-import netifaces
+import netifaces  # has gateways(), ifaddresses(). interfaces()
 import os
-import platform
 import pyudev
+import subprocess
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Communication import ir_control
-from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities.uuid_tools import Uuid as toolUuid
 
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
 
@@ -136,11 +134,7 @@ class Interfaces(object):
 
     @staticmethod
     def _find_addr_family_name(p_ix):
-        """Returns the string of the family name for a given index.
-        Windows 7 (Laptop):
-        -1000 = AF_LINK - The MAC address  (Windows only)
-        2  = AF_INET - IPv4
-        23 = AF_INET6 - IPv6
+        """ Returns the string of the family name for a given index.
 
         Linux, Kubuntu (Laptop):
         2  = AF_INET   - IPv4
@@ -161,26 +155,10 @@ class Interfaces(object):
         return l_ret
 
     @staticmethod
-    def _find_gateways():
-        l_ret = netifaces.gateways()
-        return l_ret
-
-    @staticmethod
     def _get_address_list_INET(p_list):
-        #  print(PrettyFormatAny.form(p_list, 'Address'))
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
-        #  print('115 AddrList INET {}\n\t{}'.format(PrettyFormatAny.form(p_list, 'List', 150), l_list))
-        return l_list
-
-    @staticmethod
-    def _get_address_list_INET6(p_list):
-        #  print(PrettyFormatAny.form(p_list, 'Address'))
-        l_list = []
-        for l_ent in p_list:
-            l_list.append(l_ent['addr'])
-        #  print('125 AddrList INET6: {}\n\t{}'.format(PrettyFormatAny.form(p_list, 'List', 150), l_list))
         return l_list
 
     @staticmethod
@@ -205,7 +183,7 @@ class Interfaces(object):
                 l_v4 = Interfaces._get_address_list_INET(l_afList[l_afID])
                 l_interface.V4Address = l_v4
             if l_afName == 'AF_INET6':
-                l_v6 = Interfaces._get_address_list_INET6(l_afList[l_afID])
+                l_v6 = Interfaces._get_address_list_INET(l_afList[l_afID])
                 l_interface.V6Address = l_v6
         return l_interface, l_v4, l_v6
 
@@ -241,18 +219,43 @@ class Interfaces(object):
 
     @staticmethod
     def _list_gateways():
-        """ A dict of gateways """
+        """ netifaces.gateways()
+
+        Obtain a list of the gateways on this machine.
+
+        Returns a dict whose keys are equal to the address family constants,
+        e.g. netifaces.AF_INET, and whose values are a list of tuples of the
+        format (<address>, <interface>, <is_default>).
+
+        There is also a special entry with the key 'default', which you can use
+        to quickly obtain the default gateway for a particular address family.
+
+        There may in general be multiple gateways; different address
+        families may have different gateway settings (e.g. AF_INET vs AF_INET6)
+        and on some systems it's also possible to have interface-specific
+        default gateways.
+
+        """
         l_ret = netifaces.gateways()
         return l_ret
 
     @staticmethod
     def _list_ifaddresses(p_if):
+        """
+        Obtain information about the specified network interface.
+
+        Returns a dict whose keys are equal to the address family constants,
+        e.g. netifaces.AF_INET, and whose values are a list of addresses in
+        that family that are attached to the network interface.
+        """
         l_ret = netifaces.ifaddresses(p_if)
         return l_ret
 
     @staticmethod
     def _list_interfaces():
-        """ Returns a list of interfaces. """
+        """
+        Obtain a list of the interfaces available on this machine.
+        """
         l_ret = netifaces.interfaces()
         return l_ret
 

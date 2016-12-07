@@ -16,7 +16,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2016-10-21'
+__updated__ = '2016-11-27'
 
 # Import system type stuff
 import re
