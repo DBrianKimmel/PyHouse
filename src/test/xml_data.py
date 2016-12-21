@@ -12,14 +12,17 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
+__updated__ = '2016-11-14'
+
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Core.data_objects import __version__ as dataVersion
 from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
 from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML
 
 
-TESTING_VERSION = '1.4.0'
+TESTING_VERSION = dataVersion
 TESTING_XMLNS_COMP = 'http://PyHouse.Org/ComputerDiv'
 TESTING_XMLNS_XSI = 'http://www.w3.org/2001/XMLSchema-instance'
 TESTING_XSI_SCHEMA = 'http://PyHouse.org schemas/PyHouse.xsd'

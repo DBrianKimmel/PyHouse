@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2016-10-26'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 
@@ -139,7 +139,8 @@ class Decode(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
 
-    def decode_53(self):
+    @staticmethod
+    def decode_53(p_pyhouse_obj, p_controller_obj):
         """Insteon All-Linking completed (10 bytes).
         See p 247(260) of 2009 developers guide.
         [0] = x02
@@ -150,16 +151,17 @@ class Decode(object):
         [7-8] = DevCat
         [9] = Firmwear Version
         """
-        l_message = self.m_controller_obj._Message
+        l_message = p_controller_obj._Message
         l_link_code = l_message[2]
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
-        utilDecode._devcat(l_message[7:9], self.m_controller_obj)
+        l_device_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_from_id)
+        utilDecode._devcat(l_message[7:9], p_controller_obj)
         _l_version = l_message[9]
-        LOG.info('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
+        LOG.info('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_device_obj.Name))
 
     @staticmethod
-    def decode_54(p_controller_obj):
+    def decode_54(p_pyhouse_obj, p_controller_obj):
         """Insteon Button Press event (3 bytes).
         The PLM set button was pressed.
         See p 263(276) of 2009 developers guide.
@@ -172,7 +174,7 @@ class Decode(object):
         LOG.info('The Set button was pressed {}'.format(l_event))
 
     @staticmethod
-    def decode_55(p_controller_obj):
+    def decode_55(p_pyhouse_obj, p_controller_obj):
         """Insteon Reset Detected. (2 bytes)
         See p 256(269) of 2009 developers guide.
 
@@ -186,7 +188,7 @@ class Decode(object):
         LOG.info('The Set button was pressed')
 
     @staticmethod
-    def decode_56(p_controller_obj):
+    def decode_56(p_pyhouse_obj, p_controller_obj):
         """Insteon All-Link cleanup failure report (7 bytes).
         See p 243(256) of 2009 developers guide.
         [0] = x02
@@ -201,7 +203,8 @@ class Decode(object):
         l_from_id = l_message[4:7]
         LOG.info('All-Linking failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
 
-    def decode_57(self):
+    @staticmethod
+    def decode_57(p_pyhouse_obj, p_controller_obj):
         """All-Link Record Response (10 bytes).
         See p 251(264) of 2009 developers guide.
         [0] = x02
@@ -213,8 +216,8 @@ class Decode(object):
         [8] = Link Data 2
         [9] = Link Data 3
         """
-        l_message = self.m_controller_obj._Message
-        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[4:7])
+        l_message = p_controller_obj._Message
+        l_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_message[4:7])
         l_link_obj = LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]
@@ -228,7 +231,7 @@ class Decode(object):
         return
 
     @staticmethod
-    def decode_58(p_controller_obj):
+    def decode_58(p_pyhouse_obj, p_controller_obj):
         """Insteon All-Link cleanup status report (3 bytes).
         See p 242(255) of 2007 developers guide.
         """
@@ -237,7 +240,7 @@ class Decode(object):
         LOG.info('All-Linking cleanup {}, Group:{}, From:{} '.format(l_status))
 
     @staticmethod
-    def decode_64(p_controller_obj):
+    def decode_64(p_pyhouse_obj, p_controller_obj):
         """Start All-Link ACK response (5 bytes).
         See p 243(256) of 2007 developers guide.
         """
@@ -254,7 +257,7 @@ class Decode(object):
         return l_ret
 
     @staticmethod
-    def decode_65(p_controller_obj):
+    def decode_65(p_pyhouse_obj, p_controller_obj):
         """All-Link Cancel response (5 bytes).
         See p 244(257) of 2007 developers guide.
         """
@@ -264,7 +267,7 @@ class Decode(object):
         return False
 
     @staticmethod
-    def decode_69(p_controller_obj):
+    def decode_69(p_pyhouse_obj, p_controller_obj):
         """Get All-Link First Record response (5 bytes).
         See p 248(261) of 2009 developers guide.
         [0] = x02
@@ -282,7 +285,7 @@ class Decode(object):
         return
 
     @staticmethod
-    def decode_6A(p_controller_obj):
+    def decode_6A(p_pyhouse_obj, p_controller_obj):
         """All-Link Next Record response (3 bytes).
         See p 249(262) of 2009 developers guide.
         [0] = x02
@@ -299,7 +302,7 @@ class Decode(object):
         return
 
     @staticmethod
-    def decode_6C(p_controller_obj):
+    def decode_6C(p_pyhouse_obj, p_controller_obj):
         """All-Link Record for sender response (3 bytes).
         See p 250(263) of 2009 developers guide.
         [0] = x02

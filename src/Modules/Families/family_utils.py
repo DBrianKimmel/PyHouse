@@ -15,7 +15,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2016-07-22'
+__updated__ = '2016-11-06'
 
 #  Import system type stuff.
 
@@ -39,7 +39,7 @@ class FamUtil(object):
     @staticmethod
     def _get_family_obj(p_pyhouse_obj, p_device_obj):
         """
-        Given some device object, extract the Family object
+        Given some device object, extract the Family object using .DeviceFamily
         """
         l_family_name = p_device_obj.DeviceFamily
         try:
@@ -146,7 +146,7 @@ class FamUtil(object):
         try:
             l_ret = l_xml_api.ReadXml(p_device_obj, p_xml)
         except Exception as e_err:
-            l_ret = 'ERROR family_utils-110  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
+            l_ret = 'ERROR family_utils-149  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
             LOG.error('ERROR - Unable to load family information for a device.'
                       '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
         return l_ret  # for testing

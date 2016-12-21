@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-07-08'
+__updated__ = '2016-11-14'
 
 # Import system type stuff
 
@@ -88,16 +88,5 @@ XML_WEB_SERVER = '\n'.join([
     L_LOGIN_SECTION_END,
     L_WEB_SECTION_END
     ])
-
-XSD_WEB_SERVER = """
-<xs:schema
-    attributeFormDefault="unqualified"
-    elementFormDefault="qualified"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="WebSection">
-  </xs:element>
-</xs:schema>
-"""
 
 # ## END DBK

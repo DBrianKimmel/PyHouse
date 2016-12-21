@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-24'
+__updated__ = '2016-11-13'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -123,7 +123,7 @@ class Maint(object):
     def from_web(self, p_pyhouse_obj, p_json):
         """ The web browser has sent back an add/change/delete request.
         """
-        LOG.warn('Room debug {}'.format(p_json))
+        # LOG.info('Room debug {}'.format(p_json))
         l_obj = Maint._json_2_obj(p_json)
         if l_obj._DeleteFlag:
             l_room = Sync.find_room_uuid(p_pyhouse_obj, l_obj.UUID)
@@ -233,5 +233,12 @@ class RoomCls(Sync, Xml, Maint):
 
     def __init__(self, p_pyHouse_obj):
         self.m_pyhouse_obj = p_pyHouse_obj
+
+
+def all_rooms_getter(p_pyhouse_obj):
+    return p_pyhouse_obj.House.Rooms
+
+def all_rooms_setter(p_pyhouse, p_rooms):
+    p_pyhouse.House.Rooms = p_rooms
 
 #  ## END DBK

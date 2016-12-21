@@ -11,17 +11,18 @@
 
 """
 
+__updated__ = '2016-11-08'
+
 #  Import system type stuff
-from Modules.Computer import logging_pyh as Logger
+import xml.etree.ElementTree as ET
+
+#  Import PyMh files
 from Modules.Core.data_objects import HvacData, ThermostatData, UuidData
 from Modules.Families.family_utils import FamUtil
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
-import xml.etree.ElementTree as ET
-
-#  Import PyMh files
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 
 

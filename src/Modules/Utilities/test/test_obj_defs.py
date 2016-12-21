@@ -2,12 +2,14 @@
 @name:      C:/Users/briank/workspace/PyHouse/src/Modules/Utilities/test/test_obj_defs.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 7, 2015
 @Summary:
 
 """
+
+__updated__ = '2016-11-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,7 +28,6 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_version = '1.4.0'
 
 
 class D1_GetPyHouse(SetupMixin, unittest.TestCase):

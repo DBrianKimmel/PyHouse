@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-04'
 
 #  Import system type stuff
 
@@ -41,6 +41,19 @@ def create_command_message(p_command):
 
 def queue_command(p_controller, p_command):
     p_controller._Queue.put(p_command)
+
+def get_message_length(p_message):
+    """ Get the documented length that the message is supposed to be.
+
+    Use the message type byte to find out how long the response from the PLM is supposed to be.
+    With asynchronous routines, we want to wait till the entire message is received before proceeding with its decoding.
+    """
+    l_id = p_message[1]
+    try:
+        l_message_length = MESSAGE_LENGTH[l_id]
+    except KeyError:
+        l_message_length = 1
+    return l_message_length
 
 
 class Util(object):
@@ -78,20 +91,6 @@ class Util(object):
             l_int2 = int(p_message[2])
         l_int = ((l_int0 * 256) + l_int1) * 256 + l_int2
         return l_int
-
-    @staticmethod
-    def get_message_length(p_message):
-        """ Get the documented length that the message is supposed to be.
-
-        Use the message type byte to find out how long the response from the PLM is supposed to be.
-        With asynchronous routines, we want to wait till the entire message is received before proceeding with its decoding.
-        """
-        l_id = p_message[1]
-        try:
-            l_message_length = MESSAGE_LENGTH[l_id]
-        except KeyError:
-            l_message_length = 1
-        return l_message_length
 
     @staticmethod
     def get_json_data(p_obj, p_json):

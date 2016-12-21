@@ -12,11 +12,9 @@
 """
 
 #  Import system type stuff
-# import jsonpickle
-import json
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import JsonHouseData, LightingData
+from Modules.Core.data_objects import JsonHouseData, LightingData, CoordinateData
 from Modules.Utilities import json_tools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webUtils       ')
@@ -122,5 +120,23 @@ class JsonUnicode(object):
             return p_input.encode('ascii')
         else:
             return p_input
+
+
+def get_base_info(p_obj, p_json_decoded):
+        p_obj.Name = p_json_decoded['Name']
+        p_obj.Active = p_json_decoded['Active']
+        p_obj.Key = p_json_decoded['Key']
+        p_obj.UUID = p_json_decoded['UUID']
+        return p_obj
+
+def get_room_info(p_obj, p_json_decoded):
+        l_coords = CoordinateData()
+        l_coords.X_Easting = p_json_decoded['RoomCoords'][0]
+        l_coords.Y_Northing = p_json_decoded['RoomCoords'][1]
+        l_coords.Z_Height = p_json_decoded['RoomCoords'][2]
+        p_obj.RoomCoords = l_coords
+        p_obj.RoomName = p_json_decoded['RoomName']
+        p_obj.RoomUUID = p_json_decoded['RoomUUID']
+        return p_obj
 
 #  ## END DBK

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-11-14'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -84,8 +84,8 @@ class PutGetXML(object):
         if l_xml == "False" or l_xml is False:
             return False
         else:
-            LOG.warning('Invalid bool value found for Field:{}; Value: {}==>False; Element:{}'.format(
-                            p_name, l_xml, p_xml.tag))
+            # LOG.warning('Invalid bool value found for Field:{}; Value: {}==>False; Element:{}'.format(p_name, l_xml, p_xml.tag))
+            pass
         return False
 
     @staticmethod
@@ -166,7 +166,7 @@ class PutGetXML(object):
 #  text
 # -----
     @staticmethod
-    def get_text_from_xml(p_xml, p_name, default=None):
+    def get_text_from_xml(p_xml, p_name, default=''):
         """
         @param p_xml: is the xml where we will find the field
         @param p_name: is the name of the field to fetch
@@ -289,7 +289,7 @@ class PutGetXML(object):
     @staticmethod
     def put_coords_element(p_parent_element, p_name, p_coords):
         try:
-            l_coord = "[{},{},{}]".format(p_coords.X_Easting, str(p_coords.Y_Northing), str(p_coords.Z_Height))
+            l_coord = "[{},{},{}]".format(str(p_coords.X_Easting), str(p_coords.Y_Northing), str(p_coords.Z_Height))
         except Exception as e_err:
             LOG.error('CoOrd Error - {}'.format(e_err))
             l_coord = '[0.0,0.0,0.0]'
@@ -303,7 +303,7 @@ class XmlConfigTools(object):
         """Get the BaseObject entries from the XML element.
         @param p_base_obj: is the object into which we will put the data.
         @param p_entry_element_xml: is the element we will extract data from (including children).
-        @return: A base object
+        @return: A base object with some (base) data filled in.
         """
         try:
             p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name')
@@ -318,7 +318,7 @@ class XmlConfigTools(object):
         """Get the BaseUUIDObject entries from the XML element.
         @param p_base_obj: is the object into which we will put the data.
         @param p_entry_element_xml: is the element we will extract data from (including children).
-        @return: A base UUID object
+        @return: A base UUID object with a UUID added.
         """
         XmlConfigTools().read_base_object_xml(p_base_obj, p_entry_element_xml)
         try:
@@ -346,7 +346,6 @@ class XmlConfigTools(object):
     @staticmethod
     def write_base_UUID_object_xml(p_element_name, p_object):
         """
-        Note that UUID is optional.
         @param p_element_name: is the name of the XML element (Light, Button, etc.)
         @param p_object: is the device object that contains the info to be written.
         @return: An Element with Attributes filled in and perhaps sub-elements attached

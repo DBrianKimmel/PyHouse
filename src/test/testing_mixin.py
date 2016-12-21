@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-15'
 
 #  Import system type stuff
 import platform
@@ -33,9 +33,8 @@ from Modules.Core.data_objects import \
             LightingData, HvacData, SecurityData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
-# from Modules.Housing.house import Xml as housingXML
 from Modules.Computer import logging_pyh as Logger
-from src.Modules.Core.data_objects import MqttInformation
+from Modules.Core.data_objects import MqttInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #
@@ -138,7 +137,7 @@ class SetupPyHouseObj(object):
     @staticmethod
     def _build_house(p_pyhouse_obj):
         l_ret = HouseInformation()
-        l_ret.Name = 'Test House'
+        # l_ret.Name = 'Test House'
         l_ret.Location = LocationData()
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
         l_ret.Lighting = LightingData()

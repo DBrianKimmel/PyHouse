@@ -48,6 +48,8 @@ def dotted_hex2int(p_hex):
     """
     @param p_hex: is a str like 'A1.B2.C3'
     @return: an int
+
+    Routine for taking a readable insteon type address and converting it to a Long int for internal use.
     """
     p_hex.replace(':', '.')
     l_ary = p_hex.split('.')

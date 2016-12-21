@@ -22,11 +22,13 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2016-07-17'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
+from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.InsteonHVAC    ')
 
@@ -43,81 +45,95 @@ class Util(object):
         return l_ret
 
 
-class ihvac_utility(object):
+class DecodeResponses(object):
 
-    def decode_50_record(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
+    def decode_50(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
         """
         @param p_device_obj: is the Device (light, thermostat...) we are decoding.
+
+        A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
+        See p 233(246) of 2009 developers guide.
+        [0] = x02
+        [1] = 0x50
+        [2-4] = from address
+        [5-7] = to address / group
+        [8] = message flags
+        [9] = command 1
+        [10] = command 2
         """
         l_mqtt_topic = 'hvac/{}'.format(p_device_obj.Name)
         l_mqtt_message = "Thermostat: "
         l_message = p_controller_obj._Message
+        l_firmware = l_message[7]
+        l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
-        l_mqtt_message += ' Command1: {:#X},  Command2:{:#X}({:d})'.format(l_cmd1, l_cmd2, l_cmd2)
+        l_mqtt_message += ' Cmd1:{:#02X}/{:#02X}({:d})'.format(l_cmd1, l_cmd2, l_cmd2)
+        l_debug_msg = 'Fm:"{}"; Flg:{}; C1:{:#x},{:#x}; '.format(p_device_obj.Name, l_flags, l_cmd1, l_cmd2)
 
-        if l_cmd1 == 0x01:
-            l_mqtt_message += " Set Mode; {}".format(l_cmd2)
-
-        if l_cmd1 == 0x11:
+        if l_cmd1 == MESSAGE_TYPES['assign_to_group']:  # 0x01
+            l_mqtt_message += " assign_to_group:{}; ".format(l_cmd2)
+        if l_cmd1 == MESSAGE_TYPES['delete_from_group']:  # 0x02
+            l_mqtt_message += " delete_from_group:{}; ".format(l_cmd2)
+        elif l_cmd1 == MESSAGE_TYPES['engine_version']:  # 0x0d
+            p_device_obj.EngineVersion = l_cmd2
+            l_mqtt_message += " EngineId:{}; ".format(l_cmd2)
+        elif l_cmd1 == MESSAGE_TYPES['ping']:  # 0x0f
+            l_mqtt_message += " ping:{}; ".format(l_cmd2)
+        elif l_cmd1 == MESSAGE_TYPES['id_request']:  # 0x10
+            p_device_obj.FirmwareVersion = l_firmware
+            l_mqtt_message += " id_request:{}; ".format(l_firmware)
+        elif l_cmd1 == MESSAGE_TYPES['on']:  # 0x11
             p_device_obj.ThermostatStatus = 'On'
             l_mqtt_message += " On; "
-
-        if l_cmd1 == 0x13:
+        elif l_cmd1 == MESSAGE_TYPES['off']:  # 0x13
             p_device_obj.ThermostatStatus = 'Off'
             l_mqtt_message += " Off; "
 
-        if l_cmd1 == 0x68:  #  Set thermostat temperature up (half degrees)
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_temp_up']:  # 0x68:  #  Set thermostat temperature up (half degrees)
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp UP = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x69:  #  Set Thermostat temperature down (half degrees)
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_temp_down']:  # 0x69:  #  Set Thermostat temperature down (half degrees)
             #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp DOWN = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x6A:  #  Send request for thermostat status
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_status']:  # 0x6A:  #  Send request for thermostat status
             #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' Status = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x6B:  #  Response for thermostat status
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_control']:  # 0x6B:  #  Response for thermostat status
             p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x6C:  #  Thermostat Set cool set point
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_setpoint_cool']:  # 0x6C:  #  Thermostat Set cool set point
             #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/ThermostatSetCoolSetpointCommand'
             l_mqtt_message += ' cool set point = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x6D:  #  Set heat set point
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_setpoint_heat']:  # 0x6D:  #  Set heat set point
             #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_mqtt_topic += '/ThermostatSetHeatSetpointCommand'
             l_mqtt_message += ' Heat set point = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x6e:  #  Status report Temperature
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_temperature']:  # 0x6e:  #  Status report Temperature
             p_device_obj.CurrentTemperature = l_cmd2 * FACTOR
             l_mqtt_topic += '/ThermostatTemperatureReport'
             l_mqtt_message += ' Temperature = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x6f:  #  Status Report Humidity
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_humidity']:  # 0x6f:  #  Status Report Humidity
             l_mqtt_topic += '/ThermostatHumidityReport'
             l_mqtt_message += ' Humidity = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x70:  #  Status Report Mode / Fan Status
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_mode']:  # 0x70:  #  Status Report Mode / Fan Status
             l_mqtt_topic += '/ThermostatStatusReport'
             l_mqtt_message += ' StatusMode = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x71:  #  Status Report Cool Set Point
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_cool_setpoint']:  # 0x71:  #  Status Report Cool Set Point
             p_device_obj.CoolSetPoint = l_cmd2 * FACTOR
             l_mqtt_topic += '/ThermostatCoolSetPointReport'
             l_mqtt_message += ' CoolSetPoint = {}; '.format(l_cmd2)
-
-        if l_cmd1 == 0x72:  #  Status Report Heat Set Point
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_heat_setpoint']:  # 0x72:  #  Status Report Heat Set Point
             p_device_obj.HeatSetPoint = l_cmd2 * FACTOR
             l_mqtt_topic += '/ThermostatHeatSetPointReport'
             l_mqtt_message += ' HeatSetPoint = {}; '.format(l_cmd2)
+
+        else:
+            pass
 
         LOG.info('HVAC {}'.format(l_mqtt_message))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /temperature

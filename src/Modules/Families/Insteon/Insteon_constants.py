@@ -13,11 +13,13 @@ Note! This is designed for 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-08'
 
 STX = 0x02
 ACK = 0x06
 NAK = 0x15
+
+DEVICE_TYPE = ['N/A', 'Lighting', 'HVAC', 'Security']  # documenting it
 
 # PLM Serial Commands
 PLM_COMMANDS = {
@@ -87,15 +89,16 @@ MESSAGE_TYPES = {
     #                        sprinkler_timers_request => 0x45,
     'thermostat_temp_up': 0x68,
     'thermostat_temp_down': 0x69,
-    'thermostat_get_zone_temp': 0x6a,
-    'thermostat_get_zone_setpoint': 0x6a,
-    'thermostat_get_zone_humidity': 0x6a,
+    'thermostat_status': 0x6a,
     'thermostat_control': 0x6b,
-    'thermostat_get_mode': 0x6b,
-    'thermostat_get_temp': 0x6b,
     'thermostat_setpoint_cool': 0x6c,
     'thermostat_setpoint_heat': 0x6d,
-    'thermostat_report': 0x6e}
+    'thermostat_report_temperature': 0x6e,
+    'thermostat_report_humidity': 0x6f,
+    'thermostat_report_mode': 0x70,
+    'thermostat_report_cool_setpoint': 0x71,
+    'thermostat_report_heat_setpoint': 0x72
+    }
 
 # This is the length of the response from the PLM.
 # Wait till we get the proper number of bytes before decoding the response.

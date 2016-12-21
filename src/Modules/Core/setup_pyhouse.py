@@ -23,7 +23,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2016-07-09'
+__updated__ = '2016-11-12'
 
 #  Import system type stuff
 
@@ -33,7 +33,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
-LOG = Logger.getLogger('PyHouse.CoreSetup      ')
+LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
@@ -127,7 +127,7 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        LOG.info('Saving All XML info')
+        LOG.info('\n\tSaving All XML info:')
         l_xml = configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.SaveXml(l_xml)
         self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)

@@ -11,7 +11,7 @@
 Passed all 9 tests - DBK - 2016-07-07
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-11-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,6 +42,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = houseAPI(self.m_pyhouse_obj)
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_house')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -175,8 +182,8 @@ class P1_API(SetupMixin, unittest.TestCase):
 
     def test_04_SaveXml(self):
         self.m_api.LoadXml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'P1-04-A - House'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'P1-04-B - House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'P1-04-A - House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'P1-04-B - House'))
         l_xml = ET.Element('House')
         l_xml = self.m_api.SaveXml(l_xml)
         print(PrettyFormatAny.form(l_xml, 'P1-04-D - API'))

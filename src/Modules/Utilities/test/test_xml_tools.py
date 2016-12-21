@@ -7,10 +7,10 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 56 testa - DBK 2016-10-19
+Passed all 57 testa - DBK 2016-11-12
 """
 
-__updated__ = '2016-10-19'
+__updated__ = '2016-11-12'
 
 # Import system type stuff
 # import copy
@@ -75,6 +75,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = PutGetXML
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_xml_tools')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -302,7 +309,7 @@ class C3_Text(SetupMixin, unittest.TestCase):
 
     def test_05_GetTextInvalid_NoDefault(self):
         l_text = self.m_api.get_text_from_xml(self.m_fields, 'NoSuchField')
-        self.assertEqual(l_text, 'None')
+        self.assertEqual(l_text, '')
 
     def test_06_PutTextElement(self):
         l_element = ET.Element('TestTextElement_1')
@@ -371,14 +378,14 @@ class D2_IP(SetupMixin, unittest.TestCase):
         l_element = ET.Element('TestIPv4')
         l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IpV40')
         self.m_api.put_ip_element(l_element, 'IPv4', l_ip)
-        print(PrettyFormatAny.form(l_element, 'D2-03-A'))
+        # print(PrettyFormatAny.form(l_element, 'D2-03-A'))
         self.assertEqual(l_element.find('IPv4').text, TESTING_XML_IPV4_0)
 
     def test_04_IPv6(self):
         l_element = ET.Element('TestIPv6')
         l_ip = self.m_api.get_ip_from_xml(self.m_fields, 'IpV60')
         self.m_api.put_ip_element(l_element, 'IPv6', l_ip)
-        print(PrettyFormatAny.form(l_element, 'D2-04-A'))
+        # print(PrettyFormatAny.form(l_element, 'D2-04-A'))
         self.assertEqual(l_element.find('IPv6').text, TESTING_XML_IPV6_0)
 
 
@@ -507,7 +514,7 @@ class E2_ReadEmpty(SetupMixin, unittest.TestCase):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
         # print(PrettyFormatAny.form(l_base_obj, 'E2-01-A Base))
-        self.assertEqual(l_base_obj.Name, 'None')
+        self.assertEqual(l_base_obj.Name, '')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
 
@@ -529,7 +536,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
         l_xml = XmlConfigTools.write_base_UUID_object_xml('Light', l_base_obj)
-        print(PrettyFormatAny.form(l_xml, 'E3-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'E3-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '43')
         self.assertEqual(l_xml.find('UUID').text, l_uuid)
@@ -541,7 +548,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         XmlConfigTools.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 44
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
-        print(PrettyFormatAny.form(l_xml, 'E3-02-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'E3-02-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '44')
 

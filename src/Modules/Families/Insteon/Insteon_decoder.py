@@ -24,19 +24,19 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-08'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
-from Modules.Families.Insteon import Insteon_HVAC, Insteon_utils
+from Modules.Families.Insteon import Insteon_utils
+from Modules.Families.Insteon.Insteon_HVAC import DecodeResponses as DecodeHvac
+from Modules.Families.Insteon.Insteon_Security import DecodeResponses as DecodeSecurity
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, NAK, STX
-from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode, Util as utilUtil
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX
+from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Utilities.tools import PrintBytes
-
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
 #  OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
@@ -66,17 +66,18 @@ class DecodeResponses(object):
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                l_need_len = utilUtil.get_message_length(p_controller_obj._Message)
+                l_need_len = Insteon_utils.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
-                    self._decode_dispatch(p_controller_obj)
+                    self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
+                    return 'Ok'
                 else:
-                    LOG.warning('Message was too short - waiting for rest of message.')
-            elif l_stx == NAK:
-                LOG.warn("Dropping a leading char {:#x}".format(l_stx))
+                    LOG.warning('Message was too short - waiting for rest of message. {}'.format(PrintBytes(p_controller_obj._Message)))
+                    return 'Short'
             else:
-                LOG.warn("Dropping a leading char {:#x}".format(l_stx))
-            p_controller_obj._Message = p_controller_obj._Message[1:]
+                # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, PrintBytes(p_controller_obj._Message)))
+                p_controller_obj._Message = p_controller_obj._Message[1:]
+                return 'Drop'
 
 
     def check_for_more_decoding(self, p_controller_obj, p_ret=True):
@@ -85,7 +86,7 @@ class DecodeResponses(object):
         """
         l_ret = p_ret
         l_cur_len = len(p_controller_obj._Message)
-        l_chop = utilUtil.get_message_length(p_controller_obj._Message)
+        l_chop = Insteon_utils.get_message_length(p_controller_obj._Message)
         if l_cur_len >= l_chop:
             p_controller_obj._Message = p_controller_obj._Message[l_chop:]
             l_ret = self.decode_message(p_controller_obj)
@@ -95,7 +96,7 @@ class DecodeResponses(object):
             LOG.error(l_msg)
         return l_ret
 
-    def _decode_dispatch(self, p_controller_obj):
+    def _decode_dispatch(self, p_pyhouse_obj, p_controller_obj):
         """Decode a message that was ACKed / NAked.
         see IDM pages 238-241
 
@@ -111,21 +112,21 @@ class DecodeResponses(object):
         elif l_cmd == 0x50: l_ret = self._decode_50(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51(p_controller_obj)
         elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
-        elif l_cmd == 0x53: self.m_link.decode_53()
-        elif l_cmd == 0x54: linkDecode.decode_54(p_controller_obj)
-        elif l_cmd == 0x55: l_ret = self._decode_55_record(p_controller_obj)
-        elif l_cmd == 0x56: linkDecode.decode_56(p_controller_obj)
-        elif l_cmd == 0x57: self.m_link.decode_57()
-        elif l_cmd == 0x58: linkDecode.decode_58(p_controller_obj)
+        elif l_cmd == 0x53: linkDecode.decode_53(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x54: linkDecode.decode_54(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x55: linkDecode.decode_55(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x56: linkDecode.decode_56(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x57: linkDecode.decode_57(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x58: linkDecode.decode_58(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x60: l_ret = self._decode_60_record(p_controller_obj)
         elif l_cmd == 0x61: l_ret = self._decode_61_record(p_controller_obj)
         elif l_cmd == 0x62: l_ret = self._decode_62_record(p_controller_obj)
-        elif l_cmd == 0x64: l_ret = self._decode_64_record(p_controller_obj)
-        elif l_cmd == 0x65: l_ret = self._decode_65_record(p_controller_obj)
-        elif l_cmd == 0x69: l_ret = self._decode_69_record(p_controller_obj)
-        elif l_cmd == 0x6A: l_ret = self._decode_6A_record(p_controller_obj)
+        elif l_cmd == 0x64: linkDecode.decode_64(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x65: linkDecode.decode_65(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x69: linkDecode.decode_69(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x6A: linkDecode.decode_6A(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6B: l_ret = self._decode_6B_record(p_controller_obj)
-        elif l_cmd == 0x6C: l_ret = self._decode_6C_record(p_controller_obj)
+        elif l_cmd == 0x6C: linkDecode.decode_6C(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
@@ -155,7 +156,10 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         if l_device_obj.DeviceType == 2:
-            Insteon_HVAC.ihvac_utility().decode_50_record(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            DecodeHvac().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            return
+        if l_device_obj.DeviceType == 3:
+            DecodeSecurity().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
@@ -171,14 +175,13 @@ class DecodeResponses(object):
         elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
-            # LOG.info("== 50B All-link Broadcast Group:{}, Data:{} ==".format(l_group, l_data))
         #
         try:
             if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
 
             elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
-                l_debug_msg += 'CleanupSuccess:"{}"; '.format(l_cmd2)
+                l_debug_msg += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
                 # self._publish(self.m_pyhouse_obj, l_device_obj)
 
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
@@ -203,13 +206,6 @@ class DecodeResponses(object):
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
-                # LOG.info("PLM:{} Got Light Status From:{}, Level is:{} ".format(p_controller_obj.Name, l_device_obj.Name, l_level))
-
-            elif l_cmd1 >= MESSAGE_TYPES['thermostat_temp_up'] and l_cmd1 <= MESSAGE_TYPES['thermostat_report']:  #  0x6e
-                Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
-
-            elif l_cmd1 >= 0x68 and l_cmd1 <= 0x75:  #  0x6e
-                Insteon_HVAC.ihvac_utility().decode_50_record(l_device_obj, l_cmd1, l_cmd2)
 
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
                 l_debug_msg += ' Device-Set-Button-Pressed '
@@ -256,14 +252,6 @@ class DecodeResponses(object):
         See p 253 of developers guide.
         """
         LOG.warning("52 Resp: not decoded yet.")
-
-    def _decode_55_record(self, p_controller_obj):
-        """Insteon User Reset detected (2 bytes).
-        See p 269 of developers guide.
-        """
-        l_debug_msg = "User Reset Detected! "
-        p_controller_obj.Ret = linkDecode.decode_55(p_controller_obj)
-        LOG.info("".format(l_debug_msg))
 
     def _decode_60_record(self, p_controller_obj):
         """Get Insteon Modem Info (9 bytes).
@@ -339,14 +327,6 @@ class DecodeResponses(object):
             LOG.info("Got ACK(62); {}".format(l_debug_msg))
         return
 
-    def _decode_64_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_64(p_controller_obj)
-        return
-
-    def _decode_65_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_65(p_controller_obj)
-        return
-
     def _decode_67_record(self, p_controller_obj):
         """Reset IM ACK response (3 bytes).
         See p 258 of developers guide.
@@ -355,14 +335,6 @@ class DecodeResponses(object):
         l_ack = utilDecode.get_ack_nak(l_message[2])
         l_debug_msg = "Reset IM(PLM) {}".format(l_ack)
         LOG.info("{}".format(l_debug_msg))
-        return
-
-    def _decode_69_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_69(p_controller_obj)
-        return
-
-    def _decode_6A_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_6A(p_controller_obj)
         return
 
     def _decode_6B_record(self, p_controller_obj):
@@ -383,10 +355,6 @@ class DecodeResponses(object):
         else:
             LOG.error("== 6B - NAK/Unknown message type {:#x}".format(l_flag))
             p_controller_obj.Ret = False
-        return
-
-    def _decode_6C_record(self, p_controller_obj):
-        p_controller_obj.Ret = linkDecode.decode_6C(p_controller_obj)
         return
 
     def _decode_6F_record(self, p_controller_obj):

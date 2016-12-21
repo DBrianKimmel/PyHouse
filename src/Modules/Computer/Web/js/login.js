@@ -110,11 +110,11 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function buildLcarLoginScreen(self, p_obj, p_handler) {
 		var l_obj = arguments[1];
 		var l_html = build_lcars_top('Login', 'lcars-salmon-color');
-		l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, 'change', p_handler));
+		l_html += build_lcars_middle_menu(10, self.buildEntry(l_obj, p_handler));
 		l_html += build_lcars_bottom();
 		self.nodeById('SelectionButtonsDiv').innerHTML = l_html;
 	},
-	function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
+	function buildEntry(self, p_obj, p_handler, p_onchange) {
 		var l_html = '';
 		l_html = self.buildLoginEntry(p_obj, l_html, p_onchange);
 		l_html += buildLcarButton({'Name' : 'Login', 'Key' : 12345}, p_handler, 'lcars-salmon-bg');
@@ -123,7 +123,7 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 	function buildLoginEntry(self, p_obj, p_html, p_onchange) {
 		p_html += buildLcarTextWidget(self, 'LoginName', 'Name', p_obj.Name);
 		p_html += buildLcarPasswordWidget(self, 'PasswordCurrent', 'Current Password', 'size=20', p_obj.PasswordCurrent);
-		p_html += buildLcarTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
+		p_html += buildTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
 		if (p_obj.ChangeFlag === true) {
 			p_html += buildLcarPasswordWidget(self, 'PasswordNew', 'New Password', 'size=20', p_obj.PasswordNew);
 			p_html += buildLcarPasswordWidget(self, 'PasswordVerify', 'Verify Password', 'size=20', p_obj.PasswordVerify);

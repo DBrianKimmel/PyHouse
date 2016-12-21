@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Utilities.tools import PrintBytes
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-11-17'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -96,6 +96,7 @@ class Commands(object):
     @staticmethod
     def _queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2):
         """Send Insteon Standard Length Message (8 bytes) (SD command).
+        or Extended length (22 Bytes) (ED command)
         See page 230(243) of 2009 developers guide.
 
         @param p_obj: is the device object.
@@ -108,6 +109,7 @@ class Commands(object):
         [5] = Message Flags
         [6] = Command 1
         [7] = Command 2
+        (8-21) = Extended data in ED type
         """
         try:
             l_command = Insteon_utils.create_command_message('insteon_send')
@@ -116,7 +118,7 @@ class Commands(object):
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
             Insteon_utils.queue_command(p_controller_obj, l_command)
-            LOG.info('Send Command: {}'.format(PrintBytes(l_command)))
+            # LOG.info('Send Command: {}'.format(PrintBytes(l_command)))
         except Exception as _e_err:
             LOG.error('Error creating command {}'.format(PrettyFormatAny.form(p_obj, 'Device')))
 
@@ -201,7 +203,7 @@ class PlmDriverProtocol(Commands):
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            #  LOG.info("Send to controller:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
+            LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -230,7 +232,7 @@ class PlmDriverProtocol(Commands):
             if l_cur_len < 2:
                 return
             #  LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
-            l_response_len = Util.get_message_length(p_controller_obj._Message)
+            l_response_len = Insteon_utils.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)
         else:
@@ -306,7 +308,7 @@ class LightHandlerAPI(object):
         Get the status of a thermostat.
         """
         LOG.info('Request Status from thermostat device: {}'.format(p_obj.Name))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_get_zone_temp'], 0)  #  0x6A
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_status'], 0)  #  0x6A
 
     @staticmethod
     def _get_engine_version(p_controller_obj, p_obj):
