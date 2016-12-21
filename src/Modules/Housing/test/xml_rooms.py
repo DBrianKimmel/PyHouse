@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = "2016-09-04"
+__updated__ = "2016-11-22"
 
 import datetime
 
@@ -29,10 +29,15 @@ TESTING_ROOM_CORNER_0 = '[' + TESTING_ROOM_CORNER_X_0 + \
                         ',' + TESTING_ROOM_CORNER_Y_0 + \
                         ',' + TESTING_ROOM_CORNER_Z_0 + \
                         ']'
+TESTING_ROOM_SIZE_X_0 = '8.15'
+TESTING_ROOM_SIZE_Y_0 = '9.27'
+TESTING_ROOM_SIZE_Z_0 = '2.54'
+TESTING_ROOM_SIZE_0 = '[' + TESTING_ROOM_SIZE_X_0 + \
+                        ',' + TESTING_ROOM_SIZE_Y_0 + \
+                        ',' + TESTING_ROOM_SIZE_Z_0 + \
+                        ']'
 TESTING_ROOM_FLOOR_0 = '1'
 TESTING_ROOM_LAST_UPDATE_0 = datetime.datetime.now()
-TESTING_ROOM_SIZE_X_0 = '3.0'
-TESTING_ROOM_SIZE_0 = '[3.0,5.5,3.0]'
 TESTING_ROOM_TYPE_0 = 'Room'
 TESTING_ROOM_UUID_0 = 'Room....-0000-0000-0000-0123456789ab'
 L_ROOM_START_0 = '   ' + \
@@ -130,11 +135,23 @@ TESTING_ROOM_NAME_3 = 'Foyer'
 TESTING_ROOM_KEY_3 = '0'
 TESTING_ROOM_ACTIVE_3 = 'True'
 TESTING_ROOM_COMMENT_3 = 'Room comment # 3'
-TESTING_ROOM_CORNER_3 = '[12.0,14.0,0.5]'
-TESTING_ROOM_FLOOR_3 = '1'
-TESTING_ROOM_SIZE_3 = '[ 3.0,5.5,3.0]'
+TESTING_ROOM_FLOOR_3 = '3'
 TESTING_ROOM_TYPE_3 = 'Room'
 TESTING_ROOM_UUID_3 = 'Room....-0003-0003-0003-0123456789ab'
+TESTING_ROOM_CORNER_X_3 = '32.1'
+TESTING_ROOM_CORNER_Y_3 = '34.2'
+TESTING_ROOM_CORNER_Z_3 = '3.5'
+TESTING_ROOM_CORNER_3 = '[' + TESTING_ROOM_CORNER_X_3 + \
+                        ',' + TESTING_ROOM_CORNER_Y_3 + \
+                        ',' + TESTING_ROOM_CORNER_Z_3 + \
+                        ']'
+TESTING_ROOM_SIZE_X_3 = '8.15'
+TESTING_ROOM_SIZE_Y_3 = '9.27'
+TESTING_ROOM_SIZE_Z_3 = '2.54'
+TESTING_ROOM_SIZE_3 = '[' + TESTING_ROOM_SIZE_X_3 + \
+                        ',' + TESTING_ROOM_SIZE_Y_3 + \
+                        ',' + TESTING_ROOM_SIZE_Z_3 + \
+                        ']'
 
 L_ROOM_START_3 = '   ' + \
         '<Room Name="' + TESTING_ROOM_NAME_3 + \

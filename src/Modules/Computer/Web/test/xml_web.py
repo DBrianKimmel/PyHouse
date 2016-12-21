@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-11-14'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 
@@ -23,8 +23,10 @@ L_LOGIN_SECTION_END = '</LoginSection>'
 L_LOGIN_END = '</Login>'
 
 TESTING_WEB_PORT = '8580'
+TESTING_WEB_SECURE_PORT = '8588'
 
 L_WEB_PORT = '    <Port>' + TESTING_WEB_PORT + '</Port>'
+L_WEB_SECURE_PORT = '    <SecurePort>' + TESTING_WEB_SECURE_PORT + '</SecurePort>'
 
 TESTING_LOGIN_NAME_0 = 'Admin-00'
 TESTING_LOGIN_KEY_0 = '0'
@@ -82,6 +84,7 @@ L_LOGIN_USER_1 = '\n'.join([
 XML_WEB_SERVER = '\n'.join([
     L_WEB_SECTION_START,
     L_WEB_PORT,
+    L_WEB_SECURE_PORT,
     L_LOGIN_SECTION_START,
     L_LOGIN_USER_0,
     L_LOGIN_USER_1,

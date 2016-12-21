@@ -11,7 +11,11 @@
 
 """
 
+<<<<<<< HEAD
 __updated__ = '2016-10-26'
+=======
+__updated__ = '2016-11-23'
+>>>>>>> b1988cf36a79dfbcde7dd3eee07ef1a9791d8be6
 
 #  Import system type stuff
 import copy

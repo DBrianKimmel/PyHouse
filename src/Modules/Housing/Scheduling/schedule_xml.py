@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -35,7 +35,7 @@ class Xml(object):
         ScheduleBaseData()
         """
         l_obj = ScheduleBaseData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_schedule_element)
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, p_schedule_element)
         l_obj.DOW = PutGetXML.get_int_from_xml(p_schedule_element, 'DayOfWeek', '127')
         l_obj.ScheduleMode = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleMode', 'Default Mode')
         l_obj.ScheduleType = PutGetXML.get_text_from_xml(p_schedule_element, 'ScheduleType')
@@ -108,7 +108,7 @@ class Xml(object):
     def _write_one_base_schedule(p_schedule_obj):
         """
         """
-        l_entry = XmlConfigTools.write_base_object_xml(SCHEDULE_ATTR, p_schedule_obj)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml(SCHEDULE_ATTR, p_schedule_obj)
         PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DOW))
         PutGetXML.put_text_element(l_entry, 'ScheduleMode', p_schedule_obj.ScheduleMode)
         PutGetXML.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)

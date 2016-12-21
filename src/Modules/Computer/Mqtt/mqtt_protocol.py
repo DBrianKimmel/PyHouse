@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2016-07-11'
+__updated__ = '2016-11-23'
 
 #  Import system type stuff
 import random
@@ -585,7 +585,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_client_id: is the ID of this computer that will be supplied to the broker
-        @param p_broker: is the object for this broker
+        @param p_broker: is the PyHouse object for this broker
         """
         LOG.info('Mqtt Factory Initialized.  Broker: {};  Client: {}'.format(p_broker.Name, p_client_id))
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -610,7 +610,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
 
     def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.error('Connection failed.\n\tReason:{}'.format(p_reason))
+        LOG.error('Connection failed. {} {}\n\tReason:{}'.format(self.m_broker.BrokerAddress, self.m_broker.BrokerPort, p_reason))
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def connectionLost(self, p_reason):

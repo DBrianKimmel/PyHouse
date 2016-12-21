@@ -9,9 +9,11 @@
 
 """
 
+__updated__ = '2016-11-21'
+
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Security import test as I_test
+from Modules.Housing.Security import test as I_test
 
 
 class Z_Suite(unittest.TestCase):

@@ -2,16 +2,18 @@
 @name:      PyHouse/src/Modules/test/test_Pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 31, 2015
 @Summary:
 
 """
 
+__updated__ = '2016-11-21'
+
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Pool import test as I_test
+from Modules.Housing.Pool import test as I_test
 
 
 class Z_Suite(unittest.TestCase):

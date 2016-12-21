@@ -7,11 +7,11 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 22 tests - DBK - 2016-08-30
+Passed all 23 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-08-30'
+__updated__ = '2016-12-04'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,7 +27,7 @@ from Modules.Computer.Nodes.node_local import \
     Util as localUtil
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 AF_INET = 2
@@ -43,6 +43,13 @@ class SetupMixin(object):
 class FakeNetiface(object):
     """
     """
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_node_local')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -76,18 +83,18 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
-    def test_1_Nodes(self):
+    def test_01_Nodes(self):
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
-        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - Nodes Xml'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - Nodes Xml'))
         self.assertEqual(len(l_xml), 2)
 
-    def test_2_Nodes(self):
+    def test_02_Nodes(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-2-A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
-class A3_Netiface(SetupMixin, unittest.TestCase):
+class B1_Netiface(SetupMixin, unittest.TestCase):
     """
     This section tests the setup of the test
     """
@@ -99,48 +106,80 @@ class A3_Netiface(SetupMixin, unittest.TestCase):
 
     def test_01_Families(self):
         """ Check the AF list for what we assume is the correct number later.
+        From Kubuntu 16.04:
+        0                             AF_UNSPEC
+        1                             AF_FILE
+        2                             AF_INET
+        3                             AF_AX25
+        4                             AF_IPX
+        5                             AF_APPLETALK
+        6                             AF_NETROM
+        7                             AF_BRIDGE
+        8                             AF_ATMPVC
+        9                             AF_X25
+        10                            AF_INET6
+        11                            AF_ROSE
+        12                            AF_DECnet
+        13                            AF_NETBEUI
+        14                            AF_SECURITY
+        15                            AF_KEY
+        16                            AF_NETLINK
+        17                            AF_PACKET
+        18                            AF_ASH
+        19                            AF_ECONET
+        20                            AF_ATMSVC
+        22                            AF_SNA
+        23                            AF_IRDA
+        24                            AF_PPPOX
+        25                            AF_WANPIPE
+        31                            AF_BLUETOOTH
+        34                            AF_ISDN
         """
         l_fam = Interfaces._list_families()
-        # print(PrettyFormatAny.form(l_fam, 'A3-01-A - A_Families', 170))
+        # print(PrettyFormatAny.form(l_fam, 'B1-01-A - A_Families', 170))
         self.assertEqual(l_fam[2], 'AF_INET')
         self.assertEqual(l_fam[10], 'AF_INET6')
+        self.assertEqual(l_fam[17], 'AF_PACKET')
 
     def test_02_Gateways(self):
         """ Check the gateways
         """
         l_gate = Interfaces._list_gateways()
-        # print(PrettyFormatAny.form(l_gate, 'A3-02-A - Gateways', 100))
-        l_v4 = l_gate[2]
-        self.assertEqual(l_v4[0][0], '192.168.9.1')
+        # print(PrettyFormatAny.form(l_gate, 'B1-02-A - Gateways', 100))
+        l_v4 = l_gate[AF_INET]  # 2 = AF_INET
+        print(PrettyFormatAny.form(l_v4, 'B1-02-B - Gateways', 100))
+        # self.assertEqual(l_v4[0][0], '192.168.1.1')
 
     def test_03_ListInterfaces(self):
         """ Check the interfaces in this computer
         """
         l_int = Interfaces._list_interfaces()
-        # print(PrettyFormatAny.form(l_int, 'A3-03-A - Interfaces', 170))
+        print(PrettyFormatAny.form(l_int, 'B1-03-A - Interfaces', 170))
         self.assertEqual(l_int[0], 'lo')
+        self.assertEqual(l_int[1], 'eno1')
+        self.assertEqual(l_int[2], 'wlo1')
 
     def test_04_Interfaces(self):
         """ Check the interfaces in this computer
         """
         l_int = Interfaces._list_interfaces()
-        # print(PrettyFormatAny.form(l_int, 'A3-04-A - Interface Names', 170))
+        print(PrettyFormatAny.form(l_int, 'B1-04-A - Interface Names', 170))
         for l_name in l_int:
             l_ifa = Interfaces._list_ifaddresses(l_name)
-            # print(PrettyFormatAny.form(l_ifa, 'A3-04-B - Interface "{}" Addresses'.format(l_name), 170))
+            print(PrettyFormatAny.form(l_ifa, 'B1-04-B - Interface "{}" Addresses'.format(l_name), 170))
             self.assertGreaterEqual(len(l_ifa), 1)
 
     def test_05_All(self):
         l_all, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
         for _l_ix in l_all:
-            # print('{} {}'.format(l_ix, PrettyFormatAny.form(l_all[l_ix], 'A3-05-A - Interface', 170)))
+            print('{} {}'.format(_l_ix, PrettyFormatAny.form(l_all[_l_ix], 'B1-05-A - Interface', 170)))
             pass
-        # print(PrettyFormatAny.form(l_all, 'A3-05-B - Interfaces', 170))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        print(PrettyFormatAny.form(l_all, 'B1-05-B - Interfaces', 170))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-05-C - PyHouse'))
         self.assertNotEqual(l_all, None)
 
 
-class B1_Iface(SetupMixin, unittest.TestCase):
+class B2_Iface(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -198,7 +237,7 @@ class B1_Iface(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
 
 
-class B2_Node(SetupMixin, unittest.TestCase):
+class B3_Node(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))

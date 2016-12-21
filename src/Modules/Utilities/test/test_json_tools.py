@@ -7,12 +7,12 @@
 @note:      Created on Jun 25, 2015
 @Summary:
 
-Passed all 3 tests - DBK - 20156-11-14
+Passed all 3 tests - DBK - 2016-11-14
 
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-15'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/test/test_Internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2015
 @Summary:
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2016-11-22'
 
 
 # Import system type stuff

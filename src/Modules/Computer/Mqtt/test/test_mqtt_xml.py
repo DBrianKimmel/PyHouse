@@ -7,11 +7,11 @@
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 8 tests - DBK - 2016-07-06
+Passed all 9 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2016-11-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -45,6 +45,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = mqttXML()
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_mqtt_xml')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):

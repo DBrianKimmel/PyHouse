@@ -15,7 +15,7 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.data_objects import BaseUUIDObject
 
-__updated__ = '2016-10-11'
+__updated__ = '2016-11-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -46,7 +46,7 @@ class Xml(object):
     @staticmethod
     def _read_one_device(p_device_xml):
         l_obj = SamsungData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_device_xml)
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, p_device_xml)
         l_obj.IPv4 = PutGetXML.get_ip_from_xml(p_device_xml, 'IPv4')
         l_obj.Port = PutGetXML.get_int_from_xml(p_device_xml, 'Port', 55000)
         return l_obj
@@ -79,7 +79,7 @@ class Xml(object):
 
     @staticmethod
     def _write_one_device(p_obj):
-        l_entry = XmlConfigTools.write_base_object_xml('Device', p_obj)
+        l_entry = XmlConfigTools.write_base_UUID_object_xml('Device', p_obj)
         return l_entry
 
     @staticmethod

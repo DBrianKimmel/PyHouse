@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2016-12-21'
 
 #  Import system type stuff
 import platform
@@ -59,7 +59,7 @@ class UuidFile(object):
 
     def read_uuid_file(self):
         try:
-            _l_file = open(FILE_PATH, mode='r')
+            _l_file = open(FILE_PATH, mode = 'r')
         except IOError as e_err:
             LOG.error(" -- Error in open_config_file {}".format(e_err))
         pass
@@ -129,7 +129,7 @@ class Xml(object):
             p_pyhouse_obj.Computer = l_obj
             LOG.warn('Creating NEW Uuid')
         else:
-            l_obj = XmlConfigTools.read_base_object_xml(p_pyhouse_obj.Computer, l_xml)
+            l_obj = XmlConfigTools.read_base_UUID_object_xml(p_pyhouse_obj.Computer, l_xml)
             l_msg = 'Resuming Computers UUID is {}'.format(l_obj.UUID)
             LOG.warn(l_msg)
         l_uuid_obj = UuidData()
@@ -143,7 +143,7 @@ class Xml(object):
         # p_pyhouse_obj.Computer.Name = platform.node()
         # p_pyhouse_obj.Computer.Key = 0
         # p_pyhouse_obj.Computer.Active = True
-        l_xml = XmlConfigTools.write_base_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
+        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
         return l_xml
 
 

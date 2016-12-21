@@ -7,11 +7,11 @@
 @note:      Created on Sep 2, 2014
 @Summary:
 
-Passed all 15 tests - DBK - 2016-08-20
+Passed all 16 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-08-20'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,12 +49,12 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_KEY_4, \
     TESTING_SCHEDULE_ACTIVE_4, \
     TESTING_SCHEDULE_DURATION_4
-# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -66,6 +66,13 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_schedule_obj = ScheduleBaseData()
         self.m_api = scheduleXml()
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_schedule_xml')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -138,12 +145,12 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_OneBase(self):
+    def test_01_OneBase(self):
         """ Read in the xml file and fill in x
         """
         l_obj = scheduleXml._read_one_base_schedule(self.m_xml.schedule)
-        # print(PrettyFormatAny.form(l_obj, 'B1-1-A - OneBase'))
-        # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-1-B - OneBase'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - OneBase'))
+        # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-01-B - OneBase'))
         self.assertEqual(l_obj.Name, TESTING_SCHEDULE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_SCHEDULE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_SCHEDULE_ACTIVE_0)
@@ -154,10 +161,10 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.ScheduleType, TESTING_SCHEDULE_TYPE_0)
         self.assertEqual(l_obj.Time, TESTING_SCHEDULE_TIME_0)
 
-    def test_2_OneLight(self):
+    def test_02_OneLight(self):
         l_obj = scheduleXml._read_one_lighting_schedule(self.m_xml.schedule)
-        # print(PrettyFormatAny.form(l_obj, 'B1-2-A - One Light'))
-        # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-1-B - OneBase'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-A - One Light'))
+        # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-02-B - OneBase'))
         self.assertEqual(str(l_obj.Level), TESTING_SCHEDULE_LEVEL_0)
         self.assertEqual(str(l_obj.LightName), TESTING_SCHEDULE_LIGHT_NAME_0)
         self.assertEqual(l_obj.LightUUID, TESTING_SCHEDULE_LIGHT_UUID_0)
@@ -165,25 +172,25 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.RoomName, TESTING_SCHEDULE_ROOM_NAME_0)
         self.assertEqual(l_obj.RoomUUID, TESTING_SCHEDULE_ROOM_UUID_0)
 
-    def test_3_OneSchedule(self):
+    def test_03_OneSchedule(self):
         l_sched = scheduleXml._read_one_schedule(self.m_xml.schedule_sect[1])
-        # print(PrettyFormatAny.form(l_sched, 'B1-3-A - One Schedule'))
+        # print(PrettyFormatAny.form(l_sched, 'B1-03-A - One Schedule'))
         self.assertEqual(l_sched.Name, TESTING_SCHEDULE_NAME_1)
         self.assertEqual(l_sched.LightName, TESTING_LIGHT_NAME_1)
         self.assertEqual(l_sched.RoomName, TESTING_SCHEDULE_ROOM_NAME_1)
 
-    def test_4_OneSchedule(self):
+    def test_04_OneSchedule(self):
         l_sched = scheduleXml._read_one_schedule(self.m_xml.schedule_sect[4])
-        # print(PrettyFormatAny.form(l_sched, 'B1-3-A - One Schedule'))
+        # print(PrettyFormatAny.form(l_sched, 'B1-04-A - One Schedule'))
         self.assertEqual(str(l_sched.Name), TESTING_SCHEDULE_NAME_4)
         self.assertEqual(str(l_sched.Key), TESTING_SCHEDULE_KEY_4)
         self.assertEqual(str(l_sched.Active), TESTING_SCHEDULE_ACTIVE_4)
         self.assertEqual(str(l_sched.Duration), TESTING_SCHEDULE_DURATION_4)
 
-    def test_5_AllSchedules(self):
+    def test_05_AllSchedules(self):
         l_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_schedules, 'B1-4-A - Schedules'))
-        # print(PrettyFormatAny.form(l_schedules[0], 'Schedules'))
+        # print(PrettyFormatAny.form(l_schedules, 'B1-05-A - Schedules'))
+        # print(PrettyFormatAny.form(l_schedules[0], 'B1-05-B - Schedules'))
         # print(PrettyFormatAny.form(l_schedules[1], 'Schedules'))
         # print(PrettyFormatAny.form(l_schedules[2], 'Schedules'))
         # print(PrettyFormatAny.form(l_schedules[3], 'Schedules'))
@@ -198,10 +205,10 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_OneBase(self):
+    def test_01_OneBase(self):
         l_schedule = scheduleXml._read_one_schedule(self.m_xml.schedule)
         l_xml = scheduleXml._write_one_base_schedule(l_schedule)
-        # print(PrettyFormatAny.form(l_xml, 'B2-1-A - One Interface'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-01-A - One Interface'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_SCHEDULE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_SCHEDULE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_SCHEDULE_ACTIVE_0)
@@ -211,11 +218,11 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('ScheduleType').text, TESTING_SCHEDULE_TYPE_0)
         self.assertEqual(l_xml.find('Time').text, TESTING_SCHEDULE_TIME_0)
 
-    def test_2_OneLight(self):
+    def test_02_OneLight(self):
         l_schedule = scheduleXml._read_one_schedule(self.m_xml.schedule)
         l_xml = scheduleXml._write_one_base_schedule(l_schedule)
         scheduleXml._write_one_light_schedule(l_schedule, l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'B2-2-A - One Light'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-02-A - One Light'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_SCHEDULE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_SCHEDULE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_SCHEDULE_ACTIVE_0)

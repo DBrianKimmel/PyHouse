@@ -1,17 +1,17 @@
 """
-@name: PyHouse/src/Modules/Web/test/test_web_server.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2016 by D. Brian Kimmel
-@note: Created on Apr 8, 2013
-@license: MIT License
-@summary: This module is for AMP request/response protocol
-
-Passed all 4 tests - DBK - 2016-11-23
+@name:      PyHouse/src/Modules/Computer/Web/test/test_web_schedules.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2016-2016 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Nov 23, 2016
+@summary:   Test
 
 """
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_ACTIVE, TESTING_HOUSE_KEY, TESTING_HOUSE_UUID
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-23'
+__updated__ = '2016-11-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,10 +21,41 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from Modules.Computer.Web.web_xml import Xml as webXml
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Web.web_xml import Xml as webXml
 
+
+JSON = '{ Active : false, \
+DOW : 127, \
+Key : 5, \
+Level : 50, \
+LightName : "MBR Rope", \
+LightUUID : "1efbce9e-4618-11e6-89e7-74da3859e09a", \
+Name :"Evening-05". \
+Rate : 0, \
+RoomName : "Master Bed", \
+RoomUUID : "1efc19d0-4618-11e6-89e7-74da3859e09a", \
+ScheduleMode : "Home", \
+ScheduleType : "Lighting", \
+Time : "sunset + 00:15", \
+UUID : null, \
+_AddFlag : false, \
+_DeleteFlag : false \
+}'
+JSON2 = {"Add":"false",
+         "Delete":"false",
+         "Name":"Schedule 0",
+         "Key":"0",
+         "Active":"true",
+         "ScheduleType":"Lighting",
+         "Time":"13:34",
+         "DOW":"127",
+         "ScheduleMode":"Home",
+         "Level":"100",
+         "Rate":"0",
+         "RoomName":"Master Bath",
+         "LightName":"Light, Insteon (xml_lights)"}
 
 class SetupMixin(object):
 
@@ -80,7 +111,48 @@ class A0(unittest.TestCase):
     def setUp(self):
         pass
     def test_00_Print(self):
-        print('Id: test_web_server')
+        print('Id: test_web_schedules')
+
+
+class A1_Setup(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Tags(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
+        # print(PrettyFormatAny.form(self.m_xml.web_sect, 'XML'))
+
+
+class A2_XML(SetupMixin, unittest.TestCase):
+    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_HouseDiv(self):
+        """ Test
+        """
+        l_xml = self.m_xml.house_div
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - House'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_HOUSE_UUID)
+
+
+class B01_JSON(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_xxx(self):
+        l_dev = 1
 
 
 class C02_XML(SetupMixin, unittest.TestCase):

@@ -15,7 +15,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import CoreServicesInformation, NodeData
+from Modules.Core.data_objects import NodeData
 from Modules.Computer.Nodes import node_local
 from test import xml_data
 

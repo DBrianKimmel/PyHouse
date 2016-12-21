@@ -10,9 +10,8 @@
 Passed all 12 tests - DBK - 2016-11-05
 
 """
-from Modules.Core.data_objects import WebData, LoginData
 
-__updated__ = '2016-11-13'
+__updated__ = '2016-11-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,6 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import WebData, LoginData
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.test.xml_web import \
         TESTING_WEB_PORT, \
@@ -29,7 +29,8 @@ from Modules.Computer.Web.test.xml_web import \
         TESTING_LOGIN_ROLE_0, \
         TESTING_LOGIN_FULL_NAME_0, \
         TESTING_LOGIN_KEY_0, \
-        TESTING_LOGIN_ACTIVE_0
+        TESTING_LOGIN_ACTIVE_0, \
+        TESTING_WEB_SECURE_PORT
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -77,11 +78,12 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Port(self):
-        """ Read the web port.
+    def test_01_Ports(self):
+        """ Read the web ports.
         """
-        l_port = webXml._read_port(self.m_xml.web_sect)
+        l_port, l_secure = webXml._read_ports(self.m_xml.web_sect)
         self.assertEqual(l_port, int(TESTING_WEB_PORT))
+        self.assertEqual(l_secure, int(TESTING_WEB_SECURE_PORT))
 
     def test_02_OneLogin(self):
         """ Read one Login object.
@@ -127,13 +129,14 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.Computer.Web = self.m_web_obj
         self.m_web_xml = ET.Element("WebSection")
 
-    def test_01_Port(self):
+    def test_01_Ports(self):
         """ Write Web port.
         """
-        # print(PrettyFormatAny.form(self.m_web_obj, 'Web'))
-        webXml._write_port(self.m_web_obj, self.m_web_xml)
-        # print(PrettyFormatAny.form(self.m_web_xml, 'Web'))
+        # print(PrettyFormatAny.form(self.m_web_obj, 'B2-01-A - Web', 100))
+        webXml._write_ports(self.m_web_obj, self.m_web_xml)
+        # print(PrettyFormatAny.form(self.m_web_xml, 'B2-01-B - Web'))
         self.assertEqual(self.m_web_xml.find('Port').text, TESTING_WEB_PORT)
+        self.assertEqual(self.m_web_xml.find('SecurePort').text, TESTING_WEB_SECURE_PORT)
 
     def test_02_OneLogin(self):
         """ Write one Login.

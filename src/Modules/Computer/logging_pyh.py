@@ -4,11 +4,11 @@
 @name:      PyHouse/src/Modules/Computer/logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014-2015 by D. Brian Kimmel
+@copyright: 2014-2016 by D. Brian Kimmel
 @note:      Created on Jan 20, 2014
 @license:   MIT License
 @summary:   Log Module.
-
+#
 Provides a Debug log and a Error log file to review.
 
 Default to /var/log/pyhouse/xxx
@@ -19,8 +19,9 @@ Be sure that the pyhouse process has read/write privileges to the directory.
 This module sets up the logging used by PyHouse.
 It configures PyHouse in the logging standard library module plus twisted logging.
 
-
 """
+
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import logging

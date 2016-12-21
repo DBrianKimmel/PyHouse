@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2016-11-14
 """
 
-__updated__ = '2016-11-14'
+__updated__ = '2016-11-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -58,14 +58,14 @@ class A0(unittest.TestCase):
         print('Id: test_lighting_buttons')
 
 
-class A1(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_FindXml(self):
+    def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
@@ -98,6 +98,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_button.DeviceType), TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0)
         self.assertEqual(str(l_button.DeviceSubType), TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0)
         self.assertEqual(l_button.RoomName, TESTING_LIGHTING_BUTTON_ROOM_NAME_0)
+        self.assertEqual(l_button.RoomUUID, TESTING_LIGHTING_BUTTON_ROOM_UUID_0)
 
     def test_02_ReadOneButtonXml(self):
         """ Read in the xml file and fill in the lights

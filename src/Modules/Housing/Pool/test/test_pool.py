@@ -7,11 +7,11 @@
 @note:      Created on Sep 27, 2015
 @Summary:
 
-Passed all 10 tests - DBK - 2016-07-14
+Passed all 11 tests - DBK - 2016-07-14
 
 """
 
-__updated__ = '2016-07-14'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,7 +33,7 @@ from Modules.Housing.Pool.test.xml_pool import \
         TESTING_POOL_ACTIVE_1, \
         TESTING_POOL_COMMENT_1, \
         TESTING_POOL_UUID_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -44,6 +44,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_pool_obj = PoolData()
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_pool')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):

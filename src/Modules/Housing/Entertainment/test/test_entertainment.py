@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2016-11-10
 
 """
 
-__updated__ = '2016-11-10'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,7 +33,7 @@ class A0(unittest.TestCase):
     def setUp(self):
         pass
     def test_00_Print(self):
-        print('Id: test_lighting_controller')
+        print('Id: test_entertainment')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):

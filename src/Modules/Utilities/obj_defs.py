@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Utilities/obj_defs.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 7, 2015
 @Summary:

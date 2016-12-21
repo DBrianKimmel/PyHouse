@@ -2,13 +2,15 @@
 @name:      PyHouse/src/Modules/Drivers/test/test_interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   This module is for testing driver interface data.
 
-Passed all 5 tests - DBK - 2015-08-08
+Passed all 6 tests - DBK - 2016-11-22
 """
+
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -17,7 +19,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Drivers.interface import Xml as interfaceXml
-from Modules.Lighting.lighting_controllers import API as controllerAPI
+from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
 from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
 
@@ -30,7 +32,13 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_controller_obj = ControllerData()
         self.m_ctlr_api = controllerAPI()
-        self.m_version = '1.4.0'
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_interface')
 
 
 class C01_XML(SetupMixin, unittest.TestCase):

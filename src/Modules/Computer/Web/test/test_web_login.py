@@ -2,32 +2,32 @@
 @name:      PyHouse/src/Modules/Web/test/test_web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2016 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 29, 2014
 @Summary:
 
-Passed 3 of 4 tests - DBK - 2015-11-16
+Passed 5 of 6 tests - DBK - 2015-11-22
 
 """
 
-__updated__ = '2016-10-20'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web import web_login
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Computer.Web.test.xml_web import TESTING_LOGIN_NAME_0
+from Modules.Families import VALID_FAMILIES
+from Modules.Computer.Web.test.xml_web import TESTING_LOGIN_NAME_0, TESTING_WEB_PORT
 from Modules.Computer.Web.web import WorkspaceData
-from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_NAME_0
 from Modules.Utilities import json_tools
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -37,35 +37,68 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_web_login')
+
+
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """
+    This section tests the above setup for things we will need further down in the tests.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Tags(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
+        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
+
+
 class A2_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_FindXml(self):
+    def test_01_Port(self):
         """ Be sure that the XML contains the right stuff.
         """
-        print(PrettyFormatAny.form(self.m_xml.web_sect, 'Web Xml'))
+        l_xml = self.m_xml.web_sect
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - XML'))
+        self.assertEqual(l_xml.find('Port').text, TESTING_WEB_PORT)
+
+    def test_02_FindXml(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        # print(PrettyFormatAny.form(self.m_xml.web_sect, 'A2-02-A - Web Xml'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
 
-    def test_02_ReadXML(self):
+    def test_03_ReadXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Web = l_web
-        # print(PrettyFormatAny.form(l_web, 'Web Data'))
+        # print(PrettyFormatAny.form(l_web, 'A2-03-A - Web Data'))
         self.assertEqual(l_web.WebPort, 8580)
         self.assertEqual(len(l_web.Logins), 2)
         self.assertEqual(l_web.Logins[0].Name, TESTING_LOGIN_NAME_0)
 
-    def test_03_WriteXML(self):
+    def test_04_WriteXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.Web = l_web
-        print(PrettyFormatAny.form(l_web, 'Web Data'))
-        l_xml = webXml.write_web_xml(l_web)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_web, 'A2-04-A - Web Data'))
+        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_xml, 'A2-04-B - XML'))
+        pass
 
 
-class C02_Element(SetupMixin, unittest.TestCase):
+class C1_Element(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -82,7 +115,7 @@ class C02_Element(SetupMixin, unittest.TestCase):
     def test_02_ValidList(self):
         l_json = web_login.LoginElement(self.m_worksapce).getValidLists()
         l_test = json_tools.decode_json_unicode(l_json)
-        print(PrettyFormatAny.form(l_test, 'JSON', 40))
-        self.assertEqual(l_test['ServerName'], TESTING_NODES_NODE_NAME_0)
+        # print(PrettyFormatAny.form(l_test, 'C1-02-A - JSON', 40))
+        self.assertEqual(l_test['Families'], VALID_FAMILIES)
 
 # ## END DBK

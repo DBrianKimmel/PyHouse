@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   Handle the automatic updating of PyHouse
 
-Passed all 4 tests - DBK - 2015-09-12
+Passed all 5 tests - DBK - 2015-11-21
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2016-11-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,7 +30,14 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C00_Base(SetupMixin, unittest.TestCase):
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_auto_update')
+
+
+class C0_Base(SetupMixin, unittest.TestCase):
     """ This section tests the basic setup code.
     """
 
@@ -48,7 +55,7 @@ class C00_Base(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No House division')
 
 
-class C02_Local(SetupMixin, unittest.TestCase):
+class C1_Local(SetupMixin, unittest.TestCase):
     """
     Test the local version getting code.
     """
@@ -59,14 +66,14 @@ class C02_Local(SetupMixin, unittest.TestCase):
 
     def test_01_PyHouse(self):
         l_file = auto_update.FindLocalVersion()._find_pyhouse_version_file()
-        print('Local File = {}'.format(l_file))
+        # print('C1-01-A - Local File = {}'.format(l_file))
 
     def test_02_Version(self):
         l_version = auto_update.FindLocalVersion().get_version()
-        print(l_version)
+        # print('C1-02-A - Version = {}'.format(l_version))
 
 
-class C03_Repository(SetupMixin, unittest.TestCase):
+class C2_Repository(SetupMixin, unittest.TestCase):
     """
     Test the repository version code
     """
@@ -77,6 +84,6 @@ class C03_Repository(SetupMixin, unittest.TestCase):
 
     def test_01_Version(self):
         l_version = auto_update.FindRepositoryVersion().get_version()
-        print(l_version)
+        # print('C2-01-A -  {}'.format(l_version))
 
 # ## END DBK

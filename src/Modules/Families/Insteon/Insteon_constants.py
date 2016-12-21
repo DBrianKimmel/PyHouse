@@ -13,7 +13,7 @@ Note! This is designed for 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2016-11-18'
 
 STX = 0x02
 ACK = 0x06
@@ -47,7 +47,8 @@ PLM_COMMANDS = {
     'insteon_nak': 0x70,
     'insteon_ack': 0x71,
     'rf_sleep': 0x72,
-    'plm_get_config': 0x73}
+    'plm_get_config': 0x73
+}
 
 MESSAGE_TYPES = {
     'assign_to_group': 0x01,
@@ -57,7 +58,7 @@ MESSAGE_TYPES = {
     'linking_mode': 0x09,
     'unlinking_mode': 0x0A,
     'engine_version': 0x0D,
-    'ping': 0x0F,
+    'ping' : 0x0F,
     'id_request': 0x10,
     'on': 0x11,
     'on_fast': 0x12,
@@ -98,7 +99,7 @@ MESSAGE_TYPES = {
     'thermostat_report_mode': 0x70,
     'thermostat_report_cool_setpoint': 0x71,
     'thermostat_report_heat_setpoint': 0x72
-    }
+}
 
 # This is the length of the response from the PLM.
 # Wait till we get the proper number of bytes before decoding the response.
@@ -133,7 +134,8 @@ MESSAGE_LENGTH = {
     0x70: 4,
     0x71: 5,
     0x72: 3,
-    0x73: 6}
+    0x73: 6
+}
 
 COMMAND_LENGTH = {
     0x60: 2,
@@ -156,7 +158,7 @@ COMMAND_LENGTH = {
     0x71: 4,
     0x72: 2,
     0x73: 2
-    }
+}
 
 class InsteonError(Exception):
     """

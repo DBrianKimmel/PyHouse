@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Web import web_rooms
+from Modules.Computer.Web import web_rooms
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 

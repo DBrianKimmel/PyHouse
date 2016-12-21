@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-10-21'
+__updated__ = '2016-11-22'
 
 
 #  Import system type stuff
@@ -66,13 +66,12 @@ class Util(object):
         l_list = []
         l_count = 0
         l_xml = p_xml.find('LocateUrlSection')
-        try:
-            for l_xml in l_xml.iterfind('LocateUrl'):
-                l_url = str(l_xml.text)
-                l_list.append(l_url)
-                l_count += 1
-        except AttributeError as e_err:
-            LOG.error('ERROR in read_locates_xml - {}'.format(e_err))
+        if l_xml == None:
+            return l_list
+        for l_xml in l_xml.iterfind('LocateUrl'):
+            l_url = str(l_xml.text)
+            l_list.append(l_url)
+            l_count += 1
         return l_list
 
     @staticmethod
@@ -89,13 +88,12 @@ class Util(object):
         l_list = []
         l_count = 0
         l_xml = p_xml.find('UpdateUrlSection')
-        try:
-            for l_xml in l_xml.iterfind('UpdateUrl'):
-                l_url = str(l_xml.text)
-                l_list.append(l_url)
-                l_count += 1
-        except AttributeError as e_err:
-            LOG.error('ERROR in read_updates_xml - {}'.format(e_err))
+        if l_xml == None:
+            return l_list
+        for l_xml in l_xml.iterfind('UpdateUrl'):
+            l_url = str(l_xml.text)
+            l_list.append(l_url)
+            l_count += 1
         return l_list
 
     @staticmethod

@@ -8,10 +8,10 @@
 @summary:   Test handling the information for a house.
 
 
-Passed all 9 tests - DBK - 2016-07-07
+Passed all 14 tests - DBK - 2016-11-21
 """
 
-__updated__ = '2016-11-19'
+__updated__ = '2016-12-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -186,6 +186,6 @@ class P1_API(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'P1-04-B - House'))
         l_xml = ET.Element('House')
         l_xml = self.m_api.SaveXml(l_xml)
-        print(PrettyFormatAny.form(l_xml, 'P1-04-D - API'))
+        # print(PrettyFormatAny.form(l_xml, 'P1-04-D - API'))
 
 # ## END DBK

@@ -7,11 +7,11 @@
 @note:      Created on Jul 14, 2016
 @summary:
 
-Passed all 11 tests - DBK - 2016-11-11
+Passed all 11 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2016-11-11'
+__updated__ = '2016-11-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -103,7 +103,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         """ Test
         """
         l_xml = self.m_xml.samsung_sect
-        print(PrettyFormatAny.form(l_xml, 'A2-03-A - Samsung'))
+        # print(PrettyFormatAny.form(l_xml, 'A2-03-A - Samsung'))
         self.assertEqual(len(l_xml), 1)
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
 
@@ -131,7 +131,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read the xml and fill in the first room's dict
         """
         l_obj = samsungXml._read_one_device(self.m_xml.samsung_sect.find('Device'))
-        print(PrettyFormatAny.form(l_obj, 'B1-1-A - One Device'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-1-A - One Device'))
         self.assertEqual(l_obj.Name, TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_SAMSUNG_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_SAMSUNG_DEVICE_ACTIVE_0)
@@ -144,7 +144,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """ Read the xml and fill in the first room's dict
         """
         l_obj = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B1-2-A - All Devices'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-2-A - All Devices'))
 
 
 class C1_Write(SetupMixin, unittest.TestCase):
@@ -158,7 +158,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """ Read the xml and fill in the first room's dict
         """
         l_obj = samsungXml._read_one_device(self.m_xml.samsung_sect.find('Device'))
-        print(PrettyFormatAny.form(l_obj, 'C1-1-A - One Device'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-1-A - One Device'))
         self.assertEqual(l_obj.Name, TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_SAMSUNG_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_SAMSUNG_DEVICE_ACTIVE_0)
@@ -171,7 +171,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """ Read the xml and fill in the first room's dict
         """
         l_obj = samsungXml._read_one_device(self.m_xml.samsung_sect.find('Device'))
-        print(PrettyFormatAny.form(l_obj, 'C2-2-A - All Devices'))
+        # print(PrettyFormatAny.form(l_obj, 'C2-2-A - All Devices'))
 
 
 # ## END DBK
