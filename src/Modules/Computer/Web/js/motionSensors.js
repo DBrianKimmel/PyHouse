@@ -1,11 +1,11 @@
 /**
- * @name:      PyHouse/src/Modules/Web/js/garageDoor.js
+ * @name:      PyHouse/src/Modules/Web/js/motionSensors.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
  * @copyright: (c) 2016-2016 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Sep 17, 2016
- * @summary:   Displays the Garage Door element
+ * @summary:   Displays the MotionSensor element
  */
 
 /**
@@ -175,16 +175,16 @@ function handleDataOnClick(self, p_node) {
 	var l_defer = '';
 	l_obj.Add = globals.Add;
 	switch (l_ix) {
-	case '10003': // The 'Change' Button
+	case '10003':  // The 'Add/Change' Button
 		l_json = JSON.stringify(l_obj);
 		l_defer = self.callRemote("saveMotionSensorData", l_json); // @ web_motionSensors.py
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;
-	case '10002': // The 'Back' button
+	case '10002':  // The 'Back' button
 		showSelectionButtons(self);
 		break;
-	case '10004': // The 'Delete' button
+	case '10004':  // The 'Delete' button
 		l_obj.Delete = true;
 		l_json = JSON.stringify(l_obj);
 		l_defer = self.callRemote("saveMotionSensorData", l_json); // @ web_motionSensors.py

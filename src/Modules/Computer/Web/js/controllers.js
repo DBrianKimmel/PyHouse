@@ -207,7 +207,7 @@ function handleDataOnClick(self, p_node) {
 		self.startWidget();
 	}
 	function eb_handleDataOnClick(p_reason) {
-		Divmod.debug('---', 'ERROR controllers.eb_handleDataOnClick() - ' + p_reason);
+		Divmod.debug('---', 'controllers.eb_handleDataOnClick() - ' + p_reason);
 	}
 
 	var l_ix = p_node.name;
@@ -218,8 +218,7 @@ function handleDataOnClick(self, p_node) {
 	switch (l_ix) {
 	case '10003': // The 'Change' Button
 		l_json = JSON.stringify(l_obj);
-		l_defer = self.callRemote("saveControllerData", l_json); // @
-		// web_controller
+		l_defer = self.callRemote("saveControllerData", l_json); // @web_controller
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;
@@ -229,8 +228,7 @@ function handleDataOnClick(self, p_node) {
 	case '10004': // The 'Delete' button
 		l_obj.Delete = true;
 		l_json = JSON.stringify(l_obj);
-		l_defer = self.callRemote("saveControllerData", l_json); // @
-		// web_rooms
+		l_defer = self.callRemote("saveControllerData", l_json); // @web_controller
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;

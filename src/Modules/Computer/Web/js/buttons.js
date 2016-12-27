@@ -114,6 +114,7 @@ function handleMenuOnClick(self, p_node) {
 function buildDataEntryScreen(self, p_entry, p_handler) {
 	// Divmod.debug('---', 'buttons.buildDataEntryScreen() was called.');
 	var l_obj = arguments[1];
+	l_obj.Delete = false;
 	var l_html = build_lcars_top('Button Data', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(25, self.buildEntry(l_obj, p_handler));
 	l_html += build_lcars_bottom();
@@ -148,12 +149,14 @@ function fetchEntry(self) {
 },
 
 function createEntry(self) {
-	Divmod.debug('---', 'buttons.createEntry() was called.');
-	var l_key = Object.keys(globals.House.Lighting.Buttons).length;
-	var l_data = createBaseEntry(self, l_key);
-	self.createButtonEntry(l_data);
-	createFamilyPart(self, l_data);
-	return l_data;
+	var l_ix = Object.keys(globals.House.Lighting.Buttons).length;
+	Divmod.debug('---', 'buttons.createEntry() was called.  Ix=' + l_ix);
+	var l_obj = createBaseEntry(self, l_ix);
+	createDeviceEntry(self, l_obj);    // in lcars.js
+	createFamilyPart(self, l_obj);
+	self.createButtonEntry(l_obj);
+	console.log("buttons.createEntry() Obj = %O", l_obj); 
+	return l_obj;
 },
 
 function createButtonEntry(self, p_obj) {
@@ -170,6 +173,7 @@ function handleDataEntryOnClick(self, p_node) {
 		self.startWidget();
 	}
 	function eb_handleDataOnClick(res) {
+		Divmod.debug('---', 'buttons.eb_handleDataOnClick() was called. ERROR =' + res);
 	}
 	var l_defer;
 	var l_ix = p_node.name;

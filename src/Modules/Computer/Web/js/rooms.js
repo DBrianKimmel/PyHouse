@@ -159,8 +159,8 @@ function createEntry(self) {
 function createCompleteRoomEntry(self, p_data) {
 	p_data.Comment = '';
 	self.createRoomEntry(p_data);
-	// p_data.Corner = '[1.0, 2.0, 3.0]';
-	// p_data.Size = '[ 4.0, 5.0, 6.0]';
+	p_data.Corner = createCoordinateEntry(self);
+	p_data.Size = createCoordinateEntry(self);
 	p_data.Floor = '1';
 	p_data.RoomType = 'Room';
 },

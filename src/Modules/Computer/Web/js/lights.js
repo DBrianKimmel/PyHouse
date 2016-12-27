@@ -119,6 +119,7 @@ function handleMenuOnClick(self, p_node) {
  */
 function buildDataEntryScreen(self, p_entry, p_add_change, p_handler) {
 	var l_obj = arguments[1];
+	l_obj.Delete = false;
 	var l_html = build_lcars_top('Light Data', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(27, self.buildEntry(l_obj, p_handler));
 	l_html += build_lcars_bottom();
@@ -186,12 +187,12 @@ function fetchLightEntry(self, p_data) {
 
 function createEntry(self) {
 	var l_ix = Object.keys(globals.House.Lighting.Lights).length;
-	Divmod.debug('---', 'lights.createEntry() was called Ix=' + l_ix);
+	// Divmod.debug('---', 'lights.createEntry() was called Ix=' + l_ix);
 	var l_obj = createBaseEntry(self, l_ix);
 	createDeviceEntry(self, l_obj);    // in lcars.js
 	createFamilyPart(self, l_obj);
 	self.createLightEntry(l_obj);
-	console.log("lights.createEntry() Obj = %O", l_obj);
+	// console.log("lights.createEntry() Obj = %O", l_obj);
 	return l_obj;
 },
 

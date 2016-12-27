@@ -59,7 +59,7 @@ function createRoomEntry(self, p_obj) {
 	Divmod.debug('---', 'handle_rooms.createRoomEntry() was called. ');
 	p_obj.RoomName = 'XXX Room';
 	p_obj.RoomUUID = '';
-	createCoordinateEntry(self, p_obj);
+	p_obj.RoomCoords = createCoordinateEntry(self);
 	return p_obj;
 }
 
@@ -87,7 +87,7 @@ function createRoomSelectEntry(self, p_obj) {
 	Divmod.debug('---', 'handle_rooms.createRoomSelectEntry() was called. ');
 	p_obj.RoomName = 'XXX Room';
 	p_obj.RoomUUID = '';
-	createCoordinateEntry(self, p_obj);
+	p_obj.RoomCoords = createCoordinateEntry(self);
 }
 
 // Divmod.debug('---', 'handle_rooms.handleDataEntryOnClick(Back) was called. ');

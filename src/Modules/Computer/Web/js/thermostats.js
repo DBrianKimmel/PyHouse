@@ -211,16 +211,16 @@ function handleDataOnClick(self, p_node) {
 	var l_json;
 	// Divmod.debug('---', 'thermostats.handleDataOnClick() was called. Node:' + l_ix);
 	switch (l_ix) {
-	case '10003': // Add/Change Button
+	case '10003':  // Add/Change Button
 		l_json = JSON.stringify(self.fetchEntry());
 		l_defer = self.callRemote("saveThermostatsData", l_json); // @ web_thermostat
 		l_defer.addCallback(cb_handleDataOnClick);
 		l_defer.addErrback(eb_handleDataOnClick);
 		break;
-	case '10002': // Back button
+	case '10002':  // Back button
 		showSelectionButtons(self);
 		break;
-	case '10004': // Delete button
+	case '10004':  // Delete button
 		var l_obj = self.fetchEntry();
 		l_obj.Delete = true;
 		l_json = JSON.stringify(l_obj);

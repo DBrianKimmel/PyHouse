@@ -7,9 +7,9 @@
  * @note:      Created on Sep 07, 2016
  * @summary:   Handles coordinates in JS
  *
- * Room coordinates are a list of three real values.
+ * Room coordinates are a list (JS Array) of three real values.
  * They are X, Y and Z or Easting, Northing and Height
- * They are in Meteres.
+ * They should be in Meters.
  * 
  * This MUST be imported in workspace.js
  */
@@ -28,6 +28,7 @@ function buildCoordinatesWidget(self, p_id, p_caption, p_value) {
 	// @param: p_caption is the text to be put in front of the value field.
 	// @param: p_value is the initial value of the coordinates (list of reals)
 	// @returns: HTML for a coordinate entry.
+	Divmod.debug('---', 'util_coords.buildCoordinatesWidget() was called.');
 	var l_id = buildAthenaId(self, p_id);
 	var l_size = 40;
 	var l_value = '';
@@ -70,8 +71,9 @@ function fetchCoordinateEntry(self, p_data) {
 	p_data.RoomCoords = fetchCoordinatesWidget(self, 'RoomCoords');
 }
 
-function createCoordinateEntry(self, p_data) {
-	p_data.RoomCoords = _createCoordinateList();
+function createCoordinateEntry(self) {
+	l_coords = _createCoordinateList();
+	return l_coords;
 }
 
 // Divmod.debug('---', 'util_coords.buildSerialPart() called.');

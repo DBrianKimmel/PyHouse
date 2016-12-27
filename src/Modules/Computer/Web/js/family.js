@@ -152,7 +152,7 @@ function fetchFamilyPart(self, p_obj) {
 	else if (p_obj.DeviceFamily === 'UPB')
 		fetchUpbEntry(p_obj);
 }
-j
+
 function createFamilyPart(self, p_data) {
 	// Divmod.debug('---', 'family.createFamilyPart() called.');
 	
