@@ -124,7 +124,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	// Divmod.debug('---', 'buttons.buildEntry() was called.');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
-	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
+	l_html += buildDeviceEntry(self, p_obj, p_onchange);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
@@ -141,8 +141,8 @@ function familyChanged() {
 function fetchEntry(self) {
 	Divmod.debug('---', 'buttons.fetchEntry() was called.');
 	var l_data = fetchBaseEntry(self);
-	l_data = fetchDeviceEntry(self, l_data);
-	l_data = fetchFamilyPart(self, l_data);
+	fetchDeviceEntry(self, l_data);
+	fetchFamilyPart(self, l_data);
 	console.log("buttons.fetchEntry() - Data = %O", l_data);
 	return l_data;
 },
@@ -151,9 +151,12 @@ function createEntry(self) {
 	Divmod.debug('---', 'buttons.createEntry() was called.');
 	var l_key = Object.keys(globals.House.Lighting.Buttons).length;
 	var l_data = createBaseEntry(self, l_key);
-	l_data = self.createButtonEntry(l_data);
-	l_data = createFamilyPart(self, l_data);
+	self.createButtonEntry(l_data);
+	createFamilyPart(self, l_data);
 	return l_data;
+},
+
+function createButtonEntry(self, p_obj) {
 },
 
 // ============================================================================

@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2016-12-24'
 
 #  Import system type stuff
 import random
@@ -517,7 +517,11 @@ class MQTTClient(MQTTProtocol):
         self.willRetain = willRetain
         self.UserName = userName
         self.Password = passWord
-        self.m_prefix = 'pyhouse/' + p_pyhouse_obj.House.Name.lower() + '/'
+        try:
+            l_name = p_pyhouse_obj.House.Name.lower() + '/'
+        except AttributeError:
+            l_name = 'NoName/'
+        self.m_prefix = 'pyhouse/' + l_name
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol) \n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID)
         l_msg += '\n\t User: {};  Pass: {}'.format(userName, passWord)

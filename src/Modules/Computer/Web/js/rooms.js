@@ -103,6 +103,7 @@ function handleMenuOnClick(self, p_node) {
 	}
 },
 
+
 // ============================================================================
 /**
  * Build a screen full of data entry fields.
@@ -125,11 +126,11 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildRoomEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
+	p_html += buildTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
 	p_html += buildLcarCoOrdinatesWidget(self, 'Corner', 'Corner', p_obj.Corner);
 	p_html += buildLcarCoOrdinatesWidget(self, 'Size', 'Size', p_obj.Size);
-	p_html += buildLcarTextWidget(self, 'Floor', 'Floor', p_obj.Floor);
-	p_html += buildLcarTextWidget(self, 'RoomType', 'RoomType', p_obj.RoomType);
+	p_html += buildTextWidget(self, 'Floor', 'Floor', p_obj.Floor);
+	p_html += buildTextWidget(self, 'RoomType', 'RoomType', p_obj.RoomType);
 	return p_html;
 },
 
@@ -151,14 +152,15 @@ function fetchRoomEntry(self, p_data) {
 function createEntry(self) {
 	var l_key = Object.keys(globals.House.Rooms).length;
 	var l_data = createBaseEntry(self, l_key);
-	self.createRoomEntry(l_data);
+	self.createCompleteRoomEntry(l_data);
 	return l_data;
 },
 
-function createRoomEntry(self, p_data) {
+function createCompleteRoomEntry(self, p_data) {
 	p_data.Comment = '';
-	p_data.Corner = '[1.0, 2.0, 3.0]';
-	p_data.Size = '[ 4.0, 5.0, 6.0]';
+	self.createRoomEntry(p_data);
+	// p_data.Corner = '[1.0, 2.0, 3.0]';
+	// p_data.Size = '[ 4.0, 5.0, 6.0]';
 	p_data.Floor = '1';
 	p_data.RoomType = 'Room';
 },

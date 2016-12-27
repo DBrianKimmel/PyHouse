@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2016-12-21'
+__updated__ = '2016-12-24'
 
 #  Import system type stuff
 import platform
@@ -36,7 +36,7 @@ import platform
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation, UuidData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Communication.communication import API as communicationAPI
+# from Modules.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
@@ -59,7 +59,7 @@ class UuidFile(object):
 
     def read_uuid_file(self):
         try:
-            _l_file = open(FILE_PATH, mode = 'r')
+            _l_file = open(FILE_PATH, mode='r')
         except IOError as e_err:
             LOG.error(" -- Error in open_config_file {}".format(e_err))
         pass
@@ -159,7 +159,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer = ComputerAPIs()
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
         p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
+#        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
@@ -169,7 +169,7 @@ class Utility(object):
     def _load_component_xml(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
@@ -177,7 +177,7 @@ class Utility(object):
     @staticmethod
     def _start_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
+        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
@@ -194,7 +194,7 @@ class Utility(object):
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
+        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.MqttAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)

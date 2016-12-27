@@ -121,15 +121,15 @@ helpers.Widget.subclass(login, 'LoginWidget').methods(
 		return l_html;
 	},
 	function buildLoginEntry(self, p_obj, p_html, p_onchange) {
-		p_html += buildLcarTextWidget(self, 'LoginName', 'Name', p_obj.Name);
+		p_html += buildTextWidget(self, 'LoginName', 'Name', p_obj.Name);
 		p_html += buildLcarPasswordWidget(self, 'PasswordCurrent', 'Current Password', 'size=20', p_obj.PasswordCurrent);
 		p_html += buildTrueFalseWidget(self, 'ChangeFlag', 'Change Password ?', p_obj.ChangeFlag, 'handlePasswordChangeClick')
 		if (p_obj.ChangeFlag === true) {
 			p_html += buildLcarPasswordWidget(self, 'PasswordNew', 'New Password', 'size=20', p_obj.PasswordNew);
 			p_html += buildLcarPasswordWidget(self, 'PasswordVerify', 'Verify Password', 'size=20', p_obj.PasswordVerify);
 		}
-		p_html += buildLcarTextWidget(self, 'FullName', 'Full Name', p_obj.FullName, 'disable')
-		p_html += buildLcarTextWidget(self, 'Role', 'Role', p_obj.Role, 'disable');
+		p_html += buildTextWidget(self, 'FullName', 'Full Name', p_obj.FullName, 'disable')
+		p_html += buildTextWidget(self, 'Role', 'Role', p_obj.Role, 'disable');
 		return p_html;
 	},
 	function handlePasswordChangeClick(self) {

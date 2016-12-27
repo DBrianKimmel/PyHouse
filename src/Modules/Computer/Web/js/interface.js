@@ -14,16 +14,16 @@ var VALID_PARITY = [ 'E', 'O', 'N' ];
 var VALID_STOP_BITS = [ '1.0', '1.5', '2.0' ];
 
 function buildLcarBaudRateSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, VALID_BAUD_RATE, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, VALID_BAUD_RATE, p_checked);
 }
 function buildLcarByteSizeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, VALID_BYTE_SIZE, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, VALID_BYTE_SIZE, p_checked);
 }
 function buildLcarParitySelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, VALID_PARITY, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, VALID_PARITY, p_checked);
 }
 function buildLcarStopBitsSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, VALID_STOP_BITS, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, VALID_STOP_BITS, p_checked);
 }
 
 //============================================================================
@@ -32,7 +32,7 @@ function buildLcarStopBitsSelectWidget(self, p_id, p_caption, p_checked) {
  */
 function buildInterfaceSelectWidget(self, p_id, p_caption, p_obj, p_change_function_name) {
 	// Divmod.debug('---', 'interface.buildInterfaceSelectWidget() was called.');
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceTypes, p_obj.InterfaceType, p_change_function_name);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.InterfaceTypes, p_obj.InterfaceType, p_change_function_name);
 }
 
 

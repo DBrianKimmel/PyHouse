@@ -20,7 +20,7 @@
  */
 function buildFamilySelectWidget(self, p_id, p_caption, p_obj, p_change) {
 	// Divmod.debug('---', 'family.buildFamilySelectWidget() was called.');
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_obj.DeviceFamily, p_change);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.Families, p_obj.DeviceFamily, p_change);
 }
 
 // ============================================================================
@@ -62,70 +62,68 @@ function int2hex(p_int, p_bytes) {
 function buildInsteonPart(self, p_obj, p_html) {
 	// Divmod.debug('---', 'family.buildInsteonPart() was called.');
 	// console.log("family.buildInsteonPart() - self = %O", self);
-	p_html += buildLcarTextWidget(self, 'InsteonAddress', 'Insteon Address', int2hex(p_obj.InsteonAddress, 3));
-	p_html += buildLcarTextWidget(self, 'DevCat', 'Dev Cat', int2hex(p_obj.DevCat, 2), 'disable');
-	p_html += buildLcarTextWidget(self, 'GroupNumber', 'Group Number', p_obj.GroupNumber);
-	p_html += buildLcarTextWidget(self, 'GroupList', 'Group List', p_obj.GroupList);
-	p_html += buildLcarTextWidget(self, 'ProductKey', 'Product Key', int2hex(p_obj.ProductKey, 3), 'disable');
-	p_html += buildLcarTextWidget(self, 'EngineVersion', 'EngineVersion', p_obj.EngineVersion, 'disable');
+	p_html += buildTextWidget(self, 'InsteonAddress', 'Insteon Address', int2hex(p_obj.InsteonAddress, 3));
+	p_html += buildTextWidget(self, 'DevCat', 'Dev Cat', int2hex(p_obj.DevCat, 2), 'disable');
+	p_html += buildTextWidget(self, 'GroupNumber', 'Group Number', p_obj.GroupNumber);
+	p_html += buildTextWidget(self, 'GroupList', 'Group List', p_obj.GroupList);
+	p_html += buildTextWidget(self, 'ProductKey', 'Product Key', int2hex(p_obj.ProductKey, 3), 'disable');
+	p_html += buildTextWidget(self, 'EngineVersion', 'EngineVersion', p_obj.EngineVersion, 'disable');
 	return p_html;
 }
 
-function fetchInsteonEntry(self, p_data) {
+function fetchInsteonEntry(p_obj) {
 	// Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
 	try {
-		p_data.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
-		p_data.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
-		p_data.GroupNumber = fetchTextWidget(self, 'GroupNumber');
-		p_data.GroupList = fetchTextWidget(self, 'GroupList');
-		p_data.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
-		p_data.EngineVersion = fetchTextWidget(self, 'EngineVersion');
+		p_obj.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
+		p_obj.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
+		p_obj.GroupNumber = fetchTextWidget(self, 'GroupNumber');
+		p_obj.GroupList = fetchTextWidget(self, 'GroupList');
+		p_obj.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
+		p_obj.EngineVersion = fetchTextWidget(self, 'EngineVersion');
 	} catch (err) {
-		p_data.InsteonAddress = hex2int('01.02.03', 3);
-		p_data.DevCat = hex2int('01.01', 2);
-		p_data.ProductKey = hex2int('01.01.01', 3);
-		p_data.GroupNumber = 0;
-		p_data.GroupList = '';
-		p_data.EngineVersion = 2;
+		p_obj.InsteonAddress = hex2int('01.02.03', 3);
+		p_obj.DevCat = hex2int('01.01', 2);
+		p_obj.ProductKey = hex2int('01.01.01', 3);
+		p_obj.GroupNumber = 0;
+		p_obj.GroupList = '';
+		p_obj.EngineVersion = 2;
 	}
-	return p_data;
+	console.log("family.fetchInsteonEntry() - Obj = %O", p_obj);
 }
 
-function createInsteonEntry(self, p_data) {
+function createInsteonEntry(p_obj) {
 	// Divmod.debug('---', 'family.createInsteonEntry() was called.');
-	p_data.InsteonAddress = hex2int('11.22.33', 3);
-	p_data.DevCat = 0;
-	p_data.GroupNumber = 0;
-	p_data.GroupList = '';
-	p_data.ProductKey = 0;
-	p_data.EngineVersion = 2;
-	p_data.FirmwareVersion = 0;
-	return p_data;
+	p_obj.InsteonAddress = hex2int('11.22.33', 3);
+	p_obj.DevCat = 0;
+	p_obj.GroupNumber = 0;
+	p_obj.GroupList = '';
+	p_obj.ProductKey = 0;
+	p_obj.EngineVersion = 2;
+	p_obj.FirmwareVersion = 0;
+	console.log("family.createInsteonEntry() - Obj = %O", p_obj);
 }
 
 //============================================================================
 
 function buildUpbPart(self, p_obj, p_html) {
 	// Divmod.debug('---', 'family.buildUpbPart() was called.');
-	p_html += buildLcarTextWidget(self, 'UpbAddress', 'UPB Address', p_obj.UPBAddress);
-	p_html += buildLcarTextWidget(self, 'UpbPassword', 'UPB Password', p_obj.UPBPassword);
-	p_html += buildLcarTextWidget(self, 'UpbNetworkID', 'UPB Network', p_obj.UPBNetworkID);
+	p_html += buildTextWidget(self, 'UpbAddress', 'UPB Address', p_obj.UPBAddress);
+	p_html += buildTextWidget(self, 'UpbPassword', 'UPB Password', p_obj.UPBPassword);
+	p_html += buildTextWidget(self, 'UpbNetworkID', 'UPB Network', p_obj.UPBNetworkID);
 	return p_html;
 }
 
-function fetchUpbEntry(self, p_data) {
+function fetchUpbEntry(p_obj) {
 	// Divmod.debug('---', 'family.fetchUpbEntry() was called.');
-	p_data.UPBAddress = fetchTextWidget(self, 'UpbAddress');
-	p_data.UPBPassword = fetchTextWidget(self, 'UpbPassword');
-	p_data.UPBNetworkID = fetchTextWidget(self, 'UpbNetworkID');
-	return p_data;
+	p_obj.UPBAddress = fetchTextWidget(self, 'UpbAddress');
+	p_obj.UPBPassword = fetchTextWidget(self, 'UpbPassword');
+	p_obj.UPBNetworkID = fetchTextWidget(self, 'UpbNetworkID');
 }
 
-function createUpbEntry(self, p_data) {
-	p_data.UPBAddress = '123';
-	p_data.UPBPassword = 1234;
-	p_data.UPBNetworkID = 1;
-	return p_data;
+function createUpbEntry(p_obj) {
+	p_obj.UPBAddress = '123';
+	p_obj.UPBPassword = 1234;
+	p_obj.UPBNetworkID = 1;
 }
 
 // ============================================================================
@@ -146,22 +144,22 @@ function buildFamilyPart(self, p_obj, p_html, p_change) {
 	return p_html;
 }
 
-function fetchFamilyPart(self, p_data) {
+function fetchFamilyPart(self, p_obj) {
 	// Divmod.debug('---', 'family.fetchFamilyPart() called.');
-	if (p_data.DeviceFamily === 'Insteon')
-		p_data = fetchInsteonEntry(self, p_data);
-	else if (p_data.DeviceFamily === 'UPB')
-		p_data = fetchUpbEntry(self, p_data);
-	return p_data;
+	p_obj.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
+	if (p_obj.DeviceFamily === 'Insteon')
+		fetchInsteonEntry(p_obj);
+	else if (p_obj.DeviceFamily === 'UPB')
+		fetchUpbEntry(p_obj);
 }
-
+j
 function createFamilyPart(self, p_data) {
 	// Divmod.debug('---', 'family.createFamilyPart() called.');
+	
 	if (p_data.DeviceFamily === 'Insteon')
-		p_data = createInsteonEntry(self, p_data);
+		createInsteonEntry(p_data);
 	else if (p_data.DeviceFamily === 'UPB')
-		p_data = createUpbEntry(self, p_data);
-	return p_data;
+		createUpbEntry(p_data);
 }
 
 // Divmod.debug('---', 'family.buildSerialPart() called.');

@@ -11,14 +11,7 @@ PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 
 """
-from Modules.Utilities import uuid_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
-
-<<<<<<< HEAD
-__updated__ = '2016-07-09'
-=======
-__updated__ = '2016-11-21'
->>>>>>> b1988cf36a79dfbcde7dd3eee07ef1a9791d8be6
+__updated__ = '2016-12-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,8 +20,9 @@ import datetime
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData, UuidData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Utilities import uuid_tools
+from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
-
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
 NODE_SECTION = 'NodeSection'

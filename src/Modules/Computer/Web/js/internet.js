@@ -129,11 +129,11 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildInternetEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'IPv4', 'IPv4', p_obj.ExternalIPv4, 'disabled');
-	p_html += buildLcarTextWidget(self, 'IPv6', 'IPv6', p_obj.ExternalIPv6, 'disabled');
-	p_html += buildLcarTextWidget(self, 'Interval', 'Update Interval', p_obj.UpdateInterval, 'size=20');
-	p_html += buildLcarTextWidget(self, 'Discovery', 'Discovery Urls', p_obj.LocateUrls, 'size=80');
-	p_html += buildLcarTextWidget(self, 'Update', 'Update Urls', p_obj.UpdateUrls, 'size=80');
+	p_html += buildTextWidget(self, 'IPv4', 'IPv4', p_obj.ExternalIPv4, 'disabled');
+	p_html += buildTextWidget(self, 'IPv6', 'IPv6', p_obj.ExternalIPv6, 'disabled');
+	p_html += buildTextWidget(self, 'Interval', 'Update Interval', p_obj.UpdateInterval, 'size=20');
+	p_html += buildTextWidget(self, 'Discovery', 'Discovery Urls', p_obj.LocateUrls, 'size=80');
+	p_html += buildTextWidget(self, 'Update', 'Update Urls', p_obj.UpdateUrls, 'size=80');
 	return p_html;
 },
 

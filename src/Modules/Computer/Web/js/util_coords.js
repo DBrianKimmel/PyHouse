@@ -15,17 +15,12 @@
  */
 
 
-function createCoordinates(self){
+function _createCoordinateList(){
 	var X_Easting = 0.0;
 	var Y_Northing = 0.0;
 	var Z_Height = 0.0;
 	var l_ret = [X_Easting, Y_Northing, Z_Height]
 	return l_ret;
-}
-
-function buildCoordinatesEntry(self, p_coords, p_html) {
-	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'RoomCoords', p_coords);
-	return p_html;
 }
 
 function buildCoordinatesWidget(self, p_id, p_caption, p_value) {
@@ -51,18 +46,8 @@ function buildCoordinatesWidget(self, p_id, p_caption, p_value) {
 	return l_html;
 }
 
-function createCoordinatesEntry(self, p_data) {
-	p_data.RoomCoords = self.createCoordinates();
-	return p_data;
-}
-
-function fetchCoordinateEntry(self, p_data) {
-	p_data.RoomCoords = fetchCoordinatesWidget(self, 'RoomCoords');
-	return p_data;
-}
-
 function fetchCoordinatesWidget(self, p_id) {
-	// Divmod.debug('---', 'util_coords.fetchCoordinatesWidget() was called.');
+	Divmod.debug('---', 'util_coords.fetchCoordinatesWidget() was called.');
 	var l_coords = self.nodeById(p_id).value;
 	l_vals = l_coords.replace('[','').replace(' ', '').split(',');
 	// console.log("util_coords.fetchCoordinatesWidget() - %O", l_vals);
@@ -70,11 +55,24 @@ function fetchCoordinatesWidget(self, p_id) {
 	var l_y = parseFloat(l_vals[1]);
 	var l_z = parseFloat(l_vals[2]);
 	var l_ret = [l_x, l_y, l_z];
-	// console.log("util_coords.fetchCoordinatesWidget() - %O", l_ret);
-	// Divmod.debug('---', 'util_coords.fetchCoordinatesWidget() called.  FinalValue=' + l_ret);
+	console.log("util_coords.fetchCoordinatesWidget() Coords = - %O", l_ret);
 	return l_ret;
 }
 
+//============================================================================
+
+function buildCoordinatesEntry(self, p_coords, p_html) {
+	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'RoomCoords', p_coords);
+	return p_html;
+}
+
+function fetchCoordinateEntry(self, p_data) {
+	p_data.RoomCoords = fetchCoordinatesWidget(self, 'RoomCoords');
+}
+
+function createCoordinateEntry(self, p_data) {
+	p_data.RoomCoords = _createCoordinateList();
+}
 
 // Divmod.debug('---', 'util_coords.buildSerialPart() called.');
 // console.log("util_coords.handleMenuOnClick() - l_obj = %O", l_obj);

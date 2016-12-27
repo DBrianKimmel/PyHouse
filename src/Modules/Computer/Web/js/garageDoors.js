@@ -112,7 +112,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	Divmod.debug('---', 'garageDoors.buildEntry() called ');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
-	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
+	l_html += buildDeviceEntry(self, p_obj, p_onchange);
 	l_html = self.buildDoorEntry(p_obj, l_html);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
 	l_html = buildLcarEntryButtons(p_handler, l_html);
@@ -120,7 +120,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildDoorEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Status', 'Status', p_obj.Status, 'disabled');
+	p_html += buildTextWidget(self, 'Status', 'Status', p_obj.Status, 'disabled');
 	return p_html;
 },
 
@@ -134,29 +134,27 @@ function familyChanged() {
 
 function fetchEntry(self) {
 	var l_data = fetchBaseEntry(self);
-	l_data = fetchDeviceEntry(self, l_data);
-	l_data = self.fetchDoorEntry(l_data);
-	l_data = fetchFamilyPart(self, l_data);
+	fetchDeviceEntry(self, l_data);
+	self.fetchDoorEntry(l_data);
+	fetchFamilyPart(self, l_data);
 	// console.log("garageDoors.fetchEntry() - Data = %O", l_data);
 	return l_data;
 },
 
 function fetchDoorEntry(self, p_data) {
 	p_data.Status = fetchTextWidget(self, 'Status');
-	return p_data;
 },
 
 function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Security.GarageDoors).length);
-	l_data = createDeviceEntry(self, l_data);
-	l_data = self.createDoorEntry(l_data);
-	l_data = createFamilyPart(self, l_data);
+	createDeviceEntry(self, l_data);
+	self.createDoorEntry(l_data);
+	createFamilyPart(self, l_data);
 	return l_data;
 },
 
 function createDoorEntry(self, p_data) {
 	p_data.Status = 'Unknown';
-	return p_data;
 },
 
 // ============================================================================

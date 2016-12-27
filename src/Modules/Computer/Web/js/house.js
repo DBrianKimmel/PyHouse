@@ -81,17 +81,17 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildLocationEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Street', 'Street', p_obj.Street);
-	p_html += buildLcarTextWidget(self, 'City', 'City', p_obj.City);
-	p_html += buildLcarTextWidget(self, 'State', 'State', p_obj.State);
-	p_html += buildLcarTextWidget(self, 'ZipCode', 'Zip Code', p_obj.ZipCode);
-	p_html += buildLcarTextWidget(self, 'Region', 'Region', p_obj.Region);
-	p_html += buildLcarTextWidget(self, 'Phone', 'Phone', p_obj.Phone);
-	p_html += buildLcarTextWidget(self, 'Latitude', 'Latitude', p_obj.Latitude);
-	p_html += buildLcarTextWidget(self, 'Longitude', 'Longitude', p_obj.Longitude);
-	p_html += buildLcarTextWidget(self, 'Elevation', 'Elevation', p_obj.Elevation);
-	p_html += buildLcarTextWidget(self, 'TimeZoneName', 'TimeZone Name', p_obj.TimeZoneName);
-	p_html += buildLcarTrueFalseWidget(self, 'Master', 'Master', p_obj.Master);
+	p_html += buildTextWidget(self, 'Street', 'Street', p_obj.Street);
+	p_html += buildTextWidget(self, 'City', 'City', p_obj.City);
+	p_html += buildTextWidget(self, 'State', 'State', p_obj.State);
+	p_html += buildTextWidget(self, 'ZipCode', 'Zip Code', p_obj.ZipCode);
+	p_html += buildTextWidget(self, 'Region', 'Region', p_obj.Region);
+	p_html += buildTextWidget(self, 'Phone', 'Phone', p_obj.Phone);
+	p_html += buildTextWidget(self, 'Latitude', 'Latitude', p_obj.Latitude);
+	p_html += buildTextWidget(self, 'Longitude', 'Longitude', p_obj.Longitude);
+	p_html += buildTextWidget(self, 'Elevation', 'Elevation', p_obj.Elevation);
+	p_html += buildTextWidget(self, 'TimeZoneName', 'TimeZone Name', p_obj.TimeZoneName);
+	p_html += buildTrueFalseWidget(self, 'Master', 'Master', p_obj.Master);
 	return p_html;
 },
 

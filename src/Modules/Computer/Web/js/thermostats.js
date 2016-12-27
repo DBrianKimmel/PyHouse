@@ -125,7 +125,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	//Divmod.debug('---', 'thermostats.buildEntry() was called.');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
-	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
+	l_html += buildDeviceEntry(self, p_obj, p_onchange);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
 	l_html = self.buildThermostatEntry(p_obj, l_html);
 	l_html = buildLcarEntryButtons(p_handler, l_html);
@@ -166,26 +166,24 @@ function familyChanged() {
 function fetchEntry(self) {
 	// Divmod.debug('---', 'thermostats.fetchEntry() was called.');
 	var l_data = fetchBaseEntry(self);
-	l_data = fetchDeviceEntry(self, l_data);
-	l_data = fetchFamilyPart(self, l_data);
-	l_data = self.fetchThermostatEntry(l_data);
+	fetchDeviceEntry(self, l_data);
+	fetchFamilyPart(self, l_data);
+	self.fetchThermostatEntry(l_data);
 	return l_data;
 },
 
 function fetchThermostatEntry(self, p_data) {
 	// Divmod.debug('---', 'thermostats.fetchThermostatEntry() was called.');
 	p_data.CoolSetPoint = fetchSliderWidget(self, 'CoolSetting');
-	p_data.HeatSetPoint = fetchSliderWidget(self, 'HeatSetting');
 	return p_data;
 },
 
 function createEntry(self) {
 	// Divmod.debug('---', 'thermostats.createEntry() was called.');
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Hvac.Thermostats).length);
-	l_data = createDeviceEntry(self, l_data);
-	l_data.DeviceFamily = "Insteon";
-	l_data = self.createThermostatEntry(l_data);
-	l_data = createFamilyPart(self, l_data);
+	createDeviceEntry(self, l_data);
+	self.createThermostatEntry(l_data);
+	createFamilyPart(self, l_data);
 	// console.log("thermostats.createEntry() - Obj = %O", p_data);
 	return l_data;
 },
@@ -194,7 +192,6 @@ function createThermostatEntry(self, p_data) {
 	// Divmod.debug('---', 'thermostats.createThermostatEntry() was called.');
 	p_data.CoolSetPoint = 78;
 	p_data.HeatSetPoint = 70;
-	return p_data;
 },
 
 // ============================================================================

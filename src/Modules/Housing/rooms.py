@@ -11,20 +11,19 @@
 
 """
 
-__updated__ = '2016-11-13'
+__updated__ = '2016-12-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 import datetime
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import RoomData
 from Modules.Utilities.coordinate_tools import Coords
 from Modules.Utilities.json_tools import encode_json
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Utilities.debug_tools import PrettyFormatAny
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 
 

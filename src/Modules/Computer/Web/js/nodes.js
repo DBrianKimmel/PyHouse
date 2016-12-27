@@ -117,10 +117,10 @@ function buildDataEntryScreen(self, p_entry, p_handler) {
 },
 
 function buildNodeEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildLcarTextWidget(self, 'IPv4', 'IPv4 Address', p_obj.ConnectionAddr_IPv4);
-	p_html += buildLcarTextWidget(self, 'IPv6', 'IPv6 Address', p_obj.ConnectionAddr_IPv6);
-	p_html += buildLcarTextWidget(self, 'Role', 'Node Role', p_obj.NodeRole);
+	p_html += buildTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
+	p_html += buildTextWidget(self, 'IPv4', 'IPv4 Address', p_obj.ConnectionAddr_IPv4);
+	p_html += buildTextWidget(self, 'IPv6', 'IPv6 Address', p_obj.ConnectionAddr_IPv6);
+	p_html += buildTextWidget(self, 'Role', 'Node Role', p_obj.NodeRole);
 	return p_html;
 },
 

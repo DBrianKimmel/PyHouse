@@ -152,11 +152,11 @@ function buildBaseEntry(self, p_obj, p_html, /* optional */noUuid) {
 	 */
 	var l_uuid = noUuid;
 	// Divmod.debug('---', 'lcars.build_lcars_top() was called. ' + noUuid);
-	p_html += buildLcarTextWidget(self, 'Name', 'Device Name', p_obj.Name);
-	p_html += buildLcarTextWidget(self, 'Key', 'Index', p_obj.Key, 'size=10 disabled');
+	p_html += buildTextWidget(self, 'Name', 'Device Name', p_obj.Name);
+	p_html += buildTextWidget(self, 'Key', 'Index', p_obj.Key, 'size=10 disabled');
 	p_html += buildTrueFalseWidget(self, 'Active', 'Active ?', p_obj.Active);
 	if (l_uuid === undefined)
-		p_html += buildLcarTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
+		p_html += buildTextWidget(self, 'UUID', 'UUID', p_obj.UUID, 'disabled');
 	return p_html;
 }
 
@@ -193,29 +193,24 @@ function createBaseEntry(self, p_key) {
 //============================================================================
 // Lighting Core entry data routines
 
-function buildDeviceEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
-	p_html += buildCoordinatesWidget(self, 'RoomCoords', 'Room Coords', p_obj.RoomCoords);
-	p_html += buildRoomSelectWidget(self, 'RoomName', 'Room Name', p_obj.RoomName);
-	p_html += buildLcarTextWidget(self, 'RoomUUID', 'Room UUID', p_obj.RoomUUID, 'disable');
-	return p_html;
+function buildDeviceEntry(self, p_obj, p_handleChange) {
+	// Divmod.debug('---', 'lcars.buildDeviceEntry() was called.');
+	// console.log("lcars.buildDeviceEntry() Device = %O", p_obj);
+	var l_html = '';
+	l_html += buildTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
+	l_html += buildRoomSelectEntry(self, p_obj, p_handleChange);  // in handle_rooms.js
+	return l_html;
 }
 
 function fetchDeviceEntry(self, p_data) {
+	fetchRoomSelectEntry(self, p_data);  // in handle_rooms.js
 	p_data.Comment = fetchTextWidget(self, 'Comment');
-	p_data.RoomCoords = fetchCoordinatesWidget(self, 'RoomCoords');
-	var l_ix = fetchTextWidget(self, 'RoomName');
-	p_data.RoomName = globals.House.Rooms[l_ix].Name
-	p_data.RoomUUID = fetchTextWidget(self, 'RoomUUID');
-	return p_data;
 }
 
 function createDeviceEntry(self, p_data) {
 	p_data.Comment = '';
-	p_data.RoomName = 'XXX Room';
-	p_data.RoomUUID = '';
-	p_data.RoomCoords = createCoordinates(self);
-return p_data;
+	p_data.DeviceFamily = 'Insteon';
+	createRoomSelectEntry(self, p_data);
 }
 
 // Divmod.debug('---', 'lcars.build_lcars_top() was called.');

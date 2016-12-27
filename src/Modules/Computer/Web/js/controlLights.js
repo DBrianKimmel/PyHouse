@@ -113,7 +113,7 @@ function buildEntry(self, p_obj, p_handler) {
 
 function buildControlEntry(self, p_obj, p_html) {
 	Divmod.debug('---', 'controlLights.buildControlEntry() was called.');
-	p_html += buildLcarRoomSelectWidget(self, 'RoomName', 'Room Name', p_obj.RoomName, 'disabled');
+	p_html += buildTextWidget(self, 'RoomName', 'Room Name', p_obj.RoomName, 'disabled');
 	p_html += buildLcarLevelSliderWidget(self, 'Level', 'Level', p_obj.CurLevel, 'handleSliderChange');
 	return p_html;
 },

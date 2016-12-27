@@ -125,10 +125,10 @@ function buildEntry(self, p_obj, p_add_change, p_handler, p_onchange) {
 },
 
 function buildUsersEntry(self, p_obj, p_html, p_handler) {
-	p_html += buildLcarTextWidget(self, 'Name', 'Name', p_obj.Name);
-	p_html += buildLcarTextWidget(self, 'Key', 'User Index', p_obj.Key, 'disabled');
+	p_html += buildTextWidget(self, 'Name', 'Name', p_obj.Name);
+	p_html += buildTextWidget(self, 'Key', 'User Index', p_obj.Key, 'disabled');
 	p_html += buildTrueFalseWidget(self, 'IsActive', 'Active ?', p_obj.Active);
-	p_html += buildLcarTextWidget(self, 'FullName', 'Full Name', p_obj.LoginFullName);
+	p_html += buildTextWidget(self, 'FullName', 'Full Name', p_obj.LoginFullName);
 	p_html += buildLcarPasswordWidget(self, 'Password_1', 'Password', p_obj.LoginPasswordCurrent);
 	p_html += buildLcarPasswordWidget(self, 'Password_2', 'Password Verify', p_obj.LoginPasswordCurrent);
 	p_html += buildLcarUserRoleSelectWidget(self, 'Role', 'Role', p_obj.LoginRole);

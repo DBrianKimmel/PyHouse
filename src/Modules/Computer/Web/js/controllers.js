@@ -138,7 +138,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	// Divmod.debug('---', 'controllers.buildEntry() called ');
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
-	l_html = buildDeviceEntry(self, p_obj, l_html, p_onchange);
+	l_html += buildDeviceEntry(self, p_obj, p_onchange);
 	l_html = self.buildControllerEntry(p_obj, l_html);
 	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
 	l_html = buildInterfacePart(self, p_obj, l_html, 'interfaceChanged');
@@ -147,7 +147,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildControllerEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.Port);
+	p_html += buildTextWidget(self, 'Port', 'Port', p_obj.Port);
 	return p_html;
 },
 
@@ -169,9 +169,9 @@ function interfaceChanged() {
 
 function fetchEntry(self) {
 	var l_data = fetchBaseEntry(self);
-	l_data = fetchDeviceEntry(self, l_data);
-	l_data = self.fetchControllerEntry(l_data);
-	l_data = fetchFamilyPart(self, l_data);
+	fetchDeviceEntry(self, l_data);
+	self.fetchControllerEntry(l_data);
+	fetchFamilyPart(self, l_data);
 	if (l_data.InterfaceType === 'Serial')
 		l_data = fetchSerialEntry(self, l_data);
 	// console.log("controllers.fetchEntry() - Data = %O", l_data);
@@ -181,14 +181,13 @@ function fetchEntry(self) {
 function fetchControllerEntry(self, p_data) {
 	p_data.InterfaceType = fetchSelectWidget(self, 'InterfaceType');
 	p_data.Port = fetchTextWidget(self, 'Port');
-	return p_data;
 },
 
 function createEntry(self) {
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Lighting.Controllers).length);
-	l_data = createDeviceEntry(self, l_data);  // in lcars.js
-	l_data = self.createControllerEntry(l_data);
-	l_data = createFamilyPart(self, l_data)
+	createDeviceEntry(self, l_data);  // in lcars.js
+	self.createControllerEntry(l_data);
+	createFamilyPart(self, l_data)
 	l_data = createInterfacePart(self, l_data);
 	return l_data;
 },
@@ -196,7 +195,6 @@ function createEntry(self) {
 function createControllerEntry(self, p_data) {
 	p_data.InterfaceType = 'Serial';
 	p_data.Port = '/dev/ttyS0';
-	return p_data;
 },
 
 // ============================================================================

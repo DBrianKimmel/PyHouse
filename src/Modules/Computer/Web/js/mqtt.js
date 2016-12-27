@@ -125,9 +125,9 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildMqttEntry(self, p_obj, p_html) {
-	p_html += buildLcarTextWidget(self, 'Addr', 'Broker Address', p_obj.BrokerAddress);
-	p_html += buildLcarTextWidget(self, 'Port', 'Port', p_obj.BrokerPort);
-	p_html += buildLcarTextWidget(self, 'User', 'User Name', p_obj.UserName);
+	p_html += buildTextWidget(self, 'Addr', 'Broker Address', p_obj.BrokerAddress);
+	p_html += buildTextWidget(self, 'Port', 'Port', p_obj.BrokerPort);
+	p_html += buildTextWidget(self, 'User', 'User Name', p_obj.UserName);
 	p_html += buildLcarPasswordWidget(self, 'Password', 'Password', p_obj.Password);
 	return p_html;
 },

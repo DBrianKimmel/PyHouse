@@ -664,7 +664,7 @@ function _buildLcarRadioButtonWidget(p_name, p_label, p_value, p_checkVal, /* op
 /**
  * Note the name is athenaid:xx-Name
  */
-function buildLcarTrueFalseWidget(self, p_id, p_caption, p_value, /* optional */p_optionHandler) {
+function buildTrueFalseWidget(self, p_id, p_caption, p_value, /* optional */p_optionHandler) {
 	var l_html = '';
 	var l_name = buildAthenaId(self, p_id);
 	var l_value = p_value !== false; // force to be a bool
@@ -695,13 +695,14 @@ function fetchTrueFalseWidget(self, p_name) {
  * Build a select widget
  * 
  * @param: p_id is the ID of the select field.
- * @param: p_list is the list of valid options to be added to the select box.
+ * @param: p_list is a list of valid options to be added to the select box.
  * @param: p_checked is the text of the option list that is selected.
  * @param: p_optionHandler is the optional onchange handler function name.
  * @return: Html for field,
  */
-function buildLcarSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */p_optionHandler) {
-	// Divmod.debug('---', 'globals.buildLcarSelectWidget(1) Id=' + p_id);
+function buildSelectWidget(self, p_id, p_caption, p_list, p_checked, /* optional */p_optionHandler) {
+	// Divmod.debug('---', 'globals.buildSelectWidget(1) Id=' + p_id);
+	// console.log("globals.buildSelectWidget() List = %O", p_list);
 	var l_option = p_optionHandler;
 	var l_html = "";
 	l_html += buildTopDivs(p_caption);
@@ -736,49 +737,40 @@ function _makeNamesList(p_obj) {
 		l_list[ix] = p_obj[ix].Name;
 	return l_list;
 }
-
-function buildLcarRoomSelectWidget(self, p_id, p_caption, p_checked) {
-	var l_obj = globals.House.Rooms;
-	var l_list = [];
-	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
-		l_list[ix] = l_obj[ix].Name;
-	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
-}
-
 function buildLcarLightNameSelectWidget(self, p_id, p_caption, p_checked) {
 	var l_obj = globals.House.Lighting.Lights;
 	var l_list = [];
 	for (var ix = 0; ix < Object.keys(l_obj).length; ix++)
 		l_list[ix] = l_obj[ix].Name;
-	return buildLcarSelectWidget(self, p_id, p_caption, l_list, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, l_list, p_checked);
 }
 
 function buildLcarFloorSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.Floors, p_checked);
 }
 
 function buildLcarLightTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
 }
 
 function buildLcarProtocolTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolTypes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.ProtocolTypes, p_checked);
 }
 
 function buildLcarScheduleModeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleModes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleModes, p_checked);
 }
 
 function buildLcarScheduleTypeSelectWidget(self, p_id, p_caption, p_checked, /* optional */p_optionHandler) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleTypes, p_checked, p_optionHandler);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.ScheduleTypes, p_checked, p_optionHandler);
 }
 
 function buildLcarThermostatTypeSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.LightTypes, p_checked);
 }
 
 function buildLcarUserRoleSelectWidget(self, p_id, p_caption, p_checked) {
-	return buildLcarSelectWidget(self, p_id, p_caption, globals.Valid.UserRoles, p_checked);
+	return buildSelectWidget(self, p_id, p_caption, globals.Valid.UserRoles, p_checked);
 }
 
 // ========== Slider Widgets
@@ -847,8 +839,8 @@ function buildLcarHvacSliderWidget(self, p_name, p_caption, p_level, p_handler) 
  * @param: p_options contains 'disable' if the field is unchangeable. contains
  *         size=xx to change the size of the entry field
  */
-function buildLcarTextWidget(self, p_id, p_caption, p_value, p_options) {
-	// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
+function buildTextWidget(self, p_id, p_caption, p_value, p_options) {
+	// Divmod.debug('---', 'globals.buildTextWidget() was called.');
 	var l_size = 40;
 	var l_options = p_options;
 	var l_id = buildAthenaId(self, p_id);
@@ -1051,7 +1043,7 @@ Divmod.Runtime.theRuntime.addLoadEvent(function appStartup() {
 	globals.workspace.appStartup();
 });
 
-// Divmod.debug('---', 'globals.buildLcarTextWidget() was called.');
+// Divmod.debug('---', 'globals.buildTextWidget() was called.');
 // console.log("globals.build_lcars_middle() - %O", l_html);
 // ### END DBK
 

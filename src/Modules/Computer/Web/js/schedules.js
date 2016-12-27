@@ -142,7 +142,7 @@ function buildScheduleEntry(self, p_obj, p_html) {
 	Divmod.debug('---', 'schedules.buildScheduleEntry() was called.');
 	console.log("schedules.buildScheduleEntry   Object %O", p_obj);
 	p_html += buildLcarScheduleTypeSelectWidget(self, 'ScheduleType', 'Type', p_obj.ScheduleType, 'handleScheduleTypeChange');
-	p_html += buildLcarTextWidget(self, 'ScheduleTime', 'Time', p_obj.Time);
+	p_html += buildTextWidget(self, 'ScheduleTime', 'Time', p_obj.Time);
 	p_html += buildLcarDowWidget(self, 'ScheduleDOW', 'Day of Week', p_obj.DOW);
 	p_html += buildLcarScheduleModeSelectWidget(self, 'ScheduleMode', 'ScheduleMode', p_obj.ScheduleMode);
 	if (p_obj.ScheduleType === 'Lighting')
@@ -154,16 +154,16 @@ function buildScheduleEntry(self, p_obj, p_html) {
 
 function buildIrrigationEntry(self, p_obj, p_html) {
 	Divmod.debug('---', 'schedules.buildIrigationEntry() was called.');
-	p_html += buildLcarTextWidget(self, 'Duration', 'Duration', p_obj.Duration);
+	p_html += buildTextWidget(self, 'Duration', 'Duration', p_obj.Duration);
 	return p_html;
 },
 
 function buildLightingEntry(self, p_obj, p_html) {
 	Divmod.debug('---', 'schedules.buildLightingEntry() was called.');
-	p_html += buildRoomSelectWidget(self, 'ScheduleRoomName', 'Room Name', p_obj.RoomName);
+	p_html += buildTextWidget(self, 'RoomName', 'Room Name', p_obj.RoomName, 'disabled');
 	p_html += buildLightNameSelectWidget(self, 'ScheduleLightName', 'Light Name', p_obj.LightName);
 	p_html += buildLcarLevelSliderWidget(self, 'ScheduleLevel', 'Level', p_obj.Level, 'handleSliderChange');
-	p_html += buildLcarTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);
+	p_html += buildTextWidget(self, 'ScheduleRate', 'Rate', p_obj.Rate);
 	return p_html;
 },
 

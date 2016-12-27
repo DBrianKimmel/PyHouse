@@ -21,7 +21,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2016-12-04'
+__updated__ = '2016-12-24'
 
 #  Import system type stuff
 from datetime import datetime
@@ -33,7 +33,7 @@ import subprocess
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
-from Modules.Communication import ir_control
+# from Modules.Communication import ir_control
 from Modules.Utilities.uuid_tools import Uuid as toolUuid
 
 from Modules.Computer import logging_pyh as Logger
