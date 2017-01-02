@@ -123,7 +123,18 @@ function buildLcarMenuButtons(p_list, p_handler) {
 	return l_html;
 }
 /**
- * Build a LCAR style button
+ * Build a LCAR style selection button
+ * 
+ * <button
+ *     type='button'
+ *     value='obj_name'
+ *     class='lcars-button radius background_color'
+ *     name='obj_key'
+ *     onclick='return Nevow.Athena.Widget.handleEvent(this, "onclick", "p_handler" );'
+ *     >
+ *     NameCreatedByNameFunction
+ * </button>
+ * 
  */
 function buildLcarButton(p_obj, p_handler, p_background_color, /* optional */nameFunction) {
 	var l_html = '';

@@ -148,18 +148,18 @@ function fetchEntry(self) {
 	return l_data;
 },
 
+function localButtonEntry(p_obj) {
+},
+
 function createEntry(self) {
 	var l_ix = Object.keys(globals.House.Lighting.Buttons).length;
 	Divmod.debug('---', 'buttons.createEntry() was called.  Ix=' + l_ix);
 	var l_obj = createBaseEntry(self, l_ix);
 	createDeviceEntry(self, l_obj);    // in lcars.js
 	createFamilyPart(self, l_obj);
-	self.createButtonEntry(l_obj);
+	localButtonEntry(l_obj);
 	console.log("buttons.createEntry() Obj = %O", l_obj); 
 	return l_obj;
-},
-
-function createButtonEntry(self, p_obj) {
 },
 
 // ============================================================================

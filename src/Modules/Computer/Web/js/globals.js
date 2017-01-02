@@ -560,19 +560,19 @@ function buildLcarDeleteButton(p_handler) {
 }
 
 /**
- * Build a table of buttons in the current widget space. Use the names to build
- * callbacks for the buttons being clicked on Used for things like selecting a
- * light or schedule to work on.
+ * Build a table of buttons in the current widget space.
+ * Use the names to build callbacks for the buttons being clicked on.
+ * Used for things like selecting a light or schedule to work on.
  * 
  * @param p_obj =
  *            a dict of item dicts to build from
  * @param p_handler =
  *            is a literal name of a handler function { 'handleMenuOnClick' )
- * @param p_nameFunction
+ * @param p_nameFunction =
  *            (optional) is the name of a function used to build a more complex
  *            caption for the buttons. Omit this parameter if it is not used -
  *            no need for a placeholder
- * @param p_noOptions
+ * @param p_noOptions =
  *            (optional) is the things to skip ('NoAdd' will omit the add
  *            button).
  * 

@@ -82,8 +82,10 @@ function buildLcarSelectScreen(self) {
 function handleMenuOnClick(self, p_node) {
 	var l_ix = p_node.name;
 	var l_name = p_node.value;
+	Divmod.debug('---', 'nodes.handleMenuOnClick() was called. ' + l_ix + ' ' + l_name);
 	globals.Computer.NodeIx = l_ix;
 	globals.Computer.NodeName = l_name;
+	console.log("nodes.handleMenuOnClick() - Globals = %O", globals);
 	if (l_ix <= 1000) { // One of the nodes buttons.
 		var l_obj = globals.Computer.Nodes[l_ix];
 		globals.Computer.NodeObj = l_obj;
@@ -99,24 +101,8 @@ function handleMenuOnClick(self, p_node) {
 },
 
 // ============================================================================
-/**
- * Build a screen full of data entry fields.
- */
-function buildDataEntryScreen(self, p_entry, p_handler) {
-	var l_obj = arguments[1];
-	var l_html = build_lcars_top('Node Data', 'lcars-salmon-color');
-	l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
-	l_html += build_lcars_bottom();
-	self.nodeById('DataEntryDiv').innerHTML = l_html;
-}, function buildEntry(self, p_obj, p_handler, p_onchange) {
-	var l_html = '';
-	l_html = buildBaseEntry(self, p_obj, l_html);
-	l_html = self.buildNodeEntry(p_obj, l_html);
-	l_html = buildLcarEntryButtons(p_handler, l_html);
-	return l_html;
-},
 
-function buildNodeEntry(self, p_obj, p_html) {
+function localBuildNodeEntry(self, p_obj, p_html) {
 	p_html += buildTextWidget(self, 'Comment', 'Comment', p_obj.Comment);
 	p_html += buildTextWidget(self, 'IPv4', 'IPv4 Address', p_obj.ConnectionAddr_IPv4);
 	p_html += buildTextWidget(self, 'IPv6', 'IPv6 Address', p_obj.ConnectionAddr_IPv6);
@@ -124,32 +110,52 @@ function buildNodeEntry(self, p_obj, p_html) {
 	return p_html;
 },
 
-function fetchEntry(self) {
-	var l_data = fetchBaseEntry(self);
-	l_data = self.fetchNodeEntry(l_data);
-	return l_data;
+function buildEntry(self, p_obj, p_handler) {
+	Divmod.debug('---', 'nodes.buildEntry() was called ');
+	console.log("nodes.buildEntry() Obj %O", p_obj);
+	var l_html = '';
+	l_html = buildBaseEntry(self, p_obj, l_html);
+	l_html = localBuildNodeEntry(self, p_obj, l_html);
+	l_html = buildLcarEntryButtons(self, p_handler, l_html);
+	return l_html;
 },
 
-function fetchNodeEntry(self, p_data) {
+/**
+ * Build a screen full of data entry fields.
+ */
+function buildDataEntryScreen(self, p_entry, p_handler) {
+	Divmod.debug('---', 'nodes.buildDataEntryScreen() was called ' + p_entry);
+	var l_obj = arguments[1];
+	var l_html = build_lcars_top('Node Data', 'lcars-salmon-color');
+	l_html += build_lcars_middle_menu(20, self.buildEntry(l_obj, p_handler));
+	l_html += build_lcars_bottom();
+	self.nodeById('DataEntryDiv').innerHTML = l_html;
+},
+
+function localFetchNodeEntry(p_data) {
 	p_data.Comment = fetchTextWidget(self, 'Comment');
 	p_data.ConnectionAddr_IPv4 = fetchTextWidget(self, 'IPv4');
 	p_data.ConnectionAddr_IPv46 = fetchTextWidget(self, 'IPv6');
 	p_data.NodeRole = fetchTextWidget(self, 'Role');
-	return p_data;
 },
 
-function createEntry(self) {
-	var l_data = createBaseEntry(self, Object.keys(globals.Computer.Nodes).length);
-	l_data = self.createNodeEntry(l_data);
+function fetchEntry(self) {
+	var l_data = fetchBaseEntry(self);
+	localFetchNodeEntry(l_data);
 	return l_data;
 },
 
-function createNodeEntry(self, p_data) {
+function localCreateNodeEntry(p_data) {
 	p_data.Comment = '';
 	p_data.ConnectionAddr_IPv4 = '';
 	p_data.ConnectionAddr_IPv6 = '';
 	p_data.NodeRoll = 0;
-	return p_data;
+},
+
+function createEntry(self) {
+	var l_data = createBaseEntry(self, Object.keys(globals.Computer.Nodes).length);
+	localCreateNodeEntry(l_data);
+	return l_data;
 },
 
 // ============================================================================
@@ -173,20 +179,20 @@ function handleDataEntryOnClick(self, p_node) {
 	var l_defer;
 	var l_json;
 	switch (l_ix) {
-	case '10003': // Change Button
+	case '10003':  // Change Button
 		l_json = JSON.stringify(self.fetchEntry());
-		l_defer = self.callRemote("saveNodeData", l_json); // @ web_schedule
+		l_defer = self.callRemote("saveNodeData", l_json); // @ web_nodes
 		l_defer.addCallback(cb_handleDataEntryOnClick);
 		l_defer.addErrback(eb_handleDataEntryOnClick);
 		break;
-	case '10002': // Back button
+	case '10002':  // Back button
 		showSelectionButtons(self);
 		break;
-	case '10004': // Delete button
+	case '10004':  // Delete button
 		var l_obj = self.fetchEntry();
 		l_obj.Delete = true;
 		l_json = JSON.stringify(l_obj);
-		l_defer = self.callRemote("saveNodeData", l_json); // @ web_rooms
+		l_defer = self.callRemote("saveNodeData", l_json); // @web_nodes
 		l_defer.addCallback(cb_handleDataEntryOnClick);
 		l_defer.addErrback(eb_handleDataEntryOnClick);
 		break;
@@ -196,8 +202,11 @@ function handleDataEntryOnClick(self, p_node) {
 	}
 	// return false stops the resetting of the server.
 	return false;
-});
-// Divmod.debug('---', 'nodes.handleMenuOnClick(1) was called. ' + l_ix + ' ' +
-// l_name);
+}
+
+);
+
+// Divmod.debug('---', 'nodes.handleMenuOnClick(1) was called. ' + l_ix + ' ' + l_name);
 // console.log("nodes.handleMenuOnClick() - l_obj = %O", l_obj);
+
 // ### END DBK

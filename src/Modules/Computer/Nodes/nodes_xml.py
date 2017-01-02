@@ -9,9 +9,8 @@
 
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
-
 """
-__updated__ = '2016-12-24'
+__updated__ = '2016-12-28'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +20,6 @@ import datetime
 from Modules.Core.data_objects import NodeData, NodeInterfaceData, UuidData
 from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Utilities import uuid_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
@@ -61,7 +59,6 @@ class Xml(object):
                 l_count += 1
         except AttributeError:
             l_ret = {}
-        #  LOG.info("XML Loaded")
         return l_ret
 
     @staticmethod
@@ -100,8 +97,6 @@ class Xml(object):
             l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
         except AttributeError:
             l_node_obj.LastUpdate = datetime.datetime.now()
-        # print(PrettyFormatAny.form(l_node_obj, 'Node xxx'))
-        # print(PrettyFormatAny.form(p_node_xml, 'Node yyy'))
         try:
             l_node_obj.NodeInterfaces = Xml._read_interfaces_xml(p_node_xml.find('InterfaceSection'))
         except AttributeError as e_err:
@@ -128,23 +123,20 @@ class Xml(object):
         l_ret = {}
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         if l_xml is None:
-            LOG.warn('No ComputerDivision')
             return l_ret
         l_xml = l_xml.find(NODE_SECTION)
         if l_xml is None:
-            LOG.warn('No NodeSection')
             return l_ret
         for l_node_xml in l_xml.iterfind(NODE_ATTR):
             l_node_obj = Xml._read_one_node_xml(l_node_xml)
-            # l_node_obj.Key = l_count
-            # LOG.warn('Found Node {}'.format(l_node_obj.Name))
+            l_node_obj.Key = l_count
             l_ret[l_node_obj.UUID] = l_node_obj
             l_uuid_obj = UuidData()
             l_uuid_obj.UUID = l_node_obj.UUID
             l_uuid_obj.UuidType = 'Node'
             uuid_tools.Uuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
             l_count += 1
-            LOG.info('Loaded Node for {} '.format(l_node_obj.Name))
+            LOG.info('Loaded Node:{}, Key:{}'.format(l_node_obj.Name, l_node_obj.Key))
         LOG.info('Loaded {} Nodes'.format(l_count))
         p_pyhouse_obj.Computer.Nodes = l_ret
         return l_ret
@@ -153,7 +145,6 @@ class Xml(object):
     def write_nodes_xml(p_pyhouse_obj):
         l_xml = ET.Element(NODE_SECTION)
         l_nodes = p_pyhouse_obj.Computer.Nodes
-        # print(PrettyFormatAny.form(l_nodes[0], 'xxx'))
         l_count = 0
         for l_node_obj in l_nodes.itervalues():
             LOG.info('Writing entry for node {}'.format(l_node_obj.Name))

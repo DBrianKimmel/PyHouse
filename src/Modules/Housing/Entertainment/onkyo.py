@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2016-12-28'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -231,7 +231,7 @@ class API(object):
         l_onkyo_obj = OnkyoData()
         l_onkyo_obj.Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
         _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj.Factory)
-        LOG.info("Srarted Onkyo {} {}".format(l_host, l_port))
+        LOG.info("Started Onkyo {} {}".format(l_host, l_port))
 
 
     def SaveXml(self, p_xml):

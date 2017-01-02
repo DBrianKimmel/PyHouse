@@ -67,8 +67,7 @@ function fetchDataFromServer(self) {
 	function eb_fetchDataFromServer(res) {
 		Divmod.debug('---', 'thermostats.eb_fetchDataFromServer() was called. ERROR: ' + res);
 	}
-	var l_defer = self.callRemote("getHouseData"); // call server @
-	// web_thermostat.py
+	var l_defer = self.callRemote("getHouseData"); // call server @web_thermostat.py
 	l_defer.addCallback(cb_fetchDataFromServer);
 	l_defer.addErrback(eb_fetchDataFromServer);
 	return false;
