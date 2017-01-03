@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-15'
+__updated__ = '2017-01-03'
 
 #  Import system type stuff
 import os
@@ -74,6 +74,6 @@ class MotionSensorsElement(athena.LiveElement):
         web_family.get_family_json_data(l_obj, l_json)
         web_utils.get_room_info(l_obj, l_json)
         self.m_pyhouse_obj.House.Security.MotionSensors[l_ix] = l_obj
-        LOG.info('Motion Sensor Added - {}'.format(l_obj.Name))
+        LOG.info('Motion Sensor Added - {}\n{}'.format(l_obj.Name, l_json))
 
 # ## END DBK

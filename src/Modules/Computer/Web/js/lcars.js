@@ -214,8 +214,8 @@ function buildDeviceEntry(self, p_obj, p_handleChange) {
 }
 
 function fetchDeviceEntry(self, p_data) {
-	fetchRoomSelectEntry(self, p_data);  // in handle_rooms.js
 	p_data.Comment = fetchTextWidget(self, 'Comment');
+	fetchRoomSelectEntry(self, p_data);  // in handle_rooms.js
 }
 
 function createDeviceEntry(self, p_data) {

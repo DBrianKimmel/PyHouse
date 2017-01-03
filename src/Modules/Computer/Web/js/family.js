@@ -71,21 +71,37 @@ function buildInsteonPart(self, p_obj, p_html) {
 	return p_html;
 }
 
-function fetchInsteonEntry(p_obj) {
+function fetchInsteonEntry(self, p_obj) {
 	// Divmod.debug('---', 'family.fetchInsteonEntry() was called.');
 	try {
 		p_obj.InsteonAddress = hex2int(fetchTextWidget(self, 'InsteonAddress'), 3);
-		p_obj.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
-		p_obj.GroupNumber = fetchTextWidget(self, 'GroupNumber');
-		p_obj.GroupList = fetchTextWidget(self, 'GroupList');
-		p_obj.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
-		p_obj.EngineVersion = fetchTextWidget(self, 'EngineVersion');
 	} catch (err) {
 		p_obj.InsteonAddress = hex2int('01.02.03', 3);
+		Divmod.debug('---', 'family.fetchInsteonEntry() was called. InsteonAddress ERROR ' + err);
+	}
+	try {
+		p_obj.DevCat = hex2int(fetchTextWidget(self, 'DevCat'), 2);
+	} catch (err) {
 		p_obj.DevCat = hex2int('01.01', 2);
-		p_obj.ProductKey = hex2int('01.01.01', 3);
+	}
+	try {
+		p_obj.GroupNumber = fetchTextWidget(self, 'GroupNumber');
+	} catch (err) {
 		p_obj.GroupNumber = 0;
+	}
+	try {
+		p_obj.GroupList = fetchTextWidget(self, 'GroupList');
+	} catch (err) {
 		p_obj.GroupList = '';
+}
+	try {
+		p_obj.ProductKey = hex2int(fetchTextWidget(self, 'ProductKey'), 3);
+	} catch (err) {
+		p_obj.ProductKey = hex2int('01.01.01', 3);
+	}
+	try {
+		p_obj.EngineVersion = fetchTextWidget(self, 'EngineVersion');
+	} catch (err) {
 		p_obj.EngineVersion = 2;
 	}
 	console.log("family.fetchInsteonEntry() - Obj = %O", p_obj);
@@ -100,7 +116,7 @@ function createInsteonEntry(p_obj) {
 	p_obj.ProductKey = 0;
 	p_obj.EngineVersion = 2;
 	p_obj.FirmwareVersion = 0;
-	console.log("family.createInsteonEntry() - Obj = %O", p_obj);
+	// console.log("family.createInsteonEntry() - Obj = %O", p_obj);
 }
 
 //============================================================================
@@ -113,7 +129,7 @@ function buildUpbPart(self, p_obj, p_html) {
 	return p_html;
 }
 
-function fetchUpbEntry(p_obj) {
+function fetchUpbEntry(self, p_obj) {
 	// Divmod.debug('---', 'family.fetchUpbEntry() was called.');
 	p_obj.UPBAddress = fetchTextWidget(self, 'UpbAddress');
 	p_obj.UPBPassword = fetchTextWidget(self, 'UpbPassword');
@@ -136,9 +152,8 @@ function buildFamilyPart(self, p_obj, p_html, p_change) {
 	p_html += buildFamilySelectWidget(self, 'DeviceFamily', 'Family', p_obj, p_change);
 	if (p_obj.DeviceFamily === 'Insteon')
 		p_html = buildInsteonPart(self, p_obj, p_html);
-
 	else if (p_obj.DeviceFamily === 'UPB')
-		p_html = self.buildUpbPart(p_obj, p_html);
+		p_html = buildUpbPart(self, p_obj, p_html);
 	else
 		Divmod.debug('---', 'ERROR - family.buildFamilyPart()  Invalid Family = ' + p_obj.DeviceFamily);
 	return p_html;
@@ -148,9 +163,11 @@ function fetchFamilyPart(self, p_obj) {
 	// Divmod.debug('---', 'family.fetchFamilyPart() called.');
 	p_obj.DeviceFamily = fetchSelectWidget(self, 'DeviceFamily');
 	if (p_obj.DeviceFamily === 'Insteon')
-		fetchInsteonEntry(p_obj);
+		fetchInsteonEntry(self, p_obj);
 	else if (p_obj.DeviceFamily === 'UPB')
-		fetchUpbEntry(p_obj);
+		fetchUpbEntry(self, p_obj);
+	else
+		Divmod.debug('---', 'ERROR - family.fetchFamilyPart()  Invalid Family = ' + p_obj.DeviceFamily);
 }
 
 function createFamilyPart(self, p_data) {
@@ -160,6 +177,8 @@ function createFamilyPart(self, p_data) {
 		createInsteonEntry(p_data);
 	else if (p_data.DeviceFamily === 'UPB')
 		createUpbEntry(p_data);
+	else
+		Divmod.debug('---', 'ERROR - family.createFamilyPart()  Invalid Family = ' + p_obj.DeviceFamily);
 }
 
 // Divmod.debug('---', 'family.buildSerialPart() called.');

@@ -133,11 +133,14 @@ function familyChanged() {
 },
 
 function fetchEntry(self) {
-	var l_data = fetchBaseEntry(self);
-	fetchDeviceEntry(self, l_data);
+	var l_data = fetchBaseEntry(self);  // in lcars.js (174)
+	console.log("motionSensors.fetchEntry(0) - Data = %O", l_data);
+	fetchDeviceEntry(self, l_data);  // in lcars.js (216)
+	console.log("motionSensors.fetchEntry(1) - Data = %O", l_data);
+	fetchFamilyPart(self, l_data);  // in family.js (162)
+	console.log("motionSensors.fetchEntry(2) - Data = %O", l_data);
 	self.fetchMotionEntry(l_data);
-	fetchFamilyPart(self, l_data);
-	// console.log("motionSensors.fetchEntry() - Data = %O", l_data);
+	console.log("motionSensors.fetchEntry(3) - Data = %O", l_data);
 	return l_data;
 },
 
@@ -146,10 +149,11 @@ function fetchMotionEntry(self, p_data) {
 },
 
 function createEntry(self) {
-	var l_data = createBaseEntry(self, Object.keys(globals.House.Security.MotionSensors).length);
+	var l_key = Object.keys(globals.House.Security.MotionSensors).length;
+	var l_data = createBaseEntry(self, l_key);
 	createDeviceEntry(self, l_data);
-	self.createMotionEntry(l_data);
 	createFamilyPart(self, l_data);
+	self.createMotionEntry(l_data);
 	return l_data;
 },
 

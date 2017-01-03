@@ -66,7 +66,7 @@ function createRoomEntry(self, p_obj) {
 //============================================================================
 
 function buildRoomSelectEntry(self, p_obj, p_handleChange) {
-	Divmod.debug('---', 'handle_rooms.buildRoomSelectEntry() was called. ');
+	// Divmod.debug('---', 'handle_rooms.buildRoomSelectEntry() was called. ');
 	var l_html = '';
 	l_html += buildRoomSelectWidget(self, p_obj, p_handleChange);
 	l_html += buildTextWidget(self, 'RoomUUID', 'Room UUID', p_obj.RoomUUID, 'disable');
@@ -76,15 +76,15 @@ function buildRoomSelectEntry(self, p_obj, p_handleChange) {
 
 function fetchRoomSelectEntry(self, p_obj) {
 	var l_ix = fetchTextWidget(self, 'HrRoomName');
-	Divmod.debug('---', 'handle_rooms.fetchRoomSelectEntry() was called, ix= ' + l_ix);
+	// Divmod.debug('---', 'handle_rooms.fetchRoomSelectEntry() was called, ix= ' + l_ix);
 	p_obj.RoomName = globals.House.Rooms[l_ix].Name;
 	p_obj.RoomUUID = globals.House.Rooms[l_ix].UUID;
 	fetchCoordinateEntry(self, p_obj)
-	console.log("handle_rooms.fetchRoomSelectEntry Obj %O", p_obj);
+	// console.log("handle_rooms.fetchRoomSelectEntry Obj %O", p_obj);
 }
 
 function createRoomSelectEntry(self, p_obj) {
-	Divmod.debug('---', 'handle_rooms.createRoomSelectEntry() was called. ');
+	// Divmod.debug('---', 'handle_rooms.createRoomSelectEntry() was called. ');
 	p_obj.RoomName = 'XXX Room';
 	p_obj.RoomUUID = '';
 	p_obj.RoomCoords = createCoordinateEntry(self);

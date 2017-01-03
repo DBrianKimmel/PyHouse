@@ -28,7 +28,7 @@ function buildCoordinatesWidget(self, p_id, p_caption, p_value) {
 	// @param: p_caption is the text to be put in front of the value field.
 	// @param: p_value is the initial value of the coordinates (list of reals)
 	// @returns: HTML for a coordinate entry.
-	Divmod.debug('---', 'util_coords.buildCoordinatesWidget() was called.');
+	// Divmod.debug('---', 'util_coords.buildCoordinatesWidget() was called.');
 	var l_id = buildAthenaId(self, p_id);
 	var l_size = 40;
 	var l_value = '';
@@ -48,7 +48,7 @@ function buildCoordinatesWidget(self, p_id, p_caption, p_value) {
 }
 
 function fetchCoordinatesWidget(self, p_id) {
-	Divmod.debug('---', 'util_coords.fetchCoordinatesWidget() was called.');
+	// Divmod.debug('---', 'util_coords.fetchCoordinatesWidget() was called.');
 	var l_coords = self.nodeById(p_id).value;
 	l_vals = l_coords.replace('[','').replace(' ', '').split(',');
 	// console.log("util_coords.fetchCoordinatesWidget() - %O", l_vals);
@@ -56,7 +56,7 @@ function fetchCoordinatesWidget(self, p_id) {
 	var l_y = parseFloat(l_vals[1]);
 	var l_z = parseFloat(l_vals[2]);
 	var l_ret = [l_x, l_y, l_z];
-	console.log("util_coords.fetchCoordinatesWidget() Coords = - %O", l_ret);
+	// console.log("util_coords.fetchCoordinatesWidget() Coords = - %O", l_ret);
 	return l_ret;
 }
 
