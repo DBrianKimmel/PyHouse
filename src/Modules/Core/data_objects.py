@@ -4,7 +4,7 @@
 @Name:      PyHouse/src/Modules/Core/data_objects.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 20, 2014
 @summary:   This module is the definition of major data objects.
@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2017-01-04'
 __version_info__ = (1, 7, 4)
 __version__ = '.'.join(map(str, __version_info__))
 

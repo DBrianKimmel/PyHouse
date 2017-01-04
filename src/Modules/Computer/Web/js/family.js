@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/family.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2016 by D. Brian Kimmel
+ * @copyright: (c) 2014-2017 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Dec 09, 2014
  * @summary:   Lcars components to handle all the various device families.

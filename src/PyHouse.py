@@ -5,7 +5,7 @@
 @name:      PyHouse/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2016 by D. Brian Kimmel
+@copyright: (c) 2010-2017 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2016-09-01'
+__updated__ = '2017-01-04'
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
