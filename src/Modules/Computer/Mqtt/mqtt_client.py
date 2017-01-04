@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:   Connect this computer node to the household Mqtt Broker.
 
 """
 
-__updated__ = '2016-12-24'
+__updated__ = '2017-01-04'
 
 #  Import system type stuff
 import copy

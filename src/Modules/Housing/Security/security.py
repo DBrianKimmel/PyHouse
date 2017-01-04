@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,10 +21,31 @@ from Modules.Housing.Security.pi_camera import API as cameraApi
 from Modules.Utilities.device_tools import XML as deviceXML
 from Modules.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
 # LOCATION = House.Security
+
+class MqttActions(object):
+    """
+    """
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_logmsg, p_topic, p_message):
+        """ .../security/<type>/<Name>
+        """
+        p_logmsg += '\tSecurity:\n'
+        if p_topic[1] == 'garage_door':
+            p_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
+        elif p_topic[1] == 'motion_sensor':
+            p_logmsg += '\tMotion Sensor:: {}\n'.format(self._get_field(p_message, 'Name'))
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
+        return p_logmsg
+        pass
+
 
 class Utility(object):
 

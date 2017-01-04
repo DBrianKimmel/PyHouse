@@ -266,8 +266,8 @@ class SecurityData(object):
 ==> PyHouse.House.Security.xxx as in the def below
     """
     def __init__(self):
-        self.GarageDoors = {}
-        self.MotionSensors = {}
+        self.GarageDoors = {}  # DeviceSubtype = 1
+        self.MotionSensors = {}  # DeviceSubtype = 2
 
 
 class SerialControllerData(object):

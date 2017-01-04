@@ -2,20 +2,19 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created Feb 20, 2016
 @Summary:
 
 """
 
-__updated__ = '2016-09-04'
+__updated__ = '2017-01-04'
 
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
-# from Modules.Computer.computer import MqttActions as computerMqtt
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
-# from Modules.Housing.rooms import Rooms
+from Modules.Housing.Security.security import MqttActions as securityMqtt
 
 
 class Actions(object):
@@ -108,6 +107,8 @@ class Actions(object):
             l_logmsg = self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
             l_logmsg = self._decode_schedule(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'security':
+            l_logmsg = securityMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'weather':
             l_logmsg = self._decode_weather(l_logmsg, p_topic, p_message)
         else:

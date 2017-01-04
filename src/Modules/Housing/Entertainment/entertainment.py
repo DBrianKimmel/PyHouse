@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Entertainment component access module.
@@ -12,7 +12,7 @@ Start up entertainment systems.
 
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2017-01-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -53,7 +53,7 @@ class MqttActions(object):
         elif p_topic[1] == 'update':
             p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return p_logmsg
         pass
 
