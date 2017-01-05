@@ -66,7 +66,7 @@ class DecodeResponses(object):
             l_mqtt_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
 
         if l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
-            l_mqtt_msg += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
+            l_mqtt_msg += 'CleanupSuccess with {} failures; '.format(l_cmd2)
         elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
             p_device_obj.EngineVersion = l_cmd2
             l_mqtt_msg += 'Engine-version:"{}"; '.format(l_cmd2)
@@ -74,7 +74,13 @@ class DecodeResponses(object):
             p_device_obj.FirmwareVersion = l_firmware
             l_mqtt_msg += 'Request-ID-From:"{}"; '.format(p_device_obj.Name)
         elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
-            l_mqtt_msg += 'Turn ON; '.format(p_device_obj.Name)
+            if p_device_obj.DeviceSubType == 1:
+                l_mqtt_msg += 'Garage Door Opened; '.format(p_device_obj.Name)
+            elif p_device_obj.DeviceSubType == 2:
+                l_mqtt_msg += 'Motion Detected; '.format(p_device_obj.Name)
+            else:
+                l_mqtt_msg += 'Unknown SubType {} for Device; '.format(p_device_obj.DeviceSubType, p_device_obj.Name)
+            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /security
         elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
             l_mqtt_msg += 'Turn OFF; '.format(p_device_obj.Name)
 

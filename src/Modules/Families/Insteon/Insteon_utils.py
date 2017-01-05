@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2016-11-04'
+__updated__ = '2017-01-05'
 
 #  Import system type stuff
 
@@ -107,6 +107,20 @@ class Util(object):
             p_obj.InsteonAddress = 1
             p_obj.ProductKey = 0
         return p_obj
+
+
+def decode_link_code(p_code):
+    """
+        LinkCode - 0=PLM is Responder, 1=PLM is Controller, FF=Deleted
+    """
+    l_msg = 'Unknown code {}'.format(p_code)
+    if p_code == 0:
+        l_msg = 'PLM=Responder'
+    elif p_code == 1:
+        l_msg = 'PLM=Controller'
+    elif p_code == 0xFF:
+        l_msg = 'Link Deleted'
+    return l_msg
 
 
 class Decode(object):

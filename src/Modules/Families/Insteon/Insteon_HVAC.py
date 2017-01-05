@@ -106,7 +106,7 @@ class DecodeResponses(object):
         elif l_cmd1 == MESSAGE_TYPES['delete_from_group']:  # 0x02
             l_mqtt_message += " delete_from_group:{}; ".format(l_cmd2)
         elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
-            l_mqtt_message += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
+            l_mqtt_message += 'CleanupSuccess with {} failures; '.format(l_cmd2)
         elif l_cmd1 == MESSAGE_TYPES['engine_version']:  # 0x0d
             p_device_obj.EngineVersion = l_cmd2
             l_mqtt_message += " EngineId:{}; ".format(l_cmd2)

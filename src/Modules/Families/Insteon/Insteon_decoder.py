@@ -178,7 +178,7 @@ class DecodeResponses(object):
             if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
             elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
-                l_debug_msg += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
+                l_debug_msg += 'CleanupSuccess with {} failures; '.format(l_cmd2)
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
                 l_device_obj.EngineVersion = l_cmd2
                 l_debug_msg += 'Engine-version:"{}"; '.format(l_cmd2)

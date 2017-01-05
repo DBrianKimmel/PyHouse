@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2017-01-05'
 
 #  Import system type stuff
 
@@ -143,29 +143,29 @@ class Decode(object):
     def decode_53(p_pyhouse_obj, p_controller_obj):
         """Insteon All-Linking completed (10 bytes).
         See p 247(260) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x53
-        [2] = LinkCode
+        [2] = LinkCode - 0=PLM is Responder, 1=PLM is Controller, FF=Deleted
         [3] = LinkGroup
         [4-6] = from address
         [7-8] = DevCat
         [9] = Firmwear Version
         """
         l_message = p_controller_obj._Message
-        l_link_code = l_message[2]
+        l_msg = Insteon_utils.decode_link_code(l_message[2])
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
         l_device_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_from_id)
         utilDecode._devcat(l_message[7:9], p_controller_obj)
         _l_version = l_message[9]
-        LOG.info('All-Linking completed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_device_obj.Name))
+        LOG.info('All-Linking completed - Link Code:{}, Group:{}, From:{} '.format(l_msg, l_link_group, l_device_obj.Name))
 
     @staticmethod
     def decode_54(p_pyhouse_obj, p_controller_obj):
         """Insteon Button Press event (3 bytes).
         The PLM set button was pressed.
         See p 263(276) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x54
         [2] = Button Event
         """
@@ -181,7 +181,7 @@ class Decode(object):
         Reports that the user manually put the IM into factory default state.
         Takes about 20 seconds to respond.
 
-        [0] = x02
+        [0] = 0x02
         [1] = 0x55
         """
         _l_message = p_controller_obj._Message
@@ -191,7 +191,7 @@ class Decode(object):
     def decode_56(p_pyhouse_obj, p_controller_obj):
         """Insteon All-Link cleanup failure report (7 bytes).
         See p 243(256) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x56
         [2] = 0x01
         [3] = LinkGroup
@@ -207,7 +207,7 @@ class Decode(object):
     def decode_57(p_pyhouse_obj, p_controller_obj):
         """All-Link Record Response (10 bytes).
         See p 251(264) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x57
         [2] = AllLink Record Flags
         [3] = AllLink Group
@@ -270,7 +270,7 @@ class Decode(object):
     def decode_69(p_pyhouse_obj, p_controller_obj):
         """Get All-Link First Record response (5 bytes).
         See p 248(261) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x69
         [2] = ACK/NAK
         """
@@ -288,7 +288,7 @@ class Decode(object):
     def decode_6A(p_pyhouse_obj, p_controller_obj):
         """All-Link Next Record response (3 bytes).
         See p 249(262) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x6A
         [2] = ACK/NAK
         """
@@ -305,7 +305,7 @@ class Decode(object):
     def decode_6C(p_pyhouse_obj, p_controller_obj):
         """All-Link Record for sender response (3 bytes).
         See p 250(263) of 2009 developers guide.
-        [0] = x02
+        [0] = 0x02
         [1] = 0x6C
         [2] = ACK/NAK
         """
