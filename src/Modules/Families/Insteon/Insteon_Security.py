@@ -12,7 +12,7 @@
 """
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 
-__updated__ = '2017-01-04'
+__updated__ = '2017-01-05'
 
 #  Import system type stuff
 
@@ -53,19 +53,30 @@ class DecodeResponses(object):
         #
         l_message = p_controller_obj._Message
         l_firmware = l_message[7]
-        _l_flags = utilDecode._decode_message_flag(l_message[8])
+        l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
-        l_mqtt_msg += ' Cmd1/2:{:#02X}/{:#02X} ({:d})'.format(l_cmd1, l_cmd2, l_cmd2)
+        l_data = [l_cmd1, l_cmd2]
+        l_mqtt_msg += 'Fm:"{}"; Flg:{}; C1:{:#x},{:#x}; '.format(p_device_obj.Name, l_flags, l_cmd1, l_cmd2)
 
-        if l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
+        if l_message[8] & 0xE0 == 0x80:  #  100 - SB [Broadcast]
+            l_mqtt_msg += utilDecode._devcat(l_message[5:7], p_device_obj)
+        elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
+            l_group = l_message[7]
+            l_mqtt_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
+
+        if l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
+            l_mqtt_msg += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
+        elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
             p_device_obj.EngineVersion = l_cmd2
             l_mqtt_msg += 'Engine-version:"{}"; '.format(l_cmd2)
-            # self._publish(self.m_pyhouse_obj, l_device_obj)
-
         elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
             p_device_obj.FirmwareVersion = l_firmware
             l_mqtt_msg += 'Request-ID-From:"{}"; '.format(p_device_obj.Name)
+        elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
+            l_mqtt_msg += 'Turn ON; '.format(p_device_obj.Name)
+        elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
+            l_mqtt_msg += 'Turn OFF; '.format(p_device_obj.Name)
 
         LOG.info('Security {}'.format(l_mqtt_msg))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /security

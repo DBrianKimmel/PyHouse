@@ -22,7 +22,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2016-11-18'
+__updated__ = '2017-01-05'
 
 #  Import system type stuff
 
@@ -103,8 +103,10 @@ class DecodeResponses(object):
 
         if l_cmd1 == MESSAGE_TYPES['assign_to_group']:  # 0x01
             l_mqtt_message += " assign_to_group:{}; ".format(l_cmd2)
-        if l_cmd1 == MESSAGE_TYPES['delete_from_group']:  # 0x02
+        elif l_cmd1 == MESSAGE_TYPES['delete_from_group']:  # 0x02
             l_mqtt_message += " delete_from_group:{}; ".format(l_cmd2)
+        elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
+            l_mqtt_message += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
         elif l_cmd1 == MESSAGE_TYPES['engine_version']:  # 0x0d
             p_device_obj.EngineVersion = l_cmd2
             l_mqtt_message += " EngineId:{}; ".format(l_cmd2)

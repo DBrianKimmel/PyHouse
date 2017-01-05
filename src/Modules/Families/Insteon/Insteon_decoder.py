@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-01-04'
+__updated__ = '2017-01-05'
 
 #  Import system type stuff
 
@@ -171,52 +171,36 @@ class DecodeResponses(object):
         #
         if l_message[8] & 0xE0 == 0x80:  #  100 - SB [Broadcast]
             l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
-        #
         elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
             l_group = l_message[7]
             l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
-        #
         try:
             if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
-
             elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
                 l_debug_msg += 'CleanupSuccess with {} faailures; '.format(l_cmd2)
-                # self._publish(self.m_pyhouse_obj, l_device_obj)
-
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
                 l_device_obj.EngineVersion = l_cmd2
                 l_debug_msg += 'Engine-version:"{}"; '.format(l_cmd2)
-                # self._publish(self.m_pyhouse_obj, l_device_obj)
-
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
                 l_device_obj.FirmwareVersion = l_cmd2
                 l_debug_msg += 'Request-ID:"{}"; '.format(l_device_obj.FirmwareVersion)
-
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.CurLevel = 100
                 l_debug_msg += 'Turn ON; '.format(l_device_obj.Name)
-                # self._publish(self.m_pyhouse_obj, l_device_obj)
-
             elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
                 l_device_obj.CurLevel = 0
                 l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
-                # self._publish(self.m_pyhouse_obj, l_device_obj)
-
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
-
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
                 l_debug_msg += ' Device-Set-Button-Pressed '
-
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 02:
                 l_debug_msg += ' Controller-Set-Button-Pressed '
-
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(PrintBytes(l_message))
-
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
 
