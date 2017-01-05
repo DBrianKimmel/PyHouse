@@ -33,6 +33,13 @@ class MqttActions(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _get_field(self, p_message, p_field):
+        try:
+            l_ret = p_message[p_field]
+        except KeyError:
+            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+        return l_ret
+
     def decode(self, p_logmsg, p_topic, p_message):
         """ .../security/<type>/<Name>
         """
