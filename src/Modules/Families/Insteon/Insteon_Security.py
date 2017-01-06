@@ -112,7 +112,6 @@ class DecodeResponses(object):
             l_mqtt_msg += 'Turn OFF; '.format(p_device_obj.Name)
 
         LOG.info('Security {}'.format(l_mqtt_msg))
-        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /security
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, p_device_obj)
         return
 

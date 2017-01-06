@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2017-01-05'
+__updated__ = '2017-01-06'
 
 #  Import system type stuff
 
@@ -273,20 +273,23 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
     the new information gleaned from the insteon responses.
     """
     l_ix = p_insteon_obj.Key
-    if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
-        p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
-    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
-        p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
-    elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
-        p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
-    elif p_insteon_obj.DeviceType == 2:
-        p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
-    elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 1:
-        p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
-    elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 2:
-        p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
-    else:
-        LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
-        # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
+    try:
+        if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
+            p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
+            p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
+            p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 2:
+            p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 1:
+            p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 2:
+            p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
+        else:
+            LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
+            # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
+    except AttributeError as e_err:
+        LOG.error('ERROR {}'.format(e_err))
 
 #  ## END DBK
