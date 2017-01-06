@@ -122,6 +122,24 @@ def decode_link_code(p_code):
         l_msg = 'Link Deleted'
     return l_msg
 
+def decode_message_flag(p_byte):
+    """ Get the message flag and convert it to a description of the message.
+    """
+    def decode_message_type_flag(p_type):
+        MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']
+        return MESSAGE_TYPE_X[p_type] + '-Msg, '
+    def decode_extended_flag(p_extended):
+        MESSAGE_LENGTH_X = [' Std-Len,', ' Ext-Len,']
+        return MESSAGE_LENGTH_X[p_extended]
+    l_type = (p_byte & 0xE0) >> 5
+    l_extended = (p_byte & 0x10)
+    l_hops_left = (p_byte & 0x0C) >= 4
+    l_hops_max = (p_byte & 0x03)
+    l_ret = decode_message_type_flag(l_type)
+    l_ret += decode_extended_flag(l_extended)
+    l_ret += " Hops:{:d}/{:d}({:#X})".format(l_hops_left, l_hops_max, p_byte)
+    return l_ret
+
 
 class Decode(object):
 

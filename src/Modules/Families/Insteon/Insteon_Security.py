@@ -12,14 +12,23 @@
 """
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 
-__updated__ = '2017-01-05'
+__updated__ = '2017-01-06'
 
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Secure ')
+
+
+class SensorMessage(object):
+    def __init__(self, p_name, p_room, p_type):
+        self.Name = p_name
+        self.RoomName = p_room
+        self.Type = p_type
+        self.Status = None
 
 
 class DecodeResponses(object):
@@ -41,13 +50,16 @@ class DecodeResponses(object):
         [9] = command 1
         [10] = command 2
         """
+        l_device = SensorMessage(p_device_obj.Name, p_device_obj.RoomName, 'Generic ')
         l_mqtt_topic = 'security/'
         l_mqtt_msg = 'security '
         if p_device_obj.DeviceSubType == 1:
             l_mqtt_msg += 'Garage Door: '
+            l_device.Type = 'Garage Door'
             l_mqtt_topic += 'garage_door'
         elif p_device_obj.DeviceSubType == 2:
             l_mqtt_msg += 'Motion Sensor: '
+            l_device.Type = 'Motion Sensor'
             l_mqtt_topic += 'motion_sensor'
         l_mqtt_topic += '/{}'.format(p_device_obj.Name)
         #
@@ -73,19 +85,35 @@ class DecodeResponses(object):
         elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
             p_device_obj.FirmwareVersion = l_firmware
             l_mqtt_msg += 'Request-ID-From:"{}"; '.format(p_device_obj.Name)
+
         elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
             if p_device_obj.DeviceSubType == 1:
-                l_mqtt_msg += 'Garage Door Opened; '.format(p_device_obj.Name)
+                l_mqtt_msg += 'Garage Door Closed; '.format(p_device_obj.Name)
+                p_device_obj.Status = 'Close'
+                l_device.Status = 'Garage Door Closed.'
             elif p_device_obj.DeviceSubType == 2:
                 l_mqtt_msg += 'Motion Detected; '.format(p_device_obj.Name)
+                l_device.Status = 'Motion Detected.'
             else:
                 l_mqtt_msg += 'Unknown SubType {} for Device; '.format(p_device_obj.DeviceSubType, p_device_obj.Name)
-            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /security
+            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, l_device)  #  /security
+
         elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
+            if p_device_obj.DeviceSubType == 1:
+                l_mqtt_msg += 'Garage Door Opened; '.format(p_device_obj.Name)
+                p_device_obj.Status = 'Opened'
+                l_device.Status = 'Garage Door Opened.'
+            elif p_device_obj.DeviceSubType == 2:
+                l_mqtt_msg += 'NO Motion; '.format(p_device_obj.Name)
+                l_device.Status = 'Motion Stopped.'
+            else:
+                l_mqtt_msg += 'Unknown SubType {} for Device; '.format(p_device_obj.DeviceSubType, p_device_obj.Name)
+            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, l_device)  #  /security
             l_mqtt_msg += 'Turn OFF; '.format(p_device_obj.Name)
 
         LOG.info('Security {}'.format(l_mqtt_msg))
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /security
+        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_mqtt_topic, p_device_obj)  #  /security
+        Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, p_device_obj)
         return
 
 # ## END DBK
