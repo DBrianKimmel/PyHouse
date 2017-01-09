@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-01-05'
+__updated__ = '2017-01-07'
 
 #  Import system type stuff
 
@@ -155,10 +155,10 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        if l_device_obj.DeviceType == 2:
+        if l_device_obj.DeviceType == 2:  # HVAC Type
             DecodeHvac().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
-        if l_device_obj.DeviceType == 3:
+        if l_device_obj.DeviceType == 3:  # Security Type
             DecodeSecurity().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         l_flags = utilDecode._decode_message_flag(l_message[8])

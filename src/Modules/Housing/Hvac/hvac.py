@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2016-08-21'
+__updated__ = '2017-01-07'
 
 #  Import system type stuff
 
@@ -29,6 +29,39 @@ LOG = Logger.getLogger('PyHouse.Hvac           ')
 class Utility(object):
     """
     """
+
+
+class MqttActions(object):
+    """
+    """
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _get_field(self, p_message, p_field):
+        try:
+            l_ret = p_message[p_field]
+        except KeyError:
+            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+        return l_ret
+
+    def decode(self, p_logmsg, p_topic, p_message):
+        """ .../hvac/<type>/<Name>
+        """
+        p_logmsg += '\tHVAC:\n'
+        if p_topic[1] == 'Thermostat':
+            p_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
+        elif p_topic[1] == 'motion_sensor':
+            p_logmsg += '\tMotion Sensor:{}\n\t{}'.format(self._get_field(p_message, 'Name'), self._get_field(p_message, 'Status'))
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
+        return p_logmsg
+        pass
+    def _decode_hvac(self, p_logmsg, _p_topic, p_message):
+        p_logmsg += '\tThermostat:\n'
+        p_logmsg += '\tName: {}'.format(self.m_name)
+        p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+        p_logmsg += '\tTemp: {}'.format(self._get_field(p_message, 'CurrentTemperature'))
+        return p_logmsg
 
 
 class API(Utility):

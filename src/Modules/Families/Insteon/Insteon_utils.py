@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2017-01-06'
+__updated__ = '2017-01-07'
 
 #  Import system type stuff
 
@@ -146,6 +146,18 @@ class Decode(object):
     @staticmethod
     def _decode_message_flag(p_byte):
         """ Get the message flag and convert it to a description of the message.
+        See p 42(55) of 2009 developers guide.
+
+        Message Types  -  Bits 7,6, 5  0xE0 >> 5
+        000 = Direct Message
+        001 = ACK of Direct Message
+        010 = All Link Cleanup Message
+        011 = ACK of All Link Cleanup Message
+        100 = Broadcast Message
+        101 = NAK of Direct Message
+        110 = All Link Broadcast Message
+        111 = NAK of All Link Cleanup Message
+
         """
         def decode_message_type_flag(p_type):
             MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']

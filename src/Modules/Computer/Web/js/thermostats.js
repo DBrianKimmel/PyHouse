@@ -49,7 +49,7 @@ function startWidget(self) {
  * Build a screen full of buttons - One for each thermostat and some actions.
  */
 function buildLcarSelectScreen(self) {
-	var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.Hvac.Thermostats, 'handleSelectButtonOnClick');
+	var l_thermostat_html = buildLcarSelectionButtonsTable(globals.House.Hvac.Thermostats, 'handleMenuOnClick');
 	var l_html = build_lcars_top('Thermostats', 'lcars-salmon-color');
 	l_html += build_lcars_middle_menu(10, l_thermostat_html);
 	l_html += build_lcars_bottom();
@@ -83,8 +83,8 @@ function fetchDataFromServer(self) {
  * @param p_node
  *            is the node of the button that was clicked.
  */
-function handleSelectButtonOnClick(self, p_node) {
-	// Divmod.debug('---', 'thermostats.handleSelectButtonOnClick() was called. Ix = ' + l_ix);
+function handleMenuOnClick(self, p_node) {
+	// Divmod.debug('---', 'thermostats.handleMenuOnClick() was called. Ix = ' + l_ix);
 	var l_ix = p_node.name;
 	var l_name = p_node.value;
 	var l_obj;

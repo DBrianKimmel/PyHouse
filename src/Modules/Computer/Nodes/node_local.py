@@ -21,7 +21,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2016-12-24'
+__updated__ = '2017-01-09'
 
 #  Import system type stuff
 from datetime import datetime
@@ -281,8 +281,9 @@ class HandleNodeType(object):
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
-        l_ir = ir_control.API()
-        l_ir.Start(p_pyhouse_obj)
+        # l_ir = ir_control.API()
+        # l_ir.Start(p_pyhouse_obj)
+        pass
 
 
 class Util(object):
@@ -377,11 +378,11 @@ class Util(object):
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
-        l_ir = ir_control.API()
-        l_ir.Start(p_pyhouse_obj)
+        # l_ir = ir_control.API()
+        # l_ir.Start(p_pyhouse_obj)
+        pass
 
     def insert_node(self, p_node, p_pyhouse_obj):
-        # return
         """
         """
         # l_max_key = -1

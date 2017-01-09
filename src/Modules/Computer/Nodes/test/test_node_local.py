@@ -11,13 +11,15 @@ Passed all 23 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-12-04'
+__updated__ = '2017-01-09'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
+from test.xml_data import XML_LONG
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes.node_local import \
@@ -25,8 +27,6 @@ from Modules.Computer.Nodes.node_local import \
     API as localApi, \
     Devices as localDevices, \
     Util as localUtil
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 

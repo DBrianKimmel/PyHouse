@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2017-01-09'
 
 # Import system type stuff
 import os
@@ -17,7 +17,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import RoomData
+from Modules.Core.data_objects import RoomData, NodeData
 from Modules.Computer.Web.web_utils import GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
@@ -51,7 +51,7 @@ class NodesElement(athena.LiveElement):
 
     @athena.expose
     def saveNodeData(self, p_json):
-        """A new/changed/deleted room is returned.  Process it and update the internal data.
+        """A new/changed/deleted node is returned.  Process it and update the internal data.
         """
         l_json = json_tools.decode_json_unicode(p_json)
         l_ix = int(l_json['Key'])
@@ -65,7 +65,7 @@ class NodesElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.Computer.Nodes[l_ix]
         except KeyError:
-            l_obj = RoomData()
+            l_obj = NodeData()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix
