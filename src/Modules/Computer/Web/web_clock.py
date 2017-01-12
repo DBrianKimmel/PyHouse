@@ -1,15 +1,17 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_clock -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.Web.test.test_web_clock -*-
 
-@name:      PyHouse/src/Modules/Web/web_clock.py
+@name:      PyHouse/src/Modules/Computer/Web/web_clock.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 5, 2013
 @summary:   Display a clock on the web page.
 
 """
+
+__updated__ = '2017-01-12'
 
 #  Import system type stuff
 import os
@@ -46,7 +48,7 @@ class ClockElement(athena.LiveElement):
         """ A JS request
         """
         l_obj = dict(
-            ServerName = self.m_pyhouse_obj.Computer.Name
+            ServerName=self.m_pyhouse_obj.Computer.Name
             )
         l_json = json_tools.encode_json(l_obj)
         return unicode(l_json)

@@ -2,16 +2,16 @@
 @name:       PyHouse/src/Modules/Computer/Nodes/test/test_nodes_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2016-2016 by D. Brian Kimmel
+@copyright:  2016-2017 by D. Brian Kimmel
 @date:       Created on Jun 2, 2016
 @licencse:   MIT License
 @summary:
 
-Passed all 3 tests - DBK - 2016-07-09
+Passed all 5 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,10 +24,11 @@ from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_NODE_NAME_0, \
-        TESTING_NODES_NODE_UUID_0, TESTING_NODES_NODE_KEY_0, TESTING_NODES_NODE_ACTIVE_0
+        TESTING_NODES_NODE_KEY_0, \
+        TESTING_NODES_NODE_ACTIVE_0
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Utilities import json_tools
 
 

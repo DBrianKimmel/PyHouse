@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -23,9 +23,10 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2016-11-12'
+__updated__ = '2017-01-10'
 
 #  Import system type stuff
+import os
 
 #  Import PyMh files and modules.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
@@ -33,12 +34,37 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
 from Modules.Utilities.config_file import API as configAPI
+from Modules.Utilities.uuid_tools import Uuid as toolUuid
 LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
 INITIAL_DELAY = 1 * MINUTES
 XML_SAVE_DELAY = 3 * HOURS  # 2 hours
+CONFIG_DIR = '/etc/pyhouse'
+
+
+def _build_file(p_pyhouse_obj, p_filename):
+    l_file = os.path.join(p_pyhouse_obj.Xml.XmlConfigDir, p_filename)
+    return l_file
+
+def _read_file(p_pyhouse_obj, p_filename):
+    l_name = _build_file(p_pyhouse_obj, p_filename)
+    try:
+        l_file = open(l_name, 'r')
+        l_ret = l_file.read()
+    except IOError:
+        l_ret = toolUuid.create_uuid()
+    return l_ret
+
+def _write_file(p_pyhouse_obj, p_filename, p_uuid):
+    l_name = _build_file(p_pyhouse_obj, p_filename)
+    try:
+        l_file = open(l_name, 'w')
+        l_ret = l_file.write(p_uuid)
+    except IOError as e_err:
+        l_ret = e_err
+    return l_ret
 
 
 class PyHouseObj(object):
@@ -69,7 +95,22 @@ class Utility(object):
         House.uuid
         Domain.uuid
         """
-        p_pyhouse_obj.Uuids = {}
+        p_pyhouse_obj.Uuids.All = {}
+        l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
+        try:
+            l_file = open(l_path, mode='r')
+            l_uuid = l_file.read()
+        except IOError:
+            l_uuid = toolUuid.create_uuid()
+
+    @staticmethod
+    def save_uuids(p_pyhouse_obj):
+        """be sure to save all the uuid files in /etc/pyhouse
+        Computer.uuid
+        House.uuid
+        Domain.uuid
+        """
+        l_uuids = p_pyhouse_obj.Uuids.All
 
     @staticmethod
     def _sync_startup_logging(p_pyhouse_obj):

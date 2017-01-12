@@ -11,6 +11,8 @@ Passed all 2 tests - DBK - 2016-11-21
 
 """
 
+__updated__ = '2017-01-11'
+
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest

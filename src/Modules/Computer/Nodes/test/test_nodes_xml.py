@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/test/test_nodes_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 15, 2014
 @Summary:
 
-Passed all 13 tests - DBK - 2016-11-21
+Passed all 13 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

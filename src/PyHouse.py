@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2017-01-04'
+__updated__ = '2017-01-10'
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -83,7 +83,7 @@ from Modules.Core.data_objects import \
     PyHouseAPIs, \
     UuidData, \
     TwistedInformation, \
-    XmlInformation
+    XmlInformation, AllUuids
 
 
 #  Import PyMh files and modules.
@@ -197,7 +197,8 @@ class Utilities(object):
         l_pyhouse_obj.APIs = PyHouseAPIs()
         l_pyhouse_obj.Twisted = TwistedInformation()
         l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Uuids = UuidData()
+        l_pyhouse_obj.Uuids = AllUuids()
+        l_pyhouse_obj.Uuids.All = UuidData()
         l_pyhouse_obj.Xml = XmlInformation()
         return l_pyhouse_obj
 

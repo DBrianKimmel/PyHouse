@@ -2,16 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/Web/test/test_web_schedules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 23, 2016
 @summary:   Test
 
 """
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_ACTIVE, TESTING_HOUSE_KEY, TESTING_HOUSE_UUID
-from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-27'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,6 +22,8 @@ from twisted.web.test.test_web import DummyRequest
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Web.web_xml import Xml as webXml
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_ACTIVE, TESTING_HOUSE_KEY, TESTING_HOUSE_UUID
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 JSON = '{ Active : false, \
@@ -173,6 +173,6 @@ class C02_XML(SetupMixin, unittest.TestCase):
 
     def test_21_WriteXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)
-        l_xml = webXml.write_web_xml(l_web)
+        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
 
 # ## END DBK

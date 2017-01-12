@@ -2,19 +2,15 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2016-01-29
+Passed all 14 tests - DBK - 2017-01-11
 
 """
-<<<<<<< HEAD
-__updated__ = '2016-07-11'
-=======
-__updated__ = '2016-11-29'
->>>>>>> b1988cf36a79dfbcde7dd3eee07ef1a9791d8be6
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -63,6 +59,13 @@ class SetupMixin(object):
             l_val = 'ERRor on JsonPair for key "{}"  {} {}'.format(p_key, e_err, l_json)
             print(l_val)
         return l_val
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_mqtt_client')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):

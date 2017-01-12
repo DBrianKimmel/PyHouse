@@ -1,8 +1,8 @@
 """
-@name: PyHouse/src/Modules/Web/test/test_web_server.py
+@name: PyHouse/src/Modules/Computer/Web/test/test_web_server.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2016 by D. Brian Kimmel
+@copyright: 2013-2017 by D. Brian Kimmel
 @note: Created on Apr 8, 2013
 @license: MIT License
 @summary: This module is for AMP request/response protocol
@@ -11,7 +11,7 @@ Passed all 4 tests - DBK - 2016-11-23
 
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

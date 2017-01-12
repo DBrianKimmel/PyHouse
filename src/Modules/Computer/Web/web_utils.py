@@ -1,15 +1,17 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_utils -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.Web.test.test_web_utils -*-
 
-@name:      PyHouse/src/Modules/Web/web_utils.py
+@name:      PyHouse/src/Modules/Computer/Web/web_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 30, 2013
 @summary:   Test handling the information for a house.
 
 """
+
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 
@@ -45,14 +47,6 @@ class UtilJson(object):
     """
 
     @staticmethod
-    def _getHouseBase(p_pyhouse_obj):
-        l_ret = JsonHouseData()
-        l_ret.Name = p_pyhouse_obj.House.Name
-        l_ret.Key = p_pyhouse_obj.House.Key
-        l_ret.Active = p_pyhouse_obj.House.Active
-        return l_ret
-
-    @staticmethod
     def _get_Lighting(p_pyhouse_obj):
         l_ret = LightingData()
         l_ret.Buttons = p_pyhouse_obj.House.Lighting.Buttons
@@ -62,19 +56,6 @@ class UtilJson(object):
         l_ret.Motion = p_pyhouse_obj.House.Security.MotionSensors
         return l_ret
 
-    @staticmethod
-    def _get_AllHouseObjs(p_pyhouse_obj):
-        l_ret = UtilJson._getHouseBase(p_pyhouse_obj)
-        l_ret.Hvac = p_pyhouse_obj.House.Hvac
-        l_ret.Irrigation = p_pyhouse_obj.House.Irrigation
-        l_ret.Lighting = UtilJson._get_Lighting(p_pyhouse_obj)
-        l_ret.Location = p_pyhouse_obj.House.Location
-        l_ret.Rooms = p_pyhouse_obj.House.Rooms
-        l_ret.Schedules = p_pyhouse_obj.House.Schedules
-        l_ret.Security = p_pyhouse_obj.House.Security
-        return l_ret
-
-
 
 def GetJSONHouseInfo(p_pyhouse_obj):
     """
@@ -82,7 +63,17 @@ def GetJSONHouseInfo(p_pyhouse_obj):
 
     This is simplified and customized so JSON encoding works.
     """
-    l_ret = UtilJson._get_AllHouseObjs(p_pyhouse_obj)
+    l_ret = JsonHouseData()
+    l_ret.Name = p_pyhouse_obj.House.Name
+    l_ret.Key = p_pyhouse_obj.House.Key
+    l_ret.Active = p_pyhouse_obj.House.Active
+    l_ret.Hvac = p_pyhouse_obj.House.Hvac
+    l_ret.Irrigation = p_pyhouse_obj.House.Irrigation
+    l_ret.Lighting = UtilJson._get_Lighting(p_pyhouse_obj)
+    l_ret.Location = p_pyhouse_obj.House.Location
+    l_ret.Rooms = p_pyhouse_obj.House.Rooms
+    l_ret.Schedules = p_pyhouse_obj.House.Schedules
+    l_ret.Security = p_pyhouse_obj.House.Security
     l_json = unicode(json_tools.encode_json(l_ret))
     return l_json
 
@@ -103,23 +94,6 @@ class State(object):
     """
     def __init__(self):
         self.State = WS_IDLE
-
-
-class JsonUnicode(object):
-    """Utilities for handling unicode and json
-    """
-
-    def convert_from_unicode(self, p_input):
-        """Convert unicode strings to python 2 strings.
-        """
-        if isinstance(p_input, dict):
-            return {self.convert_from_unicode(key): self.convert_from_unicode(value) for key, value in p_input.iteritems()}
-        elif isinstance(p_input, list):
-            return [self.convert_from_unicode(element) for element in p_input]
-        elif isinstance(p_input, unicode):
-            return p_input.encode('ascii')
-        else:
-            return p_input
 
 
 def get_base_info(p_obj, p_json_decoded):

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-10-06'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import os
@@ -18,7 +18,7 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import MqttBrokerData
-from Modules.Computer.Web.web_utils import JsonUnicode, GetJSONComputerInfo
+from Modules.Computer.Web.web_utils import GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Utilities import json_tools
 from Modules.Utilities.uuid_tools import Uuid

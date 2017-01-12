@@ -2,7 +2,7 @@
 @name:      PyHouse/src/test/test_xml_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2016 by D. Brian Kimmel
+@copyright: (c) 2010-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 4, 2014
 @summary:   Test the XML data for integrity.
@@ -13,7 +13,7 @@ It will check the XML file for being fundamentally correct for all other tests t
 Passed all 12 tests - DBK - 2016-11-22
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,6 +23,13 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, XML_EMPTY
 from Modules.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_UUID_0
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_xml_data')
 
 
 class A0(unittest.TestCase):

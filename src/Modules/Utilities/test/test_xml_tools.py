@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules/Utilities/test/test_xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2013-2016 by D. Brian Kimmel
+@copyright: 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 57 testa - DBK 2016-11-12
+Passed all 57 testa - DBK 2017-01-12
 """
 
-__updated__ = '2016-11-12'
+__updated__ = '2017-01-12'
 
 # Import system type stuff
 # import copy

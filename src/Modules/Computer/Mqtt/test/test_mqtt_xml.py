@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 9 tests - DBK - 2016-11-21
+Passed all 9 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET

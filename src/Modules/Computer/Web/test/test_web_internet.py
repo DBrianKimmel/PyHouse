@@ -1,8 +1,8 @@
 """
-@name:      PyHouse/src/Modules/Web/test/test_web_internet.py
+@name:      PyHouse/src/Modules/Computer/Web/test/test_web_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c)  2014-2016 by D. Brian Kimmel
+@copyright: 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 20, 2014
 @Summary:
@@ -12,7 +12,7 @@ Passed all 3 tests - DBK - 2016-11-21
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

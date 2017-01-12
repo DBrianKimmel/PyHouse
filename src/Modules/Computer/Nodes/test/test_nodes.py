@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/test/test_nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 15, 2015
 @Summary:
 
-Passed all 8 tests - DBK - 2016-12-03
+Passed all 8 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2016-12-03'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,7 +26,7 @@ from Modules.Computer.Nodes.node_local import API as localApi
 from Modules.Computer.Nodes.test.xml_nodes import \
     TESTING_NODES_NODE_NAME_0, \
     TESTING_NODES_NODE_UUID_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -110,7 +110,7 @@ class C1_Api(SetupMixin, unittest.TestCase):
 
     def test_02_LoadXml(self):
         l_api = localApi(self.m_pyhouse_obj)
-        l_ret = l_api.LoadXml(self.m_pyhouse_obj)
+        _l_ret = l_api.LoadXml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_ret, 'PyHouse Computer'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse Computer'))
         pass

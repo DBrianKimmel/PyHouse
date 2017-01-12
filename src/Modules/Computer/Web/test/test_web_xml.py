@@ -1,8 +1,8 @@
 """
-@name:      PyHouse/src/Modules/Web/test/test_web_xml.py
+@name:      PyHouse/src/Modules/Computer/Web/test/test_web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2015
 @Summary:
@@ -11,7 +11,7 @@ Passed all 12 tests - DBK - 2016-11-05
 
 """
 
-__updated__ = '2016-11-27'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

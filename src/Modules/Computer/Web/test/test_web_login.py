@@ -1,17 +1,17 @@
 """
-@name:      PyHouse/src/Modules/Web/test/test_web_login.py
+@name:      PyHouse/src/Modules/Computer/Web/test/test_web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 29, 2014
 @Summary:
 
-Passed 5 of 6 tests - DBK - 2015-11-22
+Passed all 8 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-15'
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 import platform
@@ -30,7 +30,7 @@ from Modules.Core.data_objects import \
             LocationData, \
             TwistedInformation, \
             XmlInformation, \
-            LightingData, HvacData, SecurityData
+            LightingData, HvacData, SecurityData, AllUuids, UuidData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
@@ -226,7 +226,8 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
         l_pyhouse_obj.House = SetupPyHouseObj._build_house(l_pyhouse_obj)
         l_pyhouse_obj.Twisted = self._build_twisted()
-        l_pyhouse_obj.Uuids = {}
+        l_pyhouse_obj.Uuids = AllUuids()
+        l_pyhouse_obj.Uuids.All = {}
         l_pyhouse_obj.Xml = self._build_xml(p_root)
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj

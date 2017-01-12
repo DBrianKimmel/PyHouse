@@ -12,14 +12,14 @@ Passed all 3 tests - DBK - 2016-11-14
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
 
@@ -44,7 +44,7 @@ class A1_Json(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Encode(self):
         l_obj = self.m_pyhouse_obj.House.Location
@@ -60,5 +60,19 @@ class A1_Json(SetupMixin, unittest.TestCase):
         print(l_dict)
         print(PrettyFormatAny.form(l_dict, 'A1-02-A - Decoded Info'))
         self.assertEqual(l_dict['Name'], self.m_pyhouse_obj.Computer.Name)
+
+
+class A2_Decode(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Unicode(self):
+        y = json_tools.JsonUnicode().convert_from_unicode(u'ABC')
+        self.assertEquals(y, 'ABC')
+
+    def test_02_Ascii(self):
+        y = json_tools.JsonUnicode().convert_from_unicode('ABC')
+        self.assertEquals(y, 'ABC')
 
 # ## END DBK

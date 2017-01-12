@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-07'
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 import uuid
@@ -52,10 +52,10 @@ class Uuid(object):
         """ Add the given UuidData() object to PyHouse.
         """
         l_uuid = p_uuid_obj.UUID
-        if l_uuid in p_pyhouse_obj.Uuids:
+        if l_uuid in p_pyhouse_obj.Uuids.All:
             LOG.info('Duplicate UUIDs Detected.  Old:{}  New:{}'.format(
-                        p_pyhouse_obj.Uuids[l_uuid].UuidType, p_uuid_obj.UuidType))
-        p_pyhouse_obj.Uuids[l_uuid] = p_uuid_obj
+                        p_pyhouse_obj.Uuids.All[l_uuid].UuidType, p_uuid_obj.UuidType))
+        p_pyhouse_obj.Uuids.All[l_uuid] = p_uuid_obj
 
 
 class FileUuid(object):

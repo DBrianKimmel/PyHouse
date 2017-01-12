@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2016-12-24'
+__updated__ = '2017-01-09'
 
 #  Import system type stuff
 import platform
@@ -50,7 +50,7 @@ from Modules.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Computer       ')
 COMPUTER_DIVISION = 'ComputerDivision'
-FILE_PATH = '/etc/pyhouse/computer_uuid'
+FILE_PATH = '/etc/pyhouse/Computer.uuid'
 
 # MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
 

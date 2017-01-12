@@ -2,21 +2,22 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/xml_nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 7, 2014
 @Summary:
 
 """
 
-__updated__ = '2016-07-09'
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 import datetime
 
 #  Import PyMh files
 
-L_NODE_SECTION_START = '  <NodeSection>'
+TESTING_NODE_SECTION_START = 'NodeSection'
+L_NODE_SECTION_START = '  <' + TESTING_NODE_SECTION_START + '>'
 L_NODE_SECTION_END = '  </NodeSection>'
 
 L_NODE_INTERFACE_SECTION_START = '  <InterfaceSection>'
@@ -176,49 +177,4 @@ XML_NODES = '\n'.join([
     L_NODE_SECTION_END
 ])
 
-
-NODES_XSD = """
-<xs:schema
-    attributeFormDefault="unqualified"
-    elementFormDefault="qualified"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="NodeSection">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="Node" maxOccurs="unbounded" minOccurs="0">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element type="xs:string" name="UUID"/>
-              <xs:element type="xs:string" name="ConnectionAddressV4"/>
-              <xs:element name="InterfaceSection" minOccurs="0">
-                <xs:complexType>
-                  <xs:sequence>
-                    <xs:element name="Interface" maxOccurs="unbounded" minOccurs="0">
-                      <xs:complexType>
-                        <xs:sequence>
-                          <xs:element type="xs:string" name="UUID" minOccurs="0"/>
-                          <xs:element type="xs:string" name="MacAddress"/>
-                          <xs:element type="xs:string" name="IPv4Address"/>
-                          <xs:element type="xs:string" name="IPv6Address"/>
-                        </xs:sequence>
-                        <xs:attribute type="xs:string" name="Name" use="optional"/>
-                        <xs:attribute type="xs:byte" name="Key" use="optional"/>
-                        <xs:attribute type="xs:string" name="Active" use="optional"/>
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType>
-              </xs:element>
-            </xs:sequence>
-            <xs:attribute type="xs:string" name="Name" use="optional"/>
-            <xs:attribute type="xs:byte" name="Key" use="optional"/>
-            <xs:attribute type="xs:string" name="Active" use="optional"/>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-</xs:schema>
-"""
 #  ## END DBK

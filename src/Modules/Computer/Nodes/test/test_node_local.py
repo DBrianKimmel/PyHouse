@@ -2,16 +2,17 @@
 @name:      PyHouse/src/Modules/Core/test/test_node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 23 tests - DBK - 2016-11-21
+Passed all 25 tests - DBK - 2017-01-11
 
 """
+import netifaces
 
-__updated__ = '2017-01-09'
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,9 +29,6 @@ from Modules.Computer.Nodes.node_local import \
     Devices as localDevices, \
     Util as localUtil
 from Modules.Utilities.debug_tools import PrettyFormatAny
-
-
-AF_INET = 2
 
 
 class SetupMixin(object):
@@ -50,6 +48,9 @@ class A0(unittest.TestCase):
         pass
     def test_00_Print(self):
         print('Id: test_node_local')
+    def XXX_test_01_Print(self):
+        print(XML_LONG)
+        pass
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -71,6 +72,10 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
+
+    def test_03_netifaces(self):
+        self.assertEqual(netifaces.AF_INET, 2)
+        self.assertEqual(netifaces.AF_INET6, 10)
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):
@@ -146,15 +151,15 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
         """
         l_gate = Interfaces._list_gateways()
         # print(PrettyFormatAny.form(l_gate, 'B1-02-A - Gateways', 100))
-        l_v4 = l_gate[AF_INET]  # 2 = AF_INET
-        print(PrettyFormatAny.form(l_v4, 'B1-02-B - Gateways', 100))
+        l_v4 = l_gate[netifaces.AF_INET]  # 2 = AF_INET
+        # print(PrettyFormatAny.form(l_v4, 'B1-02-B - Gateways', 100))
         # self.assertEqual(l_v4[0][0], '192.168.1.1')
 
     def test_03_ListInterfaces(self):
         """ Check the interfaces in this computer
         """
         l_int = Interfaces._list_interfaces()
-        print(PrettyFormatAny.form(l_int, 'B1-03-A - Interfaces', 170))
+        # print(PrettyFormatAny.form(l_int, 'B1-03-A - Interfaces', 170))
         self.assertEqual(l_int[0], 'lo')
         self.assertEqual(l_int[1], 'eno1')
         self.assertEqual(l_int[2], 'wlo1')
@@ -163,19 +168,19 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
         """ Check the interfaces in this computer
         """
         l_int = Interfaces._list_interfaces()
-        print(PrettyFormatAny.form(l_int, 'B1-04-A - Interface Names', 170))
+        # print(PrettyFormatAny.form(l_int, 'B1-04-A - Interface Names', 170))
         for l_name in l_int:
             l_ifa = Interfaces._list_ifaddresses(l_name)
-            print(PrettyFormatAny.form(l_ifa, 'B1-04-B - Interface "{}" Addresses'.format(l_name), 170))
+            # print(PrettyFormatAny.form(l_ifa, 'B1-04-B - Interface "{}" Addresses'.format(l_name), 170))
             self.assertGreaterEqual(len(l_ifa), 1)
 
     def test_05_All(self):
         l_all, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
         for _l_ix in l_all:
-            print('{} {}'.format(_l_ix, PrettyFormatAny.form(l_all[_l_ix], 'B1-05-A - Interface', 170)))
+            # print('{} {}'.format(_l_ix, PrettyFormatAny.form(l_all[_l_ix], 'B1-05-A - Interface', 170)))
             pass
-        print(PrettyFormatAny.form(l_all, 'B1-05-B - Interfaces', 170))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-05-C - PyHouse'))
+        # print(PrettyFormatAny.form(l_all, 'B1-05-B - Interfaces', 170))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-05-C - PyHouse'))
         self.assertNotEqual(l_all, None)
 
 
@@ -193,8 +198,11 @@ class B2_Iface(SetupMixin, unittest.TestCase):
         I don't know how to test the returned list for validity.
         Uncomment the print to see what your computer returned.
         """
-        l_names = Interfaces.find_all_interface_names()
+        l_names = Interfaces._find_all_interface_names()
         # print(PrettyFormatAny.form(l_names, 'B1-01-A - Names'))
+        self.assertEqual(l_names[0], 'lo')
+        self.assertEqual(l_names[1], 'eno1')
+        self.assertEqual(l_names[2], 'wlo1')
         self.assertGreater(len(l_names), 1)
 
     def test_02_AddrFamilyName(self):
@@ -207,10 +215,10 @@ class B2_Iface(SetupMixin, unittest.TestCase):
         # l_ret = Interfaces._find_addr_family_name(17)
         # print(PrettyFormatAny.form(l_ret, 'B1-02 A  Address Lists'))
         # self.assertEqual(l_ret, 'AF_PACKET')
-        l_ret = Interfaces._find_addr_family_name(2)
+        l_ret = Interfaces._find_addr_family_name(netifaces.AF_INET)
         # print(PrettyFormatAny.form(l_ret, 'B1-02 B Address Lists'))
         self.assertEqual(l_ret, 'AF_INET')
-        l_ret = Interfaces._find_addr_family_name(10)
+        l_ret = Interfaces._find_addr_family_name(netifaces.AF_INET6)
         # print(PrettyFormatAny.form(l_ret, 'B1-02 C Address Lists'))
         self.assertEqual(l_ret, 'AF_INET6')
 
@@ -219,14 +227,21 @@ class B2_Iface(SetupMixin, unittest.TestCase):
         I don't know how to test the returned list for validity.
         Uncomment the print to see what your computer returned.
         """
-        l_names = Interfaces.find_all_interface_names()
+        l_names = Interfaces._find_all_interface_names()
         #  On my laptop: returns 7 interfaces.
-        # print(PrettyFormatAny.form(l_names, 'Address Lists'))
+        # print(PrettyFormatAny.form(l_names, 'B2-03-A - Address Lists'))
         _l_ret = Interfaces._find_addr_lists(l_names[0])
-        # print(PrettyFormatAny.form(l_ret, 'Address Lists'))
+        # print(PrettyFormatAny.form(_l_ret, 'B2-03-B - Address Lists'))
+        _l_ret = Interfaces._find_addr_lists(l_names[1])
+        # print(PrettyFormatAny.form(_l_ret, 'B2-03-C - Address Lists'))
+        _l_ret = Interfaces._find_addr_lists(l_names[2])
+        # print(PrettyFormatAny.form(_l_ret, 'B2-03-D - Address Lists'))
+
+    def test_04_AddrListInet(self):
+        pass
 
     def test_04_OneInterfaces(self):
-        l_names = Interfaces.find_all_interface_names()
+        l_names = Interfaces._find_all_interface_names()
         _l_node = Interfaces._get_one_interface(l_names[1])
         # print(PrettyFormatAny.form(l_node, 'Node Interfaces'))
 
@@ -234,7 +249,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
         l_node = NodeData()
         l_if, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
         l_node.NodeInterfaces = l_if
-        # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'Node Interfaces'))
+        # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'B2-05-A - Node Interfaces'))
 
 
 class B3_Node(SetupMixin, unittest.TestCase):
@@ -247,7 +262,7 @@ class B3_Node(SetupMixin, unittest.TestCase):
         """
         """
         l_node = localUtil(self.m_pyhouse_obj).create_local_node()
-        # print(PrettyFormatAny.form(l_node, 'B2-01-A - Node'))
+        # print(PrettyFormatAny.form(l_node, 'B3-01-A - Node'))
         self.assertEqual(l_node.Name, 'briank-Laptop-3')
         self.assertEqual(l_node.Key, 0)
         self.assertEqual(l_node.Active, True)
@@ -258,25 +273,25 @@ class C1_Api(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_Api(self):
+    def test_01_Api(self):
         _l_api = localApi(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1_1_A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-01-A - PyHouse Computer'))
 
-    def test_2_LoadXml(self):
+    def test_02_LoadXml(self):
         l_api = localApi(self.m_pyhouse_obj)
         _l_ret = l_api.LoadXml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_ret, 'C1-2-A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(l_ret, 'C1-02-A - PyHouse Computer'))
 
-    def test_3_Start(self):
+    def test_03_Start(self):
         #  self.m_api.Start(self.m_pyhouse_obj)
         pass
 
-    def test_4_SaveXml(self):
+    def test_04_SaveXml(self):
         l_xml = ET.Element('NodeSection')
         localApi(self.m_pyhouse_obj).SaveXml(l_xml)
         pass
 
-    def test_5_Stop(self):
+    def test_05_Stop(self):
         localApi(self.m_pyhouse_obj).Stop()
         pass
 

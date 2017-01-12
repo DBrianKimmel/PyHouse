@@ -16,8 +16,8 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-01-07'
-__version_info__ = (1, 7, 4)
+__updated__ = '2017-01-10'
+__version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -36,7 +36,7 @@ class PyHouseData(object):
         self.Computer = None  # ComputerInformation()
         self.House = None  # HouseInformation()
         self.Twisted = None  # TwistedInformation()
-        self.Uuids = None  # UuidData()
+        self.Uuids = None  # AllUuids()
         self.Xml = None  # XmlInformation()
 
 
@@ -312,10 +312,21 @@ class USBControllerData(object):
         self.Vendor = 0
 
 
+class AllUuids(object):
+    """
+==> PyHouse.Uuids.xxx as in the def below
+    """
+    def __init__(self):
+        self.All = {}  # UuidData()
+        self.ComputerUuid = None
+        self.DomainUuid = None
+        self.HouseUuid = None
+
+
 class UuidData(object):
     """
     a dict with the key = UUID and values of ...
-==> PyHouse.Uuids{} as in the def below
+==> PyHouse.Uuids.All.{} as in the def below
     """
     def __init__(self):
         self.UUID = None
@@ -344,8 +355,10 @@ class WebData(object):
 
 class XmlInformation(object):
     """A collection of XLM data used for Configuration
+==> PyHouse.Xml.xxx
     """
     def __init__(self):
+        self.XmlConfigDir = '/etc/pyhouse/'
         self.XmlFileName = None
         self.XmlRoot = None
         self.XmlVersion = __version__  # Version from this module.

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016  by D. Brian Kimmel
+@copyright: (c) 2014-2017  by D. Brian Kimmel
 @note:      Created on Apr 2, 2014
 @license:   MIT License
 @summary:   Gather this node's information.
@@ -27,6 +27,7 @@ __updated__ = '2017-01-09'
 from datetime import datetime
 import fnmatch  # Filename matching with shell patterns
 import netifaces  # has gateways(), ifaddresses(). interfaces()
+from netifaces import *
 import os
 import pyudev
 import subprocess
@@ -86,7 +87,7 @@ class Devices(object):
             for k, v in l_dev.iteritems():
                 # print(k, v)
                 l_msg += '{} {}\n'.format(k, v)
-            print(l_msg)
+            # print(l_msg)
             LOG.info(l_msg)
             l_id = '{}:{}'.format(l_dev.get('ID_VENDOR_ID'), l_dev.get('ID_MODEL_ID'))
             if l_id == '0403:6001':
@@ -108,11 +109,11 @@ class Devices(object):
 
 class Interfaces(object):
     """
-    Loop thru all the interfaces and extract the info.
+    Loop thru all the interfaces of this local node and extract the info.
     """
 
     @staticmethod
-    def find_all_interface_names():
+    def _find_all_interface_names():
         """
         Get the names of all the network interfaces on this computer.
         Windows return an UUID as the name
@@ -148,6 +149,7 @@ class Interfaces(object):
     @staticmethod
     def _find_addr_lists(p_interface_name):
         """
+        @param p_interface_name: is the name of an interface like 'lo' or 'eth0' etc.
         @return:  a dict with the key = interface type (-1000 = MAC Addr, 2 = INET, 23 = INET6)
                     The values are a list of dicts of addresses for that interface.
         """
@@ -170,7 +172,7 @@ class Interfaces(object):
         l_interface.Name = p_interface_name
         l_interface.Active = True
         l_interface.Key = 0
-        l_interface.UUID = toolUuid.create_uuid()
+        l_interface.UUID = toolUuid.create_uuid()  # We need a way to persist the UUID instead of this
         l_interface.NodeInterfaceType = 'Other'
         l_afList = Interfaces._find_addr_lists(p_interface_name)
         for l_afID in l_afList.iterkeys():
@@ -196,7 +198,7 @@ class Interfaces(object):
         l_dict = {}
         l_ipv4 = []
         l_ipv6 = []
-        for l_interface_name in Interfaces.find_all_interface_names():
+        for l_interface_name in Interfaces._find_all_interface_names():
             #  print('\n160 All Interfaces: {}'.format(l_interface_name))
             l_iface, l_v4, l_v6 = Interfaces._get_one_interface(l_interface_name)
             if l_v4 != []:

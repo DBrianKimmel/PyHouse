@@ -12,7 +12,7 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
-__updated__ = '2017-01-09'
+__updated__ = '2017-01-10'
 
 #  Import system type stuff
 

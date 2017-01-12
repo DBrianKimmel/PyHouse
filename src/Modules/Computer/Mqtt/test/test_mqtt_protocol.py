@@ -2,12 +2,15 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/test_protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2015
 @Summary:
 
+Passed all 2 tests - DBK- 2017-01-11
 """
+
+__updated__ = '2017-01-11'
 
 #  Import system type stuff
 from twisted.trial import unittest

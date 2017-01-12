@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/utils/test/test_config_file.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2016-11-22
+Passed all 7 tests - DBK - 2017-01-10
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,8 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def test_01_File(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)
-        # print('File: {}\n'.format(l_file.name))
+        print('File: {}\n'.format(l_file.name))
+        self.assertEqual(l_file.name, TESTING_)
 
     def test_02_OpenConfig(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)

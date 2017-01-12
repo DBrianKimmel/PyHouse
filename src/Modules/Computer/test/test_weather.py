@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Housing/test/test_weather.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the rooms information for a house.
 
 """
 
-__updated__ = '2016-11-27'
+__updated__ = '2017-01-11'
 
 import unittest
 

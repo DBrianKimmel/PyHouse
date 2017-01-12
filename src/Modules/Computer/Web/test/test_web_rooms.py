@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Web/test/test_web_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Oct 20, 2014
 @Summary:
@@ -33,6 +33,13 @@ class SetupMixin(object):
         self.m_workspace_obj = Workspace()
         self.m_workspace_obj.m_pyhouse_obj = self.m_pyhouse_obj
 
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_web_rooms')
 
 
 class C01_XML(SetupMixin, unittest.TestCase):
