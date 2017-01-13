@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Lighting/test/test_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on Apr 9, 2013
 @license:   MIT License
 @summary:   Test the home lighting system automation.
@@ -11,7 +11,7 @@ Passed all 13 tests.  DBK 2016-11-05
 
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2017-01-12'
 
 # Import system type stuff
 from twisted.trial import unittest

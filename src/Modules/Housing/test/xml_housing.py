@@ -19,7 +19,7 @@ Coords are the X, Y and Z offsets within the room for the device.
 Comments should not need explaining.  They are just present and can contain just about anything.
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-12'
 
 # Import system type stuff
 
@@ -35,18 +35,21 @@ from Modules.Housing.Scheduling.test.xml_schedule import XML_SCHEDULE
 from Modules.Housing.Security.test.xml_security import XML_SECURITY
 
 
+TESTING_HOUSE_DIVISION = 'HouseDivision'
+
 TESTING_HOUSE_NAME = 'Pink Poppy'
 TESTING_HOUSE_KEY = '0'
 TESTING_HOUSE_ACTIVE = 'True'
 TESTING_HOUSE_UUID = 'House...-0000-0000-0000-333e5f8cdfd2'
 
-L_HOUSE_DIV = "<HouseDivision Name='" + TESTING_HOUSE_NAME + \
-            "' Key='" + TESTING_HOUSE_KEY + \
-            "' Active='" + TESTING_HOUSE_ACTIVE + \
-            "'>"
+L_HOUSE_DIV = '<' + TESTING_HOUSE_DIVISION + \
+        " Name='" + TESTING_HOUSE_NAME + \
+        "' Key='" + TESTING_HOUSE_KEY + \
+        "' Active='" + TESTING_HOUSE_ACTIVE + \
+        "'>"
 L_HOUSE_UUID = '<UUID>' + TESTING_HOUSE_UUID + '</UUID>'
 
-L_HOUSE_DIVISION_END = '</HouseDivision>'
+L_HOUSE_DIVISION_END = '</' + TESTING_HOUSE_DIVISION + '>'
 
 HOUSE_DIVISION_XML = '\n'.join([
     L_HOUSE_DIV,

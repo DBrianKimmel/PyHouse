@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Hvac/test/test_hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
 
-Passed all 5 tests - DBK - 2016-11-21
+Passed all 5 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -74,7 +74,7 @@ class A2_EmptyXML(SetupMixin, unittest.TestCase):
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
 
     def test_02_Load(self):
         """

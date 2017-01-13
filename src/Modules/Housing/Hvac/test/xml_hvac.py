@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Hvac/xml_hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 1, 2015
 @Summary:
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2017-01-12'
 
 #  Import system type stuff
 
@@ -24,7 +24,7 @@ L_THERMOSTAT_SECTION_END = '      </ThermostatSection>'
 L_THERMOSTAT_END = '        </Thermostat>'
 
 TESTING_HVAC_THERMOSTAT_NAME_0 = 'Test Thermostat Zero'
-TESTING_THERMOSTAT_ACTIVE_0 = 'True'
+TESTING_HVAC_THERMOSTAT_ACTIVE_0 = 'True'
 TESTING_THERMOSTAT_KEY_0 = '0'
 TESTING_THERMOSTAT_UUID_0 = 'Thermost-0000-0000-0000-0123456789ab'
 
@@ -40,7 +40,7 @@ TESTING_THERMOSTAT_CURRENT_TEMP_0 = '75.0'
 
 L_THERMOSTAT_START_0 = '          ' + \
         '<Thermostat Name="' + TESTING_HVAC_THERMOSTAT_NAME_0 + \
-        '" Active="' + TESTING_THERMOSTAT_ACTIVE_0 + \
+        '" Active="' + TESTING_HVAC_THERMOSTAT_ACTIVE_0 + \
         '" Key="' + TESTING_THERMOSTAT_KEY_0 + '">'
 L_THERMOSTAT_UUID_0 = '<UUID>' + TESTING_THERMOSTAT_UUID_0 + '</UUID>'
 L_HVAC_THERMOSTAT_COMMENT_0 = '            <Comment>' + TESTING_HVAC_THERMOSTAT_COMMENT_0 + '</Comment>'
@@ -116,36 +116,5 @@ XML_HVAC = '\n'.join([
         L_THERMOSTAT_SECTION_END,
     L_HVAC_SECTION_END
 ])
-
-THERMOSTAT_XSD = """"
-<xs:schema
-    attributeFormDefault="unqualified"
-    elementFormDefault="qualified"
-    xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:element name="ThermostatSection">
-    <xs:complexType>
-      <xs:sequence>
-        <xs:element name="Thermostat">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element type="xs:string" name="DeviceFamily"/>
-              <xs:element type="xs:float" name="CoolSetPoint"/>
-              <xs:element type="xs:byte" name="CurrentTemperature"/>
-              <xs:element type="xs:float" name="HeatSetPoint"/>
-              <xs:element type="xs:string" name="ThermostatMode"/>
-              <xs:element type="xs:string" name="ThermostatScale"/>
-              <xs:element type="xs:string" name="Address"/>
-            </xs:sequence>
-            <xs:attribute type="xs:string" name="Name"/>
-            <xs:attribute type="xs:string" name="Active"/>
-            <xs:attribute type="xs:byte" name="Key"/>
-          </xs:complexType>
-        </xs:element>
-      </xs:sequence>
-    </xs:complexType>
-  </xs:element>
-
-</xs:schema>"""
 
 #  ## END DBK

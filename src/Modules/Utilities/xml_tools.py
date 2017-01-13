@@ -212,8 +212,9 @@ class PutGetXML(object):
         """
         l_xml = XML.get_any_field(p_xml, p_name)
         if l_xml is None or len(l_xml) != 36:
+            l_xml_bad = l_xml
             l_xml = Uuid.create_uuid()
-            LOG.error("A valid UUID was not found for {} - generating a new one. {}".format(p_name, l_xml))
+            LOG.error("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
         return l_xml
 
     @staticmethod

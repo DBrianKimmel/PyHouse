@@ -178,14 +178,15 @@ class P1_API(SetupMixin, unittest.TestCase):
         self.m_api = houseAPI(self.m_pyhouse_obj)
 
     def test_01_Init(self):
-        """ Create a JSON object for Location.5
+        """ Create a JSON object for Location.
         """
         # print(PrettyFormatAny.form(self.m_api, 'P1-01-A - API'))
         pass
 
     def test_02_Load(self):
-        _l_xml = self.m_api.LoadXml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'P1-01-A - API'))
+        l_xml = self.m_api.LoadXml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_xml, 'P1-02-A - API'))
+        self.assertEqual(l_xml.Name, TESTING_HOUSE_NAME)
 
     def test_03_Start(self):
         pass

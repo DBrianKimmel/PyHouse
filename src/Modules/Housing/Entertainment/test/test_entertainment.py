@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Entertainment/test/test_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 14, 2013
 @summary:   Test
 
-Passed all 2 tests - DBK - 2016-11-10
+Passed all 2 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -47,6 +47,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
 
 # ## END DBK

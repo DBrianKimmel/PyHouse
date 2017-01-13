@@ -2,18 +2,18 @@
 @name:      PyHouse/src/Modules/Housing/Entertainment/test/test_onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 10 tests - DBK - 2016-11-13
+Passed all 10 tests - DBK - 2017-01-12
 
 """
 from Modules.Utilities import convert
 from Modules.Core.data_objects import EntertainmentData
 
-__updated__ = '2016-11-23'
+__updated__ = '2017-01-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -105,7 +105,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.entertainment_sect.find('OnkyoSection').find('Device')
         # print(PrettyFormatAny.form(l_xml, 'C1-01-A - XML Base Onkyo device.'))
         l_obj = onkyoXML._read_device(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Onkyo device.'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Onkyo device.'))
         self.assertEqual(str(l_obj.Name), TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_ONKYO_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_ONKYO_DEVICE_ACTIVE_0)
@@ -145,7 +145,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """Test the write for proper XML elements
         """
         l_xml = onkyoXML._write_device(self.m_onkyo[0])
-        print(PrettyFormatAny.form(l_xml, 'D1-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_ONKYO_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_ONKYO_DEVICE_ACTIVE_0)

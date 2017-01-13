@@ -1,10 +1,10 @@
 """
--*- test-case-name: PyHouse.src.Modules.lights.test.test_lighting_lights -*-
+-*- test-case-name: PyHouse.src.Modules.Housing.Lighting.test.test_lighting_lights -*-
 
-@name:      PyHouse/src/Modules/lights/lighting_lights.py
+@name:      PyHouse/src/Modules/Housing/Lighting/lighting_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2016 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @note:      Created on May 1, 2011
 @license:   MIT License
 @summary:   This module handles the lights component of the lighting system.
@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -46,8 +46,6 @@ class Utility(object):
         """
         l_obj = LightData()
         l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
-        l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 3
         return l_obj
 
     @staticmethod
@@ -57,14 +55,26 @@ class Utility(object):
 
     @staticmethod
     def _read_light_data(_p_pyhouse_obj, p_obj, p_xml):
+        p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         p_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
         p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
+        p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType', 1)
+        p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType', 3)
+        p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
+        p_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
+        p_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_xml, 'RoomCoords')
         return p_obj  # for testing
 
     @staticmethod
     def _write_light_data(p_obj, p_xml):
+        PutGetXML.put_text_element(p_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_text_element(p_xml, 'CurLevel', p_obj.CurLevel)
         PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
+        PutGetXML.put_int_element(p_xml, 'DeviceType', p_obj.DeviceType)
+        PutGetXML.put_int_element(p_xml, 'DeviceSubType', p_obj.DeviceSubType)
+        PutGetXML.put_text_element(p_xml, 'RoomName', p_obj.RoomName)
+        PutGetXML.put_uuid_element(p_xml, 'RoomUUID', p_obj.RoomUUID)
+        PutGetXML.put_coords_element(p_xml, 'RoomCoords', p_obj.RoomCoords)
         return p_xml
 
     @staticmethod

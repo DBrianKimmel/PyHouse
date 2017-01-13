@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Pool/test/test_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 27, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2016-07-14
+Passed all 11 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
