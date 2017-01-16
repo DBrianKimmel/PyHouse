@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Pool/test/test_pool.py
+@name:      PyHouse/src/Modules/Housing/Pool/test/test_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel
@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

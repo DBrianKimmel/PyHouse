@@ -2,29 +2,30 @@
 @name:      PyHouse/src/Modules/Utilities/test/test_uuid_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 22, 2015
 @Summary:
 
-Passed all 7 tests - DBK - 2016-11-16
+Passed all 7 tests - DBK - 2017-01-15
 
 """
-from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIV_START
-from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODE_SECTION_START
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-15'
 
 #  Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Core.data_objects import UuidData
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities.uuid_tools import Uuid, FileUuid
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
+from Modules.Utilities import uuid_tools
+from Modules.Utilities.uuid_tools import Uuid
+from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
+from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODE_SECTION_START
+from Modules.Core.data_objects import UuidData
+from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
 #  Import PyMh files and modules.
@@ -59,7 +60,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_02_Tags(self):
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIV_START)
+        self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
         self.assertEqual(self.m_xml.node_sect.tag, TESTING_NODE_SECTION_START)
 
 
@@ -81,7 +82,31 @@ class A2_XML(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids.All, 'All'))
 
 
-class B1_UUID(SetupMixin, unittest.TestCase):
+class B1_Defs(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_File(self):
+        """ Fixed literal file name in test to be sure it is exactly where we want it.
+        """
+        l_file = uuid_tools._file_name(self.m_pyhouse_obj, 'Computer.uuid')
+        print('B1-01-A - File Name:{}'.format(l_file))
+        self.assertEqual(l_file, '/etc/pyhouse/Computer.uuid')
+
+    def test_02_Uuid(self):
+        l_uuid = uuid_tools.get_uuid_file(self.m_pyhouse_obj, 'Computer.uuid')
+        print('B1-02-A - UUID:{}'.format(l_uuid))
+        self.assertEqual(len(l_uuid), 36)
+        self.assertEqual(l_uuid[8:9], '-')
+        self.assertEqual(l_uuid[13:14], '-')
+        self.assertEqual(l_uuid[18:19], '-')
+        self.assertEqual(l_uuid[23:24], '-')
+
+
+class B2_UUID(SetupMixin, unittest.TestCase):
     """
     This series tests the complex PutGetXML class methods
     """
@@ -112,18 +137,18 @@ class B1_UUID(SetupMixin, unittest.TestCase):
         l_obj_0.UUID = '12345678-dead-beef-dead-fedcba987654'
         l_obj_0.UuidType = 'House'
         Uuid.add_uuid(self.m_pyhouse_obj, l_obj_0)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B1-4-A - one'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B2-04-A - one'))
         self.assertEqual(self.m_pyhouse_obj.Uuids.All[l_obj_0.UUID].UuidType, l_obj_0.UuidType)
         #
         l_obj_1 = UuidData()
         l_obj_1.UUID = '01234567-dead-beef-dead-fedcba987654'
         l_obj_1.UuidType = 'Room'
         Uuid.add_uuid(self.m_pyhouse_obj, l_obj_1)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids.All, 'B1-4-B - two'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids.All, 'B2-04-B - two'))
         self.assertEqual(self.m_pyhouse_obj.Uuids.All[l_obj_1.UUID].UuidType, l_obj_1.UuidType)
 
 
-class B2_File(SetupMixin, unittest.TestCase):
+class B3_File(SetupMixin, unittest.TestCase):
     """This tests reading and writing of uuid files in the /etc/pyhouse directory
     """
 
@@ -131,10 +156,9 @@ class B2_File(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Read(self):
-        FileUuid().XXXread_file('Computer')
+        pass
 
     def test_02_Write(self):
-        # FileUuid().XXXwrite_file('Computer')
         pass
 
 #  ## END DBK

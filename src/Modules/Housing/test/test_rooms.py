@@ -10,16 +10,16 @@
 Passed all 18 tests - DBK 2017-01-12
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Housing.rooms import RoomCls as roomsApi, Maint as roomsMaint
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Housing.rooms import RoomCls as roomsApi, Maint as roomsMaint
 from Modules.Utilities import json_tools
 from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_0, \
@@ -120,7 +120,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
         self.assertEqual(self.m_xml.room_sect.tag, 'RoomSection')
         self.assertEqual(self.m_xml.room.tag, 'Room')

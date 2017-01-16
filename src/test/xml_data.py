@@ -2,7 +2,7 @@
 @name:      PyHouse/src/test/xml_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2016 by D. Brian Kimmel
+@copyright: (c) 2010-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jan 20, 2010
 @summary:   Handle all of the information for all houses.
@@ -12,7 +12,7 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
-__updated__ = '2017-01-10'
+__updated__ = '2017-01-14'
 
 #  Import system type stuff
 
@@ -21,6 +21,8 @@ from Modules.Core.data_objects import __version__ as dataVersion
 from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
 from Modules.Housing.test.xml_housing import HOUSE_DIVISION_XML
 
+
+TESTING_PYHOUSE = 'PyHouse'
 
 TESTING_VERSION = dataVersion
 TESTING_XMLNS_COMP = 'http://PyHouse.Org/ComputerDiv'
@@ -34,7 +36,7 @@ L_XMLNS_XSI = '    xmlns:xsi="' + TESTING_XMLNS_XSI + '"'
 L_XSI_SCHEMA = '    xsi:schemaLocation="' + TESTING_XSI_SCHEMA + '"'
 
 L_PYHOUSE_START = '\n'.join([
-    '<PyHouse',
+    '<' + TESTING_PYHOUSE + ' ',
     L_VERSION,
     L_XMLNS_COMP,
     L_XMLNS_XSI,
@@ -42,7 +44,7 @@ L_PYHOUSE_START = '\n'.join([
     '>',
     TESTING_UPDATE_COMMENT
 ])
-L_PYHOUSE_END = '</PyHouse>'
+L_PYHOUSE_END = '</' + TESTING_PYHOUSE + '>'
 
 
 XML_EMPTY = '\n'.join([

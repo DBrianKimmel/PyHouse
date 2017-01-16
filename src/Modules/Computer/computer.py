@@ -1,10 +1,10 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer.test.test_computer -*-
 
-@name:      PyHouse/src/Modules/computer/computer.py
+@name:      PyHouse/src/Modules/Computer/computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Jun 24, 2014
 @license:   MIT License
 @summary:   Handle the computer information.
@@ -28,44 +28,34 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-01-09'
+__updated__ = '2017-01-16'
 
 #  Import system type stuff
 import platform
 
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation, UuidData
-from Modules.Computer import logging_pyh as Logger
-# from Modules.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
-from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Utilities import uuid_tools
 from Modules.Utilities.debug_tools import PrettyFormatAny
-
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Computer       ')
+
 COMPUTER_DIVISION = 'ComputerDivision'
-FILE_PATH = '/etc/pyhouse/Computer.uuid'
+UUID_FILE_NAME = 'Computer.uuid'
 
 # MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
 
 
 class UuidFile(object):
-
-    def read_uuid_file(self):
-        try:
-            _l_file = open(FILE_PATH, mode='r')
-        except IOError as e_err:
-            LOG.error(" -- Error in open_config_file {}".format(e_err))
-        pass
-
-    def write_uuid_file(self):
-        pass
+    """
+    """
 
 
 class MqttActions(object):
@@ -109,40 +99,7 @@ class MqttActions(object):
 class Xml(object):
 
     @staticmethod
-    def create_computer(_p_pyhouse_obj):
-        l_xml = ComputerInformation()
-        l_xml.Name = platform.node()
-        l_xml.Key = 0
-        l_xml.Active = True
-        l_xml.UUID = Uuid.create_uuid()
-        return l_xml
-
-    @staticmethod
-    def read_computer_xml(p_pyhouse_obj):
-        """
-        The XML for all the sections within the division UuidTypeare read by the appropriate sub-module.
-        Therefore, there is not much to do here.
-        """
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find(COMPUTER_DIVISION)
-        if l_xml is None:
-            l_obj = Xml.create_computer(p_pyhouse_obj)
-            p_pyhouse_obj.Computer = l_obj
-            LOG.warn('Creating NEW Uuid')
-        else:
-            l_obj = XmlConfigTools.read_base_UUID_object_xml(p_pyhouse_obj.Computer, l_xml)
-            l_msg = 'Resuming Computers UUID is {}'.format(l_obj.UUID)
-            LOG.warn(l_msg)
-        l_uuid_obj = UuidData()
-        l_uuid_obj.UUID = l_obj.UUID
-        l_uuid_obj.UuidType = 'Computer'
-        uuid_tools.Uuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
-        return l_obj
-
-    @staticmethod
     def write_computer_xml(p_pyhouse_obj):
-        # p_pyhouse_obj.Computer.Name = platform.node()
-        # p_pyhouse_obj.Computer.Key = 0
-        # p_pyhouse_obj.Computer.Active = True
         l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
         return l_xml
 
@@ -202,10 +159,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(p_xml)
         return p_xml
 
-    @staticmethod
-    def read_uuid_file():
-        pass
-
 
 class API(Utility):
 
@@ -216,6 +169,9 @@ class API(Utility):
         LOG.info('Initializing')
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
+        p_pyhouse_obj.Key = 0
+        p_pyhouse_obj.Active = True
+        p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
@@ -224,10 +180,6 @@ class API(Utility):
         """
         """
         LOG.info('Loading XML')
-        p_pyhouse_obj.Computer = ComputerInformation()  # Clear before loading.
-        p_pyhouse_obj.Computer.Name = platform.node()
-        l_comp = Xml.read_computer_xml(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.UUID = l_comp.UUID
         Utility._load_component_xml(p_pyhouse_obj)
         LOG.info('XML Loaded')
 

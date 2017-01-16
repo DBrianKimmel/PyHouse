@@ -4,22 +4,44 @@
 @name:      PyHouse/src/Modules/Utilities/uuid_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 22, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-15'
 
 #  Import system type stuff
+import os
 import uuid
 
 #  Import PyMh files
 # from Modules.Core.data_objects import UuidData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UuidTools      ')
+
+
+def _file_name(p_pyhouse_obj, p_file_name):
+    """ Find the name of the file we will be using.
+    """
+    l_file = os.path.join(p_pyhouse_obj.Xml.XmlConfigDir, p_file_name)
+    return l_file
+
+def get_uuid_file(p_pyhouse_obj, p_file_name):
+    """ get the uuid for the file if it exists OR create the file with a persistent UUID if needed.
+    """
+    l_file_name = _file_name(p_pyhouse_obj, p_file_name)
+    try:
+        l_file = open(l_file_name, mode='r')
+        l_uuid = l_file.read()
+    except IOError:
+        l_uuid = Uuid.create_uuid()
+        l_file = open(l_file_name, mode='w')
+        l_file.write (l_uuid)
+    l_file.close()
+    return l_uuid
 
 
 class Uuid(object):

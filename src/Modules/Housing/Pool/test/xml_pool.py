@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Pool/test/xml_pool.py
+@name:      PyHouse/src/Modules/Housing/Pool/test/xml_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2015 by D. Brian Kimmel
@@ -8,9 +8,12 @@
 @Summary:
 
 """
+__updated__ = '2017-01-13'
 
-L_POOL_SECTION_START = '<PoolSection>'
-L_POOL_SECTION_END = '</PoolSection>'
+TESTING_POOL_SECTION = 'PoolSection'
+
+L_POOL_SECTION_START = '<' + TESTING_POOL_SECTION + '>'
+L_POOL_SECTION_END = '</' + TESTING_POOL_SECTION + '>'
 
 TESTING_POOL_NAME_0 = 'Pond'
 TESTING_POOL_KEY_0 = '0'

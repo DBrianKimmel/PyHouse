@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/test/xml_computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 8, 2014
 @Summary:
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-14'
 
 # Import system type stuff
 
@@ -21,8 +21,8 @@ from Modules.Computer.Nodes.test.xml_nodes import XML_NODES
 from Modules.Computer.Web.test.xml_web import XML_WEB_SERVER
 
 
-TESTING_COMPUTER_DIV_START = 'ComputerDivision'
-L_COMPUTER_DIVISION_END = '  </ComputerDivision>'
+TESTING_COMPUTER_DIVISION = 'ComputerDivision'
+L_COMPUTER_DIVISION_END = '  </' + TESTING_COMPUTER_DIVISION + '>'
 
 TESTING_COMPUTER_NAME_0 = 'TestingComputer'
 TESTING_COMPUTER_KEY_0 = '0'
@@ -30,7 +30,7 @@ TESTING_COMPUTER_ACTIVE_0 = 'True'
 TESTING_COMPUTER_UUID = 'Computer-0000-0000-0000-123456789ABC'
 
 L_COMPUTER_DIV_ENTRY = '  ' + \
-    '  <' + TESTING_COMPUTER_DIV_START + \
+    '  <' + TESTING_COMPUTER_DIVISION + \
     ' Name="' + TESTING_COMPUTER_NAME_0 + \
     '" Key="' + TESTING_COMPUTER_KEY_0 + \
     '" Active="' + TESTING_COMPUTER_ACTIVE_0 + \

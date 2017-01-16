@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-15'
 
 #  Import system type stuff
 
@@ -45,11 +45,13 @@ from Modules.Housing.Lighting.lighting import API as lightingAPI
 from Modules.Housing.Pool.pool import API as poolAPI
 from Modules.Housing.Scheduling.schedule import API as scheduleAPI
 from Modules.Housing.Security.security import API as securityAPI
+from Modules.Utilities import uuid_tools
 from Modules.Utilities.uuid_tools import Uuid
 from Modules.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 
+UUID_FILE_NAME = 'House.uuid'
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
 
 
@@ -184,6 +186,11 @@ class API(Utility):
         """
         """
         LOG.info('Initializing')
+        p_pyhouse_obj.Name = 'No Name yet'
+        p_pyhouse_obj.Key = 0
+        p_pyhouse_obj.Active = True
+        p_pyhouse_obj.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
+
         p_pyhouse_obj.APIs.House = HouseAPIs()
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj

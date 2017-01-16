@@ -1,15 +1,15 @@
 """
-@name:      PyHouse/src/Modules/Pool/pool.py
+@name:      PyHouse/src/Modules/Housing/Pool/pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 29, 2015
 @Summary:
 
 """
 
-__updated__ = '2016-11-28'
+__updated__ = '2017-01-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
