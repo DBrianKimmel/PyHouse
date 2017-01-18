@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2017-01-10'
+__updated__ = '2017-01-16'
 __version_info__ = (1, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -220,7 +220,7 @@ class API(object):
         #  Utilities.do_setup_stuff(self)
         p_pyhouse_obj = Utilities._create_pyhouse_obj()
         self.m_pyhouse_obj = p_pyhouse_obj
-        print('PyHouse.API()')  # For development - so we  an see when we get to this point...
+        print('PyHouse.API()')  # For development - so we can see when we get to this point...
         p_pyhouse_obj.APIs.PyHouseMainAPI = self
         p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, p_pyhouse_obj)
@@ -232,9 +232,9 @@ class API(object):
         raise SystemExit("PyHouse says Bye Now.")
 
     def LoadXml(self, p_pyhouse_obj):
-        """ This is automatically invoked when the reactor starts from API().
+        """ This is automatically invoked when the reactor starts from API().__init__{}.
         """
-        LOG.info('Loading XML')
+        LOG.info('Loading XML - Reactor is now running!')
         p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callLater(10, self.Start)
         LOG.info('Loaded XML\n-----------------------------------------\n')

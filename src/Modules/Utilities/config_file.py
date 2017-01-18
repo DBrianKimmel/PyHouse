@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Utilities/config_file.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 15, 2014
 @Summary:   This handles creation, read and write of the XML Config file.
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-16'
 
 #  Import system type stuff
 import datetime
@@ -97,10 +97,10 @@ class API(object):
             p_pyhouse_obj.Xml.XmlFileName = XML_FILE_NAME
         try:
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
-        except (SyntaxError, IOError) as e_error:
+        except (SyntaxError, IOError):
             Util()._create_empty_config_file(p_pyhouse_obj)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
-            LOG.warning("No config file found - Error:{}\n\n\tEmpty config file created.\n==========\n".format(e_error))
+            LOG.info("No config file found\n\n\tEmpty config file has been created.\n==========\n")
 
         p_pyhouse_obj.Xml.XmlRoot = l_xmltree.getroot()
         l_version = p_pyhouse_obj.Xml.XmlRoot.attrib['Version']

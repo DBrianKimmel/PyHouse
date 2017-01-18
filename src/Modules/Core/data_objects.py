@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-01-13'
+__updated__ = '2017-01-16'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -218,6 +218,13 @@ class LocationData(object):
         #  Computed at startup (refreshed periodically)
         #  self._Sunrise = None
         #  self._Sunset = None
+
+
+class ModuleObject(object):
+    """
+    """
+    def __init__(self):
+        self.Active = False
 
 
 class MqttInformation(object):
@@ -494,15 +501,15 @@ class HouseInformation(BaseUUIDObject):
         self.FamilyData = {}  # FamilyData['FamilyName']
         self.HouseMode = 'Home'  # Home, Away, Vacation,
         self.Entertainment = {}  # EntertainmentData()
-        self.Hvac = None  # HvacData()
-        self.Irrigation = None  # IrrigationData()
-        self.Lighting = None  # LightingData()
+        self.Hvac = {}  # HvacData()
+        self.Irrigation = {}  # IrrigationData()
+        self.Lighting = {}  # LightingData()
         self.Location = {}  # LocationData() - one location per house.
-        self.Pools = None  # PoolData()
+        self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomData()
-        self.Rules = None  # RulesData()
+        self.Rules = {}  # RulesData()
         self.Schedules = {}  # ScheduleBaseData()
-        self.Security = None  # SecurityData()
+        self.Security = {}  # SecurityData()
 
 
 class LoginData(BaseUUIDObject):
