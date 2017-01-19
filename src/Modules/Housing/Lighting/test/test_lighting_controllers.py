@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules/Lighting/test/test_lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 18 tests - DBK - 2016-11-14
+Passed all 19 tests - DBK - 2017-01-19
 """
 
-__updated__ = '2016-11-14'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core import conversions
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.family import API as familyAPI
@@ -54,11 +54,15 @@ from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_GROUP_NUM_1, \
     TESTING_INSTEON_ENGINE_VERSION_1, \
     TESTING_INSTEON_FIRMWARE_VERSION_1
+from Modules.Housing.test.xml_housing import \
+    TESTING_HOUSE_DIVISION
+from Modules.Housing.Lighting.test.xml_lighting import \
+    TESTING_LIGHTING_SECTION
 from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_ACTIVE_0, \
     TESTING_CONTROLLER_KEY_0, \
-    TESTING_CONTROLLER_UUID_0
+    TESTING_CONTROLLER_UUID_0, TESTING_CONTROLLER_SECTION, TESTING_CONTROLLER, XML_CONTROLLER_SECTION
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -81,43 +85,44 @@ class A0(unittest.TestCase):
         print('Id: test_lighting_controllers')
 
 
-class A1_SetUp(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_controllers.
-    """
+class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_FindXml(self):
+    def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
-        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
-        self.assertEqual(self.m_xml.controller.tag, 'Controller')
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, {})
 
-    def test_02_Xml(self):
-        pass
-
-    def test_03_Family(self):
-        self.assertEqual(self.m_family['Insteon'].Name, 'Insteon')
+    def test_02_FindXML(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.lighting_sect.tag, TESTING_LIGHTING_SECTION)
+        self.assertEqual(self.m_xml.controller_sect.tag, TESTING_CONTROLLER_SECTION)
+        self.assertEqual(self.m_xml.controller.tag, TESTING_CONTROLLER)
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_controllers.
-    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_FindXml(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_xml, 'AllControllers'))
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
         pass
+
+    def test_01_Raw(self):
+        l_xml = XML_CONTROLLER_SECTION
+        # print(l_xml)
+        self.assertEqual(l_xml[:19], '<ControllerSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_CONTROLLER_SECTION)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_CONTROLLER_SECTION)
+
+    def test_03_Family(self):
+        self.assertEqual(self.m_family['Insteon'].Name, 'Insteon')
 
 
 class B1_Read(SetupMixin, unittest.TestCase):

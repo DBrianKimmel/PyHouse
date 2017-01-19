@@ -7,54 +7,66 @@
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 24 tests - DBK - 2016-11-14
+Passed all 24 tests - DBK - 2017-01-19
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightingData
 from Modules.Housing.Lighting.lighting_lights import Utility, API as lightsAPI
 from Modules.Core import conversions
 from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon.test.xml_insteon import \
-        TESTING_INSTEON_ADDRESS_0, \
-        TESTING_INSTEON_DEVCAT_0, \
-        TESTING_INSTEON_GROUP_LIST_0, \
-        TESTING_INSTEON_GROUP_NUM_0, \
-        TESTING_INSTEON_PRODUCT_KEY_0
+    TESTING_INSTEON_ADDRESS_0, \
+    TESTING_INSTEON_DEVCAT_0, \
+    TESTING_INSTEON_GROUP_LIST_0, \
+    TESTING_INSTEON_GROUP_NUM_0, \
+    TESTING_INSTEON_PRODUCT_KEY_0
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_FAMILY_INSTEON
+    TESTING_DEVICE_FAMILY_INSTEON
+from Modules.Housing.test.xml_housing import \
+    TESTING_HOUSE_DIVISION
+from Modules.Housing.Lighting.test.xml_lighting import \
+    TESTING_LIGHTING_SECTION
 from Modules.Housing.Lighting.test.xml_lights import \
-        TESTING_LIGHT_NAME_0, \
-        TESTING_LIGHT_CUR_LEVEL_0, \
-        TESTING_LIGHT_IS_DIMMABLE_0, \
-        TESTING_LIGHT_KEY_0, \
-        TESTING_LIGHT_ACTIVE_0, \
-        TESTING_LIGHT_COMMENT_0, \
-        TESTING_LIGHT_ROOM_NAME_0, \
-        TESTING_LIGHT_UUID_0, \
-        TESTING_LIGHT_ROOM_X0, \
-        TESTING_LIGHT_ROOM_Y0, \
-        TESTING_LIGHT_ROOM_Z0, \
-        TESTING_LIGHT_DEVICE_TYPE_0, \
-        TESTING_LIGHT_DEVICE_SUBTYPE_0, \
-        TESTING_LIGHT_DEVICE_FAMILY_0, \
-        TESTING_LIGHT_ROOM_UUID_0, \
-        TESTING_LIGHT_NAME_1, \
-        TESTING_LIGHT_KEY_1, \
-        TESTING_LIGHT_ACTIVE_1, \
-        TESTING_LIGHT_UUID_1, \
-    TESTING_LIGHT_COMMENT_1, TESTING_LIGHT_DEVICE_FAMILY_1, TESTING_LIGHT_DEVICE_TYPE_1, TESTING_LIGHT_DEVICE_SUBTYPE_1, \
-    TESTING_LIGHT_ROOM_NAME_1, TESTING_LIGHT_ROOM_UUID_1, TESTING_LIGHT_CUR_LEVEL_1, TESTING_LIGHT_IS_DIMMABLE_1, \
-    TESTING_LIGHT_ROOM_COORDS_1
+    TESTING_LIGHT_NAME_0, \
+    TESTING_LIGHT_CUR_LEVEL_0, \
+    TESTING_LIGHT_IS_DIMMABLE_0, \
+    TESTING_LIGHT_KEY_0, \
+    TESTING_LIGHT_ACTIVE_0, \
+    TESTING_LIGHT_COMMENT_0, \
+    TESTING_LIGHT_ROOM_NAME_0, \
+    TESTING_LIGHT_UUID_0, \
+    TESTING_LIGHT_ROOM_X0, \
+    TESTING_LIGHT_ROOM_Y0, \
+    TESTING_LIGHT_ROOM_Z0, \
+    TESTING_LIGHT_DEVICE_TYPE_0, \
+    TESTING_LIGHT_DEVICE_SUBTYPE_0, \
+    TESTING_LIGHT_DEVICE_FAMILY_0, \
+    TESTING_LIGHT_ROOM_UUID_0, \
+    TESTING_LIGHT_NAME_1, \
+    TESTING_LIGHT_KEY_1, \
+    TESTING_LIGHT_ACTIVE_1, \
+    TESTING_LIGHT_UUID_1, \
+    TESTING_LIGHT_COMMENT_1, \
+    TESTING_LIGHT_DEVICE_FAMILY_1, \
+    TESTING_LIGHT_DEVICE_TYPE_1, \
+    TESTING_LIGHT_DEVICE_SUBTYPE_1, \
+    TESTING_LIGHT_ROOM_NAME_1, \
+    TESTING_LIGHT_ROOM_UUID_1, \
+    TESTING_LIGHT_CUR_LEVEL_1, \
+    TESTING_LIGHT_IS_DIMMABLE_1, \
+    TESTING_LIGHT_ROOM_COORDS_1, \
+    TESTING_LIGHT_SECTION, \
+    TESTING_LIGHT
 from Modules.Utilities import json_tools
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -89,10 +101,10 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
-        self.assertEqual(self.m_xml.light.tag, 'Light')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.lighting_sect.tag, TESTING_LIGHTING_SECTION)
+        self.assertEqual(self.m_xml.light.tag, TESTING_LIGHT)
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')

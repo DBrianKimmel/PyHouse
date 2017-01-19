@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 13 tests.  DBK 2016-11-05
+Passed all 10 tests.  DBK 2017-01-19
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -23,14 +23,19 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightData
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI
+from Modules.Housing.Lighting.test.xml_lighting import \
+    TESTING_LIGHTING_SECTION, \
+    XML_LIGHTING
+from Modules.Housing.test.xml_housing import \
+    TESTING_HOUSE_DIVISION
 from Modules.Housing.Lighting.test.xml_controllers import \
-        TESTING_CONTROLLER_NAME_0, \
-        TESTING_CONTROLLER_NAME_1
+    TESTING_CONTROLLER_NAME_0, \
+    TESTING_CONTROLLER_NAME_1
 from Modules.Core.test.xml_device import \
-        TESTING_DEVICE_FAMILY_INSTEON
+    TESTING_DEVICE_FAMILY_INSTEON
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
-    TESTING_LIGHT_NAME_1
+    TESTING_LIGHT_NAME_1, TESTING_LIGHT_SECTION
 from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_NAME_0, \
     TESTING_LIGHTING_BUTTON_NAME_1
@@ -62,31 +67,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_SetupLighting(self):
-        """Verify that we can find items we need in the test XML
-        """
-        pass
-
-    def test_2_PyHouse(self):
-        self.assertIsNotNone(self.m_pyhouse_obj.Xml)
-
-    def test_3_XML(self):
-        self.assertIsNotNone(self.m_xml.house_div)
-
-    def test_4_Light(self):
-        self.assertEqual(self.m_light_obj.Name, 'undefined baseobject')
-
-    def test_5_Api(self):
-        self.assertIsNotNone(self.m_api)
-
-
-class A2_XML(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by Lights.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
     def test_01_Version(self):
         self.assertGreater(self.m_pyhouse_obj.Xml.XmlVersion, '1.4.0')
 
@@ -94,12 +74,29 @@ class A2_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.lighting_sect.tag, TESTING_LIGHTING_SECTION)
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
         self.assertEqual(self.m_xml.button.tag, 'Button')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
         self.assertEqual(self.m_xml.light.tag, 'Light')
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_LIGHTING
+        print(l_raw)
+        self.assertEqual(l_raw[:17], '<LightingSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_LIGHTING)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_LIGHTING_SECTION)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -166,14 +163,14 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """
         self.m_api._read_lighting_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_obj, 'House'))
-        l_xml = ET.Element('HouseDivision')
+        l_xml = ET.Element(TESTING_HOUSE_DIVISION)
         l_xml = self.m_api._write_lighting_xml(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_xml, 'B2-1-A - XML'))
         self.assertEqual(len(l_xml), 3)
         self.assertEqual(len(l_xml[0]), 2)
         self.assertEqual(len(l_xml[1]), 2)
         self.assertEqual(len(l_xml[2]), 2)
-        self.assertEqual(l_xml.find('LightSection').tag, 'LightSection')
+        self.assertEqual(l_xml.find(TESTING_LIGHT_SECTION).tag, TESTING_LIGHT_SECTION)
         self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
         self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
         self.assertEqual(l_xml.find('ControllerSection/Controller').tag, 'Controller')

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-18'
 
 #  Import system type stuff
 import platform
@@ -213,7 +213,7 @@ class SetupPyHouseObj(object):
         p_xml.light_sect = p_xml.lighting_sect.find('LightSection')
         p_xml.light = p_xml.light_sect.find('Light')
         #
-        p_xml.irrigation_system = p_xml.irrigation_sect.find('IrrigationSystem')
+        p_xml.irrigation_system = p_xml.irrigation_sect.find('System')
         p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
         p_xml.room = p_xml.room_sect.find('Room')
         p_xml.hvac_sect = p_xml.house_div.find('HvacSection')

@@ -10,19 +10,21 @@
 Passed all 11 tests - DBK - 2017-01-12
 
 """
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 
-__updated__ = '2017-01-13'
+__updated__ = '2017-01-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import PoolData
-from test.xml_data import XML_LONG
-from Modules.Housing.Pool.pool import Xml as poolXml
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import PoolData
+from Modules.Housing.Pool.pool import Xml as poolXml
 from Modules.Housing.Pool.test.xml_pool import \
+        XML_POOL, \
         TESTING_POOL_NAME_0, \
         TESTING_POOL_KEY_0, \
         TESTING_POOL_ACTIVE_0, \
@@ -32,7 +34,8 @@ from Modules.Housing.Pool.test.xml_pool import \
         TESTING_POOL_KEY_1, \
         TESTING_POOL_ACTIVE_1, \
         TESTING_POOL_COMMENT_1, \
-        TESTING_POOL_UUID_0
+        TESTING_POOL_UUID_0, \
+        TESTING_POOL_SECTION
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -61,14 +64,14 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.Pools, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Pools, {})
 
     def test_02_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.pool_sect.tag, 'PoolSection')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.pool_sect.tag, TESTING_POOL_SECTION)
 
     def test_03_XML(self):
         """ Be sure that the XML contains the right stuff.
@@ -83,6 +86,23 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         l_pools = self.m_pyhouse_obj.House.Pools
         # print(PrettyFormatAny.form(l_pools, 'Pools'))
         self.assertEqual(len(l_pools), 2)
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_POOL
+        print(l_raw)
+        self.assertEqual(l_raw[:13], '<PoolSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_POOL)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_POOL_SECTION)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -156,7 +176,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """
         l_xml = poolXml.write_all_pools_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_xml, 'Pool'))
-        l_xml1 = l_xml.find('Pool')
+        # l_xml1 = l_xml.find('Pool')
         l_xml2 = l_xml[1]
         self.assertEqual(l_xml2.attrib['Name'], TESTING_POOL_NAME_1)
         self.assertEqual(l_xml2.attrib['Key'], TESTING_POOL_KEY_1)

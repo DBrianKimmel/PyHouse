@@ -11,7 +11,7 @@ There is a matrix of controllers to create here
 
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 
@@ -31,11 +31,14 @@ from Modules.Drivers.USB.test.xml_usb import \
         XML_USB
 
 
+TESTING_CONTROLLER_SECTION = 'ControllerSection'
+TESTING_CONTROLLER = 'Controller'
+
 L_SERIAL_INTERFACE = XML_SERIAL_LINUX_INTERFACE
 
-L_CONTROLLER_SECTION_START = '<ControllerSection>'
-L_CONTROLLER_SECTION_END = '</ControllerSection>'
-L_CONTROLLER_END = '</Controller>'
+L_CONTROLLER_SECTION_START = '<' + TESTING_CONTROLLER_SECTION + '>'
+L_CONTROLLER_SECTION_END = '</' + TESTING_CONTROLLER_SECTION + '>'
+L_CONTROLLER_END = '</' + TESTING_CONTROLLER + '>'
 
 TESTING_CONTROLLER_NAME_0 = 'Insteon Serial Controller'
 TESTING_CONTROLLER_KEY_0 = '0'

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Schedule events
@@ -28,7 +28,6 @@ Controls:
     Irrigation
     Lighting
     Pool
-    Remote
     Security
     UPNP
 
@@ -41,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-18'
 
 #  Import system type stuff
 import datetime

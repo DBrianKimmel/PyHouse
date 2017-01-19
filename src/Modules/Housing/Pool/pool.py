@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-13'
+__updated__ = '2017-01-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -65,16 +65,18 @@ class Xml(object):
     @staticmethod
     def write_all_pools_xml(p_pyhouse_obj):
         l_xml = ET.Element('PoolSection')
+        l_count = 0
         l_pools_obj = p_pyhouse_obj.House.Pools
         if l_pools_obj == {}:
-            return l_xml
+            return (l_xml, l_count)
         try:
             for l_obj in l_pools_obj.itervalues():
                 l_sys = Xml._write_one_pool(l_obj)
+                l_count += 1
                 l_xml.append(l_sys)
         except AttributeError as e_err:
             LOG.error('{}'.format(e_err))
-        return l_xml
+        return (l_xml, l_count)
 
 
 class API(object):
@@ -98,9 +100,12 @@ class API(object):
         return l_dict
 
     def SaveXml(self, p_xml):
-        l_xml = Xml.write_all_pools_xml(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
-        LOG.info("Saved Pool XML.")
+        (l_xml, l_count) = Xml.write_all_pools_xml(self.m_pyhouse_obj)
+        if l_count > 0:
+            p_xml.append(l_xml)
+            LOG.info("Saved {} Pools XML.".format(l_count))
+        else:
+            LOG.info('No Pools were defined.')
         return p_xml
 
 # ## END DBK

@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 
@@ -20,9 +20,12 @@ from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0
 from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
-L_LIGHT_SECTION_START = '<LightSection>'
-L_LIGHT_SECTION_END = '</LightSection>'
-L_LIGHT_END = '</Light>'
+TESTING_LIGHT_SECTION = 'LightSection'
+TESTING_LIGHT = 'Light'
+
+L_LIGHT_SECTION_START = '<' + TESTING_LIGHT_SECTION + '>'
+L_LIGHT_SECTION_END = '</' + TESTING_LIGHT_SECTION + '>'
+L_LIGHT_END = '</' + TESTING_LIGHT + '>'
 
 TESTING_LIGHT_NAME_0 = "Light, Insteon (xml_lights) "
 TESTING_LIGHT_KEY_0 = '0'
@@ -47,10 +50,11 @@ TESTING_LIGHT_ROOM_COORDS_0 = \
     TESTING_LIGHT_ROOM_Z0 + ']'
 
 L_LIGHT_START_0 = \
-        '<Light Name="' + TESTING_LIGHT_NAME_0 + \
-        '" Key="' + TESTING_LIGHT_KEY_0 + \
-        '" Active="' + TESTING_LIGHT_ACTIVE_0 + \
-        '">'
+        '<' + TESTING_LIGHT + ' ' + \
+        'Name="' + TESTING_LIGHT_NAME_0 + '" ' + \
+        'Key="' + TESTING_LIGHT_KEY_0 + '" ' + \
+        'Active="' + TESTING_LIGHT_ACTIVE_0 + '" ' + \
+        '>'
 L_LIGHT_UUID_0 = '    <UUID>' + TESTING_LIGHT_UUID_0 + '</UUID>'
 L_LIGHT_COMMENT_0 = '    <Comment>' + TESTING_LIGHT_COMMENT_0 + '</Comment>'
 L_LIGHT_CUR_LEVEL_0 = '    <CurLevel>' + TESTING_LIGHT_CUR_LEVEL_0 + '</CurLevel>'
@@ -100,10 +104,11 @@ TESTING_LIGHT_ROOM_UUID_1 = 'Light...-Room-0000-0000-123458b6eb6f'
 
 
 L_LIGHT_START_1 = \
-        '<Light Name="' + TESTING_LIGHT_NAME_1 + \
-        '" Key="' + TESTING_LIGHT_KEY_1 + \
-        '" Active="' + TESTING_LIGHT_ACTIVE_1 + \
-        '">'
+        '<' + TESTING_LIGHT + ' ' + \
+        'Name="' + TESTING_LIGHT_NAME_1 + '" ' + \
+        'Key="' + TESTING_LIGHT_KEY_1 + '" ' + \
+        'Active="' + TESTING_LIGHT_ACTIVE_1 + '" ' + \
+        '>'
 L_LIGHT_UUID_1 = '    <UUID>' + TESTING_LIGHT_UUID_1 + '</UUID>'
 L_LIGHT_COMMENT_1 = '    <Comment>' + TESTING_LIGHT_COMMENT_1 + '</Comment>'
 L_LIGHT_CUR_LEVEL_1 = "    <CurLevel>" + TESTING_LIGHT_CUR_LEVEL_1 + "</CurLevel>"

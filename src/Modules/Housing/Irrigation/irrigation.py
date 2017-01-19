@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 4, 2014
 @Summary:
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-18'
 
 #  Import system type stuff
 

@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-15'
+__updated__ = '2017-01-18'
 
 #  Import system type stuff
 
@@ -52,7 +52,7 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 
 UUID_FILE_NAME = 'House.uuid'
-MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Scheduling', 'Security']
+MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Rules', 'Scheduling', 'Security']
 
 
 class MqttActions(object):

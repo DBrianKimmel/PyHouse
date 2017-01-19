@@ -2,23 +2,29 @@
 @name:      PyHouse/src/Modules/lighting/test/test_lighting_buttons.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 22, 2014
 @summary:   This module is for testing lighting buttons data.
 
-Passed all 10 tests - DBK - 2016-11-14
+Passed all 12 tests - DBK - 2017-01-19
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ButtonData
 from Modules.Housing.Lighting.lighting_buttons import Utility, API as buttonsAPI
+from Modules.Housing.test.xml_housing import \
+    TESTING_HOUSE_DIVISION
+from Modules.Housing.Lighting.test.xml_lighting import \
+    TESTING_LIGHTING_SECTION
 from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_NAME_0, \
     TESTING_LIGHTING_BUTTON_COMMENT_0, \
@@ -30,11 +36,9 @@ from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_KEY_0, \
     TESTING_LIGHTING_BUTTON_UUID_0, \
     TESTING_LIGHTING_BUTTON_ROOM_UUID_0, \
-    TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0
+    TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0, TESTING_BUTTON_SECTION, TESTING_BUTTON, XML_BUTTON_SECTION
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Utilities import json_tools
 # from Modules.Utilities.debug_tools import PrettyFormatAny
 
@@ -59,21 +63,40 @@ class A0(unittest.TestCase):
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_controllers.
-    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Tags(self):
+    def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
-        self.assertEqual(self.m_xml.button.tag, 'Button')
+        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, {})
 
-    def test_02_Xml(self):
+    def test_02_FindXML(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.lighting_sect.tag, TESTING_LIGHTING_SECTION)
+        self.assertEqual(self.m_xml.button_sect.tag, TESTING_BUTTON_SECTION)
+        self.assertEqual(self.m_xml.button.tag, TESTING_BUTTON)
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
         pass
+
+    def test_01_Raw(self):
+        l_xml = XML_BUTTON_SECTION
+        # print(l_xml)
+        self.assertEqual(l_xml[:15], '<ButtonSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_BUTTON_SECTION)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_BUTTON_SECTION)
 
     def test_03_Family(self):
         self.assertEqual(self.m_family['Insteon'].Name, 'Insteon')

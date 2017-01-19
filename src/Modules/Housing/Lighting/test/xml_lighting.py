@@ -13,7 +13,7 @@ Config File Version 1.4 placed this entire section under a new LightingSection e
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 
@@ -23,8 +23,10 @@ from Modules.Housing.Lighting.test.xml_controllers import XML_CONTROLLER_SECTION
 from Modules.Housing.Lighting.test.xml_lights import XML_LIGHT_SECTION
 
 
-L_LIGHTING_SECTION_START = '<LightingSection>'
-L_LIGHTING_SECTION_END = '</LightingSection>'
+TESTING_LIGHTING_SECTION = 'LightingSection'
+
+L_LIGHTING_SECTION_START = '<' + TESTING_LIGHTING_SECTION + '>'
+L_LIGHTING_SECTION_END = '</' + TESTING_LIGHTING_SECTION + '>'
 
 XML_LIGHTING = '\n'.join([
     L_LIGHTING_SECTION_START,

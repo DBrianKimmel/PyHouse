@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 
@@ -18,9 +18,12 @@ from Modules.Core.test.xml_device import XML_DEVICE_INSTEON
 from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
-L_BUTTON_SECTION_START = '<ButtonSection>'
-L_BUTTON_SECTION_END = '</ButtonSection>'
-L_LIGHTING_BUTTON_END = '</Button>'
+TESTING_BUTTON_SECTION = 'ButtonSection'
+TESTING_BUTTON = 'Button'
+
+L_BUTTON_SECTION_START = '<' + TESTING_BUTTON_SECTION + '>'
+L_BUTTON_SECTION_END = '</' + TESTING_BUTTON_SECTION + '>'
+L_LIGHTING_BUTTON_END = '</' + TESTING_BUTTON + '>'
 
 TESTING_LIGHTING_BUTTON_NAME_0 = 'Insteon Button 0'
 TESTING_LIGHTING_BUTTON_KEY_0 = '0'
@@ -39,10 +42,11 @@ TESTING_LIGHTING_BUTTON_ROOM_UUID_0 = 'Button..-Room-0001-0002-deadbeef1234'
 TESTING_LIGHTING_BUTTON_UUID_0 = 'Button..-Dev.-0001-0002-deadbeef1234'
 
 L_LIGHTING_BUTTON_START_0 = \
-        '<Button Name="' + TESTING_LIGHTING_BUTTON_NAME_0 + \
-        '" Key="' + TESTING_LIGHTING_BUTTON_KEY_0 + \
-        '" Active="' + TESTING_LIGHTING_BUTTON_ACTIVE_0 + \
-        '">'
+        '<' + TESTING_BUTTON + ' ' + \
+        'Name="' + TESTING_LIGHTING_BUTTON_NAME_0 + '" ' + \
+        'Key="' + TESTING_LIGHTING_BUTTON_KEY_0 + '" ' + \
+        'Active="' + TESTING_LIGHTING_BUTTON_ACTIVE_0 + '" ' + \
+        '>'
 L_LIGHTING_BUTTON_UUID_0 = '    <UUID>' + TESTING_LIGHTING_BUTTON_UUID_0 + '</UUID>'
 L_LIGHTING_BUTTON_COMMENT_0 = '    <Comment>' + TESTING_LIGHTING_BUTTON_COMMENT_0 + '</Comment>'
 L_LIGHTING_BUTTON_INSTEON_ADDRESS_0 = '    <InsteonAddress>' + TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0 + '</InsteonAddress>'

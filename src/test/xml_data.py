@@ -12,7 +12,7 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
-__updated__ = '2017-01-16'
+__updated__ = '2017-01-18'
 
 #  Import system type stuff
 
@@ -58,11 +58,5 @@ XML_LONG = '\n'.join([
     HOUSE_DIVISION_XML,
     L_PYHOUSE_END
 ])
-
-
-XSD_HEADER = """
-"""
-
-XSD_LONG = XSD_HEADER
 
 #  ## END DBK
