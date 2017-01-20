@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/Web/test/test_web_thermostat.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2017 by briank
 @license:   MIT License
 @note:      Created on Jul 1, 2014
 @Summary:
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import WebData, LoginData
 from Modules.Computer.Web.web_xml import Xml as webXml
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

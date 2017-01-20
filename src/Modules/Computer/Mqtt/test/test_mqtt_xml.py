@@ -7,11 +7,11 @@
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 9 tests - DBK - 2017-01-11
+Passed all 11 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-20'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,7 +19,7 @@ from twisted.trial import unittest
 
 #  Import PyMh files and modules.
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from test.xml_data import XML_LONG, XML_EMPTY
+from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_0, \
@@ -35,8 +35,8 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_USERNAME_0, \
     TESTING_BROKER_PASSWORD_0, \
     TESTING_BROKER_USERNAME_1, \
-    TESTING_BROKER_PASSWORD_1, TESTING_BROKER_UUID_0
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+    TESTING_BROKER_PASSWORD_1, TESTING_BROKER_UUID_0, XML_MQTT, TESTING_MQTT_SECTION
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -63,7 +63,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
         self.assertEqual(self.m_xml.broker.tag, 'Broker')
@@ -72,12 +72,26 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml.mqtt_sect, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
 
     def test_03_Mqtt(self):
         pass
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_MQTT
+        print(l_raw)
+        self.assertEqual(l_raw[:13], '<MqttSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_MQTT)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_MQTT_SECTION)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):

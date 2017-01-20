@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/USB/usb_open.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 27, 2011
 @summary:   This module is for communicating with USB devices.
@@ -18,7 +18,7 @@ Instead of using callLater timers, it would be better to use deferred callbacks 
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import usb.core
@@ -26,9 +26,9 @@ import usb.util
 
 # Import PyHouse modules
 from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
-# from Modules.Utilities.tools import PrintBytes
+# from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.USBDriver_Open ')
 

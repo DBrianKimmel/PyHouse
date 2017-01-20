@@ -7,31 +7,43 @@
 @note:      Created on Jun 27, 2015
 @Summary:
 
-Passed all 12 tests - DBK - 2016-11-05
+Passed all 14 tests - DBK - 2017-01-19
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import WebData, LoginData
 from Modules.Computer.Web.web_xml import Xml as webXml
+from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Computer.Web.test.xml_web import \
-        TESTING_WEB_PORT, \
-        TESTING_LOGIN_NAME_0, \
-        TESTING_LOGIN_PASSWORD_0, \
-        TESTING_LOGIN_ROLE_0, \
-        TESTING_LOGIN_FULL_NAME_0, \
-        TESTING_LOGIN_KEY_0, \
-        TESTING_LOGIN_ACTIVE_0, \
-        TESTING_WEB_SECURE_PORT
-from Modules.Utilities.debug_tools import PrettyFormatAny
+    TESTING_WEB_PORT, \
+    TESTING_LOGIN_NAME_0, \
+    TESTING_LOGIN_PASSWORD_0, \
+    TESTING_LOGIN_ROLE_0, \
+    TESTING_LOGIN_FULL_NAME_0, \
+    TESTING_LOGIN_KEY_0, \
+    TESTING_LOGIN_ACTIVE_0, \
+    TESTING_WEB_SECURE_PORT, \
+    TESTING_WEB_SECTION, \
+    TESTING_LOGIN_SECTION, \
+    XML_WEB_SERVER, \
+    TESTING_LOGIN_UUID_0, \
+    TESTING_LOGIN_NAME_1, \
+    TESTING_LOGIN_KEY_1, \
+    TESTING_LOGIN_ACTIVE_1, \
+    TESTING_LOGIN_UUID_1, \
+    TESTING_LOGIN_FULL_NAME_1, \
+    TESTING_LOGIN_PASSWORD_1, \
+    TESTING_LOGIN_ROLE_1
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -59,18 +71,31 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
-        # print(PrettyFormatAny.form(self.m_xml.web_sect, 'XML'))
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
+        self.assertEqual(self.m_xml.web_sect.tag, TESTING_WEB_SECTION)
+        self.assertEqual(self.m_xml.login_sect.tag, TESTING_LOGIN_SECTION)
 
-    def test_02_WebSection(self):
-        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
-        # print(PrettyFormatAny.form(self.m_xml.web_sect, 'XML'))
-
-    def test_03_LoginSection(self):
+    def test_02_LoginSection(self):
         self.assertEqual(self.m_xml.login_sect.tag, 'LoginSection')
         # print(PrettyFormatAny.form(self.m_xml.login_sect, 'XML'))
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_WEB_SERVER
+        # print(l_raw)
+        self.assertEqual(l_raw[:12], '<WebSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_WEB_SERVER)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_WEB_SECTION)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -85,33 +110,48 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_port, int(TESTING_WEB_PORT))
         self.assertEqual(l_secure, int(TESTING_WEB_SECURE_PORT))
 
-    def test_02_OneLogin(self):
+    def test_02_Login_0(self):
         """ Read one Login object.
         """
-        l_xml = self.m_xml.login_sect.find('Login')
+        l_xml = self.m_xml.login_sect[0]
         l_obj = webXml._read_one_login(l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'B1-01-A - XML'))
-        # print(PrettyFormatAny.form(l_obj, 'B1-01-B - One login'))
+        # print(PrettyFormatAny.form(l_xml, 'B1-02-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-B - One login'))
         self.assertEqual(l_obj.Name, TESTING_LOGIN_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_LOGIN_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_LOGIN_ACTIVE_0)
-        # UUID is generated and can not be compared
+        self.assertEqual(str(l_obj.UUID), TESTING_LOGIN_UUID_0)
         self.assertEqual(l_obj.LoginFullName, TESTING_LOGIN_FULL_NAME_0)
         self.assertEqual(l_obj.LoginPasswordCurrent, TESTING_LOGIN_PASSWORD_0)
         self.assertEqual(l_obj.LoginRole, TESTING_LOGIN_ROLE_0)
 
-    def test_03_AllLogins(self):
+    def test_03_Login_1(self):
+        """ Read one Login object.
+        """
+        l_xml = self.m_xml.login_sect[1]
+        l_obj = webXml._read_one_login(l_xml)
+        # print(PrettyFormatAny.form(l_xml, 'B1-03-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-B - One login'))
+        self.assertEqual(l_obj.Name, TESTING_LOGIN_NAME_1)
+        self.assertEqual(str(l_obj.Key), TESTING_LOGIN_KEY_1)
+        self.assertEqual(str(l_obj.Active), TESTING_LOGIN_ACTIVE_1)
+        self.assertEqual(str(l_obj.UUID), TESTING_LOGIN_UUID_1)
+        self.assertEqual(l_obj.LoginFullName, TESTING_LOGIN_FULL_NAME_1)
+        self.assertEqual(l_obj.LoginPasswordCurrent, TESTING_LOGIN_PASSWORD_1)
+        self.assertEqual(l_obj.LoginRole, TESTING_LOGIN_ROLE_1)
+
+    def test_04_AllLogins(self):
         """ Read all login objects.
         """
         l_xml = self.m_xml.web_sect
         l_obj, l_count = webXml._read_all_logins(l_xml)
-        # print(PrettyFormatAny.form(l_xml, 'B1-03-A - XML'))
-        # print(PrettyFormatAny.form(l_obj, 'B1-03-B - All login'))
-        # print(PrettyFormatAny.form(l_obj[0], 'B1-03-C - All login'))
+        # print(PrettyFormatAny.form(l_xml, 'B1-04-A - XML'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-04-B - All login'))
+        # print(PrettyFormatAny.form(l_obj[0], 'B1-04-C - All login'))
         self.assertEqual(l_count, 2)
         self.assertEqual(len(l_obj), 2)
 
-    def test_04_Web(self):
+    def test_05_Web(self):
         """ Read all Web info.
         """
         self.m_pyhouse_obj.Computer.Web = webXml.read_web_xml(self.m_pyhouse_obj)

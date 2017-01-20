@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/UPB/UPB_Pim.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 27, 2011
 @summary:   This module is for communicating with UPB controllers.
@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import Queue
@@ -21,10 +21,10 @@ import Queue
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Families.UPB.UPB_constants import pim_commands
-from Modules.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.family_utils import FamUtil
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
 

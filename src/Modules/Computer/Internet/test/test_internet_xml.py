@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Internet/test/test_internet_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 29, 2014
 @Summary:
@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2016-11-27
 
 """
 
-__updated__ = '2016-11-27'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,9 +21,9 @@ import datetime
 # Import PyMh files
 from Modules.Core.data_objects import InternetConnectionData
 from Modules.Computer.Internet.internet_xml import API as internetAPI, Util as internetUtil
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities import convert, json_tools
+from Modules.Core.Utilities import convert, json_tools
 from Modules.Computer.Internet.test.xml_internet import \
     TESTING_INTERNET_LOCATE_URL_0_0, \
     TESTING_INTERNET_LOCATE_URL_0_1, \
@@ -36,7 +36,7 @@ from Modules.Computer.Internet.test.xml_internet import \
     TESTING_INTERNET_NAME_0, \
     TESTING_INTERNET_KEY_0, \
     TESTING_INTERNET_ACTIVE_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 DATETIME = datetime.datetime(2014, 10, 2, 12, 34, 56)
 
@@ -85,7 +85,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')
         self.assertEqual(self.m_xml.internet_locater_sect.tag, 'LocateUrlSection')

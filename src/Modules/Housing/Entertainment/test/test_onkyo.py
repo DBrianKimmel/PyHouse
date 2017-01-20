@@ -10,10 +10,8 @@
 Passed all 10 tests - DBK - 2017-01-12
 
 """
-from Modules.Utilities import convert
-from Modules.Core.data_objects import EntertainmentData
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,8 +19,10 @@ from twisted.trial import unittest
 
 # Import PyMh files
 from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Housing.Entertainment.onkyo import XML as onkyoXML
+from Modules.Core.Utilities import convert
+from Modules.Core.data_objects import EntertainmentData
 from Modules.Housing.Entertainment.test.xml_entertainment import \
     TESTING_ONKYO_DEVICE_UUID_0, \
     TESTING_ONKYO_DEVICE_KEY_0, \
@@ -31,7 +31,7 @@ from Modules.Housing.Entertainment.test.xml_entertainment import \
     TESTING_ONKYO_DEVICE_IPV4_0, \
     TESTING_ONKYO_DEVICE_PORT_0, \
     TESTING_ONKYO_DEVICE_COMMENT_0, TESTING_ONKYO_DEVICE_TYPE_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -59,7 +59,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         l_onkyo_xml = self.m_xml.entertainment_sect.find('OnkyoSection')
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.entertainment_sect.tag, 'EntertainmentSection')
         self.assertEqual(l_onkyo_xml.tag, 'OnkyoSection')

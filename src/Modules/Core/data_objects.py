@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-01-16'
+__updated__ = '2017-01-19'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -467,7 +467,7 @@ class ComputerInformation(BaseUUIDObject):
     """
     def __init__(self):
         super(ComputerInformation, self).__init__()
-        self.Comm = {}  # CommunicationData()
+        self.Communication = {}  # CommunicationData()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Mqtt = {}  # MqttInformation()
         self.Nodes = {}  # NodeData()

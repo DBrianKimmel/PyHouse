@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/Entertainment/test/test_samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 14, 2016
 @summary:
@@ -11,14 +11,14 @@ Passed all 11 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Entertainment.samsung import Xml as samsungXml
 from Modules.Housing.test.xml_housing import \
@@ -33,8 +33,8 @@ from Modules.Housing.Entertainment.test.xml_entertainment import \
     TESTING_SAMSUNG_DEVICE_UUID_0, \
     TESTING_SAMSUNG_DEVICE_IPV4_0, \
     TESTING_SAMSUNG_DEVICE_PORT_0
-from Modules.Utilities import convert
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import convert
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -69,7 +69,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.entertainment_sect.tag, 'EntertainmentSection')
         self.assertEqual(self.m_xml.samsung_sect.tag, 'SamsungSection')

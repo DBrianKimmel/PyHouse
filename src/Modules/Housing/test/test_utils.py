@@ -9,23 +9,23 @@
 
 passed all 3 tests - DBK - 2016-11-23
 """
-from Modules.Core.data_objects import DeviceData
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import DeviceData
 from Modules.Housing import utils
 from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_0, \
     TESTING_ROOM_KEY_0, \
     TESTING_ROOM_ACTIVE_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -52,7 +52,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         l_onkyo_xml = self.m_xml.entertainment_sect.find('OnkyoSection')
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(l_onkyo_xml.tag, 'OnkyoSection')
 

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 15, 2014
 @Summary:
@@ -10,7 +10,7 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2016-12-28'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -18,8 +18,8 @@ import datetime
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData, UuidData
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Utilities import uuid_tools
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Core.Utilities import uuid_tools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 

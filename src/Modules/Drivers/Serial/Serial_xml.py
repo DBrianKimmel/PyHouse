@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2014
 @summary:   Read and write USB xml
@@ -17,7 +17,7 @@ __updated__ = '2016-07-16'
 
 # Import PyMh files
 from Modules.Core.data_objects import SerialControllerData
-from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialXml      ')
 

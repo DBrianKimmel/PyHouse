@@ -9,23 +9,27 @@
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import datetime
 
 #  Import PyMh files
 
-TESTING_NODE_SECTION_START = 'NodeSection'
-L_NODE_SECTION_START = '  <' + TESTING_NODE_SECTION_START + '>'
-L_NODE_SECTION_END = '  </NodeSection>'
+TESTING_NODE_SECTION = 'NodeSection'
+TESTING_NODE = 'Node'
+TESTING_INTERFACE_SECTION = 'InterfaceSection'
+TESTING_INTERFACE = 'Interface'
 
-L_NODE_INTERFACE_SECTION_START = '  <InterfaceSection>'
-L_NODE_INTERFACE_SECTION_END = '  </InterfaceSection>'
+L_NODE_SECTION_START = '  <' + TESTING_NODE_SECTION + '>'
+L_NODE_SECTION_END = '  </' + TESTING_NODE_SECTION + '>'
 
-L_NODE_END = '    </Node>'
+L_NODE_INTERFACE_SECTION_START = '  <' + TESTING_INTERFACE_SECTION + '>'
+L_NODE_INTERFACE_SECTION_END = '  </' + TESTING_INTERFACE_SECTION + '>'
 
-L_NODE_INTERFACE_END = '    </Interface>'
+L_NODE_END = '    </' + TESTING_NODE + '>'
+
+L_NODE_INTERFACE_END = '    </' + TESTING_INTERFACE + '>'
 
 TESTING_NODES_NODE_NAME_0 = "pi-01"
 TESTING_NODES_NODE_KEY_0 = "0"

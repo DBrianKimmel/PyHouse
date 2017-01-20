@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 5, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2016-07-16
+Passed all 5 tests - DBK - 2017-01-19
 
 """
 
-__updated__ = '2016-07-16'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,10 +20,10 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
 from Modules.Drivers.Serial.Serial_xml import XML as serialXML
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.xml_tools import stuff_new_attrs
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.xml_tools import stuff_new_attrs
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_NAME_1, TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_ACTIVE_0
@@ -57,11 +57,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
-    def test_1_Tags(self):
+    def test_01_Tags(self):
         """ Be sure
         """
         # print(PrettyFormatAny.form(self.m_xml, "Tags"))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
@@ -75,16 +75,6 @@ class A2_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
-
-    def test_1_Xml(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(XML_LONG, "A2-1-A - XML"))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
-        self.assertEqual(self.m_xml.controller.tag, 'Controller')
 
     def test_2_Controllers(self):
         """ Be sure that the XML contains the right stuff.

@@ -31,5 +31,6 @@ __version_info__ = (1, 7, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 VALID_FLOORS = ['Outside', 'Basement', '1st', '2nd', '3rd', '4th', 'Attic', 'Roof']
+VALID_HOUSING_MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Rules', 'Scheduling', 'Security']
 
 # ## END DBK

@@ -11,14 +11,14 @@ Passed all 4 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 
 
@@ -53,7 +53,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_02_Tags(self):
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
 

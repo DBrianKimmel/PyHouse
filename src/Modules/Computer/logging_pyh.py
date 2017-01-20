@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014-2016 by D. Brian Kimmel
+@copyright: 2014-2017 by D. Brian Kimmel
 @note:      Created on Jan 20, 2014
 @license:   MIT License
 @summary:   Log Module.

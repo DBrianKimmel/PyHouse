@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2016 by D. Brian Kimmel
+@copyright: (c) 2010-2017 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for driving serial devices
@@ -33,10 +33,10 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
-from Modules.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 class FindPort(object):
     """

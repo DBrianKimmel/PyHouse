@@ -7,8 +7,10 @@ house itself.
 This components of this package run before any of the house components.
 """
 
-__updated__ = '2016-10-22'
-__version_info__ = (1, 7, 4)
+__updated__ = '2017-01-19'
+__version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
+
+VALID_COMPUTER_MODULES = ['Communication', 'Internet', 'Mqtt', 'Nodes', 'Pi', 'Weather', 'Web']
 
 # ## END DBK

@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Drivers/USB/USB_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 27, 2011
 @summary:   This module is for interfacing to USB devices.
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import usb
@@ -20,7 +20,7 @@ from twisted.internet.protocol import Protocol
 # Import PyHouse Modules
 from Modules.Drivers.USB.USB_data import UsbData
 from Modules.Drivers.USB.USB_open import API as usbopenAPI
-from Modules.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.USBDriver      ')

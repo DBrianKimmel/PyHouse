@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/web/web_controlLights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to control lights for the selected house.
 
 """
 
-__updated__ = '2016-10-10'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import os
@@ -22,7 +22,7 @@ from nevow import loaders
 from Modules.Core.data_objects import LightData
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webCtlLigt  ')
 

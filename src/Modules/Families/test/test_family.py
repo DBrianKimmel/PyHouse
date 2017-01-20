@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/test/test_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:   This module is for testing family.
@@ -10,14 +10,14 @@
 Passed all 12 tests.  DBK 2016-11-06
 """
 
-__updated__ = '2016-11-06'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Families import family
 from Modules.Families.family import Utility, API as familyAPI
@@ -26,7 +26,7 @@ from Modules.Families.test.xml_family import \
     TESTING_FAMILY_NAME_1, \
     TESTING_FAMILY_NAME_2, \
     TESTING_FAMILY_NAME_3
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -64,7 +64,7 @@ class A1_Valid(SetupMixin, unittest.TestCase):
         """ Be sure that m_xml is set up properly
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')

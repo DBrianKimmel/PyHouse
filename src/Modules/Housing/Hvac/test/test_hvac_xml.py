@@ -11,7 +11,7 @@ Passed all 17 tests - DBK - 2016-11-08
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files
 from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core import conversions
 # from Modules.Housing.Hvac.hvac_xml import Utility, XML as hvacXML
 from Modules.Core.test.xml_device import \
@@ -45,7 +45,7 @@ from Modules.Housing.Hvac.test.xml_hvac import \
     TESTING_THERMOSTAT_SCALE_0, \
     TESTING_THERMOSTAT_UUID_0, \
     TESTING_HVAC_THERMOSTAT_COMMENT_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -82,7 +82,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')

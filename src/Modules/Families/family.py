@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:   This module is for *BUILDING/loading* device families.

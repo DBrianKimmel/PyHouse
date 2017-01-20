@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Internet/test/test_inet_find_external_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2014
 @Summary:   Test finding an external IP address.

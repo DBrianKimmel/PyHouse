@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 18, 2014
 @Summary:
@@ -31,8 +31,8 @@ from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Security.security import XML as securityXML
-from Modules.Utilities.tools import PrintBytes
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_50T = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x6e\x4f')

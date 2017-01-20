@@ -2,12 +2,16 @@
 @name:       PyHouse/src/Certificates/test/test_newcert.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  (c) 2015-2016 by D. Brian Kimmel
+@copyright:  (c) 2015-2017 by D. Brian Kimmel
 @date:       Created on Feb 24, 2015
 @licencse:   MIT License
 @summary:
 
 """
+
+__updated__ = '2017-01-20'
+
+
 import unittest
 
 

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_houseMenu.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 30, 2013
 @summary:   Handle all of the information for a house.

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/housing/test/test_location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
@@ -10,7 +10,7 @@
 Passed all 13 tests - DBK - 2016-11-21
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,8 +19,8 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LocationData
 from Modules.Housing import location
-from Modules.Utilities.json_tools import encode_json, decode_json_unicode
-from test.xml_data import XML_LONG, XML_EMPTY
+from Modules.Core.Utilities.json_tools import encode_json, decode_json_unicode
+from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.test.xml_location import \
         TESTING_LOCATION_STREET, \
@@ -33,7 +33,7 @@ from Modules.Housing.test.xml_location import \
         TESTING_LOCATION_TIME_ZONE_NAME, \
         TESTING_LOCATION_ELEVATION, \
         TESTING_LOCATION_REGION
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -69,7 +69,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision', 'XML - No Houses Division')
 
     def test_02_ReadXml(self):

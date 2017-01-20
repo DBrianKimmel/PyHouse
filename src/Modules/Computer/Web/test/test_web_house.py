@@ -10,16 +10,16 @@
 Passed all 3 tests - DBK - 2016-11-21
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Web import web_house
 from Modules.Computer.Web.web import WorkspaceData
@@ -56,7 +56,7 @@ class B1_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
 

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/Null/test/test_Null_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 28, 2015
 @Summary:
@@ -10,6 +10,9 @@
 Passed all 1 tests - DBK - 2015-07-28
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

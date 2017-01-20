@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 17, 2014
 @Summary:
@@ -15,16 +15,16 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
+import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import LoginData, WebData
-from Modules.Utilities.uuid_tools import Uuid
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
-import xml.etree.ElementTree as ET
+from Modules.Core.Utilities.uuid_tools import Uuid
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 LOG = Logger.getLogger('PyHouse.WebXml         ')
 
 
@@ -57,7 +57,7 @@ class Xml(object):
         @param p_xml: is the element of one login
         """
         l_obj = LoginData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_xml)
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)
         l_obj.LoginFullName = PutGetXML.get_text_from_xml(p_xml, 'FullName')
         l_obj.LoginPasswordCurrent = PutGetXML.get_text_from_xml(p_xml, 'Password')
         l_obj.LoginRole = PutGetXML.get_text_from_xml(p_xml, 'Role')

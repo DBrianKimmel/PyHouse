@@ -4,7 +4,7 @@
 @Name:      PyHouse/src/Modules/Computer/Internet/internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2015 by D. Brian Kimmel
+@copyright: (c) 2012-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 20, 2012
 @summary:   This module determines the IP address of the ISP connection.
@@ -21,7 +21,7 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2016-10-22'
+__updated__ = '2017-01-20'
 
 #  Import system type stuff
 

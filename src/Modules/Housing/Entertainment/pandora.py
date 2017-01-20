@@ -4,7 +4,7 @@
 @name: PyHouse/src/Modules/entertain/pandora.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: (c)2014-2016 by D. Brian Kimmel
+@copyright: (c)2014-2017 by D. Brian Kimmel
 @note: Created on Feb 27, 2014
 @license: MIT License
 @summary: Controls pandora playback thru pianobar.
@@ -27,7 +27,7 @@ __updated__ = '2016-09-23'
 # Import system type stuff
 from twisted.internet import protocol
 
-# from Modules.Utilities.tools import PrintBytes
+# from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0

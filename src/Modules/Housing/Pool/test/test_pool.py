@@ -12,7 +12,7 @@ Passed all 11 tests - DBK - 2017-01-12
 """
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 
-__updated__ = '2017-01-18'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,7 +36,7 @@ from Modules.Housing.Pool.test.xml_pool import \
         TESTING_POOL_COMMENT_1, \
         TESTING_POOL_UUID_0, \
         TESTING_POOL_SECTION
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -165,7 +165,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """ Write one entire pool XML
         """
         l_xml = poolXml._write_one_pool(self.m_pools[0])
-        # print(PrettyFormatAny.form(l_xml, 'Pool'))
+        print(PrettyFormatAny.form(l_xml, 'B2-02-A - Pool'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_POOL_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_POOL_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_POOL_ACTIVE_0)
@@ -175,10 +175,10 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """ Write Pool Section with all pools.
         """
         l_xml = poolXml.write_all_pools_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'Pool'))
+        print(PrettyFormatAny.form(l_xml, 'B2-03-A - Pool'))
         # l_xml1 = l_xml.find('Pool')
         l_xml2 = l_xml[1]
-        self.assertEqual(l_xml2.attrib['Name'], TESTING_POOL_NAME_1)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_POOL_NAME_1)
         self.assertEqual(l_xml2.attrib['Key'], TESTING_POOL_KEY_1)
         self.assertEqual(l_xml2.attrib['Active'], TESTING_POOL_ACTIVE_1)
         self.assertEqual(l_xml2.find('Comment').text, TESTING_POOL_COMMENT_1)

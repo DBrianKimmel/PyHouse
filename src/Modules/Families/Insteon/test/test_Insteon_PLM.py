@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on Apr 8, 2013
 @license:   MIT License
 @summary:   This module is for driving serial devices
@@ -10,7 +10,7 @@
 Passed all 6 tests - DBK - 2016-07-17
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 __updated__ = '2016-10-31'
 

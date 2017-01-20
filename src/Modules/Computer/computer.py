@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-01-16'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import platform
@@ -41,9 +41,9 @@ from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
-from Modules.Utilities.xml_tools import XmlConfigTools
-from Modules.Utilities import uuid_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.xml_tools import XmlConfigTools
+from Modules.Core.Utilities import uuid_tools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Computer       ')
 

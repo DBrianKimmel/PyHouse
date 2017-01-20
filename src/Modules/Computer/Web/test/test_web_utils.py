@@ -11,7 +11,7 @@ Passed all 7 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,12 +23,12 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Web import web_utils
 from Modules.Housing.rooms import Xml as roomsXML
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_ACTIVE
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 PY_DATA = [ { 'a123': u'A', 'b': (2, 4), 'c': 3.0 }, 'def D E F' ]
 JS_DATA = '{' + '}'
@@ -88,7 +88,7 @@ class C2_House(SetupMixin, unittest.TestCase):
 
     def test_01_Before(self):
         l_house = self.m_pyhouse_obj.House
-        print(PrettyFormatAny.form(l_house, 'C2-01-A - House'))
+        # print(PrettyFormatAny.form(l_house, 'C2-01-A - House'))
         l_house2 = {}
 
 
@@ -100,7 +100,7 @@ class D1_Json(SetupMixin, unittest.TestCase):
     def test_01_HouseInfo(self):
         l_json = web_utils.GetJSONHouseInfo(self.m_pyhouse_obj)
         l_obj = jsonpickle.decode(l_json)
-        print(PrettyFormatAny.form(l_obj, 'D1-01-A - House'))
+        # print(PrettyFormatAny.form(l_obj, 'D1-01-A - House'))
         self.assertEquals(l_obj['Name'], TESTING_HOUSE_NAME)
         self.assertEquals(l_obj['Key'], TESTING_HOUSE_KEY)
         self.assertEquals(l_obj['Active'], TESTING_HOUSE_ACTIVE)

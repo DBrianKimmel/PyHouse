@@ -4,7 +4,7 @@
 @name:      /home/briank/PyHouse/src/Modules/Families/test/xml_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @note:      Created on Nov 6, 2016
 @license:   MIT License
 @summary:

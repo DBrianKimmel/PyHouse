@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 2, 2013
 @summary:   Schedule events
@@ -18,7 +18,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files
 from Modules.Core.data_objects import ScheduleBaseData, ScheduleIrrigationData, ScheduleLightData
-from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML, stuff_new_attrs
+from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.ScheduleXml ')

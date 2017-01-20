@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_scenes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 11, 2014
 @Summary:
@@ -11,7 +11,7 @@ Handle the scenes component of the lighting system.
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-20'
 
 
 Scene_Data = {}

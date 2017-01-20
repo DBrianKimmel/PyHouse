@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 11, 2014
 @Summary:   Handle lighting scheduled events.
@@ -18,7 +18,6 @@ This is so other modules only need to dispatch to here for any lighting event - 
 #  Import PyMh files
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities import tools, json_tools
 
 LOG = Logger.getLogger('PyHouse.LightAction    ')
 
@@ -41,7 +40,7 @@ class Utility(object):
         return None
 
     @staticmethod
-    def get_light_object(p_pyhouse_obj, name = None, key = None):
+    def get_light_object(p_pyhouse_obj, name=None, key=None):
         """ Return the light object for a house using the given value.
         Either a name or a key may be used to identify the light.
 
@@ -73,14 +72,14 @@ class API(object):
     def DoSchedule(p_pyhouse_obj, p_schedule_obj):
         """
         """
-        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_schedule_obj.LightName)
+        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_schedule_obj.LightName)
         LOG.info("Name:{}, Light:{}, Level:{}  {}  {}".format(p_schedule_obj.Name, p_schedule_obj.LightName,
                 p_schedule_obj.Level, l_light_obj.Name, l_light_obj.Key))
         API.ChangeLight(p_pyhouse_obj, l_light_obj, 'shedule', p_schedule_obj.Level)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", p_schedule_obj)
 
     @staticmethod
-    def ChangeLight(p_pyhouse_obj, p_light_obj, p_source, p_new_level, _p_rate = None):
+    def ChangeLight(p_pyhouse_obj, p_light_obj, p_source, p_new_level, _p_rate=None):
         """ Set a light to a value - On, Off, or Dimmed.
         Called by:
             web_controlLights
@@ -91,7 +90,7 @@ class API(object):
             @param p_new_level: is the percent of light we are changing to
             @param p_rate: is the rate the change will ramp to.
         """
-        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name = p_light_obj.Name)  #  web has some info missing - get all the object
+        l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_light_obj.Name)  #  web has some info missing - get all the object
         try:
             LOG.info('Turn Light: "{}" to level: "{}", DeviceFamily: "{}"'.format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, l_light_obj)

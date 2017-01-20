@@ -28,9 +28,9 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import LightData, UuidData
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
-from Modules.Utilities.device_tools import XML as deviceXML
-from Modules.Utilities.uuid_tools import Uuid as UtilUuid
-from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.device_tools import XML as deviceXML
+from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
+from Modules.Core.Utilities.xml_tools import PutGetXML
 
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'

@@ -4,18 +4,21 @@
 @name:      PyHouse/src/Modules/Drivers/Ethernet/ethernet_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2014
 @summary:   Read and write USB xml
 
 """
 
+__updated__ = '2017-01-20'
+
+
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Core.data_objects import EthernetControllerData
-from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.xml_tools import PutGetXML
 
 
 class XML(object):

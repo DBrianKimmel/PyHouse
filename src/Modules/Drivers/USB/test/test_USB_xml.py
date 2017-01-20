@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Drivers/USB/test/test_USB_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 30, 2015
 @Summary:
@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2016-10-10
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,9 +23,9 @@ from Modules.Drivers.USB.USB_xml import XML as usbXML
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ControllerData
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities.device_tools import XML as deviceXML
-from Modules.Utilities.device_tools import stuff_new_attrs
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.device_tools import XML as deviceXML
+from Modules.Core.Utilities.device_tools import stuff_new_attrs
 from Modules.Drivers.USB.test.xml_usb import TESTING_USB_VENDOR, TESTING_USB_PRODUCT
 from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_1, \

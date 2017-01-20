@@ -4,18 +4,22 @@
 @name:      PyHouse/src/Modules/families/UPB/UPB_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 6, 2014
 @summary:   This module is for communicating with UPB controllers.
 
 """
 
+__updated__ = '2017-01-20'
+
+
+
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
-from Modules.Utilities.xml_tools import PutGetXML, stuff_new_attrs
+from Modules.Core.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 9

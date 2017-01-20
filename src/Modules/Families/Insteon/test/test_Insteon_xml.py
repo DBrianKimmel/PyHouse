@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Aug 5, 2014
 @license:   MIT License
 @summary:   This module test insteon xml
@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2015-11-05
 
 """
 
-__updated__ = '2016-11-10'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,7 +19,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.data_objects import LightData, HouseInformation, ButtonData
 from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
 from Modules.Core import conversions
@@ -44,8 +44,8 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_DEVICE_TYPE_0, \
     TESTING_LIGHT_ROOM_NAME_0, \
     TESTING_LIGHT_ROOM_UUID_0
-from Modules.Utilities.device_tools import XML as deviceXML
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.device_tools import XML as deviceXML
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -83,7 +83,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_02_FindXml(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
@@ -108,9 +108,6 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_06_Device(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
-        self.assertEqual(self.m_xml.controller.tag, 'Controller')
 
 
 class C1_Read(SetupMixin, unittest.TestCase):

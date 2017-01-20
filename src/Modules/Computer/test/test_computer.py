@@ -26,7 +26,7 @@ from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION, \
     TESTING_COMPUTER_KEY_0, \
     TESTING_COMPUTER_ACTIVE_0
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

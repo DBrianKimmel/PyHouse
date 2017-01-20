@@ -6,7 +6,7 @@
 @name:      PyHouse/src/setup.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on Aug 3, 2013
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -52,6 +52,9 @@ PyHouse
 apt install:
     python-dev
 """
+
+__updated__ = '2017-01-20'
+
 
 #  Import system type stuff
 import sys
@@ -101,21 +104,21 @@ CLASSIFIERS = [
 
 
 setup(
-    name = 'PyHouse',
-    version = '1.7.0',
-    description = 'Pythone house automation',
-    author = 'D. Brian Kimmel',
-    author_email = 'D.BrianKimmel@gmail.com',
-    url = 'http://www.PyHouse.org',
-    license = 'MIT',
-    classifiers = CLASSIFIERS,
-    py_modules = [ 'PyHouse' ],
-    package_dir = {'': 'src'},
-    extras_require = EXTRA_REQUIRES,
-    dependency_links = DEPENDENCY_LINKS,
-    include_package_data = True,
-    zip_safe = False,
-    install_requires = INSTALL_REQUIRES
+    name='PyHouse',
+    version='1.7.0',
+    description='Pythone house automation',
+    author='D. Brian Kimmel',
+    author_email='D.BrianKimmel@gmail.com',
+    url='http://www.PyHouse.org',
+    license='MIT',
+    classifiers=CLASSIFIERS,
+    py_modules=[ 'PyHouse' ],
+    package_dir={'': 'src'},
+    extras_require=EXTRA_REQUIRES,
+    dependency_links=DEPENDENCY_LINKS,
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=INSTALL_REQUIRES
 )
 tests_passed = False
 

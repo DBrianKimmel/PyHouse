@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/families/UPB/test/test_UPB_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   This module is for testing UPB devices.
@@ -11,13 +11,15 @@ Passed all 1 tests - DBK - 2015-08-15
 
 """
 
+__updated__ = '2017-01-19'
+
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Families.UPB.UPB_device import API as upbDeviceAPI
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 
 
@@ -39,7 +41,7 @@ class A1_SetupL(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse', 'Invalid XML - not a PyHouse XML config file')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.thermostat_sect.tag, 'ThermostatSection', 'XML - No Thermostat section')
         self.assertEqual(self.m_xml.thermostat.tag, 'Thermostat', 'XML - No Thermostat Entry')
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection', 'XML - No Light section')

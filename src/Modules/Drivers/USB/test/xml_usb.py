@@ -2,12 +2,15 @@
 @name:      PyHouse/src/Modules/Drivers/USB/test/xml_usb.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
 @Summary:
 
 """
+
+__updated__ = '2017-01-20'
+
 
 TESTING_USB_VENDOR = '6109'
 TESTING_USB_PRODUCT = '21760'

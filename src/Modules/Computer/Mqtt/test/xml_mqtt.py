@@ -2,23 +2,26 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/xml_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-20'
 
 #  Import system type stuff
 
 #  Import PyMh files
 
+TESTING_MQTT_SECTION = 'MqttSection'
+TESTING_MQTT_BROKER = 'Broker'
 
-L_MQTT_SECTION_START = '  <MqttSection>'
-L_MQTT_SECTION_END = '  </MqttSection>'
-L_MQTT_BROKER_END = '    </Broker>'
+
+L_MQTT_SECTION_START = '<' + TESTING_MQTT_SECTION + '>'
+L_MQTT_SECTION_END = '  </' + TESTING_MQTT_SECTION + '>'
+L_MQTT_BROKER_END = '    </' + TESTING_MQTT_BROKER + '>'
 
 TESTING_BROKER_NAME_0 = 'CannonTrail'
 TESTING_BROKER_KEY_0 = '0'
@@ -30,10 +33,11 @@ TESTING_BROKER_USERNAME_0 = 'pyhouse'
 TESTING_BROKER_PASSWORD_0 = 'ChangeMe'
 
 L_BROKER_START_0 = '    ' + \
-    '<Broker Name="' + TESTING_BROKER_NAME_0 + \
-    '" Key="' + TESTING_BROKER_KEY_0 + \
-    '" Active="' + TESTING_BROKER_ACTIVE_0 + \
-    '">'
+    '<' + TESTING_MQTT_BROKER + ' ' + \
+    'Name="' + TESTING_BROKER_NAME_0 + '" ' + \
+    'Key="' + TESTING_BROKER_KEY_0 + '" ' + \
+    'Active="' + TESTING_BROKER_ACTIVE_0 + '"' + \
+    '>'
 L_BROKER_UUID_0 = '      <UUID>' + TESTING_BROKER_UUID_0 + '</UUID>'
 L_BROKER_ADDRESS_0 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_0 + '</BrokerAddress>'
 L_BROKER_PORT_0 = '      <BrokerPort>' + TESTING_BROKER_PORT_0 + '</BrokerPort>'

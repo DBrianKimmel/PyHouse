@@ -24,7 +24,7 @@ from Modules.Core import conversions
 from Modules.Families import VALID_FAMILIES
 from Modules.Families.family import API as familyAPI
 from Modules.Families.family_utils import FamUtil
-from Modules.Utilities.device_tools import XML as deviceXML
+from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_ACTIVE_0, \
@@ -45,7 +45,7 @@ from Modules.Core.test.xml_device import \
     TESTING_DEVICE_ROOM_COORDS, \
     TESTING_DEVICE_COMMENT_0, \
     TESTING_DEVICE_ROOM_UUID
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_Link.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 16, 2015
 @Summary:
@@ -21,7 +21,7 @@ from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
 # from Modules.Families.Insteon.Insteon_utils import Decode
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-# from Modules.Utilities.debug_tools import PrettyFormatAny, FormatBytes
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_53 = bytearray(b'\x02\x53\x00\x01\x12\x34\x56\x02\x04\x06\xFF')

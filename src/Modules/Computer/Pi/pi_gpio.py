@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Pi/pi_gpio.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 30, 2015
 @Summary:
@@ -10,6 +10,9 @@
 This needs to wait for a new GPIO package that does not require root priveliges.
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 
@@ -22,8 +25,8 @@ except:
 IRRIGATION_PIN = 14
 
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(23, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(24, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 while True:
     GPIO.wait_for_edge(23, GPIO.RISING)

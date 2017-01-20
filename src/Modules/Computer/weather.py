@@ -4,13 +4,16 @@
 @name:      PyHouse/src/Modules/Computer/weather.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014-2015 by D. Brian Kimmel
+@copyright: 2014-2017 by D. Brian Kimmel
 @note:      Created on Jan 20, 2014
 @license:   MIT License
 @summary:
 
 
 """
+
+__updated__ = '2017-01-20'
+
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET

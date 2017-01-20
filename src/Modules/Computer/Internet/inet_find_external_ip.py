@@ -4,7 +4,7 @@
 @Name:      PyHouse/src/Modules/Computer/Internet/inet_find_external_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2015 by D. Brian Kimmel
+@copyright: (c) 2012-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2014
 @summary:   This module determines our external IPv4 address asynchronously.
@@ -16,7 +16,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2016-11-27'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import re
@@ -27,7 +27,7 @@ from twisted.web.http_headers import Headers
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh
-from Modules.Utilities import convert
+from Modules.Core.Utilities import convert
 
 LOG = logging_pyh.getLogger('PyHouse.InternetFnd    ')
 

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_logging.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Aug 22, 2014
 @license:   MIT License
 @summary:   This module sets up logging.
@@ -17,13 +17,16 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
+__updated__ = '2017-01-20'
+
+
 #  Import system type stuff
 import datetime
 import logging.config
 from twisted.python import log
 
 #  Import PyMh files and modules.
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOGGER_NAME = 'PyHouse                '
 LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
@@ -39,7 +42,7 @@ class DropHttpFilter(object):
     """ This will filter out the HTTP log messages added by twisted (Athena/Nevow).
     """
 
-    def __init__(self, p_param = None):
+    def __init__(self, p_param=None):
         """ Save the list of strings to filter the log message
         """
         self.m_param = p_param
@@ -123,7 +126,7 @@ logging.getLogger(LOGGER_NAME)
 logging.config.dictConfig(LOGGING_DICT)
 logging.info('PyHouse Logging Starting. (setup_logging.py)\n------------------------------------------------------------------\n')
 
-l_observer = log.PythonLoggingObserver(loggerName = LOGGER_NAME_TWISTED)
+l_observer = log.PythonLoggingObserver(loggerName=LOGGER_NAME_TWISTED)
 l_observer.start()
 
 

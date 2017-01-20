@@ -23,7 +23,7 @@ from Modules.Core import conversions
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting_controllers import Utility, API as controllerAPI
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_TYPE, \
@@ -63,7 +63,7 @@ from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_ACTIVE_0, \
     TESTING_CONTROLLER_KEY_0, \
     TESTING_CONTROLLER_UUID_0, TESTING_CONTROLLER_SECTION, TESTING_CONTROLLER, XML_CONTROLLER_SECTION
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 #  Import PyMh files and modules.

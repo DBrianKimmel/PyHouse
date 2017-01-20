@@ -14,7 +14,7 @@ address from some external device and check on the status of the house.
 This module will try to be fully twisted like and totally async (except for read/write of xml).
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import netifaces
@@ -26,8 +26,8 @@ from twisted.internet.defer import Deferred
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 
-from Modules.Utilities.xml_tools import PutGetXML
-from Modules.Utilities import convert
+from Modules.Core.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities import convert
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 1

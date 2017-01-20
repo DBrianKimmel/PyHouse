@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 27, 2013
 @summary:   This module is for Insteon conversion routines.
@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2017-01-07'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 
@@ -27,7 +27,7 @@ from Modules.Families.Insteon.Insteon_constants import \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
     STX
-from Modules.Utilities import device_tools
+from Modules.Core.Utilities import device_tools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 

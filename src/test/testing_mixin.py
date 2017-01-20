@@ -4,14 +4,14 @@
 @name:      PyHouse/src/test/testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 40, 2013
 @summary:   Test handling the information for a house.
 
 """
 
-__updated__ = '2017-01-18'
+__updated__ = '2017-01-20'
 
 #  Import system type stuff
 import platform

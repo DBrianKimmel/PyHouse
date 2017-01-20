@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/test/test_logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Apr 30, 2014
 @license:   MIT License
 @summary:

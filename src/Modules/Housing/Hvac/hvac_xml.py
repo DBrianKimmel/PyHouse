@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Hvac/hvac_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
@@ -19,9 +19,9 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files
 from Modules.Core.data_objects import HvacData, ThermostatData, UuidData
 from Modules.Families.family_utils import FamUtil
-from Modules.Utilities.device_tools import XML as deviceXML
-from Modules.Utilities.uuid_tools import Uuid as UtilUuid
-from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.device_tools import XML as deviceXML
+from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
+from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 

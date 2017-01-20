@@ -2,7 +2,7 @@
  * @name: PyHouse/src/Modules/Web/js/interface.js
  * @author: D. Brian Kimmel
  * @contact: D.BrianKimmel@gmail.com
- * @copyright: (c) 2014-2015 by D. Brian Kimmel
+ * @copyright: (c) 2014-2017 by D. Brian Kimmel
  * @license: MIT License
  * @note: Created on Sep 12, 2014
  * @summary: Lcars components to handle all the controller interfaces. Currently: Serial USB Ethernet

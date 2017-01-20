@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/families/UPB/UPB_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 27, 2011
 @summary:   This module is for communicating with UPB controllers.
@@ -14,6 +14,9 @@ Start Active UPB Controllers.
     If more than one ???
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 
@@ -74,7 +77,7 @@ class API(object):
         """
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate=0):
         LOG.debug('Change light Name:{}, DeviceFamily:{}'.format(p_light_obj.Name, p_light_obj.DeviceFamily))
         self.m_plm.ChangeLight(p_light_obj, p_source, p_level)
 

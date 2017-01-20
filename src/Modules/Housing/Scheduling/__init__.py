@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/Scheduling/__init__.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on April 8, 2013
 @license:   MIT License
 @summary:   Valid types

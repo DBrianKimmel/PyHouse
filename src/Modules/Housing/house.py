@@ -27,9 +27,9 @@ PyHouse.House.
               Schedules
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-18'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 
@@ -45,9 +45,9 @@ from Modules.Housing.Lighting.lighting import API as lightingAPI
 from Modules.Housing.Pool.pool import API as poolAPI
 from Modules.Housing.Scheduling.schedule import API as scheduleAPI
 from Modules.Housing.Security.security import API as securityAPI
-from Modules.Utilities import uuid_tools
-from Modules.Utilities.uuid_tools import Uuid
-from Modules.Utilities.xml_tools import XmlConfigTools
+from Modules.Core.Utilities import uuid_tools
+from Modules.Core.Utilities.uuid_tools import Uuid
+from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 

@@ -2,12 +2,15 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation_action.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 3, 2015
 @Summary:   Perform actions on the irrigation system.
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 

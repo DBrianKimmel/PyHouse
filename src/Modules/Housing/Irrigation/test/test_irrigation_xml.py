@@ -11,14 +11,14 @@ Passed all 9 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 from Modules.Housing.Irrigation.test.xml_irrigation import \
@@ -28,7 +28,7 @@ from Modules.Housing.Irrigation.test.xml_irrigation import \
     TESTING_IRRIGATION_ZONE_ACTIVE_0_0, \
     TESTING_IRRIGATION_ZONE_COMMENT_0_0, \
     TESTING_IRRIGATION_ZONE_DURATION_0_0
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -60,7 +60,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_02_XML(self):
         # print(PrettyFormatAny.form(self.m_xml.irrigation_system, 'A1-02-A - Irrigation'))
         # print(PrettyFormatAny.form(self.m_xml.irrigation_zone, 'A1-02-B - Irrigation'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.irrigation_sect.tag, 'IrrigationSection')
         self.assertEqual(self.m_xml.irrigation_system.tag, 'IrrigationSystem')

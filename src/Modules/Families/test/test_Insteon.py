@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Families/test/test_Insteon.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 16, 2014
 @Summary:
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2017-01-20'
 
 
 # Import system type stuff

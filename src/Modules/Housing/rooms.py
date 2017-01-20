@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the rooms information for a house.
@@ -19,10 +19,10 @@ import datetime
 
 #  Import PyMh files
 from Modules.Core.data_objects import RoomData
-from Modules.Utilities.coordinate_tools import Coords
-from Modules.Utilities.json_tools import encode_json
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.coordinate_tools import Coords
+from Modules.Core.Utilities.json_tools import encode_json
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 

@@ -11,18 +11,18 @@ Passed all 14 tests - DBK - 2017-01-10
 """
 from Modules.Core import setup_pyhouse
 
-__updated__ = '2017-01-10'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 # from Modules.Core import setup_pyhouse
-from Modules.Utilities.config_file import API as configAPI
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.config_file import API as configAPI
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import \
     PyHouseAPIs, \
     XmlInformation, \
@@ -66,7 +66,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_02_Tags(self):
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
 
@@ -80,7 +80,7 @@ class B1_UUIDs(SetupMixin, unittest.TestCase):
 
     def test_01_Xml(self):
         l_xml = self.m_pyhouse_obj.Xml
-        print(PrettyFormatAny.form(l_xml, 'PyHouse,Xml'))
+        # print(PrettyFormatAny.form(l_xml, 'PyHouse,Xml'))
         self.assertEqual(l_xml.XmlConfigDir, '/etc/pyhouse/')
 
     def test_02_build(self):
@@ -91,12 +91,12 @@ class B1_UUIDs(SetupMixin, unittest.TestCase):
 
     def test_03_Read(self):
         l_uuid = setup_pyhouse._read_file(self.m_pyhouse_obj, 'Computer.uuid')
-        print('B1-03-A - UUID: {}'.format(l_uuid))
+        # print('B1-03-A - UUID: {}'.format(l_uuid))
 
     def test_04_Write(self):
         l_uuid = '222ec0e9-d76e-11e6-b40f-74dfbfae5aed'
         l_ret = setup_pyhouse._write_file(self.m_pyhouse_obj, 'Computer.uuid', l_uuid)
-        print('B1-03-A - UUID: {}'.format(l_ret))
+        # print('B1-03-A - UUID: {}'.format(l_ret))
 
 
 class C1_Structures(SetupMixin, unittest.TestCase):
@@ -169,6 +169,6 @@ class D1_Write(SetupMixin, unittest.TestCase):
         l_xml = configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         # computerApi(self.m_pyhouse_obj).SaveXml(l_xml)
         # houseApi(self.m_pyhouse_obj).SaveXml(l_xml)
-        print(PrettyFormatAny.form(l_xml, 'D1-1-A PyHouse.Twisted obj'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-1-A PyHouse.Twisted obj'))
 
 # ## END DBK

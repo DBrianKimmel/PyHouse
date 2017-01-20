@@ -2,7 +2,7 @@
 @name:      /home/briank/PyHouse/src/Modules/Families/Insteon/test/test_Insteon_security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 2, 2016
 @summary:   Test

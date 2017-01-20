@@ -2,7 +2,7 @@
 @name:      /home/briank/PyHouse/src/Modules/Housing/Security/test/test_security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 1, 2016
 @summary:   Test
@@ -11,7 +11,7 @@ Passed all 10 tests - DBK - 2016-11-01
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from Modules.Core.data_objects import GarageDoorData
 from Modules.Housing.Security.security import Utility, XML, API as securityAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 from Modules.Housing.Security.test.xml_garage_door import \
     TESTING_GARAGE_DOOR_NAME_0, \
     TESTING_GARAGE_DOOR_ACTIVE_0, \
@@ -51,9 +51,9 @@ from Modules.Housing.Security.test.xml_motion_sensors import \
     TESTING_MOTION_SENSOR_ROOM_UUID_0, \
     TESTING_MOTION_SENSOR_DEVCAT_0, \
     TESTING_MOTION_SENSOR_ADDRESS_0
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -85,7 +85,7 @@ class A1(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.security_sect.tag, 'SecuritySection')
         self.assertEqual(self.m_xml.garagedoor_sect.tag, 'GarageDoorSection')
         self.assertEqual(self.m_xml.garagedoor.tag, 'GarageDoor')

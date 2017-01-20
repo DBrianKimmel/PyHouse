@@ -33,8 +33,8 @@ from Modules.Core import setup_logging  # This must be first as the import cause
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
-from Modules.Utilities.config_file import API as configAPI
-from Modules.Utilities.uuid_tools import Uuid as toolUuid
+from Modules.Core.Utilities.config_file import API as configAPI
+from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
 MINUTES = 60  # Seconds in a minute

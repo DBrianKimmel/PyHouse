@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2016 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
@@ -26,7 +26,7 @@ from Modules.Housing.Scheduling import sunrisesunset
 from Modules.Housing.Scheduling.sunrisesunset import Util as AstralUtil
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.test.xml_location import \
     TESTING_LOCATION_REGION, \
     TESTING_LOCATION_LATITUDE, \

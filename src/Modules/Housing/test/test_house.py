@@ -11,14 +11,14 @@
 Passed all 14 tests - DBK - 2017-01-12
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test import xml_data
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.house import \
     API as houseAPI, \
@@ -32,8 +32,8 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_UUID
-from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import json_tools
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -58,10 +58,10 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Tags(self):
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
 
 
@@ -72,7 +72,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_House(self):
         """ Test to see if the raw XML contains the expected data.
@@ -98,7 +98,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_API(self):
         houseUtil._init_component_apis(self.m_pyhouse_obj, self)
@@ -138,7 +138,7 @@ class C3_Write(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_House(self):
         l_house_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
@@ -155,7 +155,7 @@ class J1_JSON(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Create(self):
         """ Create a JSON object for Location.5
@@ -174,7 +174,7 @@ class P1_API(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = houseAPI(self.m_pyhouse_obj)
 
     def test_01_Init(self):

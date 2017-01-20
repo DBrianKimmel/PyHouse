@@ -2,12 +2,15 @@
 @name:      PyHouse/src/Modules/Drivers/USB/USB_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 29, 2015
 @Summary:
 
 """
+
+__updated__ = '2017-01-20'
+
 
 class UsbData(object):
     """

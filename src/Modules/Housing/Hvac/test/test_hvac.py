@@ -11,18 +11,18 @@ Passed all 5 tests - DBK - 2017-01-12
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
-from test.xml_data import XML_LONG, XML_EMPTY
+from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ThermostatData
 from Modules.Housing.Hvac.hvac import API as hvacAPI
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -52,7 +52,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.hvac_sect.tag, 'HvacSection')
         self.assertEqual(self.m_xml.thermostat_sect.tag, 'ThermostatSection')

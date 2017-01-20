@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on Jul 27, 2013
 @license:   MIT License
 @summary:   Handle the web server login.
@@ -19,7 +19,7 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 """
 
-__updated__ = '2016-10-08'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import os
@@ -42,9 +42,9 @@ from Modules.Housing import VALID_FLOORS
 from Modules.Housing.Lighting import VALID_LIGHTING_TYPE
 from Modules.Housing.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Web.web_users import VALID_USER_ROLES
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.WebLogin       ')
 

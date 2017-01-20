@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2016 by D. Brian Kimmel
+@copyright: (c) 2012-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 20, 2012
 @summary:   TCreated to handle the Insteon PLM controller

@@ -2,7 +2,7 @@
  * @name: PyHouse/src/Modules/Web/js/internet.js
  * @author: D. Brian Kimmel
  * @contact: D.BrianKimmel@gmail.com
- * @c:opyright (c) 2012-2015 by D. Brian Kimmel
+ * @c:opyright (c) 2012-2017 by D. Brian Kimmel
  * @license: MIT License
  * @note: Created about 2012
  * @summary: Displays the Internet element

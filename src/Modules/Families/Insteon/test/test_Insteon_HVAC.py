@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_HVAC.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 6, 2014
 @Summary:

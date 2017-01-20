@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/__init__.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:
@@ -49,7 +49,7 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 """
 
-__updated__ = '2016-09-17'
+__updated__ = '2017-01-20'
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

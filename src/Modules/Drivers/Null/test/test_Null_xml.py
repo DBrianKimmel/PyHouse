@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Drivers/Null/test/test_Null_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 23, 2014
 @Summary:
@@ -10,6 +10,9 @@
 Passed all 1 tests - DBK - 2015-07-30
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

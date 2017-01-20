@@ -4,12 +4,15 @@
 @name:      PyHouse/src/Modules/Families/X10/X10_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Aug 6, 2014
 @license:   MIT License
 @summary:   This module is for Insteon/X10
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 

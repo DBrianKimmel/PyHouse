@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2016 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -21,7 +21,7 @@ __updated__ = '2016-11-07'
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core import conversions
 from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Utilities.xml_tools import PutGetXML, stuff_new_attrs
+from Modules.Core.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')
 

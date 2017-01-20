@@ -35,7 +35,7 @@ import subprocess
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 # from Modules.Communication import ir_control
-from Modules.Utilities.uuid_tools import Uuid as toolUuid
+from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')

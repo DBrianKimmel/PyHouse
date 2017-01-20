@@ -10,7 +10,7 @@
 Passed all 18 tests - DBK 2017-01-12
 """
 
-__updated__ = '2017-01-14'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.rooms import RoomCls as roomsApi, Maint as roomsMaint
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_0, \
     TESTING_ROOM_COMMENT_0, \
@@ -70,7 +70,7 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID, \
     TESTING_HOUSE_DIVISION
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 JSON = {
         'Name': TESTING_ROOM_NAME_3,

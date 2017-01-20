@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import EntertainmentData
 from Modules.Housing.Entertainment.onkyo import API as onkyoApi
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
 

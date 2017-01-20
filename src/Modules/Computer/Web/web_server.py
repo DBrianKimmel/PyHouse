@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2012-2016 by D. Brian Kimmel
+@copyright: 2012-2017 by D. Brian Kimmel
 @note:      Created on Apr 3, 2012
 @license:   MIT License
 @summary:   This module provides the web server service of PyHouse.
@@ -44,7 +44,7 @@ from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web import web_utils
 from Modules.Computer.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 ENDPOINT_WEB_SERVER = 'tcp:port=8580'
 

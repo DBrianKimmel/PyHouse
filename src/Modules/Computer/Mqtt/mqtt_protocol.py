@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 28, 2015
 @Summary:   This creates the Twisted (Async) version of MQTT client.
@@ -25,8 +25,8 @@ from twisted.internet import error
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
-#  from Modules.Utilities.tools import PrintBytes
-#  from Modules.Utilities.debug_tools import PrettyFormatAny
+#  from Modules.Core.Utilities.tools import PrintBytes
+#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 

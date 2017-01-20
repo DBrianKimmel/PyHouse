@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/computerMenu.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2015-2015 by D. Brian Kimmel
+ * @copyright: (c) 2015-2017 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on June 20, 2015
  * @summary:   Displays the computer menu element

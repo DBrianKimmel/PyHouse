@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,11 +19,15 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Web.web_xml import Xml as webXml
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME, TESTING_HOUSE_ACTIVE, TESTING_HOUSE_KEY, TESTING_HOUSE_UUID
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Housing.test.xml_housing import \
+    TESTING_HOUSE_NAME, \
+    TESTING_HOUSE_ACTIVE, \
+    TESTING_HOUSE_KEY, \
+    TESTING_HOUSE_UUID
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 JSON = '{ Active : false, \
@@ -122,7 +126,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
         # print(PrettyFormatAny.form(self.m_xml.web_sect, 'XML'))
@@ -163,8 +167,6 @@ class C02_XML(SetupMixin, unittest.TestCase):
     def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
 
     def test_11_ReadXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)

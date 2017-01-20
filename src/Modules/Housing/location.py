@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the location information for a house.
@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files
 from Modules.Core.data_objects import LocationData, RiseSetData
-from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Location       ')

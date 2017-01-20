@@ -4,12 +4,15 @@
 @name:      PyHouse/src/Modules/Families/X10/X10_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2015 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon/X10
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -75,7 +78,7 @@ class API(object):
     def SaveXml(self, p_xml):
         pass
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate = 0):
+    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate=0):
         pass
 
 # ## END

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/UPB/test/test_UPB_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2017 by briank
 @license:   MIT License
 @note:       Created on Aug 6, 2014
 @Summary:
@@ -10,6 +10,9 @@
 Passed all 2 tests - DBK - 2015-07-29
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 from twisted.trial import unittest

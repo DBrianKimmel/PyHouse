@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Drivers/USB/Driver_USB_17DD_5500.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2015 by D. Brian Kimmel
+@copyright: (c) 2012-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 13, 2012
 @summary:   This module is for
@@ -85,6 +85,9 @@ Device Descriptor:
 
 """
 
+__updated__ = '2017-01-20'
+
+
 # import array
 import usb
 
@@ -130,7 +133,7 @@ class API(object):
         l_len = -1
         while l_len != 0:
             try:
-                l_msg = p_usb.Device.read(0x81, 8, timeout = 1000)
+                l_msg = p_usb.Device.read(0x81, 8, timeout=1000)
                 # we seem to have actual length + 240 as 1st char
                 l_len = l_msg[0] - 240
                 if l_len > 0:

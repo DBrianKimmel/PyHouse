@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Aug 9, 2011
 @license:   MIT License
 @summary:   This module is for *USING* device families
@@ -22,7 +22,7 @@ __updated__ = '2016-11-06'
 #  Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import FamilyData
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 

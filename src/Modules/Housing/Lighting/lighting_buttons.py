@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_buttons.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2016 by D. Brian Kimmel
+@copyright: (c) 2010-2017 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -20,8 +20,8 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import ButtonData
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
-from Modules.Utilities.device_tools import XML as deviceXML
-# from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Core.Utilities.device_tools import XML as deviceXML
+# from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
 LOG = Logging.getLogger('PyHouse.LightingButton ')
 

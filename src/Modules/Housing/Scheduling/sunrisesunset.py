@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2016 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
@@ -28,7 +28,7 @@ import astral
 # Import PyMh files
 from Modules.Core.data_objects import RiseSetData
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Sunrise        ')
 

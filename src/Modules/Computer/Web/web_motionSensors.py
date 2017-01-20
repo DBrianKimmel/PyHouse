@@ -4,14 +4,14 @@
 @name:      /home/briank/PyHouse/src/Modules/Computer/Web/web_motionSensors.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @note:      Created on Oct 23, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2017-01-03'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import os
@@ -22,7 +22,7 @@ from nevow import athena
 from Modules.Core.data_objects import MotionSensorData
 from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
-from Modules.Utilities import json_tools
+from Modules.Core.Utilities import json_tools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webMotion   ')
 

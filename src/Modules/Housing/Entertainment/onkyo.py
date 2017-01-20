@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Entertainment/onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c)2016-2016 by D. Brian Kimmel
+@copyright: (c)2016-2017 by D. Brian Kimmel
 @note:      Created on Jul 9, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2016-12-28'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import BaseUUIDObject
-from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML
+from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 

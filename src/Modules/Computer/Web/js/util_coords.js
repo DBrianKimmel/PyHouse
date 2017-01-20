@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/util_coords.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2016-2016 by D. Brian Kimmel
+ * @copyright: (c) 2016-2017 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created on Sep 07, 2016
  * @summary:   Handles coordinates in JS

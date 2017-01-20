@@ -4,7 +4,7 @@
 @name:       PyHouse/src/Modules/Computer/Nodes/node_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2016-2016 by D. Brian Kimmel
+@copyright:  2016-2017 by D. Brian Kimmel
 @date:       Created on Apr 27, 2016
 @licencse:   MIT License
 @summary:    Sync the nodes between all nodes.
@@ -18,7 +18,7 @@ import datetime
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeSync       ')
 

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Core/test/xml_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 18, 2015
 @Summary:
@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2016-10-27'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 

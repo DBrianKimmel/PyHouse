@@ -39,8 +39,8 @@ from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0, TESTING_BUTTON_SECTION, TESTING_BUTTON, XML_BUTTON_SECTION
 from Modules.Families.family import API as familyAPI
 from Modules.Core import conversions
-from Modules.Utilities import json_tools
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import json_tools
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

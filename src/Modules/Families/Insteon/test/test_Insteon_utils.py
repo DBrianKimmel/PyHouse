@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
@@ -32,8 +32,8 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_ADDRESS_0
 from test.xml_data import XML_LONG
-# from Modules.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Utilities.tools import PrintBytes
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.tools import PrintBytes
 
 # this matches button 0 in XML_LIGHTING_BUTTONS
 ADDR_BUTTON_0_MSG = bytearray(b'\x35\x6f\x2a')

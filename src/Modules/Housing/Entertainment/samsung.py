@@ -4,15 +4,15 @@
 @name:      src.Modules.Entertainment.samsung
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @note:      Created on Jul 11, 2016
 @license:   MIT License
 @summary:
 
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities.xml_tools import XmlConfigTools, PutGetXML
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.data_objects import BaseUUIDObject
 
 __updated__ = '2016-11-28'

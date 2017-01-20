@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/test/test_Scheduling.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 31, 2015
 @Summary:
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-20'
 
 from twisted.trial import unittest, reporter, runner
 

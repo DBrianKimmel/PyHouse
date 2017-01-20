@@ -2,7 +2,7 @@
 @name:      /home/briank/PyHouse/src/Modules/Housing/Entertainment/test/test_sony.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 28, 2016
 @summary:   Test

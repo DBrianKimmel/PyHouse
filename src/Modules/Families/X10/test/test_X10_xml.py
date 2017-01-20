@@ -2,12 +2,16 @@
 @name:      PyHouse/src/Modules/families/X10/test/test_X10_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2017 by briank
 @license:   MIT License
 @note:      Created on Aug 6, 2014
 @Summary:
 
 """
+
+__updated__ = '2017-01-20'
+
+
 import unittest
 
 

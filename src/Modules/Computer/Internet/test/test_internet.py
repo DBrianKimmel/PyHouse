@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Computer/Internet/test/test_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the internet information for a computer.
@@ -10,7 +10,7 @@
 Passed all 5 tests - DBK - 2015-09-12
 """
 
-__updated__ = '2016-11-27'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import InternetConnectionData
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4_0
-from Modules.Utilities import convert
+from Modules.Core.Utilities import convert
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 

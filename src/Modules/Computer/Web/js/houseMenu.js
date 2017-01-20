@@ -2,7 +2,7 @@
  * @name:      PyHouse/src/Modules/Web/js/houseMenu.js
  * @author:    D. Brian Kimmel
  * @contact:   D.BrianKimmel@gmail.com
- * @copyright: (c) 2012-2016 by D. Brian Kimmel
+ * @copyright: (c) 2012-2017 by D. Brian Kimmel
  * @license:   MIT License
  * @note:      Created about 2012
  * @summary:   Displays the house menu element

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/auto_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @note:      Created on Dec 31, 2013
 @license:   MIT License
 @summary:   Handle the automatic updating of PyHouse
@@ -13,7 +13,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-20'
 
 
 # strategy:

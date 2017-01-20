@@ -2,12 +2,15 @@
 @name:      PyHouse/src/Modules/Rules/rules_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 27, 2015
 @Summary:
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 

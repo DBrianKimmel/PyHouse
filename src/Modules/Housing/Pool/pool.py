@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import PoolData
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Pool           ')

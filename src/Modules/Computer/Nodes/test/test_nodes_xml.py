@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -56,8 +56,8 @@ from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_NODE_ROLL_0, \
         TESTING_NODES_NODE_ROLL_1
 from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 DIVISION = 'ComputerDivision'
 NODE_SECTION = 'NodeSection'
@@ -99,12 +99,12 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         Test some scattered things so we don't end up with hundreds of asserts.
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Xml'))
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
 
     def test_02_Computer(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'A1-02-A - PyHouse'))
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
 
 
@@ -123,9 +123,6 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         Test some scattered things so we don't end up with hundreds of asserts.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, DIVISION)
-        self.assertEqual(self.m_xml.node_sect.tag, NODE_SECTION)
 
 
 class B1_Read(SetupMixin, unittest.TestCase):

@@ -10,7 +10,7 @@
 Passed all 14 tests - DBK - 2017-01-11
 
 """
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,7 +19,7 @@ from twisted.internet import reactor
 import twisted
 
 #  Import PyMh files and modules.
-from test.xml_data import XML_LONG, XML_EMPTY
+from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import MqttBrokerData, \
     LocationData, ScheduleLightData, ControllerData, \
@@ -28,8 +28,8 @@ from Modules.Computer.Mqtt.mqtt_client import Util, API as mqttAPI
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
     TESTING_BROKER_ACTIVE_1
-from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import json_tools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
@@ -77,7 +77,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
 

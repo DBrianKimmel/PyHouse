@@ -1,6 +1,6 @@
 """ drivers/__init__.py
 
-@copyright: (C) 2012-2015 by D. Brian Kimmel
+@copyright: (C) 2012-2017 by D. Brian Kimmel
 
 The following terms apply to all files associated
  with the software unless explicitly disclaimed in individual files.
@@ -42,6 +42,7 @@ Ethernet - not too much of this is used yet.
 
 """
 
+__updated__ = '2017-01-20'
 __version_info__ = (1, 6, 0)
 __version__ = '.' . join(map(str, __version_info__))
 

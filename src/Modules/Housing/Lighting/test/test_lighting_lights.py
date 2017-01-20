@@ -67,8 +67,8 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_COORDS_1, \
     TESTING_LIGHT_SECTION, \
     TESTING_LIGHT
-from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import json_tools
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

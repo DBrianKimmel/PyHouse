@@ -1,16 +1,15 @@
 """
-
 @name:      PyHouse/src/Modules/housing/no_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Feb 13, 2014
 @summary:
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-20'
 
 """
 #define DEBUG

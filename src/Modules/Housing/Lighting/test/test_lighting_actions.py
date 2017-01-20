@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Lighting/test/test_lighting_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 3, 2015
 @Summary:
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

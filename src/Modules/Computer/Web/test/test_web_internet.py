@@ -10,9 +10,9 @@
 Passed all 3 tests - DBK - 2016-11-21
 
 """
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Computer.Web import web_internet
 from Modules.Computer.Web.web import WorkspaceData
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 
 
@@ -49,7 +49,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')
 
@@ -68,8 +68,5 @@ class B1_Data(SetupMixin, unittest.TestCase):
         """
         l_comp = web_internet.InternetElement(self.m_workspace, None).getInternetData()
         # print(PrettyFormatAny.form(l_comp, 'B1-01-A - Data'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')
 
 # ## END DBK

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Driveres/interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 21, 2013
 @summary:   Schedule events
@@ -28,7 +28,7 @@ from Modules.Drivers.Ethernet.Ethernet_xml import XML as ethernetXML
 from Modules.Drivers.Null.Null_xml import XML as nullXML
 from Modules.Drivers.Serial.Serial_xml import XML as serialXML
 from Modules.Drivers.USB.USB_xml import XML as usbXML
-from Modules.Utilities.xml_tools import stuff_new_attrs
+from Modules.Core.Utilities.xml_tools import stuff_new_attrs
 from Modules.Computer import logging_pyh as Logging
 # from Modules.Drivers import VALID_INTERFACES
 # from Modules.Drivers import VALID_PROTOCOLS

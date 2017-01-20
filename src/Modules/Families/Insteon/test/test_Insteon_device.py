@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2016 by D. Brian Kimmel
+@copyright: (c) 2011-2017 by D. Brian Kimmel
 @note:      Created on Apr 1, 2011
 @license:   MIT License
 @summary:   This module tests Insteon_device

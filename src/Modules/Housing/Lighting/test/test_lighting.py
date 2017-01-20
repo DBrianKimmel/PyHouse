@@ -18,7 +18,7 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightData
 from Modules.Families.family import API as familyAPI
@@ -39,7 +39,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
 from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_NAME_0, \
     TESTING_LIGHTING_BUTTON_NAME_1
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -73,7 +73,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_02_XmlTags(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
         self.assertEqual(self.m_xml.lighting_sect.tag, TESTING_LIGHTING_SECTION)
         self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')

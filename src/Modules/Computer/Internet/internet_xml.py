@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Computer/Internet/internet_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 29, 2014
 @Summary:
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-19'
 
 
 #  Import system type stuff
@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Internet_xml   ')

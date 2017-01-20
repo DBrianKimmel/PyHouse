@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Scheduling/test/test_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2016 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the schedule information for a house.
@@ -12,7 +12,7 @@ There are two tests (Starting with XX) that I do not know how to do in twisted.
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import datetime
@@ -37,9 +37,9 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_NAME_3, \
     TESTING_SCHEDULE_SUNRISE_0, \
     TESTING_SCHEDULE_SUNSET_0
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 T_TODAY = datetime.datetime(2015, 6, 6, 12, 34, 56)
@@ -116,7 +116,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Just to be sure the family data is loaded properly.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.schedule_sect.tag, 'ScheduleSection')
         self.assertEqual(self.m_xml.schedule.tag, 'Schedule')

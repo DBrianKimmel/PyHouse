@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Famlies/UPB/test/test_UPB_Pim.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test the UPB controller.
@@ -10,6 +10,9 @@
 Passed all 30 tests - DBK - 2015-08-15
 
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 from twisted.trial import unittest

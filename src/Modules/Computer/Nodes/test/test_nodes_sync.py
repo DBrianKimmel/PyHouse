@@ -11,7 +11,7 @@ Passed all 5 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,10 +26,10 @@ from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_NODE_NAME_0, \
         TESTING_NODES_NODE_KEY_0, \
         TESTING_NODES_NODE_ACTIVE_0
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Utilities.debug_tools import PrettyFormatAny
-from Modules.Utilities import json_tools
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import json_tools
 
 
 class SetupMixin(object):
@@ -57,8 +57,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.m_node_obj = NodeData()
 
     def test_01_Tags(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'a1-01-a - PyHouse'))
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
         self.assertEqual(self.m_xml.node.tag, 'Node')
@@ -91,12 +91,12 @@ class C1_Util(SetupMixin, unittest.TestCase):
 
     def test_01_Add(self):
         l_node = nodesXml._read_one_node_xml(self.m_xml.node)
-       # print(PrettyFormatAny.form(l_node, 'Node'))
+        # print(PrettyFormatAny.form(l_node, 'Node'))
         l_json = json_tools.encode_json(l_node)
-        # print(PrettyFormatAny.form(l_json, 'PyHouse'))
+        # print(PrettyFormatAny.form(l_json, 'C1-01-A - PyHouse'))
         l_msg = json_tools.decode_json_unicode(l_json)
         Util.add_node(self.m_pyhouse_obj, l_msg)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'C1-01-B - PyHouse'))
         self.assertNotEqual(self.m_pyhouse_obj.Xml, TESTING_NODES_NODE_NAME_0)
 
 # ## END DBK

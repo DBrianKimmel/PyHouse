@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Families/UPB/test/xml_upb.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
 @Summary:
 
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2017-01-20'
 
 TESTING_UPB_ADDRESS = '255'
 TESTING_UPB_NETWORK = '6'

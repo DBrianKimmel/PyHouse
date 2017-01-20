@@ -2,7 +2,7 @@
 @Name:      PyHouse/src/Modules/Family/test/test_package.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2015 by D. Brian Kimmel
+@copyright: (c) 2013-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 9, 2013
 @summary:   This module
@@ -10,7 +10,7 @@
 Passed all 6 tests - DBK 2015-07-28
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 import inspect

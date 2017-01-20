@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Drivers/USB/test/test_USB_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by briank
+@copyright: (c) 2014-2017 by briank
 @license:   MIT License
 @note:      Created on Jul 22, 2014
 @Summary:
@@ -10,6 +10,10 @@
 Passed all 1 tests - DBK - 2015-08-15
 
 """
+
+__updated__ = '2017-01-20'
+
+
 # Import system type stuff
 from twisted.trial import unittest
 

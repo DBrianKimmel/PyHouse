@@ -12,14 +12,14 @@ Passed all 25 tests - DBK - 2017-01-11
 """
 import netifaces
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
@@ -28,7 +28,7 @@ from Modules.Computer.Nodes.node_local import \
     API as localApi, \
     Devices as localDevices, \
     Util as localUtil
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -69,7 +69,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_02_Tags(self):
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
 

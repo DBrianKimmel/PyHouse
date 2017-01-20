@@ -23,7 +23,7 @@ from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

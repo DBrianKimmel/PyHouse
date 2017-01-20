@@ -4,14 +4,14 @@
 @Name:      PyHouse/src/Modules/Computer/Internet/inet_update_dyn_dns.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2015 by D. Brian Kimmel
+@copyright: (c) 2012-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 20, 2012
 @summary:   This module sends our external IP to freedns.
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-20'
 
 # Import system type stuff
 from twisted.web.client import getPage

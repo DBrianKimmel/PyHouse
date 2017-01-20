@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2016 by D. Brian Kimmel
+@copyright: (c) 2010-2017 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,10 +29,9 @@ from Modules.Core.data_objects import ControllerData, UuidData
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 from Modules.Drivers.interface import Xml as interfaceXML
-from Modules.Utilities.device_tools import XML as deviceXML
-from Modules.Utilities.uuid_tools import Uuid as UtilUuid
-from Modules.Utilities.xml_tools import PutGetXML
-#  from Modules.Utilities import debug_tools
+from Modules.Core.Utilities.device_tools import XML as deviceXML
+from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
+from Modules.Core.Utilities.xml_tools import PutGetXML
 
 LOG = Logger.getLogger('PyHouse.LightController')
 

@@ -11,7 +11,7 @@ Passed all 4 tests - DBK - 2016-11-23
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
 from Modules.Computer.Web.web_xml import Xml as webXml
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 
 
@@ -91,7 +91,7 @@ class C02_XML(SetupMixin, unittest.TestCase):
     def test_01_find_xml(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
 
     def test_11_ReadXML(self):

@@ -2,25 +2,29 @@
 @name:      PyHouse/src/Modules/Web/test/xml_web.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2015 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 30, 2015
 @Summary:
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 
 # Import PyMh files
 
 
-L_WEB_SECTION_START = '<WebSection>'
-L_WEB_SECTION_END = '</WebSection>'
-L_LOGIN_SECTION_START = '<LoginSection>'
-L_LOGIN_SECTION_END = '</LoginSection>'
-L_LOGIN_END = '</Login>'
+TESTING_WEB_SECTION = 'WebSection'
+TESTING_LOGIN_SECTION = 'LoginSection'
+TESTING_LOGIN = 'Login'
+
+L_WEB_SECTION_START = '<' + TESTING_WEB_SECTION + '>'
+L_WEB_SECTION_END = '</' + TESTING_WEB_SECTION + '>'
+L_LOGIN_SECTION_START = '<' + TESTING_LOGIN_SECTION + '>'
+L_LOGIN_SECTION_END = '</' + TESTING_LOGIN_SECTION + '>'
+L_LOGIN_END = '</' + TESTING_LOGIN + '>'
 
 TESTING_WEB_PORT = '8580'
 TESTING_WEB_SECURE_PORT = '8588'
@@ -37,10 +41,11 @@ TESTING_LOGIN_PASSWORD_0 = 'ChangeMe'
 TESTING_LOGIN_ROLE_0 = 'Admin'
 
 L_LOGIN_START_0 = '      ' + \
-    '<Login Name="' + TESTING_LOGIN_NAME_0 + \
-    '" Key="' + TESTING_LOGIN_KEY_0 + \
-    '" Active="' + TESTING_LOGIN_ACTIVE_0 + \
-    '">'
+    '<' + TESTING_LOGIN + ' ' + \
+    'Name="' + TESTING_LOGIN_NAME_0 + '" ' + \
+    'Key="' + TESTING_LOGIN_KEY_0 + '" ' + \
+    'Active="' + TESTING_LOGIN_ACTIVE_0 + '" ' + \
+    '>'
 L_LOGIN_UUID_0 = '<UUID>' + TESTING_LOGIN_UUID_0 + '</UUID>'
 L_LOGIN_FULL_NAME_0 = '      <FullName>' + TESTING_LOGIN_FULL_NAME_0 + '</FullName>'
 L_LOGIN_PASSWORD_0 = '      <Password>' + TESTING_LOGIN_PASSWORD_0 + '</Password>'
@@ -64,10 +69,11 @@ TESTING_LOGIN_PASSWORD_1 = 'Pass1'
 TESTING_LOGIN_ROLE_1 = 'Adult'
 
 L_LOGIN_START_1 = '      ' + \
-    '<Login Name="' + TESTING_LOGIN_NAME_1 + \
-    '" Key="' + TESTING_LOGIN_KEY_1 + \
-    '" Active="' + TESTING_LOGIN_ACTIVE_1 + \
-    '">'
+    '<' + TESTING_LOGIN + ' ' + \
+    'Name="' + TESTING_LOGIN_NAME_1 + '" ' + \
+    'Key="' + TESTING_LOGIN_KEY_1 + '" ' + \
+    'Active="' + TESTING_LOGIN_ACTIVE_1 + '" ' + \
+    '>'
 L_LOGIN_UUID_1 = '<UUID>' + TESTING_LOGIN_UUID_1 + '</UUID>'
 L_LOGIN_FULL_NAME_1 = '      <FullName>' + TESTING_LOGIN_FULL_NAME_1 + '</FullName>'
 L_LOGIN_PASSWORD_1 = '      <Password>' + TESTING_LOGIN_PASSWORD_1 + '</Password>'

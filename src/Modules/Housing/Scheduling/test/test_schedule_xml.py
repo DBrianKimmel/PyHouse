@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2016 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 2, 2014
 @Summary:
@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.test.xml_lights import TESTING_LIGHT_NAME_1
 from Modules.Housing.Scheduling.test.xml_schedule import \
@@ -54,7 +54,7 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -93,7 +93,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.schedule_sect.tag, 'ScheduleSection')
         self.assertEqual(self.m_xml.schedule.tag, 'Schedule')

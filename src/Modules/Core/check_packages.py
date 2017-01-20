@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Core/check_packages.pyt
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2016 by D. Brian Kimmel
+@copyright: (c) 2016-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created Jan 10, 2016
 @Summary:   Checks to see if all packages needed are properly installed.

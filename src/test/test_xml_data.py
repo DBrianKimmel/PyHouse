@@ -13,7 +13,7 @@ It will check the XML file for being fundamentally correct for all other tests t
 Passed all 12 tests - DBK - 2017-01-18
 """
 
-__updated__ = '2017-01-18'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_UUID_0
 
 
@@ -65,15 +65,7 @@ class A2_Parsed(unittest.TestCase):
 
     def test_02_Computer(self):
         l_div = self.m_root_element.find('ComputerDivision')
-        self.assertEqual(self.m_root_element.tag, 'PyHouse')
-
-    def test_03_House(self):
-        l_div = self.m_root_element.find('HouseDivision')
-        self.assertEqual(self.m_root_element.tag, 'PyHouse')
-
-    def test_03_ReadXML(self):
-        l_pyhouse = self.m_root_element
-        self.assertEqual(l_pyhouse.tag, 'PyHouse')
+        self.assertEqual(self.m_root_element.tag, TESTING_PYHOUSE)
 
     def test_04_ComputerDivision(self):
         l_div = self.m_root_element.find('ComputerDivision')

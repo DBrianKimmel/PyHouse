@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Core/test/test_conversions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2015 by D. Brian Kimmel
+@copyright: (c) 2014-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 14, 2014
 @Summary:
@@ -10,6 +10,9 @@
 
 Tests all working OK - DBK 2014-07-114
 """
+
+__updated__ = '2017-01-20'
+
 
 # Import system type stuff
 from twisted.trial import unittest

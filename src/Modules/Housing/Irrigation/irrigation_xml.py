@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2016 by D. Brian Kimmel
+@copyright: (c) 2015-2017 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @Summary:   Read/Write the Irrigation portions of the XML Configuration file.
@@ -21,7 +21,7 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import IrrigationSystemData, IrrigationZoneData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.IrrigationXml  ')
 DIVISION = 'HouseDivision'

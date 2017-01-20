@@ -11,14 +11,14 @@ Passed all 8 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2017-01-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Web.web_xml import Xml as webXml
@@ -26,8 +26,8 @@ from Modules.Computer.Web import web_login
 from Modules.Families import VALID_FAMILIES
 from Modules.Computer.Web.test.xml_web import TESTING_LOGIN_NAME_0, TESTING_WEB_PORT
 from Modules.Computer.Web.web import WorkspaceData
-from Modules.Utilities import json_tools
-from Modules.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities import json_tools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -56,7 +56,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
@@ -78,8 +78,6 @@ class A2_XML(SetupMixin, unittest.TestCase):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml.web_sect, 'A2-02-A - Web Xml'))
-        self.assertEqual(self.m_xml.root.tag, 'PyHouse')
-        self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
 
     def test_03_ReadXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)
