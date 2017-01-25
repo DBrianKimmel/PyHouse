@@ -53,7 +53,7 @@ class Xml(object):
         l_dict = {}
         l_count = 0
         try:
-            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
+            l_section = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
             if l_section == None:
                 return l_dict
             l_section = l_section.find(SECTION)

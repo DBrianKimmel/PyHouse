@@ -7,9 +7,10 @@
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 11 tests - DBK - 2017-01-11
+Passed all 9 tests - DBK - 2017-01-20
 
 """
+from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 
 __updated__ = '2017-01-20'
 
@@ -19,9 +20,12 @@ from twisted.trial import unittest
 
 #  Import PyMh files and modules.
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt.test.xml_mqtt import \
+    XML_MQTT, \
+    TESTING_MQTT_SECTION, \
+    TESTING_MQTT_BROKER, \
     TESTING_BROKER_NAME_0, \
     TESTING_BROKER_KEY_0, \
     TESTING_BROKER_ACTIVE_0, \
@@ -35,7 +39,8 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_USERNAME_0, \
     TESTING_BROKER_PASSWORD_0, \
     TESTING_BROKER_USERNAME_1, \
-    TESTING_BROKER_PASSWORD_1, TESTING_BROKER_UUID_0, XML_MQTT, TESTING_MQTT_SECTION
+    TESTING_BROKER_PASSWORD_1, \
+    TESTING_BROKER_UUID_0
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -59,22 +64,14 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_PyHouse(self):
+    def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
-        self.assertEqual(self.m_xml.broker.tag, 'Broker')
-
-    def test_02_FindXML(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_xml.mqtt_sect, 'A1-02-A - Tags'))
-
-    def test_03_Mqtt(self):
-        pass
+        self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
+        self.assertEqual(self.m_xml.mqtt_sect.tag, TESTING_MQTT_SECTION)
+        self.assertEqual(self.m_xml.broker.tag, TESTING_MQTT_BROKER)
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):
@@ -85,7 +82,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Raw(self):
         l_raw = XML_MQTT
-        print(l_raw)
+        # print(l_raw)
         self.assertEqual(l_raw[:13], '<MqttSection>')
 
     def test_02_Parsed(self):
@@ -130,19 +127,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj[1].BrokerPort, int(TESTING_BROKER_PORT_1))
         self.assertEqual(l_obj[1].UserName, TESTING_BROKER_USERNAME_1)
         self.assertEqual(l_obj[1].Password, TESTING_BROKER_PASSWORD_1)
-
-
-class B2_EmptyRead(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
-
-    def test_01_Mqtt(self):
-        """Here we should get a dict of brokers
-        """
-        l_obj = self.m_api.read_mqtt_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_obj, 'Mqtt'))
-        self.assertEqual(l_obj, {})
 
 
 class C1_Write(SetupMixin, unittest.TestCase):
