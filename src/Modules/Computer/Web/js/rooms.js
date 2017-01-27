@@ -158,7 +158,7 @@ function createEntry(self) {
 
 function createCompleteRoomEntry(self, p_data) {
 	p_data.Comment = '';
-	self.createRoomEntry(p_data);
+	createRoomEntry(self, p_data);
 	p_data.Corner = createCoordinateEntry(self);
 	p_data.Size = createCoordinateEntry(self);
 	p_data.Floor = '1';

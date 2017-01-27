@@ -111,6 +111,14 @@ function handleMenuOnClick(self, p_node) {
 /**
  * Build a screen full of data entry fields.
  */
+function buildModeSelectWidget(self, p_checked) {
+	return buildSelectWidget(self, 'ThermostatMode', 'Mode', ['Auto', 'Heat', 'Cool', 'Off'], p_checked);
+},
+
+function buildScaleSelectWidget(self, p_checked) {
+	return buildSelectWidget(self, 'ThermostatScale', 'C or F', ['C', 'F'], p_checked);
+},
+
 function buildDataEntryScreen(self, p_entry, p_handler) {
 	// Divmod.debug('---', 'thermostats.buildDataEntryScreen() was called.';
 	var l_obj = arguments[1];
@@ -125,7 +133,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 	var l_html = '';
 	l_html = buildBaseEntry(self, p_obj, l_html);
 	l_html += buildDeviceEntry(self, p_obj, p_onchange);
-	l_html = buildFamilyPart(self, p_obj, l_html, 'familyChanged');
+	l_html = buildFamilyPart(self, p_obj, l_html, 'handleFamilyChanged');
 	l_html = self.buildThermostatEntry(p_obj, l_html);
 	l_html = buildLcarEntryButtons(p_handler, l_html);
 	return l_html;
@@ -133,8 +141,10 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 
 function buildThermostatEntry(self, p_obj, p_html, p_onchange) {
 	//Divmod.debug('---', 'thermostats.buildThermostatEntry() was called.');
-	p_html += buildLcarHvacSliderWidget(self, 'CoolSetting', 'Cool', p_obj.CoolSetPoint, 'handleSliderChangeCool');
-	p_html += buildLcarHvacSliderWidget(self, 'HeatSetting', 'Heat', p_obj.HeatSetPoint, 'handleSliderChangeHeat');
+	p_html += buildLcarHvacSliderWidget(self, 'CoolSetPoint', 'Cool', p_obj.CoolSetPoint, 'handleSliderChangeCool');
+	p_html += buildLcarHvacSliderWidget(self, 'HeatSetPoint', 'Heat', p_obj.HeatSetPoint, 'handleSliderChangeHeat');
+	p_html += self.buildModeSelectWidget(p_obj.ThermostatMode);
+	p_html += self.buildScaleSelectWidget(p_obj.ThermostatScale);
 	return p_html;
 },
 
@@ -142,20 +152,20 @@ function handleSliderChangeCool(p_event) {
 	// Divmod.debug('---', 'thermostats.handleSliderChangeCool() was called.');
 	var l_obj = globals.House.ThermostatObj;
 	var l_self = globals.Self;
-	var l_level = fetchSliderWidget(l_self, 'CoolSetting');
-	updateSliderBoxValue(l_self, 'CoolSetting', l_level);
+	var l_level = fetchSliderWidget(l_self, 'CoolSetPoint');
+	updateSliderBoxValue(l_self, 'CoolSetPoint', l_level);
 },
 
 function handleSliderChangeHeat(p_event) {
 	// Divmod.debug('---', 'thermostats.handleSliderChangeHeat() was called.');
 	var l_obj = globals.House.ThermostatObj;
 	var l_self = globals.Self;
-	var l_level = fetchSliderWidget(l_self, 'HeatSetting');
-	updateSliderBoxValue(l_self, 'HeatSetting', l_level);
+	var l_level = fetchSliderWidget(l_self, 'HeatSetPoint');
+	updateSliderBoxValue(l_self, 'HeatSetPoint', l_level);
 },
 
-function familyChanged() {
-	// Divmod.debug('---', 'thermostats.familyChanged() was called.');
+function handleFamilyChanged() {
+	// Divmod.debug('---', 'thermostats.handleFamilyChanged() was called.');
 	var l_obj = globals.House.ThermostatObj;
 	var l_self = globals.Self;
 	l_obj.DeviceFamily = fetchSelectWidget(l_self, 'Family');
@@ -173,7 +183,10 @@ function fetchEntry(self) {
 
 function fetchThermostatEntry(self, p_data) {
 	// Divmod.debug('---', 'thermostats.fetchThermostatEntry() was called.');
-	p_data.CoolSetPoint = fetchSliderWidget(self, 'CoolSetting');
+	p_data.CoolSetPoint = fetchSliderWidget(self, 'CoolSetPoint');
+	p_data.HeatSetPoint = fetchSliderWidget(self, 'HeatSetPoint');
+	p_data.ThermostatMode = fetchSelectWidget(self, 'ThermostatMode');
+	p_data.ThermostatScale = fetchSelectWidget(self, 'ThermostatScale');
 	return p_data;
 },
 
@@ -181,8 +194,8 @@ function createEntry(self) {
 	// Divmod.debug('---', 'thermostats.createEntry() was called.');
 	var l_data = createBaseEntry(self, Object.keys(globals.House.Hvac.Thermostats).length);
 	createDeviceEntry(self, l_data);
-	self.createThermostatEntry(l_data);
 	createFamilyPart(self, l_data);
+	self.createThermostatEntry(l_data);
 	// console.log("thermostats.createEntry() - Obj = %O", p_data);
 	return l_data;
 },
@@ -190,7 +203,10 @@ function createEntry(self) {
 function createThermostatEntry(self, p_data) {
 	// Divmod.debug('---', 'thermostats.createThermostatEntry() was called.');
 	p_data.CoolSetPoint = 78;
+	p_data.CurrentTemperature = 75;
 	p_data.HeatSetPoint = 70;
+	p_data.ThermostatMode = 'Auto';
+	p_data.ThermostatScale = 'F';
 },
 
 // ============================================================================

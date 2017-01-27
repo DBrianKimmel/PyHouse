@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-01-27'
 
 #  Import system type stuff
 import os
@@ -73,7 +73,7 @@ class ThermostatsElement(athena.LiveElement):
         l_obj.DeviceSubType = 1
         l_obj.DeviceType = 2
         l_obj.HeatSetPoint = l_json['HeatSetPoint']
-        l_obj.ThermostatMode = 'Cool'  #  Cool | Heat | Auto | EHeat
+        l_obj.ThermostatMode = 'Auto'  #  Cool | Heat | Auto | EHeat
         l_obj.ThermostatScale = 'F'  #  F | C
         l_obj.ThermostatStatus = 'Off'
         web_family.get_family_json_data(l_obj, l_json)

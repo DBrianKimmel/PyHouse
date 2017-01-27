@@ -32,7 +32,7 @@ function buildRoomList() {
  * @returns
  */
 function handleRoomChange(self, p_event) {
-	Divmod.debug('---', 'handle_rooms.handleRoomChange() was called. ' + p_event);
+	// Divmod.debug('---', 'handle_rooms.handleRoomChange() was called. ' + p_event);
 	var l_obj = globals.House.ScheduleObj;
 	var l_self = globals.Self;
 	l_obj.RoomName = fetchSelectWidget(l_self, 'HrRoomName');
@@ -56,7 +56,7 @@ function buildRoomSelectWidget(self, p_obj, p_handleChange) {
 }
 
 function createRoomEntry(self, p_obj) {
-	Divmod.debug('---', 'handle_rooms.createRoomEntry() was called. ');
+	// Divmod.debug('---', 'handle_rooms.createRoomEntry() was called. ');
 	p_obj.RoomName = 'XXX Room';
 	p_obj.RoomUUID = '';
 	p_obj.RoomCoords = createCoordinateEntry(self);
