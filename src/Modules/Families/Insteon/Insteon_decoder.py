@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-01-07'
+__updated__ = '2017-01-31'
 
 #  Import system type stuff
 
@@ -33,7 +33,7 @@ from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_HVAC import DecodeResponses as DecodeHvac
 from Modules.Families.Insteon.Insteon_Security import DecodeResponses as DecodeSecurity
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX
+from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
@@ -211,7 +211,7 @@ class DecodeResponses(object):
 
     def _decode_51(self, p_controller_obj):
         """ Insteon Extended Message Received (25 bytes).
-        See p 247 of developers guide.
+        See p 234(247) of 2009 developers guide.
         """
         l_message = p_controller_obj._Message
         l_obj_from = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
@@ -234,9 +234,18 @@ class DecodeResponses(object):
 
     def _decode_52_record(self, p_controller_obj):
         """Insteon X-10 message received (4 bytes).
-        See p 253 of developers guide.
+        See p 240(253) of 2009 developers guide.
         """
-        LOG.warning("52 Resp: not decoded yet.")
+        l_message = p_controller_obj._Message
+        l_house = X10_HOUSE[l_message[2] / 16]
+        l_key = X10_HOUSE[l_message[2] % 16]
+        l_unit = ''
+        l_command = ''
+        if l_message[3] == 0:
+            l_unit = l_key
+        else:
+            l_command = l_key
+        LOG.info("X10 Message - House:{} {}, Command:{}".format(l_house, l_unit, l_command))
 
     def _decode_60_record(self, p_controller_obj):
         """Get Insteon Modem Info (9 bytes).

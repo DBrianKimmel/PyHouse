@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-02-02'
 
 #  Import system type stuff
 import platform
@@ -21,16 +21,19 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import \
-            PyHouseData, \
-            PyHouseAPIs, \
-            ComputerInformation, \
-            ComputerAPIs, \
-            HouseInformation, \
-            HouseAPIs, \
-            LocationData, \
-            TwistedInformation, \
-            XmlInformation, \
-            LightingData, HvacData, SecurityData, AllUuids, UuidData
+    PyHouseData, \
+    PyHouseAPIs, \
+    ComputerInformation, \
+    ComputerAPIs, \
+    HouseInformation, \
+    HouseAPIs, \
+    LocationData, \
+    TwistedInformation, \
+    XmlInformation, \
+    LightingData, \
+    HvacData, \
+    SecurityData, \
+    AllUuids
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
@@ -75,6 +78,8 @@ class XmlData(object):
         self.pool = None
         self.room_sect = None
         self.room = None
+        self.rules_sect = None
+        self.rule = None
         self.schedule_sect = None
         self.schedule = None
         self.security_sect = None
@@ -184,18 +189,25 @@ class SetupPyHouseObj(object):
         p_xml.house_div = p_xml.root.find('HouseDivision')
         if p_xml.house_div is None:
             return
-        #
+
         p_xml.entertainment_sect = p_xml.house_div.find('EntertainmentSection')
         p_xml.panasonic_sect = p_xml.entertainment_sect.find('PanasonicSection')
         p_xml.pioneer_sect = p_xml.entertainment_sect.find('PioneerSection')
         p_xml.samsung_sect = p_xml.entertainment_sect.find('SamsungSection')
         #
         p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')
-        p_xml.location_sect = p_xml.house_div.find('LocationSection')
+        p_xml.irrigation_system = p_xml.irrigation_sect.find('System')
+        p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
 
         p_xml.pool_sect = p_xml.house_div.find('PoolSection')
         p_xml.pool = p_xml.pool_sect.find('Pool')
+
         p_xml.room_sect = p_xml.house_div.find('RoomSection')
+        p_xml.room = p_xml.room_sect.find('Room')
+
+        p_xml.rules_sect = p_xml.house_div.find('RulesSection')
+        p_xml.rule = p_xml.rules_sect.find('Rule')
+
         p_xml.schedule_sect = p_xml.house_div.find('ScheduleSection')
         p_xml.schedule = p_xml.schedule_sect.find('Schedule')
 
@@ -204,7 +216,7 @@ class SetupPyHouseObj(object):
         p_xml.garagedoor = p_xml.garagedoor_sect.find('GarageDoor')
         p_xml.motiondetector_sect = p_xml.security_sect.find('MotionDetectorSection')
         p_xml.motiondetector = p_xml.motiondetector_sect.find('Motion')
-        #
+
         p_xml.lighting_sect = p_xml.house_div.find('LightingSection')
         p_xml.button_sect = p_xml.lighting_sect.find('ButtonSection')
         p_xml.button = p_xml.button_sect.find('Button')
@@ -212,13 +224,12 @@ class SetupPyHouseObj(object):
         p_xml.controller = p_xml.controller_sect.find('Controller')
         p_xml.light_sect = p_xml.lighting_sect.find('LightSection')
         p_xml.light = p_xml.light_sect.find('Light')
-        #
-        p_xml.irrigation_system = p_xml.irrigation_sect.find('System')
-        p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
-        p_xml.room = p_xml.room_sect.find('Room')
+
         p_xml.hvac_sect = p_xml.house_div.find('HvacSection')
         p_xml.thermostat_sect = p_xml.hvac_sect.find('ThermostatSection')
         p_xml.thermostat = p_xml.thermostat_sect.find('Thermostat')
+
+        p_xml.location_sect = p_xml.house_div.find('LocationSection')
 
     def BuildPyHouseObj(self, p_root):
         l_pyhouse_obj = PyHouseData()

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-11'
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
@@ -27,7 +27,7 @@ class Actions(object):
     def _get_field(self, p_message, p_field):
         try:
             l_ret = p_message[p_field]
-        except KeyError:
+        except (KeyError, TypeError):
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
         return l_ret
 
@@ -87,13 +87,22 @@ class Actions(object):
         p_logmsg += '\tWeather info {}'.format(PrettyFormatAny.form(p_message, 'Weather msg', 160))
         return p_logmsg
 
+    def _decodeLWT(self, p_logmsg, p_topic, p_message):
+        p_logmsg += '\tLast Will:\n'
+        p_logmsg += p_message
+        return p_logmsg
+
     def mqtt_dispatch(self, p_topic, p_message):
         """ This is the master dispatch table
         """
+        l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
+        # Lwt can be from any device
+        if p_topic[0] == 'lwt':
+            l_logmsg += self._decodeLWT(l_logmsg, p_topic, p_message)
+            return l_logmsg
         self.m_sender = self._get_field(p_message, 'Sender')
         self.m_name = self._get_field(p_message, 'Name')
         self.m_room_name = self._get_field(p_message, 'RoomName')
-        l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
         l_logmsg += '\tSender: {}\n'.format(self.m_sender)
         if p_topic[0] == 'computer':
             l_logmsg = self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(l_logmsg, p_topic, p_message)

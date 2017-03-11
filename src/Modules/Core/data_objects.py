@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-02-01'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -447,15 +447,6 @@ class MqttBrokerData(BaseObject):
         self._isTLS = False
 
 
-class RulesData(BaseObject):
-    """
-    """
-    def __init__(self):
-        self.Device = None
-        self.Condition = None
-        self.Action = None
-
-
 """
 BaseUUIDObject dependent.
 """
@@ -483,7 +474,7 @@ class DeviceData(BaseUUIDObject):
         super(DeviceData, self).__init__()
         self.Comment = ''
         self.DeviceFamily = 'Null'
-        self.DeviceType = 0  # 0 = Lighting, 1 = HVAC, 2 = Security
+        self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security
         self.DeviceSubType = 0
         self.RoomCoords = None  # CoordinateData()
         self.RoomName = ''
@@ -590,6 +581,17 @@ class RoomData(BaseUUIDObject):
         self.RoomType = 'Room'
         self._AddFlag = False
         self._DeleteFlag = False
+
+
+class RulesData(BaseUUIDObject):
+    """
+    ==> PyHouse.House.Rules.xxx as in the def below
+    """
+    def __init__(self):
+        self.DeviceUUID = None
+        self.Condition = None
+        self.Time = None
+        self.Action = None
 
 
 class ScheduleBaseData(BaseUUIDObject):

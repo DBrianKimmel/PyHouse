@@ -18,8 +18,9 @@ Coords are the X, Y and Z offsets within the room for the device.
 
 Comments should not need explaining.  They are just present and can contain just about anything.
 """
+from Modules.Housing.Rules.test.xml_rules import XML_RULES_SECTION
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-02-01'
 
 # Import system type stuff
 
@@ -61,6 +62,7 @@ HOUSE_DIVISION_XML = '\n'.join([
     XML_ENTERTAINMENT,
     XML_IRRIGATION,
     XML_POOL,
+    XML_RULES_SECTION,
     XML_SCHEDULE,
     XML_SECURITY,
     L_HOUSE_DIVISION_END

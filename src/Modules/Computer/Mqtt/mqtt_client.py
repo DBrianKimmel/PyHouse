@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-11'
 
 #  Import system type stuff
 import copy
@@ -43,7 +43,7 @@ class Util(object):
     """
 
     def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker):
-        l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
+        l_clientID = 'PyH-Raspi-' + p_pyhouse_obj.Computer.Name
         l_host = p_broker.BrokerAddress
         l_port = p_broker.BrokerPort
         l_username = None  # p_broker.UserName

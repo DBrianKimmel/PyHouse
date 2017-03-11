@@ -13,7 +13,7 @@ Note! This is designed for 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2016-11-18'
+__updated__ = '2017-01-31'
 
 STX = 0x02
 ACK = 0x06
@@ -158,6 +158,63 @@ COMMAND_LENGTH = {
     0x71: 4,
     0x72: 2,
     0x73: 2
+}
+
+X10_HOUSE = {
+    0x00: 'M',
+    0x01: 'E',
+    0x02: 'C',
+    0x03: 'K',
+    0x04: 'O',
+    0x05: 'G',
+    0x06: 'A',
+    0x07: 'I',
+    0x08: 'N',
+    0x09: 'F',
+    0x0A: 'D',
+    0x0B: 'L',
+    0x0C: 'P',
+    0x0D: 'H',
+    0x0E: 'B',
+    0x0F: 'J'
+}
+
+X10_UNIT = {
+    0x00: '13',
+    0x01: '5',
+    0x02: '3',
+    0x03: '11',
+    0x04: '15',
+    0x05: '7',
+    0x06: '1',
+    0x07: '9',
+    0x08: '14',
+    0x09: '6',
+    0x0A: '4',
+    0x0B: '12',
+    0x0C: '16',
+    0x0D: '8',
+    0x0E: '2',
+    0x0F: '10'
+}
+
+X10_COMMAND = {
+    0x00: 'All Units Off',
+    0x01: 'All Lights On',
+    0x02: 'On',
+    0x03: 'Off',
+    0x04: 'Dim',
+    0x05: 'Bright',
+    0x06: 'All Lights Off',
+    0x07: 'Extend Code',
+    0x08: 'Hail Request',
+    0x09: 'Hail Acknowledge',
+    0x0A: 'Preset Dim',
+    0x0B: 'Preset Dim',
+    0x0C: 'Extended Data (analog)',
+    0x0D: 'Status = On',
+    0x0E: 'Status = Off',
+    0x0F: 'Status Request'
 }
 
 class InsteonError(Exception):

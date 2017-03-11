@@ -11,7 +11,7 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-02-01'
 
 # Import system type stuff
 
@@ -55,17 +55,17 @@ L_LIGHT_START_0 = \
         'Key="' + TESTING_LIGHT_KEY_0 + '" ' + \
         'Active="' + TESTING_LIGHT_ACTIVE_0 + '" ' + \
         '>'
-L_LIGHT_UUID_0 = '    <UUID>' + TESTING_LIGHT_UUID_0 + '</UUID>'
-L_LIGHT_COMMENT_0 = '    <Comment>' + TESTING_LIGHT_COMMENT_0 + '</Comment>'
-L_LIGHT_CUR_LEVEL_0 = '    <CurLevel>' + TESTING_LIGHT_CUR_LEVEL_0 + '</CurLevel>'
-L_LIGHT_DEVICE_FAMILY_0 = "    <DeviceFamily>" + TESTING_LIGHT_DEVICE_FAMILY_0 + "</DeviceFamily>"
-L_LIGHT_DEVICE_TYPE_0 = '    <DeviceType>' + TESTING_LIGHT_DEVICE_TYPE_0 + '</DeviceType>'
-L_LIGHT_DEVICE_SUBTYPE_0 = '    <DeviceSubType>' + TESTING_LIGHT_DEVICE_SUBTYPE_0 + '</DeviceSubType>'
-L_LIGHT_ROOM_COORDS_0 = '    <RoomCoords>' + TESTING_LIGHT_ROOM_COORDS_0 + '</RoomCoords>'
-L_LIGHT_ROOM_NAME_0 = '    <RoomName>' + TESTING_LIGHT_ROOM_NAME_0 + '</RoomName>'
-L_LIGHT_ROOM_UUID_0 = '    <RoomUUID>' + TESTING_LIGHT_ROOM_UUID_0 + '</RoomUUID>'
+L_LIGHT_UUID_0 = '<UUID>' + TESTING_LIGHT_UUID_0 + '</UUID>'
+L_LIGHT_COMMENT_0 = '<Comment>' + TESTING_LIGHT_COMMENT_0 + '</Comment>'
+L_LIGHT_CUR_LEVEL_0 = '<CurLevel>' + TESTING_LIGHT_CUR_LEVEL_0 + '</CurLevel>'
+L_LIGHT_DEVICE_FAMILY_0 = "<DeviceFamily>" + TESTING_LIGHT_DEVICE_FAMILY_0 + "</DeviceFamily>"
+L_LIGHT_DEVICE_TYPE_0 = '<DeviceType>' + TESTING_LIGHT_DEVICE_TYPE_0 + '</DeviceType>'
+L_LIGHT_DEVICE_SUBTYPE_0 = '<DeviceSubType>' + TESTING_LIGHT_DEVICE_SUBTYPE_0 + '</DeviceSubType>'
+L_LIGHT_ROOM_COORDS_0 = '<RoomCoords>' + TESTING_LIGHT_ROOM_COORDS_0 + '</RoomCoords>'
+L_LIGHT_ROOM_NAME_0 = '<RoomName>' + TESTING_LIGHT_ROOM_NAME_0 + '</RoomName>'
+L_LIGHT_ROOM_UUID_0 = '<RoomUUID>' + TESTING_LIGHT_ROOM_UUID_0 + '</RoomUUID>'
 
-L_LIGHT_IS_DIMMABLE_0 = '    <IsDimmable>' + TESTING_LIGHT_IS_DIMMABLE_0 + '</IsDimmable>'
+L_LIGHT_IS_DIMMABLE_0 = '<IsDimmable>' + TESTING_LIGHT_IS_DIMMABLE_0 + '</IsDimmable>'
 
 L_LIGHT_0 = '\n'.join([
     L_LIGHT_START_0,

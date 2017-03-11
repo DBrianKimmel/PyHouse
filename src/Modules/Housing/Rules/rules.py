@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-02-01'
 
 
 # Import system type stuff
@@ -26,8 +26,7 @@ class API (object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def Start(self):
-        l_count = 0
-        LOG.info('{} Rules were loaded'.format(l_count))
+        pass
 
     def Stop(self):
         pass
@@ -35,13 +34,14 @@ class API (object):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        l_rules = rulesXML.read_rules_xml(self.m_pyhouse_obj)
+        l_rules, l_count = rulesXML.read_rules_xml(self.m_pyhouse_obj)
+        LOG.info('{} Rules were loaded'.format(l_count))
         return l_rules
 
     def SaveXml(self, p_xml):
-        l_xml = rulesXML.write_rules_xml(self.m_pyhouse_obj)
+        l_xml, l_count = rulesXML.write_rules_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        LOG.info("Saved Rules XML.")
+        LOG.info("Saved {} Rules XML.".format(l_count))
         return p_xml
 
 # ## END DBK

@@ -7,21 +7,20 @@
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 9 tests - DBK - 2017-01-20
+Passed all 8 tests - DBK - 2017-03-11
 
 """
-from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
-
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
+from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     XML_MQTT, \
     TESTING_MQTT_SECTION, \

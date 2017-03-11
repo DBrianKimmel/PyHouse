@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2016-12-24'
+__updated__ = '2017-03-11'
 
 #  Import system type stuff
 import random
@@ -127,7 +127,7 @@ class MQTTProtocol(Protocol):
         packet = packet[1:]
         keepalive = EncodeDecode._decodeValue(packet[:2])  # Extract the keepalive period
         packet = packet[2:]
-        clientID = EncodeDecode._decodeString(packet)  # Extract the client id
+        clientID = EncodeDecode._decodeString(packet)  # Extract the client id_event_connect
         packet = packet[len(clientID) + 2:]
         # Extract the will topic and message, if applicable
         l_willTopic = None
