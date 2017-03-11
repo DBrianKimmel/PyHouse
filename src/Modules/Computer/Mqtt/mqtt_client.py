@@ -48,6 +48,8 @@ class Util(object):
         l_port = p_broker.BrokerPort
         l_username = None  # p_broker.UserName
         l_password = None  # p_broker.Password
+        l_keepalive = 60
+
         p_broker._ClientAPI = self
         LOG.info('Connecting via TCP...')
         if l_host is None or l_port is None:
@@ -66,7 +68,7 @@ class Util(object):
         # l_port = p_broker.BrokerPort
         # l_username = p_broker.UserName
         # l_password = p_broker.Password
-        # l_clientID = 'PyH-' + p_pyhouse_obj.Computer.Name
+        # l_clientID = 'PyH-RasPi-' + p_pyhouse_obj.Computer.Name
         LOG.info('Connecting via TLS...')
         # l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
         # l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)

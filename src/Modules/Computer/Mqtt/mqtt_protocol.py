@@ -303,11 +303,11 @@ class MQTTProtocol(Protocol):
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
         LOG.info("Sending 'connect' packet - ID: {}".format(p_clientID))
-        header = bytearray()
-        varHeader = bytearray()
-        payload = bytearray()
-        varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
-        varHeader.append(3)
+        l_header = bytearray()
+        l_varHeader = bytearray()
+        l_payload = bytearray()
+        l_varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
+        l_varHeader.append(3)
         varLogin = 0
         if username is not None:
             varLogin += 2
@@ -315,33 +315,33 @@ class MQTTProtocol(Protocol):
             varLogin += 1
         if willMessage is None or willTopic is None:
             #  Clean start, no will message
-            varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
+            l_varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
         else:
-            varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 |
+            l_varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 |
                              1 << 2 | cleanStart << 1)
-        varHeader.extend(EncodeDecode._encodeValue(keepalive / 1000))
-        payload.extend(EncodeDecode._encodeString(p_clientID))
+        l_varHeader.extend(EncodeDecode._encodeValue(keepalive / 1000))
+        l_payload.extend(EncodeDecode._encodeString(p_clientID))
         if willMessage is not None and willTopic is not None:
             LOG.debug('Adding last will testiment {}'.format(willMessage + willTopic))
-            payload.extend(EncodeDecode._encodeString(willTopic))
-            payload.extend(EncodeDecode._encodeString(willMessage))
+            l_payload.extend(EncodeDecode._encodeString(willTopic))
+            l_payload.extend(EncodeDecode._encodeString(willMessage))
         if username is not None:
             LOG.debug('Adding username {}'.format(username))
-            payload.extend(EncodeDecode._encodeString(username))
+            l_payload.extend(EncodeDecode._encodeString(username))
         if password is not None:
             LOG.debug('Adding password {}'.format(password))
-            payload.extend(EncodeDecode._encodeString(password))
-        header.append(0x01 << 4)
-        header.extend(EncodeDecode._encodeLength(len(varHeader) + len(payload)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
-        self.transport.write(str(payload))
+            l_payload.extend(EncodeDecode._encodeString(password))
+        l_header.append(0x01 << 4)  #  Packet type 1 = connect packet
+        l_header.extend(EncodeDecode._encodeLength(len(l_varHeader) + len(l_payload)))
+        self.transport.write(str(l_header))
+        self.transport.write(str(l_varHeader))
+        self.transport.write(str(l_payload))
 
     def connack(self, status):
         LOG.warn('Got connect ack packet')
         header = bytearray()
         payload = bytearray()
-        header.append(0x02 << 4)
+        header.append(0x02 << 4)  #  Packet type 2 = connack packet
         payload.append(status)
         header.extend(EncodeDecode._encodeLength(len(payload)))
         self.transport.write(str(header))
@@ -500,28 +500,33 @@ class MQTTClient(MQTTProtocol):
         """
         At this point all config has been read in and Set-up
         """
+        l_comp_name = p_pyhouse_obj.Computer.Name
+        try:
+            l_house_name = p_pyhouse_obj.House.Name.lower() + '/'
+        except AttributeError:
+            l_house_name = 'NoName/'
+        self.m_prefix = 'pyhouse/' + l_house_name
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         self.m_state = MQTT_FACTORY_START
         if p_clientID is not None:
             self.m_clientID = p_clientID
         else:
-            self.m_clientID = p_pyhouse_obj.Computer.Name
+            self.m_clientID = l_comp_name + 'RasPi'
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
             self.m_keepalive = 120 * 1000
-        self.willQos = willQos
-        self.willTopic = willTopic
-        self.willMessage = willMessage
-        self.willRetain = willRetain
-        self.UserName = userName
-        self.Password = passWord
-        try:
-            l_name = p_pyhouse_obj.House.Name.lower() + '/'
-        except AttributeError:
-            l_name = 'NoName/'
-        self.m_prefix = 'pyhouse/' + l_name
+        self.m_willQos = willQos
+        if willTopic != None:
+            willTopic = self.m_prefix + 'lwt'
+        self.m_willTopic = willTopic
+        if willMessage != None:
+            willMessage = self.m_clientID + 'Offline'
+        self.m_willMessage = willMessage
+        self.m_willRetain = willRetain
+        self.m_UserName = userName
+        self.m_Password = passWord
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol) \n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID)
         l_msg += '\n\t User: {};  Pass: {}'.format(userName, passWord)
@@ -536,8 +541,8 @@ class MQTTClient(MQTTProtocol):
 
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_clientID, self.m_keepalive,
-                     self.willTopic, self.willMessage, self.willQos, self.willRetain, True,
-                     self.UserName, self.Password
+                     self.m_willTopic, self.m_willMessage, self.m_willQos, self.m_willRetain, True,
+                     self.m_UserName, self.m_Password
                      )
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
