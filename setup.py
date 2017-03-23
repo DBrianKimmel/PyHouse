@@ -77,6 +77,7 @@ INSTALL_REQUIRES = [
     'pycrypto',
     'pyOpenSSL',
     'python-dateutil',
+    'python-dev',
     'pyserial',
     'pytz',
     'pyudev',
@@ -104,21 +105,21 @@ CLASSIFIERS = [
 
 
 setup(
-    name='PyHouse',
-    version='1.7.0',
-    description='Pythone house automation',
-    author='D. Brian Kimmel',
-    author_email='D.BrianKimmel@gmail.com',
-    url='http://www.PyHouse.org',
-    license='MIT',
-    classifiers=CLASSIFIERS,
-    py_modules=[ 'PyHouse' ],
-    package_dir={'': 'src'},
-    extras_require=EXTRA_REQUIRES,
-    dependency_links=DEPENDENCY_LINKS,
-    include_package_data=True,
-    zip_safe=False,
-    install_requires=INSTALL_REQUIRES
+    name = 'PyHouse',
+    version = '1.7.0',
+    description = 'Pythone house automation',
+    author = 'D. Brian Kimmel',
+    author_email = 'D.BrianKimmel@gmail.com',
+    url = 'http://www.PyHouse.org',
+    license = 'MIT',
+    classifiers = CLASSIFIERS,
+    py_modules = [ 'PyHouse' ],
+    package_dir = {'': 'src'},
+    extras_require = EXTRA_REQUIRES,
+    dependency_links = DEPENDENCY_LINKS,
+    include_package_data = True,
+    zip_safe = False,
+    install_requires = INSTALL_REQUIRES
 )
 tests_passed = False
 
