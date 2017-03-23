@@ -77,7 +77,6 @@ INSTALL_REQUIRES = [
     'pycrypto',
     'pyOpenSSL',
     'python-dateutil',
-    'python-dev',
     'pyserial',
     'pytz',
     'pyudev',
