@@ -32,9 +32,9 @@ Do not require reloads, auto change PyHouse on the fly.
 __updated__ = '2016-08-31'
 
 #  Import system type stuff
-import ssl
+# import ssl
 from nevow import appserver
-#  from twisted.internet import ssl
+# from twisted.internet import ssl
 from twisted.internet import protocol, defer
 from twisted.python.modules import getModule
 
@@ -79,9 +79,9 @@ class Utility(ClientConnections):
 
     def start_tls(self, p_pyhouse_obj):
         l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
-        l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
+        # l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
         l_factory = protocol.Factory.forProtocol(echoserv.Echo)
-        p_pyhouse_obj.Twisted.Reactor.listenSSL(8000, l_factory, l_certificate.options())
+        # p_pyhouse_obj.Twisted.Reactor.listenSSL(8000, l_factory, l_certificate.options())
         return defer.Deferred()
 
 
