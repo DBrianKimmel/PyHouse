@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-03-30'
 
 #  Import system type stuff
 import ssl
@@ -78,10 +78,10 @@ class Utility(ClientConnections):
         p_pyhouse_obj.Twisted.Reactor.listenTCP(p_port, p_site)
 
     def start_tls(self, p_pyhouse_obj):
-        l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
-        l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
-        l_factory = protocol.Factory.forProtocol(echoserv.Echo)
-        p_pyhouse_obj.Twisted.Reactor.listenSSL(8000, l_factory, l_certificate.options())
+        # l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
+        # l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
+        # l_factory = protocol.Factory.forProtocol(echoserv.Echo)
+        # p_pyhouse_obj.Twisted.Reactor.listenSSL(8000, l_factory, l_certificate.options())
         return defer.Deferred()
 
 
