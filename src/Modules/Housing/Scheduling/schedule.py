@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2017-01-18'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import datetime
@@ -234,7 +234,7 @@ class Utility(object):
         l_schedule_key_list = []
         l_min_seconds = SECONDS_IN_WEEK
         l_riseset = Utility.fetch_sunrise_set(p_pyhouse_obj)
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.iteritems():
+        for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
             if not l_schedule_obj.Active:
                 continue
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)

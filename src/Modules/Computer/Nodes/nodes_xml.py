@@ -10,7 +10,7 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -67,7 +67,7 @@ class Xml(object):
         l_count = 0
         if p_interfaces_obj is None:
             return l_xml
-        for l_interface_obj in p_interfaces_obj.itervalues():
+        for l_interface_obj in p_interfaces_obj.values():
             l_entry = Xml._write_one_interface_xml(l_interface_obj)
             l_xml.append(l_entry)
             l_count += 1
@@ -146,7 +146,7 @@ class Xml(object):
         l_xml = ET.Element(NODE_SECTION)
         l_nodes = p_pyhouse_obj.Computer.Nodes
         l_count = 0
-        for l_node_obj in l_nodes.itervalues():
+        for l_node_obj in l_nodes.values():
             LOG.info('Writing entry for node {}'.format(l_node_obj.Name))
             try:
                 l_node_obj.Key = l_count

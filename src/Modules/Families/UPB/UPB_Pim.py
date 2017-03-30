@@ -13,10 +13,13 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
-import Queue
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
 
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
@@ -429,7 +432,7 @@ class API(UpbPimAPI):
         pass
 
     def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate=0):
-        for l_obj in self.m_house_obj.Lights.itervalues():
+        for l_obj in self.m_house_obj.Lights.values():
             if l_obj.Active == False:
                 continue
             l_name = p_light_obj.Name

@@ -33,7 +33,7 @@ class Utility(object):
         """ Given the limited information from the web browser, look up and return the full object.
         If more than one device has the same name, return the first one found.
         """
-        for l_light in p_pyhouse_obj.House.Lighting.Lights.itervalues():
+        for l_light in p_pyhouse_obj.House.Lighting.Lights.values():
             if p_web_obj.Name == l_light.Name:
                 return l_light
         LOG.error('ERROR - no light with name {} was found.'.format(p_web_obj.Name))
@@ -51,12 +51,12 @@ class Utility(object):
         """
         l_lights = p_pyhouse_obj.House.Lighting.Lights
         if name != None:
-            for l_obj in l_lights.itervalues():
+            for l_obj in l_lights.values():
                 if l_obj.Name == name:
                     return l_obj
             LOG.error('Using Name:{} - lookup failed'.format(name))
         elif key != None:
-            for l_obj in l_lights.itervalues():
+            for l_obj in l_lights.values():
                 if l_obj.Key == key:
                     return l_obj
             LOG.error('Using Key:{} - lookup failed'.format(key))

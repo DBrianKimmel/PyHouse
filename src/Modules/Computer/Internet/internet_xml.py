@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 
 #  Import system type stuff
@@ -148,7 +148,7 @@ class API(object):
         @return: a sub tree ready to be appended to tree
         """
         l_ret = ET.Element('InternetSection')
-        for l_obj in p_pyhouse_obj.Computer.InternetConnection.itervalues():
+        for l_obj in p_pyhouse_obj.Computer.InternetConnection.values():
             l_ret.append(Util._write_derived_xml(l_obj))
             l_ret.append(Util._write_locates_xml(l_obj))
             l_ret.append(Util._write_updates_xml(l_obj))

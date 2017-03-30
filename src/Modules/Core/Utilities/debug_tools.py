@@ -9,21 +9,24 @@
 
 """
 
+__updated__ = '2017-03-27'
+
 #  Import system type stuff
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
+import pprint
 
 #  Import PyMh files
 
 
-def _trunc_string(s, maxlen = 2000):
+def _trunc_string(s, maxlen=2000):
     if len(s) > maxlen:
         return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
     else:
         return s
 
 
-def _format_line(string, maxlen = 175, split = ' '):
+def _format_line(string, maxlen=175, split=' '):
     """
     Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
@@ -58,7 +61,7 @@ def _nuke_newlines(string):
     return ' '.join([line.strip() for line in lines])
 
 
-def _format_cols(strings, widths, split = ' '):
+def _format_cols(strings, widths, split=' '):
     """
     Pretty prints text in columns, with each string breaking at split according to _format_line.
     Margins gives the corresponding right breaking point.
@@ -72,7 +75,7 @@ def _format_cols(strings, widths, split = ' '):
     @return: the line of output with the strings left justified in the colum width pecified
     """
     assert len(strings) == len(widths)
-    strings = map(_nuke_newlines, strings)
+    strings = list(map(_nuke_newlines, strings))
     #  pretty Print each column
     cols = [''] * len(strings)
     for i in range(len(strings)):
@@ -85,7 +88,7 @@ def _format_cols(strings, widths, split = ' '):
     return '\n'.join(map(formatline, *cols))
 
 
-def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 24, maxspew = 2000):
+def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
     """Print a nicely formatted overview of an object.
 
     The output lines will be wrapped at maxlen, with lindent of space
@@ -214,7 +217,7 @@ def _format_object(p_title, p_obj, suppressdoc = True, maxlen = 180, lindent = 2
 class PrettyFormatAny(object):
 
     @staticmethod
-    def form(p_any, title = 'No Title Given', maxlen = 120):
+    def form(p_any, title='No Title Given', maxlen=120):
         l_indent = 0
         l_type = type(p_any)
         l_ret = '\n===== {} ===== {}\n'.format(title, l_type)
@@ -224,21 +227,21 @@ class PrettyFormatAny(object):
     @staticmethod
     def _type_dispatcher(p_any, maxlen, indent):
         if isinstance(p_any, dict):
-            l_ret = PrettyFormatAny._format_dict(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_dict(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, ET.Element):
-            l_ret = PrettyFormatAny._format_XML(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_XML(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, str):
-            l_ret = PrettyFormatAny._format_string(p_any, maxlen = maxlen, indent = indent)
-        elif isinstance(p_any, unicode):
-            l_ret = PrettyFormatAny._format_unicode(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_string(p_any, maxlen=maxlen, indent=indent)
+        elif isinstance(p_any, type(unicode)):
+            l_ret = PrettyFormatAny._format_unicode(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, list):
-            l_ret = PrettyFormatAny._format_list(p_any, maxlen = maxlen, indent = indent + 4)
+            l_ret = PrettyFormatAny._format_list(p_any, maxlen=maxlen, indent=indent + 4)
         elif isinstance(p_any, tuple):
-            l_ret = PrettyFormatAny._format_tuple(p_any, maxlen = maxlen, indent = indent + 4)
+            l_ret = PrettyFormatAny._format_tuple(p_any, maxlen=maxlen, indent=indent + 4)
         elif isinstance(p_any, type(None)):
             l_ret = PrettyFormatAny._format_none(p_any)
         else:  #  Default to an object
-            l_ret = PrettyFormatAny._format_object(p_any, maxlen = maxlen, indent = indent)
+            l_ret = PrettyFormatAny._format_object(p_any, maxlen=maxlen, indent=indent)
         l_ret += '---------------------------------'
         return l_ret
 
@@ -256,7 +259,7 @@ class PrettyFormatAny(object):
     def _format_dict(p_dict, maxlen, indent):
         l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
-        for l_key, l_val in p_dict.iteritems():
+        for l_key, l_val in p_dict.items():
             if isinstance(l_val, dict):
                 l_ret += _format_cols(('', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
             else:
@@ -282,7 +285,7 @@ class PrettyFormatAny(object):
         l_lines = l_doc.splitlines()
         for l_line in l_lines:
             if not l_line.isspace():
-                l_list = _format_line(l_line, maxlen = maxlen)
+                l_list = _format_line(l_line, maxlen=maxlen)
                 for l_line in l_list:
                     l_ret += l_line + '\n'
         return l_ret
@@ -310,7 +313,7 @@ class PrettyFormatAny(object):
         return l_ret
 
     @staticmethod
-    def _format_object(p_obj, maxlen, indent = 24, maxspew = 2000):
+    def _format_object(p_obj, maxlen, indent=24, maxspew=2000):
         l_col_1_width = 28
         l_tab = 4
         l_attrs = []
@@ -356,7 +359,7 @@ def FormatBytes(p_message):
 
 #######################################
 
-def PrettyPrint(p_title, p_str, maxlen = 150):
+def PrettyPrint(p_title, p_str, maxlen=150):
     print('Title: {}\n'.format(p_title), '\n'.join(_format_line(str(p_str), maxlen, ' ')))
 
 def _delchars(p_str, chars):

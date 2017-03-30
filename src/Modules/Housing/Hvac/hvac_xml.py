@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-08'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -126,7 +126,7 @@ class Utility(object):
         l_thermostats = p_pyhouse_obj.House.Hvac.Thermostats
         l_xml = ET.Element('ThermostatSection')
         try:
-            for l_obj in l_thermostats.itervalues():
+            for l_obj in l_thermostats.values():
                 l_entry = Utility._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
                 l_xml.append(l_entry)
                 l_count += 1

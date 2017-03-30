@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 
@@ -230,7 +230,7 @@ class Decode(object):
         @param p_addr: is the address that we want to find.
         @return: the object that has the address.  None if not found in the given clss.
         """
-        for l_obj in p_class.itervalues():
+        for l_obj in p_class.values():
             if l_obj.DeviceFamily != 'Insteon':
                 continue  #  ignore any non-Insteon devices in the class
             if l_obj.InsteonAddress == p_addr:

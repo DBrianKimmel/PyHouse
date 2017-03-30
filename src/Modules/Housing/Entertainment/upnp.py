@@ -14,7 +14,7 @@ address from some external device and check on the status of the house.
 This module will try to be fully twisted like and totally async (except for read/write of xml).
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 import netifaces
@@ -193,7 +193,7 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
         PutGetXML.put_int_attribute(l_internet_xml, 'ExternalDelay', p_house_obj.Internet.ExternalDelay)
         PutGetXML.put_text_attribute(l_internet_xml, 'ExternalUrl', p_house_obj.Internet.ExternalUrl)
         try:
-            for l_dyndns_obj in p_house_obj.Internet.DynDns.itervalues():
+            for l_dyndns_obj in p_house_obj.Internet.DynDns.values():
                 l_entry = self.write_base_object_xml('DynamicDNS', l_dyndns_obj)
                 PutGetXML.put_int_element(l_entry, 'UpdateInterval', l_dyndns_obj.UpdateInterval)
                 PutGetXML.put_text_element(l_entry, 'UpdateUrl', l_dyndns_obj.UpdateUrl)
@@ -340,7 +340,7 @@ class DynDnsAPI(object):
         to start up a loop for each dynamic service being updated.
         """
         self.m_running = True
-        for l_dyn_obj in self.m_house_obj.Internet.DynDns.itervalues():
+        for l_dyn_obj in self.m_house_obj.Internet.DynDns.values():
             l_cmd = lambda x = l_dyn_obj.UpdateInterval, y = l_dyn_obj: self.update_loop(x, y)
             callLater(l_dyn_obj.UpdateInterval, l_cmd)
 

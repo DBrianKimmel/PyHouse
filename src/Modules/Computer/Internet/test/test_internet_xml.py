@@ -7,11 +7,11 @@
 @note:      Created on Sep 29, 2014
 @Summary:
 
-Passed all 16 tests - DBK - 2016-11-27
+Passed all 16 tests - DBK - 2017-03-29
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -179,17 +179,17 @@ class C1_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'C1-02-A - Locate'))
         self.assertEqual(l_xml.find('ExternalIPv4').text, TESTING_INTERNET_IPv4_0)
         self.assertEqual(l_xml.find('ExternalIPv6').text, TESTING_INTERNET_IPv6_0)
-        self.assertEqual(l_xml._children[2].text, str(DATETIME))
+        self.assertEqual(l_xml.find('LastChanged').text, str(DATETIME))
 
     def test_03_Locates(self):
         l_xml = internetUtil._write_locates_xml(self.m_internet_dict[0])
         # print(PrettyFormatAny.form(l_xml, 'C1-03-A - Locate'))
-        self.assertEqual(l_xml._children[0].text, TESTING_INTERNET_LOCATE_URL_0_0)
+        self.assertEqual(l_xml.find('LocateUrl').text, TESTING_INTERNET_LOCATE_URL_0_0)
 
     def test_04_Updates(self):
         l_xml = internetUtil._write_updates_xml(self.m_internet_dict[0])
         # print(PrettyFormatAny.form(l_xml, 'C1-04-A - Locate'))
-        self.assertEqual(l_xml._children[0].text, TESTING_INTERNET_UPDATE_URL_0_0)
+        self.assertEqual(l_xml.find('UpdateUrl').text, TESTING_INTERNET_UPDATE_URL_0_0)
 
     def test_05_One(self):
         """ Write out the XML file for the location section

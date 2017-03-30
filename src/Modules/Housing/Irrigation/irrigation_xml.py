@@ -13,7 +13,7 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 
 """
 
-__updated__ = '2016-11-28'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -129,7 +129,7 @@ class Xml(object):
         """
         l_xml = XmlConfigTools.write_base_UUID_object_xml('IrrigationSystem', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
-        for l_obj in p_obj.Zones.itervalues():
+        for l_obj in p_obj.Zones.values():
             l_zone = Xml._write_one_zone(l_obj)
             l_xml.append(l_zone)
         return l_xml
@@ -143,7 +143,7 @@ class Xml(object):
         l_xml = ET.Element(SECTION)
         l_count = 0
         try:
-            for l_obj in p_obj.itervalues():
+            for l_obj in p_obj.values():
                 l_obj.Key = l_count
                 l_sys = Xml._write_one_system(l_obj)
                 l_xml.append(l_sys)

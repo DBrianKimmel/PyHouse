@@ -13,7 +13,7 @@ Json is now used for Mqtt messages in addition to web browser.
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-26'
 
 
 # Import system type stuff
@@ -50,7 +50,7 @@ def convert_from_unicode(p_input):
     """Convert unicode strings to python 2.7 strings.
     """
     if isinstance(p_input, dict):
-        return {convert_from_unicode(key): convert_from_unicode(value) for key, value in p_input.iteritems()}
+        return {convert_from_unicode(key): convert_from_unicode(value) for key, value in p_input.items()}
     elif isinstance(p_input, list):
         return [convert_from_unicode(element) for element in p_input]
     elif isinstance(p_input, unicode):

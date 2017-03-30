@@ -33,7 +33,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2016-11-01'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 import importlib
@@ -64,7 +64,7 @@ class Utility(object):
         try:
             l_ret = importlib.import_module(l_device, p_obj.FamilyPackageName)
         except ImportError as e_err:
-            l_msg = 'ERROR importing family:{} Module:{}\n   Err:{} .'.format(p_obj.Name, p_module, e_err)
+            l_msg = 'ERROR importing family:{};  Module:{}\n\tErr:{}.'.format(p_obj.Name, p_module, e_err)
             LOG.error(l_msg)
             l_ret = l_msg
         return l_ret
@@ -72,7 +72,7 @@ class Utility(object):
     @staticmethod
     def _create_api_instance(p_pyhouse_obj, p_module_name, p_module_ref):
         """
-        Hopefully, this will catch errors when addingf new families.
+        Hopefully, this will catch errors when adding new families.
         I had a very strange error when one module had a different number of params in the API.__init__ definition.
 
         @param p_pyhouse_obj: is the entire PyHouse Data
@@ -82,7 +82,7 @@ class Utility(object):
         try:
             l_api = p_module_ref.API(p_pyhouse_obj)
         except Exception as e_err:
-            LOG.error('ERROR - Module{} - {}'.format(p_module_name, e_err))
+            LOG.error('ERROR - Module{}\n\t{}'.format(p_module_name, e_err))
         return l_api
 
     @staticmethod
@@ -94,7 +94,7 @@ class Utility(object):
         try:
             l_api = p_module_ref.Xml()
         except Exception as e_err:
-            LOG.error('ERROR - Module{} - {}'.format(p_module_name, e_err))
+            LOG.error('ERROR - Module:{} - {}'.format(p_module_name, e_err))
         return l_api
 
     @staticmethod
@@ -187,7 +187,7 @@ class API(object):
         Runs Device_<family>.API.Start()
         """
         LOG.info("Starting lighting families.")
-        for l_family_obj in p_pyhouse_obj.House.FamilyData.itervalues():
+        for l_family_obj in p_pyhouse_obj.House.FamilyData.values():
             LOG.info('Starting Family {}'.format(l_family_obj.Name))
             l_family_obj.FamilyModuleAPI.Start()  # will run <family>_device.API().Start()
         LOG.info("Started all lighting families.")

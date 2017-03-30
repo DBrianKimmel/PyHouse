@@ -19,7 +19,7 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import os
@@ -128,7 +128,7 @@ class LoginElement(athena.LiveElement):
         #
         if l_login_obj.LoginName in self.m_pyhouse_obj.Computer.Web.Logins:
             pass
-        for l_user in self.m_pyhouse_obj.Computer.Web.Logins.itervalues():
+        for l_user in self.m_pyhouse_obj.Computer.Web.Logins.values():
             #  LOG.debug(PrettyFormatAny.form(l_user, 'User Obj'))
             if l_user.Name == l_login_obj.LoginName:
                 #  LOG.debug('User Matched')

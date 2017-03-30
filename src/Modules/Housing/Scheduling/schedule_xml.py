@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -155,7 +155,7 @@ class Xml(object):
         l_count = 0
         l_xml = ET.Element(SCHEDULE_SECTION)
         try:
-            for l_schedule_obj in p_schedules_obj.itervalues():
+            for l_schedule_obj in p_schedules_obj.values():
                 l_entry = Xml._write_one_schedule(l_schedule_obj)
                 l_xml.append(l_entry)
                 l_count += 1

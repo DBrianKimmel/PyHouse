@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-18'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -70,7 +70,7 @@ class Xml(object):
         if l_pools_obj == {}:
             return (l_xml, l_count)
         try:
-            for l_obj in l_pools_obj.itervalues():
+            for l_obj in l_pools_obj.values():
                 l_sys = Xml._write_one_pool(l_obj)
                 l_count += 1
                 l_xml.append(l_sys)

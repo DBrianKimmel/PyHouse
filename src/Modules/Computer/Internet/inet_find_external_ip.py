@@ -16,7 +16,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-29'
 
 # Import system type stuff
 import re
@@ -53,10 +53,8 @@ class FindExternalIpAddress(object):
         return l_string
 
     def _get_url(self, p_key):
-        l_ret = [
-                 'http://ipv4bot.whatismyipaddress.com/'
-                 ]
-        return l_ret[p_key]
+        l_ret = b'http://ipv4bot.whatismyipaddress.com/'
+        return l_ret
 
 
 class Utility(FindExternalIpAddress):
@@ -104,9 +102,9 @@ class Utility(FindExternalIpAddress):
         l_url = self._get_url(p_key)
         l_defer = l_agent.request(
             'GET',
-            l_url,
-            Headers({'User-Agent': ['Twisted Web Client Example']}),
-            None)
+            l_url)
+#            Headers({'User-Agent': ['PyHouse.Computer.Internet.inet_find_external_ip.Utility.get_public_ip']}),
+#            None)
         l_defer.addCallback(cb_response)
         l_defer.addErrback(eb_response)
         return l_defer
@@ -123,7 +121,7 @@ class API(Utility):
         """
         l_internet = p_pyhouse_obj.Computer.InternetConnection
         l_defer = Deferred()
-        for l_test in l_internet.itervalues():
+        for l_test in l_internet.values():
             if l_test.Active:
                 for l_url in l_test.LocateUrls:
                     l_ret = Utility.get_public_ip(l_url)

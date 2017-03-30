@@ -21,7 +21,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2017-01-09'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 from datetime import datetime
@@ -84,7 +84,7 @@ class Devices(object):
             #    continue
             l_msg = '\nDevice found: {}\n'.format(l_dev.get('DEVNAME'))
             # print(PrettyFormatAny.form(l_dev))
-            for k, v in l_dev.iteritems():
+            for k, v in l_dev.items():
                 # print(k, v)
                 l_msg += '{} {}\n'.format(k, v)
             # print(l_msg)
@@ -175,7 +175,7 @@ class Interfaces(object):
         l_interface.UUID = toolUuid.create_uuid()  # We need a way to persist the UUID instead of this
         l_interface.NodeInterfaceType = 'Other'
         l_afList = Interfaces._find_addr_lists(p_interface_name)
-        for l_afID in l_afList.iterkeys():
+        for l_afID in l_afList.keys():
             l_v4 = []
             l_v6 = []
             l_afName = Interfaces._find_addr_family_name(l_afID)
@@ -389,7 +389,7 @@ class Util(object):
         """
         # l_max_key = -1
         # try:
-        #    for l_node in p_pyhouse_obj.Computer.Nodes.itervalues():
+        #    for l_node in p_pyhouse_obj.Computer.Nodes.values():
         #        # if l_node.Name == p_node.Name:
         #            p_pyhouse_obj.Computer.Nodes[p_node.Key] = p_node
         #            LOG.info('Added node {}'.format(p_node.Name))

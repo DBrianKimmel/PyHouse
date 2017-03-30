@@ -7,12 +7,12 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 25 tests - DBK - 2017-01-11
+Passed all 25 tests - DBK - 2017-03-27
 
 """
 import netifaces
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-27'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -95,7 +95,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Nodes(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 

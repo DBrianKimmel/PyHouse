@@ -15,7 +15,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.data_objects import BaseUUIDObject
 
-__updated__ = '2016-11-28'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -87,7 +87,7 @@ class Xml(object):
         l_xml = ET.Element('SamsungSection')
         l_count = 0
         l_obj = p_pyhouse_obj.House.Entertainment.Samsung
-        for l_room_object in l_obj.itervalues():
+        for l_room_object in l_obj.values():
             l_room_object.Key = l_count
             l_entry = Xml.write_one_room(l_room_object)
             l_xml.append(l_entry)

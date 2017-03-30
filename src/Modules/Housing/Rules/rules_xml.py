@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-02-01'
+__updated__ = '2017-03-26'
 
 
 # Import system type stuff
@@ -41,7 +41,7 @@ class Xml (object):
     def write_rules_xml(p_pyhouse_obj):
         l_xml = ET.Element('RulesSection')
         l_count = 0
-        for l_light_obj in p_pyhouse_obj.House.Rules.itervalues():
+        for l_light_obj in p_pyhouse_obj.House.Rules.values():
             l_one = Xml._write_one_rule(p_pyhouse_obj, l_light_obj)
             l_xml.append(l_one)
             l_count += 1

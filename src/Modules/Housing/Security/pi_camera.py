@@ -20,7 +20,11 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
 # Import system type stuff
-import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    from io import StringIO
+
 import subprocess
 import os
 import time
@@ -55,7 +59,7 @@ class Image(object):
     def capture_test_image(self):
         command = "raspistill -w %s -h %s -t 0 -e bmp -o -" % (100, 75)
         imageData = StringIO.StringIO()
-        imageData.write(subprocess.check_output(command, shell = True))
+        imageData.write(subprocess.check_output(command, shell=True))
         imageData.seek(0)
         im = None  # Image.open(imageData)
         l_buffer = im.load()
@@ -67,7 +71,7 @@ class Image(object):
         self.keep_disk_space_free(diskSpaceToReserve)
         time = datetime.now()
         filename = "capture-%04d%02d%02d-%02d%02d%02d.jpg" % (time.year, time.month, time.day, time.hour, time.minute, time.second)
-        subprocess.call("raspistill -w 1296 -h 972 -t 0 -e jpg -q 15 -o %s" % filename, shell = True)
+        subprocess.call("raspistill -w 1296 -h 972 -t 0 -e jpg -q 15 -o %s" % filename, shell=True)
 
     # Keep free space above given level
     def keep_disk_space_free(self, bytesToReserve):

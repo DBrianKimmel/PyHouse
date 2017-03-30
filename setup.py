@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 #  -*- coding: utf-8 -*-
 """
 -*- test-case-name: PyHouse.src.test.test_setup -*-
@@ -53,7 +53,7 @@ apt install:
     python-dev
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-25'
 
 
 #  Import system type stuff
@@ -65,10 +65,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "sr
 
 #  Requirements for the PyHouse application
 INSTALL_REQUIRES = [
-    'astral',
-    'athena',
-    'idna',
-    'jsonpickle',
+    'astral >= 1.2',
+    'athena >= 0.8',
+    'idna >= 2.0',
+    'jsonpickle >= 0.9.4',
     'netaddr',
     'netifaces',
     'nevow >= 0.0.0',
@@ -82,7 +82,7 @@ INSTALL_REQUIRES = [
     'pyudev',
     'pyusb',
     'service-identity',
-    'twisted >= 15.0.0'
+    'twisted >= 16.0.0'
 ]
 
 EXTRA_REQUIRES = {}
@@ -97,28 +97,28 @@ CLASSIFIERS = [
     'License :: OSI Approved :: MIT License',
     'Natural Language :: English',
     'Operating System :: POSIX :: Linux',
-    'Programming Language :: Python :: 2.7',
+    'Programming Language :: Python :: 3.5',
     'Programming Language :: JavaScript',
     'Topic :: Home Automation'
 ]
 
 
 setup(
-    name = 'PyHouse',
-    version = '1.7.0',
-    description = 'Pythone house automation',
-    author = 'D. Brian Kimmel',
-    author_email = 'D.BrianKimmel@gmail.com',
-    url = 'http://www.PyHouse.org',
-    license = 'MIT',
-    classifiers = CLASSIFIERS,
-    py_modules = [ 'PyHouse' ],
-    package_dir = {'': 'src'},
-    extras_require = EXTRA_REQUIRES,
-    dependency_links = DEPENDENCY_LINKS,
-    include_package_data = True,
-    zip_safe = False,
-    install_requires = INSTALL_REQUIRES
+    name='PyHouse',
+    version='17.3.1',
+    description='Pythone house automation',
+    author='D. Brian Kimmel',
+    author_email='D.BrianKimmel@gmail.com',
+    url='http://www.PyHouse.org',
+    license='MIT',
+    classifiers=CLASSIFIERS,
+    py_modules=[ 'PyHouse' ],
+    package_dir={'': 'src'},
+    extras_require=EXTRA_REQUIRES,
+    dependency_links=DEPENDENCY_LINKS,
+    include_package_data=True,
+    zip_safe=False,
+    install_requires=INSTALL_REQUIRES
 )
 tests_passed = False
 
@@ -156,13 +156,13 @@ class TestInstalledSoftware(object):
 
     def test_python_version(self):
         l_version = sys.version_info
-        if l_version.major != 2:
-            print("ERROR - Only Python 2.7 is currently supported due to Twisted requirements.")
+        if l_version.major != 3:
+            print("ERROR - Move to Python 3.")
             return False
-        if l_version.minor < 7:
-            print("ERROR - Python less than version is not tested - Please use 2.7.x")
+        if l_version.minor < 4:
+            print("ERROR - Python less than version is not tested - Please use 3.x.x")
             return False
-        print("  Python 2.7 ok...")
+        print("  Python 3 ok...")
         return True
 
     def test_twisted(self):
@@ -172,9 +172,9 @@ class TestInstalledSoftware(object):
             print("ERROR - Twisted not installed.  apt-get install python-twisted")
             return False
         l_version = twisted.version
-        if l_version.major < 12:
-            print("ERROR - Twisted must be at least version 12.  apt-get install python-twisted")
-        print("  Twisted > 12.0 ok...")
+        if l_version.major < 16:
+            print("ERROR - Twisted must be at least version 16.  apt-get install python-twisted")
+        print("  Twisted >= 16.0 ok...")
         return True
 
     def test_zope_interface(self):

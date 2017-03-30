@@ -22,7 +22,7 @@ TODO:
 """
 from Modules.Core.Utilities.tools import PrintBytes
 
-__updated__ = '2016-11-17'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 from Modules.Computer import logging_pyh as Logger
@@ -336,29 +336,29 @@ class LightHandlerAPI(object):
         """
         LOG.info('Getting information for all Insteon devices.')
 
-        for l_obj in p_pyhouse_obj.House.Lighting.Buttons.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
                 InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
 
-        for l_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
+        for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
                 # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.itervalues():
+        for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.values():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.itervalues():
+        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Security.MotionSensors.itervalues():
+        for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
             if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
 

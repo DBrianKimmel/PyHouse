@@ -7,10 +7,10 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 57 testa - DBK 2017-01-12
+Passed all 59 tests - DBK 2017-03-27
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-27'
 
 # Import system type stuff
 # import copy
@@ -19,6 +19,10 @@ from twisted.trial import unittest
 import datetime
 
 # Import PyMh files and modules.
+from test.xml_data import \
+    XML_LONG, \
+    XML_EMPTY
+from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import CoreLightingData, LocationData
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
@@ -60,10 +64,6 @@ from Modules.Core.Utilities.test.xml_xml_tools import \
     TESTING_XML_ROOM_Y_1, \
     TESTING_XML_ROOM_Z_1, \
     TESTING_XML_ROOM_COORDS_1
-from test.xml_data import \
-    XML_LONG, \
-    XML_EMPTY
-from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -196,7 +196,7 @@ class B3_AnyField(SetupMixin, unittest.TestCase):
 
 class C1_Boolean(SetupMixin, unittest.TestCase):
     """
-    This series tests the PutGetXML class methods
+    This series tests the PutGetXML class methods for bools.
     """
 
     def setUp(self):
@@ -239,14 +239,35 @@ class C1_Boolean(SetupMixin, unittest.TestCase):
         self.assertFalse(l_result)
 
     def test_09_PutElement(self):
+        """ Create this:
+        <TestBoolElement_1>
+            <Active>True</Active>
+        </TestBoolElement_1>
+        """
         l_element = ET.Element('TestBoolElement_1')
         self.m_api.put_bool_element(l_element, 'Active', True)
-        self.assertEqual(bool(l_element._children[0].text), True)
+        # print(PrettyFormatAny.form(l_element, 'element'))
+        self.assertEqual(l_element.find("Active").text, 'True')
 
-    def test_10_PutAttribute(self):
+    def test_10_PutElement(self):
+        l_element = ET.Element('TestBoolElement_1')
+        self.m_api.put_bool_element(l_element, 'Active', False)
+        # print(PrettyFormatAny.form(l_element, 'element'))
+        self.assertEqual(l_element.find("Active").text, 'False')
+
+    def test_11_PutAttribute(self):
+        """ Create this:
+        <TestBoolAttribute_2 Active="True"/>
+        """
         l_element = ET.Element('TestBoolAttribute_2')
         self.m_api.put_bool_attribute(l_element, 'Active', True)
+        # print(PrettyFormatAny.form(l_element, 'element'))
         self.assertEqual(l_element.attrib['Active'], 'True')
+
+    def test_12_PutAttribute(self):
+        l_element = ET.Element('TestBoolAttribute_2')
+        self.m_api.put_bool_attribute(l_element, 'Active', False)
+        self.assertEqual(l_element.attrib['Active'], 'False')
 
 
 class C2_Integer(SetupMixin, unittest.TestCase):
@@ -269,9 +290,9 @@ class C2_Integer(SetupMixin, unittest.TestCase):
 
     def test_3_PutIntElement(self):
         l_element = ET.Element('TestIntElement_1')
-        # print(PrettyFormatAny.form(l_element, 'Fields C2-3'))
         self.m_api.put_int_element(l_element, 'IntNumber', -57)
-        self.assertEqual(int(l_element._children[0].text), -57)
+        # print(PrettyFormatAny.form(l_element, 'Fields C2-3'))
+        self.assertEqual(int(l_element.find('IntNumber').text), -57)
 
     def test_4_PutIntAttribute(self):
         l_element = ET.Element('TestIntAttribute_2')
@@ -314,7 +335,7 @@ class C3_Text(SetupMixin, unittest.TestCase):
     def test_06_PutTextElement(self):
         l_element = ET.Element('TestTextElement_1')
         self.m_api.put_int_element(l_element, 'Comment', 'Arbitrary Comment')
-        self.assertEqual(l_element._children[0].text, 'Arbitrary Comment')
+        self.assertEqual(l_element.find('Comment').text, 'Arbitrary Comment')
 
     def test_07_PutTextAttribute(self):
         l_element = ET.Element('TestTextAttribute_2')

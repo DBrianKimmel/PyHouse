@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -178,7 +178,7 @@ class API(object):
     def write_all_controllers_xml(p_pyhouse_obj):
         l_count = 0
         l_controllers_xml = ET.Element('ControllerSection')
-        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.itervalues():
+        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
             l_controllers_xml.append(Utility._write_one_controller_xml(p_pyhouse_obj, l_controller_obj))
             l_count += 1
         LOG.info('Saved {} Controllers XML'.format(l_count))

@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2017-01-12'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -160,7 +160,7 @@ class API(object):
     def write_all_lights_xml(p_pyhouse_obj):
         l_xml = ET.Element(SECTION)
         l_count = 0
-        for l_light_obj in p_pyhouse_obj.House.Lighting.Lights.itervalues():
+        for l_light_obj in p_pyhouse_obj.House.Lighting.Lights.values():
             l_one = Utility._write_one_light_xml(p_pyhouse_obj, l_light_obj)
             l_xml.append(l_one)
             l_count += 1

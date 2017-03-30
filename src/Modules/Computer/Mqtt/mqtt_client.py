@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import copy
@@ -87,7 +87,7 @@ class Util(object):
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
         """
         l_count = 0
-        for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
+        for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.values():
             if not l_broker.Active:
                 continue
             if l_broker.BrokerPort < 2000:
@@ -186,7 +186,7 @@ class API(Util):
         """
         l_topic = Util._make_topic(self.m_pyhouse_obj, p_topic)
         l_message = Util._make_message(self.m_pyhouse_obj, p_message)
-        for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.itervalues():
+        for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.values():
             if not l_broker.Active:
                 continue
             try:

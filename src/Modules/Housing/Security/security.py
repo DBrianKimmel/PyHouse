@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-06'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -214,7 +214,7 @@ class XML(object):
     def write_all_MotionSensors_xml(p_pyhouse_obj):
         l_xml = ET.Element('MotionDetectorSection')
         l_count = 0
-        for l_obj in p_pyhouse_obj.House.Security.MotionSensors.itervalues():
+        for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
             l_one = Utility._write_one_motion_xml(p_pyhouse_obj, l_obj)
             l_xml.append(l_one)
             l_count += 1
@@ -265,7 +265,7 @@ class XML(object):
     def write_all_GarageDoors_xml(p_pyhouse_obj):
         l_xml = ET.Element('GarageDoorSection')
         l_count = 0
-        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.itervalues():
+        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
             l_one = Utility._write_one_door_xml(p_pyhouse_obj, l_obj)
             l_xml.append(l_one)
             l_count += 1

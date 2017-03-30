@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 -*- test-case-name: PyHouse.src.test.test_PyHouse -*-
 
@@ -62,8 +62,8 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2017-01-16'
-__version_info__ = (1, 7, 2)
+__updated__ = '2017-03-25'
+__version_info__ = (17, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

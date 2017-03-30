@@ -10,7 +10,7 @@
 Passed all 18 tests - DBK 2017-01-12
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -305,7 +305,7 @@ class D1_Maint(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def _print(self, p_rooms):
-        # for l_obj in p_rooms.itervalues():
+        # for l_obj in p_rooms.values():
         #    print('D1-Print - Key:{}; Name:{}; UUID:{}; Update:{};'.format(
         #            l_obj.Key, l_obj.Name, l_obj.UUID, l_obj.LastUpdate))
         # print

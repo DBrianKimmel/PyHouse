@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -121,7 +121,7 @@ class XML(object):
         """
         l_xml = ET.Element('OnkyoSection')
         l_count = 0
-        for l_obj in p_pyhouse_obj.House.Entertainment.Onkyo.itervalues():
+        for l_obj in p_pyhouse_obj.House.Entertainment.Onkyo.values():
             l_xml.append(XML._write_one(p_pyhouse_obj, l_obj))
             l_count += 1
         LOG.info('Saved {} Onkyo devices XML'.format(l_count))
@@ -223,7 +223,7 @@ class API(object):
         else:
             LOG.info('No Mqtt brokers are configured.')
         """
-        for l_onkyo in self.m_pyhouse_obj.House.Entertainment.Onkyo.itervalues():
+        for l_onkyo in self.m_pyhouse_obj.House.Entertainment.Onkyo.values():
             pass
         # l_host = self.m_pyhouse_obj.House.Entertainment.Onkyo[0].IPv4
         l_host = DEFAULT_EISCP_IPV4

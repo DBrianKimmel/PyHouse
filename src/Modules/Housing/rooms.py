@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-12-24'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -90,7 +90,7 @@ class Xml(object):
     def write_rooms_xml(p_rooms_obj):
         l_rooms_xml = ET.Element('RoomSection')
         l_count = 0
-        for l_room_object in p_rooms_obj.itervalues():
+        for l_room_object in p_rooms_obj.values():
             l_room_object.Key = l_count
             l_entry = Xml.write_one_room(l_room_object)
             l_rooms_xml.append(l_entry)
@@ -142,7 +142,7 @@ class Maint(object):
         l_rooms = p_pyhouse_obj.House.Rooms
         l_len = len(l_rooms)
 
-        for l_key, l_val in l_rooms.iteritems():
+        for l_key, l_val in l_rooms.items():
             if l_val.UUID == p_room_obj.UUID:
                 LOG.info('Updating room {}'.format(p_room_obj.Name))
                 l_rooms[l_key] = l_val
@@ -212,7 +212,7 @@ class Sync(object):
     @staticmethod
     def find_room_name(p_pyhouse_obj, p_name):
         l_rooms = p_pyhouse_obj.House.Rooms
-        for l_room in l_rooms.itervalues():
+        for l_room in l_rooms.values():
             if l_room.Name == p_name:
                 return l_room
         return None
@@ -220,7 +220,7 @@ class Sync(object):
     @staticmethod
     def find_room_uuid(p_pyhouse_obj, p_uuid):
         l_rooms = p_pyhouse_obj.House.Rooms
-        for l_room in l_rooms.itervalues():
+        for l_room in l_rooms.values():
             if l_room.UUID == p_uuid:
                 return l_room
         return None

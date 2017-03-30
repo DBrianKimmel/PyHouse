@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -97,7 +97,7 @@ class Xml(object):
             LOG.info('No MQTT congig to write.')
             return l_xml
         try:
-            for l_obj in p_obj.itervalues():
+            for l_obj in p_obj.values():
                 l_sys = Xml._write_one_broker(l_obj)
                 l_xml.append(l_sys)
                 l_count += 1

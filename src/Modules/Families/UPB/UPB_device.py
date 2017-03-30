@@ -15,7 +15,7 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-26'
 
 
 # Import system type stuff
@@ -49,7 +49,7 @@ class API(object):
         """For the given house, this will start all the controllers for family = UPB in that house.
         """
         l_count = 0
-        for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.itervalues():
+        for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.values():
             if Utility._is_upb_active(l_controller_obj):
                 l_controller_prefix = 'lighting/controller/{}'.format(l_controller_obj.Name)
                 l_controller_obj._HandlerAPI = upbPimAPI(self.m_pyhouse_obj)
@@ -65,7 +65,7 @@ class API(object):
 
     def Stop(self):
         try:
-            for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.itervalues():
+            for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.values():
                 if Utility._is_upb_active(l_controller_obj):
                     l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError as e_err:

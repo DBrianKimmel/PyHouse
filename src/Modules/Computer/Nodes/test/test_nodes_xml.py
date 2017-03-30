@@ -11,13 +11,15 @@ Passed all 13 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-03-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
+from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.data_objects import NodeData, NodeInterfaceData
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Nodes.test.xml_nodes import \
@@ -55,8 +57,6 @@ from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_INTERFACE_TYPE_0_0, \
         TESTING_NODES_NODE_ROLL_0, \
         TESTING_NODES_NODE_ROLL_1
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 DIVISION = 'ComputerDivision'

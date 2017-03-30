@@ -11,7 +11,7 @@ Handle the scenes component of the lighting system.
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-26'
 
 
 Scene_Data = {}
@@ -39,7 +39,7 @@ class ScenesAPI(ScenesData):
 
     def load_all_scenes(self, p_dict):
         return
-        # for l_value in p_dict.itervalues():
+        # for l_value in p_dict.values():
         #    self.load_scene(l_value)
 
     def load_scene(self, p_dict):

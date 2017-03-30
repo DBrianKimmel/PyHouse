@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-03-26'
 
 # Import system type stuff
 from twisted.web.client import getPage
@@ -47,7 +47,7 @@ class DynDnsAPI(object):
         to start up a loop for each dynamic service being updated.
         """
         self.m_running = True
-        for l_dyn_obj in self.m_internet_obj.DynDns.itervalues():
+        for l_dyn_obj in self.m_internet_obj.DynDns.values():
             l_cmd = lambda x = l_dyn_obj.UpdateInterval, y = l_dyn_obj: self.update_loop(x, y)
             self.m_reactor.callLater(l_dyn_obj.UpdateInterval, l_cmd, None)
 
