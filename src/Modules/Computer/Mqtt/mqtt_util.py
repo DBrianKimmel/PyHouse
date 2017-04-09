@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-04'
+__updated__ = '2017-04-01'
 
 class EncodeDecode(object):
     """
@@ -22,8 +22,7 @@ class EncodeDecode(object):
         l_encoded = bytearray()
         l_encoded.append(len(p_string) >> 8)
         l_encoded.append(len(p_string) & 0xFF)
-        for i in p_string:
-            l_encoded.append(i)
+        # l_encoded.append(map(ord, p_string))
         return l_encoded
 
     @staticmethod

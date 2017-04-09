@@ -11,8 +11,10 @@
 Android
 Certificates
 PyHouse.egg-info
+html/
+latex/
 lock
-build
+build/
 dist
 minimal
 

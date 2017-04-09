@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-03-27'
+__updated__ = '2017-04-01'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -21,9 +21,22 @@ import pprint
 
 def _trunc_string(s, maxlen=2000):
     if len(s) > maxlen:
-        return s[0:maxlen] + ' ...(%d more chars)...' % (len(s) - maxlen)
+        return s[0:maxlen]  # + ' ...(%d more chars)...' % (len(s) - maxlen)
     else:
         return s
+
+
+def _nuke_newlines(string):
+    """
+    Strip newlines and any trailing/following whitespace;
+    rejoin with a single space where the newlines were.
+
+    Bug: This routine will completely butcher any whitespace-formatted text.
+    """
+    if not string:
+        return ''
+    lines = string.splitlines()
+    return ' '.join([line.strip() for line in lines])
 
 
 def _format_line(string, maxlen=175, split=' '):
@@ -48,19 +61,6 @@ def _format_line(string, maxlen=175, split=' '):
         oldeol = eol + len(split)
     return lines
 
-def _nuke_newlines(string):
-    """
-    Strip newlines and any trailing/following whitespace;
-    rejoin with a single space where the newlines were.
-
-    Bug: This routine will completely butcher any whitespace-formatted text.
-    """
-    if not string:
-        return ''
-    lines = string.splitlines()
-    return ' '.join([line.strip() for line in lines])
-
-
 def _format_cols(strings, widths, split=' '):
     """
     Pretty prints text in columns, with each string breaking at split according to _format_line.
@@ -70,9 +70,9 @@ def _format_cols(strings, widths, split=' '):
 
     The number of strings must match the number of widths.
     Each width is the width of a column with the last number is the total width.
-    @param strings: is a list of strings
-    @param widths: is a list of integer column widths.  There must be the same number of widths as strings
-    @return: the line of output with the strings left justified in the colum width pecified
+    @param strings: is a tuple of strings
+    @param widths: is a tuple of integer column widths.  There must be the same number of widths as strings
+    @return: the line of output with the strings left justified in the column width specified
     """
     assert len(strings) == len(widths)
     strings = list(map(_nuke_newlines, strings))
@@ -150,8 +150,8 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
             builtins.append(slot)
         elif (isinstance(attr, types.MethodType) or isinstance(attr, types.FunctionType)):
             methods.append((slot, attr))
-        elif isinstance(attr, types.TypeType):
-            classes.append((slot, attr))
+    #   elif isinstance(attr, types.TypeType):
+    #        classes.append((slot, attr))
         else:
             attrs.append((slot, attr))
     #  Organize them
@@ -195,7 +195,7 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
         classdoc = getattr(classtype, '__doc__', None) or '<No documentation>'
         if suppressdoc:
             classdoc = '<No documentation>'
-        l_output += _format_cols(('', classname, _trunc_string(classdoc, maxspew)), tabbedwidths, ' ')
+        l_output += _format_cols(('Class: ', classname, _trunc_string(classdoc, maxspew)), tabbedwidths, ' ')
     #  User methods
     if methods:
         l_output += '\nMethods'
@@ -203,12 +203,12 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
         methoddoc = getattr(method, '__doc__', None) or '<No documentation>'
         if suppressdoc:
             methoddoc = '<No documentation>'
-        l_output += _format_cols(('', methodname, _trunc_string(methoddoc, maxspew)), tabbedwidths, ' ')
+        l_output += _format_cols(('Method: ', methodname, _trunc_string(methoddoc, maxspew)), tabbedwidths, ' ')
     #  Attributes
     if attrs:
         l_output += '\nAttributes'
     for (attr, val) in attrs:
-        l_output += _format_cols(('', attr, _trunc_string(str(val), maxspew)), tabbedwidths, ' ')
+        l_output += _format_cols(('Attr: ', attr, _trunc_string(str(val), maxspew)), tabbedwidths, ' ')
         l_output += '\n'
     l_output += '\n====================\n'
     return l_output
@@ -218,6 +218,8 @@ class PrettyFormatAny(object):
 
     @staticmethod
     def form(p_any, title='No Title Given', maxlen=120):
+        """ Top level call PrettyFormatAmy(form(obj, Title, MaxLineLen)
+        """
         l_indent = 0
         l_type = type(p_any)
         l_ret = '\n===== {} ===== {}\n'.format(title, l_type)
@@ -226,13 +228,17 @@ class PrettyFormatAny(object):
 
     @staticmethod
     def _type_dispatcher(p_any, maxlen, indent):
+        """ We have the following dispatch to pretty up the things we want to see.
+
+        The default is to print a generic object of some sort.
+        """
         if isinstance(p_any, dict):
             l_ret = PrettyFormatAny._format_dict(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, ET.Element):
             l_ret = PrettyFormatAny._format_XML(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, str):
             l_ret = PrettyFormatAny._format_string(p_any, maxlen=maxlen, indent=indent)
-        elif isinstance(p_any, type(unicode)):
+        elif isinstance(p_any, type('utf-8')):
             l_ret = PrettyFormatAny._format_unicode(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, list):
             l_ret = PrettyFormatAny._format_list(p_any, maxlen=maxlen, indent=indent + 4)
@@ -247,12 +253,12 @@ class PrettyFormatAny(object):
 
     @staticmethod
     def _format_string(p_obj, maxlen, indent):
-        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ') + '\n'
+        l_ret = _format_cols((' str ', p_obj), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
     def _format_unicode(p_obj, maxlen, indent):
-        l_ret = _format_cols(('', p_obj), [indent, maxlen - indent], ' ') + '\n'
+        l_ret = _format_cols((' uc ', p_obj), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -261,9 +267,9 @@ class PrettyFormatAny(object):
         l_tabbedwidths = [indent, 30, maxlen - 30]
         for l_key, l_val in p_dict.items():
             if isinstance(l_val, dict):
-                l_ret += _format_cols(('', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
+                l_ret += _format_cols((' dict1 ', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
             else:
-                l_ret += _format_cols(('', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
+                l_ret += _format_cols((' dict2 ', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -325,7 +331,7 @@ class PrettyFormatAny(object):
             l_attrs.append((l_slot, l_attr))
         l_attrs.sort()
         for (attr, l_val) in l_attrs:
-            l_ret += _format_cols(('', attr, _trunc_string(str(l_val), maxspew)), l_tabbedwidths, ' ') + '\n'
+            l_ret += _format_cols(('Obj: ', attr, _trunc_string(str(l_val), maxspew)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -362,13 +368,13 @@ def FormatBytes(p_message):
 def PrettyPrint(p_title, p_str, maxlen=150):
     print('Title: {}\n'.format(p_title), '\n'.join(_format_line(str(p_str), maxlen, ' ')))
 
-def _delchars(p_str, chars):
-    """Returns a string for which all occurrences of characters in
-    chars have been removed."""
+def _delchars(p_str, p_chars):
+    """ Returns a string for which all occurrences of characters in chars have been removed.
+    """
     #  Translate demands a mapping string of 256 characters;
     #  whip up a string that will leave all characters unmolested.
-    identity = ''.join([chr(x) for x in range(256)])
-    return p_str.translate(identity, chars)
+    l_table = dict.fromkeys(map(ord, p_chars), None)
+    return p_str.translate(l_table)
 
 
 class Lister():

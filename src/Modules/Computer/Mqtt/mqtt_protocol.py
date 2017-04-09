@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-03-31'
 
 #  Import system type stuff
 import random
@@ -497,9 +497,7 @@ class MQTTClient(MQTTProtocol):
                  keepalive=None,
                  willQos=0, willTopic=None, willMessage=None, willRetain=False
                  ):
-        """
-        At this point all config has been read in and Set-up
-        """
+        """ At this point all config has been read in and Set-up """
         l_comp_name = p_pyhouse_obj.Computer.Name
         try:
             l_house_name = p_pyhouse_obj.House.Name.lower() + '/'
