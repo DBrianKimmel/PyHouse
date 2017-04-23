@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-04-01'
+__updated__ = '2017-04-21'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -47,19 +47,19 @@ def _format_line(string, maxlen=175, split=' '):
     This will overflow the line if no convenient occurrence of split is found.
     @param string: is a string that will be broken up into several strings if needed.
     @param maxlen: is the maximum length of a string segment
-    @param split: is the character around which the split will ocur.
-    @return: a list of strings
+    @param split: is the character around which the split will occur.
+    @return: a list of string segments
     """
     #  Tack on the splitting character to guarantee a final match
     string += split
-    lines = []
+    linelist = []
     oldeol = 0
     eol = 0
     while not (eol == -1 or eol == len(string) - 1):
         eol = string.rfind(split, oldeol, oldeol + maxlen + len(split))
-        lines.append(string[oldeol:eol])
+        linelist.append(string[oldeol:eol])
         oldeol = eol + len(split)
-    return lines
+    return linelist
 
 def _format_cols(strings, widths, split=' '):
     """
@@ -75,11 +75,11 @@ def _format_cols(strings, widths, split=' '):
     @return: the line of output with the strings left justified in the column width specified
     """
     assert len(strings) == len(widths)
-    strings = list(map(_nuke_newlines, strings))
+    stringlist = list(map(_nuke_newlines, strings))
     #  pretty Print each column
-    cols = [''] * len(strings)
-    for i in range(len(strings)):
-        cols[i] = _format_line(strings[i], widths[i], split)
+    cols = [''] * len(stringlist)
+    for i in range(len(stringlist)):
+        cols[i] = _format_line(stringlist[i], widths[i], split)
     #  prepare a format line
     l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
     def formatline(*cols):
@@ -215,6 +215,8 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
 
 
 class PrettyFormatAny(object):
+    """
+    """
 
     @staticmethod
     def form(p_any, title='No Title Given', maxlen=120):
@@ -240,6 +242,8 @@ class PrettyFormatAny(object):
             l_ret = PrettyFormatAny._format_string(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, type('utf-8')):
             l_ret = PrettyFormatAny._format_unicode(p_any, maxlen=maxlen, indent=indent)
+        elif isinstance(p_any, bytearray):
+            l_ret = PrettyFormatAny._format_bytearray(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, list):
             l_ret = PrettyFormatAny._format_list(p_any, maxlen=maxlen, indent=indent + 4)
         elif isinstance(p_any, tuple):
@@ -259,6 +263,13 @@ class PrettyFormatAny(object):
     @staticmethod
     def _format_unicode(p_obj, maxlen, indent):
         l_ret = _format_cols((' uc ', p_obj), [indent, maxlen - indent], ' ') + '\n'
+        return l_ret
+
+    @staticmethod
+    def _format_bytearray(p_obj, maxlen, indent):
+
+        l_str = FormatBytes(p_obj)
+        l_ret = _format_cols(('>>', l_str), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod

@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-01-31'
+__updated__ = '2017-04-18'
 
 #  Import system type stuff
 
@@ -195,9 +195,9 @@ class DecodeResponses(object):
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
+            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x01:
                 l_debug_msg += ' Device-Set-Button-Pressed '
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 02:
+            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x02:
                 l_debug_msg += ' Controller-Set-Button-Pressed '
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(PrintBytes(l_message))

@@ -20,11 +20,16 @@ TODO:
     implement all-links
 
 """
-from Modules.Core.Utilities.tools import PrintBytes
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-19'
 
 #  Import system type stuff
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
+
+#  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_decoder, Insteon_utils, Insteon_Link
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
@@ -32,10 +37,7 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family_utils import FamUtil
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Core.Utilities.tools import PrintBytes
-import Queue
-
-#  Import PyMh files
+from Modules.Core.Utilities.tools import PrintBytes
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
 
 #  Timeouts for send/receive delays

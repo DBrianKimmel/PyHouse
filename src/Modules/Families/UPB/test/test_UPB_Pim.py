@@ -11,13 +11,16 @@ Passed all 30 tests - DBK - 2015-08-15
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-04-19'
 
 
 # Import system type stuff
-from twisted.trial import unittest
-import Queue
+try:
+    import Queue
+except ImportError:
+    import queue as Queue
 import xml.etree.ElementTree as ET
+from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Families.UPB.UPB_Pim import BuildCommand, DecodeResponses

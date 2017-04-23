@@ -7,10 +7,10 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 14 tests - DBK - 2017-01-11
+Passed all 14 tests - DBK - 2017-04-21
 
 """
-__updated__ = '2017-01-19'
+__updated__ = '2017-04-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -116,12 +116,12 @@ class A3_EmptyXML(SetupMixin, unittest.TestCase):
         self.assertEqual(len(l_mqtt.Brokers), 0)
 
 
-class B1_ConnectTCP(SetupMixin, unittest.TestCase):
+class B1_TcpConnect(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Twisted.Reactor = reactor
-        twisted.internet.base.DelayedCall.debug = True
+        # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.BrokerPort = PORT
         self.m_broker.Active = TESTING_BROKER_ACTIVE_1
@@ -141,7 +141,7 @@ class B2_ConnectTLS(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Twisted.Reactor = reactor
-        twisted.internet.base.DelayedCall.debug = True
+        # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKER_TLS
         self.m_broker.BrokerPort = PORT_TLS
         self.m_broker.Active = True
@@ -181,7 +181,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
-        twisted.internet.base.DelayedCall.debug = True
+        # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.BrokerPort = PORT
         self.m_broker.Active = True

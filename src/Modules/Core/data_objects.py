@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-04-21'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -364,6 +364,7 @@ class WebData(object):
     """
     def __init__(self):
         self.WebPort = 8580
+        self.WebSocketPort = 8581
         self.SecurePort = 8588
         self.Logins = {}  # LoginData()
 
@@ -435,9 +436,12 @@ class JsonHouseData(BaseObject):
 
 class MqttBrokerData(BaseObject):
     """ 0-N
+
+    ==> PyHouse.Computer.Mqtt.Brokers.XXX as in the def below
     """
     def __init__(self):
         super(MqttBrokerData, self).__init__()
+        self.BrokerName = None
         self.BrokerAddress = None
         self.BrokerPort = None
         self.UserName = ''

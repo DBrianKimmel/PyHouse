@@ -12,7 +12,7 @@ Passed all 5 tests - DBK - 2017-01-20
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-04-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,6 +23,21 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities  import json_tools
 
+MSG_JSON = bytearray(b'Count": 0, \
+    "ControllerTypes": [], \
+    "Active": true, \
+    "NodeId": null, \
+    "Name": "briank-Laptop-3", \
+    "DateTime": "2017-04-22 10:17:03.678333", \
+    "NodeInterfaces": null, \
+    "ConnectionAddr_IPv4": [], \
+    "LastUpdate": "2017-04-22 10:16:48.676017", \
+    "ConnectionAddr_IPv6": [["::1"], ["2604:8800:100:8268:8cca:e089:25e1:897a", "2604:8800:100:8268:2e04:b128:2c5c:ab0b", "fe80::9a42:15f0:6352:7d50%wlo1"]], \
+    "Sender": "briank-Laptop-3", \
+    "Comment": null, \
+    "NodeRole": 0, \
+    "UUID": "afd36665-df62-11e6-9b94-74dfbfae5aed", \
+    "Key": 0}')
 
 class SetupMixin(object):
 
@@ -61,6 +76,15 @@ class A1_Json(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_dict, 'A1-02-A - Decoded Info'))
         self.assertEqual(l_dict['Name'], self.m_pyhouse_obj.Computer.Name)
 
+    def test_03_Decode(self):
+        print(PrettyFormatAny.form(MSG_JSON, 'A1-03-A - bytes'))
+        l_json = str(MSG_JSON)
+        print(PrettyFormatAny.form(l_json, 'A1-03-B - bytes'))
+        l_dict = json_tools.decode_json_unicode(l_json)
+        print(l_dict)
+        print(PrettyFormatAny.form(l_dict, 'A1-03-C - Decoded Info'))
+        self.assertEqual(l_dict['Name'], self.m_pyhouse_obj.Computer.Name)
+
 
 class A2_Decode(SetupMixin, unittest.TestCase):
 
@@ -73,6 +97,11 @@ class A2_Decode(SetupMixin, unittest.TestCase):
 
     def test_02_Ascii(self):
         y = json_tools.convert_from_unicode('ABC')
+        self.assertEquals(y, 'ABC')
+
+    def test_03_BA(self):
+        y = json_tools.convert_from_unicode(MSG_JSON)
+        print(PrettyFormatAny.form(y, 'A2-03-A - Decoded Info'))
         self.assertEquals(y, 'ABC')
 
 # ## END DBK

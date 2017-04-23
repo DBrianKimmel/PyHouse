@@ -9,8 +9,9 @@
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2017-04-18'
 
+TESTING_TUPLE = (1, 22, 333, 'Aa', 'BbBb', 'CcCcCc')
 TESTING_XML_BOOL_0 = 'False'
 TESTING_XML_BOOL_1 = 'True'
 TESTING_XML_BOOL_2 = 'Howdy'
@@ -53,9 +54,9 @@ TESTING_XML_ROOM_X_0 = '3.4'
 TESTING_XML_ROOM_Y_0 = '5.6'
 TESTING_XML_ROOM_Z_0 = '1.2'
 TESTING_XML_ROOM_COORDS_0 = '[' + TESTING_XML_ROOM_X_0 + \
-                            ", '" + TESTING_XML_ROOM_Y_0 + \
-                            "', " + '"' + TESTING_XML_ROOM_Z_0 + \
-                            '"]'
+                            ", " + TESTING_XML_ROOM_Y_0 + \
+                            ", " + TESTING_XML_ROOM_Z_0 + \
+                            ']'
 L_ROOM_COORDS_0 = '<RoomCoords0>' + TESTING_XML_ROOM_COORDS_0 + '</RoomCoords0>'
 
 TESTING_XML_ROOM_X_1 = '1.75'

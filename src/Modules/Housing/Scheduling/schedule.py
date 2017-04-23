@@ -40,11 +40,12 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-20'
 
 #  Import system type stuff
 import datetime
 import dateutil.parser as dparser
+import aniso8601
 
 #  Import PyMh files
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
@@ -60,6 +61,21 @@ SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  # 86400
 SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
+
+
+def to_minutes(p_datetime):
+    return (p_datetime.hour * 60 + p_datetime.minute)
+
+def _get_schedule_timefield(p_schedule_obj):
+    """
+    """
+    l_timefield = p_schedule_obj.Time.lower()
+    try:
+        # l_time = dparser.parse(l_timefield, fuzzy=True) # Worked ok in Python2
+        l_time = aniso8601.parse_time(l_timefield)
+    except ValueError:
+        l_time = datetime.time(0)
+    return l_time, l_timefield
 
 
 class RiseSet(object):
@@ -112,29 +128,68 @@ class SchedTime(object):
     @staticmethod
     def _extract_schedule_time(p_schedule_obj, p_rise_set):
         """ Find the number of minutes from midnight until the schedule time for action.
+
+        Possible valid formats are:
+            hh:mm:ss
+            hh:mm
+            sunrise
+            sunrise + hh:mm
+            sunrise - hh:mm
         @return: the number of minutes
         """
         l_timefield = p_schedule_obj.Time.lower()
-        l_time = dparser.parse(l_timefield, fuzzy=True)
-        l_offset = l_time.hour * 60 + l_time.minute
-        #
         if 'dawn' in l_timefield:
-            l_base = Utility.to_mins(p_rise_set.Dawn)
-        if 'sunrise' in l_timefield or 'dawn' in l_timefield:
-            l_base = Utility.to_mins(p_rise_set.SunRise)
-        elif 'sunset' in l_timefield or 'dusk' in l_timefield:
-            l_base = Utility.to_mins(p_rise_set.SunSet)
+            # print('Dawn - {}'.format(l_timefield))
+            l_base = to_minutes(p_rise_set.Dawn)
+            l_timefield = l_timefield[4:]
+        elif 'sunrise' in l_timefield:
+            # print('SunRise - {}'.format(l_timefield))
+            l_base = to_minutes(p_rise_set.SunRise)
+            l_timefield = l_timefield[7:]
+        elif 'noon' in l_timefield:
+            # print('Noon - {}'.format(l_timefield))
+            l_base = to_minutes(p_rise_set.Noon)
+            l_timefield = l_timefield[4:]
+        elif 'sunset' in l_timefield:
+            # print('SunSet - {}'.format(l_timefield))
+            l_base = to_minutes(p_rise_set.SunSet)
+            l_timefield = l_timefield[6:]
         elif 'dusk' in l_timefield:
-            l_base = Utility.to_mins(p_rise_set.Dusk)
+            # print('Dusk - {}'.format(l_timefield))
+            l_base = to_minutes(p_rise_set.Dusk)
+            l_timefield = l_timefield[4:]
         else:
-            l_base = l_offset
-        #
+            l_base = 0
+
+        l_timefield = l_timefield.strip()
+        # print('==time== - {}'.format(l_timefield))
+
+        l_subflag = False
         if '-' in l_timefield:
-            l_minutes = l_base - l_offset
+            # print(" found - ")
+            l_subflag = True
+            l_timefield = l_timefield[1:]
         elif '+' in l_timefield:
-            l_minutes = l_base + l_offset
+            # print(" found + ")
+            l_subflag = False
+            l_timefield = l_timefield[1:]
+        l_timefield = l_timefield.strip()
+
+        try:
+            # l_time = dparser.parse(l_timefield, fuzzy=True)
+            l_time = aniso8601.parse_time(l_timefield)
+            # print('Parsable time field "{}" = "{}"'.format(l_timefield, l_time))
+        except ValueError:
+            # print('Unparsable time field "{}"'.format(l_timefield))
+            l_time = datetime.time(0)
+
+        l_offset = to_minutes(l_time)
+        #
+        #
+        if l_subflag:
+            l_minutes = l_base - l_offset
         else:
-            l_minutes = l_base
+            l_minutes = l_base + l_offset
         #
         return l_minutes
 
@@ -150,7 +205,7 @@ class SchedTime(object):
         l_dow_mins = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
         l_sched_mins = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
         l_sched_secs = 60 * (l_dow_mins + l_sched_mins)
-        l_now_secs = Utility.to_mins(p_now) * 60
+        l_now_secs = to_minutes(p_now) * 60
         l_seconds = l_sched_secs - l_now_secs
         if l_seconds < 0:
             l_seconds += SECONDS_IN_DAY
@@ -209,13 +264,6 @@ class Utility(object):
     def _setup_components(p_pyhouse_obj):
         # p_pyhouse_obj.House.Schedules = {}
         pass
-
-    @staticmethod
-    def to_mins(p_datetime):
-        """ Convert a datetime to minutes since midnight.
-        """
-        l_mins = p_datetime.hour * 60 + p_datetime.minute
-        return l_mins
 
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-21'
 
 #  Import system type stuff
 import copy
@@ -42,16 +42,20 @@ class Util(object):
     """
     """
 
+    def _make_client_name(self, p_pyhouse_obj):
+        l_client_name = 'PyH-Computer-' + p_pyhouse_obj.Computer.Name
+        return l_client_name
+
     def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker):
-        l_clientID = 'PyH-Raspi-' + p_pyhouse_obj.Computer.Name
+        l_clientID = self._make_client_name(p_pyhouse_obj)
         l_host = p_broker.BrokerAddress
         l_port = p_broker.BrokerPort
-        l_username = None  # p_broker.UserName
-        l_password = None  # p_broker.Password
+        l_username = p_broker.UserName
+        l_password = p_broker.Password
         l_keepalive = 60
-
         p_broker._ClientAPI = self
         LOG.info('Connecting via TCP...')
+
         if l_host is None or l_port is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(l_host, l_port))
             p_broker._ProtocolAPI = None
@@ -60,15 +64,16 @@ class Util(object):
             _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
             LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker.Name, l_host))
             LOG.info('Prefix: {}'.format(p_pyhouse_obj.Computer.Mqtt.Prefix))
-        pass
 
     @defer.inlineCallbacks
-    def connect_to_one_broker_TLS(self, _p_pyhouse_obj, _p_broker):
-        # l_host = p_broker.BrokerAddress
-        # l_port = p_broker.BrokerPort
-        # l_username = p_broker.UserName
-        # l_password = p_broker.Password
-        # l_clientID = 'PyH-RasPi-' + p_pyhouse_obj.Computer.Name
+    def connect_to_one_broker_TLS(self, p_pyhouse_obj, p_broker):
+        l_clientID = self._make_client_name(p_pyhouse_obj)
+        l_host = p_broker.BrokerAddress
+        l_port = p_broker.BrokerPort
+        l_username = p_broker.UserName
+        l_password = p_broker.Password
+        l_keepalive = p_broker.Keepalive
+        p_broker._ClientAPI = self
         LOG.info('Connecting via TLS...')
         # l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
         # l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
@@ -89,6 +94,7 @@ class Util(object):
         l_count = 0
         for l_broker in p_pyhouse_obj.Computer.Mqtt.Brokers.values():
             if not l_broker.Active:
+                LOG.info('Skipping not active broker: {}'.format(l_broker.Name))
                 continue
             if l_broker.BrokerPort < 2000:
                 self.connect_to_one_broker_TCP(p_pyhouse_obj, l_broker)

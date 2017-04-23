@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-04-20'
 
 
 # Import system type stuff
@@ -59,6 +59,13 @@ def dotted_hex2int(p_hex):
     l_hexn = ''.join(["%02X" % _get_int(l_ix) for l_ix in l_ary])
     return int(l_hexn, 16)
 
+def makeHex(p_int):
+    """ convert an int to 2 hex digits
+    """
+    l_int = p_int & 0xff
+    l_hex = "{:02X}".format(l_int)
+    return l_hex
+
 def int2dotted_hex(p_int, p_size):
     """
     @param p_int: is the integer to convert to a dotted hex string such as 'A1.B2' or 'C4.D3.E2'
@@ -69,12 +76,14 @@ def int2dotted_hex(p_int, p_size):
     l_int = int(p_int)
     try:
         while l_ix > 0:
-            l_byte, l_int = divmod(l_int, l_ix)
+            l_byte, l_int = divmod(int(l_int), int(l_ix))
             l_hex.append("{:02X}".format(l_byte))
-            l_ix = l_ix / 256
+            l_ix = int(l_ix / 256)
         return str('.'.join(l_hex))
     except TypeError as e_err:
         LOG.error('ERROR in converting int to dotted Hex {} - Type:{} - {}'.format(p_int, type(p_int), e_err))
+    except ValueError:
+        LOG.error('ERROR converting {} {} {}'.format(l_byte, l_int, l_ix))
 
 def getbool(p_bool):
     if p_bool == 'True':

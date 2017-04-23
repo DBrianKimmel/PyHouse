@@ -12,8 +12,9 @@ The first is a TCP connection to the Mqtt broker.
 The second is a MQTT connection to the broker that uses the first connection as a transport.
 
 """
+from thriftpy.parser.parser import p_ref_type
 
-__updated__ = '2017-03-31'
+__updated__ = '2017-04-22'
 
 #  Import system type stuff
 import random
@@ -26,7 +27,8 @@ from twisted.internet import error
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
 #  from Modules.Core.Utilities.tools import PrintBytes
-#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import FormatBytes
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 
@@ -169,7 +171,7 @@ class MQTTProtocol(Protocol):
             packet = packet[2:]
         #  Extract the message
         #  Whatever remains is the message
-        message = str(packet)
+        message = packet
         #  LOG.info('Mqtt Publish: {}\n\t{}'.format(topic, message))
         self.publishReceived(topic, message, qos, dup, retain, messageId)
 
@@ -293,7 +295,21 @@ class MQTTProtocol(Protocol):
 
     #  these are for sending Mqtt packets.
 
-    def connect(self, p_clientID, keepalive=3000,
+    def _build_fixed_header(self, p_packet_type, p_remaining_length, dup=0, qosLevel=0, retain=0):
+        l_header = bytearray()
+        l_header.append((p_packet_type & 0x0f) << 4 | (dup & 0x01) << 3 | (qosLevel & 0x03) << 1 | (retain & 0x01))
+        l_header.extend(EncodeDecode._encodeLength(p_remaining_length))
+        return l_header
+
+    def _send_transport(self, p_fixed, p_var, p_payload):
+        # print('MQTT Fixed:{}'.format(PrettyFormatAny.form(p_fixed, "Fixed")))
+        # print('MQTT Var:{}'.format(PrettyFormatAny.form(p_var)))
+        # print('MQTT Payload:{}'.format(PrettyFormatAny.form(p_payload)))
+        self.transport.write(p_fixed)
+        self.transport.write(p_var)
+        self.transport.write(p_payload)
+
+    def connect(self, p_clientID, keepalive=30000,
                 willTopic=None, willMessage=None, willQoS=0, willRetain=False,
                 cleanStart=True,
                 username=None,
@@ -303,11 +319,14 @@ class MQTTProtocol(Protocol):
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
         LOG.info("Sending 'connect' packet - ID: {}".format(p_clientID))
-        l_header = bytearray()
         l_varHeader = bytearray()
         l_payload = bytearray()
-        l_varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
-        l_varHeader.append(3)
+        # Version 3.0
+        # l_varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
+        # l_varHeader.append(3)
+        # Version 3.1.1
+        l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
+        l_varHeader.append(4)
         varLogin = 0
         if username is not None:
             varLogin += 2
@@ -317,25 +336,21 @@ class MQTTProtocol(Protocol):
             #  Clean start, no will message
             l_varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
         else:
-            l_varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 |
-                             1 << 2 | cleanStart << 1)
-        l_varHeader.extend(EncodeDecode._encodeValue(keepalive / 1000))
+            l_varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 | 1 << 2 | cleanStart << 1)
+        l_varHeader.extend(EncodeDecode._encodeValue(int(keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_clientID))
         if willMessage is not None and willTopic is not None:
             LOG.debug('Adding last will testiment {}'.format(willMessage + willTopic))
             l_payload.extend(EncodeDecode._encodeString(willTopic))
             l_payload.extend(EncodeDecode._encodeString(willMessage))
-        if username is not None:
-            LOG.debug('Adding username {}'.format(username))
+        if username is not None and len(username) > 0:
+            LOG.debug('Adding username "{}"'.format(username))
             l_payload.extend(EncodeDecode._encodeString(username))
-        if password is not None:
-            LOG.debug('Adding password {}'.format(password))
+        if password is not None and len(password) > 0:
+            LOG.debug('Adding password "{}"'.format(password))
             l_payload.extend(EncodeDecode._encodeString(password))
-        l_header.append(0x01 << 4)  #  Packet type 1 = connect packet
-        l_header.extend(EncodeDecode._encodeLength(len(l_varHeader) + len(l_payload)))
-        self.transport.write(str(l_header))
-        self.transport.write(str(l_varHeader))
-        self.transport.write(str(l_payload))
+        l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
+        self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
         LOG.warn('Got connect ack packet')
@@ -344,27 +359,25 @@ class MQTTProtocol(Protocol):
         header.append(0x02 << 4)  #  Packet type 2 = connack packet
         payload.append(status)
         header.extend(EncodeDecode._encodeLength(len(payload)))
-        self.transport.write(str(header))
-        self.transport.write(str(payload))
+        self.transport.write(header)
+        self.transport.write(payload)
 
     def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
         #  LOG.info("Sending publish packet - Topic: {}".format(p_topic))
-        header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
         #  Type = publish
-        header.append(0x03 << 4 | dup << 3 | qosLevel << 1 | retain)
         varHeader.extend(EncodeDecode._encodeString(p_topic))
         if qosLevel > 0:
             if messageId is not None:
                 varHeader.extend(EncodeDecode._encodeValue(messageId))
             else:
                 varHeader.extend(EncodeDecode._encodeValue(random.randint(1, 0xFFFF)))
-        payload.extend(p_message)
-        header.extend(EncodeDecode._encodeLength(len(varHeader) + len(payload)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
-        self.transport.write(str(payload))
+        payload.extend(EncodeDecode._encodeString(p_message))
+        fixHeader = self._build_fixed_header(0x03, len(varHeader) + len(payload), dup, qosLevel, retain)
+        self.transport.write(fixHeader)
+        self.transport.write(varHeader)
+        self.transport.write(payload)
 
     def puback(self, messageId):
         header = bytearray()
@@ -372,8 +385,8 @@ class MQTTProtocol(Protocol):
         header.append(0x04 << 4)
         varHeader.extend(EncodeDecode._encodeValue(messageId))
         header.extend(EncodeDecode._encodeLength(len(varHeader)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
+        self.transport.write(header)
+        self.transport.write(varHeader)
 
     def pubrec(self, messageId):
         header = bytearray()
@@ -381,8 +394,8 @@ class MQTTProtocol(Protocol):
         header.append(0x05 << 4)
         varHeader.extend(EncodeDecode._encodeValue(messageId))
         header.extend(EncodeDecode._encodeLength(len(varHeader)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
+        self.transport.write(header)
+        self.transport.write(varHeader)
 
     def pubrel(self, messageId):
         header = bytearray()
@@ -390,8 +403,8 @@ class MQTTProtocol(Protocol):
         header.append(0x06 << 4)
         varHeader.extend(EncodeDecode._encodeValue(messageId))
         header.extend(EncodeDecode._encodeLength(len(varHeader)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
+        self.transport.write(header)
+        self.transport.write(varHeader)
 
     def pubcomp(self, messageId):
         header = bytearray()
@@ -399,8 +412,8 @@ class MQTTProtocol(Protocol):
         header.append(0x07 << 4)
         varHeader.extend(EncodeDecode._encodeValue(messageId))
         header.extend(EncodeDecode._encodeLength(len(varHeader)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
+        self.transport.write(header)
+        self.transport.write(varHeader)
 
     def subscribe(self, p_topic, requestedQoS=0, messageId=None):
         """
@@ -420,9 +433,9 @@ class MQTTProtocol(Protocol):
         payload.extend(EncodeDecode._encodeString(p_topic))
         payload.append(requestedQoS)
         header.extend(EncodeDecode._encodeLength(len(varHeader) + len(payload)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
-        self.transport.write(str(payload))
+        self.transport.write(header)
+        self.transport.write(varHeader)
+        self.transport.write(payload)
 
     def suback(self, grantedQos, messageId):
         header = bytearray()
@@ -433,9 +446,9 @@ class MQTTProtocol(Protocol):
         for i in grantedQos:
             payload.append(i)
         header.extend(EncodeDecode._encodeLength(len(varHeader) + len(payload)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
-        self.transport.write(str(payload))
+        self.transport.write(header)
+        self.transport.write(varHeader)
+        self.transport.write(payload)
 
     def unsubscribe(self, topic, messageId=None):
         LOG.info("Sending unsubscribe packet")
@@ -449,9 +462,9 @@ class MQTTProtocol(Protocol):
             varHeader.extend(EncodeDecode._encodeValue(random.randint(1, 0xFFFF)))
         payload.extend(EncodeDecode._encodeString(topic))
         header.extend(EncodeDecode._encodeLength(len(payload) + len(varHeader)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
-        self.transport.write(str(payload))
+        self.transport.write(header)
+        self.transport.write(varHeader)
+        self.transport.write(payload)
 
     def unsuback(self, messageId):
         header = bytearray()
@@ -459,29 +472,29 @@ class MQTTProtocol(Protocol):
         header.append(0x0B << 4)
         varHeader.extend(EncodeDecode._encodeValue(messageId))
         header.extend(EncodeDecode._encodeLength(len(varHeader)))
-        self.transport.write(str(header))
-        self.transport.write(str(varHeader))
+        self.transport.write(header)
+        self.transport.write(varHeader)
 
     def pingreq(self):
         #  LOG.warn('Sent ping packet')
         header = bytearray()
         header.append(0x0C << 4)
         header.extend(EncodeDecode._encodeLength(0))
-        self.transport.write(str(header))
+        self.transport.write(header)
 
     def pingresp(self):
         #  LOG.warn('Got ping ack packet')
         header = bytearray()
         header.append(0x0D << 4)
         header.extend(EncodeDecode._encodeLength(0))
-        self.transport.write(str(header))
+        self.transport.write(header)
 
     def disconnect(self):
         LOG.info("Sending disconnect packet")
         header = bytearray()
         header.append(0x0E << 4)
         header.extend(EncodeDecode._encodeLength(0))
-        self.transport.write(str(header))
+        self.transport.write(header)
 
 
 MQTT_FACTORY_START = 0
@@ -514,7 +527,7 @@ class MQTTClient(MQTTProtocol):
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
-            self.m_keepalive = 120 * 1000
+            self.m_keepalive = 60 * 1000
         self.m_willQos = willQos
         if willTopic != None:
             willTopic = self.m_prefix + 'lwt'
@@ -579,7 +592,7 @@ class MQTTClient(MQTTProtocol):
         """ Override - This is where we receive all the pyhouse messages.
         Call the dispatcher to send them on to the correct place.
         """
-        self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
+        self.m_broker._ClientAPI.MqttDispatch(str(p_topic), str(p_message))
 
 
 ###########################################

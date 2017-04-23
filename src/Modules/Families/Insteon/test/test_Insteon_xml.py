@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   This module test insteon xml
 
-Passed all 15 tests - DBK - 2015-11-05
+Passed all 15 tests - DBK - 2017-04-20
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-04-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

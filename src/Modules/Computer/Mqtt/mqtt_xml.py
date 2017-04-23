@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -35,7 +35,7 @@ class Xml(object):
         """
         l_obj = MqttBrokerData()
         try:
-            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)
+            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
             l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
             l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
             l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'BrokerUser')

@@ -7,10 +7,11 @@
 @note:      Created on Mar 31, 2017
 @summary:   Test
 
-"""
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+Passed all 3 tests - DBK - 2017-04-18
 
-__updated__ = '2017-03-31'
+"""
+
+__updated__ = '2017-04-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,6 +23,7 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt import mqtt_util
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQTT_BROKER
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -53,7 +55,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.broker.tag, TESTING_MQTT_BROKER)
 
 
-class C1_encode(SetupMixin, unittest.TestCase):
+class C1_Encode(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -64,7 +66,7 @@ class C1_encode(SetupMixin, unittest.TestCase):
     def test_01_string(self):
         """
         """
-        l_t1 = self.m_api._encodeString('Abc')
-        print(PrettyFormatAny.form(l_t1, 'string'))
+        l_bytearray = self.m_api._encodeString('Abc')
+        # print(PrettyFormatAny.form(l_bytearray, 'string'))
 
 # ## END DBK
