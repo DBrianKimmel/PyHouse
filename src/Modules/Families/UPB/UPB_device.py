@@ -15,14 +15,14 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-26'
 
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Families.UPB.UPB_Pim import API as upbPimAPI
-from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
+from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.UPB_device     ')

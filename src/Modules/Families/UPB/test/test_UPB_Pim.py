@@ -11,7 +11,7 @@ Passed all 30 tests - DBK - 2015-08-15
 
 """
 
-__updated__ = '2017-04-19'
+__updated__ = '2017-04-26'
 
 
 # Import system type stuff
@@ -158,10 +158,10 @@ class B3_Decode(SetupMixin, unittest.TestCase):
         pass
 
     def test_02_ExtractMsg(self):
-        # print('Before', PrintBytes(self.m_controller_obj._Message))
+        # print('Before', FormatBytes(self.m_controller_obj._Message))
         l_msg = self.m_api.decode_response(self.m_controller_obj)
         # print(l_msg)
-        # print('After', PrintBytes(self.m_controller_obj._Message))
+        # print('After', FormatBytes(self.m_controller_obj._Message))
 
     def test_03_DispatchDecode(self):
         pass

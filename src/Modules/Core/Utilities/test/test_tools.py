@@ -11,7 +11,7 @@ Passed all 3 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-04-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,25 +43,6 @@ class A0(unittest.TestCase):
         pass
     def test_00_Print(self):
         print('Id: test_tools')
-
-
-class A_PB1(SetupMixin, unittest.TestCase):
-    """Test PrintBytes functionality.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
-
-    def test_01_String(self):
-        """Testing PrintBytes.
-        """
-        l_str = bytearray('1234')
-        l_str[0] = 0x00
-        l_str[1] = 0x7f
-        l_str[2] = 0x80
-        l_str[3] = 0xff
-        l_ans = tools.PrintBytes(l_str)
-        self.assertEqual(l_ans, ' 0x00 0x7f 0x80 0xff <END>')
 
 
 class C1_Find(SetupMixin, unittest.TestCase):

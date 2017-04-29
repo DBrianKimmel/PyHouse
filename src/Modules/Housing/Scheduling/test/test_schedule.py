@@ -13,7 +13,7 @@ There are some tests (Starting with XX) that I do not know how to do in twisted.
 
 """
 
-__updated__ = '2017-04-20'
+__updated__ = '2017-04-26'
 
 # Import system type stuff
 import datetime
@@ -24,7 +24,7 @@ import time
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import RiseSetData
-from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
+from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 from Modules.Housing.Scheduling import schedule

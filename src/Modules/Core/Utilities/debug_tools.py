@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-04-21'
+__updated__ = '2017-04-23'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -26,17 +26,17 @@ def _trunc_string(s, maxlen=2000):
         return s
 
 
-def _nuke_newlines(string):
+def _nuke_newlines(p_string):
     """
     Strip newlines and any trailing/following whitespace;
     rejoin with a single space where the newlines were.
 
     Bug: This routine will completely butcher any whitespace-formatted text.
     """
-    if not string:
+    if not p_string:
         return ''
-    lines = string.splitlines()
-    return ' '.join([line.strip() for line in lines])
+    l_lines = p_string.splitlines()
+    return ' '.join([line.strip() for line in l_lines])
 
 
 def _format_line(string, maxlen=175, split=' '):
@@ -87,15 +87,14 @@ def _format_cols(strings, widths, split=' '):
     #  generate the formatted text
     return '\n'.join(map(formatline, *cols))
 
-
-def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
+def _formatObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
     """Print a nicely formatted overview of an object.
 
     The output lines will be wrapped at maxlen, with lindent of space
     for names of attributes.  A maximum of maxspew characters will be
     printed for each attribute value.
 
-    You can hand dumpObj any data type -- a module, class, instance,
+    You can hand formatObj any data type -- a module, class, instance,
     new class.
 
     Note that in reformatting for compactness the routine trashes any
@@ -150,8 +149,8 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
             builtins.append(slot)
         elif (isinstance(attr, types.MethodType) or isinstance(attr, types.FunctionType)):
             methods.append((slot, attr))
-    #   elif isinstance(attr, types.TypeType):
-    #        classes.append((slot, attr))
+#        elif isinstance(attr, types.TypeType):
+#            classes.append((slot, attr))
         else:
             attrs.append((slot, attr))
     #  Organize them
@@ -172,9 +171,8 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
     #  Summary of introspection attributes
     if objclass == '':
         objclass = type(p_obj).__name__
-    intro = "\nInstance of class '{}' as defined in module {} with id {}".format(objclass, objmodule, id(p_obj))
+    intro = "\nInstance of class '{}' as defined in module '{}' with id '{}'".format(objclass, objmodule, id(p_obj))
     l_output += '\nTitle:  {} {}'.format(p_title, '\n'.join(_format_line(intro, maxlen)))
-    #  l_output += '\nTitle:  ', p_title, '\n'.join(_format_line(intro, maxlen))
     #  Object's Docstring
     if not suppressdoc:
         if objdoc is None:
@@ -182,12 +180,12 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
         else:
             objdoc = ('"""' + objdoc.strip() + '"""')
         l_output += '\n'
-        l_output += _format_cols(('Documentation string:', _trunc_string(objdoc, maxspew)), normalwidths, ' ')
+        l_output += _format_cols(('Documentation string: ', _trunc_string(objdoc, maxspew)), normalwidths, ' ')
     #  Built-in methods
     if builtins:
         bi_str = _delchars(str(builtins), "[']") or str(None)
         l_output += '\n'
-        l_output += _format_cols(('Built-in Methods:', _trunc_string(bi_str, maxspew)), normalwidths, ', ')
+        l_output += _format_cols(('Built-in Methods: ', _trunc_string(bi_str, maxspew)), normalwidths, ', ')
     #  Classes
     if classes:
         l_output += '\nClasses'
@@ -212,6 +210,10 @@ def _format_object(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, max
         l_output += '\n'
     l_output += '\n====================\n'
     return l_output
+
+
+def PrettyFormatObject(p_obj, p_title, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
+    _formatObject(p_title, p_obj, suppressdoc, maxlen, lindent, maxspew)
 
 
 class PrettyFormatAny(object):
@@ -257,19 +259,19 @@ class PrettyFormatAny(object):
 
     @staticmethod
     def _format_string(p_obj, maxlen, indent):
-        l_ret = _format_cols((' str ', p_obj), [indent, maxlen - indent], ' ') + '\n'
+        l_ret = _format_cols(('String: ', p_obj), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
     def _format_unicode(p_obj, maxlen, indent):
-        l_ret = _format_cols((' uc ', p_obj), [indent, maxlen - indent], ' ') + '\n'
+        l_ret = _format_cols(('Unicode: ', p_obj), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
     def _format_bytearray(p_obj, maxlen, indent):
 
         l_str = FormatBytes(p_obj)
-        l_ret = _format_cols(('>>', l_str), [indent, maxlen - indent], ' ') + '\n'
+        l_ret = _format_cols(('Bytearray: ', l_str), [indent, maxlen - indent], ' ') + '\n'
         return l_ret
 
     @staticmethod
@@ -278,9 +280,9 @@ class PrettyFormatAny(object):
         l_tabbedwidths = [indent, 30, maxlen - 30]
         for l_key, l_val in p_dict.items():
             if isinstance(l_val, dict):
-                l_ret += _format_cols((' dict1 ', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
+                l_ret += '__' + _format_cols(('Dict1: ', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
             else:
-                l_ret += _format_cols((' dict2 ', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
+                l_ret += '_' + _format_cols(('Dict2: ', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod

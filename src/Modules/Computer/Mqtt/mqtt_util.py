@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-04-21'
+__updated__ = '2017-04-24'
 
 class EncodeDecode(object):
     """
@@ -31,8 +31,11 @@ class EncodeDecode(object):
 
     @staticmethod
     def _decodeString(p_encodedString):
+        """
+        """
         l_length = 256 * p_encodedString[0] + p_encodedString[1]
-        return str(p_encodedString[2:2 + l_length])
+        l_ret = p_encodedString[2:2 + l_length].decode('utf-8')
+        return l_ret
 
     @staticmethod
     def _encodeLength(p_length):

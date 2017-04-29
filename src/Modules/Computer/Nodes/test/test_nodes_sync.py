@@ -11,7 +11,7 @@ Passed all 5 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-04-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -72,7 +72,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_NODES_NODE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_NODES_NODE_ACTIVE_0)
 
-    def test_03_Data(self):
+    def test_03_NodeData(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A1-03-A - PyHouse Computer Nodes'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes[TESTING_NODES_NODE_UUID_0], 'A1-03-B - PyHouse Computer Nodes'))

@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2016-09-22'
+__updated__ = '2017-04-29'
 
 #  Import system type stuff
 import pyudev
@@ -33,7 +33,7 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
-from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 #  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -66,20 +66,33 @@ class SerialProtocol(Protocol):
         self.m_controller_obj = p_controller_obj
 
     def connectionLost(self, reason):
+        """ Override
+
+        When something went wrong and we lost contact with the controller
+
+        We should trigger a restart of the controller connection from here.
+        """
         LOG.error('Connection lost for controller {}\n\t{}'.format(self.m_controller_obj.Name, reason))
         SerialAPI().try_restart(self.m_pyhouse_obj, self.m_controller_obj)
         #  self.m_controller_obj._DriverAPI.Stop()
         #  self.m_controller_obj._DriverAPI.Start(self.m_pyhouse_obj, self.m_controller_obj)
 
     def connectionMade(self):
+        """ Override
+
+        Used only to log that we are connected to the controller for this driver.
+        """
         LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
+        self.m_controller_obj._Data = bytearray()
 
     def dataReceived(self, p_data):
+        """ Override
+
+        The controller got some data, Append it to the bytearray buffer.
+        """
         l_len = len(p_data)
-        if l_len > 0:
-            # LOG.info('Rxed {} bytes of data {}'.format(l_len, PrintBytes(p_data)))
-            pass
-        self.m_controller_obj._Data += p_data
+        self.m_controller_obj._Data.extend(p_data)
+        LOG.info('Rxed {} bytes of data {}'.format(l_len, FormatBytes(p_data)))
 
 
 class SerialAPI(object):
@@ -96,7 +109,7 @@ class SerialAPI(object):
                  False if the driver is not functional for any reason.
         """
         l_serial = None
-        p_controller_obj._Data = ''
+        p_controller_obj._Data = bytearray()
         try:
             l_serial = \
                 SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
@@ -128,6 +141,10 @@ class SerialAPI(object):
             LOG.error('ERROR Restart failed - Reason: {}'.format(e_err))
 
     def fetch_read_data(self, p_controller_obj):
+        """ This is called periodically to see if there is any data.
+        It should be changed to trigger an event if there is data available.
+        """
+        # LOG.info('Fetch data {}'.format(FormatBytes(p_controller_obj._Data)))
         l_msg = p_controller_obj._Data
         p_controller_obj._Data = bytearray()
         return l_msg
@@ -139,7 +156,7 @@ class SerialAPI(object):
             try:
                 self.m_serial.writeSomeData(p_message)
             except (AttributeError, TypeError) as e_err:
-                LOG.warning("Bad serial write - {} {}".format(e_err, PrintBytes(p_message)))
+                LOG.warning("Bad serial write - {} {}".format(e_err, FormatBytes(p_message)))
         return
 
 
@@ -182,7 +199,7 @@ class API(SerialAPI):
         """
         Non-Blocking write to the serial port
         """
-        #  LOG.info('Writing - {}'.format(PrintBytes(p_message)))
+        #  LOG.info('Writing - {}'.format(FormatBytes(p_message)))
         self.write_device(p_message)
 
 #  ## END DBK

@@ -14,9 +14,10 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-29'
 
 #  Import system type stuff
+import math
 
 #  Import PyMh files
 from Modules.Core import conversions
@@ -33,6 +34,8 @@ LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
 
 def create_command_message(p_command):
+    """ Create a bytearray of the proper length
+    """
     l_cmd = PLM_COMMANDS[p_command]
     l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])
     l_command_bytes[0] = STX
@@ -59,19 +62,26 @@ def get_message_length(p_message):
 class Util(object):
 
     @staticmethod
-    def int2message(p_int, p_message, p_index=3):
+    def int2message(p_int, p_message, p_index=2):
         """Place an Insteon address (int internally) into a message at a given offset.
         The message must exist and be long enough to include a 3 byte area for the address.
+        @param p_int: is the insteon address as a long integer
+        @param p_message: is the message bytearray
+        @param p_index: is the offset into the message where the converted address will be placed.
         """
         if p_int > 16777215 or p_int < 0:
-            l_msg = 'ERROR - Insteon_utils - trying to convert {} to message byte string.'.format(p_int)
-            LOG.error(l_msg)
+            LOG.error('ERROR - Insteon_utils - trying to convert {} to message byte string.'.format(p_int))
             p_int = 0xBADBAD
-        l_ix = 256 * 256
-        l_int = p_int
+        l_ix = int(math.pow(256, 2))
+
+        l_int = int(p_int)
+        # print('')
         while l_ix > 0:
-            p_message[p_index], l_int = divmod(l_int, l_ix)
-            l_ix = l_ix / 256
+            # print('l_ix1 ', l_ix, l_int)
+            l_byte, l_int = divmod(int(l_int), int(l_ix))
+            # print('l_ix2 ', l_ix, l_byte)
+            p_message[p_index] = l_byte
+            l_ix = int(l_ix / 256)
             p_index += 1
         return p_message
 

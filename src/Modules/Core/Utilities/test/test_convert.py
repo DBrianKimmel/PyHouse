@@ -7,10 +7,10 @@
 @note: Created on Apr 4, 2013
 @summary: This module is for testing conversion tools.
 
-Passed all 5 tests - DBK - 2016-11-22
+Passed all 5 tests - DBK - 2017-04-29
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-04-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -18,14 +18,14 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.Utilities import convert
-from test import xml_data
+from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
 
 STR_IPV4 = '192.168.1.54'
-LONG_IPV4 = 3232235830L
+LONG_IPV4 = 3232235830
 STR_IPV6 = '2001:db8::1'
-LONG_IPV6 = 42540766411282592856903984951653826561L
+LONG_IPV6 = 42540766411282592856903984951653826561
 
 
 class SetupMixin(object):
@@ -46,27 +46,49 @@ class A0(unittest.TestCase):
         print('Id: test_convert')
 
 
-class B1_Convert(SetupMixin, unittest.TestCase):
+class B1_Pow(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
         self.m_api = convert
 
     def test_01_Str2Long(self):
-        l_long = self.m_api.str_to_long(STR_IPV4)
+        l_str = STR_IPV4
+        l_long = self.m_api.str_to_long(l_str)
+        # print('B1-01-A - ', l_str, l_long)
+        self.assertEqual(l_long, LONG_IPV4)
+
+
+class C1_Convert(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        self.m_api = convert
+
+    def test_01_Str2Long(self):
+        l_str = STR_IPV4
+        l_long = self.m_api.str_to_long(l_str)
+        # print('C1-01-A - ', l_str, l_long)
         self.assertEqual(l_long, LONG_IPV4)
 
     def test_02_Str2Long(self):
-        l_long = self.m_api.str_to_long(STR_IPV6)
+        l_str = STR_IPV6
+        l_long = self.m_api.str_to_long(l_str)
+        # print('C1-02-A - ', l_str, l_long)
         self.assertEqual(l_long, LONG_IPV6)
 
     def test_03_Long2Str(self):
-        l_long = self.m_api.long_to_str(LONG_IPV4)
+        l_str = LONG_IPV4
+        l_long = self.m_api.long_to_str(l_str)
+        # print('C1-03-A - ', l_str, l_long)
         self.assertEqual(l_long, STR_IPV4)
 
     def test_04_Long2Str(self):
-        l_long = self.m_api.long_to_str(LONG_IPV6)
+        l_str = LONG_IPV6
+        l_long = self.m_api.long_to_str(l_str)
+        # print('C1-04-A - ', l_str, l_long)
         self.assertEqual(l_long, STR_IPV6)
 
 # ## END

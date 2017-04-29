@@ -10,7 +10,7 @@
 Passed all 17 tests.  DBK 2015-11-06
 """
 
-__updated__ = '2016-11-06'
+__updated__ = '2017-04-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -248,10 +248,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
         self.m_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device_obj, self.m_xml.controller)
 
-    def test_01_Data(self):
-        pass
-
-    def test_02_All(self):
+    def test_01_All(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         l_in_xml = self.m_xml.light

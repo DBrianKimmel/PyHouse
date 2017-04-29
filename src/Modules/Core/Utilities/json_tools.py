@@ -13,7 +13,7 @@ Json is now used for Mqtt messages in addition to web browser.
 
 """
 
-__updated__ = '2017-04-22'
+__updated__ = '2017-04-23'
 
 
 # Import system type stuff
@@ -39,9 +39,9 @@ def decode_json_unicode(p_json):
     """Convert a json object to a valid python object.
     The object keys and values are all encoded in unicode
     """
-    l_json = convert_from_unicode(p_json)
+    # l_json = convert_from_unicode(p_json)
     try:
-        l_json = jsonpickle.decode(l_json)
+        l_json = jsonpickle.decode(p_json)
     except (TypeError, ValueError) as l_error:
         LOG.error('ERROR {}\n{}'.format(l_error, p_json))
         l_json = u'{}'

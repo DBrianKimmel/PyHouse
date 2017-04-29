@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2017-04-19'
+__updated__ = '2017-04-28'
 
 #  Import system type stuff
 try:
@@ -37,7 +37,7 @@ from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family_utils import FamUtil
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
 
 #  Timeouts for send/receive delays
@@ -120,9 +120,9 @@ class Commands(object):
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
             Insteon_utils.queue_command(p_controller_obj, l_command)
-            # LOG.info('Send Command: {}'.format(PrintBytes(l_command)))
+            # LOG.info('Send Command: {}'.format((l_command)))
         except Exception as _e_err:
-            LOG.error('Error creating command {}'.format(PrettyFormatAny.form(p_obj, 'Device')))
+            LOG.error('Error creating command: {}\n{}\n>>{}<<'.format(_e_err, PrettyFormatAny.form(p_obj, 'Device'), FormatBytes(l_command)))
 
     @staticmethod
     def queue_6B_command(p_controller_obj, p_flags):
@@ -201,11 +201,11 @@ class PlmDriverProtocol(Commands):
         #  LOG.info('Within send loop.  Size: {}'.format(p_controller_obj._Queue.qsize()))
         try:
             l_command = p_controller_obj._Queue.get(False)
-            #  LOG.info('Got command:  {}'.format(PrintBytes(l_command)))
+            #  LOG.info('Got command:  {}'.format((l_command)))
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, PrintBytes(l_command)))
+            LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, FormatBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -216,7 +216,7 @@ class PlmDriverProtocol(Commands):
         Accumulate data received
         """
         l_msg = p_controller_obj._DriverAPI.Read()
-        p_controller_obj._Message += l_msg
+        p_controller_obj._Message.extend(l_msg)
         return p_controller_obj._Message  #  For debugging
 
     def receive_loop(self, p_controller_obj):
@@ -233,7 +233,7 @@ class PlmDriverProtocol(Commands):
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
                 return
-            #  LOG.info('Receive message is now {}'.format(PrintBytes(p_controller_obj._Message)))
+            #  LOG.info('Receive message is now {}'.format((p_controller_obj._Message)))
             l_response_len = Insteon_utils.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)

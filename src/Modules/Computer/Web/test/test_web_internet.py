@@ -12,7 +12,7 @@ Passed all 3 tests - DBK - 2016-11-21
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-04-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -54,7 +54,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.internet_sect.tag, 'InternetSection')
 
 
-class B1_Data(SetupMixin, unittest.TestCase):
+class B1_XmlData(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 

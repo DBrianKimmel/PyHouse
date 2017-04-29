@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-04-21'
+__updated__ = '2017-04-28'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -750,8 +750,8 @@ class ControllerData(CoreLightingData):
         #  The following are not in XML config file
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        self._Data = None  # InterfaceType specific data
-        self._Message = ''
+        self._Data = bytearray()  # Rx InterfaceType specific data
+        self._Message = bytearray()
         self._Queue = None
 
 

@@ -13,7 +13,7 @@ This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2016-11-04'
+__updated__ = '2017-04-26'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -31,7 +31,7 @@ from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Security.security import XML as securityXML
-from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
@@ -107,15 +107,15 @@ class B1_Util(SetupMixin, unittest.TestCase):
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
         l_msg = Util().get_next_message(self.m_ctrlr)
-        print(PrintBytes(l_msg))
+        print(FormatBytes(l_msg))
         #  self.assertEqual(l_msg[1], 0x50)
         #  self.m_ctrlr._Message = bytearray()
         #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
         #  self.assertEqual(l_msg, None)
         #  self.m_ctrlr._Message = MSG_62 + MSG_50
         #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        #  print('Msg {}'.format(PrintBytes(l_msg)))
-        #  print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
+        #  print('Msg {}'.format(FormatBytes(l_msg)))
+        #  print('remaning: {}'.format(FormatBytes(self.m_ctrlr._Message)))
         #  self.assertEqual(l_msg[1], 0x62)
         self.assertEqual(self.m_ctrlr._Message[1], 0x50)
 

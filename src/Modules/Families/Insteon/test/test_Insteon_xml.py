@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2017-04-20
 
 """
 
-__updated__ = '2017-04-20'
+__updated__ = '2017-04-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,7 +43,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_DEVICE_FAMILY_0, \
     TESTING_LIGHT_DEVICE_TYPE_0, \
     TESTING_LIGHT_ROOM_NAME_0, \
-    TESTING_LIGHT_ROOM_UUID_0
+    TESTING_LIGHT_ROOM_UUID_0, XML_LIGHT_SECTION, TESTING_LIGHT_SECTION
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -108,6 +108,23 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_06_Device(self):
         """ Be sure that the XML contains the right stuff.
         """
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_LIGHT_SECTION
+        # print(l_raw)
+        self.assertEqual(l_raw[:14], '<' + TESTING_LIGHT_SECTION + '>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_LIGHT_SECTION)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_LIGHT_SECTION)
 
 
 class C1_Read(SetupMixin, unittest.TestCase):

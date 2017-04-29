@@ -13,7 +13,7 @@ Various tools that can be imported.  Named differently for recognition.
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-04-26'
 
 
 # Import system type stuff
@@ -31,26 +31,6 @@ def truncstring(s, maxlen=2000):
 
 
 # ======================================================================
-
-def PrintBytes(p_message):
-    """Print all the bytes of a message as hex bytes.
-    """
-    l_len = len(p_message)
-    l_message = ''
-    if l_len == 0:
-        l_message = "<NONE>"
-    else:
-        for l_x in range(l_len):
-            try:
-                l_message += " {:#04x}".format(int(p_message[l_x]))
-            except ValueError:
-                try:
-                    l_message += " {:#04X}".format(ord(p_message[l_x]))
-                except TypeError:  # Must be a string
-                    l_message += " {} ".format(p_message[l_x])
-    l_message += " <END>"
-    return l_message
-
 
 def PrettyPrintCols(strings, widths, split=' '):
     """
