@@ -10,8 +10,9 @@
 @summary:   This is basically the MQTT API interface that is used by all of pyhouse.
 
 """
+from Modules.Core.Utilities.debug_tools import FormatBytes
 
-__updated__ = '2017-04-26'
+__updated__ = '2017-04-30'
 
 
 #  Import system type stuff
@@ -47,8 +48,8 @@ def _make_message(p_pyhouse_obj, p_message=None):
         xml_tools.stuff_new_attrs(l_message, p_message)
     else:
         xml_tools.stuff_new_attrs(l_message, p_message)
-    #  print(PrettyFormatAny.form(l_message, 'Mqtt Client - Message'))
     l_json = json_tools.encode_json(l_message)
+    LOG.debug('Message:{}<<'.format(FormatBytes(l_json)))
     return l_json
 
 

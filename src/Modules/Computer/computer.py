@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-04-25'
+__updated__ = '2017-04-29'
 
 #  Import system type stuff
 import platform
@@ -41,6 +41,7 @@ from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
+from Modules.Computer.Web.websocket_server import API as websocketAPI
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -121,6 +122,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):

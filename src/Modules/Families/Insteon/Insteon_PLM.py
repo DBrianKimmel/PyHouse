@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2017-04-28'
+__updated__ = '2017-04-30'
 
 #  Import system type stuff
 try:
@@ -205,7 +205,7 @@ class PlmDriverProtocol(Commands):
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, FormatBytes(l_command)))
+            # LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, FormatBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -301,7 +301,7 @@ class LightHandlerAPI(object):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
-        LOG.info('Request Status from device: {}'.format(p_obj.Name))
+        LOG.info('Request Status from device: {} - {}'.format(p_obj.RoomName, p_obj.Name))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0)  #  0x19
 
     @staticmethod

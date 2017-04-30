@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-04-28'
+__updated__ = '2017-04-30'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -91,6 +91,7 @@ class ComputerAPIs(object):
         self.NodesAPI = None
         self.WeatherAPI = None
         self.WebAPI = None
+        self.WebSocketAPI = None
 
 
 class CoordinateData(object):
@@ -239,7 +240,8 @@ class MqttInformation(object):
 
 
 class MqttJson(object):
-    """
+    """ This is a couple of pieces of information that get added into every MQTT message
+        sent out of this computer.
     """
     def __init__(self):
         self.Sender = ''  # The Mqtt name of the sending device.

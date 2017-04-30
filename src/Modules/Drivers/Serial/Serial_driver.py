@@ -92,7 +92,7 @@ class SerialProtocol(Protocol):
         """
         l_len = len(p_data)
         self.m_controller_obj._Data.extend(p_data)
-        LOG.info('Rxed {} bytes of data {}'.format(l_len, FormatBytes(p_data)))
+        # LOG.info('Rxed {} bytes of data {}'.format(l_len, FormatBytes(p_data)))
 
 
 class SerialAPI(object):

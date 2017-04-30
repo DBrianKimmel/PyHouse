@@ -12,9 +12,8 @@ The first is a TCP connection to the Mqtt broker.
 The second is a MQTT connection to the broker that uses the first connection as a transport.
 
 """
-from Modules.Core.Utilities import json_tools
 
-__updated__ = '2017-04-28'
+__updated__ = '2017-04-30'
 
 #  Import system type stuff
 import random
@@ -26,8 +25,9 @@ from twisted.internet import error
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities import json_tools
+from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
+
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 
@@ -177,15 +177,22 @@ class MQTTProtocol(Protocol):
         #  Extract the topic portion of the packet.
         l_topic = EncodeDecode._decodeString(packet)
         packet = packet[len(l_topic) + 2:]
+        LOG.debug('Publish qos:{}'.format(qos))
+        LOG.debug('Publish topic:{}'.format(l_topic))
         #  Extract the message ID if appropriate
         messageId = None
         if qos > 0:
             messageId = EncodeDecode._decodeValue(packet[:2])
             packet = packet[2:]
+            LOG.debug('Publish MsgID:{}'.format(messageId))
         #  Extract whatever remains as the message
-        l_json = EncodeDecode._decodeString(packet)
+        # l_json = EncodeDecode._decodeString(packet)
+        l_json = packet.decode('utf-8')
+        LOG.debug('Publish message:{}'.format(l_json))
         l_message = json_tools.decode_json_unicode(l_json)
-        # LOG.info('Event Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, l_message))
+        LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
+        # l_topic is a string
+        # l_message is a string
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)
 
     def _event_puback(self, packet, _qos, _dup, _retain):
@@ -254,11 +261,11 @@ class MQTTProtocol(Protocol):
         self.unsubackReceived(messageId)
 
     def _event_pingreq(self, packet, _qos, _dup, _retain):
-        LOG.info('Event Pingreq received: {} {}'.format(len(packet), packet))
+        # LOG.info('Event Pingreq received: {} {}'.format(len(packet), packet))
         self.pingreqReceived()
 
     def _event_pingresp(self, packet, _qos, _dup, _retain):
-        LOG.debug('Event Pingresp received: {} {}'.format(len(packet), packet))
+        # LOG.debug('Event Pingresp received: {} {}'.format(len(packet), packet))
         self.pingrespReceived()
 
     def _event_disconnect(self, packet, _qos, _dup, _retain):
@@ -505,7 +512,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(varHeader)
 
     def pingreq(self):
-        LOG.warn('Sending ping packet')
+        # LOG.warn('Sending ping packet')
         l_empty = bytearray()
         l_fixHeader = self._build_fixed_header(0x0C, 0)
         self._send_transport(l_fixHeader, l_empty, l_empty)
@@ -632,7 +639,7 @@ class MQTTClient(MQTTProtocol):
     def publishReceived(self, p_topic, p_message, _qos=0, _dup=False, _retain=False, _messageId=None):
         """ Override
 
-        This is where we receive all the pyhouse messages.
+        This is where we receive all the pyhouse messages from the broker.
         Call the dispatcher to send them on to the correct place.
         """
         self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)

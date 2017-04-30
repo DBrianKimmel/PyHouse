@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2017-01-07'
+__updated__ = '2017-04-30'
 
 #  Import system type stuff
 
@@ -22,6 +22,7 @@ __updated__ = '2017-01-07'
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Core.data_objects import ThermostatData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Hvac           ')
 
@@ -49,9 +50,7 @@ class MqttActions(object):
         """
         p_logmsg += '\tHVAC:\n'
         if p_topic[1] == 'Thermostat':
-            p_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
-        elif p_topic[1] == 'motion_sensor':
-            p_logmsg += '\tMotion Sensor:{}\n\t{}'.format(self._get_field(p_message, 'Name'), self._get_field(p_message, 'Status'))
+            p_logmsg += '\tThermostat: {}\n'.format(self._get_field(p_message, 'Name'))
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return p_logmsg
