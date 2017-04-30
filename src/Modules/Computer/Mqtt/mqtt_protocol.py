@@ -177,8 +177,8 @@ class MQTTProtocol(Protocol):
         #  Extract the topic portion of the packet.
         l_topic = EncodeDecode._decodeString(packet)
         packet = packet[len(l_topic) + 2:]
-        LOG.debug('Publish qos:{}'.format(qos))
-        LOG.debug('Publish topic:{}'.format(l_topic))
+        # LOG.debug('Publish qos:{}'.format(qos))
+        # LOG.debug('Publish topic:{}'.format(l_topic))
         #  Extract the message ID if appropriate
         messageId = None
         if qos > 0:
@@ -186,9 +186,9 @@ class MQTTProtocol(Protocol):
             packet = packet[2:]
             LOG.debug('Publish MsgID:{}'.format(messageId))
         #  Extract whatever remains as the message
-        # l_json = EncodeDecode._decodeString(packet)
-        l_json = packet.decode('utf-8')
-        LOG.debug('Publish message:{}'.format(l_json))
+        l_json = EncodeDecode._get_string(packet)
+        # l_json = packet.decode('utf-8')
+        # LOG.debug('Publish message:{}'.format(l_json))
         l_message = json_tools.decode_json_unicode(l_json)
         LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
         # l_topic is a string
@@ -409,7 +409,8 @@ class MQTTProtocol(Protocol):
                 l_varHeader.extend(EncodeDecode._encodeValue(messageId))
             else:
                 l_varHeader.extend(EncodeDecode._encodeValue(random.randint(1, 0xFFFF)))
-        l_payload.extend(EncodeDecode._encodeString(p_message))
+        l_payload.extend(EncodeDecode._put_string(p_message))
+        # l_payload.extend(p_message)
         l_fixHeader = self._build_fixed_header(0x03, len(l_varHeader) + len(l_payload), dup, qosLevel, retain)
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 

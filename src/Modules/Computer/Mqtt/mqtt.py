@@ -49,7 +49,7 @@ def _make_message(p_pyhouse_obj, p_message=None):
     else:
         xml_tools.stuff_new_attrs(l_message, p_message)
     l_json = json_tools.encode_json(l_message)
-    LOG.debug('Message:{}<<'.format(FormatBytes(l_json)))
+    # LOG.debug('Message:{}<<'.format(FormatBytes(l_json)))
     return l_json
 
 
