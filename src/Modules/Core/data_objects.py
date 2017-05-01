@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-04-30'
+__updated__ = '2017-05-01'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -363,6 +363,8 @@ class WeatherData(object):
 
 class WebData(object):
     """ Information about the configuration and control web server
+
+    ==> PyHouse.Computer.Web.xxx - as in the def below.
     """
     def __init__(self):
         self.WebPort = 8580

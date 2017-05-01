@@ -11,15 +11,22 @@
 
 """
 
-__updated__ = '2017-04-30'
+__updated__ = '2017-05-01'
 
 #  Import system type stuff
-# import ssl
+import http.cookies
+import json
 # import sys
+import urllib
+from twisted.internet import ssl
 from twisted.web.static import File
-# from twisted.python import log
 from twisted.web.server import Site
-# from twisted.internet import reactor
+
+# import autobahn
+from autobahn.util import newid, utcnow
+# from autobahn.websocket import http
+# from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
+# from autobahn.twisted.resource import WebSocketResource
 
 #  Import PyMh files and modules.
 # from Modules.Core.data_objects import WebData
@@ -45,10 +52,123 @@ class WebSockServerProtocol(WebSocketServerProtocol):
     """
 
     def onConnect(self, request):
-        print("some request connected {}".format(request))
+        LOG.debug("some request connected {}".format(request))
+        # This is called during the initial WebSocket opening handshake.
+        protocol, headers = None, {}
+        # our cookie tracking ID
+        self._cbtid = None
+        # see if there already is a cookie set ..
+        if 'cookie' in request.headers:
+            try:
+                cookie = http.cookies.SimpleCookie()
+                cookie.load(str(request.headers['cookie']))
+            except http.cookies.CookieError:
+                pass
+            else:
+                if 'cbtid' in cookie:
+                    cbtid = cookie['cbtid'].value
+                    if cbtid in self.factory._cookies:
+                        self._cbtid = cbtid
+                        LOG.warn("Cookie already set: %s" % self._cbtid)
+        # if no cookie is set, create a new one ..
+        if self._cbtid is None:
+            self._cbtid = newid()
+            maxAge = 86400
+            cbtData = {'created': utcnow(),
+                       'authenticated': None,
+                       'maxAge': maxAge,
+                       'connections': set()}
+            self.factory._cookies[self._cbtid] = cbtData
+            # do NOT add the "secure" cookie attribute! "secure" refers to the scheme of the Web page that triggered the WS, not WS itself!!
+            headers['Set-Cookie'] = 'cbtid=%s;max-age=%d' % (self._cbtid, maxAge)
+            LOG.warn("Setting new cookie: %s" % self._cbtid)
+        # add this WebSocket connection to the set of connections
+        # associated with the same cookie
+        self.factory._cookies[self._cbtid]['connections'].add(self)
+        # accept the WebSocket connection, speaking subprotocol `protocol` and setting HTTP headers `headers`
+        return (protocol, headers)
+
+    def onOpen(self):
+        # This is called when initial WebSocket opening handshake has been completed.
+        # see if we are authenticated ..
+        authenticated = self.factory._cookies[self._cbtid]['authenticated']
+        if not authenticated:
+            # .. if not, send authentication request
+            self.sendMessage(json.dumps({'cmd': 'AUTHENTICATION_REQUIRED'}))
+        else:
+            # .. if yes, send info on authenticated user
+            self.sendMessage(json.dumps({'cmd': 'AUTHENTICATED', 'email': authenticated}))
+
+    def onClose(self, wasClean, code, reason):
+        # This is called when WebSocket connection is gone
+        # remove this connection from list of connections associated with same cookie
+        self.factory._cookies[self._cbtid]['connections'].remove(self)
+        # if list gets empty, possibly do something ..
+        if not self.factory._cookies[self._cbtid]['connections']:
+            LOG.warn("All connections for {} gone".format(self._cbtid))
 
     def onMessage(self, payload, isBinary):
-        self.sendMessage("message received")
+        # This is called when we receive a WebSocket message
+        if not isBinary:
+            msg = json.loads(payload)
+            if msg['cmd'] == 'AUTHENTICATE':
+                # The client did it's Mozilla Persona authentication thing
+                # and now wants to verify the authentication and login.
+                assertion = msg.get('assertion')
+                audience = msg.get('audience')
+                # To verify the authentication, we need to send a HTTP/POST
+                # to Mozilla Persona. When successful, Persona will send us
+                # back something like:
+                # {
+                #    "audience": "http://192.168.1.130:8080/",
+                #    "expires": 1393681951257,
+                #    "issuer": "gmail.login.persona.org",
+                #    "email": "tobias.oberstein@gmail.com",
+                #    "status": "okay"
+                # }
+                headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+                body = urllib.parse.urlencode({'audience': audience, 'assertion': assertion})
+                from twisted.web.client import getPage
+                d = getPage(url="https://verifier.login.persona.org/verify",
+                            method='POST',
+                            postdata=body,
+                            headers=headers)
+                LOG.warn("Authentication request sent.")
+
+                def done(res):
+                    res = json.loads(res)
+                    if res['status'] == 'okay':
+                        # Mozilla Persona successfully authenticated the user
+                        # remember the user's email address. this marks the cookie as
+                        # authenticated
+                        self.factory._cookies[self._cbtid]['authenticated'] = res['email']
+                        # inform _all_ WebSocket connections of the successful auth.
+                        msg = json.dumps({'cmd': 'AUTHENTICATED', 'email': res['email']})
+                        for proto in self.factory._cookies[self._cbtid]['connections']:
+                            proto.sendMessage(msg)
+                        LOG.warn("Authenticated user {}".format(res['email']))
+                    else:
+                        LOG.warn("Authentication failed: {}".format(res.get('reason')))
+                        self.sendMessage(json.dumps({'cmd': 'AUTHENTICATION_FAILED', 'reason': res.get('reason')}))
+                        self.sendClose()
+
+                def error(err):
+                    LOG.warn("Authentication request failed: {}".format(err.value))
+                    self.sendMessage(json.dumps({'cmd': 'AUTHENTICATION_FAILED', 'reason': str(err.value)}))
+                    self.sendClose()
+
+                d.addCallbacks(done, error)
+            elif msg['cmd'] == 'LOGOUT':
+                # user wants to logout ..
+                if self.factory._cookies[self._cbtid]['authenticated']:
+                    self.factory._cookies[self._cbtid]['authenticated'] = False
+                    # inform _all_ WebSocket connections of the logout
+                    msg = json.dumps({'cmd': 'LOGGED_OUT'})
+                    for proto in self.factory._cookies[self._cbtid]['connections']:
+                        proto.sendMessage(msg)
+            else:
+                LOG.debug("unknown command {}".format(msg))
+        LOG.debug("websocket message rxed {}".format(payload))
 
 
 class ClientConnections(object):
@@ -111,9 +231,12 @@ class Utility(ClientConnections):
 
 class API(Utility):
 
+    m_contextFactory = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.')
+        self.m_contextFactory = ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt')
 
     def LoadXml(self, p_pyhouse_obj):
         pass

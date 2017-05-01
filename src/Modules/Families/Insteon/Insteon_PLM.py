@@ -107,7 +107,7 @@ class Commands(object):
 
         [0] = x02
         [1] = 0x62
-        [5-4] = to address
+        [2-4] = to address
         [5] = Message Flags
         [6] = Command 1
         [7] = Command 2
@@ -444,7 +444,7 @@ class API(Utility):
         elif int(p_level) == 100:
             Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
         else:
-            l_level = int(p_level) * 255 / 100
+            l_level = int(p_level * 255 / 100)
             Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
 
 #  ## END DBK

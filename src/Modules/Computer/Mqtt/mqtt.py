@@ -10,7 +10,6 @@
 @summary:   This is basically the MQTT API interface that is used by all of pyhouse.
 
 """
-from Modules.Core.Utilities.debug_tools import FormatBytes
 
 __updated__ = '2017-04-30'
 
@@ -27,6 +26,7 @@ from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
+from Modules.Core.Utilities.debug_tools import FormatBytes
 
 
 def _make_topic(p_pyhouse_obj, p_topic):

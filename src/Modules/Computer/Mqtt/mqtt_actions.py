@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-04-30'
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
@@ -81,7 +81,7 @@ class Actions(object):
 
     def _decode_weather(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tWeather:\n'
-        l_temp = float(self._get_field(p_message, 'Temperature'))
+        l_temp = float(self._get_field(p_message, 'Temperature_F'))
         p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Location'))
         p_logmsg += '\tTemp: {} ({})'.format(l_temp, ((l_temp / 5.0) * 9.0) + 32.0)
         p_logmsg += '\tWeather info {}'.format(PrettyFormatAny.form(p_message, 'Weather msg', 160))
