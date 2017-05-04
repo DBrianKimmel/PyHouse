@@ -33,7 +33,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2017-04-25'
+__updated__ = '2017-05-04'
 
 # Import system type stuff
 import importlib
@@ -62,7 +62,7 @@ class Utility(object):
         l_ret = None
         l_device = p_obj.FamilyPackageName + '.' + p_module
         try:
-            l_ret = importlib.import_module(l_device, p_obj.FamilyPackageName)
+            l_ret = importlib.import_module(l_device, package=p_obj.FamilyPackageName)
         except ImportError as e_err:
             l_msg = 'ERROR importing family:{};  Module:{}\n\tErr:{}.'.format(p_obj.Name, p_module, e_err)
             LOG.error(l_msg)
@@ -110,16 +110,18 @@ class Utility(object):
         @param p_name: a Valid Name such as "Insteon"
         @param p_count: an indexing number
         """
+        LOG.info('Building Family: {}'.format(p_name))
         l_family_obj = FamilyData()
         l_family_obj.Name = p_name
-        LOG.info('Building Family: {}'.format(p_name))
         l_family_obj.Key = 0
         l_family_obj.Active = True
         l_family_obj.FamilyPackageName = 'Modules.Families.' + p_name
         l_family_obj.FamilyDeviceModuleName = p_name + '_device'
         l_family_obj.FamilyXmlModuleName = p_name + '_xml'
+
         l_dev_mod = Utility._do_import(l_family_obj, l_family_obj.FamilyDeviceModuleName)
         l_family_obj.FamilyModuleAPI = Utility._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyDeviceModuleName, l_dev_mod)
+
         l_xml_mod = Utility._do_import(l_family_obj, l_family_obj.FamilyXmlModuleName)
         l_family_obj.FamilyXmlModuleAPI = Utility._create_xml_instance(l_family_obj.FamilyXmlModuleName, l_xml_mod)
         return l_family_obj
@@ -150,6 +152,7 @@ class Utility(object):
 class API(object):
 
     m_count = 0
+    m_family = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
