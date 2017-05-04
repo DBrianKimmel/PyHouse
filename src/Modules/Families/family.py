@@ -116,6 +116,8 @@ class Utility(object):
         l_family_obj.Key = 0
         l_family_obj.Active = True
         l_family_obj.FamilyPackageName = 'Modules.Families.' + p_name
+        importlib.import_module(l_family_obj.FamilyPackageName)
+
         l_family_obj.FamilyDeviceModuleName = p_name + '_device'
         l_family_obj.FamilyXmlModuleName = p_name + '_xml'
 
