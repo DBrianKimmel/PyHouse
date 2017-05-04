@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-05-01'
+__updated__ = '2017-05-04'
 
 #  Import system type stuff
 import http.cookies
@@ -236,7 +236,11 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.')
-        self.m_contextFactory = ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt')
+        try:
+            self.m_contextFactory = ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt')
+        except:
+            LOG.warn("SSL not available.")
+            self.m_contextFactory = None
 
     def LoadXml(self, p_pyhouse_obj):
         pass
