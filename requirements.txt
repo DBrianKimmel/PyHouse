@@ -1,22 +1,13 @@
 
-sudo apt install -y libffi-dev
-sudo apt install -y libssl-dev
-sudo apt install -y python3-dev
-sudo apt install -y python3-pip
-sudo apt install -y python3-dateutil
-sudo apt install -y python3-cffi
-
-sudo pip3 install twisted
-sudo pip3 install netaddr
-sudo pip3 install netifaces
-sudo pip3 install jsonpickle
-sudo pip3 install pyudev
+sudo apt install -y libffi-dev libssl-dev
+sudo apt install -y python3-dev python3-pip python3-dateutil python3-cffi
 
 sudo pip3 install --upgrade cffi
-
-sudo pip3 install cryptography
-sudo pip3 install autobahn
-sudo pip3 install aniso8601
-sudo pip3 install astral
 sudo pip3 install service_identity
+
+sudo pip3 install twisted autobahn
+sudo pip3 install netaddr netifaces
+sudo pip3 install jsonpickle pyudev
+sudo pip3 install cryptography
+sudo pip3 install astral aniso8601
 

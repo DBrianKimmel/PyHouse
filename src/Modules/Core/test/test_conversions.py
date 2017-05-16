@@ -11,7 +11,7 @@
 All 21 tests working OK - DBK - 2017-04-29
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2017-05-05'
 
 
 # Import system type stuff
@@ -19,9 +19,8 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core import conversions
-from test import xml_data
+from test.xml_data import XML_LONG
 
-XML = xml_data.XML_LONG
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_DOT = '16.C9.D0'

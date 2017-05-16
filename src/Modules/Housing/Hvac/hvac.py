@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2017-04-30'
+__updated__ = '2017-05-11'
 
 #  Import system type stuff
 
@@ -55,6 +55,7 @@ class MqttActions(object):
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return p_logmsg
         pass
+
     def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'
         p_logmsg += '\tName: {}'.format(self.m_name)
