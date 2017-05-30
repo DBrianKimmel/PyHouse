@@ -130,7 +130,6 @@ class EmailData(object):
         self.GmailPassword = ''
 
 
-
 class EntertainmentData(object):
     """
 
@@ -398,6 +397,7 @@ class BaseUUIDObject(BaseObject):
 BaseObject dependent.
 """
 
+
 class FamilyData(BaseObject):
     """ A container for every family that has been defined in modules.
     """
@@ -460,6 +460,7 @@ class MqttBrokerData(BaseObject):
 """
 BaseUUIDObject dependent.
 """
+
 
 class ComputerInformation(BaseUUIDObject):
     """
@@ -636,6 +637,7 @@ class SensorData(BaseUUIDObject):
 """
 ScheduleBaseData dependent
 """
+
 
 class ScheduleIrrigationData(ScheduleBaseData):
     """
