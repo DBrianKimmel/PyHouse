@@ -10,7 +10,7 @@
 Passed all 4 tests - DBK - 2017-03-11
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-07-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,6 +19,7 @@ from twisted.trial import unittest
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Mqtt.mqtt_actions import Actions as mqtt_actions
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import \
@@ -65,6 +66,28 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         l_raw = XML_MQTT
         # print(l_raw)
         self.assertEqual(l_raw[:13], '<MqttSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_MQTT)
+        # print(l_xml)
+        self.assertEqual(l_xml.tag, TESTING_MQTT_SECTION)
+
+
+class B1_Field(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        self.m_get = mqtt_actions(self.m_pyhouse_obj)
+
+
+    def test_01_HVAC(self):
+        l_topic = 'pyhouse/pink poppy/irrigation'
+        l_payload = '{"DateTime": "2017-07-07 10:45:02.464763", "Sender": "briank-Laptop-3"}'
+        print(l_topic)
+        print(l_payload)
+        l_sender = self.m_get._get_field(l_payload, 'Sender')
+        print(l_sender)
+        # self.assertEqual(l_raw[:13], '<MqttSection>')
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_MQTT)

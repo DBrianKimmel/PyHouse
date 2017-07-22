@@ -13,10 +13,12 @@ The Olson Time Zone names are used and supported.
 
 """
 
-__updated__ = '2016-07-16'
+__updated__ = '2017-06-25'
 
-L_LOCATION_SECTION_START = '  <LocationSection>'
-L_LOCATION_SECTION_END = '  </LocationSection>'
+TESTING_LOCATION_SECTION = 'LocationSection'
+
+L_LOCATION_SECTION_START = '  <' + TESTING_LOCATION_SECTION + '>'
+L_LOCATION_SECTION_END = '  </' + TESTING_LOCATION_SECTION + '>'
 
 TESTING_LOCATION_STREET = '1234 Nowhere Dr'
 TESTING_LOCATION_CITY = 'Beverly Hills'

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-06-24'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -86,7 +86,7 @@ class XML(object):
         return l_obj
 
     @staticmethod
-    def _write_one(p_pyhouse_obj, p_obj):
+    def _write_one(_p_pyhouse_obj, p_obj):
         """ Create the complete Device XML for one Onkyo device.
         """
         l_xml = XML._write_device(p_obj)
@@ -148,7 +148,7 @@ class OnkyoClient(OnkyoProtocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_onkyo_obj, p_clientID=None):
+    def __init__(self, p_pyhouse_obj, p_onkyo_obj, _p_clientID=None):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_onkyo_obj = p_onkyo_obj
 
@@ -166,7 +166,7 @@ class OnkyoFactory(ReconnectingClientFactory):
         LOG.info('Started to connect. {}'.format(p_connector))
 
     def buildProtocol(self, p_addr):
-        protocol = OnkyoProtocol()
+        _protocol = OnkyoProtocol()
         LOG.info('BuildProtocol - Addr = {}'.format(p_addr))
         l_client = OnkyoClient(self.m_pyhouse_obj, self.m_onkyo_obj)
         # l_ret = ReconnectingClientFactory.buildProtocol(self, p_addr)
@@ -223,7 +223,7 @@ class API(object):
         else:
             LOG.info('No Mqtt brokers are configured.')
         """
-        for l_onkyo in self.m_pyhouse_obj.House.Entertainment.Onkyo.values():
+        for _l_onkyo in self.m_pyhouse_obj.House.Entertainment.Onkyo.values():
             pass
         # l_host = self.m_pyhouse_obj.House.Entertainment.Onkyo[0].IPv4
         l_host = DEFAULT_EISCP_IPV4
