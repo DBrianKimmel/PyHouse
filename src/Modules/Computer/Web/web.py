@@ -14,7 +14,7 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2017-04-17'
+__updated__ = '2017-07-24'
 
 #  Import system type stuff
 
@@ -23,7 +23,7 @@ from Modules.Core.data_objects import WebData, LoginData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.web_server import API as WebAPI
-from Modules.Computer.Web.websocket_server import API as WebSocketAPI
+# from Modules.Computer.Web.websocket_server import API as WebSocketAPI
 
 LOG = Logger.getLogger('PyHouse.Web            ')
 
@@ -52,7 +52,7 @@ class API(object):
         #  l_obj = self.LoadXml(self.m_pyhouse_obj)
         #  self.m_pyhouse_obj.Computer.Web = l_obj
         WebAPI(self.m_pyhouse_obj).Start()
-        WebSocketAPI(self.m_pyhouse_obj).Start()
+        # WebSocketAPI(self.m_pyhouse_obj).Start()
         LOG.info('Started.')
 
     def SaveXml(self, p_xml):

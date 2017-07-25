@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2017-07-24'
 
 #  Import system type stuff
 import platform
@@ -117,7 +117,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer = ComputerAPIs()
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
         p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
-#        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
@@ -132,6 +132,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.LoadXml(p_pyhouse_obj)
 
     @staticmethod
     def _start_component_apis(p_pyhouse_obj):
@@ -141,6 +142,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
         p_pyhouse_obj.APIs.Computer.WebAPI.Start()
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Start()
 
     @staticmethod
     def _stop_component_apis(p_pyhouse_obj):
@@ -150,6 +152,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WebAPI.Stop()
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Stop()
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
@@ -159,6 +162,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.SaveXml(p_xml)
         return p_xml
 
 

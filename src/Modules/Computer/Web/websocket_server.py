@@ -11,49 +11,41 @@
 
 """
 
-__updated__ = '2017-05-04'
+__updated__ = '2017-07-24'
 
 #  Import system type stuff
 import http.cookies
 import json
-# import sys
 import urllib
 from twisted.internet import ssl
 from twisted.web.static import File
 from twisted.web.server import Site
-
-# import autobahn
 from autobahn.util import newid, utcnow
-# from autobahn.websocket import http
-# from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
-# from autobahn.twisted.resource import WebSocketResource
+from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
+from autobahn.twisted.resource import WebSocketResource
 
 #  Import PyMh files and modules.
-# from Modules.Core.data_objects import WebData
-# from Modules.Computer.Web.web_xml import Xml as webXml
-# from Modules.Computer.Web import web_utils
-# from Modules.Computer.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-ENDPOINT_WEBSOCKET_SERVER = 'tcp:port=8581'
 
+WEBSOCKET_PORT = 8581
+ENDPOINT_WEBSOCKET_SERVER = 'tcp:port={}'.format(WEBSOCKET_PORT)
 LOG = Logger.getLogger('PyHouse.WebSockets     ')
 
 
-from autobahn.twisted.websocket import WebSocketServerFactory, \
-    WebSocketServerProtocol
-
-from autobahn.twisted.resource import WebSocketResource
-
-
 class WebSockServerProtocol(WebSocketServerProtocol):
-    """ This is the protocol for the PyHouse Websocket server
+    """
+    Inherits from autobahn.twisted.websocket
+
+    This is the protocol for the PyHouse Websocket server
     """
 
     def onConnect(self, request):
+        """
+        This is called during the initial WebSocket opening handshake.
+        """
         LOG.debug("some request connected {}".format(request))
-        # This is called during the initial WebSocket opening handshake.
         protocol, headers = None, {}
         # our cookie tracking ID
         self._cbtid = None
@@ -82,14 +74,15 @@ class WebSockServerProtocol(WebSocketServerProtocol):
             # do NOT add the "secure" cookie attribute! "secure" refers to the scheme of the Web page that triggered the WS, not WS itself!!
             headers['Set-Cookie'] = 'cbtid=%s;max-age=%d' % (self._cbtid, maxAge)
             LOG.warn("Setting new cookie: %s" % self._cbtid)
-        # add this WebSocket connection to the set of connections
-        # associated with the same cookie
+        # add this WebSocket connection to the set of connections associated with the same cookie
         self.factory._cookies[self._cbtid]['connections'].add(self)
         # accept the WebSocket connection, speaking subprotocol `protocol` and setting HTTP headers `headers`
         return (protocol, headers)
 
     def onOpen(self):
-        # This is called when initial WebSocket opening handshake has been completed.
+        """
+        This is called when initial WebSocket opening handshake has been completed.
+        """
         # see if we are authenticated ..
         authenticated = self.factory._cookies[self._cbtid]['authenticated']
         if not authenticated:
@@ -100,7 +93,9 @@ class WebSockServerProtocol(WebSocketServerProtocol):
             self.sendMessage(json.dumps({'cmd': 'AUTHENTICATED', 'email': authenticated}))
 
     def onClose(self, wasClean, code, reason):
-        # This is called when WebSocket connection is gone
+        """
+        This is called when WebSocket connection is gone
+        """
         # remove this connection from list of connections associated with same cookie
         self.factory._cookies[self._cbtid]['connections'].remove(self)
         # if list gets empty, possibly do something ..
@@ -108,17 +103,17 @@ class WebSockServerProtocol(WebSocketServerProtocol):
             LOG.warn("All connections for {} gone".format(self._cbtid))
 
     def onMessage(self, payload, isBinary):
-        # This is called when we receive a WebSocket message
+        """
+        This is called when we receive a WebSocket message
+        """
         if not isBinary:
             msg = json.loads(payload)
             if msg['cmd'] == 'AUTHENTICATE':
-                # The client did it's Mozilla Persona authentication thing
-                # and now wants to verify the authentication and login.
+                # The client did it's Mozilla Persona authentication thing and now wants to verify the authentication and login.
                 assertion = msg.get('assertion')
                 audience = msg.get('audience')
-                # To verify the authentication, we need to send a HTTP/POST
-                # to Mozilla Persona. When successful, Persona will send us
-                # back something like:
+                # To verify the authentication, we need to send a HTTP/POST to Mozilla Persona.
+                # When successful, Persona will send us back something like:
                 # {
                 #    "audience": "http://192.168.1.130:8080/",
                 #    "expires": 1393681951257,
@@ -139,8 +134,7 @@ class WebSockServerProtocol(WebSocketServerProtocol):
                     res = json.loads(res)
                     if res['status'] == 'okay':
                         # Mozilla Persona successfully authenticated the user
-                        # remember the user's email address. this marks the cookie as
-                        # authenticated
+                        # remember the user's email address. this marks the cookie as authenticated
                         self.factory._cookies[self._cbtid]['authenticated'] = res['email']
                         # inform _all_ WebSocket connections of the successful auth.
                         msg = json.dumps({'cmd': 'AUTHENTICATED', 'email': res['email']})
@@ -189,27 +183,17 @@ class Utility(ClientConnections):
     def start_websocket_server(self, p_pyhouse_obj):
         """ Setup for starting a web socket server (encrypted or not).
         """
-        l_port = 8581  # p_pyhouse_obj.Computer.Web.WebPort
+        l_port = WEBSOCKET_PORT  # p_pyhouse_obj.Computer.Web.WebPort
         l_addr = u'ws://127.0.0.1:{}'.format(l_port)
-        #
         l_factory = WebSocketServerFactory(l_addr)
         l_factory.protocol = WebSockServerProtocol
-        #
         # websockets resource on "/ws" path
         l_resource = WebSocketResource(l_factory)
-        #
         l_root = File('.')
         l_root.putChild(u"ws", l_resource)
-        #
         l_site = Site(l_root)
         self.m_pyhouse_obj.Twisted.Reactor.listenTCP(l_port, l_site)
-
-
-
-
         l_site_dir = None
-        # l_site = appserver.NevowSite(web_mainpage.TheRoot(l_site_dir, p_pyhouse_obj))
-        # p_pyhouse_obj.Twisted.Reactor.listenTCP(l_port, l_site)
         l_msg = "Port:{}, Path:{}".format(l_port, l_site_dir)
         LOG.info("Started - {}".format(l_msg))
 
@@ -224,7 +208,7 @@ class Utility(ClientConnections):
         # l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
         # l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
         # l_factory = protocol.Factory.forProtocol(echoserv.Echo)
-        # p_pyhouse_obj.Twisted.Reactor.listenSSL(8581, l_factory, l_certificate.options())
+        # p_pyhouse_obj.Twisted.Reactor.listenSSL(WEBSOCKET_PORT, l_factory, l_certificate.options())
         # return defer.Deferred()
         pass
 
@@ -237,7 +221,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.')
         try:
-            self.m_contextFactory = ssl.DefaultOpenSSLContextFactory('keys/server.key', 'keys/server.crt')
+            self.m_contextFactory = ssl.DefaultOpenSSLContextFactory('/etc/pyhouse/keys/server.key', '/etc/pyhouse/keys/server.crt')
         except:
             LOG.warn("SSL not available.")
             self.m_contextFactory = None
@@ -248,16 +232,6 @@ class API(Utility):
     def Start(self):
         LOG.info('Starting websocket server.')
         self.start_websocket_server(self.m_pyhouse_obj)
-        # static file server seving index.html as root
-        # root = File(".")
-        # factory = WebSocketServerFactory(u"ws://127.0.0.1:8581")
-        # factory.protocol = WebSockServerProtocol
-        # resource = WebSocketResource(factory)
-        # websockets resource on "/ws" path
-        # root.putChild(u"ws", resource)
-        # site = Site(root)
-        # self.m_pyhouse_obj.Twisted.Reactor.listenTCP(8581, site)
-        # self.start_webserver(self.m_pyhouse_obj)
         LOG.info('Started.')
 
     def SaveXml(self, p_xml):
