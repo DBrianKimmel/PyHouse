@@ -15,5 +15,6 @@ lock
 build
 dist
 minimal
+doc/html
 
 ### END DBK
