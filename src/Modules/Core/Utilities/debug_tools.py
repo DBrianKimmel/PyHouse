@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-03-27'
+__updated__ = '2017-10-08'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -232,7 +232,7 @@ class PrettyFormatAny(object):
             l_ret = PrettyFormatAny._format_XML(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, str):
             l_ret = PrettyFormatAny._format_string(p_any, maxlen=maxlen, indent=indent)
-        elif isinstance(p_any, type(unicode)):
+        elif isinstance(p_any, type(str)):
             l_ret = PrettyFormatAny._format_unicode(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, list):
             l_ret = PrettyFormatAny._format_list(p_any, maxlen=maxlen, indent=indent + 4)

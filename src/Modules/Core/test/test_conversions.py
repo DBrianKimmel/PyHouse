@@ -8,10 +8,10 @@
 @Summary:
 
 
-Tests all working OK - DBK 2014-07-114
+All 6 tests working - DBK - 2017-10-08
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-10-08'
 
 
 # Import system type stuff
@@ -33,6 +33,13 @@ ADDR_NOOK_INT = 1557106
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
 MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
+
+
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_conversions')
 
 
 class Test_A1_Cvrt(unittest.TestCase):

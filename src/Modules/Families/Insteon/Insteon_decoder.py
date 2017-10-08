@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-01-31'
+__updated__ = '2017-10-08'
 
 #  Import system type stuff
 
@@ -195,9 +195,9 @@ class DecodeResponses(object):
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
                 l_device_obj.CurLevel = l_level
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 01:
+            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x01:
                 l_debug_msg += ' Device-Set-Button-Pressed '
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 02:
+            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x02:
                 l_debug_msg += ' Controller-Set-Button-Pressed '
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(PrintBytes(l_message))
@@ -235,16 +235,37 @@ class DecodeResponses(object):
     def _decode_52_record(self, p_controller_obj):
         """Insteon X-10 message received (4 bytes).
         See p 240(253) of 2009 developers guide.
+        [0] = x02
+        [1] = 0x52
+        [2] = high order 4 bits contain house code, low order 4 bits contain key code.
+        [3] = flag 0x00 indicates key code is unit code; 0x80 indicates key code is command.
+
+        0x0    M    13    All Units Off
+        0x1    E     5    All Lights On
+        0x2    C     3    On
+        0x3    K    11    Off
+        0x4    O    15    Dim
+        0x5    G     7    Bright
+        0x6    A     1    All Lights Off
+        0x7    I     9    Extended Code
+        0x8    N    14    Hail Request
+        0x9    F     6    Hail Acknowledge
+        0xA    D     4    Preset Dim
+        0xB    L    12    Preset Dim
+        0xC    P    16    Extended Data (analog)
+        0xD    H     8    Status = On
+        0xE    B     2    Status = Off
+        0xF    J    10    Status Request
         """
         l_message = p_controller_obj._Message
-        l_house = X10_HOUSE[l_message[2] / 16]
-        l_key = X10_HOUSE[l_message[2] % 16]
+        l_house = X10_HOUSE[(l_message[2] >> 4) & 0x0F]
+        l_key = l_message[2] & 0x0F
         l_unit = ''
         l_command = ''
         if l_message[3] == 0:
-            l_unit = l_key
+            l_unit = X10_UNIT[l_key]
         else:
-            l_command = l_key
+            l_command = X10_COMMAND[l_key]
         LOG.info("X10 Message - House:{} {}, Command:{}".format(l_house, l_unit, l_command))
 
     def _decode_60_record(self, p_controller_obj):
