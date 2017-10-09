@@ -10,7 +10,7 @@
 Passed all 8 tests - DBK - 2017-03-11
 
 """
-__updated__ = '2017-03-11'
+__updated__ = '2017-04-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -81,7 +81,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Raw(self):
         l_raw = XML_MQTT
-        # print(l_raw)
+        print(l_raw)
         self.assertEqual(l_raw[:13], '<MqttSection>')
 
     def test_02_Parsed(self):

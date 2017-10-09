@@ -13,7 +13,7 @@ This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2017-10-08'
+__updated__ = '2017-10-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -114,8 +114,8 @@ class B1_Util(SetupMixin, unittest.TestCase):
         #  self.assertEqual(l_msg, None)
         #  self.m_ctrlr._Message = MSG_62 + MSG_50
         #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
-        #  print('Msg {}'.format(PrintBytes(l_msg)))
-        #  print('remaning: {}'.format(PrintBytes(self.m_ctrlr._Message)))
+        #  print('Msg {}'.format(FormatBytes(l_msg)))
+        #  print('remaning: {}'.format(FormatBytes(self.m_ctrlr._Message)))
         #  self.assertEqual(l_msg[1], 0x62)
         self.assertEqual(self.m_ctrlr._Message[1], 0x50)
 

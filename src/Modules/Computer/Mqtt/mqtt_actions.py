@@ -9,11 +9,12 @@
 
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-05-11'
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
+from Modules.Housing.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.Housing.Security.security import MqttActions as securityMqtt
 
 
@@ -43,13 +44,6 @@ class Actions(object):
         l_node.ControllerTypes = self._get_field(p_message, 'ControllerTypes')
         l_node.NodeId = self._get_field(p_message, 'NodeId')
         l_node.NodeRole = self._get_field(p_message, 'NodeRole')
-
-    def _decode_hvac(self, p_logmsg, _p_topic, p_message):
-        p_logmsg += '\tThermostat:\n'
-        p_logmsg += '\tName: {}'.format(self.m_name)
-        p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        p_logmsg += '\tTemp: {}'.format(self._get_field(p_message, 'CurrentTemperature'))
-        return p_logmsg
 
     def _decode_lighting(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tLighting:\n'
@@ -81,7 +75,7 @@ class Actions(object):
 
     def _decode_weather(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tWeather:\n'
-        l_temp = float(self._get_field(p_message, 'Temperature'))
+        l_temp = float(self._get_field(p_message, 'Temperature_F'))
         p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Location'))
         p_logmsg += '\tTemp: {} ({})'.format(l_temp, ((l_temp / 5.0) * 9.0) + 32.0)
         p_logmsg += '\tWeather info {}'.format(PrettyFormatAny.form(p_message, 'Weather msg', 160))
@@ -109,7 +103,7 @@ class Actions(object):
         elif p_topic[0] == 'entertainment':
             l_logmsg = entertainmentMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'hvac':
-            l_logmsg = self._decode_hvac(l_logmsg, p_topic, p_message)
+            l_logmsg = hvacMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'lighting':
             l_logmsg = self._decode_lighting(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'house':

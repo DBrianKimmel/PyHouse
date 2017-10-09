@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-26'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -35,7 +35,7 @@ class Xml(object):
         """
         l_obj = MqttBrokerData()
         try:
-            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)
+            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
             l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
             l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
             l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'BrokerUser')
@@ -45,7 +45,7 @@ class Xml(object):
         return l_obj
 
     @staticmethod
-    def read_mqtt_xml(p_pyhouse_obj):
+    def read_mqtt_xml(p_pyhouse_obj, p_api):
         """Read all the broker information.
         Allow for several brokers.
         @return: a dict of broker objects keys = 0, 1, 2...
@@ -56,16 +56,17 @@ class Xml(object):
             l_section = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
             if l_section == None:
                 return l_dict
-            l_section = l_section.find(SECTION)
+            l_section = l_section.find('MqttSection')
             if l_section == None:
                 return l_dict
         except AttributeError as e_err:
             LOG.error('Reading MQTT Configuration information - {}'.format(e_err))
             l_section = None
         try:
-            for l_xml in l_section.iterfind(BROKER):
+            for l_xml in l_section.iterfind('Broker'):
                 l_broker = Xml._read_one_broker(l_xml)
                 l_broker.Key = l_count
+                l_broker._ClientAPI = p_api
                 l_dict[l_count] = l_broker
                 l_count += 1
         except AttributeError as e_err:
@@ -92,7 +93,7 @@ class Xml(object):
         @return:  XML for the MqttSection
         """
         l_count = 0
-        l_xml = ET.Element(SECTION)
+        l_xml = ET.Element('MqttSection')
         if p_obj == {}:
             LOG.info('No MQTT congig to write.')
             return l_xml

@@ -22,12 +22,11 @@ When the remotes switches to another device (TV, BluRay, Tuner etc.), pianobar i
 this module goes back to its initial state ready for another session.
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2017-04-26'
 
 # Import system type stuff
 from twisted.internet import protocol
 
-# from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 
 g_debug = 0

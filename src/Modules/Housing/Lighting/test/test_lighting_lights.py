@@ -11,7 +11,7 @@ Passed all 24 tests - DBK - 2017-01-19
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-06-25'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -64,8 +64,6 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_UUID_1, \
     TESTING_LIGHT_CUR_LEVEL_1, \
     TESTING_LIGHT_IS_DIMMABLE_1, \
-    TESTING_LIGHT_ROOM_COORDS_1, \
-    TESTING_LIGHT_SECTION, \
     TESTING_LIGHT
 from Modules.Core.Utilities import json_tools
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny

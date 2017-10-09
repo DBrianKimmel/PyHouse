@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-10-08'
+__updated__ = '2017-10-09'
 
 
 # Import system type stuff
@@ -37,7 +37,7 @@ def _get_factor(p_size):
     return int(math.pow(256, (p_size - 1)))
 
 def _get_int(p_str):
-    """Convert 2 hex chars into a 1 byte int.
+    """ Internal utility to convert 2 hex chars into a 1 byte int.
     a3 --> 163
     """
     l_int = 0
@@ -47,6 +47,13 @@ def _get_int(p_str):
         l_int = 0
     return l_int
 
+def _makeHex(p_int):
+    """ convert an int to 2 hex digits
+    """
+    l_int = p_int & 0xff
+    l_hex = "{:02X}".format(l_int)
+    return l_hex
+
 def dotted_hex2int(p_hex):
     """
     @param p_hex: is a str like 'A1.B2.C3'
@@ -54,7 +61,9 @@ def dotted_hex2int(p_hex):
 
     Routine for taking a readable insteon type address and converting it to a Long int for internal use.
     """
-    p_hex.replace(':', '.')
+    # print(p_hex)
+    p_hex = p_hex.replace(':', '.')
+    # print(p_hex)
     l_ary = p_hex.split('.')
     l_hexn = ''.join(["%02X" % _get_int(l_ix) for l_ix in l_ary])
     return int(l_hexn, 16)
@@ -65,6 +74,7 @@ def int2dotted_hex(p_int, p_size):
     @param p_size: is the number of bytes to convert - either 2 or 3
     """
     l_ix = _get_factor(p_size)
+
     l_hex = []
     l_int = int(p_int)
     try:

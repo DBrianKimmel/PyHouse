@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2017-03-25'
+__updated__ = '2017-04-24'
 __version_info__ = (17, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -141,7 +141,8 @@ def daemonize():
 
 
 def handle_signals():
-    """
+    """Handle Signals
+
     typing the interrupt character (probably Ctrl-C) causes SIGINT to be sent
     typing the quit character (probably Ctrl-\) sends SIGQUIT.
     hanging up the phone (modem) sends SIGHUP
@@ -163,7 +164,8 @@ def SigHupHandler(signum, _stackframe):
 
 
 def SigIntHandler(signum, _stackframe):
-    """interrupt character (probably Ctrl-C)
+    """ SigInt
+    interrupt character (probably Ctrl-C)
     """
     LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
     LOG.info("Interrupted.\n\n\n")
@@ -172,7 +174,7 @@ def SigIntHandler(signum, _stackframe):
 
 
 def SigTermHandler(signum, _stackframe):
-    """
+    """SigTerm
     """
     LOG.debug('SigTerm - Signal handler called with signal {}'.format(signum))
     LOG.info('SigTerm \n')
@@ -232,7 +234,9 @@ class API(object):
         raise SystemExit("PyHouse says Bye Now.")
 
     def LoadXml(self, p_pyhouse_obj):
-        """ This is automatically invoked when the reactor starts from API().__init__{}.
+        """LoadXml loads all the XML configuration.
+
+         This is automatically invoked when the reactor starts from API().__init__{}.
         """
         LOG.info('Loading XML - Reactor is now running!')
         p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)

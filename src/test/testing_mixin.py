@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-02-02'
+__updated__ = '2017-06-25'
 
 #  Import system type stuff
 import platform
@@ -151,7 +151,7 @@ class SetupPyHouseObj(object):
         return l_ret
 
     @staticmethod
-    def _build_computer(p_pyhouse_obj):
+    def _build_computer(_p_pyhouse_obj):
         l_ret = ComputerInformation()
         l_ret.Mqtt = MqttInformation()
         return l_ret
@@ -194,6 +194,7 @@ class SetupPyHouseObj(object):
         p_xml.panasonic_sect = p_xml.entertainment_sect.find('PanasonicSection')
         p_xml.pioneer_sect = p_xml.entertainment_sect.find('PioneerSection')
         p_xml.samsung_sect = p_xml.entertainment_sect.find('SamsungSection')
+        p_xml.onkyo_sect = p_xml.entertainment_sect.find('OnkyoSection')
         #
         p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')
         p_xml.irrigation_system = p_xml.irrigation_sect.find('System')

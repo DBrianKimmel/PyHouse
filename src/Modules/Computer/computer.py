@@ -28,19 +28,20 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-07-24'
 
 #  Import system type stuff
 import platform
 
 #  Import PyHouse files
-from Modules.Core.data_objects import ComputerAPIs, ComputerInformation, UuidData
+from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
 from Modules.Computer.Internet.internet import API as internetAPI
-from Modules.Computer.Mqtt.mqtt_client import API as mqttAPI
+from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
+from Modules.Computer.Web.websocket_server import API as websocketAPI
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -116,11 +117,12 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer = ComputerAPIs()
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
         p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
-#        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
+        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
@@ -130,6 +132,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.LoadXml(p_pyhouse_obj)
 
     @staticmethod
     def _start_component_apis(p_pyhouse_obj):
@@ -139,6 +142,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
         p_pyhouse_obj.APIs.Computer.WebAPI.Start()
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Start()
 
     @staticmethod
     def _stop_component_apis(p_pyhouse_obj):
@@ -148,6 +152,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WebAPI.Stop()
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Stop()
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
@@ -157,6 +162,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.Computer.WebSocketAPI.SaveXml(p_xml)
         return p_xml
 
 

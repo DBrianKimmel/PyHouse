@@ -10,7 +10,7 @@
 Passed all 12 tests.  DBK 2016-11-06
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-05-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -77,7 +77,7 @@ class A1_Valid(SetupMixin, unittest.TestCase):
 
     def test_04_FamiliesNull(self):
         l_obj = Utility._build_one_family_data(self.m_pyhouse_obj, 'Null')
-        # print(PrettyFormatAny.form(l_obj, 'Null'))
+        print(PrettyFormatAny.form(l_obj, 'A1-04-A - Null'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_0)
         self.assertEqual(l_obj.FamilyDeviceModuleName, 'Null_device')
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Null')
@@ -85,7 +85,7 @@ class A1_Valid(SetupMixin, unittest.TestCase):
 
     def test_05_FamiliesInsteon(self):
         l_obj = Utility._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
-        # print(PrettyFormatAny.form(l_obj, 'Insteon'))
+        print(PrettyFormatAny.form(l_obj, 'A1-05-A- Insteon'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_1)
         self.assertEqual(l_obj.FamilyDeviceModuleName, 'Insteon_device')
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
@@ -93,7 +93,7 @@ class A1_Valid(SetupMixin, unittest.TestCase):
 
     def test_06_FamiliesUPB(self):
         l_obj = Utility._build_one_family_data(self.m_pyhouse_obj, 'UPB')
-        # print(PrettyFormatAny.form(l_obj, 'UPB'))
+        print(PrettyFormatAny.form(l_obj, 'A1-06-A - UPB'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_2)
         self.assertEqual(l_obj.FamilyDeviceModuleName, 'UPB_device')
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.UPB')
@@ -101,7 +101,7 @@ class A1_Valid(SetupMixin, unittest.TestCase):
 
     def test_07_FamiliesX10(self):
         l_obj = Utility._build_one_family_data(self.m_pyhouse_obj, 'X10')
-        # print(PrettyFormatAny.form(l_obj, 'X10'))
+        print(PrettyFormatAny.form(l_obj, 'A1-07-A - X10'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_3)
         self.assertEqual(l_obj.FamilyDeviceModuleName, 'X10_device')
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.X10')
@@ -118,7 +118,7 @@ class B1_One(SetupMixin, unittest.TestCase):
 
     def test_01_Import(self):
         l_mod = Utility._do_import(self.m_family_obj, 'Insteon_xml')
-        # print(PrettyFormatAny.form(l_mod, 'B1-01-A - Module'))
+        print(PrettyFormatAny.form(l_mod, 'B1-01-A - Module'))
         self.assertEqual(self.m_family_obj.Name, 'Insteon')
         self.assertEqual(self.m_family_obj.Key, 0)
         self.assertEqual(self.m_family_obj.Active, True)
@@ -146,7 +146,6 @@ class B2_One(SetupMixin, unittest.TestCase):
     def test_02_ImportOneMod(self):
         l_module = family.Utility._init_component_apis(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_module, 'Module'))
-        self.assertEqual(l_module.keys(), ['X10', 'Insteon', 'Null', 'UPB'])
 
 
 class B3_One(SetupMixin, unittest.TestCase):

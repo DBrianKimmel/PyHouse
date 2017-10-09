@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-26'
 
 # Import system type stuff
 try:
@@ -24,10 +24,9 @@ except ImportError:
 # Import PyMh files
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Families.UPB.UPB_constants import pim_commands
-from Modules.Core.Utilities.tools import PrintBytes
-from Modules.Computer import logging_pyh as Logger
-from Modules.Families.family_utils import FamUtil
+from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
 
@@ -148,7 +147,7 @@ class BuildCommand(object):
             l_str = BuildCommand._byte_to_2chars(l_byte)
             l_ret.append(l_str[0])
             l_ret.append(l_str[1])
-        LOG.debug("Convert_pim - {}".format(PrintBytes(l_ret)))
+        LOG.debug("Convert_pim - {}".format(FormatBytes(l_ret)))
         return l_ret
 
     @staticmethod
@@ -163,7 +162,7 @@ class BuildCommand(object):
 
     @staticmethod
     def _queue_pim_command(p_controller_obj, p_command):
-        l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
+        l_msg = "Queue_pim_command {}".format(FormatBytes(p_command))
         LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
@@ -230,7 +229,7 @@ class DecodeResponses(object):
         if l_end < 0:
             return ''  # Not a complete message yet.
         if l_start > 0:
-            LOG.warning('Decoding result - discarding leading junk {}'.format(PrintBytes(p_controller_obj._Message[0:l_start])))
+            LOG.warning('Decoding result - discarding leading junk {}'.format(FormatBytes(p_controller_obj._Message[0:l_start])))
             p_controller_obj._Message = p_controller_obj._Message[l_start:]
             l_start = 0
             l_end = p_controller_obj._Message.find('\r')
@@ -238,7 +237,7 @@ class DecodeResponses(object):
                 return ''  # Not a complete message yet.
         l_message = p_controller_obj._Message[l_start:l_end]
         p_controller_obj._Message = p_controller_obj._Message[l_end + 1:]
-        LOG.debug('Extracted message {}'.format(PrintBytes(l_message)))
+        LOG.debug('Extracted message {}'.format(FormatBytes(l_message)))
         return l_message
 
     def _dispatch_decode(self, p_message):
@@ -263,14 +262,14 @@ class DecodeResponses(object):
         elif l_hdr == 0x55:  # 'U'
             self._decode_U()
         else:
-            LOG.error("UPB_Pim.decode_response() found unknown code {} {}".format(l_hdr, PrintBytes(p_message)))
+            LOG.error("UPB_Pim.decode_response() found unknown code {} {}".format(l_hdr, FormatBytes(p_message)))
 
     def decode_response(self, p_controller_obj):
         """A response message starts with a 'P' (0x50) and ends with a '\r' (0x0D).
         """
-        LOG.debug('DecodeResponse A - {}'.format(PrintBytes(p_controller_obj._Message)))
+        LOG.debug('DecodeResponse A - {}'.format(FormatBytes(p_controller_obj._Message)))
         l_message = self._extract_one_message(p_controller_obj)
-        LOG.debug('DecodeResponse B - {}'.format(PrintBytes(l_message)))
+        LOG.debug('DecodeResponse B - {}'.format(FormatBytes(l_message)))
         if len(l_message) < 2:
             return
         self._dispatch_decode(l_message)
@@ -311,7 +310,7 @@ class PimDriverInterface(DecodeResponses):
         self.receive_loop(p_controller_obj)
 
     def XXXqueue_pim_command(self, p_controller_obj, p_command):
-        l_msg = "Queue_pim_command {}".format(PrintBytes(p_command))
+        l_msg = "Queue_pim_command {}".format(FormatBytes(p_command))
         LOG.debug(l_msg)
         p_controller_obj._Queue.put(p_command)
 
@@ -322,7 +321,7 @@ class PimDriverInterface(DecodeResponses):
         except  Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            LOG.debug('Sending to controller:{}, Message: {} '.format(p_controller_obj.Name, PrintBytes(l_command)))
+            LOG.debug('Sending to controller:{}, Message: {} '.format(p_controller_obj.Name, FormatBytes(l_command)))
             p_controller_obj._DriverAPI.Write(l_command)
 
     def receive_loop(self, p_controller_obj):
@@ -333,7 +332,7 @@ class PimDriverInterface(DecodeResponses):
             l_msg = p_controller_obj._DriverAPI.Read()
             if len(l_msg) == 0:
                 return
-            LOG.debug('Fetched message  {}'.format(PrintBytes(l_msg)))
+            LOG.debug('Fetched message  {}'.format(FormatBytes(l_msg)))
             p_controller_obj._Message += l_msg
             self.decode_response(p_controller_obj)
         else:

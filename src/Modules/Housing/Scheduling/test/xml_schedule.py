@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2016-08-29'
+__updated__ = '2017-04-20'
 
 from datetime import datetime
 
@@ -20,13 +20,19 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_NAME_0, \
     TESTING_LIGHT_ROOM_UUID_0
 
-L_SCHEDULE_SECTION_START = '<ScheduleSection>'
-L_SCHEDULE_SECTION_END = '</ScheduleSection>'
-L_SCHEDULE_END = '</Schedule>'
+TESTING_SCHEDULE_SECTION = 'ScheduleSection'
+TESTING_SCHEDULE = 'Schedule'
 
-TESTING_SCHEDULE_SUNRISE_0 = datetime(2016, 6, 21, 6, 31)
+L_SCHEDULE_SECTION_START = '<' + TESTING_SCHEDULE_SECTION + '>'
+L_SCHEDULE_SECTION_END = '</' + TESTING_SCHEDULE_SECTION + '>'
+L_SCHEDULE_END = '</' + TESTING_SCHEDULE + '>'
 
-TESTING_SCHEDULE_SUNSET_0 = datetime(2016, 6, 21, 20, 30)
+TESTING_SCHEDULE_DATE_0 = datetime(2015, 6, 21)
+TESTING_SCHEDULE_DAWN_0 = datetime(2016, 6, 21, 6, 4, 52)
+TESTING_SCHEDULE_SUNRISE_0 = datetime(2016, 6, 21, 6, 31, 56)
+TESTING_SCHEDULE_NOON_0 = datetime(2016, 6, 21, 13, 31, 41)
+TESTING_SCHEDULE_SUNSET_0 = datetime(2016, 6, 21, 20, 31, 25)
+TESTING_SCHEDULE_DUSK_0 = datetime(2016, 6, 21, 20, 58, 30)
 
 # Schedule 0 - Light
 
@@ -48,7 +54,7 @@ TESTING_SCHEDULE_ROOM_NAME_0 = TESTING_LIGHT_ROOM_NAME_0
 TESTING_SCHEDULE_ROOM_UUID_0 = TESTING_LIGHT_ROOM_UUID_0
 
 L_SCHEDULE_START_0 = '  ' + \
-        '<Schedule Name="' + TESTING_SCHEDULE_NAME_0 + \
+        '<' + TESTING_SCHEDULE + ' Name="' + TESTING_SCHEDULE_NAME_0 + \
         '" Key="' + TESTING_SCHEDULE_KEY_0 + \
         '" Active="' + TESTING_SCHEDULE_ACTIVE_0 + \
         '">'

@@ -7,28 +7,28 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 14 tests - DBK - 2017-01-11
+Passed all 14 tests - DBK - 2017-04-21
 
 """
-__updated__ = '2017-01-19'
+__updated__ = '2017-07-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.internet import reactor
-import twisted
+# import twisted
 
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.Utilities import json_tools
 from Modules.Core.data_objects import MqttBrokerData, \
-    LocationData, ScheduleLightData, ControllerData, \
-    ComputerInformation
-from Modules.Computer.Mqtt.mqtt_client import Util, API as mqttAPI
+        LocationData, ScheduleLightData, ControllerData, \
+        ComputerInformation
+from Modules.Computer.Mqtt.mqtt_client import Util  # , API as mqttAPI
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
     TESTING_BROKER_ACTIVE_1
-from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -46,7 +46,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = mqttAPI(self.m_pyhouse_obj)
+        # self.m_api = mqttAPI(self.m_pyhouse_obj)
         self.m_broker = MqttBrokerData()
 
     def jsonPair(self, p_json, p_key):
@@ -111,17 +111,17 @@ class A3_EmptyXML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
 
-    def test_01_Mqtt(self):
-        l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
-        self.assertEqual(len(l_mqtt.Brokers), 0)
+    # def test_01_Mqtt(self):
+    #    l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
+    #    self.assertEqual(len(l_mqtt.Brokers), 0)
 
 
-class B1_ConnectTCP(SetupMixin, unittest.TestCase):
+class B1_TcpConnect(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Twisted.Reactor = reactor
-        twisted.internet.base.DelayedCall.debug = True
+        # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.BrokerPort = PORT
         self.m_broker.Active = TESTING_BROKER_ACTIVE_1
@@ -141,7 +141,7 @@ class B2_ConnectTLS(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Twisted.Reactor = reactor
-        twisted.internet.base.DelayedCall.debug = True
+        # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKER_TLS
         self.m_broker.BrokerPort = PORT_TLS
         self.m_broker.Active = True
@@ -181,17 +181,11 @@ class C2_Publish(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
-        twisted.internet.base.DelayedCall.debug = True
+        # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.BrokerPort = PORT
         self.m_broker.Active = True
         self.m_broker.Name = 'ClientTest'
-
-    def test_01_Topic(self):
-        """ Test topic.
-        """
-        l_topic = Util._make_topic(self.m_pyhouse_obj, 'Test')
-        self.assertEqual(l_topic, "pyhouse/test_house/Test")
 
     def test_02_Message(self):
         """ No payload (not too useful)

@@ -32,15 +32,16 @@ Do not require reloads, auto change PyHouse on the fly.
 __updated__ = '2017-03-30'
 
 #  Import system type stuff
-import ssl
+# import ssl
 # from nevow import appserver
 #  from twisted.internet import ssl
-from twisted.internet import protocol, defer
-from twisted.python.modules import getModule
+# from twisted.internet import protocol
+from twisted.internet import defer
+# from twisted.python.modules import getModule
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import WebData
-from Modules.Computer.Web.web_xml import Xml as webXml
+# from Modules.Core.data_objects import WebData
+# from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web import web_utils
 # from Modules.Computer.Web import web_mainpage
 from Modules.Computer import logging_pyh as Logger
@@ -77,7 +78,7 @@ class Utility(ClientConnections):
     def start_non_tls(self, p_pyhouse_obj, p_site, p_port):
         p_pyhouse_obj.Twisted.Reactor.listenTCP(p_port, p_site)
 
-    def start_tls(self, p_pyhouse_obj):
+    def start_tls(self, _p_pyhouse_obj):
         # l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
         # l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
         # l_factory = protocol.Factory.forProtocol(echoserv.Echo)

@@ -53,7 +53,7 @@ apt install:
     python-dev
 """
 
-__updated__ = '2017-03-25'
+__updated__ = '2017-06-23'
 
 
 #  Import system type stuff
@@ -65,24 +65,27 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "sr
 
 #  Requirements for the PyHouse application
 INSTALL_REQUIRES = [
-    'astral >= 1.2',
-    'athena >= 0.8',
-    'idna >= 2.0',
-    'jsonpickle >= 0.9.4',
-    'netaddr',
-    'netifaces',
-    'nevow >= 0.0.0',
-    'passlib',
-    'pyasn1 >= 0.1.8',
-    'pycrypto',
-    'pyOpenSSL',
-    'python-dateutil',
-    'pyserial',
-    'pytz',
-    'pyudev',
-    'pyusb',
-    'service-identity',
-    'twisted >= 16.0.0'
+    # sudo apt install libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev
+        'aniso8601',
+        'astral >= 1.2',
+    # 'athena >= 0.8',
+        'autobahn',
+    # 'idna >= 2.0',
+        'jsonpickle >= 0.9.4',
+        'netaddr',
+        'netifaces',
+    # 'nevow >= 0.0.0',
+    # 'passlib',
+    # 'pyasn1 >= 0.1.8',
+    # 'pycrypto',
+        'pyOpenSSL',
+        'python-dateutil',
+    # 'pyserial',
+    # 'pytz',
+        'pyudev',
+    # 'pyusb',
+        'service-identity',
+        'twisted >= 16.0.0'
 ]
 
 EXTRA_REQUIRES = {}

@@ -18,7 +18,7 @@ Instead of using callLater timers, it would be better to use deferred callbacks 
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-04-26'
 
 # Import system type stuff
 import usb.core
@@ -26,7 +26,6 @@ import usb.util
 
 # Import PyHouse modules
 from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
-# from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

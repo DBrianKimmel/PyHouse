@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-04-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -92,7 +92,7 @@ class Utility(object):
     def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
         """Read the family specific data for this controller.
         """
-        # l_debug = debug_tools._format_object('Obj', p_obj, 100)
+        # l_debug = debug_tools._formatObject('Obj', p_obj, 100)
         # print('Read controller {}'.format(l_debug))
         l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing

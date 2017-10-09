@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-27'
+__updated__ = '2017-04-22'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -179,6 +179,8 @@ class PutGetXML(object):
             l_var = str(l_xml)
         except (ValueError, TypeError):
             l_var = str(default)
+        if l_var == 'None':
+            l_var = None
         return l_var
 
     @staticmethod

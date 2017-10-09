@@ -7,11 +7,11 @@
 @note:      Created on Apr 27, 2013
 @summary:   This module is for testing Insteon conversion routines.
 
-Passed all 19 tests - DBK - 2016-10-31
+Passed all 23 tests - DBK - 2017-04-29
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2017-04-29'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -33,7 +33,7 @@ from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_ADDRESS_0
 from test.xml_data import XML_LONG
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes
 
 # this matches button 0 in XML_LIGHTING_BUTTONS
 ADDR_BUTTON_0_MSG = bytearray(b'\x35\x6f\x2a')
@@ -44,8 +44,8 @@ ADDR_CONTROLLER_0_INT = (((0x21 * 256) + 0x34) * 256) + 0x1f
 
 ADDR_LIGHT_0_MSG = bytearray(b'\x16\x62\x2d')
 ADDR_MOTION_0_MSG = bytearray(b'\x53\x22\x56')
-ADDR_GARAGE_0_MSG = bytearray(b'\x16\x620\x2d')
-ADDR_THERMOSTAT_0_MSG = bytearray(b'\x16\x620\x2d')
+ADDR_GARAGE_0_MSG = bytearray(b'\x16\x62\x2d')
+ADDR_THERMOSTAT_0_MSG = bytearray(b'\x16\x62\x2d')
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_INT = (((0x16 * 256) + 0xc9) * 256) + 0xd0
@@ -80,6 +80,13 @@ class SetupMixin(object):
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_Insteon_utils')
+
+
 class A1_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
@@ -97,15 +104,28 @@ class A2_Command(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Create(self):
+    def test_01_60(self):
+        l_cmd = Insteon_utils.create_command_message('plm_info')
+        # print('A2-01-A - ', FormatBytes(l_cmd))
+        self.assertEqual(len(l_cmd), 2)
+        self.assertEqual(l_cmd[0], 0x02)
+        self.assertEqual(l_cmd[1], 0x60)
+
+    def test_02_61(self):
+        l_cmd = Insteon_utils.create_command_message('all_link_send')
+        # print('A2-02-A - ', FormatBytes(l_cmd))
+        self.assertEqual(len(l_cmd), 5)
+        self.assertEqual(l_cmd[0], 0x02)
+        self.assertEqual(l_cmd[1], 0x61)
+
+    def test_03_62(self):
         """
         """
-        result = Insteon_utils.create_command_message('insteon_send')
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A2-01-A - PyHouse'))
-        # print(PrintBytes(result))
-        self.assertEqual(len(result), 8)
-        self.assertEqual(result[0], 0x02)
-        self.assertEqual(result[1], 0x62)
+        l_cmd = Insteon_utils.create_command_message('insteon_send')
+        # print('A2-03-A - ', FormatBytes(l_cmd))
+        self.assertEqual(len(l_cmd), 8)
+        self.assertEqual(l_cmd[0], 0x02)
+        self.assertEqual(l_cmd[1], 0x62)
 
 
 class A3_Queue(SetupMixin, unittest.TestCase):
@@ -176,34 +196,41 @@ class B3_Lookup(SetupMixin, unittest.TestCase):
         self.assertEqual(result.InsteonAddress, ADDR_CONTROLLER_0_INT)
 
 
-class C1_Conversions(SetupMixin, unittest.TestCase):
+class C1_Convert(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Message2int(self):
-        """ Get 3 bytes and convert it ti a laww
+        """ Get 3 bytes and convert it to a long int
         """
         result = self.inst.message2int(MSG_50[2:5])
-        # print(result)
+        # print('C1-01-A - ', FormatBytes(MSG_50[2:5]), result)
         self.assertEqual(result, MSG_50_INT)
         #
         result = self.inst.message2int(MSG_62[2:5])
         self.assertEqual(result, MSG_62_INT)
 
-    def test_02_Int2message(self):
+    def test_02_i2msg(self):
         """ Convert a long int to a 3 byte address
         """
-        l_msg = MSG_50
+        l_msg = bytearray(b'0000000000')
         result = self.inst.int2message(ADDR_DR_SLAVE_INT, l_msg, 2)
-        # print(PrintBytes(result))
+        # print('C1-02-A - ', FormatBytes(result))
+        # print('C1-02-B - ', FormatBytes(l_msg))
         self.assertEqual(result[2:5], ADDR_DR_SLAVE_MSG)
         #
-        l_msg = MSG_62
+
+    def test_03_i2msg(self):
+        """ Convert a long int to a 3 byte address
+        """
+        l_msg = bytearray(b'          ')
         result = self.inst.int2message(ADDR_NOOK_INT, l_msg, 2)
+        # print('C1-03-A - ', FormatBytes(result))
+        # print('C1-03-B - ', FormatBytes(l_msg))
         self.assertEqual(result[2:5], ADDR_NOOK_MSG)
 
-    def test_03_Json(self):
+    def test_04_Json(self):
         pass
 
 
@@ -234,7 +261,7 @@ class D2_Decode(SetupMixin, unittest.TestCase):
         """
         """
         l_msg = MSG_50
-        # print(PrintBytes(l_msg), 'D2-01-A - Message')
+        # print(FormatBytes(l_msg), 'D2-01-A - Message')
         _l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_msg[2:5])
         # print(PrettyFormatAny.form(_l_ret, 'D2-01-B - Combined Dicts'))
 

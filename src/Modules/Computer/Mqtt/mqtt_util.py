@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-04'
+__updated__ = '2017-04-30'
 
 class EncodeDecode(object):
     """
@@ -19,17 +19,37 @@ class EncodeDecode(object):
 
     @staticmethod
     def _encodeString(p_string):
+        """ Convert a string(UTF) into bytes with encoded length
+        """
+        l_len = len(p_string)
+        l_str = p_string.encode('utf-8')
         l_encoded = bytearray()
-        l_encoded.append(len(p_string) >> 8)
-        l_encoded.append(len(p_string) & 0xFF)
-        for i in p_string:
-            l_encoded.append(i)
+        l_encoded.append(l_len >> 8)
+        l_encoded.append(l_len & 0xFF)
+        l_encoded += l_str
         return l_encoded
 
     @staticmethod
     def _decodeString(p_encodedString):
+        """ Convert a lengh-encoded entry into a string
+        """
         l_length = 256 * p_encodedString[0] + p_encodedString[1]
-        return str(p_encodedString[2:2 + l_length])
+        l_ret = p_encodedString[2:2 + l_length].decode('utf-8')
+        return l_ret
+
+    @staticmethod
+    def _put_string(p_string):
+        """ Convert a string(utf) into bytes
+        """
+        l_str = p_string.encode('utf-8')
+        return l_str
+
+    @staticmethod
+    def _get_string(p_string):
+        """ Convert bytes into a string(utf).
+        """
+        l_ret = p_string.decode('utf-8')
+        return l_ret
 
     @staticmethod
     def _encodeLength(p_length):

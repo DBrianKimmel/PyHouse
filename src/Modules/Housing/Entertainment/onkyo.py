@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-07-24'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -86,7 +86,7 @@ class XML(object):
         return l_obj
 
     @staticmethod
-    def _write_one(p_pyhouse_obj, p_obj):
+    def _write_one(_p_pyhouse_obj, p_obj):
         """ Create the complete Device XML for one Onkyo device.
         """
         l_xml = XML._write_device(p_obj)
@@ -113,7 +113,7 @@ class XML(object):
             LOG.info('Loaded Onkyo device {}'.format(l_dict[l_count]))
             l_count += 1
         LOG.info('Loaded {} Onkyo Devices.'.format(l_count))
-        return l_dict
+        return l_dict, l_count
 
     @staticmethod
     def write_all(p_pyhouse_obj):
@@ -148,7 +148,7 @@ class OnkyoClient(OnkyoProtocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_onkyo_obj, p_clientID=None):
+    def __init__(self, p_pyhouse_obj, p_onkyo_obj, _p_clientID=None):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_onkyo_obj = p_onkyo_obj
 
@@ -166,7 +166,7 @@ class OnkyoFactory(ReconnectingClientFactory):
         LOG.info('Started to connect. {}'.format(p_connector))
 
     def buildProtocol(self, p_addr):
-        protocol = OnkyoProtocol()
+        _protocol = OnkyoProtocol()
         LOG.info('BuildProtocol - Addr = {}'.format(p_addr))
         l_client = OnkyoClient(self.m_pyhouse_obj, self.m_onkyo_obj)
         # l_ret = ReconnectingClientFactory.buildProtocol(self, p_addr)
@@ -206,38 +206,30 @@ class API(object):
         LOG.info("Initialized")
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Start the onkyo factory See if we have any Onkyo devices.
+        """ Read the XML for all Onkyo devices.
         """
         p_pyhouse_obj.House.Entertainment.Onkyo = OnkyoData()  # Clear before loading
-        l_onkyo_obj = XML().read_all(p_pyhouse_obj)
+        l_onkyo_obj, _l_count = XML().read_all(p_pyhouse_obj)
         p_pyhouse_obj.House.Entertainment.Onkyo = l_onkyo_obj
         LOG.info("Loaded XML")
         return l_onkyo_obj
 
     def Start(self):
+        """ Start all the Onkyo factories if we have any Onkyo devices.
         """
-        if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            LOG.info('Connecting to all MQTT Brokers.')
-            l_count = self.connect_to_all_brokers(self.m_pyhouse_obj)
-            LOG.info("Mqtt {} broker(s) Started.".format(l_count))
-        else:
-            LOG.info('No Mqtt brokers are configured.')
-        """
-        for l_onkyo in self.m_pyhouse_obj.House.Entertainment.Onkyo.values():
-            pass
-        # l_host = self.m_pyhouse_obj.House.Entertainment.Onkyo[0].IPv4
-        l_host = DEFAULT_EISCP_IPV4
-        l_port = DEFAULT_EISCP_PORT
-        l_onkyo_obj = OnkyoData()
-        l_onkyo_obj.Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
-        _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj.Factory)
-        LOG.info("Started Onkyo {} {}".format(l_host, l_port))
-
+        l_count = 0
+        for l_onkyo_obj in self.m_pyhouse_obj.House.Entertainment.Onkyo.values():
+            l_host = l_onkyo_obj.IPv4
+            l_port = l_onkyo_obj.Port
+            l_onkyo_obj.Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
+            _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj.Factory)
+            LOG.info("Started Onkyo {} {}".format(l_host, l_port))
+        LOG.info("Started {} Onkyo devices".format(l_count))
 
     def SaveXml(self, p_xml):
         l_xml = XML().write_all(self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Saved Onkyo XML.")
         return p_xml
 
     def Stop(self):

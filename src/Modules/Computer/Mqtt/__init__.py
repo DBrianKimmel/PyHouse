@@ -1,9 +1,9 @@
 """
 This package is used for MQTT communications.
 
-A section of the PyHouse Object (Mqtt) is reserverd for holding the information.
+A section of the PyHouse Object (Mqtt) is reserved for holding the information.
 
-Multilpe Brokers.
+Multiple Brokers.
 -----------------
 
 Passing broker information via Mqtt itself may allow for synchronization of the broker tree.
@@ -27,3 +27,6 @@ pyhouse/<HouseName>/***
     ***/schedule/execute                      Modules/Lighting/lighting_actions (80)
 
 """
+__updated__ = '2017-04-26'
+
+# ## END DBK

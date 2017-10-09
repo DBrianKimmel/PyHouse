@@ -9,8 +9,9 @@
 
 Passed all 4 tests - DBK- 2017-03-11
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-04-21'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -59,34 +60,44 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.broker.tag, TESTING_MQTT_BROKER)
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
+class D1_Encode(SetupMixin, unittest.TestCase):
+    """
+    """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
+
+    def test_01_String(self):
         pass
 
-    def test_01_Raw(self):
-        l_raw = XML_MQTT
-        # print(l_raw)
-        self.assertEqual(l_raw[:13], '<MqttSection>')
 
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_MQTT)
-        # print(l_xml)
-        self.assertEqual(l_xml.tag, TESTING_MQTT_SECTION)
-
-
-class C1_Packet(SetupMixin, unittest.TestCase):
+class P1_Packet(SetupMixin, unittest.TestCase):
     """
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
 
-    def test_01_connect(self):
+    def test_01_fixed(self):
+        l_packet_type = 0x01
+        l_remaining_length = 17
+        l_fixed = MQTTProtocol()._build_fixed_header(l_packet_type, l_remaining_length)
+        # print(PrettyFormatAny.form(l_fixed, 'FixedHeader'))
+
+    def test_02_connect(self):
         """
         """
-        MQTTProtocol.connect()
+        l_clientID = "TestClient"
+        l_keepalive = 30000
+        l_willTopic = None
+        l_willMessage = None
+        l_willQoS = 0
+        l_willRetain = False
+        l_cleanStart = True
+        l_username = None
+        l_password = None
+
+        MQTTProtocol().connect(l_clientID, l_keepalive)
         pass
 
 #  ## END DBK

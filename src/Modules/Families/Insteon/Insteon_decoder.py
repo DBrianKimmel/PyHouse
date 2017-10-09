@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-10-08'
+__updated__ = '2017-10-09'
 
 #  Import system type stuff
 
@@ -35,7 +35,7 @@ from Modules.Families.Insteon.Insteon_Security import DecodeResponses as DecodeS
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
 from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
-from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_decode ')
 
@@ -72,10 +72,10 @@ class DecodeResponses(object):
                     self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
                     return 'Ok'
                 else:
-                    LOG.warning('Message was too short - waiting for rest of message. {}'.format(PrintBytes(p_controller_obj._Message)))
+                    LOG.warning('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
-                # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, PrintBytes(p_controller_obj._Message)))
+                # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, FormatBytes(p_controller_obj._Message)))
                 p_controller_obj._Message = p_controller_obj._Message[1:]
                 return 'Drop'
 
@@ -92,7 +92,7 @@ class DecodeResponses(object):
             l_ret = self.decode_message(p_controller_obj)
         else:
             l_msg = "check_for_more_decoding() trying to chop an incomplete message - {}".format(
-                    PrintBytes(p_controller_obj._Message))
+                    FormatBytes(p_controller_obj._Message))
             LOG.error(l_msg)
         return l_ret
 
@@ -107,7 +107,7 @@ class DecodeResponses(object):
         l_cmd = p_controller_obj._Message[1]
         # LOG.debug('  Dispatch: {:#02x}'.format(l_cmd))
         if l_cmd == 0:
-            LOG.warning("Found a '0' record ->{}.".format(PrintBytes(l_message)))
+            LOG.warning("Found a '0' record ->{}.".format(FormatBytes(l_message)))
             return l_ret
         elif l_cmd == 0x50: l_ret = self._decode_50(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51(p_controller_obj)
@@ -130,7 +130,7 @@ class DecodeResponses(object):
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
         else:
-            LOG.error("Unknown message {}, Cmd:{}".format(PrintBytes(p_controller_obj._Message), l_cmd))
+            LOG.error("Unknown message {}, Cmd:{}".format(FormatBytes(p_controller_obj._Message), l_cmd))
             # self.check_for_more_decoding(p_controller_obj, l_ret)
         self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
@@ -200,7 +200,7 @@ class DecodeResponses(object):
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x02:
                 l_debug_msg += ' Controller-Set-Button-Pressed '
             else:
-                l_debug_msg += '\n\tUnknown-type -"{}"; '.format(PrintBytes(l_message))
+                l_debug_msg += '\n\tUnknown-type -"{}"; '.format(FormatBytes(l_message))
         except AttributeError as e_err:
             LOG.error('ERROR decoding 50 record {}'.format(e_err))
 

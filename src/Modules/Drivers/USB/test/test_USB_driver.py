@@ -11,7 +11,7 @@ Passed all 1 tests - DBK - 2015-08-15
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-04-26'
 
 
 # Import system type stuff
@@ -39,7 +39,14 @@ class SetupMixin(object):
         self.m_version = '1.4.0'
 
 
-class A01_API(SetupMixin, unittest.TestCase):
+class A0(unittest.TestCase):
+    def setUp(self):
+        pass
+    def test_00_Print(self):
+        print('Id: test_USB_driver')
+
+
+class A1_API(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -51,17 +58,17 @@ class B1(unittest.TestCase):
 
     def test_01_Extract(self):
         l_ba = self.m_api._extract_hid_report(RAW_01)
-        # print('Test_0101 A ', PrintBytes(l_ba))
+        # print('Test_0101 A ', FormatBytes(l_ba))
         self.assertEqual(l_ba, b'\x50\x45\x0d\x45\x0d\x50\x45')
         self.assertEqual(type(l_ba), bytearray)
         l_ba = self.m_api._extract_hid_report(RAW_02)
-        # print('Test_0101 B ', PrintBytes(l_ba))
+        # print('Test_0101 B ', FormatBytes(l_ba))
         self.assertEqual(l_ba, b'\x0D\x50\x45\x0d')
         l_ba = self.m_api._extract_hid_report(RAW_03)
-        # print('Test_0101 C ', PrintBytes(l_ba))
+        # print('Test_0101 C ', FormatBytes(l_ba))
         self.assertEqual(l_ba, b'')
         l_ba = self.m_api._extract_hid_report(RAW_04)
-        # print('Test_0101 D ', PrintBytes(l_ba))
+        # print('Test_0101 D ', FormatBytes(l_ba))
         self.assertEqual(l_ba, b'')
 
 # ## END DBK

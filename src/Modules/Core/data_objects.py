@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-03-11'
+__updated__ = '2017-05-01'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -91,6 +91,7 @@ class ComputerAPIs(object):
         self.NodesAPI = None
         self.WeatherAPI = None
         self.WebAPI = None
+        self.WebSocketAPI = None
 
 
 class CoordinateData(object):
@@ -127,7 +128,6 @@ class EmailData(object):
         self.EmailToAddress = ''
         self.GmailLogin = ''
         self.GmailPassword = ''
-
 
 
 class EntertainmentData(object):
@@ -239,7 +239,8 @@ class MqttInformation(object):
 
 
 class MqttJson(object):
-    """
+    """ This is a couple of pieces of information that get added into every MQTT message
+        sent out of this computer.
     """
     def __init__(self):
         self.Sender = ''  # The Mqtt name of the sending device.
@@ -361,9 +362,12 @@ class WeatherData(object):
 
 class WebData(object):
     """ Information about the configuration and control web server
+
+    ==> PyHouse.Computer.Web.xxx - as in the def below.
     """
     def __init__(self):
         self.WebPort = 8580
+        self.WebSocketPort = 8581
         self.SecurePort = 8588
         self.Logins = {}  # LoginData()
 
@@ -392,6 +396,7 @@ class BaseUUIDObject(BaseObject):
 """
 BaseObject dependent.
 """
+
 
 class FamilyData(BaseObject):
     """ A container for every family that has been defined in modules.
@@ -435,9 +440,12 @@ class JsonHouseData(BaseObject):
 
 class MqttBrokerData(BaseObject):
     """ 0-N
+
+    ==> PyHouse.Computer.Mqtt.Brokers.XXX as in the def below
     """
     def __init__(self):
         super(MqttBrokerData, self).__init__()
+        self.BrokerName = None
         self.BrokerAddress = None
         self.BrokerPort = None
         self.UserName = ''
@@ -452,6 +460,7 @@ class MqttBrokerData(BaseObject):
 """
 BaseUUIDObject dependent.
 """
+
 
 class ComputerInformation(BaseUUIDObject):
     """
@@ -629,6 +638,7 @@ class SensorData(BaseUUIDObject):
 ScheduleBaseData dependent
 """
 
+
 class ScheduleIrrigationData(ScheduleBaseData):
     """
     """
@@ -746,8 +756,8 @@ class ControllerData(CoreLightingData):
         #  The following are not in XML config file
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        self._Data = None  # InterfaceType specific data
-        self._Message = ''
+        self._Data = bytearray()  # Rx InterfaceType specific data
+        self._Message = bytearray()
         self._Queue = None
 
 
