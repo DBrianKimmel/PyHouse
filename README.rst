@@ -173,5 +173,4 @@ be interfaced easily into PyHouse.  It is my hope that a complete Home Automatio
 be the result.
 
 
-
 ### END DBK
