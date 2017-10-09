@@ -8,10 +8,10 @@
 @Summary:
 
 
-All 21 tests working OK - DBK - 2017-04-29
+All 6 tests working - DBK - 2017-10-08
 """
 
-__updated__ = '2017-05-05'
+__updated__ = '2017-10-09'
 
 
 # Import system type stuff

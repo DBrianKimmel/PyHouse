@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2017-10-09'
 
 
 # Import system type stuff
@@ -79,14 +79,12 @@ def int2dotted_hex(p_int, p_size):
     l_int = int(p_int)
     try:
         while l_ix > 0:
-            l_byte, l_int = divmod(int(l_int), int(l_ix))
-            l_hex.append(_makeHex(l_byte))
+            l_byte, l_int = divmod(l_int, l_ix)
+            l_hex.append("{:02X}".format(l_byte))
             l_ix = int(l_ix / 256)
         return str('.'.join(l_hex))
-    except TypeError as e_err:
-        LOG.error('ERROR in converting int to dotted Hex {} - Type:{} - {}'.format(p_int, type(p_int), e_err))
-    except ValueError:
-        LOG.error('ERROR converting {} {} {}'.format(l_byte, l_int, l_ix))
+    except (TypeError, ValueError) as e_err:
+        LOG.error('ERROR in converting int to dotted Hex {} {} - Type:{} - {}'.format(p_int, l_ix, type(p_int), e_err))
 
 def getbool(p_bool):
     if p_bool == 'True':

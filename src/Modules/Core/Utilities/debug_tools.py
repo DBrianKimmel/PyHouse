@@ -9,12 +9,12 @@
 
 """
 
-__updated__ = '2017-04-23'
+__updated__ = '2017-10-09'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
 from xml.dom import minidom
-import pprint
+# import pprint
 
 #  Import PyMh files
 
@@ -242,7 +242,7 @@ class PrettyFormatAny(object):
             l_ret = PrettyFormatAny._format_XML(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, str):
             l_ret = PrettyFormatAny._format_string(p_any, maxlen=maxlen, indent=indent)
-        elif isinstance(p_any, type('utf-8')):
+        elif isinstance(p_any, type(str)):
             l_ret = PrettyFormatAny._format_unicode(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, bytearray):
             l_ret = PrettyFormatAny._format_bytearray(p_any, maxlen=maxlen, indent=indent)

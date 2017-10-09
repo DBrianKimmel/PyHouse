@@ -7,13 +7,13 @@
 @note:      Created on Jul 18, 2014
 @Summary:
 
-Passed all 6 tests - DBK - 2016-10-31
+Passed all 8 tests - DBK - 2017-10-08
 
 This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2017-04-26'
+__updated__ = '2017-10-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -25,13 +25,13 @@ from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 from Modules.Core.data_objects import ControllerData
 from Modules.Families.Insteon import Insteon_decoder
-from Modules.Families.Insteon.Insteon_utils import Util
+# from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Security.security import XML as securityXML
-from Modules.Core.Utilities.debug_tools import FormatBytes
+# from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')
@@ -70,9 +70,9 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """Test that PyHouse_obj has the needed info.
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - PyHouse.House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - PyHouse.House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-01-C - PyHouse.House.Lighting', 80))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Security, 'A1-01-D - PyHouse.House.Security', 80))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Security, 'A1-01-D - PyHouse.House.Security', 80))
         self.assertEqual(self.m_pyhouse_obj.Xml.XmlFileName, '/etc/pyhouse/master.xml')
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Buttons), 2)
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
@@ -106,8 +106,8 @@ class B1_Util(SetupMixin, unittest.TestCase):
 
     def test_02_NextMsg(self):
         self.m_ctrlr._Message = MSG_50
-        l_msg = Util().get_next_message(self.m_ctrlr)
-        print(FormatBytes(l_msg))
+        # l_msg = Util().get_next_message(self.m_ctrlr)
+        # print(PrintBytes(l_msg))
         #  self.assertEqual(l_msg[1], 0x50)
         #  self.m_ctrlr._Message = bytearray()
         #  l_msg = self.m_util.get_next_message(self.m_ctrlr)
