@@ -11,12 +11,12 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2017-02-01'
+__updated__ = '2017-10-09'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0
+from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0, XML_INSTEON_1
 from Modules.Families.UPB.test.xml_upb import XML_UPB
 
 
@@ -90,7 +90,7 @@ TESTING_LIGHT_ACTIVE_1 = 'True'
 TESTING_LIGHT_UUID_1 = 'Light...-Lgt.-0000-0001-Light.b6eb6f'
 TESTING_LIGHT_COMMENT_1 = "UPB Dimmer Light Comment"
 TESTING_LIGHT_CUR_LEVEL_1 = "12"
-TESTING_LIGHT_DEVICE_FAMILY_1 = 'Insteon'
+TESTING_LIGHT_DEVICE_FAMILY_1 = 'UPB'
 TESTING_LIGHT_DEVICE_TYPE_1 = '1'
 TESTING_LIGHT_DEVICE_SUBTYPE_1 = '25'
 TESTING_LIGHT_IS_DIMMABLE_1 = 'True'
