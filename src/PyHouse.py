@@ -62,8 +62,8 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2017-04-24'
-__version_info__ = (17, 3, 1)
+__updated__ = '2017-10-09'
+__version_info__ = (17, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

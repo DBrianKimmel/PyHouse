@@ -6,17 +6,19 @@
 .directory
 .project
 .pydevproject
-.settings
 .SaveConfig
 Android
 Certificates
 PyHouse.egg-info
-html/
-latex/
 lock
-build/
-dist
 minimal
 doc/html
+
+# Dirs
+build/
+dist/
+html/
+latex/
+.settings/
 
 ### END DBK
