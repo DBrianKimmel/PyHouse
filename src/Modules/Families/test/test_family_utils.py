@@ -7,11 +7,11 @@
 @note:      Created on Nov 15, 2014
 @Summary:
 
-Passed all 27 tests.  DBK 2017-10-09
+Passed all 278tests.  DBK 2017-10-10
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS
 
-__updated__ = '2017-10-09'
+__updated__ = '2017-10-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,9 +34,15 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_DEVICE_FAMILY_0, \
     TESTING_LIGHT_DEVICE_SUBTYPE_0, \
     TESTING_LIGHT_DEVICE_TYPE_0, \
-    TESTING_LIGHT_ROOM_NAME_0, TESTING_LIGHT_NAME_1
+    TESTING_LIGHT_ROOM_NAME_0, \
+    TESTING_LIGHT_NAME_1, \
+    TESTING_LIGHT_KEY_1, \
+    TESTING_LIGHT_ACTIVE_1, TESTING_LIGHT_COMMENT_0
 from Modules.Families.test.xml_family import \
-    TESTING_FAMILY_NAME_1, TESTING_FAMILY_NAME_0, TESTING_FAMILY_NAME_2, TESTING_FAMILY_NAME_3
+    TESTING_FAMILY_NAME_1, \
+    TESTING_FAMILY_NAME_0, \
+    TESTING_FAMILY_NAME_2, \
+    TESTING_FAMILY_NAME_3
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_PRODUCT_KEY_0, \
     TESTING_INSTEON_ADDRESS_0, \
@@ -45,7 +51,8 @@ from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_ROOM_COORDS, \
     TESTING_DEVICE_COMMENT_0, \
-    TESTING_DEVICE_ROOM_UUID, TESTING_DEVICE_FAMILY_UPB
+    TESTING_DEVICE_ROOM_UUID, \
+    TESTING_DEVICE_FAMILY_UPB
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -99,10 +106,14 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_device_obj, 'A1-02-A - Device'))
         self.assertEqual(self.m_device_obj.Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(self.m_device_obj.Key, TESTING_LIGHT_KEY_0)
+        self.assertEqual(self.m_device_obj.Active, TESTING_LIGHT_ACTIVE_0)
+        self.assertEqual(self.m_device_obj.Comment, TESTING_DEVICE_COMMENT_0)
+        self.assertEqual(self.m_device_obj.CurLevel, TESTING_LIGHT_CUR_LEVEL_0)
 
 
-class B1_Utils(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by node_local.
+class B1_Utils_Name(SetupMixin, unittest.TestCase):
+    """ This section tests utility name retrieval.
     """
 
     def setUp(self):
@@ -132,7 +143,7 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         self.m_device_obj.Name = TESTING_FAMILY_NAME_2
         # print(PrettyFormatAny.form(self.m_device_obj, 'B1-03-A - Device'))
         l_name = FamUtil._get_device_name(self.m_device_obj)
-        # print(PrettyFormatAny.form(l_name, 'B1-01-B - Family'))
+        # print(PrettyFormatAny.form(l_name, 'B1-03-B - Family'))
         self.assertEqual(l_name, TESTING_FAMILY_NAME_2)
 
     def test_04_GetDeviceName3(self):
@@ -141,14 +152,23 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         self.m_device_obj.Name = TESTING_FAMILY_NAME_3
         # print(PrettyFormatAny.form(self.m_device_obj, 'B1-04-A - Device'))
         l_name = FamUtil._get_device_name(self.m_device_obj)
-        # print(PrettyFormatAny.form(l_name, 'B1-02-B - Family'))
+        # print(PrettyFormatAny.form(l_name, 'B1-04-B - Family'))
         self.assertEqual(l_name, TESTING_FAMILY_NAME_3)
 
-    def test_05_GetFamilyObj0(self):
+
+class B2_Utils_Obj(SetupMixin, unittest.TestCase):
+    """ This section tests family object retrieval
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_GetFamilyObj0(self):
+        """ Do we get the correct family object (Null)
+        """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_0
-        # print(PrettyFormatAny.form(self.m_device_obj, 'B1-03-A - Device'))
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_obj, 'B1-03-B - Family'))
+        # print(PrettyFormatAny.form(l_obj, 'B2-01-A - Family object'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_0)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Key, 0)
@@ -156,11 +176,12 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Null')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'Null_xml')
 
-    def test_06_GetFamilyObj1(self):
+    def test_02_GetFamilyObj1(self):
+        """ Do we get the correct family object (Insteon)
+        """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
-        # print(PrettyFormatAny.form(self.m_device_obj, 'B1-04-A - Device'))
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_obj, 'B1-04-B - Family'))
+        # print(PrettyFormatAny.form(l_obj, 'B2-02-A - Family'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_1)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Key, 1)
@@ -168,11 +189,12 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'Insteon_xml')
 
-    def test_07_GetFamilyObj2(self):
+    def test_03_GetFamilyObj2(self):
+        """ Do we get the correct family object (UPB)
+        """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
-        # print(PrettyFormatAny.form(self.m_device_obj, 'B1-03-A - Device'))
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_obj, 'B1-03-B - Family'))
+        # print(PrettyFormatAny.form(l_obj, 'B2-03-A - Family'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_2)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Key, 2)
@@ -180,11 +202,12 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.UPB')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'UPB_xml')
 
-    def test_08_GetFamilyObj3(self):
+    def test_04_GetFamilyObj3(self):
+        """ Do we get the correct family object (X10)
+        """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_3
-        # print(PrettyFormatAny.form(self.m_device_obj, 'B1-04-A - Device'))
         l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_obj, 'B1-04-B - Family'))
+        # print(PrettyFormatAny.form(l_obj, 'B2-04-A - Family'))
         self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_3)
         self.assertEqual(l_obj.Active, True)
         self.assertEqual(l_obj.Key, 3)
@@ -192,31 +215,61 @@ class B1_Utils(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.X10')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'X10_xml')
 
-    def test_09_GetFamily(self):
-        """ Did we get a family?
+
+class B3_Utils_Family(SetupMixin, unittest.TestCase):
+    """ This section tests family retrieval
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_GetFamily(self):
+        """ Did we get a family name string
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_family = FamUtil.get_family(self.m_device_obj)
-        # print(PrettyFormatAny.form(l_family, 'B1-05-A - Family'))
+        # print(PrettyFormatAny.form(l_family, 'B3-01-A - Family'))
         self.assertEqual(l_family, TESTING_FAMILY_NAME_1)
 
-    def test_10_GetFamily(self):
-        """ Did we get a family?
+    def test_02_GetFamily(self):
+        """ Did we get a family name string
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
         l_family = FamUtil.get_family(self.m_device_obj)
-        # print(PrettyFormatAny.form(l_family, 'B1-06-A - Family'))
+        # print(PrettyFormatAny.form(l_family, 'B3-02-A - Family'))
         self.assertEqual(l_family, TESTING_FAMILY_NAME_2)
 
-    def test_11_GetApi(self):
+
+class B4_Utils_Family(SetupMixin, unittest.TestCase):
+    """ This section tests family API retrieval
+            Obj:ChangeLight             <bound method API.ChangeLight of <Modules.Families.UPB.UPB_device.API object at
+            Obj:SaveXml                 <bound method API.SaveXml of <Modules.Families.UPB.UPB_device.API object at
+            Obj:Start                   <bound method API.Start of <Modules.Families.UPB.UPB_device.API object at
+            Obj:Stop                    <bound method API.Stop of <Modules.Families.UPB.UPB_device.API object at
+            Obj:m_pyhouse_obj           <Modules.Core.data_objects.PyHouseData object at 0x7f6a02cc35c0>
+
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_GetApi(self):
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_api, 'B1-07-A - API'))
+        # print(PrettyFormatAny.form(l_api, 'B4-01-A - API'))
         self.assertNotEqual(l_api, None)
+        # Note: We need proper testing here
+
+    def test_02_GetApi(self):
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+        # print(PrettyFormatAny.form(l_api, 'B4-02-A - API'))
+        self.assertNotEqual(l_api, None)
+        # Note: We need proper testing here
 
 
 class C1_Read(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by Insteon.
+    """ This section tests the reading of XML used by the family.
     """
 
     def setUp(self):
@@ -240,12 +293,22 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_1)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_UPB)
 
-    def test_03_Device0(self):
-        """ Did we get the Device correctly
+
+class C2_Read_Dev(SetupMixin, unittest.TestCase):
+    """ This section tests the reading of XML used by the family.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        # self.m_device_obj.DeviceFamily = TESTING_DEVICE_FAMILY_INSTEON
+        # self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+
+    def test_01_Device0(self):
+        """ Did we get the Device correctly (Insteon)
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_device = self.m_device_obj
-        # print(PrettyFormatAny.form(l_device, 'C1-03-A - Device'))
+        # print(PrettyFormatAny.form(l_device, 'C2-01-A - Device'))
         self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.Key, TESTING_LIGHT_KEY_0)
         self.assertEqual(l_device.Active, TESTING_LIGHT_ACTIVE_0)
@@ -254,40 +317,51 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_device.DeviceSubType), TESTING_LIGHT_DEVICE_SUBTYPE_0)
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
 
-    def test_04_Device1(self):
-        """ Did we get the Device correctly
+    def test_02_Device1(self):
+        """ Did we get the Device correctly (UPB)
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
-        l_device = self.m_device_obj
-        # print(PrettyFormatAny.form(l_device, 'C1-04-A - Device'))
-        self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_1)
-        self.assertEqual(l_device.Key, TESTING_LIGHT_KEY_0)
-        self.assertEqual(l_device.Active, TESTING_LIGHT_ACTIVE_0)
-        self.assertEqual(l_device.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(str(l_device.DeviceType), TESTING_LIGHT_DEVICE_TYPE_0)
-        self.assertEqual(str(l_device.DeviceSubType), TESTING_LIGHT_DEVICE_SUBTYPE_0)
-        self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
+        self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+        # print(PrettyFormatAny.form(self.m_device_obj, 'C2-02-A - Device'))
+        self.assertEqual(self.m_device_obj.Name, TESTING_LIGHT_NAME_2)
+        self.assertEqual(self.m_device_obj.Key, TESTING_LIGHT_KEY_1)
+        self.assertEqual(self.m_device_obj.Active, TESTING_LIGHT_ACTIVE_1)
+        self.assertEqual(self.m_device_obj.DeviceFamily, TESTING_DEVICE_FAMILY_UPB)
+        self.assertEqual(str(self.m_device_obj.DeviceType), TESTING_LIGHT_DEVICE_TYPE_0)
+        self.assertEqual(str(self.m_device_obj.DeviceSubType), TESTING_LIGHT_DEVICE_SUBTYPE_0)
+        self.assertEqual(self.m_device_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
 
-    def test_05_Family(self):
+
+class C3_Read(SetupMixin, unittest.TestCase):
+    """ This section tests the reading of XML used by the family.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        # self.m_device_obj.DeviceFamily = TESTING_DEVICE_FAMILY_INSTEON
+        # self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+
+    def test_01_Family(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C1-05-A - Light'))
+        # print(PrettyFormatAny.form(l_light, 'C3-01-A - Light'))
+        self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_1)
         self.assertEqual(l_light.UPBAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
-    def test_06_Light(self):
+    def test_02_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C1-06-A - Light'))
+        # print(PrettyFormatAny.form(l_light, 'C3-02-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
 
-    def test_07_All(self):
+    def test_03_All(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         l_xml = self.m_xml.light
@@ -295,7 +369,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         #
         l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C1-07-A - Light'))
+        # print(PrettyFormatAny.form(l_light, 'C3-03-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
@@ -303,7 +377,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
-class C2_Read(SetupMixin, unittest.TestCase):
+class C4_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by UPB.
     """
 
@@ -316,7 +390,7 @@ class C2_Read(SetupMixin, unittest.TestCase):
         """ Did we get the XML correctly
         """
         l_xml = self.m_xml.light_sect[1]
-        # print(PrettyFormatAny.form(l_xml, 'C2-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'C4-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_1)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_UPB)
 
@@ -325,7 +399,7 @@ class C2_Read(SetupMixin, unittest.TestCase):
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_device = self.m_device_obj
-        # print(PrettyFormatAny.form(l_device, 'C2-02-A - Device'))
+        # print(PrettyFormatAny.form(l_device, 'C4-02-A - Device'))
         self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.Key, TESTING_LIGHT_KEY_0)
         self.assertEqual(l_device.Active, TESTING_LIGHT_ACTIVE_0)
@@ -340,8 +414,8 @@ class C2_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C2-03-A - Light'))
-        self.assertEqual(l_light.UPBAddress, TESTING_UPB_ADDRESS)
+        # print(PrettyFormatAny.form(l_light, 'C4-03-A - Light'))
+        self.assertEqual(str(l_light.UPBAddress), TESTING_UPB_ADDRESS)
 
     def test_04_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -349,7 +423,7 @@ class C2_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C2-04-A - Light'))
+        # print(PrettyFormatAny.form(l_light, 'C4-04-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
 
@@ -361,7 +435,7 @@ class C2_Read(SetupMixin, unittest.TestCase):
         #
         l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C2-05-A - Light'))
+        # print(PrettyFormatAny.form(l_light, 'C4-05-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
@@ -369,7 +443,7 @@ class C2_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
-class D1_Write(SetupMixin, unittest.TestCase):
+class E1_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
