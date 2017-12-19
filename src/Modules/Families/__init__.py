@@ -49,11 +49,11 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-12-18'
 __version_info__ = (1, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
-VALID_FAMILIES = ['Null', 'Insteon', 'UPB', 'X10']  # Keep null first
+VALID_FAMILIES = ['Null', 'Insteon', 'UPB', 'X10', 'Hue']  # Keep null first
 VALID_DEVICE_TYPES = ['Light', 'Thermostat', 'Irrigation', 'Pool']
 
 # ## END DBK

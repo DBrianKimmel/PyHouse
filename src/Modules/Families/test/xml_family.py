@@ -11,13 +11,12 @@
 
 """
 
-__updated__ = '2016-11-06'
-
+__updated__ = '2017-12-18'
 
 TESTING_FAMILY_NAME_0 = 'Null'
 TESTING_FAMILY_NAME_1 = 'Insteon'
 TESTING_FAMILY_NAME_2 = 'UPB'
 TESTING_FAMILY_NAME_3 = 'X10'
-
+TESTING_FAMILY_NAME_4 = 'Hue'
 
 # ## END DBK
