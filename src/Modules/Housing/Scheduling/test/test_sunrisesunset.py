@@ -12,7 +12,7 @@ Passed all 9 tests - DBK - 2017-04-20
 http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2017-04-20'
+__updated__ = '2017-12-20'
 
 # Import system type stuff
 import datetime
@@ -45,7 +45,6 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
 # Conversion constants.
 RAD2DEG = 180.0 / pi
 DEG2RAD = pi / 180.0
-
 
 #  http://www.esrl.noaa.gov/gmd/grad/solcalc/sunrise.html
 T_DATE_1 = datetime.date(2014, 4, 22)
@@ -87,8 +86,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_sunrisesunset')
 
@@ -96,6 +97,7 @@ class A0(unittest.TestCase):
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
     """
+
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
@@ -159,6 +161,9 @@ class B1_Astral(SetupMixin, unittest.TestCase):
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_3.minute, 1)
 
     def test_05_Loc(self):
+        """ Nearly the shortest day of the year.
+        Also, Standard time.
+        """
         l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_4)
         # print('Sun Rise', l_ret.SunRise)
         # print('Sun Set', l_ret.SunSet)

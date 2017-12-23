@@ -28,13 +28,15 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-07-24'
+__updated__ = '2017-12-22'
 
 #  Import system type stuff
 import platform
 
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
+from Modules.Computer.Bridges.bridges import API as bridgesAPI
+from Modules.Computer.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
@@ -100,6 +102,16 @@ class MqttActions(object):
 class Xml(object):
 
     @staticmethod
+    def create_computer_xml(p_pyhouse_obj):
+        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
+        return l_xml
+
+    @staticmethod
+    def read_computer_xml(p_pyhouse_obj):
+        l_xml = XmlConfigTools.read_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
+        return l_xml
+
+    @staticmethod
     def write_computer_xml(p_pyhouse_obj):
         l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
         return l_xml
@@ -116,9 +128,11 @@ class Utility(object):
         """
         p_pyhouse_obj.APIs.Computer = ComputerAPIs()
         p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
-        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.BridgesAPI = bridgesAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
@@ -128,6 +142,8 @@ class Utility(object):
     def _load_component_xml(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
+        #
+        p_pyhouse_obj.APIs.Computer.BridgesAPI.LoadXml(p_pyhouse_obj)
         # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
@@ -137,6 +153,7 @@ class Utility(object):
     @staticmethod
     def _start_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
+        p_pyhouse_obj.APIs.Computer.BridgesAPI.Start()
         # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
@@ -146,6 +163,7 @@ class Utility(object):
 
     @staticmethod
     def _stop_component_apis(p_pyhouse_obj):
+        p_pyhouse_obj.APIs.Computer.BridgesAPI.Stop()
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Stop()
         # p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
         p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
@@ -156,6 +174,7 @@ class Utility(object):
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
+        p_pyhouse_obj.APIs.Computer.BridgesAPI.SaveXml(p_xml)
         # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.MqttAPI.SaveXml(p_xml)

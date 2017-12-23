@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2017-01-14
 
 """
-__updated__ = "2017-01-15"
+__updated__ = "2017-12-21"
 
 # Import system type stuff
 import platform
@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Computer.computer import API as computerAPI, Xml as computerXML
+from Modules.Computer.computer import API as computerAPI, Xml as computerXML, COMPUTER_DIVISION
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_NAME_0, \
     TESTING_COMPUTER_DIVISION, \
@@ -40,8 +40,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_computer')
 
@@ -94,7 +96,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_01_Create(self):
         """
         """
-        l_xml = computerXML.create_computer(self.m_pyhouse_obj)
+        l_xml = computerXML.create_computer_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
         self.assertEqual(l_xml.Name, platform.node())
         self.assertEqual(l_xml.Key, 0)
@@ -109,6 +111,11 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
 
 class C2_Write(SetupMixin, unittest.TestCase):
+
+    @staticmethod
+    def write_computer_xml(p_pyhouse_obj):
+        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
+        return l_xml
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))

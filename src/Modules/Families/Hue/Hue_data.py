@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-18'
+__updated__ = '2017-12-22'
 
 # Import system type stuff
 
@@ -19,7 +19,7 @@ __updated__ = '2017-12-18'
 from Modules.Core.data_objects import LightData
 
 
-class hUEData(LightData):
+class HueData(LightData):
     """
     This is known only within the hUE family package.
     """

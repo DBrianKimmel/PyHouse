@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-07-24'
+__updated__ = '2017-12-21'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -24,13 +24,12 @@ from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 
-
-
 DEFAULT_EISCP_IPV4 = '192.168.1.138'
 DEFAULT_EISCP_PORT = 60128
 
 
 class OnkyoData(object):
+
     def __init__(self):
         self.DeviceCount = 0
         self.Devices = {}  # OnkyoDeviceData()
@@ -101,13 +100,13 @@ class XML(object):
         l_count = 0
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml == None:
-            return l_dict
+            return l_dict, l_count
         l_xml = l_xml.find('EntertainmentSection')
         if l_xml == None:
-            return l_dict
+            return l_dict, l_count
         l_xml = l_xml.find('OnkyoSection')
         if l_xml == None:
-            return l_dict
+            return l_dict, l_count
         for l_dev_xml in l_xml.iterfind('Device'):
             l_dict[l_count] = XML._read_one(l_dev_xml)
             LOG.info('Loaded Onkyo device {}'.format(l_dict[l_count]))

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-18'
+__updated__ = '2017-12-20'
 
 # Import system type stuff
 
@@ -25,8 +25,14 @@ class API(object):
     """
     """
 
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+
+    def LoadXml(self, p_pyhouse_obj):
+        """ Load the Schedule xml info.
+        """
 
     def Start(self):
         pass

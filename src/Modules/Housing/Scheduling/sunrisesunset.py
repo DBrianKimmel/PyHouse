@@ -1,10 +1,10 @@
 """
--*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_sunrisesunset -*-
+-*- test-case-name: PyHouse.src.Modules.Housing.Scheduling.test.test_sunrisesunset -*-
 
-@name:      PyHouse/src/Modules/Scheduling/sunrisesunset.py
+@name:      PyHouse/src/Modules/Housing/Scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2018 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
@@ -19,7 +19,7 @@
 
 """
 
-__updated__ = '2016-07-16'
+__updated__ = '2017-12-20'
 
 # Import system type stuff
 import datetime
@@ -36,6 +36,7 @@ LOG = Logger.getLogger('PyHouse.Sunrise        ')
 class LocatTzinfo(datetime.tzinfo):
     """
     """
+
     def __init__(self):
         pass
 
@@ -55,7 +56,7 @@ class Util(object):
     def _till_next(p_time=datetime.datetime.today()):
         """
         Get the number of seconds until we calculate sunrise again
-        @return: the numbere of seconds till 0:12:12
+        @return: the number of seconds till 0:12:12
         """
         l_recalc = datetime.timedelta(days=1, seconds=(12 * 60 + 12)).total_seconds()
         l_current = p_time
@@ -83,7 +84,6 @@ class Util(object):
             l_date = p_date.date()  # convert datetime.datetime to datetime.date
         else:
             l_date = p_date
-        # print(PrettyFormatAny.form('{}'.format(l_a), 'AA'))
         l_sun = l_a.sun(date=l_date, local=True)
         l_ret = RiseSetData()
         l_ret.Dawn = l_sun['dawn']

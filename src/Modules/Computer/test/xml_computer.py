@@ -7,19 +7,28 @@
 @note:      Created on Nov 8, 2014
 @Summary:
 
+
+ComputerDivision - Name, Key, Active
+  BridgeSection
+  CommunicationSection
+  InternetSection
+  MqttSection
+  NodeSection
+  WebSection
+
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-12-22'
 
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Computer.Bridges.test.xml_bridges import XML_BRIDGES
 from Modules.Computer.Communication.test.xml_communications import XML_COMMUNICATION
 from Modules.Computer.Internet.test.xml_internet import XML_INTERNET
 from Modules.Computer.Mqtt.test.xml_mqtt import XML_MQTT
 from Modules.Computer.Nodes.test.xml_nodes import XML_NODES
 from Modules.Computer.Web.test.xml_web import XML_WEB_SERVER
-
 
 TESTING_COMPUTER_DIVISION = 'ComputerDivision'
 
@@ -41,6 +50,7 @@ L_COMPUTER_UUID = '<UUID>' + TESTING_COMPUTER_UUID + '</UUID>'
 XML_COMPUTER_DIVISION = '\n'.join([
     L_COMPUTER_DIV_START,
     L_COMPUTER_UUID,
+    XML_BRIDGES,
     XML_COMMUNICATION,
     XML_INTERNET,
     XML_MQTT,

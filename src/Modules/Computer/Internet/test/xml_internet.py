@@ -2,14 +2,22 @@
 @name:      PyHouse/src/Modules/Computer/Internet/test/xml_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 8, 2014
 @Summary:   Testing multiple internet connection structures.
 
+InternetSection
+  Internet Name Active Key
+    ExternamIPv4
+    ExternamIPv6
+    LastChanged
+    UpdateInterval
+    LocateUrl
+    UpdateUrl
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-12-21'
 
 L_INTERNET_SECTION_START = '<InternetSection>'
 L_INTERNET_SECTION_END = '</InternetSection>'

@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-05-01'
+__updated__ = '2017-12-22'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,6 +31,7 @@ class PyHouseData(object):
 
     The APIs are kept seperate as they should not be a part of the data sent to the browser.
     """
+
     def __init__(self):
         self.APIs = None  # PyHouseAPIs()
         self.Computer = None  # ComputerInformation()
@@ -60,10 +61,19 @@ class BaseObject(object):
     This data for non device data.
     Do not use this object, derive objects from it.
     """
+
     def __init__(self):
         self.Name = 'undefined baseobject'
         self.Key = 0
         self.Active = False
+
+
+class BridgesData(object):
+    """ This section contains the data for any bridges defined for the executing Computer/Node.
+    """
+
+    def __init__(self):
+        self.Name = 'undefined bridges data'
 
 
 class CommunicationAPIs(object):
@@ -71,6 +81,7 @@ class CommunicationAPIs(object):
 
     ==> PyHouse.APIs.Computer.Communication as in the def below.
     """
+
     def __init__(self):
         self.BluetoothAPI = None
         self.EmailAPI = None
@@ -83,7 +94,9 @@ class ComputerAPIs(object):
 
     ==> PyHouse.APIs.Computer.xxx as in the def below.
     """
+
     def __init__(self):
+        self.BridgesAPI = None
         self.ComputerAPI = None
         self.Communication = None  # CommunicationAPIs()
         self.InternetAPI = None
@@ -106,6 +119,7 @@ class CoordinateData(object):
         Light switches are about 1.0 meters above the floor.
         Outlets are about 0.2 meters above the floor.
     """
+
     def __init__(self):
         self.X_Easting = 0.0
         self.Y_Northing = 0.0
@@ -115,6 +129,7 @@ class CoordinateData(object):
 class CommunicationData(object):
     """Email information.
     """
+
     def __init__(self):
         self.Email = None  # EmailData()
         self.Twitter = None  # TwitterData()
@@ -123,6 +138,7 @@ class CommunicationData(object):
 class EmailData(object):
     """Email information.
     """
+
     def __init__(self):
         self.EmailFromAddress = ''
         self.EmailToAddress = ''
@@ -135,6 +151,7 @@ class EntertainmentData(object):
 
     ==> PyHouse.House.Entertainment.xxx as in the def below.
     """
+
     def __init__(self):
         self.Onkyo = None
         self.Panasonic = None
@@ -147,6 +164,7 @@ class EntertainmentData(object):
 class EthernetControllerData(object):
     """A lighting controller that is connected to the node via Ethernet
     """
+
     def __init__(self):
         self.InterfaceType = 'Ethernet'
         self.PortNumber = 0
@@ -158,6 +176,7 @@ class HouseAPIs(object):
 
     ==> PyHouse.APIs.House
     """
+
     def __init__(self):
         self.EntertainmentAPI = None
         self.FamilyAPI = None
@@ -177,6 +196,7 @@ class HvacData(object):
 
     ==> PyHouse.House.Hvac.xxx as in the def below
     """
+
     def __init__(self):
         self.Thermostats = {}  # ThermostatData()  Sub = 1
 
@@ -187,6 +207,7 @@ class LightingData(object):
 
     ==> PyHouse.House.Lighting.xxx as in the def below
     """
+
     def __init__(self):
         self.Buttons = {}  # ButtonData()  Sub = 3
         self.Controllers = {}  # ControllerData()  Sub = 1
@@ -197,6 +218,7 @@ class LocationData(object):
     """ Location of the houses
     Latitude and Longitude allow the computation of local sunrise and sunset
     """
+
     def __init__(self):
         self.Street = ''
         self.City = ''
@@ -223,6 +245,7 @@ class LocationData(object):
 class ModuleObject(object):
     """
     """
+
     def __init__(self):
         self.Active = False
 
@@ -232,6 +255,7 @@ class MqttInformation(object):
 
     ==> PyHouse.Computer.Mqtt.xxx as in the def below
     """
+
     def __init__(self):
         self.Prefix = ''
         self.Brokers = {}  # MqttBrokerData()
@@ -242,6 +266,7 @@ class MqttJson(object):
     """ This is a couple of pieces of information that get added into every MQTT message
         sent out of this computer.
     """
+
     def __init__(self):
         self.Sender = ''  # The Mqtt name of the sending device.
         self.DateTime = None  # The time on the sending device
@@ -250,6 +275,7 @@ class MqttJson(object):
 class NullControllerData(object):
     """ A lighting controller that is connected to the node via Nothing
     """
+
     def __init__(self):
         self.InterfaceType = 'Null'
 
@@ -259,6 +285,7 @@ class RiseSetData(object):
     They were calculated by the sunrisesunset module for the house's location and timezone.
     They are therefore, the local time of sunrise and sunset.
     """
+
     def __init__(self):
         self.Dawn = None
         self.SunRise = None
@@ -270,6 +297,7 @@ class RiseSetData(object):
 class ScheduleThermostatData(object):
     """
     """
+
     def __init__(self):
         self.HeatSetting = None
         self.CoolSetting = None
@@ -280,6 +308,7 @@ class SecurityData(object):
     DeviceType = 3
     ==> PyHouse.House.Security.xxx as in the def below
     """
+
     def __init__(self):
         self.GarageDoors = {}  # DeviceSubtype = 1
         self.MotionSensors = {}  # DeviceSubtype = 2
@@ -288,6 +317,7 @@ class SecurityData(object):
 class SerialControllerData(object):
     """ The additional data needed for serial interfaces.
     """
+
     def __init__(self):
         self.InterfaceType = 'Serial'
         self.BaudRate = 9600
@@ -303,6 +333,7 @@ class SerialControllerData(object):
 class TwistedInformation(object):
     """ Twisted info is kept in this class
     """
+
     def __init__(self):
         self.Application = None  # Application('PyHouse')
         self.Reactor = None  # reactor
@@ -311,6 +342,7 @@ class TwistedInformation(object):
 class TwitterData(object):
     """ Email information.
     """
+
     def __init__(self):
         self.TwitterConsumerKey = ''
         self.TwitterConsumerSecret = ''
@@ -321,6 +353,7 @@ class TwitterData(object):
 class USBControllerData(object):
     """ A lighting controller that is plugged into one of the nodes USB ports
     """
+
     def __init__(self):
         self.InterfaceType = 'USB'
         self.Product = 0
@@ -332,6 +365,7 @@ class AllUuids(object):
 
     ==> PyHouse.Uuids.xxx as in the def below
     """
+
     def __init__(self):
         self.All = {}  # UuidData()
         self.ComputerUuid = None
@@ -344,6 +378,7 @@ class UuidData(object):
 
     ==> PyHouse.Uuids.All.{} as in the def below
     """
+
     def __init__(self):
         self.UUID = None
         self.UuidType = None  # Light, Thermostat, Room ...
@@ -352,6 +387,7 @@ class UuidData(object):
 class WeatherData(object):
     """
     """
+
     def __init__(self):
         self.Temperature = 0  # Degrees C
         self.Humidity = 0  # Percent
@@ -365,6 +401,7 @@ class WebData(object):
 
     ==> PyHouse.Computer.Web.xxx - as in the def below.
     """
+
     def __init__(self):
         self.WebPort = 8580
         self.WebSocketPort = 8581
@@ -377,6 +414,7 @@ class XmlInformation(object):
 
     ==> PyHouse.Xml.xxx
     """
+
     def __init__(self):
         self.XmlConfigDir = '/etc/pyhouse/'
         self.XmlFileName = None
@@ -388,6 +426,7 @@ class XmlInformation(object):
 class BaseUUIDObject(BaseObject):
     """
     """
+
     def __init__(self):
         super(BaseUUIDObject, self).__init__()
         self.UUID = None
@@ -401,6 +440,7 @@ BaseObject dependent.
 class FamilyData(BaseObject):
     """ A container for every family that has been defined in modules.
     """
+
     def __init__(self):
         super(FamilyData, self).__init__()
         self.FamilyModuleAPI = None  # Insteon_device.API()
@@ -413,6 +453,7 @@ class FamilyData(BaseObject):
 class InternetConnectionData(BaseObject):
     """ Check our nodes external IP-v4 address
     """
+
     def __init__(self):
         self.ExternalIPv4 = '0.0.0.0'
         self.ExternalIPv6 = '2001:db8::dead:beef'
@@ -425,6 +466,7 @@ class InternetConnectionData(BaseObject):
 class JsonHouseData(BaseObject):
     """ Simplified for JSON encoding.
     """
+
     def __init__(self):
         super(JsonHouseData, self).__init__()
         self.Buttons = {}
@@ -443,6 +485,7 @@ class MqttBrokerData(BaseObject):
 
     ==> PyHouse.Computer.Mqtt.Brokers.XXX as in the def below
     """
+
     def __init__(self):
         super(MqttBrokerData, self).__init__()
         self.BrokerName = None
@@ -467,8 +510,10 @@ class ComputerInformation(BaseUUIDObject):
 
     ==> PyHouse.Computer.xxx - as in the def below.
     """
+
     def __init__(self):
         super(ComputerInformation, self).__init__()
+        self.Bridges = {}  # BridgesData()
         self.Communication = {}  # CommunicationData()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Mqtt = {}  # MqttInformation()
@@ -481,6 +526,7 @@ class DeviceData(BaseUUIDObject):
     """ This data is in every other device object.
     Do not use this object, derive objects from it.
     """
+
     def __init__(self):
         super(DeviceData, self).__init__()
         self.Comment = ''
@@ -498,6 +544,7 @@ class HouseInformation(BaseUUIDObject):
 
     ==> PyHouse.House.xxx as in the def below.
     """
+
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.FamilyData = {}  # FamilyData['FamilyName']
@@ -519,6 +566,7 @@ class LoginData(BaseUUIDObject):
 
     ==> PyHouse.Computer.Web.Logins.xxx - as in the def below.
     """
+
     def __init__(self):
         super(LoginData, self).__init__()
         self.LoginFullName = 'Not logged in'
@@ -538,6 +586,7 @@ class NodeData(BaseUUIDObject):
 
     ==> PyHouse.Computer.Nodes[x].xxx - as in the def below.
     """
+
     def __init__(self):
         super(NodeData, self).__init__()
         self.Comment = None
@@ -556,6 +605,7 @@ class NodeInterfaceData(BaseUUIDObject):
 
     ==> PyHouse.Computer.Nodes[x].NodeInterfaces[x].xxx - as in the def below.
     """
+
     def __init__(self):
         super(NodeInterfaceData, self).__init__()
         self.NodeInterfaceType = None  # Ethernet | Wireless | Loopback | Tunnel | Other
@@ -569,6 +619,7 @@ class PoolData(BaseUUIDObject):
 
     ==> PyHouse.House.Pools.{}.
     """
+
     def __init__(self):
         super(PoolData, self).__init__()
         self.Comment = None
@@ -582,6 +633,7 @@ class RoomData(BaseUUIDObject):
 
     ==> PyHouse.House.Rooms.xxx as in the def below
     """
+
     def __init__(self):
         super(RoomData, self).__init__()
         self.Comment = ''
@@ -598,6 +650,7 @@ class RulesData(BaseUUIDObject):
     """
     ==> PyHouse.House.Rules.xxx as in the def below
     """
+
     def __init__(self):
         self.DeviceUUID = None
         self.Condition = None
@@ -614,6 +667,7 @@ class ScheduleBaseData(BaseUUIDObject):
             2 is valid on Tuesday
             64 is valid on Sunday
     """
+
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
         self.DOW = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
@@ -629,6 +683,7 @@ class SensorData(BaseUUIDObject):
     """ This data is in almost every other Sensor object.
     Do not use this object, derive objects from it.
     """
+
     def __init__(self):
         super(SensorData, self).__init__()
         self.Sensor = None
@@ -642,6 +697,7 @@ ScheduleBaseData dependent
 class ScheduleIrrigationData(ScheduleBaseData):
     """
     """
+
     def __init__(self):
         super(ScheduleIrrigationData, self).__init__()
         self.ScheduleType = 'Irrigation'
@@ -654,6 +710,7 @@ class ScheduleIrrigationData(ScheduleBaseData):
 class ScheduleLightData(ScheduleBaseData):
     """ A schedule piece for lighting events.
     """
+
     def __init__(self):
         super(ScheduleLightData, self).__init__()
         self.Level = 0
@@ -683,6 +740,7 @@ class CoreLightingData(DeviceData):
 class IrrigationData(DeviceData):
     """ Info about any/all irrigation systems for a house.
     """
+
     def __init__(self):
         super(IrrigationData, self).__init__()
         self.Systems = {}  # IrrigationSystemData()
@@ -691,6 +749,7 @@ class IrrigationData(DeviceData):
 class IrrigationSystemData(DeviceData):
     """ Info about an irrigation system (may have many zones).
     """
+
     def __init__(self):
         super(IrrigationSystemData, self).__init__()
         self.UsesMasterValve = False  # Master valve and/or Pump Relay
@@ -701,6 +760,7 @@ class IrrigationSystemData(DeviceData):
 class IrrigationZoneData(object):
     """ Info about an irrigation zone
     """
+
     def __init__(self):
         # super(IrrigationZoneData, self).__init__()
         self.Name = 'Default zone'
@@ -718,6 +778,7 @@ class ThermostatData(DeviceData):
 
     ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
     """
+
     def __init__(self):
         super(ThermostatData, self).__init__()
         self.CoolSetPoint = 0
@@ -739,6 +800,7 @@ class ButtonData(CoreLightingData):
     This is the wall switch and may control more than one light
     Also may control scenes.
     """
+
     def __init__(self):
         super(ButtonData, self).__init__()
 
@@ -748,6 +810,7 @@ class ControllerData(CoreLightingData):
 
     ==> PyHouse.House.Lighting.Controllers.xxx as in the def below
     """
+
     def __init__(self):
         super(ControllerData, self).__init__()
         self.InterfaceType = ''  # Serial | USB | Ethernet
@@ -766,6 +829,7 @@ class GarageDoorData(CoreLightingData):
 
     ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
     """
+
     def __init__(self):
         super(GarageDoorData, self).__init__()
         self.Status = None  # Open | Closed
@@ -776,6 +840,7 @@ class LightData(CoreLightingData):
 
     ==> PyHouse.House.Lighting.Lightss.xxx as in the def below
     """
+
     def __init__(self):
         super(LightData, self).__init__()
         self.CurLevel = 0
@@ -788,6 +853,7 @@ class MotionSensorData(CoreLightingData):
     SubType = 5
     ==> PyHouse.House.Security.Motion.xxx as in the def below
     """
+
     def __init__(self):
         super(MotionSensorData, self).__init__()
         self.Motion = None
