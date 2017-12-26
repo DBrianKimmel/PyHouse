@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-06-25'
+__updated__ = '2017-12-23'
 
 #  Import system type stuff
 import platform
@@ -53,6 +53,7 @@ class XmlData(object):
     """
     Testing XML infrastructure
     """
+
     def __init__(self):
         self.root = None
         #
@@ -92,6 +93,7 @@ class XmlData(object):
         self.thermostat = None
         #
         self.computer_div = None
+        self.bridges_sect = None
         self.communication_sect = None
         self.email_sect = None
         self.twitter_sect = None
@@ -167,6 +169,7 @@ class SetupPyHouseObj(object):
         if p_xml.computer_div is None:
             return
         #
+        p_xml.bridges_sect = p_xml.computer_div.find('BridgesSection')
         p_xml.communication_sect = p_xml.computer_div.find('CommunicationSection')
         p_xml.email_sect = p_xml.communication_sect.find('EmailSection')
         p_xml.twitter_sect = p_xml.communication_sect.find('TwitterSection')

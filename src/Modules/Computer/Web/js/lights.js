@@ -147,7 +147,7 @@ function buildEntry(self, p_obj, p_handler, p_onchange) {
 },
 
 function buildLightEntry(self, p_obj, p_html) {
-	p_html += buildTextWidget(self, 'CurLevel', 'Level', p_obj.CurLevel, 'disabled');
+	p_html += buildTextWidget(self, 'BrightnessPct', 'Level', p_obj.BrightnessPct, 'disabled');
 	p_html += buildTrueFalseWidget(self, 'IsDimmable', 'Dimmable ?', p_obj.IsDimmable);
 	return p_html;
 },
@@ -178,7 +178,7 @@ function fetchEntry(self) {
 },
 
 function fetchLightEntry(self, p_data) {
-	p_data.CurLevel = fetchTextWidget(self, 'CurLevel');
+	p_data.BrightnessPct = fetchTextWidget(self, 'BrightnessPct');
 	p_data.IsDimmable = fetchTrueFalseWidget(self, 'IsDimmable');
 	// Get non displayed fields
 	p_data.DeviceSubType = 3;
@@ -197,7 +197,7 @@ function createEntry(self) {
 },
 
 function createLightEntry(self, p_data) {
-	p_data.CurLevel = 0;
+	p_data.BrightnessPct = 0;
 	p_data.IsDimmable = 'True';
 },
 

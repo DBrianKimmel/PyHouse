@@ -67,7 +67,7 @@ class SetupMixin(object):
         self.m_device_obj.Key = TESTING_LIGHT_KEY_0
         self.m_device_obj.Active = TESTING_LIGHT_ACTIVE_0
         self.m_device_obj.Comment = TESTING_DEVICE_COMMENT_0
-        self.m_device_obj.CurLevel = TESTING_LIGHT_CUR_LEVEL_0
+        self.m_device_obj.BrightnessPct = TESTING_LIGHT_CUR_LEVEL_0
         self.m_device_obj.DeviceFamily = TESTING_LIGHT_DEVICE_FAMILY_0
         self.m_device_obj.DeviceType = 1
         self.m_device_obj.DeviceSubType = 3
@@ -109,7 +109,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_device_obj.Key, TESTING_LIGHT_KEY_0)
         self.assertEqual(self.m_device_obj.Active, TESTING_LIGHT_ACTIVE_0)
         self.assertEqual(self.m_device_obj.Comment, TESTING_DEVICE_COMMENT_0)
-        self.assertEqual(self.m_device_obj.CurLevel, TESTING_LIGHT_CUR_LEVEL_0)
+        self.assertEqual(self.m_device_obj.BrightnessPct, TESTING_LIGHT_CUR_LEVEL_0)
 
 
 class B1_Utils_Name(SetupMixin, unittest.TestCase):

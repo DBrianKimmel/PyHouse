@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2016-11-05'
+__updated__ = '2017-12-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,27 +36,6 @@ LOG = Logger.getLogger('PyHouse.Lighting       ')
 class Utility(object):
     """Commands we can run from high places.
     """
-
-    def XXX_setup_lighting(self, p_pyhouse_obj):
-        """
-        Find the lighting information
-        Config file version 1.4 moved the lighting information into a separate LightingSection
-        """
-        l_root = p_pyhouse_obj.Xml.XmlRoot
-        l_lighting_xml = None
-        try:
-            l_house_xml = l_root.find('HouseDivision')
-        except AttributeError as e_err:
-            LOG.error('House Division is missing in Config file.  {}'.format(e_err))
-            l_house_xml = l_root
-        try:
-            l_lighting_xml = l_house_xml.find('LightingSection')
-        except AttributeError as e_err:
-            LOG.warning('No LightingSection {}'.format(e_err))
-        #  We have an old version
-        if l_lighting_xml is None or l_lighting_xml == 'None':
-            l_lighting_xml = l_house_xml
-        return l_lighting_xml
 
     def _read_lighting_xml(self, p_pyhouse_obj):
         """
@@ -123,13 +102,18 @@ class API(Utility):
         #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def ChangeLight(self, p_light_obj, p_source, p_new_level, _p_rate=None):
+    def ChangeLight(self, p_light_obj, p_source, p_new_level, p_rate=None):
         """
         Set an Insteon controlled light to a value - On, Off, or Dimmed.
 
         Called by:
             web_controlLights
             schedule
+
+        @param p_light_obj:
+        @param p_source: is a string denoting the source of the change.
+        @param p_new_level: is the new light level (0 - 100%)
+        @param p_rate: is the ramp up rate (not uese)
         """
         l_light_obj = actionUtility._find_full_obj(self.m_pyhouse_obj, p_light_obj)
         try:

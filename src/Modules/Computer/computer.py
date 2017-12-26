@@ -4,16 +4,17 @@
 @name:      PyHouse/src/Modules/Computer/computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @note:      Created on Jun 24, 2014
 @license:   MIT License
 @summary:   Handle the computer information.
 
-This handles the Computer part of the node.  (The other part is "house").
+This handles the Computer part of the node.  (The other part is "House").
 
 This takes care of starting all the computer modules (In Order).
     Logging
     Mqtt Broker(s)
+    Bridges
     Nodes
     Internet Connection(s)
     Web Server(s)
@@ -28,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-12-22'
+__updated__ = '2017-12-23'
 
 #  Import system type stuff
 import platform

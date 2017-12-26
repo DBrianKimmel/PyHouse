@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-05-11'
+__updated__ = '2017-12-24'
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData
@@ -21,6 +21,7 @@ from Modules.Housing.Security.security import MqttActions as securityMqtt
 class Actions(object):
     """
     """
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_myname = p_pyhouse_obj.Computer.Name
@@ -49,7 +50,7 @@ class Actions(object):
         p_logmsg += '\tLighting:\n'
         p_logmsg += '\tName: {}\n'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        p_logmsg += '\n\tLevel: {}'.format(self._get_field(p_message, 'CurLevel'))
+        p_logmsg += '\n\tBrightness: {}'.format(self._get_field(p_message, 'BrightnessPct'))
         return p_logmsg
 
     def _decode_room(self, p_logmsg, p_topic, p_message):

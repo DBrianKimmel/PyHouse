@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2017-12-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -56,10 +56,13 @@ class Utility(object):
     @staticmethod
     def _read_light_data(_p_pyhouse_obj, p_obj, p_xml):
         p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
-        p_obj.CurLevel = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 0)
+        if (p_xml.find('Brightness') != None):
+            p_obj.BrightnessPct = PutGetXML.get_int_from_xml(p_xml, 'Brightness', 44)
+        else:
+            p_obj.BrightnessPct = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 45)
         p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
-        p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType', 1)
-        p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType', 3)
+        p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType', 41)
+        p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType', 43)
         p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
         p_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
         p_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_xml, 'RoomCoords')
@@ -68,7 +71,7 @@ class Utility(object):
     @staticmethod
     def _write_light_data(p_obj, p_xml):
         PutGetXML.put_text_element(p_xml, 'Comment', p_obj.Comment)
-        PutGetXML.put_text_element(p_xml, 'CurLevel', p_obj.CurLevel)
+        PutGetXML.put_text_element(p_xml, 'Brightness', p_obj.BrightnessPct)
         PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
         PutGetXML.put_int_element(p_xml, 'DeviceType', p_obj.DeviceType)
         PutGetXML.put_int_element(p_xml, 'DeviceSubType', p_obj.DeviceSubType)

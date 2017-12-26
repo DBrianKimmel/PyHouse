@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2017-12-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,18 +42,18 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_ROOM_UUID_0, \
     TESTING_SCHEDULE_LIGHT_UUID_0, \
     TESTING_SCHEDULE_LIGHT_NAME_0, \
-    TESTING_SCHEDULE_LEVEL_0, \
+    TESTING_SCHEDULE_BRIGHTNESS_0, \
     TESTING_SCHEDULE_RATE_0, \
     TESTING_SCHEDULE_NAME_4, \
     TESTING_SCHEDULE_ROOM_NAME_1, \
     TESTING_SCHEDULE_KEY_4, \
     TESTING_SCHEDULE_ACTIVE_4, \
-    TESTING_SCHEDULE_DURATION_4
+    TESTING_SCHEDULE_DURATION_4, TESTING_SCHEDULE_SECTION
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_KEY, \
-    TESTING_HOUSE_UUID
+    TESTING_HOUSE_UUID, TESTING_HOUSE_DIVISION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -69,8 +69,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_schedule_xml')
 
@@ -87,15 +89,15 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_pyhouse_obj.House.Schedules, None)
+        self.assertEqual(self.m_pyhouse_obj.House.Schedules, {})
 
     def test_2_FindXML(self):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.schedule_sect.tag, 'ScheduleSection')
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.schedule_sect.tag, TESTING_SCHEDULE_SECTION)
         self.assertEqual(self.m_xml.schedule.tag, 'Schedule')
 
 
@@ -165,7 +167,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = scheduleXml._read_one_lighting_schedule(self.m_xml.schedule)
         # print(PrettyFormatAny.form(l_obj, 'B1-02-A - One Light'))
         # print(PrettyFormatAny.form(self.m_xml.schedule, 'B1-02-B - OneBase'))
-        self.assertEqual(str(l_obj.Level), TESTING_SCHEDULE_LEVEL_0)
+        self.assertEqual(str(l_obj.Level), TESTING_SCHEDULE_BRIGHTNESS_0)
         self.assertEqual(str(l_obj.LightName), TESTING_SCHEDULE_LIGHT_NAME_0)
         self.assertEqual(l_obj.LightUUID, TESTING_SCHEDULE_LIGHT_UUID_0)
         self.assertEqual(str(l_obj.Rate), TESTING_SCHEDULE_RATE_0)
@@ -231,7 +233,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('ScheduleMode').text, TESTING_SCHEDULE_MODE_0)
         self.assertEqual(l_xml.find('ScheduleType').text, TESTING_SCHEDULE_TYPE_0)
         self.assertEqual(l_xml.find('Time').text, TESTING_SCHEDULE_TIME_0)
-        self.assertEqual(l_xml.find('Level').text, TESTING_SCHEDULE_LEVEL_0)
+        self.assertEqual(l_xml.find('Level').text, TESTING_SCHEDULE_BRIGHTNESS_0)
         self.assertEqual(l_xml.find('LightName').text, TESTING_SCHEDULE_LIGHT_NAME_0)
         self.assertEqual(l_xml.find('LightUUID').text, TESTING_SCHEDULE_LIGHT_UUID_0)
         self.assertEqual(l_xml.find('Rate').text, TESTING_SCHEDULE_RATE_0)

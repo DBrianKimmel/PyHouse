@@ -186,14 +186,14 @@ class DecodeResponses(object):
                 l_device_obj.FirmwareVersion = l_cmd2
                 l_debug_msg += 'Request-ID:"{}"; '.format(l_device_obj.FirmwareVersion)
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
-                l_device_obj.CurLevel = 100
+                l_device_obj.BrightnessPct = 100
                 l_debug_msg += 'Turn ON; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
-                l_device_obj.CurLevel = 0
+                l_device_obj.BrightnessPct = 0
                 l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
                 l_level = int(((l_cmd2 + 2) * 100) / 256)
-                l_device_obj.CurLevel = l_level
+                l_device_obj.BrightnessPct = l_level
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x01:
                 l_debug_msg += ' Device-Set-Button-Pressed '

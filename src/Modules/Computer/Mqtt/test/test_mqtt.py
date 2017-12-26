@@ -10,9 +10,8 @@
 Passed all 9 tests - DBK - 2017-07-07
 
 """
-from Modules.Core.data_objects import ScheduleLightData, ControllerData
 
-__updated__ = '2017-07-07'
+__updated__ = '2017-12-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,6 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import ScheduleLightData, ControllerData
 from Modules.Computer.Mqtt import mqtt
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
@@ -28,8 +28,8 @@ from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQ
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.debug_tools import FormatBytes
 
-
 DICT = {'one': 1, "Two": 'tew'}
+
 
 class SetupMixin(object):
 
@@ -51,8 +51,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_mqtt_util')
 
@@ -62,7 +64,6 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
-
 
     def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.

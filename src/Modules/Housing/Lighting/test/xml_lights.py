@@ -11,14 +11,13 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2017-10-09'
+__updated__ = '2017-12-24'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0, XML_INSTEON_1
 from Modules.Families.UPB.test.xml_upb import XML_UPB
-
 
 TESTING_LIGHT_SECTION = 'LightSection'
 TESTING_LIGHT = 'Light'
@@ -83,7 +82,6 @@ L_LIGHT_0 = '\n'.join([
     L_LIGHT_END
     ])
 
-
 TESTING_LIGHT_NAME_1 = "UPB Light"
 TESTING_LIGHT_KEY_1 = '1'
 TESTING_LIGHT_ACTIVE_1 = 'True'
@@ -102,7 +100,6 @@ TESTING_LIGHT_ROOM_COORDS_1 = '[1.23,4.56,7.89]'
 TESTING_LIGHT_ROOM_NAME_1 = 'Master Bath'
 TESTING_LIGHT_ROOM_UUID_1 = 'Light...-Room-0000-0000-123458b6eb6f'
 
-
 L_LIGHT_START_1 = \
         '<' + TESTING_LIGHT + ' ' + \
         'Name="' + TESTING_LIGHT_NAME_1 + '" ' + \
@@ -111,7 +108,7 @@ L_LIGHT_START_1 = \
         '>'
 L_LIGHT_UUID_1 = '    <UUID>' + TESTING_LIGHT_UUID_1 + '</UUID>'
 L_LIGHT_COMMENT_1 = '    <Comment>' + TESTING_LIGHT_COMMENT_1 + '</Comment>'
-L_LIGHT_CUR_LEVEL_1 = "    <CurLevel>" + TESTING_LIGHT_CUR_LEVEL_1 + "</CurLevel>"
+L_LIGHT_CUR_LEVEL_1 = "    <Brightness>" + TESTING_LIGHT_CUR_LEVEL_1 + "</Brightness>"
 L_LIGHT_DEVICE_FAMILY_1 = "    <DeviceFamily>" + TESTING_LIGHT_DEVICE_FAMILY_1 + "</DeviceFamily>"
 L_LIGHT_DEVICE_TYPE_1 = '    <DeviceType>' + TESTING_LIGHT_DEVICE_TYPE_1 + '</DeviceType>'
 L_LIGHT_DEVICE_SUBTYPE_1 = '    <DeviceSubType>' + TESTING_LIGHT_DEVICE_SUBTYPE_1 + '</DeviceSubType>'

@@ -5,7 +5,7 @@
 @name:      PyHouse/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2018 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2017-10-09'
+__updated__ = '2017-12-23'
 __version_info__ = (17, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -84,7 +84,6 @@ from Modules.Core.data_objects import \
     UuidData, \
     TwistedInformation, \
     XmlInformation, AllUuids
-
 
 #  Import PyMh files and modules.
 g_API = None

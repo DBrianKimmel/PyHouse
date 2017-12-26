@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-04-22'
+__updated__ = '2017-12-26'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -64,6 +64,15 @@ class PutGetXML(object):
     """Protected put / get routines
 
     Try to be safe if a user edits (and screws up) the XML file.
+
+    get_bool_from_xml
+    get_float_from_xml
+    get_int_from_xml
+    get_text_from_xml
+    get_uuid_from_xml
+    get_ip_from_xml
+    get_date_time_from_xml
+    get_coords_from_xml
     """
 
 # -----
@@ -228,7 +237,6 @@ class PutGetXML(object):
         """
         PutGetXML.put_text_element(p_parent_element, p_name, p_uuid)
 
-
 # -----
 #  IP
 # -----
@@ -247,7 +255,6 @@ class PutGetXML(object):
         l_ip = convert.long_to_str(p_ip)
         PutGetXML.put_text_element(p_parent_element, p_name, l_ip)
 
-
 # -----
 #  DateTime
 # -----
@@ -263,16 +270,17 @@ class PutGetXML(object):
     def put_date_time_element(p_parent_element, p_name, p_date_time):
         PutGetXML.put_text_element(p_parent_element, p_name, p_date_time)
 
-
 # -----
 #  Coords
 # -----
     @staticmethod
     def get_coords_from_xml(p_xml, p_name):
+
         def _get_float(p_field):
             l_fld = str.strip(p_field, '\"\' ')
             l_flt = float(l_fld)
             return l_flt
+
         l_ret = CoordinateData()
         l_raw = XML.get_any_field(p_xml, p_name)
         #  LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
