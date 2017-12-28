@@ -4,15 +4,14 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @note:      Created on Apr 25, 2017
 @license:   MIT License
 @summary:   This is basically the MQTT API interface that is used by all of pyhouse.
 
 """
 
-__updated__ = '2017-04-30'
-
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 import copy
@@ -32,6 +31,7 @@ from Modules.Core.Utilities.debug_tools import FormatBytes
 def _make_topic(p_pyhouse_obj, p_topic):
     l_topic = p_pyhouse_obj.Computer.Mqtt.Prefix + p_topic
     return l_topic
+
 
 def _make_message(p_pyhouse_obj, p_message=None):
     """

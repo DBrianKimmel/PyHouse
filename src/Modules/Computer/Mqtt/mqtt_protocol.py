@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 28, 2015
 @Summary:   This creates the Twisted (Async) version of MQTT client.
@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2017-04-30'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 import random
@@ -537,6 +537,7 @@ MQTT_FACTORY_START = 0
 MQTT_FACTORY_CONNECTING = 1
 MQTT_FACTORY_CONNECTED = 2
 
+
 class MQTTClient(MQTTProtocol):
     """
     """
@@ -588,7 +589,7 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.info("Client TCP or TLS - Keepalive: {} seconds".format(self.m_keepalive / 1000))
+        LOG.info("Client TCP or TLS - KeepAlive: {} seconds".format(self.m_keepalive / 1000))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_clientID, self.m_keepalive,
                      self.m_willTopic, self.m_willMessage, self.m_willQos, self.m_willRetain, True,
@@ -599,10 +600,10 @@ class MQTTClient(MQTTProtocol):
     def connectionLost(self, reason):
         """ Override
 
-        PyHouse logic for what happend when the TCP/TLS connection is broken.
+        PyHouse logic for what happened when the TCP/TLS connection is broken.
         """
-        _l_msg = reason.check(error.ConnectionClosed)
-        LOG.info("Disconnected from MQTT Broker: {}".format(reason))
+        l_msg = reason.check(error.ConnectionClosed)
+        LOG.info("Disconnected from MQTT Broker: {}  {}".format(reason, l_msg))
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
@@ -645,8 +646,8 @@ class MQTTClient(MQTTProtocol):
         """
         self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
 
-
 ###########################################
+
 
 class PyHouseMqttFactory(ReconnectingClientFactory):
     """This factory holds the state for this broker (there may be more than one).

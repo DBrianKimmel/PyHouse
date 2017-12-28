@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-08-30'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 import datetime
@@ -27,6 +27,11 @@ HOURS = MINUTES * 60
 INITIAL_DELAY = 15
 REPEAT_DELAY = 4 * HOURS
 TOPIC = 'computer/node/'
+
+
+class NodeMessage():
+    """
+    """
 
 
 class Util(object):

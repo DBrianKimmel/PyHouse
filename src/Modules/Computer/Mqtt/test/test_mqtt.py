@@ -2,16 +2,16 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 26, 2017
 @summary:   Test
 
-Passed all 9 tests - DBK - 2017-07-07
+Passed all 9 tests - DBK - 2017-12-28
 
 """
 
-__updated__ = '2017-12-23'
+__updated__ = '2017-12-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

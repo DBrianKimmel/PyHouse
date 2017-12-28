@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-12-23'
+__updated__ = '2017-12-27'
 
 #  Import system type stuff
 import platform
@@ -175,6 +175,8 @@ class Utility(object):
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
+        """ Save the XML for each of the components of the Computer
+        """
         p_pyhouse_obj.APIs.Computer.BridgesAPI.SaveXml(p_xml)
         # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)

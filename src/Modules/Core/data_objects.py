@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2017-12-28'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -493,6 +493,7 @@ class MqttBrokerData(BaseObject):
         self.BrokerPort = None
         self.UserName = ''
         self.Password = None
+        self.Class = 'Local'
         self.ClientID = 'PyH-'
         self.Keepalive = 60
         self._ClientAPI = None

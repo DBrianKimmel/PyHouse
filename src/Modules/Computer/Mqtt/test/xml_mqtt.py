@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/xml_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 
@@ -17,7 +17,6 @@ __updated__ = '2017-01-20'
 
 TESTING_MQTT_SECTION = 'MqttSection'
 TESTING_MQTT_BROKER = 'Broker'
-
 
 L_MQTT_SECTION_START = '<' + TESTING_MQTT_SECTION + '>'
 L_MQTT_SECTION_END = '  </' + TESTING_MQTT_SECTION + '>'
@@ -31,6 +30,7 @@ TESTING_BROKER_ADDRESS_0 = '192.168.9.10'
 TESTING_BROKER_PORT_0 = '8883'
 TESTING_BROKER_USERNAME_0 = 'pyhouse'
 TESTING_BROKER_PASSWORD_0 = 'ChangeMe'
+TESTING_BROKER_CLASS_0 = 'Local'
 
 L_BROKER_START_0 = '    ' + \
     '<' + TESTING_MQTT_BROKER + ' ' + \
@@ -43,6 +43,7 @@ L_BROKER_ADDRESS_0 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_0 + '</Bro
 L_BROKER_PORT_0 = '      <BrokerPort>' + TESTING_BROKER_PORT_0 + '</BrokerPort>'
 L_BROKER_USER_0 = '      <BrokerUser>' + TESTING_BROKER_USERNAME_0 + '</BrokerUser>'
 L_BROKER_PASSWORD_0 = '      <BrokerPassword>' + TESTING_BROKER_PASSWORD_0 + '</BrokerPassword>'
+L_BROKER_CLASS_0 = '      <Class>' + TESTING_BROKER_CLASS_0 + '</Class>'
 
 L_BROKER_0 = '\n'.join([
     L_BROKER_START_0,
@@ -51,6 +52,7 @@ L_BROKER_0 = '\n'.join([
     L_BROKER_PORT_0,
     L_BROKER_USER_0,
     L_BROKER_PASSWORD_0,
+    L_BROKER_CLASS_0,
     L_MQTT_BROKER_END
 ])
 
@@ -62,6 +64,7 @@ TESTING_BROKER_ADDRESS_1 = '192.168.1.10'
 TESTING_BROKER_PORT_1 = '1883'
 TESTING_BROKER_USERNAME_1 = 'pyhouse'
 TESTING_BROKER_PASSWORD_1 = 'ChangeMe'
+TESTING_BROKER_CLASS_1 = 'Local'
 
 L_BROKER_START_1 = '    ' + \
     '<' + TESTING_MQTT_BROKER + ' ' + \
@@ -74,6 +77,7 @@ L_BROKER_ADDRESS_1 = '      <BrokerAddress>' + TESTING_BROKER_ADDRESS_1 + '</Bro
 L_BROKER_PORT_1 = '      <BrokerPort>' + TESTING_BROKER_PORT_1 + '</BrokerPort>'
 L_BROKER_USER_1 = '      <BrokerUser>' + TESTING_BROKER_USERNAME_1 + '</BrokerUser>'
 L_BROKER_PASSWORD_1 = '      <BrokerPassword>' + TESTING_BROKER_PASSWORD_1 + '</BrokerPassword>'
+L_BROKER_CLASS_1 = '      <Class>' + TESTING_BROKER_CLASS_1 + '</Class>'
 
 L_BROKER_1 = '\n'.join([
     L_BROKER_START_1,
@@ -82,6 +86,7 @@ L_BROKER_1 = '\n'.join([
     L_BROKER_PORT_1,
     L_BROKER_USER_1,
     L_BROKER_PASSWORD_1,
+    L_BROKER_CLASS_1,
     L_MQTT_BROKER_END
 ])
 

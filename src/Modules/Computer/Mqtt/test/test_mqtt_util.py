@@ -2,15 +2,15 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_util.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 31, 2017
 @summary:   Test
 
-Passed all 5 tests - DBK - 2017-04-24
+Passed all 10 tests - DBK - 2017-12-28
 
 """
-__updated__ = '2017-04-26'
+__updated__ = '2017-12-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,8 +33,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_mqtt_util')
 

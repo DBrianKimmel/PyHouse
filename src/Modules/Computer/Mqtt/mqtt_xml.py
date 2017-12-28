@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-04-26'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -40,6 +40,7 @@ class Xml(object):
             l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
             l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'BrokerUser')
             l_obj.Password = PutGetXML.get_text_from_xml(p_xml, 'BrokerPassword')
+            l_obj.Class = PutGetXML.get_text_from_xml(p_xml, 'Class', 'Local')
         except Exception:
             pass
         return l_obj
@@ -73,7 +74,6 @@ class Xml(object):
             LOG.error('Mqtt Errors: {}'.format(e_err))
         return l_dict
 
-
     @staticmethod
     def _write_one_broker(p_mqtt):
         """
@@ -85,6 +85,7 @@ class Xml(object):
         PutGetXML().put_int_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
         PutGetXML().put_text_element(l_entry, 'BrokerUser', p_mqtt.UserName)
         PutGetXML().put_text_element(l_entry, 'BrokerPassword', p_mqtt.Password)
+        PutGetXML().put_text_element(l_entry, 'Class', p_mqtt.Class)
         return l_entry
 
     def write_mqtt_xml(self, p_obj):

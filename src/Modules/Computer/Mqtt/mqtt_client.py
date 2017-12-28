@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:   Connect this computer node to the household Mqtt Broker.
 
 """
 
-__updated__ = '2017-04-26'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -27,6 +27,7 @@ PEM_FILE = '/etc/pyhouse/ca_certs/rootCA.pem'
 
 
 class Struct:
+
     def __init__(self, **args):
         self.__dict__.update(args)
 

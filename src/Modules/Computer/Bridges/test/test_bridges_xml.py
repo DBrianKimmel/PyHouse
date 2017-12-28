@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2017-12-23
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2017-12-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -57,13 +57,37 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
 
     def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
-        print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
+
+
+class B1_Read(SetupMixin, unittest.TestCase):
+    """ Test Reading of XML
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Bridge0(self):
+        pass
+
+    def test_02_Bridge1(self):
+        pass
+
+
+class C1_Write(SetupMixin, unittest.TestCase):
+    """ Test Reading of XML
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Bridge0(self):
+        pass
 
 # ## END DBK

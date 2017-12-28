@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/test_protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2015
 @Summary:
 
-Passed all 4 tests - DBK- 2017-03-11
+Passed 4 of 5 tests - DBK- 2017-03-11
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-04-21'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -39,8 +39,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_mqtt_protocol')
 

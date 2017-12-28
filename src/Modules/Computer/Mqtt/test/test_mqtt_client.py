@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 14 tests - DBK - 2017-04-21
+Passed all 13 tests - DBK - 2017-12-28
 
 """
-__updated__ = '2017-07-07'
+__updated__ = '2017-12-28'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,12 +25,12 @@ from Modules.Core.Utilities import json_tools
 from Modules.Core.data_objects import MqttBrokerData, \
         LocationData, ScheduleLightData, ControllerData, \
         ComputerInformation
+from Modules.Computer.Mqtt.mqtt import _make_message
 from Modules.Computer.Mqtt.mqtt_client import Util  # , API as mqttAPI
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
     TESTING_BROKER_ACTIVE_1
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
 BROKER_TLS = '192.168.1.10'
@@ -62,8 +62,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_mqtt_client')
 
@@ -190,7 +192,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
     def test_02_Message(self):
         """ No payload (not too useful)
         """
-        l_message = Util._make_message(self.m_pyhouse_obj)
+        l_message = _make_message(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_message, 'C2-02-A - Bare Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
@@ -202,7 +204,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.Name = 'Mqtt Controller Object'
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'
-        l_message = Util._make_message(self.m_pyhouse_obj, l_data)
+        l_message = _make_message(self.m_pyhouse_obj, l_data)
         # print(PrettyFormatAny.form(l_message, 'C2-03-A - Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)
@@ -216,7 +218,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
         l_data.LightName = 'Test Light'
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'
-        l_message = Util._make_message(self.m_pyhouse_obj, l_data)
+        l_message = _make_message(self.m_pyhouse_obj, l_data)
         # print(PrettyFormatAny.form(l_message, 'C2-04-A - Message', 80))
         self.assertEqual(self.jsonPair(l_message, 'Sender'), self.m_pyhouse_obj.Computer.Name)
         self.assertSubstring('DateTime', l_message)

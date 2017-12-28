@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-16'
+__updated__ = '2017-12-27'
 
 #  Import system type stuff
 import datetime
@@ -116,7 +116,7 @@ class API(object):
         Create the "PyHouse" top element of the XML config file.
         The other divisions are appended to this foundation.
         """
-        l_xml = ET.Element("PyHouse")
+        l_xml = ET.Element("PyHouse")  # The root element.
         PutGetXML.put_text_attribute(l_xml, 'Version', p_pyhouse_obj.Xml.XmlVersion)
         PutGetXML.put_text_attribute(l_xml, 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
         PutGetXML.put_text_attribute(l_xml, 'xsi:schemaLocation', 'http://PyHouse.org schemas/PyHouse.xsd')
