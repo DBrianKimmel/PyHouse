@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-23'
+__updated__ = '2017-12-29'
 
 #  Import system type stuff
 import platform
@@ -170,6 +170,8 @@ class SetupPyHouseObj(object):
             return
         #
         p_xml.bridges_sect = p_xml.computer_div.find('BridgesSection')
+        p_xml.bridge = p_xml.bridges_sect.find('Bridge')
+
         p_xml.communication_sect = p_xml.computer_div.find('CommunicationSection')
         p_xml.email_sect = p_xml.communication_sect.find('EmailSection')
         p_xml.twitter_sect = p_xml.communication_sect.find('TwitterSection')

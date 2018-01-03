@@ -4,14 +4,14 @@
 @name:       PyHouse/src/Modules/Computer/Nodes/node_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2016-2017 by D. Brian Kimmel
+@copyright:  2016-2018 by D. Brian Kimmel
 @date:       Created on Apr 27, 2016
 @licencse:   MIT License
 @summary:    Sync the nodes between all nodes.
 
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2017-12-29'
 
 #  Import system type stuff
 import datetime

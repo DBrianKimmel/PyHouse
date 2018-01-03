@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-27'
+__updated__ = '2018-01-01'
 
 #  Import system type stuff
 import datetime
@@ -97,7 +97,12 @@ class API(object):
             p_pyhouse_obj.Xml.XmlFileName = XML_FILE_NAME
         try:
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
-        except (SyntaxError, IOError):
+        except SyntaxError as e_err:
+            LOG.error('*** Syntax error in XML file: {}'.format(e_err))
+            Util()._create_empty_config_file(p_pyhouse_obj)
+            l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
+            LOG.info("Bad config file found\n\n\tEmpty config file has been created.\n==========\n")
+        except IOError:
             Util()._create_empty_config_file(p_pyhouse_obj)
             l_xmltree = ET.parse(p_pyhouse_obj.Xml.XmlFileName)
             LOG.info("No config file found\n\n\tEmpty config file has been created.\n==========\n")

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2017-12-31'
 
 #  Import system type stuff
 import copy
@@ -77,7 +77,7 @@ class API(object):
         if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
             #  LOG.info('Connecting to all MQTT Brokers.')
             l_count = mqttUtil().connect_to_all_brokers(p_pyhouse_obj)
-            LOG.info("Mqtt {} broker(s) Started.".format(l_count))
+            LOG.info("Mqtt {} broker Connection(s) Started.".format(l_count))
         else:
             LOG.info('No Mqtt brokers are configured.')
         LOG.info("Loaded XML")

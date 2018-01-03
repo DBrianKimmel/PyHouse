@@ -11,14 +11,14 @@
 
 """
 
-__updated__ = '2017-12-20'
+__updated__ = '2018-01-01'
 
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Families.Hue.Hue_hub import HueHub
 from Modules.Computer import logging_pyh as Logger
-
-LOG = Logger.getLogger('PyHouse.Hue_device ')
+LOG = Logger.getLogger('PyHouse.Hue_device     ')
 
 
 class API(object):
@@ -29,15 +29,26 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Load the Schedule xml info.
+        """ Reading the xml has alreadyhappened - handled by Bridges.
+        Now we set up the rest client
         """
+        LOG.info('Loading')
+        HueHub(self.m_pyhouse_obj).Start(self.m_pyhouse_obj)
 
     def Start(self):
+        """
+        """
+        # if self.m_pyhouse_obj.Computer != {}:
+        # HueHub(self.m_pyhouse_obj).Start(self.m_pyhouse_obj)
+        LOG.info('Started')
         pass
 
     def SaveXml(self, p_xml):
+        """ Handled by Bridges
+        """
         return p_xml
 
 # ## END DBK

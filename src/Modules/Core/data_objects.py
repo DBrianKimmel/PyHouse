@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2017-12-30'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -66,14 +66,6 @@ class BaseObject(object):
         self.Name = 'undefined baseobject'
         self.Key = 0
         self.Active = False
-
-
-class BridgesData(object):
-    """ This section contains the data for any bridges defined for the executing Computer/Node.
-    """
-
-    def __init__(self):
-        self.Name = 'undefined bridges data'
 
 
 class CommunicationAPIs(object):
@@ -514,7 +506,7 @@ class ComputerInformation(BaseUUIDObject):
 
     def __init__(self):
         super(ComputerInformation, self).__init__()
-        self.Bridges = {}  # BridgesData()
+        self.Bridges = {}  # BridgeData() in Modules.Computer.Bridges.bridge_data
         self.Communication = {}  # CommunicationData()
         self.InternetConnection = {}  # InternetConnectionData()
         self.Mqtt = {}  # MqttInformation()

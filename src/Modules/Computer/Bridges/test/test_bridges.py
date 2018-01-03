@@ -9,11 +9,11 @@
 @license:   MIT License
 @summary:
 
-Passed all 2 tests - DBK - 2017-12-23
+Passed all 6 tests - DBK - 2018-01-01
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-01-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,8 +22,15 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Core.Utilities import json_tools
+from Modules.Computer.Bridges.test.xml_bridges import \
+        XML_BRIDGES, \
+        TESTING_BRIDGES_SECTION, \
+        TESTING_BRIDGE_NAME_0, \
+        TESTING_BRIDGE_NAME_1, \
+        TESTING_BRIDGE_COMMENT_0
 # from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -67,5 +74,51 @@ class A1_XML(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_BRIDGES
+        # print('A2-01-A - Raw', l_raw)
+        self.assertEqual(l_raw[:16], '<BridgesSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_BRIDGES)
+        # print('A2-02-A - Parsed', l_xml)
+        self.assertEqual(l_xml.tag, TESTING_BRIDGES_SECTION)
+
+
+class B1_API(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
+
+    def test_01_Load(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        bridgesAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
+        l_bridges = self.m_pyhouse_obj.Computer.Bridges
+        # print(PrettyFormatAny.form(l_bridges, 'B1-01-A - Load'))
+        self.assertEqual(l_bridges[0].Name, TESTING_BRIDGE_NAME_0)
+        self.assertEqual(l_bridges[1].Name, TESTING_BRIDGE_NAME_1)
+
+    def test_02_Save(self):
+        """
+        """
+        l_xml = ET.Element('PyHouse')
+        bridgesAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
+        l_bridges = self.m_pyhouse_obj.Computer.Bridges
+        # print(PrettyFormatAny.form(l_bridges, 'B1-02-A - Load'))
+        l_out = bridgesAPI(self.m_pyhouse_obj).SaveXml(l_xml)
+        # print(PrettyFormatAny.form(l_out, 'B1-02-B - XML'))
+        l_out = l_out.find('Bridge')
+        # print(PrettyFormatAny.form(l_out, 'B1-02-C - Bridges'))
+        self.assertEqual(l_out.find('Comment').text, TESTING_BRIDGE_COMMENT_0)
 
 # ## END DBK

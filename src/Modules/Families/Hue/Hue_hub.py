@@ -18,61 +18,37 @@
 /rules
 
 """
-from twisted.web.client import Agent
 
-__updated__ = '2017-12-20'
+__updated__ = '2018-01-02'
 
-
-
-
-
-
-
-
-#! /usr/bin/python
-
-# This program was written by Folkert van Heusden.
-# It is released under AGPL 3.0
-
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from SocketServer import ThreadingMixIn
-import configparser
-import json
-import os
-import socket
-import subprocess
-import sys
-from threading import Thread
-import threading
+# Import system type stuff
+import jsonpickle
 import time
-from twisted.internet import reactor, task
-from twisted.internet.protocol import DatagramProtocol
+from twisted.web.client import Agent, readBody
+from twisted.web.http_headers import Headers
+from twisted.internet.defer import Deferred
+from twisted.internet.protocol import Protocol
 
-main_config = dict()
-
-ssdp_addr = '239.255.255.250'
-ssdp_port = 1900
+# Import PyMh files
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
 
 mac = [ '00', '17', '88', '10', '22', '01' ]
-bridgeid = '%sFFFE%s' % (''.join(mac[0:3]), ''.join(mac[3:6]))
-
 uid = '2f402f80-da50-11e1-9b23-%s' % ''.join(mac)
-
 icon = 'hue.png'
-
 description_xml = 'description.xml'
-
 lights = []
-
 username = "83b7780291a6ceffbe0bd049104df"
 devicetype = "something"
 portalservices = False
 
+
 def gen_ts():
     return time.strftime('%Y-%m-%dT%H:%M:%S')
 
+
 def put_config_json(j):
-    entry = json.loads(j)
+    entry = jsonpickle.encode(j)
 
     if 'devicetype' in entry:
         global devicetype
@@ -82,40 +58,38 @@ def put_config_json(j):
         global portalservices
         portalservices = entry['portalservices']
 
+
 def json_dumps(what):
-    return json.dumps(what, sort_keys=True, separators=(',', ':'))
+    return jsonpickle.decode(what, sort_keys=True, separators=(',', ':'))
+
 
 def gen_config_json(full):
-    return json_dumps(gen_config(full))
+    pass
+    # return json_dumps(gen_config(full))
+
 
 def gen_sensors_json():
     return json_dumps(dict())
 
-def set_light_state(nr, state):
-    entry = json.loads(state)
-    return json_dumps(json_obj)
 
-def set_group_state(nr, state):
+def set_light_state(_nr, state):
+    _entry = jsonpickle.encode(state)
+    # return json_dumps(json_obj)
+
+
+def set_group_state(_nr, state):
     # only 1 group in the current version
-    for i in xrange(0, len(lights)):
+    for i in range(0, len(lights)):
         set_light_state(i, state)
 
-def get_light_state(nr):
 
-def gen_ind_light_json(nr):
+def get_light_state(nr):
+    pass
+
+
+def gen_ind_light_json(_nr):
     return
 
-class gilj(Thread):
-    def __init__(self, nr):
-        self.nr = nr
-        self.result = None
-        Thread.__init__(self)
-
-    def get_result(self):
-        return self.result
-
-    def run(self):
-        self.result = gen_ind_light_json(self.nr)
 
 def gen_lights(which):
     global lights
@@ -123,57 +97,60 @@ def gen_lights(which):
         json_obj = dict()
         t = []
         n = 0
-        for l in lights:
-            th = gilj(n)
+        for _l in lights:
+            th = 9875  # gilj(n)
             n += 1
             th.start()
             t.append(th)
-        for nr in xrange(0, n):
+        for nr in range(0, n):
             t[nr].join()
             json_obj['%d' % (nr + 1)] = t[nr].get_result()
         return json_obj
     return gen_ind_light_json(which)
 
+
 def gen_groups(which):
     #### a light group
     action = {
-        'on': True,
-        'bri': 254,
-        'hue': 10000,
-        'sat': 254,
-        'effect': 'none',
-        'xy': [],
-        'ct': 250,
-        'alert': 'select',
-        'colormode': 'ct'
+        'on'        : True,
+        'bri'       : 254,
+        'hue'       : 10000,
+        'sat'       : 254,
+        'effect'    : 'none',
+        'xy'        : [],
+        'ct'        : 250,
+        'alert'     : 'select',
+        'colormode' : 'ct'
     }
     action['xy'].append(0.5)
     action['xy'].append(0.5)
     g_lights = []
     nOn = 0
-    for i in xrange(0, len(lights)):
+    for i in range(0, len(lights)):
         g_lights.append('%d' % (i + 1))
         if lights[i]['state'] == True:
-            nOn +=1
+            nOn += 1
     state = {
-        'all_on': nOn == len(lights),
-        'any_on': nOn > 0
+        'all_on' : nOn == len(lights),
+        'any_on' : nOn > 0
     }
     g = {
-        'action': action,
-        'lights': g_lights,
-        'state': state,
-        'type': 'Room',
-        'class': 'Living room',
-        'name': 'Group 1'
+        'action' : action,
+        'lights' : g_lights,
+        'state'  : state,
+        'type'   : 'Room',
+        'class'  : 'Living room',
+        'name'   : 'Group 1'
     }
     if which == None:
         answer = { '1': g }
         return answer
     return g
 
+
 def gen_groups_json(which):
     return json_dumps(gen_groups(which))
+
 
 def gen_scenes():
     scene = {
@@ -187,22 +164,25 @@ def gen_scenes():
         'lastupdated': '2015-12-03T08:57:13',
         'version': 1
     }
-    for i in xrange(0, len(lights)):
+    for i in range(0, len(lights)):
         scene['lights'].append('%d' % (i + 1))
     answer = { '123123123-on-0':  scene }
     return answer
 
+
 def gen_scenes_json():
     return json_dumps(gen_scenes())
 
+
 def gen_light_json(which):
     return json_dumps(gen_lights(which))
+
 
 def gen_dump_json():
     answer = {
         'lights': gen_lights(None),
         'groups': gen_groups(None),
-        'config': gen_config(True),
+        # 'config': gen_config(True),
         'sensors': {},
         'swupdate2': {},
         'schedules': {},
@@ -210,169 +190,166 @@ def gen_dump_json():
     }
     return json_dumps(answer)
 
+
 def gen_description_xml(addr):
-    reply = [ '<root xmlns="urn:schemas-upnp-org:device-1-0">', 
-        '<specVersion>',
-        '<major>1</major>',
-        '<minor>0</minor>',
-        '</specVersion>',
-        '<URLBase>http://%s/</URLBase>' % addr,
-        '<device>',
-        '<deviceType>urn:schemas-upnp-org:device:Basic:1</deviceType>',
-        '<friendlyName>Virtual hue</friendlyName>',
-        '<manufacturer>vanheusden.com</manufacturer>',
-        '<manufacturerURL>http://www.vanheusden.com</manufacturerURL>',
-        '<modelDescription>Virtual Philips hue bridge</modelDescription>',
-        '<modelName>Virtual hue</modelName>',
-        '<modelNumber>1</modelNumber>',
-        '<modelURL>https://github.com/flok99/virtual-hue</modelURL>',
-        '<serialNumber>%s</serialNumber>' % ''.join(mac),
-        '<UDN>uuid:%s/UDN>' % uid,
-        '<presentationURL>index.html</presentationURL>',
-        '<iconList>',
-        '<icon>',
-        '<mimetype>image/png</mimetype>',
-        '<height>48</height>',
-        '<width>48</width>',
-        '<depth>24</depth>',
-        '<url>%s</url>' % icon,
-        '</icon>',
-        '</iconList>',
-        '</device>',
+    reply = [
+        '<root xmlns="urn:schemas-upnp-org:device-1-0">',
+        '  <specVersion>',
+        '    <major>1</major>',
+        '    <minor>0</minor>',
+        '  </specVersion>',
+        '  <URLBase>http://%s/</URLBase>' % addr,
+        '  <device>',
+        '    <deviceType>urn:schemas-upnp-org:device:Basic:1</deviceType>',
+        '    <friendlyName>Virtual hue</friendlyName>',
+        '    <manufacturer>vanheusden.com</manufacturer>',
+        '    <manufacturerURL>http://www.vanheusden.com</manufacturerURL>',
+        '    <modelDescription>Virtual Philips hue bridge</modelDescription>',
+        '    <modelName>Virtual hue</modelName>',
+        '    <modelNumber>1</modelNumber>',
+        '    <modelURL>https://github.com/flok99/virtual-hue</modelURL>',
+        '    <serialNumber>%s</serialNumber>' % ''.join(mac),
+        '    <UDN>uuid:%s/UDN>' % uid,
+        '    <presentationURL>index.html</presentationURL>',
+        '    <iconList>',
+        '      <icon>',
+        '        <mimetype>image/png</mimetype>',
+        '        <height>48</height>',
+        '        <width>48</width>',
+        '        <depth>24</depth>',
+        '        <url>%s</url>' % icon,
+        '      </icon>',
+        '    </iconList>',
+        '  </device>',
         '</root>'
         ]
     return '\r\n'.join(reply)
 
 
-class server(BaseHTTPRequestHandler):
+# class server(BaseHTTPRequestHandler):
+class server(object):
+
     def _set_headers(self, mime_type):
         self.send_response(200)
         self.send_header('Content-type', mime_type)
         self.end_headers()
 
     def do_GET(self):
-        print 'GET', self.client_address, self.path
+        print('GET', self.client_address, self.path)
         parts = self.path.split('/')
         if self.path == '/%s' % description_xml:
             self._set_headers("text/xml")
-            print 'get %s' % description_xml
+            print('get %s' % description_xml)
             h = self.server.server_address[0]
             if 'Host' in self.headers:
                 h = self.headers['Host']
             self.wfile.write(gen_description_xml(h))
         elif self.path == '/%s' % icon:
             self._set_headers("image/png")
-            print 'get %s' % parts[1]
+            print('get %s' % parts[1])
             try:
                 fh = open(icon, 'r')
                 self.wfile.write(fh.read())
                 fh.close()
-            except Exception, e:
-                print 'Cannot access %s' % icon, e
+            except Exception as e:
+                print('Cannot access %s' % icon, e)
         elif self.path == '/api/' or self.path == '/api/%s' % username or self.path == '/api/%s/' % username:
             self._set_headers("application/json")
-            print 'get all state'
+            print('get all state')
             self.wfile.write(gen_dump_json())
         elif self.path == '/api/config' or self.path == '/api/config/':
             self._set_headers("application/json")
-            print 'get basic configuration short (2)'
+            print('get basic configuration short (2)')
             self.wfile.write(gen_config_json(False))
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'lights':
             self._set_headers("application/json")
-            print 'enumerate list of lights'
+            print('enumerate list of lights')
             if len(parts) == 4 or parts[4] == '':
-                print ' ...all'
+                print(' ...all')
                 self.wfile.write(gen_light_json(None))
             else:
-                print ' ...single (%s)' % parts[4]
+                print(' ...single (%s)' % parts[4])
                 self.wfile.write(gen_light_json(int(parts[4]) - 1))
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'groups':
             self._set_headers("application/json")
-            print 'enumerate list of groups'
+            print('enumerate list of groups')
             if len(parts) == 4 or parts[4] == '':
-                print ' ...all'
+                print(' ...all')
                 self.wfile.write(gen_groups_json(None))
             else:
-                print ' ...single (%s)' % parts[4]
+                print(' ...single (%s)' % parts[4])
                 self.wfile.write(gen_groups_json(int(parts[4]) - 1))
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'scenes':
             self._set_headers("application/json")
-            print 'enumerate list of scenes'
+            print('enumerate list of scenes')
             self.wfile.write(gen_scenes_json())
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'sensors':
             self._set_headers("application/json")
-            print 'enumerate list of sensors'
+            print('enumerate list of sensors')
             self.wfile.write(gen_sensors_json())
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'light':
             self._set_headers("application/json")
-            print 'get individual light state'
+            print('get individual light state')
             self.wfile.write(gen_ind_light_json(int(parts[4]) - 1))
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'config':
             self._set_headers("application/json")
             if parts[2] == username:
-                print 'get basic configuration full'
+                print('get basic configuration full')
                 self.wfile.write(gen_config_json(True))
             else:
-                print 'get basic configuration short (1)'
+                print('get basic configuration short (1)')
                 self.wfile.write(gen_config_json(False))
         else:
             self._set_headers("application/json")
-            print '[G] unknown get request', self.path, self.headers
-            self.wfile.write(unreg())
-            #self.wfile.write('[{"error":{"type":1,"address":"/","description":"unauthorized user"}}]')
+            print('[G] unknown get request', self.path, self.headers)
+            self.wfile.write('unreg()')
+            # self.wfile.write('[{"error":{"type":1,"address":"/","description":"unauthorized user"}}]')
 
     def do_HEAD(self):
         self._set_headers("text/html")
 
     def do_POST(self):
-        print 'POST', self.path
+        print('POST', self.path)
         parts = self.path.split('/')
         # simpler registration; always return the same key
         # should keep track in e.g. an sqlite3 database and then do whitelisting etc
         if len(parts) >= 2 and parts[1] == 'api':
             self._set_headers("application/json")
             data_len = int(self.headers['Content-Length'])
-            print self.rfile.read(data_len)
+            print(self.rfile.read(data_len))
             self.wfile.write('[{"success":{"username": "%s"}}]' % username)
         elif len(parts) >= 4 and parts[1] == 'api' and parts['3'] == 'groups':
             self._set_headers("application/json")
             self.wfile.write('[{"success":{"id": "1"}}]')
         else:
-            print 'unknown post request', self.path
+            print('unknown post request', self.path)
 
     def do_PUT(self):
-        print 'PUT', self.path
+        print('PUT', self.path)
         data_len = int(self.headers['Content-Length'])
         content = self.rfile.read(data_len)
         parts = self.path.split('/')
         if len(parts) >= 6 and parts[1] == 'api' and parts[3] == 'lights' and parts[5] == 'state':
             self._set_headers("application/json")
-            print 'set individual light state'
+            print('set individual light state')
             self.wfile.write(set_light_state(int(parts[4]) - 1, content))
         elif len(parts) >= 6 and parts[1] == 'api' and parts[3] == 'groups' and parts[5] == 'action':
             self._set_headers("application/json")
-            print 'set individual group state'
+            print('set individual group state')
             self.wfile.write(set_group_state(int(parts[4]) - 1, content))
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'config':
             self._set_headers("application/json")
-            print 'put config'
+            print('put config')
             put_config_json(content)
             self.wfile.write('[{"success":"Updated."}]')
         elif len(parts) >= 3 and parts[1] == 'api' and parts[2] == 'config':
             self._set_headers("application/json")
-            print 'put config (2)'
-            print content
+            print('put config (2)')
+            print(content)
         else:
             self._set_headers("text/html")
-            print 'unknown put request', self.path, content
+            print('unknown put request', self.path, content)
 
-class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
-    """Handle requests in a separate thread."""
-
-def run(port=80):
-    print 'Starting http listener...'
-    h = ThreadedHTTPServer(('', port), server)
-    h.serve_forever()
 
 def add_light(name, id_, command, command_get):
         global lights
@@ -385,84 +362,79 @@ def add_light(name, id_, command, command_get):
         }
         lights.append(row)
 
-def gen_ssdp_content(addr, st_nt):
-    reply = [
-      "CACHE-CONTROL: max-age=100\r\n",
-      "LOCATION: http://%s:80/%s\r\n" % (addr, description_xml),
-      "SERVER: VirtualHue/0.1 UPNP/1.0 IpBridge/1.16.0\r\n",
-      "hue-bridgeid: %s\r\n" % bridgeid,
-      "%s: urn:schemas-upnp-org:device:Basic:1\r\n" % st_nt,
-      "USN: uuid:%s\r\n" % uid,
-      "\r\n" ]
-    return ''.join(reply)
 
-class SSDPDevice(DatagramProtocol):
-    def __init__(self, addr):
-        self.addr = addr
-        self.ssdp = reactor.listenMulticast(ssdp_port, self, listenMultiple=True)
-        self.ssdp.setLoopbackMode(1)
-        self.ssdp.joinGroup(ssdp_addr, interface=addr)
+C_IP = b'192.168.1.111/'
 
-    def datagramReceived(self, datagram, address):
-        first_line = datagram.rsplit('\r\n')[0]
-        parts = first_line.split(' ')
-        if parts[0] == 'M-SEARCH':
-            print "Received %s from %r" % (first_line, address, )
-            # FIXME
-            reply_header = [
-              "HTTP/1.1 200 OK\r\n",
-              "EXT:\r\n"
-              ]
-            reply = ''.join(reply_header) + gen_ssdp_content(self.addr, 'ST')
-            self.ssdp.write(reply, address)
 
-    def stop(self):
-        self.ssdp.leaveGroup(ssdp_addr, interface=self.addr)
-        self.ssdp.stopListening()
+C_KEY = b'MBFBC-agf6rq5bsWcxLngYZoClGr2pw2oKEMLZgs'
 
-def __startSSDPListener(addr):
-    obj = SSDPDevice(addr)
-    reactor.addSystemEventTrigger('before', 'shutdown', obj.stop)
 
-def _startSSDPListener(addr):
-    reactor.callWhenRunning(__startSSDPListener, addr)
-    reactor.run(installSignalHandlers=0)
+C_STA = b'/status'
+C_GET = b'GET'
+C_URI = b'http//' + C_IP + b'api/' + C_KEY + C_STA
 
-def _startSSDPNotifier(addr):
-    msgHeader = [
-            'NOTIFY * HTTP/1.1\r\n',
-            'HOST: 239.255.255.250:1900\r\n',
-            "NTS: ssdp:alive\r\n"
-        ]
-    msg = ''.join(msgHeader) + gen_ssdp_content(addr, 'NT')
-    while True:
-        print "Sending M-NOTIFY..."
-        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        sock.setsockopt(socket.IPPROTO_IP, socket.IP_MULTICAST_TTL, 32)
-        sock.sendto(msg, (ssdp_addr, ssdp_port))
-        sock.close()
-        del sock
-        time.sleep(6)
 
-def startSSDPListener(addr):
-    print 'Starting SSDP listener...'
-    t = Thread(target=_startSSDPListener, args=((addr),))
-    t.daemon = True
-    t.start()
-    print 'Starting SSDP notifier...'
-    t = Thread(target=_startSSDPNotifier, args=((addr),))
-    t.daemon = True
-    t.start()
+class HueProtocol(Protocol):
+
+    m_finished = None
+    m_remaining = 0
+
+    def __init__(self, p_finished):
+        """
+        @param p_finished: is a deferred that ????
+        """
+        self.m_finished = p_finished
+        self.m_remaining = 1024 * 10
+
+    def dataReceived(self, p_bytes):
+        if self.m_remaining:
+            l_display = p_bytes[:self.m_remaining]
+            LOG.debug('Rxed: {}'.format(l_display))
+            self.m_remaining -= len(l_display)
+
+    def connectionLost(self, p_reason):
+        l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)
+        LOG.debug('Finished receiving body: {}'.format(p_reason))
+        LOG.debug('Finished receiving body: {}'.format("\t".join(str(x) for x in l_msg)))
+        self.m_finished.callback(None)
 
 
 class HueHub(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initialized')
 
-    def Start(self):
-        hue_agent = Agent()
+    def _build_uri(self, p_ip, p_key, p_cmd=b'/status'):
+        l_uri = b'http://' + p_ip + b'/api/' + p_key + p_cmd
+        LOG.info('URI: {}'.format(l_uri))
+        return l_uri
 
+    def HubStart(self, p_pyhouse_obj):
 
+        def cb_Shutdown(p_response):
+            LOG.debug('Error - Response: {}'.format(p_response))
+
+        def cb_Body(p_body):
+            """ Generate a body to send with the request.
+            """
+            LOG.debug('Response body: {}'.format(p_body))
+
+        def cb_Response(p_response):
+            LOG.debug('Response Code: {}'.format(p_response.code))
+            # LOG.debug('Response Phrase: {}'.format(p_response.phrase))
+            # LOG.debug('Response Headers: {}'.format(p_response.headers))
+            # l_agent_d = readBody(p_response)
+            l_finished = Deferred()
+            p_response.deliverBody(HueProtocol(l_finished))
+            return l_finished
+
+        hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+        l_uri = self._build_uri(C_IP, C_KEY, C_STA)
+        l_headers = Headers({'User-Agent': ['Twisted Web Client Example']})
+        l_agent_d = hue_agent.request(C_GET, l_uri, l_headers, None)
+        l_agent_d.addCallback(cb_Response)
+        LOG.info('Started')
+        return l_agent_d
 
 # ## END DBK

@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2018-01-01'
 
 #  Import system type stuff
 import random
@@ -682,7 +682,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
 
     def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.error('Connection failed. {} {}\n\tReason:{}'.format(self.m_broker.BrokerAddress, self.m_broker.BrokerPort, p_reason))
+        LOG.warn('Connection failed. {} {}\n\tReason:{}'.format(self.m_broker.BrokerAddress, self.m_broker.BrokerPort, p_reason))
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def connectionLost(self, p_reason):

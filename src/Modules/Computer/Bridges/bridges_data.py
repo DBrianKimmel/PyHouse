@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-26'
+__updated__ = '2017-12-30'
 
 #  Import system type stuff
 
@@ -23,6 +23,7 @@ LOG = Logger.getLogger('PyHouse.Bridges_Data   ')
 
 class BridgesData(object):
     """
+    ==> PyHouse.Computer.Bridges.
     """
 
     def __init__(self):
@@ -31,9 +32,11 @@ class BridgesData(object):
 
 class BridgeData(BaseUUIDObject):
     """
+    ==> PyHouse.Computer.Bridges[x].xxx as below
     """
 
     def __init__(self):
+        Comment = ''
         Connection = 'Ethernet'
         Type = 'Insteon'
         IPv4Address = '9.8.7.6'
