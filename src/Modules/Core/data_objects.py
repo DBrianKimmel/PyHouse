@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2017-12-30'
+__updated__ = '2018-01-03'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -524,7 +524,7 @@ class DeviceData(BaseUUIDObject):
         super(DeviceData, self).__init__()
         self.Comment = ''
         self.DeviceFamily = 'Null'
-        self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security
+        self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
         self.DeviceSubType = 0
         self.RoomCoords = None  # CoordinateData()
         self.RoomName = ''

@@ -4,23 +4,20 @@
 @Name:      PyHouse/src/Modules.Core.Utilities.convert.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2017 by D. Brian Kimmel
+@copyright: (c) 2012-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 3, 2013
 @summary:   This module determines the IP address of the ISP connection.
 
 
-Utility routines to convert external readable numbers to integers for
-ease in comparing.
+Utility routines to convert external readable numbers to integers for ease in comparing.
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2018-01-04'
 
 # Import system type stuff
 import re
 import netaddr
-
-
 
 """
 Handle IP V-4 32 bit numbers or V6 128 bit numbers
@@ -28,9 +25,11 @@ Handle IP V-4 32 bit numbers or V6 128 bit numbers
 '2001:db8::1' == 42540857365213159232363542340108812289L
 """
 
+
 def str_to_long(p_str):
     l_long = int(netaddr.IPAddress(p_str))
     return l_long
+
 
 def long_to_str(p_int):
     l_str = str(netaddr.IPAddress(p_int))
@@ -107,6 +106,5 @@ def is_valid_ipv6(ip):
         $
     """, re.VERBOSE | re.IGNORECASE | re.DOTALL)
     return pattern.match(ip) is not None
-
 
 # ## END DBK

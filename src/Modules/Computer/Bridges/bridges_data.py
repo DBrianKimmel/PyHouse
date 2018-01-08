@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-30'
+__updated__ = '2018-01-05'
 
 #  Import system type stuff
 
@@ -43,5 +43,6 @@ class BridgeData(BaseUUIDObject):
         Tcp_port = None
         UserName = None
         Password = None
+        _Queue = None
 
 # ## END DBK

@@ -15,7 +15,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2018-01-01'
+__updated__ = '2018-01-05'
 
 #  Import system type stuff
 
@@ -53,7 +53,7 @@ class API(object):
                 # Atempt to not load unless used
                 from Modules.Families.Hue.Hue_hub import HueHub
                 LOG.info('Hue Bridge Active: {}'.format(l_bridge.Name))
-                HueHub(self.m_pyhouse_obj).HubStart(self.m_pyhouse_obj)
+                HueHub(self.m_pyhouse_obj).HubStart(l_bridge)
             else:
                 LOG.info('Other Bridge Active: {}'.format(l_bridge.Name))
             l_count += 1

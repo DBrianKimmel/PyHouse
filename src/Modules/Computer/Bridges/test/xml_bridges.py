@@ -18,7 +18,7 @@ BridgesSection
 
 """
 
-__updated__ = '2017-12-29'
+__updated__ = '2018-01-04'
 
 TESTING_BRIDGES_SECTION = 'BridgesSection'
 TESTING_BRIDGE = 'Bridge'
@@ -78,6 +78,7 @@ TESTING_BRIDGE_IPV4ADDRESS_1 = '192.168.1.111'
 TESTING_BRIDGE_PORT_1 = '12345'
 TESTING_BRIDGE_USERNAME_1 = 'Username-01'
 TESTING_BRIDGE_PASSWORD_1 = 'Password-01'
+TESTING_BRIDGE_HUE_ACCESS_KEY_1 = 'MBFBC-agf6rq5bsWcxLngYZoClGr2pw2oKEMLZgs'
 
 L_BRIDGE_START_1 = '    ' + \
     '<' + TESTING_BRIDGE + ' ' + \
@@ -93,6 +94,7 @@ L_BRIDGE_IPV4_ADDRESS_1 = '      <IPv4Address>' + TESTING_BRIDGE_IPV4ADDRESS_1 +
 L_BRIDGE_PORT_1 = '      <Port>' + TESTING_BRIDGE_PORT_1 + '</Port>'
 L_BRIDGE_USERNAME_1 = '      <UserName>' + TESTING_BRIDGE_USERNAME_1 + '</UserName>'
 L_BRIDGE_PASSWORD_1 = '      <Password>' + TESTING_BRIDGE_PASSWORD_1 + '</Password>'
+L_BRIDGE_HUE_ACCESS_KEY_1 = '<ApiKey>' + TESTING_BRIDGE_HUE_ACCESS_KEY_1 + '</ApiKey>'
 
 L_BRIDGE_1 = '\n'.join([
     L_BRIDGE_START_1,
@@ -104,6 +106,7 @@ L_BRIDGE_1 = '\n'.join([
     L_BRIDGE_PORT_1,
     L_BRIDGE_USERNAME_1,
     L_BRIDGE_PASSWORD_1,
+    L_BRIDGE_HUE_ACCESS_KEY_1,
     L_BRIDGE_END
 ])
 

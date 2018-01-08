@@ -11,13 +11,15 @@
 
 """
 
-__updated__ = '2018-01-01'
+__updated__ = '2018-01-04'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
+from Modules.Computer.Bridges import VALID_BRIDGE_TYPES
 from Modules.Computer.Bridges.bridges_data import BridgeData
+from Modules.Families.Hue.Hue_xml import Xml as hueXML
 # from Modules.Computer.computer import COMPUTER_DIVISION
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
@@ -27,8 +29,17 @@ LOG = Logger.getLogger('PyHouse.BridgesXml     ')
 class Xml(object):
 
     @staticmethod
+    def _read_type(p_xml):
+        l_type = PutGetXML.get_text_from_xml(p_xml, 'Type')
+        if l_type not in VALID_BRIDGE_TYPES:
+            LOG.error('Invalid bridge type: {} - Changed to: {}'.format(l_type, VALID_BRIDGE_TYPES[0]))
+            l_type = VALID_BRIDGE_TYPES[0]
+        return l_type
+
+    @staticmethod
     def _read_one_bridge(p_xml):
         """ Read all the information for a single Bridge device.
+        Call specific bridge information readers for some types of bridges.
 
         @param p_xml: XML information for one Bridge.
         @return: an Bridge object filled in with data from the XML passed in
@@ -38,11 +49,13 @@ class Xml(object):
             XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
             l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             l_obj.Connection = PutGetXML.get_text_from_xml(p_xml, 'Connection')
-            l_obj.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
+            l_obj.Type = Xml._read_type(p_xml)
             l_obj.IPv4Address = PutGetXML.get_ip_from_xml(p_xml, 'IPv4Address')
             l_obj.TcpPort = PutGetXML.get_int_from_xml(p_xml, 'Port')
             l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'UserName')
             l_obj.Password = PutGetXML.get_text_from_xml(p_xml, 'Password')
+            if l_obj.Type == "Hue":
+                hueXML.ReadXml(l_obj, p_xml)
         except Exception:
             pass
         return l_obj
@@ -62,6 +75,8 @@ class Xml(object):
         PutGetXML().put_int_element(l_entry, 'Port', p_bridge_obj.TcpPort)
         PutGetXML().put_text_element(l_entry, 'UserName', p_bridge_obj.UserName)
         PutGetXML().put_text_element(l_entry, 'Password', p_bridge_obj.Password)
+        if p_bridge_obj.Type == "Hue":
+            hueXML.WriteXml(l_entry, p_bridge_obj)
         return l_entry
 
     @staticmethod

@@ -18,13 +18,15 @@
 /rules
 
 """
+from Modules.Core.Utilities.convert import long_to_str
 
-__updated__ = '2018-01-02'
+__updated__ = '2018-01-07'
 
 # Import system type stuff
 import jsonpickle
+import queue as Queue
 import time
-from twisted.web.client import Agent, readBody
+from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
 from twisted.internet.defer import Deferred
 from twisted.internet.protocol import Protocol
@@ -33,6 +35,7 @@ from twisted.internet.protocol import Protocol
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
 
+SEND_TIMEOUT = 0.8
 mac = [ '00', '17', '88', '10', '22', '01' ]
 uid = '2f402f80-da50-11e1-9b23-%s' % ''.join(mac)
 icon = 'hue.png'
@@ -229,22 +232,27 @@ def gen_description_xml(addr):
 # class server(BaseHTTPRequestHandler):
 class server(object):
 
+    m_client_address = None
+    m_path = None
+
     def _set_headers(self, mime_type):
         self.send_response(200)
         self.send_header('Content-type', mime_type)
         self.end_headers()
 
     def do_GET(self):
-        print('GET', self.client_address, self.path)
-        parts = self.path.split('/')
-        if self.path == '/%s' % description_xml:
+        print('GET', self.m_client_address, self.m_path)
+        parts = self.m_path.split('/')
+
+        if self.m_path == '/%s' % description_xml:
             self._set_headers("text/xml")
             print('get %s' % description_xml)
             h = self.server.server_address[0]
             if 'Host' in self.headers:
                 h = self.headers['Host']
             self.wfile.write(gen_description_xml(h))
-        elif self.path == '/%s' % icon:
+
+        elif self.m_path == '/%s' % icon:
             self._set_headers("image/png")
             print('get %s' % parts[1])
             try:
@@ -253,14 +261,17 @@ class server(object):
                 fh.close()
             except Exception as e:
                 print('Cannot access %s' % icon, e)
-        elif self.path == '/api/' or self.path == '/api/%s' % username or self.path == '/api/%s/' % username:
+
+        elif self.m_path == '/api/' or self.m_path == '/api/%s' % username or self.m_path == '/api/%s/' % username:
             self._set_headers("application/json")
             print('get all state')
             self.wfile.write(gen_dump_json())
-        elif self.path == '/api/config' or self.path == '/api/config/':
+
+        elif self.m_path == '/api/config' or self.m_path == '/api/config/':
             self._set_headers("application/json")
             print('get basic configuration short (2)')
             self.wfile.write(gen_config_json(False))
+
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'lights':
             self._set_headers("application/json")
             print('enumerate list of lights')
@@ -270,6 +281,7 @@ class server(object):
             else:
                 print(' ...single (%s)' % parts[4])
                 self.wfile.write(gen_light_json(int(parts[4]) - 1))
+
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'groups':
             self._set_headers("application/json")
             print('enumerate list of groups')
@@ -279,18 +291,22 @@ class server(object):
             else:
                 print(' ...single (%s)' % parts[4])
                 self.wfile.write(gen_groups_json(int(parts[4]) - 1))
+
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'scenes':
             self._set_headers("application/json")
             print('enumerate list of scenes')
             self.wfile.write(gen_scenes_json())
+
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'sensors':
             self._set_headers("application/json")
             print('enumerate list of sensors')
             self.wfile.write(gen_sensors_json())
+
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'light':
             self._set_headers("application/json")
             print('get individual light state')
             self.wfile.write(gen_ind_light_json(int(parts[4]) - 1))
+
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'config':
             self._set_headers("application/json")
             if parts[2] == username:
@@ -299,9 +315,10 @@ class server(object):
             else:
                 print('get basic configuration short (1)')
                 self.wfile.write(gen_config_json(False))
+
         else:
             self._set_headers("application/json")
-            print('[G] unknown get request', self.path, self.headers)
+            print('[G] unknown get request', self.m_path, self.headers)
             self.wfile.write('unreg()')
             # self.wfile.write('[{"error":{"type":1,"address":"/","description":"unauthorized user"}}]')
 
@@ -309,8 +326,8 @@ class server(object):
         self._set_headers("text/html")
 
     def do_POST(self):
-        print('POST', self.path)
-        parts = self.path.split('/')
+        print('POST', self.m_path)
+        parts = self.m_path.split('/')
         # simpler registration; always return the same key
         # should keep track in e.g. an sqlite3 database and then do whitelisting etc
         if len(parts) >= 2 and parts[1] == 'api':
@@ -322,13 +339,13 @@ class server(object):
             self._set_headers("application/json")
             self.wfile.write('[{"success":{"id": "1"}}]')
         else:
-            print('unknown post request', self.path)
+            print('unknown post request', self.m_path)
 
     def do_PUT(self):
-        print('PUT', self.path)
+        print('PUT', self.m_path)
         data_len = int(self.headers['Content-Length'])
         content = self.rfile.read(data_len)
-        parts = self.path.split('/')
+        parts = self.m_path.split('/')
         if len(parts) >= 6 and parts[1] == 'api' and parts[3] == 'lights' and parts[5] == 'state':
             self._set_headers("application/json")
             print('set individual light state')
@@ -348,7 +365,7 @@ class server(object):
             print(content)
         else:
             self._set_headers("text/html")
-            print('unknown put request', self.path, content)
+            print('unknown put request', self.m_path, content)
 
 
 def add_light(name, id_, command, command_get):
@@ -363,18 +380,9 @@ def add_light(name, id_, command, command_get):
         lights.append(row)
 
 
-C_IP = b'192.168.1.111/'
-
-
-C_KEY = b'MBFBC-agf6rq5bsWcxLngYZoClGr2pw2oKEMLZgs'
-
-
-C_STA = b'/status'
-C_GET = b'GET'
-C_URI = b'http//' + C_IP + b'api/' + C_KEY + C_STA
-
-
 class HueProtocol(Protocol):
+    """ A minimal protocol for the Hue Hub.
+    """
 
     m_finished = None
     m_remaining = 0
@@ -384,12 +392,13 @@ class HueProtocol(Protocol):
         @param p_finished: is a deferred that ????
         """
         self.m_finished = p_finished
-        self.m_remaining = 1024 * 10
+        self.m_remaining = 1024 * 10  # Allow for 10kb response
 
     def dataReceived(self, p_bytes):
-        if self.m_remaining:
-            l_display = p_bytes[:self.m_remaining]
-            LOG.debug('Rxed: {}'.format(l_display))
+        if self.m_remaining > 0:
+            l_display = p_bytes[:self.m_remaining].decode("utf8")  # Get the string
+            l_json = jsonpickle.decode(l_display)
+            LOG.debug('\n===== Body =====\n{}\n'.format(l_json))
             self.m_remaining -= len(l_display)
 
     def connectionLost(self, p_reason):
@@ -399,42 +408,108 @@ class HueProtocol(Protocol):
         self.m_finished.callback(None)
 
 
+class HueDecode(object):
+    """
+    """
+
+    def decode_get(self):
+        """
+        """
+        LOG.info('Decode_Get')
+
+    def decode_post(self):
+        """
+        """
+        LOG.info('Decode_Post')
+
+
 class HueHub(object):
+    """
+    """
 
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized')
+    m_bridge_obj = None
+    m_agent_d = None
+    m_hue_agent = None
+    m_command = b'/config'
+    m_headers = None
 
-    def _build_uri(self, p_ip, p_key, p_cmd=b'/status'):
-        l_uri = b'http://' + p_ip + b'/api/' + p_key + p_cmd
+    def __init__(self, p_pyhouse_obj=None):
+        self.m_headers = Headers({'User-Agent': ['Hue Hub Web Client']})
+        if p_pyhouse_obj != None:
+            self.m_pyhouse_obj = p_pyhouse_obj
+            self.m_hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+            LOG.info('Initialized')
+
+    def _build_uri(self, p_command=b'/config'):
+        l_uri = b'http://'
+        try:
+            l_uri += self.m_bridge_obj.IPv4Address
+        except TypeError:
+            l_uri += long_to_str(self.m_bridge_obj.IPv4Address).encode("utf8")
+        l_uri += b'/api/'
+        try:
+            l_uri += self.m_bridge_obj.ApiKey
+        except TypeError:
+            l_uri += self.m_bridge_obj.ApiKey.encode("utf8")
+        try:
+            l_uri += p_command.encode("utf8")
+        except:
+            l_uri += p_command
         LOG.info('URI: {}'.format(l_uri))
         return l_uri
 
-    def HubStart(self, p_pyhouse_obj):
+    def _build_command(self, p_command):
+        try:
+            l_command = p_command.encode("utf8")
+        except:
+            l_command = p_command
+        return l_command
 
-        def cb_Shutdown(p_response):
-            LOG.debug('Error - Response: {}'.format(p_response))
+    def _get_all_config(self):
+        l_agent_d = self.HubGet('/config')
+        l_agent_d = self.HubGet('/lights')
+        LOG.info('Got All config')
 
-        def cb_Body(p_body):
-            """ Generate a body to send with the request.
-            """
-            LOG.debug('Response body: {}'.format(p_body))
+    def HubGet(self, p_command):
+        """ Issue a request for information
+        """
 
         def cb_Response(p_response):
-            LOG.debug('Response Code: {}'.format(p_response.code))
-            # LOG.debug('Response Phrase: {}'.format(p_response.phrase))
-            # LOG.debug('Response Headers: {}'.format(p_response.headers))
-            # l_agent_d = readBody(p_response)
+            l_hdr = p_response.headers
+            l_json = jsonpickle.decode(l_hdr)
+            LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
+            LOG.debug('Response Headers: {}'.format(l_json))
             l_finished = Deferred()
             p_response.deliverBody(HueProtocol(l_finished))
             return l_finished
 
-        hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
-        l_uri = self._build_uri(C_IP, C_KEY, C_STA)
-        l_headers = Headers({'User-Agent': ['Twisted Web Client Example']})
-        l_agent_d = hue_agent.request(C_GET, l_uri, l_headers, None)
+        l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, None)
         l_agent_d.addCallback(cb_Response)
-        LOG.info('Started')
+        HueDecode().decode_get()
         return l_agent_d
+
+    def HubPost(self, p_command, p_body):
+        """
+        """
+
+        def cb_Response(p_response):
+            LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
+            # LOG.debug('Response Headers: {}'.format(p_response.headers.decode("utf8")))
+            l_finished = Deferred()
+            p_response.deliverBody(HueProtocol(l_finished))
+            return l_finished
+
+        l_agent_d = self.m_hue_agent.request(b'GET', self.build_uri(p_command), self.m_headers, p_body)
+        l_agent_d.addCallback(cb_Response)
+        HueDecode().decode_post()
+        return l_agent_d
+
+    def HubStart(self, p_bridge_obj):
+        """ Start the hub and then get the hub data
+        """
+        p_bridge_obj._Queue = Queue(100)
+        self.m_bridge_obj = p_bridge_obj
+        self._get_all_config()
+        LOG.info('Started')
 
 # ## END DBK

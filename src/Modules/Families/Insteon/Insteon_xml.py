@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2018 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -13,7 +13,7 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerData.
 """
 
-__updated__ = '2016-11-07'
+__updated__ = '2018-01-04'
 
 #  Import system type stuff
 

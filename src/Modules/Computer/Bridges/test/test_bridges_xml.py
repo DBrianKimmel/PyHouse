@@ -11,7 +11,7 @@ Passed all 10 tests - DBK - 2018-01-01
 
 """
 
-__updated__ = '2018-01-01'
+__updated__ = '2018-01-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,9 +36,19 @@ from Modules.Computer.Bridges.test.xml_bridges import \
     TESTING_BRIDGE_PASSWORD_0, \
     TESTING_BRIDGE_COMMENT_0, \
     TESTING_BRIDGE_CONNECTION_0, \
-    TESTING_BRIDGE_TYPE_0, TESTING_BRIDGE_NAME_1, TESTING_BRIDGE_KEY_1, TESTING_BRIDGE_ACTIVE_1, TESTING_BRIDGE_UUID_1, \
-    TESTING_BRIDGE_IPV4ADDRESS_1, TESTING_BRIDGE_PORT_1, TESTING_BRIDGE_USERNAME_1, TESTING_BRIDGE_PASSWORD_1, \
-    TESTING_BRIDGE_COMMENT_1, TESTING_BRIDGE_CONNECTION_1, TESTING_BRIDGE_TYPE_1
+    TESTING_BRIDGE_TYPE_0, \
+    TESTING_BRIDGE_NAME_1, \
+    TESTING_BRIDGE_KEY_1, \
+    TESTING_BRIDGE_ACTIVE_1, \
+    TESTING_BRIDGE_UUID_1, \
+    TESTING_BRIDGE_IPV4ADDRESS_1, \
+    TESTING_BRIDGE_PORT_1, \
+    TESTING_BRIDGE_USERNAME_1, \
+    TESTING_BRIDGE_PASSWORD_1, \
+    TESTING_BRIDGE_COMMENT_1, \
+    TESTING_BRIDGE_CONNECTION_1, \
+    TESTING_BRIDGE_TYPE_1, \
+    TESTING_BRIDGE_HUE_ACCESS_KEY_1
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities import convert
 # from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -128,9 +138,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Type, TESTING_BRIDGE_TYPE_0)
 
     def test_02_Bridge1(self):
+        """ A Philips Hue Bridge
+        """
         l_xml = self.m_xml.bridges_sect[1]
         l_obj = bridgesXML._read_one_bridge(l_xml)
-        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Bridge 1'))
+        print(PrettyFormatAny.form(l_obj, 'B1-02-A - Bridge 1'))
         self.assertEqual(l_obj.Name, TESTING_BRIDGE_NAME_1)
         self.assertEqual(str(l_obj.Key), TESTING_BRIDGE_KEY_1)
         self.assertEqual(str(l_obj.Active), TESTING_BRIDGE_ACTIVE_1)
@@ -142,6 +154,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Comment, TESTING_BRIDGE_COMMENT_1)
         self.assertEqual(l_obj.Connection, TESTING_BRIDGE_CONNECTION_1)
         self.assertEqual(l_obj.Type, TESTING_BRIDGE_TYPE_1)
+        self.assertEqual(l_obj.ApiKey, TESTING_BRIDGE_HUE_ACCESS_KEY_1)
 
     def test_03_Bridges(self):
         """Here we should get a dict of bridges
@@ -156,6 +169,23 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj[1].Name, TESTING_BRIDGE_NAME_1)
         self.assertEqual(str(l_obj[1].Key), TESTING_BRIDGE_KEY_1)
         self.assertEqual(str(l_obj[1].Active), TESTING_BRIDGE_ACTIVE_1)
+
+    def test_04_Valid(self):
+        """
+        """
+        l_xml = self.m_xml.bridges_sect[1]
+        l_type = bridgesXML()._read_type(l_xml)
+        print(PrettyFormatAny.form(l_type, 'B1-04-A - Type'))
+        self.assertEqual(l_type, TESTING_BRIDGE_TYPE_1)
+
+    def test_05_InValid(self):
+        """
+        """
+        l_xml = self.m_xml.bridges_sect[1]
+        l_xml.find('Type').text = 'Garbage'
+        l_type = bridgesXML()._read_type(l_xml)
+        print(PrettyFormatAny.form(l_type, 'B1-05-A - Type'))
+        self.assertEqual(l_type, 'Null')
 
 
 class C1_Write(SetupMixin, unittest.TestCase):
@@ -185,13 +215,13 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('Password').text, TESTING_BRIDGE_PASSWORD_0)
 
     def test_02_Bridge1(self):
-        """Write one bridge
+        """Write one bridge (Hue Bridge) XML
         """
         l_xml_r = self.m_xml.bridges_sect[1]
         l_obj = bridgesXML._read_one_bridge(l_xml_r)
         # print(PrettyFormatAny.form(l_xml_r, 'C1-02-A - Bridge 1'))
         l_xml = bridgesXML._write_one_bridge(l_obj)
-        # print(PrettyFormatAny.form(l_xml, 'C1-01-B - Bridge 0'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-02-B - Bridge 0'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_BRIDGE_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], TESTING_BRIDGE_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_BRIDGE_ACTIVE_1)
@@ -202,9 +232,11 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('Port').text, TESTING_BRIDGE_PORT_1)
         self.assertEqual(l_xml.find('UserName').text, TESTING_BRIDGE_USERNAME_1)
         self.assertEqual(l_xml.find('Password').text, TESTING_BRIDGE_PASSWORD_1)
+        self.assertEqual(l_xml.find('Password').text, TESTING_BRIDGE_PASSWORD_1)
+        self.assertEqual(l_xml.find('ApiKey').text, TESTING_BRIDGE_HUE_ACCESS_KEY_1)
 
     def test_03_Bridges(self):
-        """Write all bridge
+        """Write all bridges
         """
         l_obj = bridgesXML.read_bridges_xml(self.m_pyhouse_obj, self)
         self.m_pyhouse_obj.Computer.Bridges = l_obj

@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 6, 2014
 @summary:   This module contains data definition for Insteon devices.
 
 """
 
-__updated__ = '2016-09-18'
+__updated__ = '2018-01-04'
 
 #  Import system type stuff
 
@@ -19,6 +19,9 @@ __updated__ = '2016-09-18'
 
 
 class InsteonData(object):
+    """ This is the Insteon specific data.
+    It will be added into device objects that are Insteon.
+    """
 
     def __init__(self):
         self.DevCat = 0  # DevCat and SubCat (2 bytes)

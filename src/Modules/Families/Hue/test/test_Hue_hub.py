@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-01-02'
+__updated__ = '2018-01-03'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -88,5 +88,6 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_06_Device(self):
         """ Be sure that the XML contains the right stuff.
         """
+        pass
 
 # ## END DBK
