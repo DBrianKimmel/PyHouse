@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Pi/pi_gpio.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 30, 2015
 @Summary:
@@ -11,8 +11,7 @@ This needs to wait for a new GPIO package that does not require root priveliges.
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-08'
 
 # Import system type stuff
 

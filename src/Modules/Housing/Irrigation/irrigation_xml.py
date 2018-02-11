@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @Summary:   Read/Write the Irrigation portions of the XML Configuration file.
@@ -12,21 +12,22 @@
 This is a skeleton until we start the use of the data.  Things are just a placeholder for now.
 
 """
+from opcode import cmp_op
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-02-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import IrrigationSystemData, IrrigationZoneData
+from Modules.Housing.Irrigation.irrigation_data import IrrigationSystemData, IrrigationZoneData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.IrrigationXml  ')
 DIVISION = 'HouseDivision'
 SECTION = 'IrrigationSection'
-SYSTEM = 'IrrigationSystem'
+SYSTEM = 'System'
 ZONE = 'Zone'
 
 
@@ -43,12 +44,13 @@ class Xml(object):
         l_obj = IrrigationZoneData()
         XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name, Key, Active
         l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
-        l_obj.Duration = PutGetXML.get_int_from_xml(p_xml, 'Duration', 0)
+        l_obj.Duration = PutGetXML.get_time_from_xml(p_xml, 'Duration')
         l_obj.EmitterCount = PutGetXML.get_int_from_xml(p_xml, 'EmitterCount', 0)
         l_obj.EmitterType = PutGetXML.get_text_from_xml(p_xml, 'EmitterType')
         l_obj.Next = PutGetXML.get_int_from_xml(p_xml, 'NextZone', 0)
         l_obj.Previous = PutGetXML.get_int_from_xml(p_xml, 'PrevZone', 0)
-        l_obj.Rate = PutGetXML.get_int_from_xml(p_xml, 'Rate', 0)
+        l_obj.Rate = PutGetXML.get_float_from_xml(p_xml, 'Rate', 0.0)
+        l_obj.StartTime = PutGetXML.get_time_from_xml(p_xml, 'StartTime')
         #  Expand with much more control data
         return l_obj
 
@@ -60,14 +62,14 @@ class Xml(object):
         """
         l_xml = XmlConfigTools.write_base_UUID_object_xml('Zone', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
-        PutGetXML.put_int_element(l_xml, 'Duration', p_obj.Duration)
+        PutGetXML.put_time_element(l_xml, 'Duration', p_obj.Duration)
         PutGetXML.put_int_element(l_xml, 'EmitterCount', p_obj.EmitterCount)
         PutGetXML.put_int_element(l_xml, 'EmitterType', p_obj.EmitterType)
         PutGetXML.put_int_element(l_xml, 'NextZone', p_obj.Next)
         PutGetXML.put_int_element(l_xml, 'PrevZone', p_obj.Previous)
         PutGetXML.put_int_element(l_xml, 'Rate', p_obj.Rate)
+        PutGetXML.put_time_element(l_xml, 'StartTime', p_obj.StartTime)
         return l_xml
-
 
     @staticmethod
     def _read_one_irrigation_system(p_xml):
@@ -118,8 +120,6 @@ class Xml(object):
             LOG.error('irrigationSystem: {}'.format(e_err))
         LOG.info('Loaded {} Irrigation Systems.'.format(l_count))
         return l_obj
-
-
 
     @staticmethod
     def _write_one_system(p_obj):

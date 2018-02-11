@@ -2,19 +2,18 @@
 @name:      PyHouse/src/Modules/Web/test/xml_web.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 30, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-01-27'
 
 # Import system type stuff
 
 # Import PyMh files
-
 
 TESTING_WEB_SECTION = 'WebSection'
 TESTING_LOGIN_SECTION = 'LoginSection'
@@ -28,9 +27,11 @@ L_LOGIN_END = '</' + TESTING_LOGIN + '>'
 
 TESTING_WEB_PORT = '8580'
 TESTING_WEB_SECURE_PORT = '8588'
+TESTING_WEB_SOCKET_PORT = '8581'
 
 L_WEB_PORT = '    <Port>' + TESTING_WEB_PORT + '</Port>'
 L_WEB_SECURE_PORT = '    <SecurePort>' + TESTING_WEB_SECURE_PORT + '</SecurePort>'
+L_WEB_SOCKET_PORT = '    <SocketPort>' + TESTING_WEB_SOCKET_PORT + '</SocketPort>'
 
 TESTING_LOGIN_NAME_0 = 'Admin-00'
 TESTING_LOGIN_KEY_0 = '0'
@@ -91,6 +92,7 @@ XML_WEB_SERVER = '\n'.join([
     L_WEB_SECTION_START,
     L_WEB_PORT,
     L_WEB_SECURE_PORT,
+    L_WEB_SOCKET_PORT,
     L_LOGIN_SECTION_START,
     L_LOGIN_USER_0,
     L_LOGIN_USER_1,

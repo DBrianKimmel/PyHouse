@@ -4,19 +4,19 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 4, 2014
 @Summary:
 
 """
 
-__updated__ = '2017-07-07'
+__updated__ = '2018-02-09'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.data_objects import IrrigationData
+from Modules.Housing.Irrigation.irrigation_data import IrrigationData
 from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 from Modules.Computer import logging_pyh as Logging
 
@@ -26,6 +26,7 @@ LOG = Logging.getLogger('PyHouse.Irrigation     ')
 class MqttActions(object):
     """
     """
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 

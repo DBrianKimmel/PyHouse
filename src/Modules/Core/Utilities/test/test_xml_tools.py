@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules.Core.Utilities.test/test_xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2013-2017 by D. Brian Kimmel
+@copyright: 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 59 tests - DBK 2017-03-27
+Passed all 62 tests - DBK 2018-02-08
 """
 
-__updated__ = '2017-03-27'
+__updated__ = '2018-02-08'
 
 # Import system type stuff
 # import copy
@@ -63,7 +63,8 @@ from Modules.Core.Utilities.test.xml_xml_tools import \
     TESTING_XML_ROOM_X_1, \
     TESTING_XML_ROOM_Y_1, \
     TESTING_XML_ROOM_Z_1, \
-    TESTING_XML_ROOM_COORDS_1
+    TESTING_XML_ROOM_COORDS_1, TESTING_XML_TIME_HOUR_0, TESTING_XML_TIME_MINUTE_0, TESTING_XML_TIME_SECOND_0, \
+    TESTING_XML_TIME_HOUR_1, TESTING_XML_TIME_MINUTE_1, TESTING_XML_TIME_SECOND_1, TESTING_XML_TIME_0
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -78,8 +79,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_xml_tools')
 
@@ -410,8 +413,37 @@ class D2_IP(SetupMixin, unittest.TestCase):
         self.assertEqual(l_element.find('IPv6').text, TESTING_XML_IPV6_0)
 
 
+class E1_Time(SetupMixin, unittest.TestCase):
+    """
+    This series tests the PutGetXML class methods
+    """
 
-class D3_DateTime(SetupMixin, unittest.TestCase):
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
+
+    def test_01_time0(self):
+        l_answer = datetime.time(TESTING_XML_TIME_HOUR_0, TESTING_XML_TIME_MINUTE_0, TESTING_XML_TIME_SECOND_0)
+        # print(PrettyFormatAny.form(l_answer, 'DateTime E1-01 A'))
+        l_time = self.m_api.get_time_from_xml(self.m_fields, 'Time0')
+        # print(PrettyFormatAny.form(self.m_fields, 'DateTime E1-01 B'))
+        self.assertEqual(l_time, l_answer)
+
+    def test_02_time1(self):
+        l_answer = datetime.time(int(TESTING_XML_TIME_HOUR_1), int(TESTING_XML_TIME_MINUTE_1), int(TESTING_XML_TIME_SECOND_1))
+        # print(PrettyFormatAny.form(l_answer, 'DateTime E1-02 A'))
+        l_time = self.m_api.get_time_from_xml(self.m_fields, 'Time1')
+        self.assertEqual(l_time, l_answer)
+
+    def test_03_Write(self):
+        l_time = self.m_api.get_time_from_xml(self.m_fields, 'Time0')
+        l_element = ET.Element('TestTime')
+        self.m_api.put_date_time_element(l_element, 'TestField', l_time)
+        # print(PrettyFormatAny.form(l_element, 'DateTime E1-03 A'))
+        self.assertEqual(l_element[0].text, TESTING_XML_TIME_0)
+
+
+class E2_DateTime(SetupMixin, unittest.TestCase):
     """
     This series tests the PutGetXML class methods
     """
@@ -423,7 +455,7 @@ class D3_DateTime(SetupMixin, unittest.TestCase):
     def test_1_Read(self):
         l_answer = datetime.datetime(int(TESTING_XML_YEAR_0), int(TESTING_XML_MONTH_0), int(TESTING_XML_DAY_0),
                                      int(TESTING_XML_HOUR_0), int(TESTING_XML_MINUTE_0), int(TESTING_XML_SECOND_0))
-        # print(PrettyFormatAny.form(l_answer, 'DateTime D3-1 A'))
+        # print(PrettyFormatAny.form(l_answer, 'DateTime E2-1 A'))
         l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime0')
         self.assertEqual(l_date, l_answer)
 
@@ -431,11 +463,11 @@ class D3_DateTime(SetupMixin, unittest.TestCase):
         l_date = self.m_api.get_date_time_from_xml(self.m_fields, 'DateTime0')
         l_element = ET.Element('TestDateTime')
         self.m_api.put_date_time_element(l_element, 'TestField', l_date)
-        # print(PrettyFormatAny.form(l_element, 'DateTime D3-2 A'))
+        # print(PrettyFormatAny.form(l_element, 'DateTime E2-2 A'))
         self.assertEqual(l_element[0].text, TESTING_XML_DATE_TIME_0)
 
 
-class D4_Coords(SetupMixin, unittest.TestCase):
+class F1_Coords(SetupMixin, unittest.TestCase):
     """
     This series test reeading and writing of CoOrdinates.
     Since there are various input formats tested and the xml-tools output is always ideal,
@@ -448,55 +480,55 @@ class D4_Coords(SetupMixin, unittest.TestCase):
         self.m_api = PutGetXML
 
     def test_01_Read(self):
-        # print(PrettyFormatAny.form(self.m_fields, 'Coords D4-1 A'))
+        # print(PrettyFormatAny.form(self.m_fields, 'Coords F1-1 A'))
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords0')
-        # print(PrettyFormatAny.form(l_coords, 'Coords D4-1 B'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords F1-1 B'))
         self.assertEqual(l_coords.X_Easting, float(TESTING_XML_ROOM_X_0))
         self.assertEqual(l_coords.Y_Northing, float(TESTING_XML_ROOM_Y_0))
         self.assertEqual(l_coords.Z_Height, float(TESTING_XML_ROOM_Z_0))
 
     def test_02_Read(self):
-        # print(PrettyFormatAny.form(self.m_fields, 'Coords D4-2 A'))
+        # print(PrettyFormatAny.form(self.m_fields, 'Coords F1-2 A'))
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
-        # print(PrettyFormatAny.form(l_coords, 'Coords D4-2 B'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords F1-2 B'))
         self.assertEqual(l_coords.X_Easting, float(TESTING_XML_ROOM_X_1))
         self.assertEqual(l_coords.Y_Northing, float(TESTING_XML_ROOM_Y_1))
         self.assertEqual(l_coords.Z_Height, float(TESTING_XML_ROOM_Z_1))
 
     def test_03_Read(self):
-        # print(PrettyFormatAny.form(self.m_fields, 'Coords D4-3 A'))
+        # print(PrettyFormatAny.form(self.m_fields, 'Coords F1-3 A'))
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
-        # print(PrettyFormatAny.form(l_coords, 'Coords D4-3 B'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords F1-3 B'))
         self.assertEqual(l_coords.X_Easting, 23.7)
         self.assertEqual(l_coords.Y_Northing, 2.15)
         self.assertEqual(l_coords.Z_Height, 3.33)
 
     def test_04_Write(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords0')
-        # print(PrettyFormatAny.form(l_coords, 'Coords D4-4 A'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords F1-4 A'))
         l_element = ET.Element('TestCoords')
         self.m_api.put_coords_element(l_element, 'OutCoords', l_coords)
-        # print(PrettyFormatAny.form(l_element, 'Coords D4-4 B'))
+        # print(PrettyFormatAny.form(l_element, 'Coords F1-4 B'))
         self.assertEqual(l_element[0].text, '[3.4,5.6,1.2]')
 
     def test_05_Write(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords1')
-        # print(PrettyFormatAny.form(l_coords, 'Coords D4-5 A'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords F1-5 A'))
         l_element = ET.Element('TestCoords')
         self.m_api.put_coords_element(l_element, 'OutCoords', l_coords)
-        # print(PrettyFormatAny.form(l_element, 'Coords D4-5 B'))
+        # print(PrettyFormatAny.form(l_element, 'Coords F1-5 B'))
         self.assertEqual(l_element[0].text, TESTING_XML_ROOM_COORDS_1)
 
     def test_06_Write(self):
         l_coords = self.m_api.get_coords_from_xml(self.m_fields, 'RoomCoords2')
-        # print(PrettyFormatAny.form(l_coords, 'Coords D4-6 A'))
+        # print(PrettyFormatAny.form(l_coords, 'Coords F1-6 A'))
         l_element = ET.Element('TestCoords')
         self.m_api.put_coords_element(l_element, 'OutCoords', l_coords)
-        # print(PrettyFormatAny.form(l_element, 'Coords D4-6 B'))
+        # print(PrettyFormatAny.form(l_element, 'Coords F1-6 B'))
         self.assertEqual(l_element[0].text, '[23.7,2.15,3.33]')
 
 
-class E1_Read(SetupMixin, unittest.TestCase):
+class J1_Read(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -508,7 +540,7 @@ class E1_Read(SetupMixin, unittest.TestCase):
     def test_01_BaseUUIDObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_base_obj, 'E1-01-A - Base Obj'))
+        # print(PrettyFormatAny.form(l_base_obj, 'J1-01-A - Base Obj'))
         self.assertEqual(l_base_obj.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(str(l_base_obj.Active), TESTING_LIGHT_ACTIVE_0)
@@ -522,7 +554,7 @@ class E1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_base_obj.Active), TESTING_CONTROLLER_ACTIVE_0)
 
 
-class E2_ReadEmpty(SetupMixin, unittest.TestCase):
+class J2_ReadEmpty(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -534,13 +566,13 @@ class E2_ReadEmpty(SetupMixin, unittest.TestCase):
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
         self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_base_obj, 'E2-01-A Base))
+        # print(PrettyFormatAny.form(l_base_obj, 'J2-01-A Base))
         self.assertEqual(l_base_obj.Name, '')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
 
 
-class E3_Write(SetupMixin, unittest.TestCase):
+class K1_Write(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -557,7 +589,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
         l_xml = XmlConfigTools.write_base_UUID_object_xml('Light', l_base_obj)
-        # print(PrettyFormatAny.form(l_xml, 'E3-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'K1-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '43')
         self.assertEqual(l_xml.find('UUID').text, l_uuid)
@@ -569,7 +601,7 @@ class E3_Write(SetupMixin, unittest.TestCase):
         XmlConfigTools.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 44
         l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
-        # print(PrettyFormatAny.form(l_xml, 'E3-02-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'K1-02-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '44')
 

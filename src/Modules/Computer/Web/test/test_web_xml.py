@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Web/test/test_web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2015
 @Summary:
 
-Passed all 14 tests - DBK - 2017-01-19
+Passed all 14 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-01-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,8 +42,9 @@ from Modules.Computer.Web.test.xml_web import \
     TESTING_LOGIN_UUID_1, \
     TESTING_LOGIN_FULL_NAME_1, \
     TESTING_LOGIN_PASSWORD_1, \
-    TESTING_LOGIN_ROLE_1
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+    TESTING_LOGIN_ROLE_1, \
+    TESTING_WEB_SOCKET_PORT
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -57,8 +58,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_xml')
 
@@ -78,7 +81,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def test_02_LoginSection(self):
         self.assertEqual(self.m_xml.login_sect.tag, 'LoginSection')
-        # print(PrettyFormatAny.form(self.m_xml.login_sect, 'XML'))
+        print(PrettyFormatAny.form(self.m_xml.login_sect, 'A1-03-A - XML'))
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):
@@ -106,9 +109,10 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_Ports(self):
         """ Read the web ports.
         """
-        l_port, l_secure = webXml._read_ports(self.m_xml.web_sect)
-        self.assertEqual(l_port, int(TESTING_WEB_PORT))
-        self.assertEqual(l_secure, int(TESTING_WEB_SECURE_PORT))
+        l_port, l_secure, l_socket = webXml._read_ports(self.m_xml.web_sect)
+        self.assertEqual(str(l_port), TESTING_WEB_PORT)
+        self.assertEqual(str(l_secure), TESTING_WEB_SECURE_PORT)
+        self.assertEqual(str(l_socket), TESTING_WEB_SOCKET_PORT)
 
     def test_02_Login_0(self):
         """ Read one Login object.
@@ -177,6 +181,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_web_xml, 'B2-01-B - Web'))
         self.assertEqual(self.m_web_xml.find('Port').text, TESTING_WEB_PORT)
         self.assertEqual(self.m_web_xml.find('SecurePort').text, TESTING_WEB_SECURE_PORT)
+        self.assertEqual(self.m_web_xml.find('SocketPort').text, TESTING_WEB_SOCKET_PORT)
 
     def test_02_OneLogin(self):
         """ Write one Login.

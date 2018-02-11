@@ -2,23 +2,23 @@
 @name:      PyHouse/src/Modules/Families/test/test_family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014_2015 by D. Brian Kimmel
+@copyright: (c) 2014_2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 15, 2014
 @Summary:
 
-Passed all 278tests.  DBK 2017-10-10
+Passed all 30 tests.  DBK 2018-01-22
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS
 
-__updated__ = '2017-10-10'
+__updated__ = '2018-01-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightData
 from Modules.Core import conversions
@@ -37,12 +37,15 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_NAME_0, \
     TESTING_LIGHT_NAME_1, \
     TESTING_LIGHT_KEY_1, \
-    TESTING_LIGHT_ACTIVE_1, TESTING_LIGHT_COMMENT_0
+    TESTING_LIGHT_ACTIVE_1, \
+    TESTING_LIGHT_COMMENT_0, \
+    TESTING_LIGHT_ROOM_NAME_1
 from Modules.Families.test.xml_family import \
     TESTING_FAMILY_NAME_1, \
     TESTING_FAMILY_NAME_0, \
     TESTING_FAMILY_NAME_2, \
-    TESTING_FAMILY_NAME_3
+    TESTING_FAMILY_NAME_3, \
+    TESTING_FAMILY_NAME_4
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_PRODUCT_KEY_0, \
     TESTING_INSTEON_ADDRESS_0, \
@@ -78,8 +81,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_family_utils')
 
@@ -110,6 +115,21 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_device_obj.Active, TESTING_LIGHT_ACTIVE_0)
         self.assertEqual(self.m_device_obj.Comment, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(self.m_device_obj.BrightnessPct, TESTING_LIGHT_CUR_LEVEL_0)
+
+    def test_02_PyHouseObj(self):
+        """ Be sure that m_xml is set up properly
+        """
+        # print(PrettyFormatAny.form(self.m_xml, 'Xml'))
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
+        self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
+        self.assertEqual(self.m_xml.button.tag, 'Button')
+        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
+        self.assertEqual(self.m_xml.controller.tag, 'Controller')
+        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
+        self.assertEqual(self.m_xml.light.tag, 'Light')
 
 
 class B1_Utils_Name(SetupMixin, unittest.TestCase):
@@ -215,6 +235,19 @@ class B2_Utils_Obj(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.X10')
         self.assertEqual(l_obj.FamilyXmlModuleName, 'X10_xml')
 
+    def test_05_GetFamilyObj4(self):
+        """ Do we get the correct family object (X10)
+        """
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_4
+        l_obj = FamUtil._get_family_obj(self.m_pyhouse_obj, self.m_device_obj)
+        # print(PrettyFormatAny.form(l_obj, 'B2-05-A - Family'))
+        self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_4)
+        self.assertEqual(l_obj.Active, True)
+        self.assertEqual(l_obj.Key, 4)
+        self.assertEqual(l_obj.FamilyDeviceModuleName, 'Hue_device')
+        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Hue')
+        self.assertEqual(l_obj.FamilyXmlModuleName, 'Hue_xml')
+
 
 class B3_Utils_Family(SetupMixin, unittest.TestCase):
     """ This section tests family retrieval
@@ -254,16 +287,37 @@ class B4_Utils_Family(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_GetApi(self):
-        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_0
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
         # print(PrettyFormatAny.form(l_api, 'B4-01-A - API'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 
     def test_02_GetApi(self):
-        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
         # print(PrettyFormatAny.form(l_api, 'B4-02-A - API'))
+        self.assertNotEqual(l_api, None)
+        # Note: We need proper testing here
+
+    def test_03_GetApi(self):
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+        # print(PrettyFormatAny.form(l_api, 'B4-03-A - API'))
+        self.assertNotEqual(l_api, None)
+        # Note: We need proper testing here
+
+    def test_04_GetApi(self):
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_3
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+        # print(PrettyFormatAny.form(l_api, 'B4-04-A - API'))
+        self.assertNotEqual(l_api, None)
+        # Note: We need proper testing here
+
+    def test_05_GetApi(self):
+        self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_4
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
+        # print(PrettyFormatAny.form(l_api, 'B4-05-A - API'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 
@@ -281,7 +335,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Did we get the XML correctly
         """
         l_xml = self.m_xml.light_sect[0]
-        # print(PrettyFormatAny.form(l_xml, 'C1-01-A - XML'))
+        print(PrettyFormatAny.form(l_xml, 'C1-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
 
@@ -289,7 +343,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Did we get the XML correctly
         """
         l_xml = self.m_xml.light_sect[1]
-        # print(PrettyFormatAny.form(l_xml, 'C1-02-A - XML'))
+        print(PrettyFormatAny.form(l_xml, 'C1-02-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_1)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_UPB)
 
@@ -308,7 +362,7 @@ class C2_Read_Dev(SetupMixin, unittest.TestCase):
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_device = self.m_device_obj
-        # print(PrettyFormatAny.form(l_device, 'C2-01-A - Device'))
+        print(PrettyFormatAny.form(l_device, 'C2-01-A - Device'))
         self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.Key, TESTING_LIGHT_KEY_0)
         self.assertEqual(l_device.Active, TESTING_LIGHT_ACTIVE_0)
@@ -322,8 +376,8 @@ class C2_Read_Dev(SetupMixin, unittest.TestCase):
         """
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
         self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(self.m_device_obj, 'C2-02-A - Device'))
-        self.assertEqual(self.m_device_obj.Name, TESTING_LIGHT_NAME_2)
+        print(PrettyFormatAny.form(self.m_device_obj, 'C2-02-A - Device'))
+        self.assertEqual(self.m_device_obj.Name, TESTING_LIGHT_NAME_1)
         self.assertEqual(self.m_device_obj.Key, TESTING_LIGHT_KEY_1)
         self.assertEqual(self.m_device_obj.Active, TESTING_LIGHT_ACTIVE_1)
         self.assertEqual(self.m_device_obj.DeviceFamily, TESTING_DEVICE_FAMILY_UPB)
@@ -344,22 +398,25 @@ class C3_Read(SetupMixin, unittest.TestCase):
     def test_01_Family(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_xml = self.m_xml.light
+        l_xml = self.m_xml.light_sect[0]
+        print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
         l_device = self.m_device_obj
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C3-01-A - Light'))
-        self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_1)
-        self.assertEqual(l_light.UPBAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        print(PrettyFormatAny.form(l_light, 'C3-01-B - Light'))
+        self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
+        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_02_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_xml = self.m_xml.light
+        l_xml = self.m_xml.light_sect[1]
+        print(PrettyFormatAny.form(l_xml, 'C3-02-A - XML'))
         l_device = self.m_device_obj
         l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C3-02-A - Light'))
-        self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
+        print(PrettyFormatAny.form(l_light, 'C3-02-B - Light'))
+        self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_1)
+        self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_1)
+        self.assertEqual(l_light.UPBAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_03_All(self):
         """ Did we get everything set up for the rest of the tests of this class.

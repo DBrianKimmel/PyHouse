@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/Lighting/test/xml_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 22, 2014
 @Summary:
@@ -11,13 +11,16 @@ See PyHouse/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-01-24'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0, XML_INSTEON_1
-from Modules.Families.UPB.test.xml_upb import XML_UPB
+from Modules.Families.Insteon.test.xml_insteon import \
+        XML_INSTEON_0, \
+        XML_INSTEON_1
+from Modules.Families.UPB.test.xml_upb import \
+        XML_UPB
 
 TESTING_LIGHT_SECTION = 'LightSection'
 TESTING_LIGHT = 'Light'

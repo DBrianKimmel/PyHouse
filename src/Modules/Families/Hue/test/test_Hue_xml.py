@@ -2,14 +2,16 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/test/test_Hue_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 18, 2017
 @summary:   Test
 
+Passed all 7 tests - DBK - 2018-01-27
+
 """
 
-__updated__ = '2017-12-18'
+__updated__ = '2018-01-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,6 +21,7 @@ from twisted.trial import unittest
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.data_objects import LightData, HouseInformation
+from Modules.Families.Hue.Hue_xml import Xml as HueXml
 
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -68,9 +71,11 @@ class A1_Prep(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
         self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
 
-    def test_03_House(self):
+    def test_03_Read(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
+        l_xml = s
+        l_dict = HueXml.ReadXml(p_device_obj, p_entry_xml)
         pass
 
     def test_04_Objs(self):

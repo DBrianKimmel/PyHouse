@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_logging.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @note:      Created on Aug 22, 2014
 @license:   MIT License
 @summary:   This module sets up logging.
@@ -17,8 +17,7 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-01-22'
 
 #  Import system type stuff
 import datetime
@@ -29,7 +28,7 @@ from twisted.python import log
 #  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOGGER_NAME = 'PyHouse                '
-LOGGER_NAME_TWISTED = 'PyHouse.Twisted.....   '
+LOGGER_NAME_TWISTED = 'PyHouse.Twisted........'
 
 LOG_DIRECTORY = '/var/log/pyhouse/'
 DEBUG_LOG_NAME = 'debug'

@@ -20,11 +20,11 @@
 """
 from Modules.Core.Utilities.convert import long_to_str
 
-__updated__ = '2018-01-07'
+__updated__ = '2018-02-10'
 
 # Import system type stuff
 import jsonpickle
-import queue as Queue
+from queue import Queue
 import time
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers

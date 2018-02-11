@@ -4,19 +4,21 @@
 @name:      PyHouse/src/Modules.Core.Utilities.xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2017 by D. Brian Kimmel
+@copyright: (c) 2012-2018 by D. Brian Kimmel
 @note:      Created on Jun 2, 2012
 @license:   MIT License
 @summary:   Various XML functions and utility methods.
 
 """
+from _datetime import date
 
-__updated__ = '2017-12-26'
+__updated__ = '2018-02-10'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
-import dateutil.parser as dparser
+import time
 import datetime
+import dateutil.parser as dparser
 # import uuid
 
 #  Import PyMh files
@@ -28,6 +30,9 @@ LOG = Logger.getLogger('PyHouse.XmlTools       ')
 
 
 class XML(object):
+    """
+    @return: a string containing the requested field data
+    """
 
     @staticmethod
     def get_element_field(p_xml, p_name):
@@ -71,6 +76,7 @@ class PutGetXML(object):
     get_text_from_xml
     get_uuid_from_xml
     get_ip_from_xml
+    get_time_from_xml
     get_date_time_from_xml
     get_coords_from_xml
     """
@@ -121,7 +127,7 @@ class PutGetXML(object):
             l_var = float(l_xml)
         except (ValueError, TypeError):
             l_var = float(p_default)
-            LOG.warning('invalid float: {}; {}=>0.0'.format(p_name, l_xml))
+            # LOG.warning('invalid float: {}; {}=>0.0'.format(p_name, l_xml))
         return l_var
 
     @staticmethod
@@ -254,6 +260,37 @@ class PutGetXML(object):
     def put_ip_element(p_parent_element, p_name, p_ip):
         l_ip = convert.long_to_str(p_ip)
         PutGetXML.put_text_element(p_parent_element, p_name, l_ip)
+
+# -----
+#  Time
+#
+# Could be a time of day or an interval.
+# hh:mm:ss
+# hh:mm
+# mm
+# -----
+    @staticmethod
+    def get_time_from_xml(p_xml, p_name):
+        """
+        @return: a datetime.time object
+        """
+        l_field = XML.get_any_field(p_xml, p_name)
+        # print('Field is : ', l_field)
+        if l_field is None:
+            l_field = str(datetime.time)
+        try:
+            l_str_time = time.strptime(l_field, '%H:%M:%S')
+            # print('aaa ', str(l_str_time))
+            l_ret = datetime.time(l_str_time.tm_hour, l_str_time.tm_min, l_str_time.tm_sec)
+            # print('bbb ', l_str_time, l_ret)
+        except Exception as e_err:
+            # print('parse failed: ', str(l_field), ' -- ', e_err)
+            l_ret = datetime.time(0, 0, 0)
+        return l_ret
+
+    @staticmethod
+    def put_time_element(p_parent_element, p_name, p_time):
+        PutGetXML.put_text_element(p_parent_element, p_name, p_time)
 
 # -----
 #  DateTime

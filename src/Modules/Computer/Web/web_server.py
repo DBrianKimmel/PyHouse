@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2012-2017 by D. Brian Kimmel
+@copyright: 2012-2018 by D. Brian Kimmel
 @note:      Created on Apr 3, 2012
 @license:   MIT License
 @summary:   This module provides the web server service of PyHouse.
@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2017-03-30'
+__updated__ = '2018-01-27'
 
 #  Import system type stuff
 # import ssl
@@ -57,6 +57,7 @@ class ClientConnections(object):
     We can update the browser via COMET when a controlled device changes.
     (Light On/Off, Pool water low, Garage Door open/Close ...)
     """
+
     def __init__(self):
         self.ConnectedBrowsers = []
 

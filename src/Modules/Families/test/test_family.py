@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules/Families/test/test_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:   This module is for testing family.
 
-Passed all 13 tests.  DBK 2017-10-10
+Passed all 13 tests.  DBK 2018-01-22
 """
 
-__updated__ = '2017-10-10'
+__updated__ = '2018-01-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -38,8 +38,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_family')
 
@@ -160,7 +162,7 @@ class B2_One(SetupMixin, unittest.TestCase):
 
     def test_02_ImportOneMod(self):
         l_module = family.Utility._init_component_apis(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_module, 'Module'))
+        # print(PrettyFormatAny.form(l_module, 'Module'))
 
 
 class B3_One(SetupMixin, unittest.TestCase):
@@ -173,7 +175,7 @@ class B3_One(SetupMixin, unittest.TestCase):
 
     def test_01_Import(self):
         l_obj = family.Utility._init_component_apis(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B3-01-A - Module'))
+        # print(PrettyFormatAny.form(l_obj, 'B3-01-A - Module'))
         self.assertNotEqual(l_obj, None)
 
 # ## END DBK

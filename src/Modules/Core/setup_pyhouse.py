@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -23,7 +23,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2017-01-10'
+__updated__ = '2018-01-10'
 
 #  Import system type stuff
 import os
@@ -48,6 +48,7 @@ def _build_file(p_pyhouse_obj, p_filename):
     l_file = os.path.join(p_pyhouse_obj.Xml.XmlConfigDir, p_filename)
     return l_file
 
+
 def _read_file(p_pyhouse_obj, p_filename):
     l_name = _build_file(p_pyhouse_obj, p_filename)
     try:
@@ -56,6 +57,7 @@ def _read_file(p_pyhouse_obj, p_filename):
     except IOError:
         l_ret = toolUuid.create_uuid()
     return l_ret
+
 
 def _write_file(p_pyhouse_obj, p_filename, p_uuid):
     l_name = _build_file(p_pyhouse_obj, p_filename)
@@ -124,7 +126,8 @@ class Utility(object):
 
 
 class API(Utility):
-    """ Now that any platform dependent initialization has been done, set up the rest of PyHouse
+    """ Now that any platform dependent initialization has been done, set up the rest of PyHouse.
+    Called from PyHouse.py
     """
 
     def __init__(self, p_pyhouse_obj):

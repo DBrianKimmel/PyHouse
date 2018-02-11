@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2018-01-03'
+__updated__ = '2018-02-09'
 __version_info__ = (1, 7, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -728,42 +728,6 @@ class CoreLightingData(DeviceData):
         super(CoreLightingData, self).__init__()
         # self. Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
         pass
-
-
-class IrrigationData(DeviceData):
-    """ Info about any/all irrigation systems for a house.
-    """
-
-    def __init__(self):
-        super(IrrigationData, self).__init__()
-        self.Systems = {}  # IrrigationSystemData()
-
-
-class IrrigationSystemData(DeviceData):
-    """ Info about an irrigation system (may have many zones).
-    """
-
-    def __init__(self):
-        super(IrrigationSystemData, self).__init__()
-        self.UsesMasterValve = False  # Master valve and/or Pump Relay
-        self.FirstZone = 0
-        self.Zones = {}  # IrrigationZoneData()
-
-
-class IrrigationZoneData(object):
-    """ Info about an irrigation zone
-    """
-
-    def __init__(self):
-        # super(IrrigationZoneData, self).__init__()
-        self.Name = 'Default zone'
-        self.Key = 0
-        self.Rate = 0  # litres per Minute
-        self.Duration = 0  # On time in seconds
-        self.Next = 0
-        self.Previous = -1
-        self.EmitterCount = 1
-        self.EmitterType = 'Rotor'
 
 
 class ThermostatData(DeviceData):

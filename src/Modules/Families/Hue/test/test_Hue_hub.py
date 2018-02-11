@@ -4,14 +4,17 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/test/test_Hue_hub.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @note:      Created on Jan 2, 2018
 @license:   MIT License
 @summary:
 
-"""
+Passed all 7 tests - DBK - 2018-01-27
 
-__updated__ = '2018-01-03'
+"""
+from Modules.Families.Hue.Hue_hub import HueHub
+
+__updated__ = '2018-01-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -73,6 +76,8 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_03_House(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
+        l_url = HueHub(self.m_pyhouse_obj)._build_uri(b'/config')
+        print(PrettyFormatAny.form(l_url, '1-03-A - Url'))
         pass
 
     def test_04_Objs(self):

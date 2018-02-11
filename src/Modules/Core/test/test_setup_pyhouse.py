@@ -2,16 +2,15 @@
 @name:      PyHouse/src/Modules/Core/test/test_setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @note:      Created on Mar 2, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
 
-Passed all 14 tests - DBK - 2017-01-10
+Passed all 17 tests - DBK - 2018-01-22                                                                                                                   tests - DBK - 2018-01-10
 """
-from Modules.Core import setup_pyhouse
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-01-22'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,9 +19,8 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Core import setup_pyhouse
+from Modules.Core import setup_pyhouse
 from Modules.Core.Utilities.config_file import API as configAPI
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import \
     PyHouseAPIs, \
     XmlInformation, \
@@ -31,6 +29,7 @@ from Modules.Core.data_objects import \
     TwistedInformation, \
     ComputerAPIs, \
     HouseAPIs
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -43,12 +42,15 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_setup_pyhouse')
+
     def XXX_test_01_Print(self):
-        print(XML_LONG)
+        # print(XML_LONG)
         pass
 
 
@@ -123,11 +125,11 @@ class C1_Structures(SetupMixin, unittest.TestCase):
         self.assertIsInstance(self.m_pyhouse_obj.APIs.House, HouseAPIs)
 
     def test_03_Computer(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-3-A PyHouse.Computer obj'))
+        # sprint(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-3-A PyHouse.Computer obj'))
         pass
 
     def test_04_House(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-4-A PyHouse.House obj'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-4-A PyHouse.House obj'))
         pass
 
     def test_05_Services(self):
@@ -135,15 +137,15 @@ class C1_Structures(SetupMixin, unittest.TestCase):
         pass
 
     def test_06_Twisted(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Twisted, 'C1-6-A PyHouse.Twisted obj'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Twisted, 'C1-6-A PyHouse.Twisted obj'))
         pass
 
     def test_07_Uuids(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'C1-7-A PyHouse.Uuids obj'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'C1-7-A PyHouse.Uuids obj'))
         pass
 
     def test_08_Xml(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'C1-8-A PyHouse.Xml obj'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'C1-8-A PyHouse.Xml obj'))
         pass
 
 

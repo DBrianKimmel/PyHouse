@@ -2,14 +2,16 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/test/test_Hue_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 18, 2017
 @summary:   Test
 
+Passed all 2 tests - DBK - 2018-01-27
+
 """
 
-__updated__ = '2017-12-18'
+__updated__ = '2018-01-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

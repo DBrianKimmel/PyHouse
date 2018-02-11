@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @note:      Created on Aug 9, 2011
 @license:   MIT License
 @summary:   This module is for *USING* device families
@@ -15,7 +15,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2016-11-06'
+__updated__ = '2018-01-22'
 
 #  Import system type stuff.
 

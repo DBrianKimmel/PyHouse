@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules.Core.Utilities.test/xml_xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2016-2017 by D. Brian Kimmel
+@copyright: 2016-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 11, 2016
 @summary:   This module is for testing XML tools.
 
 """
 
-__updated__ = '2017-04-18'
+__updated__ = '2018-02-08'
 
 TESTING_TUPLE = (1, 22, 333, 'Aa', 'BbBb', 'CcCcCc')
 TESTING_XML_BOOL_0 = 'False'
@@ -32,7 +32,6 @@ TESTING_XML_TEXT_1 = 'Another text element'
 L_TEXT_0 = '<Text0>' + TESTING_XML_TEXT_0 + '</Text0>'
 L_TEXT_1 = '<Text1>' + TESTING_XML_TEXT_1 + '</Text1>'
 
-
 TESTING_XML_IPV4_0 = '98.76.45.123'
 TESTING_XML_IPV6_0 = '1234:dead::beef'
 L_IPV4_0 = '<IpV40>' + TESTING_XML_IPV4_0 + '</IpV40>'
@@ -40,6 +39,24 @@ L_IPV6_0 = '<IpV60>' + TESTING_XML_IPV6_0 + '</IpV60>'
 
 TESTING_XML_UUID_0 = '01234567-fedc-2468-7531-0123456789ab'
 L_UUID_0 = '<UUID0>' + TESTING_XML_UUID_0 + '</UUID0>'
+
+TESTING_XML_TIME_HOUR_0 = 1
+TESTING_XML_TIME_MINUTE_0 = 2
+TESTING_XML_TIME_SECOND_0 = 3
+TESTING_XML_TIME_0 = '01:02:03'
+L_TIME_0 = '<Time0>' + TESTING_XML_TIME_0 + '</Time0>'
+
+TESTING_XML_TIME_HOUR_1 = 12
+TESTING_XML_TIME_MINUTE_1 = 34
+TESTING_XML_TIME_SECOND_1 = 56
+TESTING_XML_TIME_1 = '12:34:56'
+L_TIME_1 = '<Time1>' + TESTING_XML_TIME_1 + '</Time1>'
+
+TESTING_XML_TIME_HOUR_2 = 0
+TESTING_XML_TIME_MINUTE_2 = 2
+TESTING_XML_TIME_SECOND_2 = 3
+TESTING_XML_TIME_2 = '12:34:56'
+L_TIME_2 = '<Time2>' + TESTING_XML_TIME_2 + '</Time2>'
 
 TESTING_XML_YEAR_0 = '2016'
 TESTING_XML_MONTH_0 = '01'
@@ -108,6 +125,9 @@ XML_TEST = '\n'.join([
     L_IPV4_0,
     L_IPV6_0,
     L_UUID_0,
+    L_TIME_0,
+    L_TIME_1,
+    L_TIME_2,
     L_DATE_TIME_0,
     L_ROOM_COORDS_0,
     L_ROOM_COORDS_1,

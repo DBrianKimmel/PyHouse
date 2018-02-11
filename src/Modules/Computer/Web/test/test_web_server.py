@@ -2,16 +2,16 @@
 @name: PyHouse/src/Modules/Computer/Web/test/test_web_server.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2017 by D. Brian Kimmel
+@copyright: 2013-2018 by D. Brian Kimmel
 @note: Created on Apr 8, 2013
 @license: MIT License
 @summary: This module is for AMP request/response protocol
 
-Passed all 4 tests - DBK - 2016-11-23
+Passed all 4 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-01-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,6 +24,9 @@ from twisted.web.test.test_web import DummyRequest
 from Modules.Computer.Web.web_xml import Xml as webXml
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Web.test.xml_web import \
+        TESTING_WEB_PORT, TESTING_WEB_SECURE_PORT, TESTING_WEB_SOCKET_PORT
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -50,6 +53,7 @@ class SmartDummyRequest(DummyRequest):
 
 
 class DummySite(server.Site):
+
     def get(self, url, args=None, headers=None):
         return self._request("GET", url, args, headers)
 
@@ -77,13 +81,15 @@ class DummySite(server.Site):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_server')
 
 
-class C02_XML(SetupMixin, unittest.TestCase):
+class B1_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -94,13 +100,30 @@ class C02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.web_sect.tag, 'WebSection')
 
-    def test_11_ReadXML(self):
-        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Computer.Logs = l_web
-        self.assertEqual(l_web.WebPort, 8580)
 
-    def test_21_WriteXML(self):
+class B2_Read(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_ReadXML(self):
         l_web = webXml.read_web_xml(self.m_pyhouse_obj)
-        l_xml = webXml.write_web_xml(l_web)
+        print(PrettyFormatAny.form(l_web, 'C02-11-A - Xml'))
+        self.m_pyhouse_obj.Computer.Logs = l_web
+        self.assertEqual(str(l_web.WebPort), TESTING_WEB_PORT)
+        self.assertEqual(str(l_web.SecurePort), TESTING_WEB_SECURE_PORT)
+        self.assertEqual(str(l_web.WebSocketPort), TESTING_WEB_SOCKET_PORT)
+
+
+class B3_Write(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_WriteXML(self):
+        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_web, 'C02-22-A - Web'))
+        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'C02-22-B - Xml'))
 
 # ## END DBK

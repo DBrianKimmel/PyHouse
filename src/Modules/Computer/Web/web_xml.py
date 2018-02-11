@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 17, 2014
 @Summary:
@@ -15,7 +15,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2017-05-01'
+__updated__ = '2018-01-27'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -40,16 +40,18 @@ class Xml(object):
         """
         l_port = PutGetXML.get_int_from_xml(p_xml, 'WebPort', 8580)
         l_secure = PutGetXML.get_int_from_xml(p_xml, 'SecurePort', 8580)
-        return l_port, l_secure
+        l_socket = PutGetXML.get_int_from_xml(p_xml, 'SocketPort', 8580)
+        return l_port, l_secure, l_socket
 
     @staticmethod
     def _write_ports(p_obj, p_xml):
         """
         @param p_obj: is the Computer.Web object
         """
-        l_xml = PutGetXML.put_int_element(p_xml, 'Port', p_obj.WebPort)
-        l_xml = (PutGetXML.put_int_element(p_xml, 'SecurePort', p_obj.SecurePort))
-        return l_xml
+        PutGetXML.put_int_element(p_xml, 'Port', p_obj.WebPort)
+        PutGetXML.put_int_element(p_xml, 'SecurePort', p_obj.SecurePort)
+        PutGetXML.put_int_element(p_xml, 'SocketPort', p_obj.WebSocketPort)
+        return p_xml
 
     @staticmethod
     def _read_one_login(p_xml):
@@ -148,6 +150,7 @@ class Xml(object):
         l_obj.Logins = Xml._add_default_login()
         l_obj.WebPort = 8580
         l_obj.SecurePort = 8588
+        l_obj.WebSocketPort = 8581
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
         if l_xml == None:
             return l_obj
@@ -155,7 +158,7 @@ class Xml(object):
         if l_xml == None:
             return l_obj
         l_obj.Logins, l_count = Xml._read_all_logins(l_xml)
-        l_obj.WebPort, l_obj.SecurePort = Xml._read_ports(l_xml)
+        l_obj.WebPort, l_obj.SecurePort, l_obj.WebSocketPort = Xml._read_ports(l_xml)
         LOG.info('Loaded {} logins.'.format(l_count))
         return l_obj
 
