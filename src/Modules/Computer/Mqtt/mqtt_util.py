@@ -2,14 +2,15 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_util.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 13, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-04-30'
+__updated__ = '2018-02-12'
+
 
 class EncodeDecode(object):
     """

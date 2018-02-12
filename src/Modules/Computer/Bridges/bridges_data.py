@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-01-05'
+__updated__ = '2018-02-11'
 
 #  Import system type stuff
 
@@ -36,7 +36,6 @@ class BridgeData(BaseUUIDObject):
     """
 
     def __init__(self):
-        Comment = ''
         Connection = 'Ethernet'
         Type = 'Insteon'
         IPv4Address = '9.8.7.6'

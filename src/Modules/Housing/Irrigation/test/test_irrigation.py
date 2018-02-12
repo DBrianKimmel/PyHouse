@@ -11,7 +11,7 @@ Passed all 6 tests - DBK - 2017-01-18
 
 """
 
-__updated__ = '2018-02-06'
+__updated__ = '2018-02-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import TESTING_PYHOUSE, XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import IrrigationData
+from Modules.Housing.Irrigation.irrigation_data import IrrigationData
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 from Modules.Housing.Irrigation.test.xml_irrigation import \
     XML_IRRIGATION, \

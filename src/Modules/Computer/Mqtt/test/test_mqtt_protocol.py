@@ -9,9 +9,8 @@
 
 Passed 4 of 5 tests - DBK- 2017-03-11
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -21,12 +20,12 @@ import xml.etree.ElementTree as ET
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Computer.Mqtt.test.xml_mqtt import \
-    XML_MQTT, \
     TESTING_MQTT_SECTION, \
     TESTING_MQTT_BROKER
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.mqtt_protocol import MQTTProtocol
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -99,7 +98,7 @@ class P1_Packet(SetupMixin, unittest.TestCase):
         l_username = None
         l_password = None
 
-        MQTTProtocol().connect(l_clientID, l_keepalive)
+        # MQTTProtocol().connect(l_clientID, l_keepalive)
         pass
 
 #  ## END DBK

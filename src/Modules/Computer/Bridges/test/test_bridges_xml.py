@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:
 
-Passed all 10 tests - DBK - 2018-01-01
+Passed all 12 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2018-01-04'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -101,7 +101,6 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
 
     def test_01_Raw(self):
         l_raw = XML_BRIDGES
@@ -142,7 +141,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.bridges_sect[1]
         l_obj = bridgesXML._read_one_bridge(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'B1-02-A - Bridge 1'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Bridge 1'))
         self.assertEqual(l_obj.Name, TESTING_BRIDGE_NAME_1)
         self.assertEqual(str(l_obj.Key), TESTING_BRIDGE_KEY_1)
         self.assertEqual(str(l_obj.Active), TESTING_BRIDGE_ACTIVE_1)
@@ -175,7 +174,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.bridges_sect[1]
         l_type = bridgesXML()._read_type(l_xml)
-        print(PrettyFormatAny.form(l_type, 'B1-04-A - Type'))
+        # print(PrettyFormatAny.form(l_type, 'B1-04-A - Type'))
         self.assertEqual(l_type, TESTING_BRIDGE_TYPE_1)
 
     def test_05_InValid(self):
@@ -184,7 +183,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.bridges_sect[1]
         l_xml.find('Type').text = 'Garbage'
         l_type = bridgesXML()._read_type(l_xml)
-        print(PrettyFormatAny.form(l_type, 'B1-05-A - Type'))
+        # print(PrettyFormatAny.form(l_type, 'B1-05-A - Type'))
         self.assertEqual(l_type, 'Null')
 
 
@@ -200,7 +199,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_xml_r = self.m_xml.bridges_sect[0]
         l_obj = bridgesXML._read_one_bridge(l_xml_r)
-        # print(PrettyFormatAny.form(l_xml_r, 'C1-01-A - Bridge 0'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-01-A - Bridge 0'))
         l_xml = bridgesXML._write_one_bridge(l_obj)
         # print(PrettyFormatAny.form(l_xml, 'C1-01-B - Bridge 0'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_BRIDGE_NAME_0)
@@ -240,9 +239,9 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_obj = bridgesXML.read_bridges_xml(self.m_pyhouse_obj, self)
         self.m_pyhouse_obj.Computer.Bridges = l_obj
-        print(PrettyFormatAny.form(l_obj, 'C1-03-A - Bridges'))
+        # print(PrettyFormatAny.form(l_obj, 'C1-03-A - Bridges'))
         l_sect_xml = bridgesXML.write_bridges_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_sect_xml, 'C1-03-B - Bridges'))
+        # print(PrettyFormatAny.form(l_sect_xml, 'C1-03-B - Bridges'))
         l_xml = l_sect_xml[0]
         self.assertEqual(l_xml.attrib['Name'], TESTING_BRIDGE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_BRIDGE_KEY_0)

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 15, 2014
 @Summary:
@@ -10,7 +10,7 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2017-03-26'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -143,6 +143,8 @@ class Xml(object):
 
     @staticmethod
     def write_nodes_xml(p_pyhouse_obj):
+        """ These are writing in a random order - makes testing not work.
+        """
         l_xml = ET.Element(NODE_SECTION)
         l_nodes = p_pyhouse_obj.Computer.Nodes
         l_count = 0

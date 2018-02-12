@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/utils/test/test_config_file.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 7 tests - DBK - 2017-01-10
+Passed all 7 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2017-01-10'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,15 +31,18 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_config_file')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
     """
-    This section will verify the XML in the 'Modules.test.xml_data' file is correct and what the node_local module can read/write.
+    This section will verify the XML in the 'Modules.test.xml_data' file is correct
+    and what the node_local module can read/write.
     """
 
     def setUp(self):
@@ -50,7 +53,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_File(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)
         print('File: {}\n'.format(l_file.name))
-        self.assertEqual(l_file.name, TESTING_)
+        self.assertEqual(l_file.name, "/etc/pyhouse/master.xml")
 
     def test_02_OpenConfig(self):
         l_file = Util._open_config_file(self.m_pyhouse_obj)
@@ -68,6 +71,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
         Util._open_config_file(self.m_pyhouse_obj)
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot
         self.m_api.write_xml_config_file(self.m_pyhouse_obj, l_xml)
+
 
 class B2_1_4(SetupMixin, unittest.TestCase):
     """

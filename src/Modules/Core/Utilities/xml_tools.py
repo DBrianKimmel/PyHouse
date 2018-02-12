@@ -12,7 +12,7 @@
 """
 from _datetime import date
 
-__updated__ = '2018-02-10'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -357,6 +357,7 @@ class XmlConfigTools(object):
             p_base_obj.Name = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Name')
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
+            p_base_obj.Comment = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Comment', '')
         except Exception as e_err:
             LOG.error('Base Object - {}'.format(e_err))
         return p_base_obj
@@ -387,6 +388,7 @@ class XmlConfigTools(object):
             PutGetXML.put_text_attribute(l_elem, 'Name', p_object.Name)
             PutGetXML.put_int_attribute(l_elem, 'Key', p_object.Key)
             PutGetXML.put_bool_attribute(l_elem, 'Active', p_object.Active)
+            PutGetXML.put_text_element(l_elem, 'Comment', p_object.Comment)
         except AttributeError as e_err:
             PutGetXML.put_text_attribute(l_elem, 'Error: ', e_err)
         return l_elem

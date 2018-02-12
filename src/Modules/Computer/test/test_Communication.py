@@ -1,13 +1,11 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/test/test_Bridges.py -*-
-
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/test/test_Bridges.py
+@name:      PyHouse/src/Modules/test/test_communication.py
 @author:    D. Brian Kimmel
-@contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
-@note:      Created on Dec 21, 2017
+@contact:   D.BrianKimmel@gmail.com>
+@copyright: (c) 2014-2015 by D. Brian Kimmel
 @license:   MIT License
-@summary:
+@note:        Created on Aug 16, 2014
+@Summary:
 
 """
 
@@ -16,7 +14,8 @@ __updated__ = '2018-02-12'
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Computer.Bridges import test as I_test
+# Import PyMh files and modules.
+from Modules.Computer.Communication import test as I_test
 
 
 class Z_Suite(unittest.TestCase):
@@ -30,6 +29,6 @@ class Z_Suite(unittest.TestCase):
         l_package.run(l_ret)
         l_ret.done()
         #
-        print('\n====================\n*** test_Bridges ***\n{}\n'.format(l_ret))
+        print('\n====================\n*** test_Communication ***\n{}\n'.format(l_ret))
 
 # ## END DBK

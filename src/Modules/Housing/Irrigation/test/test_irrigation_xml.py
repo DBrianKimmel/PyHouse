@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2018-02-10
 
 """
 
-__updated__ = '2018-02-10'
+__updated__ = '2018-02-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,7 +36,20 @@ from Modules.Housing.Irrigation.test.xml_irrigation import \
     TESTING_IRRIGATION_ZONE_NEXT_0_0, \
     TESTING_IRRIGATION_ZONE_PREV_0_0, \
     TESTING_IRRIGATION_ZONE_RATE_0_0, \
-    TESTING_IRRIGATION_ZONE_START_TIME_0_0
+    TESTING_IRRIGATION_ZONE_START_TIME_0_0, \
+    TESTING_IRRIGATION_SYSTEM_COMMENT_0, \
+    TESTING_IRRIGATION_SYSTEM_MASTER_VALVE_0, \
+    TESTING_IRRIGATION_SYSTEM_KEY_0, \
+    TESTING_IRRIGATION_SYSTEM_ACTIVE_0, \
+    TESTING_IRRIGATION_SYSTEM_PUMP_RELAY_0, \
+    TESTING_IRRIGATION_SYSTEM_FIRST_ZONE_0, \
+    TESTING_IRRIGATION_SYSTEM_TYPE_0, \
+    TESTING_IRRIGATION_SYSTEM_NAME_1, \
+    TESTING_IRRIGATION_SYSTEM_KEY_1, \
+    TESTING_IRRIGATION_SYSTEM_ACTIVE_1, \
+    TESTING_IRRIGATION_SYSTEM_NAME_2, \
+    TESTING_IRRIGATION_SYSTEM_KEY_2, \
+    TESTING_IRRIGATION_SYSTEM_ACTIVE_2
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -116,7 +129,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.irrigation_zone
         l_obj = self.m_api._read_one_zone(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Zone'))
         self.assertEqual(str(l_obj.Name), TESTING_IRRIGATION_ZONE_NAME_0_0)
         self.assertEqual(str(l_obj.Key), TESTING_IRRIGATION_ZONE_KEY_0_0)
         self.assertEqual(str(l_obj.Active), TESTING_IRRIGATION_ZONE_ACTIVE_0_0)
@@ -136,6 +149,13 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = self.m_api._read_one_irrigation_system(l_xml)
         # print(PrettyFormatAny.form(l_obj, 'B1-02-A - System'))
         self.assertEqual(l_obj.Name, TESTING_IRRIGATION_SYSTEM_NAME_0)
+        self.assertEqual(str(l_obj.Key), TESTING_IRRIGATION_SYSTEM_KEY_0)
+        self.assertEqual(str(l_obj.Active), TESTING_IRRIGATION_SYSTEM_ACTIVE_0)
+        self.assertEqual(str(l_obj.Comment), TESTING_IRRIGATION_SYSTEM_COMMENT_0)
+        self.assertEqual(str(l_obj.FirstZone), TESTING_IRRIGATION_SYSTEM_FIRST_ZONE_0)
+        self.assertEqual(str(l_obj.UsesMasterValve), TESTING_IRRIGATION_SYSTEM_MASTER_VALVE_0)
+        self.assertEqual(str(l_obj.UsesPumpStartRelay), TESTING_IRRIGATION_SYSTEM_PUMP_RELAY_0)
+        self.assertEqual(str(l_obj.Type), TESTING_IRRIGATION_SYSTEM_TYPE_0)
 
     def test_03_Irrigation(self):
         """
@@ -144,6 +164,15 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = self.m_api.read_irrigation_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Irrigation'))
         self.assertEqual(len(l_obj), 3)
+        self.assertEqual(l_obj[0].Name, TESTING_IRRIGATION_SYSTEM_NAME_0)
+        self.assertEqual(str(l_obj[0].Key), TESTING_IRRIGATION_SYSTEM_KEY_0)
+        self.assertEqual(str(l_obj[0].Active), TESTING_IRRIGATION_SYSTEM_ACTIVE_0)
+        self.assertEqual(l_obj[1].Name, TESTING_IRRIGATION_SYSTEM_NAME_1)
+        self.assertEqual(str(l_obj[1].Key), TESTING_IRRIGATION_SYSTEM_KEY_1)
+        self.assertEqual(str(l_obj[1].Active), TESTING_IRRIGATION_SYSTEM_ACTIVE_1)
+        self.assertEqual(l_obj[2].Name, TESTING_IRRIGATION_SYSTEM_NAME_2)
+        self.assertEqual(str(l_obj[2].Key), TESTING_IRRIGATION_SYSTEM_KEY_2)
+        self.assertEqual(str(l_obj[2].Active), TESTING_IRRIGATION_SYSTEM_ACTIVE_2)
 
 
 class W1_Write(SetupMixin, unittest.TestCase):
@@ -165,6 +194,12 @@ class W1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], TESTING_IRRIGATION_ZONE_ACTIVE_0_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_IRRIGATION_ZONE_COMMENT_0_0)
         self.assertEqual(l_xml.find('Duration').text, TESTING_IRRIGATION_ZONE_DURATION_0_0)
+        self.assertEqual(l_xml.find('EmitterCount').text, TESTING_IRRIGATION_ZONE_EMITTER_COUNT_0_0)
+        self.assertEqual(l_xml.find('EmitterType').text, TESTING_IRRIGATION_ZONE_EMITTER_TYPE_0_0)
+        self.assertEqual(l_xml.find('NextZone').text, TESTING_IRRIGATION_ZONE_NEXT_0_0)
+        self.assertEqual(l_xml.find('PrevZone').text, TESTING_IRRIGATION_ZONE_PREV_0_0)
+        self.assertEqual(l_xml.find('Rate').text, TESTING_IRRIGATION_ZONE_RATE_0_0)
+        self.assertEqual(l_xml.find('StartTime').text, TESTING_IRRIGATION_ZONE_START_TIME_0_0)
 
     def test_02_System(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.

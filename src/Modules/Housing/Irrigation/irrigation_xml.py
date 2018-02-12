@@ -14,7 +14,7 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 """
 from opcode import cmp_op
 
-__updated__ = '2018-02-10'
+__updated__ = '2018-02-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,7 +42,7 @@ class Xml(object):
         @return: an IrrigationZone object filled in with data from the XML passed in
         """
         l_obj = IrrigationZoneData()
-        XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name, Key, Active
+        XmlConfigTools.read_base_object_xml(l_obj, p_xml)  # Name, Key, Active
         l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_obj.Duration = PutGetXML.get_time_from_xml(p_xml, 'Duration')
         l_obj.EmitterCount = PutGetXML.get_int_from_xml(p_xml, 'EmitterCount', 0)
@@ -60,7 +60,7 @@ class Xml(object):
         @param p_obj: is one zone object
         @return the XML for one Zone
         """
-        l_xml = XmlConfigTools.write_base_UUID_object_xml('Zone', p_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('Zone', p_obj)
         PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_time_element(l_xml, 'Duration', p_obj.Duration)
         PutGetXML.put_int_element(l_xml, 'EmitterCount', p_obj.EmitterCount)
@@ -82,6 +82,10 @@ class Xml(object):
         XmlConfigTools.read_base_UUID_object_xml(l_sys, p_xml)
         try:
             l_sys.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+            l_sys.FirstZone = PutGetXML.get_int_from_xml(p_xml, 'FirstZone')
+            l_sys.UsesMasterValve = PutGetXML.get_bool_from_xml(p_xml, 'MasterValve')
+            l_sys.UsesPumpStartRelay = PutGetXML.get_bool_from_xml(p_xml, 'PumpRelay')
+            l_sys.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
             for l_zone in p_xml.iterfind(ZONE):
                 l_obj = Xml._read_one_zone(l_zone)
                 l_sys.Zones[l_count] = l_obj
@@ -89,6 +93,19 @@ class Xml(object):
         except AttributeError as e_err:
             LOG.error('Zone: {}'.format(e_err))
         return l_sys
+
+    @staticmethod
+    def _write_one_system(p_obj):
+        """
+        @param p_obj: is one irrigation system object.
+        @return: the XML for one complete IrrigationSystem
+        """
+        l_xml = XmlConfigTools.write_base_UUID_object_xml('IrrigationSystem', p_obj)
+        PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
+        for l_obj in p_obj.Zones.values():
+            l_zone = Xml._write_one_zone(l_obj)
+            l_xml.append(l_zone)
+        return l_xml
 
     @staticmethod
     def read_irrigation_xml(p_pyhouse_obj):
@@ -112,6 +129,13 @@ class Xml(object):
             LOG.error('ERROR Reading irrigation information - {}'.format(e_err))
             l_section = None
         try:
+            # l_xml = l_section.find('Comment')
+            # l_obj.Comment = PutGetXML.get_text_from_xml(l_xml, 'Comment')
+            pass
+        except Exception:
+            # l_obj.Comment = 'None'
+            pass
+        try:
             for l_xml in l_section.iterfind(SYSTEM):
                 l_system = Xml._read_one_irrigation_system(l_xml)
                 l_obj[l_count] = l_system
@@ -120,19 +144,6 @@ class Xml(object):
             LOG.error('irrigationSystem: {}'.format(e_err))
         LOG.info('Loaded {} Irrigation Systems.'.format(l_count))
         return l_obj
-
-    @staticmethod
-    def _write_one_system(p_obj):
-        """
-        @param p_obj: is one irrigation system object.
-        @return: the XML for one complete IrrigationSystem
-        """
-        l_xml = XmlConfigTools.write_base_UUID_object_xml('IrrigationSystem', p_obj)
-        PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
-        for l_obj in p_obj.Zones.values():
-            l_zone = Xml._write_one_zone(l_obj)
-            l_xml.append(l_zone)
-        return l_xml
 
     @staticmethod
     def write_irrigation_xml(p_obj):

@@ -7,10 +7,10 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 13 tests - DBK - 2017-12-28
+Passed all 13 tests - DBK - 2018-02-12
 
 """
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,9 +21,10 @@ from twisted.internet import reactor
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData
 from Modules.Core.Utilities import json_tools
-from Modules.Core.data_objects import MqttBrokerData, \
-        LocationData, ScheduleLightData, ControllerData, \
+from Modules.Core.data_objects import LocationData, \
+        ScheduleLightData, ControllerData, \
         ComputerInformation
 from Modules.Computer.Mqtt.mqtt import _make_message
 from Modules.Computer.Mqtt.mqtt_client import Util  # , API as mqttAPI

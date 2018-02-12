@@ -7,10 +7,10 @@
 @note:      Created on Mar 31, 2017
 @summary:   Test
 
-Passed all 10 tests - DBK - 2017-12-28
+Passed all 10 tests - DBK - 2018-02-12
 
 """
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -110,12 +110,12 @@ class C2_Decode(SetupMixin, unittest.TestCase):
         """
         """
         l_bytes = bytearray(b'\x00\x03Abc')
-        print(PrettyFormatAny.form(l_bytes, 'ByteArray'))
+        # print(PrettyFormatAny.form(l_bytes, 'C2-01-A - ByteArray'))
         l_str = self.m_api._decodeString(l_bytes)
-        print(PrettyFormatAny.form(l_str, 'string'))
+        # print(PrettyFormatAny.form(l_str, 'C2-01-B - String'))
         self.assertEqual(l_bytes[0], 0)
-        # self.assertEqual(l_bytearray[1], 3)
-        # self.assertEqual(str(l_bytearray[2:]), l_res)
+        self.assertEqual(l_bytes[1], 3)
+        self.assertEqual(l_str, 'Abc')
 
 
 class D1_EncLen(SetupMixin, unittest.TestCase):
@@ -131,7 +131,7 @@ class D1_EncLen(SetupMixin, unittest.TestCase):
         """
         l_bytes = 127
         l_ba = self.m_api._encodeLength(l_bytes)
-        print(PrettyFormatAny.form(l_ba, 'string'))
+        # print(PrettyFormatAny.form(l_ba, 'D1-01-A - string'))
         self.assertEqual(l_ba[0], 127)
 
     def test_02_string(self):
@@ -139,7 +139,7 @@ class D1_EncLen(SetupMixin, unittest.TestCase):
         """
         l_bytes = 133
         l_ba = self.m_api._encodeLength(l_bytes)
-        print(PrettyFormatAny.form(l_ba, 'string'))
+        # print(PrettyFormatAny.form(l_ba, 'D1-02-A - string'))
         self.assertEqual(l_ba[0], 0x85)
         self.assertEqual(l_ba[1], 1)
 
@@ -148,7 +148,7 @@ class D1_EncLen(SetupMixin, unittest.TestCase):
         """
         l_bytes = 732
         l_ba = self.m_api._encodeLength(l_bytes)
-        print(PrettyFormatAny.form(l_ba, 'string'))
+        # print(PrettyFormatAny.form(l_ba, 'D1-03-A - string'))
         self.assertEqual(l_ba[0], 220)
         self.assertEqual(l_ba[1], 5)
 
@@ -157,7 +157,7 @@ class D1_EncLen(SetupMixin, unittest.TestCase):
         """
         l_bytes = 88500
         l_ba = self.m_api._encodeLength(l_bytes)
-        print(PrettyFormatAny.form(l_ba, 'string'))
+        # print(PrettyFormatAny.form(l_ba, 'D1-04-A - string'))
         self.assertEqual(l_ba[0], 180)
         self.assertEqual(l_ba[1], 179)
         self.assertEqual(l_ba[2], 5)

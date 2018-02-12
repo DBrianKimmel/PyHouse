@@ -9,11 +9,11 @@
 @license:   MIT License
 @summary:
 
-Passed all 6 tests - DBK - 2018-01-01
+Passed all 6 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2018-01-01'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -71,7 +71,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
         """
-        print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
 

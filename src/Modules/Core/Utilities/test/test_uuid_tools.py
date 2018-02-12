@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules.Core.Utilities.test/test_uuid_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 22, 2015
 @Summary:
 
-Passed all 7 tests - DBK - 2017-01-15
+Passed all 13 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -23,7 +23,7 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
-from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODE_SECTION_START
+from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODE_SECTION
 from Modules.Core.data_objects import UuidData
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -39,8 +39,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_uuid_tools')
 
@@ -61,7 +63,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
-        self.assertEqual(self.m_xml.node_sect.tag, TESTING_NODE_SECTION_START)
+        self.assertEqual(self.m_xml.node_sect.tag, TESTING_NODE_SECTION)
 
 
 class A2_XML(SetupMixin, unittest.TestCase):

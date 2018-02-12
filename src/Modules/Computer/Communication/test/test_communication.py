@@ -11,7 +11,7 @@ Passed all 5 tests - DBK - 2017-01-19
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,7 +23,9 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Communication.test.xml_communications import \
-    XML_COMMUNICATION, TESTING_COMMUNICATION_SECTION, TESTING_EMAIL_SECTION
+    XML_COMMUNICATION, \
+    TESTING_COMMUNICATION_SECTION, \
+    TESTING_EMAIL_SECTION
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -37,8 +39,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_communications')
 
@@ -69,7 +73,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Raw(self):
         l_raw = XML_COMMUNICATION
-        print(l_raw)
+        # print(l_raw)
         self.assertEqual(l_raw[:22], '<CommunicationSection>')
 
     def test_02_Parsed(self):

@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Internet/test/test_inet_update_dyn_dns.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2014
 @Summary:
 
-Passed all 2 tests - DBK - 2016-11-22
+Passed all 2 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,10 +33,12 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
-        print('Id: test_inet_updaye_dyn_dns')
+        print('Id: test_inet_update_dyn_dns')
 
 
 class Test(SetupMixin, unittest.TestCase):

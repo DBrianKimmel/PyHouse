@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created Feb 20, 2016
 @Summary:
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-02-11'
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData

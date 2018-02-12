@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules.Core.Utilities.test/test_device_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 26, 2015
 @Summary:
 
-Passed all 11 tests - DBK - 2016-11-23
+Passed all 11 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -39,7 +39,10 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_DEVICE_TYPE_0, \
     TESTING_LIGHT_ROOM_COORDS_0, \
     TESTING_LIGHT_ROOM_NAME_0, \
-    TESTING_LIGHT_ROOM_UUID_0, TESTING_LIGHT_ROOM_X, TESTING_LIGHT_ROOM_Z, TESTING_LIGHT_ROOM_Y
+    TESTING_LIGHT_ROOM_UUID_0, \
+    TESTING_LIGHT_ROOM_X0, \
+    TESTING_LIGHT_ROOM_Z0, \
+    TESTING_LIGHT_ROOM_Y0
 from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_ACTIVE_0, \
@@ -66,8 +69,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_device_tools')
 
@@ -135,9 +140,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_base.DeviceSubType, int(TESTING_LIGHT_DEVICE_SUBTYPE_0))
         self.assertEqual(l_base.DeviceType, int(TESTING_LIGHT_DEVICE_TYPE_0))
-        self.assertEqual(str(l_base.RoomCoords.X_Easting), TESTING_LIGHT_ROOM_X)
-        self.assertEqual(str(l_base.RoomCoords.Y_Northing), TESTING_LIGHT_ROOM_Y)
-        self.assertEqual(str(l_base.RoomCoords.Z_Height), TESTING_LIGHT_ROOM_Z)
+        self.assertEqual(str(l_base.RoomCoords.X_Easting), TESTING_LIGHT_ROOM_X0)
+        self.assertEqual(str(l_base.RoomCoords.Y_Northing), TESTING_LIGHT_ROOM_Y0)
+        self.assertEqual(str(l_base.RoomCoords.Z_Height), TESTING_LIGHT_ROOM_Z0)
         self.assertEqual(l_base.RoomName, TESTING_LIGHT_ROOM_NAME_0)
         self.assertEqual(l_base.RoomUUID, TESTING_LIGHT_ROOM_UUID_0)
 
@@ -199,7 +204,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_obj = ControllerData()
         l_base = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, l_obj, self.m_xml.controller)
         l_xml = self.m_api.write_base_device_object_xml('Light', l_base)
-        print(PrettyFormatAny.form(l_xml, 'C1-02-A - Base'))
+        # print(PrettyFormatAny.form(l_xml, 'C1-02-A - Base'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_CONTROLLER_ACTIVE_0)

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-01-04'
+__updated__ = '2018-02-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -47,7 +47,6 @@ class Xml(object):
         l_obj = BridgeData()
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
-            l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             l_obj.Connection = PutGetXML.get_text_from_xml(p_xml, 'Connection')
             l_obj.Type = Xml._read_type(p_xml)
             l_obj.IPv4Address = PutGetXML.get_ip_from_xml(p_xml, 'IPv4Address')
@@ -68,7 +67,6 @@ class Xml(object):
         @return: the XML for one Broker System
         """
         l_entry = XmlConfigTools.write_base_UUID_object_xml('Bridge', p_bridge_obj)
-        PutGetXML().put_text_element(l_entry, 'Comment', p_bridge_obj.Comment)
         PutGetXML().put_text_element(l_entry, 'Connection', p_bridge_obj.Connection)
         PutGetXML().put_text_element(l_entry, 'Type', p_bridge_obj.Type)
         PutGetXML().put_ip_element(l_entry, 'IPv4Address', p_bridge_obj.IPv4Address)

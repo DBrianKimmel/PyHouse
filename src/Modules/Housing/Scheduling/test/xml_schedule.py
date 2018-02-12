@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Scheduling/test/xml_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 7, 2014
 @Summary:
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-02-11'
 
 from datetime import datetime
 

@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 2, 2014
 @Summary:
 
-Passed all 16 tests - DBK - 2016-11-21
+Passed all 16 tests - DBK - 2018-02-11
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-02-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -48,12 +48,14 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_ROOM_NAME_1, \
     TESTING_SCHEDULE_KEY_4, \
     TESTING_SCHEDULE_ACTIVE_4, \
-    TESTING_SCHEDULE_DURATION_4, TESTING_SCHEDULE_SECTION
+    TESTING_SCHEDULE_DURATION_4, \
+    TESTING_SCHEDULE_SECTION
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_KEY, \
-    TESTING_HOUSE_UUID, TESTING_HOUSE_DIVISION
+    TESTING_HOUSE_UUID, \
+    TESTING_HOUSE_DIVISION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

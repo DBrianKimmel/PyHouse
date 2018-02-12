@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/Core/test/test_node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 25 tests - DBK - 2017-03-27
+Passed all 24 tests - DBK - 2018-02-12
 
 """
 import netifaces
 
-__updated__ = '2017-03-27'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -44,10 +44,13 @@ class FakeNetiface(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_node_local')
+
     def XXX_test_01_Print(self):
         print(XML_LONG)
         pass
@@ -73,10 +76,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
 
-    def test_03_netifaces(self):
-        self.assertEqual(netifaces.AF_INET, 2)
-        self.assertEqual(netifaces.AF_INET6, 10)
-
 
 class A2_Xml(SetupMixin, unittest.TestCase):
     """
@@ -95,7 +94,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Nodes(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
@@ -263,7 +262,7 @@ class B3_Node(SetupMixin, unittest.TestCase):
         """
         l_node = localUtil(self.m_pyhouse_obj).create_local_node()
         # print(PrettyFormatAny.form(l_node, 'B3-01-A - Node'))
-        self.assertEqual(l_node.Name, 'briank-Laptop-3')
+        # self.assertEqual(l_node.Name, local name)
         self.assertEqual(l_node.Key, 0)
         self.assertEqual(l_node.Active, True)
 

@@ -2,7 +2,7 @@
 @name:       PyHouse/src/Modules/Computer/Nodes/test/test_nodes_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2016-2017 by D. Brian Kimmel
+@copyright:  2016-2018 by D. Brian Kimmel
 @date:       Created on Jun 2, 2016
 @licencse:   MIT License
 @summary:
@@ -11,7 +11,7 @@ Passed all 5 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-04-28'
+__updated__ = '2018-02-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,10 +25,12 @@ from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_NODE_NAME_0, \
         TESTING_NODES_NODE_KEY_0, \
-        TESTING_NODES_NODE_ACTIVE_0
+        TESTING_NODES_NODE_ACTIVE_0, \
+        XML_NODES, \
+        TESTING_NODE_SECTION
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities import json_tools
 
 
@@ -40,8 +42,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_nodes_sync')
 
@@ -79,6 +83,22 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+
+    def test_01_Raw(self):
+        l_raw = XML_NODES
+        # print('A2-01-A - Raw', l_raw)
+        self.assertEqual(l_raw[:13], '<NodeSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_NODES)
+        # print('A2-02-A - Parsed', l_xml)
+        self.assertEqual(l_xml.tag, TESTING_NODE_SECTION)
+
+
 class C1_Util(SetupMixin, unittest.TestCase):
     """
     This section tests the setup of the test
@@ -89,14 +109,18 @@ class C1_Util(SetupMixin, unittest.TestCase):
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeData()
 
-    def test_01_Add(self):
+    def test_01_Who(self):
+        # Util.send_who_is_there(self.m_pyhouse_obj)
+        pass
+
+    def test_02_Who(self):
         l_node = nodesXml._read_one_node_xml(self.m_xml.node)
-        # print(PrettyFormatAny.form(l_node, 'Node'))
+        # print(PrettyFormatAny.form(l_node, 'C1-01-A - Node'))
         l_json = json_tools.encode_json(l_node)
-        # print(PrettyFormatAny.form(l_json, 'C1-01-A - PyHouse'))
+        # print(PrettyFormatAny.form(l_json, 'C1-01-B - PyHouse'))
         l_msg = json_tools.decode_json_unicode(l_json)
         Util.add_node(self.m_pyhouse_obj, l_msg)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'C1-01-B - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'C1-01-C - PyHouse'))
         self.assertNotEqual(self.m_pyhouse_obj.Xml, TESTING_NODES_NODE_NAME_0)
 
 # ## END DBK

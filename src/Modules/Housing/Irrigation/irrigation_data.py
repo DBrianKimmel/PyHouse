@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-10'
+__updated__ = '2018-02-11'
 
 #  Import system type stuff
 
@@ -27,7 +27,6 @@ class IrrigationData(BaseObject):
 
     def __init__(self):
         super(IrrigationData, self).__init__()
-        self.Comment = ''
         self.Systems = {}  # IrrigationSystemData()
 
 
@@ -39,11 +38,10 @@ class IrrigationSystemData(BaseUUIDObject):
 
     def __init__(self):
         super(IrrigationSystemData, self).__init__()
-        self.Comment = ''
+        self.FirstZone = None
         self.UsesMasterValve = False  # Master valve
         self.UsesPumpStartRelay = False
         self.Type = None
-        self.FirstZone = None
         self.Zones = {}  # IrrigationZoneData()
 
 
@@ -55,7 +53,6 @@ class IrrigationZoneData(BaseObject):
 
     def __init__(self):
         super(IrrigationZoneData, self).__init__()
-        self.Comment = ''
         self.Duration = 0  # On time in hh:mm:ss
         self.EmitterCount = 1
         self.EmitterType = 'Rotor'

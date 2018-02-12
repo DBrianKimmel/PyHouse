@@ -7,11 +7,11 @@
 @note:      Created on Apr 26, 2017
 @summary:   Test
 
-Passed all 9 tests - DBK - 2017-12-28
+Passed all 9 tests - DBK - 2018-02-11
 
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -89,15 +89,15 @@ class B1_Form(SetupMixin, unittest.TestCase):
 
     def test_02_Topic(self):
         l_topic = mqtt._make_topic(self.m_pyhouse_obj, 'abc/def/ghi')
-        print('B1-02-A - {} {}'.format(FormatBytes(l_topic), l_topic))
+        # print('B1-02-A - {} {}'.format(FormatBytes(l_topic), l_topic))
 
     def test_03_Msg(self):
         l_msg = mqtt._make_message(self.m_pyhouse_obj, self.m_pyhouse_obj.House)
-        print('B1-03-A - {}; {}'.format(FormatBytes(l_msg)[:300], l_msg))
+        # print('B1-03-A - {}; {}'.format(FormatBytes(l_msg)[:300], l_msg))
 
     def test_04_Msg(self):
         l_msg = mqtt._make_message(self.m_pyhouse_obj, DICT)
-        print('B1-04-A - {}; {}'.format(FormatBytes(l_msg)[:30], l_msg))
+        # print('B1-04-A - {}; {}'.format(FormatBytes(l_msg)[:30], l_msg))
 
     def test_05_Message(self):
         """ No payload (not too useful)

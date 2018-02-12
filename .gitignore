@@ -15,6 +15,7 @@ minimal
 doc/html
 
 # Dirs
+admin/config/*.xml
 build/
 dist/
 html/

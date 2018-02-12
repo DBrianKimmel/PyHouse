@@ -7,10 +7,10 @@
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 10 tests - DBK - 2017-12-28
+Passed all 10 tests - DBK - 2016-02-11
 
 """
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -121,7 +121,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.mqtt_sect[1]
         l_obj = mqttXML._read_one_broker(l_xml)
-        print(PrettyFormatAny.form(l_obj, 'B1-02-A - Broker'))
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Broker'))
         self.assertEqual(l_obj.Name, TESTING_BROKER_NAME_1)
         self.assertEqual(l_obj.Key, int(TESTING_BROKER_KEY_1))
         self.assertEqual(str(l_obj.Active), TESTING_BROKER_ACTIVE_1)

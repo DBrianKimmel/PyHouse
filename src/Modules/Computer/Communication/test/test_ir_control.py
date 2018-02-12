@@ -2,19 +2,21 @@
 @name:      PyHouse/src/communication/test/test_ir_control.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
 """
 
+__updated__ = '2018-02-12'
+
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files
-from Modules.Communication import ir_control
+# from Modules.Communication import ir_control
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 
@@ -56,6 +58,7 @@ class Test_03_Connection(SetupMixin, unittest.TestCase):
 
     def tearDown(self):
         pass
+
 
 class Test_04_Dispatch(SetupMixin, unittest.TestCase):
 

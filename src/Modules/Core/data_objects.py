@@ -16,8 +16,8 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2018-02-09'
-__version_info__ = (1, 7, 5)
+__updated__ = '2018-02-12'
+__version_info__ = (18, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 
@@ -66,6 +66,7 @@ class BaseObject(object):
         self.Name = 'undefined baseobject'
         self.Key = 0
         self.Active = False
+        self.Comment = ''
 
 
 class CommunicationAPIs(object):
@@ -472,14 +473,14 @@ class JsonHouseData(BaseObject):
         # self.Thermostats = {}
 
 
-class MqttBrokerData(BaseObject):
+class XXXMqttBrokerData(BaseObject):
     """ 0-N
 
     ==> PyHouse.Computer.Mqtt.Brokers.XXX as in the def below
     """
 
     def __init__(self):
-        super(MqttBrokerData, self).__init__()
+        super(XXMqttBrokerData, self).__init__()
         self.BrokerName = None
         self.BrokerAddress = None
         self.BrokerPort = None
@@ -522,7 +523,6 @@ class DeviceData(BaseUUIDObject):
 
     def __init__(self):
         super(DeviceData, self).__init__()
-        self.Comment = ''
         self.DeviceFamily = 'Null'
         self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
         self.DeviceSubType = 0
@@ -582,7 +582,6 @@ class NodeData(BaseUUIDObject):
 
     def __init__(self):
         super(NodeData, self).__init__()
-        self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
         self.ControllerTypes = []  # A list of controller types attached to this node
@@ -615,7 +614,6 @@ class PoolData(BaseUUIDObject):
 
     def __init__(self):
         super(PoolData, self).__init__()
-        self.Comment = None
         self.PoolType = None  # 'Pool', 'Pond', 'HotTub'
 
 
@@ -629,7 +627,6 @@ class RoomData(BaseUUIDObject):
 
     def __init__(self):
         super(RoomData, self).__init__()
-        self.Comment = ''
         self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.LastUpdate = None

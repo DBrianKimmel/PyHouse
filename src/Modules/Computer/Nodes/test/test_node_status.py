@@ -2,7 +2,7 @@
 @name:      Modules/Computer/Nodes/test/test_node_status.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 22, 2016
 @summary:   Test
@@ -11,7 +11,7 @@ Passed all 4 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,10 +30,13 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_node_status')
+
     def XXX_test_01_Print(self):
         print(XML_LONG)
         pass
@@ -70,6 +73,5 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
         # print(PrettyFormatAny.form(l_xml, 'A2-01-A - Nodes Xml'))
         self.assertEqual(len(l_xml), 2)
-
 
 # ## END DBK

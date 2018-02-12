@@ -10,7 +10,7 @@
 Passed all 6 tests - DBK - 2017-12-28
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-12'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -83,11 +83,11 @@ class B1_Field(SetupMixin, unittest.TestCase):
 
     def test_01_HVAC(self):
         l_topic = 'pyhouse/pink poppy/irrigation'
-        l_payload = '{"DateTime": "2017-07-07 10:45:02.464763", "Sender": "briank-Laptop-3"}'
-        print(l_topic)
-        print(l_payload)
+        l_payload = {"DateTime": "2017-07-07 10:45:02.464763", "Sender": "briank-Laptop-3"}
+        # print("Topic: {}".format(l_topic))
+        # print("Payload: {}".format(l_payload))
         l_sender = self.m_get._get_field(l_payload, 'Sender')
-        print(l_sender)
+        # print("Sender: {}".format(l_sender))
         # self.assertEqual(l_raw[:13], '<MqttSection>')
 
     def test_02_Parsed(self):
