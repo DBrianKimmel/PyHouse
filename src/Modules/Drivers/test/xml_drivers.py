@@ -2,14 +2,12 @@
 @name:      PyHouse/src/Modules/Drivers/test/xml_drivers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
 @Summary:
 
 """
-
-
 
 DRIVERS_XML = """
 """

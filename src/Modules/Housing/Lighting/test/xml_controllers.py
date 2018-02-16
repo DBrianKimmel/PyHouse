@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Lighting/test/xml_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 22, 2014
 @Summary:
@@ -11,7 +11,7 @@ There is a matrix of controllers to create here
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 
@@ -30,7 +30,6 @@ from Modules.Drivers.Serial.test.xml_serial import \
 from Modules.Drivers.USB.test.xml_usb import \
         XML_USB
 
-
 TESTING_CONTROLLER_SECTION = 'ControllerSection'
 TESTING_CONTROLLER = 'Controller'
 
@@ -47,6 +46,7 @@ TESTING_CONTROLLER_UUID_0 = 'Controlr-0000-0000-0000-2468acb6eb6f'
 TESTING_CONTROLLER_COMMENT = 'Controller Comment'
 TESTING_CONTROLLER_COMMENT_0 = 'Device Comment 0'
 TESTING_CONTROLLER_FAMILY_INSTEON = 'Insteon'
+TESTING_CONTROLLER_INTERFACE_TYPE = 'Serial'
 TESTING_CONTROLLER_TYPE = '1'
 TESTING_CONTROLLER_SUBTYPE = '2'
 TESTING_CONTROLLER_ROOM_X = '3.4'
@@ -72,7 +72,6 @@ L_CONTROLLER_0 = '\n'.join([
     XML_SERIAL,
     L_CONTROLLER_END
     ])
-
 
 TESTING_CONTROLLER_NAME_1 = 'UPB USB Controller'
 TESTING_CONTROLLER_KEY_1 = '1'

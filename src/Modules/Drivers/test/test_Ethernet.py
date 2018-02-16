@@ -2,15 +2,14 @@
 @name:      PyHouse/src/Modules/Drivers/test/test_Ethernet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 30, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner

@@ -7,15 +7,15 @@
 @note:      Created on Jul 22, 2014
 @Summary:
 
-Passed all 1 tests - DBK - 2015-08-15
+Passed all 2 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2017-04-26'
-
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 from twisted.trial import unittest
+import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Drivers.USB import USB_driver
@@ -40,21 +40,19 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_USB_driver')
 
 
-class A1_API(SetupMixin, unittest.TestCase):
-    """
-    """
-
-class B1(unittest.TestCase):
+class B1(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_api = USB_driver.API()
-        pass
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_api = USB_driver.API(self.m_pyhouse_obj)
 
     def test_01_Extract(self):
         l_ba = self.m_api._extract_hid_report(RAW_01)

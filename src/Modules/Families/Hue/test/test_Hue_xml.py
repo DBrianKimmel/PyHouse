@@ -7,11 +7,12 @@
 @note:      Created on Dec 18, 2017
 @summary:   Test
 
-Passed all 7 tests - DBK - 2018-01-27
+Passed all 7 tests - DBK - 2018-02-13
 
 """
+from Modules.Computer.Bridges.bridges_data import BridgesData
 
-__updated__ = '2018-01-27'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -74,8 +75,9 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     def test_03_Read(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_xml = s
-        l_dict = HueXml.ReadXml(p_device_obj, p_entry_xml)
+        l_xml = self.m_xml.bridges_sect
+        l_bridges = BridgesData()
+        l_dict = HueXml.ReadXml(l_bridges, l_xml)
         pass
 
     def test_04_Objs(self):

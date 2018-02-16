@@ -2,14 +2,14 @@
 @name: PyHouse/src/Modules/security/test/test_dropbox_uploader.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: 2014-2017 by D. Brian Kimmel
+@copyright: 2014-2018 by D. Brian Kimmel
 @note: Created on May 31, 2014
 @license: MIT License
 @summary: Test uploading files to dropbox.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-13'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,6 @@ from Modules.Computer.Nodes import node_local
 
 
 class Test_01_XML(unittest.TestCase):
-
 
     def setUp(self):
         self.m_root_element = ET.fromstring(XML_LONG)

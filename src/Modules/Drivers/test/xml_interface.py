@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Drivers/test/xml_interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 7, 2014
 @Summary:
@@ -11,6 +11,9 @@
 
 TESTING_INTERFACE_TYPE_SERIAL = 'Serial'
 TESTING_INTERFACE_TYPE_USB = 'USB'
+TESTING_INTERFACE_TYPE_ETHERNET = 'Ethernet'
+TESTING_INTERFACE_TYPE_NULL = 'Null'
+
 TESTING_INTERFACE_PORT_SERIAL = '/dev/ttyS0'
 TESTING_INTERFACE_PORT_USB = '/dev/ttyUSB0'
 TESTING_INTERFACE_PORT_WINDOWS = 'COMM15'

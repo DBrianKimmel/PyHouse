@@ -2,15 +2,16 @@
 @name:      PyHouse/src/Modules/Families/test/test_Insteon.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 16, 2014
 @Summary:
 
+passed all tests - DBK - 2018-02-13
+
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner

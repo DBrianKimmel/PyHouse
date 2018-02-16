@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-21'
+__updated__ = '2018-02-13'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -218,6 +218,8 @@ class API(object):
         """
         l_count = 0
         for l_onkyo_obj in self.m_pyhouse_obj.House.Entertainment.Onkyo.values():
+            if not l_onkyo_obj.Active:
+                continue
             l_host = l_onkyo_obj.IPv4
             l_port = l_onkyo_obj.Port
             l_onkyo_obj.Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)

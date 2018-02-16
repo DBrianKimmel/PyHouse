@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2018 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
-Passed all 9 tests - DBK - 2017-04-20
+Passed all 9 tests - DBK - 2018-02-13
 
 http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2017-12-20'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import datetime

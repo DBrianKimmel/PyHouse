@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Scheduling/test/test_auto_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @note:      Created on Dec 31, 2013
 @license:   MIT License
 @summary:   Handle the automatic updating of PyHouse
@@ -11,7 +11,7 @@ Passed all 5 tests - DBK - 2015-11-21
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,8 +31,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_auto_update')
 

@@ -11,7 +11,7 @@ Passed all 12 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,6 +20,8 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.Utilities import json_tools
+from Modules.Core.Utilities import convert
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Computer.Bridges.bridges_xml import Xml as bridgesXML
 from Modules.Computer.Bridges.test.xml_bridges import \
@@ -49,8 +51,6 @@ from Modules.Computer.Bridges.test.xml_bridges import \
     TESTING_BRIDGE_CONNECTION_1, \
     TESTING_BRIDGE_TYPE_1, \
     TESTING_BRIDGE_HUE_ACCESS_KEY_1
-from Modules.Core.Utilities import json_tools
-from Modules.Core.Utilities import convert
 # from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

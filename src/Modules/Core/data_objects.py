@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-02-13'
 __version_info__ = (18, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -473,27 +473,6 @@ class JsonHouseData(BaseObject):
         # self.Thermostats = {}
 
 
-class XXXMqttBrokerData(BaseObject):
-    """ 0-N
-
-    ==> PyHouse.Computer.Mqtt.Brokers.XXX as in the def below
-    """
-
-    def __init__(self):
-        super(XXMqttBrokerData, self).__init__()
-        self.BrokerName = None
-        self.BrokerAddress = None
-        self.BrokerPort = None
-        self.UserName = ''
-        self.Password = None
-        self.Class = 'Local'
-        self.ClientID = 'PyH-'
-        self.Keepalive = 60
-        self._ClientAPI = None
-        self._ProtocolAPI = None
-        self._isTLS = False
-
-
 """
 BaseUUIDObject dependent.
 """
@@ -604,17 +583,6 @@ class NodeInterfaceData(BaseUUIDObject):
         self.MacAddress = ''
         self.V4Address = []
         self.V6Address = []
-
-
-class PoolData(BaseUUIDObject):
-    """ Holds information about the pool(s)
-
-    ==> PyHouse.House.Pools.{}.
-    """
-
-    def __init__(self):
-        super(PoolData, self).__init__()
-        self.PoolType = None  # 'Pool', 'Pond', 'HotTub'
 
 
 class RoomData(BaseUUIDObject):

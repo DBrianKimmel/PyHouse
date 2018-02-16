@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2017-04-26'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 try:
@@ -22,6 +22,7 @@ except ImportError:
     import queue as Queue
 
 # Import PyMh files
+from Modules.Families.family_utils import FamUtil
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Families.UPB.UPB_constants import pim_commands
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -29,7 +30,6 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.UPB_PIM        ')
-
 
 # UPB Control Word
 # Page 15
@@ -43,7 +43,6 @@ ACK_MSG = 0x40
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.9  # this is for fetching data in the RX buffer
-
 
 # Command types
 CTL_T = 0x14  # transmit a UPB Message
@@ -421,6 +420,8 @@ class API(UpbPimAPI):
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
+        if not p_controller_obj.Active:
+            return False
         if self.start_controller(p_pyhouse_obj, p_controller_obj):
             LOG.info('Starting driver loop')
             self.driver_loop_start(p_pyhouse_obj, p_controller_obj)

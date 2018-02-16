@@ -2,25 +2,26 @@
 @name:      PyHouse/src/Modules/Drivers/USB/test/xml_usb.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
 @Summary:
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-13'
 
 TESTING_USB_VENDOR = '6109'
 TESTING_USB_PRODUCT = '21760'
 
-L_VENDOR = '    <Vendor>' + TESTING_USB_VENDOR + '</Vendor>'
-L_PRODUCT = '    <Product>' + TESTING_USB_PRODUCT + '</Product>'
+L_VENDOR = '<Vendor>' + TESTING_USB_VENDOR + '</Vendor>'
+L_PRODUCT = '<Product>' + TESTING_USB_PRODUCT + '</Product>'
 
 XML_USB = '\n'.join([
+        "<USB>",
         L_VENDOR,
-        L_PRODUCT
+        L_PRODUCT,
+        "</USB>"
 ])
 
 USB_XSD = """

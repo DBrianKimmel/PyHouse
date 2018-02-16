@@ -2,25 +2,23 @@
 @Name:      PyHouse/src/Modules/Family/test/test_package.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 9, 2013
 @summary:   This module
 
-Passed all 6 tests - DBK 2015-07-28
+Passed all 6 tests - DBK 2018-02-13
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import inspect
 import os
-from twisted import trial
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Families.__init__ import VALID_FAMILIES
-from Modules.Families.Insteon.test import test_Insteon_device
 
 
 class Test_01(unittest.TestCase):
@@ -80,11 +78,13 @@ class Test_02_Insteon(unittest.TestCase):
         # unittest.TestSuite(l_name)
         pass
 
+
 def suite():
     suite = unittest.TestSuite()
     suite.addTest(Test_02_Insteon('test_0101_ValidFamilies'))
     suite.addTest(Test_02_Insteon('test_allDefined'))
     return suite
+
 
 class MySuite():
     """

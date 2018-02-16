@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/Housing/test/test_Entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 31, 2015
 @Summary:
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2018-02-13'
 
 from twisted.trial import unittest, reporter, runner
 

@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Web/web_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to house info for the selected house.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import os

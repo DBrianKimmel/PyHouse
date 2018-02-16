@@ -2,14 +2,13 @@
 @name:      PyHouse/src/Modules/Housing/Pool/test/xml_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 27, 2015
 @Summary:
 
 """
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-13'
 
 TESTING_POOL_SECTION = 'PoolSection'
 

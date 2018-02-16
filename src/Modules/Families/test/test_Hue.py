@@ -4,14 +4,16 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Families/test/test_Hue.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @note:      Created on Dec 18, 2017
 @license:   MIT License
 @summary:
 
+Passed all tests - DB - 2018-02-13
+
 """
 
-__updated__ = '2017-12-18'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner

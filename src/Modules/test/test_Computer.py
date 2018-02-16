@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/test/test_Computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2018-02-12'
 
 from twisted.trial import unittest, reporter, runner
 

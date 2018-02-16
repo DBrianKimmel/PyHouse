@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 5, 2014
 @Summary:
 
-Passed all 5 tests - DBK - 2017-01-19
+Passed all 6 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,7 +23,6 @@ from Modules.Drivers.Serial.Serial_xml import XML as serialXML
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_NAME_1, TESTING_CONTROLLER_KEY_0, TESTING_CONTROLLER_ACTIVE_0
@@ -36,6 +35,7 @@ from Modules.Drivers.Serial.test.xml_serial import \
     TESTING_SERIAL_STOP_BITS, \
     TESTING_SERIAL_TIMEOUT, \
     TESTING_SERIAL_XON_XOFF
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -47,6 +47,15 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_controller_obj = ControllerData()
         self.m_controller_obj.InterfaceType = 'Serial'
+
+
+class A0(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_00_Print(self):
+        print('Id: test_Serial_xml')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):

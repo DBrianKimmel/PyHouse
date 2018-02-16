@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-01-01'
+__updated__ = '2018-02-14'
 
 #  Import system type stuff
 import random
@@ -347,6 +347,44 @@ class MQTTProtocol(Protocol):
         l_packet += p_payload
         self.transport.write(l_packet)
 
+    def _build_connect(self, p_clientID, keepalive=30000,
+                willTopic=None, willMessage=None, willQoS=0, willRetain=False,
+                cleanStart=True,
+                username=None,
+                password=None
+                ):
+        """
+        """
+        LOG.info("Sending 'connect' packet - ClientID: {}".format(p_clientID))
+        l_varHeader = bytearray()
+        l_payload = bytearray()
+        l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
+        l_varHeader.append(4)
+        varLogin = 0
+        if username is not None:
+            varLogin += 2
+        if password is not None:
+            varLogin += 1
+        if willMessage is None or willTopic is None:
+            #  Clean start, no will message
+            l_varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
+        else:
+            l_varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 | 1 << 2 | cleanStart << 1)
+        l_varHeader.extend(EncodeDecode._encodeValue(int(keepalive / 1000)))
+        l_payload.extend(EncodeDecode._encodeString(p_clientID))
+        if willMessage is not None and willTopic is not None:
+            LOG.debug('Adding last will testiment {}'.format(willMessage + willTopic))
+            l_payload.extend(EncodeDecode._encodeString(willTopic))
+            l_payload.extend(EncodeDecode._encodeString(willMessage))
+        if username is not None and len(username) > 0:
+            LOG.debug('Adding username "{}"'.format(username))
+            l_payload.extend(EncodeDecode._encodeString(username))
+        if password is not None and len(password) > 0:
+            LOG.debug('Adding password "{}"'.format(password))
+            l_payload.extend(EncodeDecode._encodeString(password))
+        l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
+        return (l_fixHeader, l_varHeader, l_payload)
+
     def connect(self, p_clientID, keepalive=30000,
                 willTopic=None, willMessage=None, willQoS=0, willRetain=False,
                 cleanStart=True,
@@ -356,7 +394,7 @@ class MQTTProtocol(Protocol):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
-        LOG.info("Sending 'connect' packet - ID: {}".format(p_clientID))
+        LOG.info("Sending 'connect' packet - ClientID: {}".format(p_clientID))
         l_varHeader = bytearray()
         l_payload = bytearray()
         # Version 3.0
@@ -578,7 +616,7 @@ class MQTTClient(MQTTProtocol):
         self.m_UserName = userName
         self.m_Password = passWord
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
-        l_msg = 'MQTTClient(MQTTProtocol) \n\tPrefix: {}\n\tFrom: {}'.format(self.m_prefix, self.m_clientID)
+        l_msg = 'MQTTClient(MQTTProtocol) \n\tPrefix: {}\n\tFrom ClientID: {}'.format(self.m_prefix, self.m_clientID)
         l_msg += '\n\tUser: {};  Pass: {}'.format(userName, passWord)
         LOG.info(l_msg)
 
@@ -589,7 +627,7 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.info("Client TCP or TLS - KeepAlive: {} seconds".format(self.m_keepalive / 1000))
+        LOG.info("ConnectionMade - Client TCP or TLS - KeepAlive: {} seconds".format(self.m_keepalive / 1000))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_clientID, self.m_keepalive,
                      self.m_willTopic, self.m_willMessage, self.m_willQos, self.m_willRetain, True,
@@ -603,7 +641,7 @@ class MQTTClient(MQTTProtocol):
         PyHouse logic for what happened when the TCP/TLS connection is broken.
         """
         l_msg = reason.check(error.ConnectionClosed)
-        LOG.info("Disconnected from MQTT Broker: {}  {}".format(reason, l_msg))
+        LOG.info("ConnectionLost - Disconnected from MQTT Broker: {}  Reason:{}".format(reason, l_msg))
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
@@ -659,7 +697,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the PyHouse object for this broker
         """
-        LOG.info('Mqtt Factory Initialized.  Broker: {};  Client: {}'.format(p_broker.Name, p_client_id))
+        LOG.info('Mqtt Factory Initialized.  Broker: {};  ClientId: {}'.format(p_broker.Name, p_client_id))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         self.m_clientID = p_client_id
@@ -667,30 +705,41 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         self.m_password = p_password
         p_broker._ProtocolAPI = self
 
-    def startedConnecting(self, p_connector):
-        LOG.info('Started to connect. {}'.format(p_connector))
-
     def buildProtocol(self, p_addr):
+        """ Override.
+        """
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID, self.m_username, self.m_password)
         self.m_broker._ProtocolAPI = l_client
         LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
         self.resetDelay()
         return l_client
 
-    def clientConnectionLost(self, p_connector, p_reason):
-        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
+    def startedConnecting(self, p_connector):
+        """ Override.
+        """
+        LOG.info('Started to connect. {}'.format(p_connector))
 
     def clientConnectionFailed(self, p_connector, p_reason):
+        """ Override.
+        """
         LOG.warn('Connection failed. {} {}\n\tReason:{}'.format(self.m_broker.BrokerAddress, self.m_broker.BrokerPort, p_reason))
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
+    def clientConnectionLost(self, p_connector, p_reason):
+        """ Override.
+        """
+        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
+        ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
+
     def connectionLost(self, p_reason):
-        """ This is required. """
+        """ Override.
+            Required.   This is required.
+        """
         LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
 
     def makeConnection(self, p_transport):
-        """ This is required. """
+        """ This is required.
+        """
         LOG.warn('makeConnection - Transport: {}'.format(p_transport))
 
 #  ## END DBK

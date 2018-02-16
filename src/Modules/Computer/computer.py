@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2017-12-27'
+__updated__ = '2018-02-13'
 
 #  Import system type stuff
 import platform
@@ -132,7 +132,6 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.BridgesAPI = bridgesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)

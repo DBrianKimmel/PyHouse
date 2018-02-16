@@ -7,10 +7,11 @@
 @note:      Created on Jul 29, 2015
 @Summary:
 
+Passed all tests - BK - 2018-02-13
+
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner

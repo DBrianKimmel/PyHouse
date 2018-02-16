@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Drivers/USB/test/test_USB_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 30, 2015
 @Summary:
 
-Passed all 2 tests - DBK - 2016-10-10
+Passed all 3 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,11 +19,9 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Drivers.USB.USB_xml import XML as usbXML
-# from Modules.Housing.Lighting.lighting_core import API as lightingcoreAPI
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ControllerData
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.device_tools import stuff_new_attrs
 from Modules.Drivers.USB.test.xml_usb import TESTING_USB_VENDOR, TESTING_USB_PRODUCT
@@ -31,6 +29,7 @@ from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_1, \
     TESTING_CONTROLLER_KEY_1, \
     TESTING_CONTROLLER_ACTIVE_1
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -42,6 +41,15 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_version = '1.4.0'
         self.m_api = deviceXML
+
+
+class A0(unittest.TestCase):
+
+    def setUp(self):
+        pass
+
+    def test_00_Print(self):
+        print('Id: test_USB_xml')
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -63,7 +71,6 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Product, int(TESTING_USB_PRODUCT))
 
 
-
 class B2_Write(SetupMixin, unittest.TestCase):
     """
     """
@@ -80,7 +87,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'B2-01-A - Controller xml'))
         l_xml = self.m_api.write_base_device_object_xml('TestController', l_obj)
         usbXML.write_interface_xml(l_xml, l_obj)
-        print(PrettyFormatAny.form(l_xml, 'XML'))
+        # print(PrettyFormatAny.form(l_xml, 'B2-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_CONTROLLER_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], TESTING_CONTROLLER_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_CONTROLLER_ACTIVE_1)

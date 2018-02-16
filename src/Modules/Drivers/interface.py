@@ -1,20 +1,21 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Drivers.test.test_interface -*-
 
-@name:      PyHouse/src/Modules/Driveres/interface.py
+@name:      PyHouse/src/Modules/Drivers/interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 21, 2013
-@summary:   Schedule events
+@summary:
 
 
 Controllers, which are attached to the server, communicate with the server via an interface.
-There are three different interfaces at this point (2013-10-29):
+There are several different interfaces at this point (2013-10-29):
     Serial
     USB - Includes HID variant
     Ethernet
+    Null
 
 This module reads and writes the XML for those controllers.
 
@@ -43,6 +44,10 @@ class Xml(object):
     @staticmethod
     def read_interface_xml(p_controller_obj, p_controller_xml):
         """Update the controller object by extracting the passed in XML.
+
+        This is basically a dispatcher.
+
+        @param p_controller_obj: This is the object we are going to stuff the interface info into.
         """
         if p_controller_obj.InterfaceType == 'Ethernet':
             l_interface = ethernetXML.read_interface_xml(p_controller_xml)
@@ -50,6 +55,8 @@ class Xml(object):
             l_interface = serialXML.read_interface_xml(p_controller_xml)
         elif p_controller_obj.InterfaceType == 'USB':
             l_interface = usbXML.read_interface_xml(p_controller_xml)
+        elif p_controller_obj.InterfaceType == 'Null':
+            l_interface = nullXML.read_interface_xml(p_controller_xml)
         else:
             LOG.error('Reading a controller driver interface section  For {} - Unknown InterfaceType - {}'
                       .format(p_controller_obj.Name, p_controller_obj.InterfaceType))
@@ -65,6 +72,8 @@ class Xml(object):
             p_xml = serialXML.write_interface_xml(p_xml, p_controller_obj)
         elif p_controller_obj.InterfaceType == 'USB':
             p_xml = usbXML.write_interface_xml(p_xml, p_controller_obj)
+        elif p_controller_obj.InterfaceType == 'Null':
+            p_xml = nullXML.write_interface_xml(p_xml, p_controller_obj)
         else:
             LOG.error('ERROR - WriteDriverXml - Unknown InterfaceType - {} for {}'.format(p_controller_obj.InterfaceType, p_controller_obj.Name))
         p_xml  # for testing

@@ -11,7 +11,7 @@ Passed all 14 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2018-01-27'
+__updated__ = '2018-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -78,10 +78,6 @@ class A1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
         self.assertEqual(self.m_xml.web_sect.tag, TESTING_WEB_SECTION)
         self.assertEqual(self.m_xml.login_sect.tag, TESTING_LOGIN_SECTION)
-
-    def test_02_LoginSection(self):
-        self.assertEqual(self.m_xml.login_sect.tag, 'LoginSection')
-        print(PrettyFormatAny.form(self.m_xml.login_sect, 'A1-03-A - XML'))
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):

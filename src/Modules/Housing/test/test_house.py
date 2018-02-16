@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Housing/test/test_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
+Passed all 14 tests - DBK - 2018-02-13
 
-Passed all 14 tests - DBK - 2017-01-12
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -45,8 +45,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_house')
 
@@ -83,7 +85,6 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
         self.assertEqual(l_xml.find('UUID').text, TESTING_HOUSE_UUID)
-
 
     def test_02_buildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.

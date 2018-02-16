@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2018-02-11
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2018-02-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -260,12 +260,12 @@ class B2_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'B2-4-A - All Interfaces'))
         self.assertEqual(l_count, len(l_schedules))
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_SCHEDULE_NAME_0)
-        self.assertEqual(l_xml[0][1].text, TESTING_SCHEDULE_DOW_0)
+        self.assertEqual(l_xml[0].find("DayOfWeek").text, TESTING_SCHEDULE_DOW_0)
         self.assertEqual(l_xml[1].attrib['Name'], TESTING_SCHEDULE_NAME_1)
-        self.assertEqual(l_xml[1][1].text, TESTING_SCHEDULE_DOW_1)
+        self.assertEqual(l_xml[1].find("DayOfWeek").text, TESTING_SCHEDULE_DOW_1)
         self.assertEqual(l_xml[2].attrib['Name'], TESTING_SCHEDULE_NAME_2)
-        self.assertEqual(l_xml[2][1].text, TESTING_SCHEDULE_DOW_2)
+        self.assertEqual(l_xml[2].find("DayOfWeek").text, TESTING_SCHEDULE_DOW_2)
         self.assertEqual(l_xml[3].attrib['Name'], TESTING_SCHEDULE_NAME_3)
-        self.assertEqual(l_xml[3][1].text, TESTING_SCHEDULE_DOW_3)
+        self.assertEqual(l_xml[3].find("DayOfWeek").text, TESTING_SCHEDULE_DOW_3)
 
 # ## END DBK

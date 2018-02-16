@@ -10,7 +10,7 @@
 Passed 4 of 5 tests - DBK- 2017-03-11
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-02-13'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -25,7 +25,8 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.mqtt_protocol import MQTTProtocol
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.tools import PrintBytes
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
 
 class SetupMixin(object):
@@ -98,7 +99,10 @@ class P1_Packet(SetupMixin, unittest.TestCase):
         l_username = None
         l_password = None
 
-        # MQTTProtocol().connect(l_clientID, l_keepalive)
-        pass
+        l_fixed, l_var, l_pay = MQTTProtocol()._build_connect(l_clientID)
+        print('\n   Fixed: {}'.format(FormatBytes(l_fixed)))
+        print('Variable: {}'.format(FormatBytes(l_var)))
+        print(' Payload: {}'.format(FormatBytes(l_pay)))
+        self.assertEqual(l_fixed, bytearray(b'\x10\x16'))
 
 #  ## END DBK
