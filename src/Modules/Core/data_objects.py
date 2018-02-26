@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2018-02-16'
 __version_info__ = (18, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -241,28 +241,6 @@ class ModuleObject(object):
 
     def __init__(self):
         self.Active = False
-
-
-class MqttInformation(object):
-    """
-
-    ==> PyHouse.Computer.Mqtt.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.Prefix = ''
-        self.Brokers = {}  # MqttBrokerData()
-        self.ClientID = ''
-
-
-class MqttJson(object):
-    """ This is a couple of pieces of information that get added into every MQTT message
-        sent out of this computer.
-    """
-
-    def __init__(self):
-        self.Sender = ''  # The Mqtt name of the sending device.
-        self.DateTime = None  # The time on the sending device
 
 
 class NullControllerData(object):

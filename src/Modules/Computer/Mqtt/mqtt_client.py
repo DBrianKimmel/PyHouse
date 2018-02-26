@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2018-02-17'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -37,40 +37,32 @@ class Util(object):
     """
 
     def _make_client_name(self, p_pyhouse_obj):
-        l_client_name = 'PyH-Computer-' + p_pyhouse_obj.Computer.Name
+        l_client_name = 'PyH-Comp-' + p_pyhouse_obj.Computer.Name
         return l_client_name
 
     def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker):
-        l_clientID = self._make_client_name(p_pyhouse_obj)
-        l_host = p_broker.BrokerAddress
-        l_port = p_broker.BrokerPort
-        l_username = p_broker.UserName
-        l_password = p_broker.Password
-        l_keepalive = 60
-        # p_broker._ClientAPI = self
+        """ Provide a TCP connection to the designated broker.
+        @param p_broker: Designates which broker to connect.
+        """
+        p_broker.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Connecting via TCP...')
-
-        if l_host is None or l_port is None:
-            LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(l_host, l_port))
+        if p_broker.BrokerAddress is None or p_broker.BrokerPort is None:
+            LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker.BrokerAddress, p_broker.BrokerPort))
             p_broker._ProtocolAPI = None
         else:
-            l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
-            _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-            LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker.Name, l_host))
+            l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker)
+            _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(p_broker.BrokerAddress, p_broker.BrokerPort, l_factory)
+            LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker.Name, p_broker.BrokerAddress))
             LOG.info('Prefix: {}'.format(p_pyhouse_obj.Computer.Mqtt.Prefix))
 
     @defer.inlineCallbacks
     def connect_to_one_broker_TLS(self, p_pyhouse_obj, p_broker):
-        l_clientID = self._make_client_name(p_pyhouse_obj)
-        l_host = p_broker.BrokerAddress
-        l_port = p_broker.BrokerPort
-        l_username = p_broker.UserName
-        l_password = p_broker.Password
-        l_keepalive = p_broker.Keepalive
-        # p_broker._ClientAPI = self
+        """
+        """
+        p_broker.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Connecting via TLS...')
         # l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
-        # l_factory = PyHouseMqttFactory(p_pyhouse_obj, l_clientID, p_broker, l_username, l_password)
+        # l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker)
         # l_certData = PEM_FILE.getContent()
         # l_authority = Certificate.loadPEM(l_certData)
         # l_options = optionsForClientTLS(l_host.decode('utf-8'), l_authority)

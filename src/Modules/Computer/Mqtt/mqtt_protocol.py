@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-02-14'
+__updated__ = '2018-02-18'
 
 #  Import system type stuff
 import random
@@ -119,7 +119,7 @@ class MQTTProtocol(Protocol):
     def _event_connect(self, packet, _qos, _dup, _retain):
         """This will decode a received 'connect' packet.
         """
-        LOG.info('Event Connect received.')
+        LOG.info('ProtocolEvent "Connect Packet" received.')
         #  Strip variable header
         packet = packet[10:]
         #  Extract the connect flags
@@ -163,7 +163,7 @@ class MQTTProtocol(Protocol):
         """ We just received a connck packet.
         The broker has confirmed our MQTT connection.
         """
-        LOG.info('Event Conack received: {} {}'.format(len(packet), FormatBytes(packet)))
+        LOG.info('ProtocolEvent "Conack Packet" received: {} {}'.format(len(packet), FormatBytes(packet)))
         #  Return the status field
         self.connackReceived(packet[0])
 
@@ -174,6 +174,7 @@ class MQTTProtocol(Protocol):
         Extract the parts of the packet.
         @param packet: is a bytearray containing the variable header and payload combined.
         """
+        LOG.info('ProtocolEvent "Publish Packet" received.')
         #  Extract the topic portion of the packet.
         l_topic = EncodeDecode._decodeString(packet)
         packet = packet[len(l_topic) + 2:]
@@ -196,7 +197,7 @@ class MQTTProtocol(Protocol):
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)
 
     def _event_puback(self, packet, _qos, _dup, _retain):
-        LOG.info('Event PubAck received: {} {}'.format(len(packet), packet))
+        LOG.info('ProtocolEvent "PubAck Packet" received: {} {}'.format(len(packet), packet))
         #  Extract the message ID
         messageId = EncodeDecode._decodeValue(packet[:2])
         self.pubackReceived(messageId)
@@ -217,7 +218,7 @@ class MQTTProtocol(Protocol):
         self.pubcompReceived(messageId)
 
     def _event_subscribe(self, packet, qos, _dup, _retain):
-        LOG.info('Event Subscribe received: {} {}'.format(len(packet), packet))
+        LOG.info('ProtocolEvent "Subscribe Packet" received: {} {}'.format(len(packet), packet))
         messageId = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
         topics = []
@@ -260,11 +261,11 @@ class MQTTProtocol(Protocol):
         messageId = EncodeDecode._decodeValue(packet[:2])
         self.unsubackReceived(messageId)
 
-    def _event_pingreq(self, packet, _qos, _dup, _retain):
+    def _event_pingreq(self, _packet, _qos, _dup, _retain):
         # LOG.info('Event Pingreq received: {} {}'.format(len(packet), packet))
         self.pingreqReceived()
 
-    def _event_pingresp(self, packet, _qos, _dup, _retain):
+    def _event_pingresp(self, _packet, _qos, _dup, _retain):
         # LOG.debug('Event Pingresp received: {} {}'.format(len(packet), packet))
         self.pingrespReceived()
 
@@ -338,94 +339,54 @@ class MQTTProtocol(Protocol):
         @param p_var: is a bytearray containing the variable header if any
         @param p_payload: is a bytearray containing the payload of the packet if any
         """
-        # LOG.debug('MQTT   Fixed:({}) {}'.format(len(p_fixed), FormatBytes(p_fixed)))
-        # LOG.debug('MQTT     Var:({}) {}'.format(len(p_var), FormatBytes(p_var)))
-        # LOG.debug('MQTT Payload:({}) {}'.format(len(p_payload), FormatBytes(p_payload)))
+        LOG.debug('MQTT   Fixed:({}) {}'.format(len(p_fixed), FormatBytes(p_fixed)))
+        LOG.debug('MQTT     Var:({}) {}'.format(len(p_var), FormatBytes(p_var)))
+        LOG.debug('MQTT Payload:({}) {}'.format(len(p_payload), FormatBytes(p_payload)))
         l_packet = bytearray()
         l_packet += p_fixed
         l_packet += p_var
         l_packet += p_payload
         self.transport.write(l_packet)
 
-    def _build_connect(self, p_clientID, keepalive=30000,
-                willTopic=None, willMessage=None, willQoS=0, willRetain=False,
-                cleanStart=True,
-                username=None,
-                password=None
-                ):
+    def _build_connect(self, p_broker):
         """
         """
-        LOG.info("Sending 'connect' packet - ClientID: {}".format(p_clientID))
+        LOG.info("Building 'connect' packet\n\tClientID:{};".format(p_broker.ClientID))
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
         l_varHeader.append(4)
         varLogin = 0
-        if username is not None:
+        if p_broker.UserName is not None:
             varLogin += 2
-        if password is not None:
+        if p_broker.Password is not None:
             varLogin += 1
-        if willMessage is None or willTopic is None:
+        if p_broker.WillMessage is None or p_broker.WillTopic is None:
             #  Clean start, no will message
-            l_varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
+            l_varHeader.append(varLogin << 6 | 0 << 2 | 1 << 1)
         else:
-            l_varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 | 1 << 2 | cleanStart << 1)
-        l_varHeader.extend(EncodeDecode._encodeValue(int(keepalive / 1000)))
-        l_payload.extend(EncodeDecode._encodeString(p_clientID))
-        if willMessage is not None and willTopic is not None:
-            LOG.debug('Adding last will testiment {}'.format(willMessage + willTopic))
-            l_payload.extend(EncodeDecode._encodeString(willTopic))
-            l_payload.extend(EncodeDecode._encodeString(willMessage))
-        if username is not None and len(username) > 0:
-            LOG.debug('Adding username "{}"'.format(username))
-            l_payload.extend(EncodeDecode._encodeString(username))
-        if password is not None and len(password) > 0:
-            LOG.debug('Adding password "{}"'.format(password))
-            l_payload.extend(EncodeDecode._encodeString(password))
+            l_varHeader.append(varLogin << 6 | p_broker.WillRetain << 5 | p_broker.WillQoS << 3 | 1 << 2 | 1 << 1)
+        l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
+        l_payload.extend(EncodeDecode._encodeString(p_broker.ClientID))
+        if p_broker.WillMessage is not None and p_broker.WillTopic is not None:
+            LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.WillTopic))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.WillMessage))
+        if p_broker.UserName is not None and len(p_broker.UserName) > 0:
+            LOG.debug('Adding username "{}"'.format(p_broker.UserName))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.UserName))
+        if p_broker.Password is not None and len(p_broker.Password) > 0:
+            LOG.debug('Adding password "{}"'.format(p_broker.Password))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.Password))
         l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
         return (l_fixHeader, l_varHeader, l_payload)
 
-    def connect(self, p_clientID, keepalive=30000,
-                willTopic=None, willMessage=None, willQoS=0, willRetain=False,
-                cleanStart=True,
-                username=None,
-                password=None
-                ):
+    def connect(self, p_broker):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
-        LOG.info("Sending 'connect' packet - ClientID: {}".format(p_clientID))
-        l_varHeader = bytearray()
-        l_payload = bytearray()
-        # Version 3.0
-        # l_varHeader.extend(EncodeDecode._encodeString("MQIsdp"))
-        # l_varHeader.append(3)
-        # Version 3.1.1
-        l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
-        l_varHeader.append(4)
-        varLogin = 0
-        if username is not None:
-            varLogin += 2
-        if password is not None:
-            varLogin += 1
-        if willMessage is None or willTopic is None:
-            #  Clean start, no will message
-            l_varHeader.append(varLogin << 6 | 0 << 2 | cleanStart << 1)
-        else:
-            l_varHeader.append(varLogin << 6 | willRetain << 5 | willQoS << 3 | 1 << 2 | cleanStart << 1)
-        l_varHeader.extend(EncodeDecode._encodeValue(int(keepalive / 1000)))
-        l_payload.extend(EncodeDecode._encodeString(p_clientID))
-        if willMessage is not None and willTopic is not None:
-            LOG.debug('Adding last will testiment {}'.format(willMessage + willTopic))
-            l_payload.extend(EncodeDecode._encodeString(willTopic))
-            l_payload.extend(EncodeDecode._encodeString(willMessage))
-        if username is not None and len(username) > 0:
-            LOG.debug('Adding username "{}"'.format(username))
-            l_payload.extend(EncodeDecode._encodeString(username))
-        if password is not None and len(password) > 0:
-            LOG.debug('Adding password "{}"'.format(password))
-            l_payload.extend(EncodeDecode._encodeString(password))
-        l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
+        LOG.info("Sending 'connect' packet\n\tClientID: {};\n\tAddr: {};".format(p_broker.ClientID, p_broker.BrokerAddress))
+        l_fixHeader, l_varHeader, l_payload = self._build_connect(p_broker)
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
@@ -437,7 +398,7 @@ class MQTTProtocol(Protocol):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
-        LOG.info("Sending publish packet - Topic: {}".format(p_topic))
+        LOG.info("Sending publish packet\n\tTopic: {};\n\tAddr: {};".format(p_topic, self.m_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = publish
@@ -582,10 +543,8 @@ class MQTTClient(MQTTProtocol):
 
     m_pingPeriod = 50
 
-    def __init__(self, p_pyhouse_obj, p_broker, p_clientID=None,
-                 userName=None, passWord=None,
-                 keepalive=None,
-                 willQos=0, willTopic=None, willMessage=None, willRetain=False
+    def __init__(self, p_pyhouse_obj, p_broker,
+                 keepalive=None, willQos=0, willTopic=None, willMessage=None, willRetain=False
                  ):
         """ At this point all config has been read in and Set-up """
         l_comp_name = p_pyhouse_obj.Computer.Name
@@ -597,10 +556,6 @@ class MQTTClient(MQTTProtocol):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         self.m_state = MQTT_FACTORY_START
-        if p_clientID is not None:
-            self.m_clientID = p_clientID
-        else:
-            self.m_clientID = l_comp_name + 'RasPi'
         if keepalive is not None:
             self.m_keepalive = keepalive
         else:
@@ -609,15 +564,14 @@ class MQTTClient(MQTTProtocol):
         if willTopic != None:
             willTopic = self.m_prefix + 'lwt'
         self.m_willTopic = willTopic
-        if willMessage != None:
-            willMessage = self.m_clientID + 'Offline'
         self.m_willMessage = willMessage
         self.m_willRetain = willRetain
-        self.m_UserName = userName
-        self.m_Password = passWord
+        self.m_UserName = p_broker.UserName
+        self.m_Password = p_broker.Password
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
-        l_msg = 'MQTTClient(MQTTProtocol) \n\tPrefix: {}\n\tFrom ClientID: {}'.format(self.m_prefix, self.m_clientID)
-        l_msg += '\n\tUser: {};  Pass: {}'.format(userName, passWord)
+        l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_broker.ClientID)
+        l_msg += '\n\tUser: {};\n\tPass: {};'.format(p_broker.UserName, p_broker.Password)
+        l_msg += '\n\tHost: {};'.format(self.m_broker.BrokerAddress)
         LOG.info(l_msg)
 
     def connectionMade(self):
@@ -627,12 +581,9 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.info("ConnectionMade - Client TCP or TLS - KeepAlive: {} seconds".format(self.m_keepalive / 1000))
+        LOG.info("Client TCP or TLS - KeepAlive: {} seconds".format(self.m_keepalive / 1000))
         self.m_state = MQTT_FACTORY_CONNECTING
-        self.connect(self.m_clientID, self.m_keepalive,
-                     self.m_willTopic, self.m_willMessage, self.m_willQos, self.m_willRetain, True,
-                     self.m_UserName, self.m_Password
-                     )
+        self.connect(self.m_broker)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
@@ -641,7 +592,7 @@ class MQTTClient(MQTTProtocol):
         PyHouse logic for what happened when the TCP/TLS connection is broken.
         """
         l_msg = reason.check(error.ConnectionClosed)
-        LOG.info("ConnectionLost - Disconnected from MQTT Broker: {}  Reason:{}".format(reason, l_msg))
+        LOG.info("Disconnected from MQTT Broker:\n\t{}\n\tReason:{}\n\tAddr:{}".format(reason, l_msg, self.m_broker.BrokerAddress))
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
@@ -688,54 +639,65 @@ class MQTTClient(MQTTProtocol):
 
 
 class PyHouseMqttFactory(ReconnectingClientFactory):
-    """This factory holds the state for this broker (there may be more than one).
+    """
+    This factory holds the state for this broker (there may be more than one).
     """
 
-    def __init__(self, p_pyhouse_obj, p_client_id, p_broker, p_username, p_password):
+    def __init__(self, p_pyhouse_obj, p_broker):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the PyHouse object for this broker
         """
-        LOG.info('Mqtt Factory Initialized.  Broker: {};  ClientId: {}'.format(p_broker.Name, p_client_id))
+        LOG.info('PyHouseMqttFactoryMqtt Initialized.\n\tBroker: {};\n\tClientId: {};\n\tAddr: {};'.format(p_broker.Name, p_broker.ClientID, p_broker.BrokerAddress))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
-        self.m_clientID = p_client_id
-        self.m_username = p_username
-        self.m_password = p_password
         p_broker._ProtocolAPI = self
 
     def buildProtocol(self, p_addr):
         """ Override.
+
+        Create an instance of a subclass of Protocol.
+
+        The returned instance will handle input on an incoming server
+        connection, and an attribute "factory" pointing to the creating
+        factory.
+
+        Alternatively, L{None} may be returned to immediately close the
+        new connection.
+
         """
-        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker, self.m_clientID, self.m_username, self.m_password)
+        l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
-        LOG.info("Mqtt buildProtocol - broker address: {}".format(p_addr))
+        LOG.info("\n\tBroker address: {};\n\tClientID: {};\n\tAddr: {};".format(p_addr, self.m_broker.ClientID, self.m_broker.BrokerAddress))
         self.resetDelay()
         return l_client
 
     def startedConnecting(self, p_connector):
         """ Override.
+        Called when a connection has been started.
         """
         LOG.info('Started to connect. {}'.format(p_connector))
 
     def clientConnectionFailed(self, p_connector, p_reason):
         """ Override.
+        Called when a connection has failed to connect.
         """
-        LOG.warn('Connection failed. {} {}\n\tReason:{}'.format(self.m_broker.BrokerAddress, self.m_broker.BrokerPort, p_reason))
+        LOG.warn('Factory Connection failed to make.\n\tAddr: {};\n\tReason:{};'.format(self.m_broker.BrokerAddress, p_reason))
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def clientConnectionLost(self, p_connector, p_reason):
         """ Override.
+        Called when an established connection is lost.
         """
-        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
+        LOG.warn('Made connection LOST.\n\tAddr: {};\n\tReason:{};'.format(self.m_broker.BrokerAddress, p_reason))
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
 
     def connectionLost(self, p_reason):
         """ Override.
-            Required.   This is required.
+            Required.
         """
-        LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
+        LOG.warn('Broker: {};  Port: {}\n\tReason:{}'.format(self.m_broker.BrokerAddress, self.m_broker.BrokerPort, p_reason))
 
     def makeConnection(self, p_transport):
         """ This is required.
