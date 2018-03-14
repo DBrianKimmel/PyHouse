@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-29'
+__updated__ = '2018-03-07'
 
 #  Import system type stuff
 import platform
@@ -37,7 +37,7 @@ from Modules.Core.data_objects import \
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import MqttInformation
+from Modules.Computer.Mqtt.mqtt_data import MqttInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #

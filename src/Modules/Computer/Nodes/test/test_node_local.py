@@ -12,7 +12,7 @@ Passed all 24 tests - DBK - 2018-02-12
 """
 import netifaces
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-03-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -147,6 +147,12 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
 
     def test_02_Gateways(self):
         """ Check the gateways
+
+        2                           [('192.168.1.1', 'wlo1', True)]
+        10                          [('fe80::12bf:48ff:feb6:eb6f', 'wlo1', True)]
+        default                     2        ('192.168.1.1', 'wlo1')
+                                    10
+
         """
         l_gate = Interfaces._list_gateways()
         # print(PrettyFormatAny.form(l_gate, 'B1-02-A - Gateways', 100))
