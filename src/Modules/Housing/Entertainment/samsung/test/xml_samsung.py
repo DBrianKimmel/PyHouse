@@ -1,0 +1,62 @@
+"""
+-*- test-case-name: PyHouse/src/Modules/Housing/Entertainment/samsung/test/xml_samsung.py -*-
+
+@name:      PyHouse/src/Modules/Housing/Entertainment/samsung/test/xml_samsung.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2018-2018 by D. Brian Kimmel
+@note:      Created on Mar 19, 2018
+@license:   MIT License
+@summary:
+
+"""
+
+__updated__ = '2018-03-19'
+
+TESTING_SAMSUNG_SECTION = 'SamsungSection'
+TESTING_DEVICE = 'Device'
+
+L_SAMSUNG_SECTION_START = '<' + TESTING_SAMSUNG_SECTION + '>'
+L_SAMSUNG_SECTION_END = '</' + TESTING_SAMSUNG_SECTION + '>'
+L_DEVICE_END = '</' + TESTING_DEVICE + '>'
+
+TESTING_SAMSUNG_DEVICE_NAME_0 = 'ct - L/R - TV 48abc1234'
+TESTING_SAMSUNG_DEVICE_KEY_0 = '0'
+TESTING_SAMSUNG_DEVICE_ACTIVE_0 = 'True'
+TESTING_SAMSUNG_DEVICE_UUID_0 = 'Samsung.-0000-0000-0000-0123456789ab'
+TESTING_SAMSUNG_DEVICE_COMMENT_0 = '48in Smart-Tv  '
+TESTING_SAMSUNG_DEVICE_IPV4_0 = '192.168.9.118'
+TESTING_SAMSUNG_DEVICE_PORT_0 = '55000'
+TESTING_SAMSUNG_DEVICE_ROOM_NAME_0 = 'Living Room'
+TESTING_SAMSUNG_DEVICE_ROOM_UUID_0 = 'Room....-0000-0000-0000-0123456789ab'
+TESTING_SAMSUNG_DEVICE_TYPE_0 = 'TV'
+
+L_SAMSUNG_DEVICE_START_0 = '    ' + \
+    '<' + TESTING_DEVICE + \
+    ' Name="' + TESTING_SAMSUNG_DEVICE_NAME_0 + \
+    '" Key="' + TESTING_SAMSUNG_DEVICE_KEY_0 + \
+    '" Active="' + TESTING_SAMSUNG_DEVICE_ACTIVE_0 + \
+    '">'
+L_SAMSUNG_UUID_0 = '<UUID>' + TESTING_SAMSUNG_DEVICE_UUID_0 + '</UUID>'
+L_SAMSUNG_COMMENT_0 = '<Comment>' + TESTING_SAMSUNG_DEVICE_COMMENT_0 + '</Comment>'
+L_SAMSUNG_IPV4_0 = '<IPv4>' + TESTING_SAMSUNG_DEVICE_IPV4_0 + '</IPv4>'
+L_SAMSUNG_PORT_0 = '<Port>' + TESTING_SAMSUNG_DEVICE_PORT_0 + '</Port>'
+L_SAMSUNG_ROOM_NAME_0 = '<RoomName>' + TESTING_SAMSUNG_DEVICE_ROOM_NAME_0 + '</RoomName>'
+L_SAMSUNG_ROOM_UUID_0 = '<RoomUUID>' + TESTING_SAMSUNG_DEVICE_ROOM_UUID_0 + '</RoomUUID>'
+L_SAMSUNG_TYPE_0 = '<Type>' + TESTING_SAMSUNG_DEVICE_TYPE_0 + '</Type>'
+
+L_SAMSUNG_DEVICE_0 = '\n'.join([
+    L_SAMSUNG_DEVICE_START_0,
+    L_SAMSUNG_UUID_0,
+    L_SAMSUNG_IPV4_0,
+    L_SAMSUNG_PORT_0,
+    L_DEVICE_END
+])
+
+XML_SAMSUNG_SECTION = '\n'.join([
+    L_SAMSUNG_SECTION_START,
+    L_SAMSUNG_DEVICE_0,
+    L_SAMSUNG_SECTION_END
+])
+
+# ## END DBK

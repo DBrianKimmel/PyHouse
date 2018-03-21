@@ -13,7 +13,7 @@ Passed all 13 tests - DBK - 2017-06-25
 
 """
 
-__updated__ = '2017-06-25'
+__updated__ = '2018-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,7 +24,7 @@ from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Housing.Entertainment.onkyo import XML as onkyoXML
 from Modules.Core.Utilities import convert
-from Modules.Core.data_objects import EntertainmentData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ONKYO_DEVICE_UUID_0, \
         TESTING_ONKYO_DEVICE_KEY_0, \
@@ -51,8 +51,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_onkyo')
 

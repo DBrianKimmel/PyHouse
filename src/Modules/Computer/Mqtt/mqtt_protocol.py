@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-02-18'
+__updated__ = '2018-03-16'
 
 #  Import system type stuff
 import random
@@ -163,7 +163,7 @@ class MQTTProtocol(Protocol):
         """ We just received a connck packet.
         The broker has confirmed our MQTT connection.
         """
-        LOG.info('ProtocolEvent "Conack Packet" received: {} {}'.format(len(packet), FormatBytes(packet)))
+        LOG.info('ProtocolEvent "Conack Packet" received: {} {}\n\tAddr:{}'.format(len(packet), FormatBytes(packet), self.m_broker.BrokerAddress))
         #  Return the status field
         self.connackReceived(packet[0])
 
@@ -197,7 +197,7 @@ class MQTTProtocol(Protocol):
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)
 
     def _event_puback(self, packet, _qos, _dup, _retain):
-        LOG.info('ProtocolEvent "PubAck Packet" received: {} {}'.format(len(packet), packet))
+        LOG.info('ProtocolEvent "PubAck Packet" received: {} {}\n\tAddr:{}'.format(len(packet), packet, self.m_broker.BrokerAddress))
         #  Extract the message ID
         messageId = EncodeDecode._decodeValue(packet[:2])
         self.pubackReceived(messageId)
@@ -235,7 +235,7 @@ class MQTTProtocol(Protocol):
     def _event_suback(self, packet, _qos, _dup, _retain):
         messageId = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
-        LOG.info('Event SubAck received - MsgID:{}  Acks: {} {}'.format(messageId, len(packet), packet))
+        LOG.info('Event SubAck received - MsgID:{}  Acks: {} {}\n\tAddr:{}'.format(messageId, len(packet), packet, self.m_broker.BrokerAddress))
         #  Extract the granted QoS levels
         grantedQos = []
         while len(packet):
@@ -270,7 +270,7 @@ class MQTTProtocol(Protocol):
         self.pingrespReceived()
 
     def _event_disconnect(self, packet, _qos, _dup, _retain):
-        LOG.info('Event Publish received: {} {}'.format(len(packet), packet))
+        LOG.info('Event Disconnect received: {} {}\n\tAddr:{}'.format(len(packet), packet, self.m_broker.BrokerAddress))
         self.disconnectReceived()
 
     #  these are to be overridden below
@@ -339,9 +339,9 @@ class MQTTProtocol(Protocol):
         @param p_var: is a bytearray containing the variable header if any
         @param p_payload: is a bytearray containing the payload of the packet if any
         """
-        LOG.debug('MQTT   Fixed:({}) {}'.format(len(p_fixed), FormatBytes(p_fixed)))
-        LOG.debug('MQTT     Var:({}) {}'.format(len(p_var), FormatBytes(p_var)))
-        LOG.debug('MQTT Payload:({}) {}'.format(len(p_payload), FormatBytes(p_payload)))
+        # LOG.debug('MQTT   Fixed:({}) {}'.format(len(p_fixed), FormatBytes(p_fixed)))
+        # LOG.debug('MQTT     Var:({}) {}'.format(len(p_var), FormatBytes(p_var)))
+        # LOG.debug('MQTT Payload:({}) {}'.format(len(p_payload), FormatBytes(p_payload)))
         l_packet = bytearray()
         l_packet += p_fixed
         l_packet += p_var
@@ -351,7 +351,8 @@ class MQTTProtocol(Protocol):
     def _build_connect(self, p_broker):
         """
         """
-        LOG.info("Building 'connect' packet\n\tClientID:{};".format(p_broker.ClientID))
+        LOG.info("Building 'connect' packet\n\tClientID:{};\n\tUser:'{}';\n\tPass:'{}';\n\tWill:'{}','{}'\n\tAddr:{};".format(
+            p_broker.ClientID, p_broker.UserName, p_broker.Password, p_broker.WillTopic, p_broker.WillMessage, p_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
@@ -361,14 +362,14 @@ class MQTTProtocol(Protocol):
             varLogin += 2
         if p_broker.Password is not None:
             varLogin += 1
-        if p_broker.WillMessage is None or p_broker.WillTopic is None:
+        if p_broker.WillMessage is None or p_broker.WillMessage == '' or p_broker.WillTopic is None:
             #  Clean start, no will message
             l_varHeader.append(varLogin << 6 | 0 << 2 | 1 << 1)
         else:
             l_varHeader.append(varLogin << 6 | p_broker.WillRetain << 5 | p_broker.WillQoS << 3 | 1 << 2 | 1 << 1)
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_broker.ClientID))
-        if p_broker.WillMessage is not None and p_broker.WillTopic is not None:
+        if (p_broker.WillMessage is not None or p_broker.WillMessage != '') and p_broker.WillTopic is not None:
             LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillMessage))
@@ -542,6 +543,8 @@ class MQTTClient(MQTTProtocol):
     """
 
     m_pingPeriod = 50
+    m_prefix = ''
+    m_broker = {}
 
     def __init__(self, p_pyhouse_obj, p_broker,
                  keepalive=None, willQos=0, willTopic=None, willMessage=None, willRetain=False
@@ -570,7 +573,7 @@ class MQTTClient(MQTTProtocol):
         self.m_Password = p_broker.Password
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_broker.ClientID)
-        l_msg += '\n\tUser: {};\n\tPass: {};'.format(p_broker.UserName, p_broker.Password)
+        l_msg += "\n\tUser:'{}';\n\tPass:'{}';".format(p_broker.UserName, p_broker.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.BrokerAddress)
         LOG.info(l_msg)
 
@@ -581,7 +584,7 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.info("Client TCP or TLS - KeepAlive: {} seconds".format(self.m_keepalive / 1000))
+        LOG.info("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.BrokerAddress))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_broker)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
@@ -607,7 +610,7 @@ class MQTTClient(MQTTProtocol):
     def connackReceived(self, p_status):
         """ Override
         """
-        LOG.info("Received Connack from MQTT Broker: {}".format(p_status))
+        LOG.info("Received Connack from MQTT Broker\n\tAddr:{}".format(self.m_broker.BrokerAddress))
         if p_status == 0:
             self.mqttConnected()
 
@@ -643,6 +646,8 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     This factory holds the state for this broker (there may be more than one).
     """
 
+    m_broker = {}
+
     def __init__(self, p_pyhouse_obj, p_broker):
         """
         @param p_pyhouse_obj: is the master information store
@@ -654,7 +659,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         self.m_broker = p_broker
         p_broker._ProtocolAPI = self
 
-    def buildProtocol(self, p_addr):
+    def buildProtocol(self, _p_addr):
         """ Override.
 
         Create an instance of a subclass of Protocol.
@@ -669,7 +674,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
-        LOG.info("\n\tBroker address: {};\n\tClientID: {};\n\tAddr: {};".format(p_addr, self.m_broker.ClientID, self.m_broker.BrokerAddress))
+        LOG.info("\n\tClientID: {};\n\tAddr: {};".format(self.m_broker.ClientID, self.m_broker.BrokerAddress))
         self.resetDelay()
         return l_client
 

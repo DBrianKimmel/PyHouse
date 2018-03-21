@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2018-03-16'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,6 +43,10 @@ class Xml(object):
             l_obj.Class = PutGetXML.get_text_from_xml(p_xml, 'Class', 'Local')
         except Exception:
             pass
+        if l_obj.UserName == 'None':
+            l_obj.UserName = None
+        if l_obj.Password == 'None':
+            l_obj.Password = None
         return l_obj
 
     @staticmethod

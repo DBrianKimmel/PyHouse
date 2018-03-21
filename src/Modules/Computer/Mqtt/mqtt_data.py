@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-17'
+__updated__ = '2018-03-16'
 
 #  Import system type stuff
 
@@ -48,9 +48,9 @@ class MqttBrokerData(BaseObject):
         self.Password = None
         self.ClientID = 'PyH-'
         self.Keepalive = 60  # seconds
-        self.WillTopic = None
-        self.WillMessage = None
-        self.WillQos = 0
+        self.WillTopic = ''
+        self.WillMessage = ''
+        self.WillQoS = 0
         self.WillRetain = False
         #
         self._ClientAPI = None

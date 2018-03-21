@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Housing/Entertainment/test/test_samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 14, 2016
 @summary:
 
-Passed all 11 tests - DBK - 2016-11-22
+Passed all 11 tests - DBK - 2018-03-19
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-03-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,13 +20,13 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.Entertainment.samsung import Xml as samsungXml
+from Modules.Housing.Entertainment.samsung.samsung import Xml as samsungXml
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID
-from Modules.Housing.Entertainment.test.xml_entertainment import \
+from Modules.Housing.Entertainment.samsung.test.xml_samsung import \
     TESTING_SAMSUNG_DEVICE_NAME_0, \
     TESTING_SAMSUNG_DEVICE_KEY_0, \
     TESTING_SAMSUNG_DEVICE_ACTIVE_0, \
@@ -45,8 +45,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_samsung')
 
@@ -172,6 +174,5 @@ class C1_Write(SetupMixin, unittest.TestCase):
         """
         l_obj = samsungXml._read_one_device(self.m_xml.samsung_sect.find('Device'))
         # print(PrettyFormatAny.form(l_obj, 'C2-2-A - All Devices'))
-
 
 # ## END DBK

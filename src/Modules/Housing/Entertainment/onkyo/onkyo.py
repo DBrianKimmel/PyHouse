@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2018-03-16'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory

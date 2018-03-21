@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2018-02-16'
+__updated__ = '2018-03-18'
 __version_info__ = (18, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -137,21 +137,6 @@ class EmailData(object):
         self.EmailToAddress = ''
         self.GmailLogin = ''
         self.GmailPassword = ''
-
-
-class EntertainmentData(object):
-    """
-
-    ==> PyHouse.House.Entertainment.xxx as in the def below.
-    """
-
-    def __init__(self):
-        self.Onkyo = None
-        self.Panasonic = None
-        self.Pioneer = None
-        self.Samsung = None
-        self.Sharp = None
-        self.Sony = None
 
 
 class EthernetControllerData(object):

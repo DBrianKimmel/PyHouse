@@ -4,7 +4,7 @@
 @name:      src.Modules.Entertainment.samsung
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2018 by D. Brian Kimmel
 @note:      Created on Jul 11, 2016
 @license:   MIT License
 @summary:
@@ -15,7 +15,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.data_objects import BaseUUIDObject
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-03-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,11 +26,12 @@ from twisted.internet import error
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Samsung        ')
 
-SAMSUNG_ADDRESS = '192.168.1.120'
+SAMSUNG_ADDRESS = '192.168.1.103'
 SAMSUNG_PORT = 55000
 
 
 class SamsungData(BaseUUIDObject):
+
     def __init__(self):
         self.DeviceCount = 0
         self.Factory = None
@@ -158,6 +159,7 @@ class SamsungFactory(ReconnectingClientFactory):
 
 
 class API(object):
+
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing.")
         self.m_pyhouse_obj = p_pyhouse_obj
