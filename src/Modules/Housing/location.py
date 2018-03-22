@@ -44,15 +44,15 @@ class Xml(object):
             l_xml = l_xml.find('LocationSection')
             if l_xml is None:
                 return l_obj
-            l_obj.Street = PutGetXML.get_text_from_xml(l_xml, 'Street')
-            l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City')
-            l_obj.State = PutGetXML.get_text_from_xml(l_xml, 'State')
+            l_obj.Street = PutGetXML.get_text_from_xml(l_xml, 'Street', 'Main')
+            l_obj.City = PutGetXML.get_text_from_xml(l_xml, 'City', 'Gotham')
+            l_obj.State = PutGetXML.get_text_from_xml(l_xml, 'State', 'Confusion')
             l_obj.ZipCode = PutGetXML.get_text_from_xml(l_xml, 'ZipCode', '99999')
             l_obj.Region = PutGetXML.get_text_from_xml(l_xml, 'Region', 'America')
-            l_obj.Phone = PutGetXML.get_text_from_xml(l_xml, 'Phone')
-            l_obj.Latitude = PutGetXML.get_float_from_xml(l_xml, 'Latitude')
-            l_obj.Longitude = PutGetXML.get_float_from_xml(l_xml, 'Longitude')
-            l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation', 10)
+            l_obj.Phone = PutGetXML.get_text_from_xml(l_xml, 'Phone', '800-555-1212')
+            l_obj.Latitude = PutGetXML.get_float_from_xml(l_xml, 'Latitude', 40.0)
+            l_obj.Longitude = PutGetXML.get_float_from_xml(l_xml, 'Longitude', 100.0)
+            l_obj.Elevation = PutGetXML.get_float_from_xml(l_xml, 'Elevation', 10.0)
             l_obj.TimeZoneName = PutGetXML.get_text_from_xml(l_xml, 'TimeZoneName', 'America/New_York')
         except AttributeError as e_err:
             LOG.error('ERROR getting location Data - {}'.format(e_err))
