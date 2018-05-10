@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/test/xml_computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 8, 2014
 @Summary:
@@ -18,7 +18,7 @@ ComputerDivision - Name, Key, Active
 
 """
 
-__updated__ = '2017-12-22'
+__updated__ = '2018-03-23'
 
 # Import system type stuff
 
@@ -39,8 +39,8 @@ TESTING_COMPUTER_KEY_0 = '0'
 TESTING_COMPUTER_ACTIVE_0 = 'True'
 TESTING_COMPUTER_UUID = 'Computer-0000-0000-0000-123456789ABC'
 
-L_COMPUTER_DIV_START = '  ' + \
-    '  <' + TESTING_COMPUTER_DIVISION + ' ' + \
+L_COMPUTER_DIV_START = \
+    '<' + TESTING_COMPUTER_DIVISION + ' ' + \
     'Name="' + TESTING_COMPUTER_NAME_0 + '" ' + \
     'Key="' + TESTING_COMPUTER_KEY_0 + '" ' + \
     'Active="' + TESTING_COMPUTER_ACTIVE_0 + '"' + \

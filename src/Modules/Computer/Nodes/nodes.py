@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 6, 2014
 @summary:   This module does everything for nodes.
@@ -17,7 +17,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2016-07-08'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 
@@ -35,7 +35,7 @@ class API(object):
         self.m_local = localAPI(p_pyhouse_obj)
         self.m_sync = syncAPI(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized')
+        LOG.info('Initialized.')
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Node xml info.

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Schedule events
@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2017-04-20'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 import datetime
@@ -66,6 +66,7 @@ PAUSE_DELAY = 5
 def to_minutes(p_datetime):
     return (p_datetime.hour * 60 + p_datetime.minute)
 
+
 def _get_schedule_timefield(p_schedule_obj):
     """
     """
@@ -79,6 +80,7 @@ def _get_schedule_timefield(p_schedule_obj):
 
 
 class RiseSet(object):
+
     def __init__(self):
         self.SunRise = None
         self.SunSet = None
@@ -269,7 +271,7 @@ class Utility(object):
     def fetch_sunrise_set(p_pyhouse_obj):
         l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('schedule/sunrise_set', l_riseset)
+        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('schedule/sunrise_set', l_riseset)
         return l_riseset
 
     @staticmethod

@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 import random
@@ -44,6 +44,7 @@ class MQTTProtocol(Protocol):
                     0x09: "suback", 0x0A: "unsubscribe", 0x0B: "unsuback",
                     0x0C: "pingreq", 0x0D: "pingresp", 0x0E: "disconnect"}
     m_buffer = bytearray()
+    m_broker = {}
 
     def dataReceived(self, p_data):
         """ A standard callback when we get data from the broker.
@@ -162,10 +163,20 @@ class MQTTProtocol(Protocol):
     def _event_connack(self, packet, _qos, _dup, _retain):
         """ We just received a connck packet.
         The broker has confirmed our MQTT connection.
+        byte 0 = Session present flag
+        byte 1 = Return Code
+                0 = Connection Accepted
+                1 = Rejected - wrong protocol
+                2 = Rejected - Client ID wrong
+                3 = Rejected - Server unavailable
+                4 = Rejected - Username/Password incorrect
+                5 = Rejected - Not Authorized
         """
-        LOG.info('ProtocolEvent "Conack Packet" received: {} {}\n\tAddr:{}'.format(len(packet), FormatBytes(packet), self.m_broker.BrokerAddress))
+        l_rc = packet[1]
+        if l_rc != 0:
+            LOG.error('ProtocolEvent "Conack Packet" received:\n\tStatus: {}; {};\n\tAddr:{}'.format(packet[0], l_rc, self.m_broker.BrokerAddress))
         #  Return the status field
-        self.connackReceived(packet[0])
+        self.connackReceived(l_rc)
 
     def _event_publish(self, packet, qos, dup, retain):
         """ Receive a "Published" message
@@ -174,7 +185,7 @@ class MQTTProtocol(Protocol):
         Extract the parts of the packet.
         @param packet: is a bytearray containing the variable header and payload combined.
         """
-        LOG.info('ProtocolEvent "Publish Packet" received.')
+        # LOG.info('ProtocolEvent "Publish Packet" received.')
         #  Extract the topic portion of the packet.
         l_topic = EncodeDecode._decodeString(packet)
         packet = packet[len(l_topic) + 2:]
@@ -191,7 +202,7 @@ class MQTTProtocol(Protocol):
         # l_json = packet.decode('utf-8')
         # LOG.debug('Publish message:{}'.format(l_json))
         l_message = json_tools.decode_json_unicode(l_json)
-        LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
+        # LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
         # l_topic is a string
         # l_message is a string
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)
@@ -351,8 +362,8 @@ class MQTTProtocol(Protocol):
     def _build_connect(self, p_broker):
         """
         """
-        LOG.info("Building 'connect' packet\n\tClientID:{};\n\tUser:'{}';\n\tPass:'{}';\n\tWill:'{}','{}'\n\tAddr:{};".format(
-            p_broker.ClientID, p_broker.UserName, p_broker.Password, p_broker.WillTopic, p_broker.WillMessage, p_broker.BrokerAddress))
+        # LOG.info("Building 'connect' packet\n\tClientID:{};\n\tUser:'{}';\n\tPass:'{}';\n\tWill:'{}','{}'\n\tAddr:{};".format(
+        #    p_broker.ClientID, p_broker.UserName, p_broker.Password, p_broker.WillTopic, p_broker.WillMessage, p_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
@@ -459,7 +470,7 @@ class MQTTProtocol(Protocol):
         Only supports QoS = 0 subscribes
         Only supports one subscription per message
         """
-        LOG.info("Sending subscribe packet - Topic: {}".format(p_topic))
+        LOG.info("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = subscribe, QoS = 1
@@ -674,7 +685,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
-        LOG.info("\n\tClientID: {};\n\tAddr: {};".format(self.m_broker.ClientID, self.m_broker.BrokerAddress))
+        # LOG.info("\n\tClientID: {};\n\tAddr: {};".format(self.m_broker.ClientID, self.m_broker.BrokerAddress))
         self.resetDelay()
         return l_client
 
@@ -682,7 +693,8 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """ Override.
         Called when a connection has been started.
         """
-        LOG.info('Started to connect. {}'.format(p_connector))
+        # LOG.info('Started to connect. {}'.format(p_connector))
+        pass
 
     def clientConnectionFailed(self, p_connector, p_reason):
         """ Override.
@@ -707,6 +719,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     def makeConnection(self, p_transport):
         """ This is required.
         """
-        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+        # LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+        pass
 
 #  ## END DBK

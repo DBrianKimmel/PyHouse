@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/test/test_computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 25, 2014
 @Summary:
@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2017-01-14
 
 """
-__updated__ = "2017-12-21"
+__updated__ = "2018-03-23"
 
 # Import system type stuff
 import platform
@@ -25,8 +25,8 @@ from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_NAME_0, \
     TESTING_COMPUTER_DIVISION, \
     TESTING_COMPUTER_KEY_0, \
-    TESTING_COMPUTER_ACTIVE_0
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+    TESTING_COMPUTER_ACTIVE_0, XML_COMPUTER_DIVISION
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -88,6 +88,23 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
 
 
+class A3_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_COMPUTER_DIVISION
+        print('A3-01-A - Raw', l_raw)
+        self.assertEqual(l_raw[:17], '<ComputerDivision')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_COMPUTER_DIVISION)
+        print('A3-02-A - Parsed', l_xml)
+        self.assertEqual(l_xml.tag, TESTING_COMPUTER_DIVISION)
+
+
 class C1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
@@ -97,7 +114,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """
         """
         l_xml = computerXML.create_computer_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
+        print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
         self.assertEqual(l_xml.Name, platform.node())
         self.assertEqual(l_xml.Key, 0)
         # self.assertEqual(l_xml.Active, True)
@@ -106,7 +123,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Read the config - it is minimal.
         """
         l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_obj, 'C1-02-A - Computer Xml'))
+        print(PrettyFormatAny.form(l_obj, 'C1-02-A - Computer Xml'))
         self.assertEqual(l_obj.Name, TESTING_COMPUTER_NAME_0)
 
 

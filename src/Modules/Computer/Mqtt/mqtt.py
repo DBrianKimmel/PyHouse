@@ -1,7 +1,7 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/mqtt.py -*-
+-*- test-case-name: PyHouse.src.Modules.Computer.Mqtt.test.test_mqtt -*-
 
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/mqtt.py
+@name:      PyHouse/src/Modules/Computer/Mqtt/mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-17'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 import copy
@@ -50,7 +50,6 @@ def _make_message(p_pyhouse_obj, p_message=None):
     else:
         xml_tools.stuff_new_attrs(l_message, p_message)
     l_json = json_tools.encode_json(l_message)
-    # LOG.debug('Message:{}<<'.format(FormatBytes(l_json)))
     return l_json
 
 
@@ -60,7 +59,7 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.APIs.Computer.MqttAPI = self
+        # p_pyhouse_obj.APIs.Computer.MqttAPI = self
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
         p_pyhouse_obj.Computer.Mqtt.Brokers = {}
@@ -86,12 +85,6 @@ class API(object):
 
     def Start(self):
         """
-        if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            LOG.info('Connecting to all MQTT Brokers.')
-            l_count = self.connect_to_all_brokers(self.m_pyhouse_obj)
-            LOG.info("Mqtt {} broker(s) Started.".format(l_count))
-        else:
-            LOG.info('No Mqtt brokers are configured.')
         """
         LOG.info("Start")
         pass
@@ -122,17 +115,20 @@ class API(object):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                LOG.info('Mqtt published:\tTopic:{}'.format(p_topic))
+                # LOG.info('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
 
     def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.
 
+        --> pyhouse/housename/topic02/topic03/topic04/...
+
         TODO: This needs protection from poorly formed Mqtt messages.
+        @param p_topic: is a string of the topic 'pyhouse/housename/light/status/schedule/...
+        @param p_message: is the JSON encoded string with all the data of the message
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
-        # l_message = json_tools.decode_json_unicode(p_message)
         l_message = p_message
         l_logmsg = Actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_message)
         LOG.info(l_logmsg)

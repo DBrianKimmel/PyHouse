@@ -9,10 +9,13 @@
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2018-03-26'
 
+#  Import system type stuff
+
+#  Import PyMh files and modules.
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeData, PyHouseData
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.Housing.Security.security import MqttActions as securityMqtt
@@ -21,6 +24,9 @@ from Modules.Housing.Security.security import MqttActions as securityMqtt
 class Actions(object):
     """
     """
+
+    m_myname = 'Not Initialized.'
+    m_pyhouse_obj = PyHouseData()
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -82,13 +88,16 @@ class Actions(object):
         p_logmsg += '\tWeather info {}'.format(PrettyFormatAny.form(p_message, 'Weather msg', 160))
         return p_logmsg
 
-    def _decodeLWT(self, p_logmsg, p_topic, p_message):
+    def _decodeLWT(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tLast Will:\n'
         p_logmsg += p_message
         return p_logmsg
 
     def mqtt_dispatch(self, p_topic, p_message):
         """ This is the master dispatch table
+
+        @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped
+        @param p_message: is the payload that is JSON
         """
         l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
         # Lwt can be from any device
@@ -100,24 +109,27 @@ class Actions(object):
         self.m_room_name = self._get_field(p_message, 'RoomName')
         l_logmsg += '\tSender: {}\n'.format(self.m_sender)
         if p_topic[0] == 'computer':
-            l_logmsg = self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
+            l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'entertainment':
-            l_logmsg = entertainmentMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
+            l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'hvac':
-            l_logmsg = hvacMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
+            l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'lighting':
-            l_logmsg = self._decode_lighting(l_logmsg, p_topic, p_message)
+            l_logmsg += self._decode_lighting(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'house':
-            l_logmsg = self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
+            l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'login':
+            l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
-            l_logmsg = self._decode_schedule(l_logmsg, p_topic, p_message)
+            l_logmsg += self._decode_schedule(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'security':
-            l_logmsg = securityMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
+            l_logmsg += securityMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'weather':
-            l_logmsg = self._decode_weather(l_logmsg, p_topic, p_message)
+            l_logmsg += self._decode_weather(l_logmsg, p_topic, p_message)
         else:
-            l_logmsg += 'OTHER: Unknown'
-            l_logmsg += '\tMessage: {}\n'.format(PrettyFormatAny.form(p_message, 'Message', 160))
+            l_logmsg += 'OTHER: Unknown\n'
+            l_logmsg += '\tTopic: {};\n'.format(p_topic[0])
+            l_logmsg += '\tMessage: {};\n'.format(PrettyFormatAny.form(p_message, 'Message', 160))
         return l_logmsg
 
 #  ## END DBK

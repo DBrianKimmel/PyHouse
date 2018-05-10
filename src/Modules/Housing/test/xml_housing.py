@@ -20,7 +20,7 @@ Comments should not need explaining.  They are just present and can contain just
 """
 from Modules.Housing.Rules.test.xml_rules import XML_RULES_SECTION
 
-__updated__ = '2017-02-01'
+__updated__ = '2018-03-23'
 
 # Import system type stuff
 
@@ -34,7 +34,6 @@ from Modules.Housing.Lighting.test.xml_lighting import XML_LIGHTING
 from Modules.Housing.Pool.test.xml_pool import XML_POOL
 from Modules.Housing.Scheduling.test.xml_schedule import XML_SCHEDULE
 from Modules.Housing.Security.test.xml_security import XML_SECURITY
-
 
 TESTING_HOUSE_DIVISION = 'HouseDivision'
 
@@ -52,7 +51,7 @@ L_HOUSE_UUID = '<UUID>' + TESTING_HOUSE_UUID + '</UUID>'
 
 L_HOUSE_DIVISION_END = '</' + TESTING_HOUSE_DIVISION + '>'
 
-HOUSE_DIVISION_XML = '\n'.join([
+XML_HOUSE_DIVISION = '\n'.join([
     L_HOUSE_DIV,
     L_HOUSE_UUID,
     XML_LOCATION,

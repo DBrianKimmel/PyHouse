@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2018-03-26'
 __version_info__ = (18, 2, 11)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -208,6 +208,8 @@ class API(object):
     """
     """
 
+    m_pyhouse_obj = {}
+
     def __init__(self):
         """This is the startup of the entire system.
         All permanent services are started here.
@@ -219,13 +221,12 @@ class API(object):
         global g_API
         g_API = self
         #  Utilities.do_setup_stuff(self)
-        p_pyhouse_obj = Utilities._create_pyhouse_obj()
-        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pyhouse_obj = Utilities._create_pyhouse_obj()
         print('PyHouse.API()')  # For development - so we can see when we get to this point...
-        p_pyhouse_obj.APIs.PyHouseMainAPI = self
-        p_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        self.m_pyhouse_obj.APIs.PyHouseMainAPI = self
+        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #

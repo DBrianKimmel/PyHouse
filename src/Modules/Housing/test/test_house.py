@@ -7,11 +7,11 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
-Passed all 14 tests - DBK - 2018-02-13
+Passed all 13 tests - DBK - 2018-02-23
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2018-03-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,14 +26,17 @@ from Modules.Housing.house import \
     Utility as houseUtil
 from Modules.Housing.test.xml_location import \
     TESTING_LOCATION_LATITUDE
-from Modules.Housing.test.xml_rooms import TESTING_ROOM_NAME_0
+from Modules.Housing.test.xml_rooms import \
+    TESTING_ROOM_NAME_0
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_ACTIVE, \
-    TESTING_HOUSE_UUID
+    TESTING_HOUSE_UUID, \
+    XML_HOUSE_DIVISION, \
+    TESTING_HOUSE_DIVISION
 from Modules.Core.Utilities import json_tools
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -92,10 +95,20 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A2-2-A - House'))
         self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
 
+    def test_03_Raw(self):
+        l_raw = XML_HOUSE_DIVISION
+        # print('A2-01-A - Raw', l_raw)
+        self.assertEqual(l_raw[:14], '<HouseDivision')
+
+    def test_04_Parsed(self):
+        l_xml = ET.fromstring(XML_HOUSE_DIVISION)
+        # print('A2-02-A - Parsed', l_xml)
+        self.assertEqual(l_xml.tag, TESTING_HOUSE_DIVISION)
+
 
 class B1_Read(SetupMixin, unittest.TestCase):
     """
-    This section tests the reading and writing of XML used by house.
+    This section tests the reading of XML used by house.
     """
 
     def setUp(self):
@@ -135,7 +148,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
 
 class C3_Write(SetupMixin, unittest.TestCase):
     """
-    This section tests the reading and writing of XML used by house.
+    This section tests the writing of XML used by house.
     """
 
     def setUp(self):
@@ -145,9 +158,10 @@ class C3_Write(SetupMixin, unittest.TestCase):
         l_house_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House = l_house_obj
         l_xml = houseXml.write_house_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
+        print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
         self.assertEqual(l_xml.tag, 'HouseDivision')
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_HOUSE_UUID)
 
 
 class J1_JSON(SetupMixin, unittest.TestCase):
@@ -171,7 +185,7 @@ class J1_JSON(SetupMixin, unittest.TestCase):
 
 
 class P1_API(SetupMixin, unittest.TestCase):
-    """
+    """ Test the major API functions
     """
 
     def setUp(self):

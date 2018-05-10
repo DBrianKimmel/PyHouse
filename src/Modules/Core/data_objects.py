@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2018-03-18'
+__updated__ = '2018-03-26'
 __version_info__ = (18, 2, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,7 +29,7 @@ class PyHouseData(object):
 
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
 
-    The APIs are kept seperate as they should not be a part of the data sent to the browser.
+    The APIs are kept separate as they should not be a part of the data sent to the browser.
     """
 
     def __init__(self):
@@ -166,6 +166,7 @@ class HouseAPIs(object):
         self.ScheduleAPI = None
         self.SecurityAPI = None
         self.SunRiseSetAPI = None
+        self.SyncAPI = None
 
 
 class HvacData(object):
@@ -349,7 +350,15 @@ class WeatherData(object):
         self.Humidity = 0  # Percent
         self.DewPoint = 0  # Degrees C
         self.WindSpeed = 0  # Meters / Second
-        self.WindDirection = 0  # Degreed
+        self.WindDirection = 0  # Degrees
+
+
+class WeatherInformation(object):
+    """
+    """
+
+    def __init__(self):
+        self.stationID = None
 
 
 class WebData(object):
@@ -455,6 +464,7 @@ class ComputerInformation(BaseUUIDObject):
         self.Mqtt = {}  # MqttInformation()
         self.Nodes = {}  # NodeData()
         self.Primary = False
+        self.Weather = {}  # WeatherInformation()
         self.Web = {}  # WebData()
 
 

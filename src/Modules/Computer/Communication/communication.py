@@ -1,18 +1,17 @@
 """
--*- test-case-name: Pyhouse/src/Modules/Communication/communication.py -*-
+-*- test-case-name: Pyhouse.src.Modules.Communication.test.test-communication -*-
 
 @name:      Pyhouse/src/Modules/Communication/communication.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2018 by D. Brian Kimmel
 @note:      Created on Jan 9, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2017-01-19'
-
+__updated__ = '2018-03-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -41,8 +40,13 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def LoadXml(self, p_pyhouse_obj):
+        """
+        """
+        LOG.info('Loaded XML.')
+
     def Start(self):
-        self.m_pyhouse_obj.Computer.Communication = Utility().read_xml(self.m_pyhouse_obj)
+        pass
 
     def Stop(self):
         pass

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle all of the information for a house.
@@ -25,11 +25,11 @@ PyHouse.House.
               Rooms
               Rules
               Schedules
-
+              ...
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 
@@ -45,6 +45,7 @@ from Modules.Housing.Lighting.lighting import API as lightingAPI
 from Modules.Housing.Pool.pool import API as poolAPI
 from Modules.Housing.Scheduling.schedule import API as scheduleAPI
 from Modules.Housing.Security.security import API as securityAPI
+from Modules.Housing.Sync.sync import API as syncAPI
 from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
@@ -63,8 +64,11 @@ class MqttActions(object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def decode(self, p_logmsg, p_topic, p_message):
+        """
+        --> pyhouse/housname/house/topic03/topic04/...
+        """
         p_logmsg += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        if p_topic[2] == 'room':
+        if p_topic[0] == 'room':
             p_logmsg += roomsMqtt()._decode_room(p_logmsg, p_topic, p_message)
         #  computer/***
         else:
@@ -134,6 +138,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.PoolAPI = poolAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI = scheduleAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SecurityAPI = securityAPI(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.SyncAPI = syncAPI(p_pyhouse_obj)
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
@@ -147,10 +152,12 @@ class Utility(object):
         p_pyhouse_obj.APIs.House.PoolAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.SecurityAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.House.SyncAPI.LoadXml(p_pyhouse_obj)
         pass
 
     def start_house_parts(self, p_pyhouse_obj):
-        #  Family must start before the other things (that depend on family).
+        """ Family must start before the other things (that depend on family).
+        """
         p_pyhouse_obj.APIs.House.FamilyAPI.Start()
         p_pyhouse_obj.APIs.House.EntertainmentAPI.Start()
         p_pyhouse_obj.APIs.House.HvacAPI.Start()
@@ -197,6 +204,9 @@ class API(Utility):
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
+        """
+        Read in the HouseDivision portion XML file and update the internal data.
+        """
         LOG.info('Loading XML')
         p_pyhouse_obj.House = HouseInformation()  # Clear before loading
         l_house = Xml.read_house_xml(p_pyhouse_obj)
@@ -207,7 +217,6 @@ class API(Utility):
 
     def Start(self):
         """Start processing for all things house.
-        Read in the HouseDivision portion XML file and update the internal data.
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting.")
@@ -218,7 +227,6 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        #  l_house_xml = ET.Element('HouseDivision')
         l_house_xml = Xml.write_house_xml(self.m_pyhouse_obj)
         Utility._save_component_apis(self.m_pyhouse_obj, l_house_xml)
         p_xml.append(l_house_xml)
@@ -226,14 +234,15 @@ class API(Utility):
         return p_xml
 
     def Stop(self):
-        """Stop all houses.
-        Append the house XML to the passed in xlm tree.
+        """ Stop all house stuff.
         """
         LOG.info("Stopping House.")
         self.stop_house_parts()
         LOG.info("Stopped.")
 
     def DecodeMqtt(self, p_logmsg, p_topic, p_message):
+        """ Decode messages sent to the house module.
+        """
         MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
 
 #  ##  END DBK

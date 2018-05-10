@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 import platform
@@ -144,7 +144,7 @@ class Utility(object):
         p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         #
         p_pyhouse_obj.APIs.Computer.BridgesAPI.LoadXml(p_pyhouse_obj)
-        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
@@ -154,7 +154,7 @@ class Utility(object):
     def _start_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
         p_pyhouse_obj.APIs.Computer.BridgesAPI.Start()
-        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
+        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
         p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
@@ -165,7 +165,7 @@ class Utility(object):
     def _stop_component_apis(p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.BridgesAPI.Stop()
         p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Stop()
-        # p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
+        p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
         p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
         p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
         p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()
@@ -177,7 +177,7 @@ class Utility(object):
         """ Save the XML for each of the components of the Computer
         """
         p_pyhouse_obj.APIs.Computer.BridgesAPI.SaveXml(p_xml)
-        # p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
+        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.MqttAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)
@@ -191,7 +191,6 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         """ Initialize the computer section of PyHouse.
-
         """
         LOG.info('Initializing')
         p_pyhouse_obj.Computer = ComputerInformation()
@@ -201,14 +200,14 @@ class API(Utility):
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized')
+        LOG.info('Initialized.')
 
     def LoadXml(self, p_pyhouse_obj):
         """
         """
-        LOG.info('Loading XML')
+        # LOG.info('Loading XML')
         Utility._load_component_xml(p_pyhouse_obj)
-        LOG.info('XML Loaded')
+        LOG.info('Loaded XML.')
 
     def Start(self):
         """
@@ -216,7 +215,7 @@ class API(Utility):
         """
         LOG.info('Starting')
         Utility._start_component_apis(self.m_pyhouse_obj)
-        LOG.info('Started')
+        LOG.info('Started.')
 
     def SaveXml(self, p_xml):
         """
@@ -236,6 +235,8 @@ class API(Utility):
         LOG.info("Stopped.")
 
     def DecodeMqtt(self, p_logmsg, p_topic, p_message):
+        """ Decode messages sent to the computer module.
+        """
         MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
 
 # ## END DBK

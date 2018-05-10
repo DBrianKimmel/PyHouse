@@ -23,7 +23,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2018-01-10'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 import os
@@ -143,14 +143,14 @@ class API(Utility):
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
         Utility._sync_startup_logging(self.m_pyhouse_obj)
-        LOG.info('Initialized\n==================================================================\n')
+        LOG.info('Initialized.\n==================================================================\n')
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('Loading XML')
         p_pyhouse_obj = configAPI(p_pyhouse_obj).read_xml_config_file(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI.LoadXml(p_pyhouse_obj)
-        LOG.info('Loaded XML')
+        LOG.info('Loaded XML.')
 
     def Start(self):
         """

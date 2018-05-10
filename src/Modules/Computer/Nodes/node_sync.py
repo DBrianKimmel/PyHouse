@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-12-29'
+__updated__ = '2018-03-26'
 
 #  Import system type stuff
 import datetime
@@ -49,6 +49,11 @@ class Util(object):
             l_node = NodeData()
         l_node.NodeInterfaces = None
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/whoisthere
+
+        l_topic = 'login/initial'
+        l_message = {}
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)  # /login/initial
+
         _l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_who_is_there, p_pyhouse_obj)
 
     @staticmethod
@@ -96,7 +101,7 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadXml(self, _p_pyhouse_obj):
         LOG.info("Initialized.")
         pass
 
