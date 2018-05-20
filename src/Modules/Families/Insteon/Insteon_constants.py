@@ -9,7 +9,7 @@
 @note:      Created on Apr 19, 2013
 @summary:   This module is for communicating with Insteon controllers.
 
-Note! This is designed for 'from Insteon_constants import *'
+Note! This is designed for: 'from Insteon_constants import *'
 
 """
 
@@ -216,6 +216,7 @@ X10_COMMAND = {
     0x0E: 'Status = Off',
     0x0F: 'Status Request'
 }
+
 
 class InsteonError(Exception):
     """

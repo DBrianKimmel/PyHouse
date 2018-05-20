@@ -79,8 +79,7 @@ class DecodeResponses(object):
                 p_controller_obj._Message = p_controller_obj._Message[1:]
                 return 'Drop'
 
-
-    def check_for_more_decoding(self, p_controller_obj, p_ret=True):
+    def check_for_more_decoding(self, p_controller_obj, p_ret = True):
         """Chop off the current message from the head of the buffered response stream from the controller.
         @param p_ret: is the result to return.
         """
@@ -134,8 +133,6 @@ class DecodeResponses(object):
             # self.check_for_more_decoding(p_controller_obj, l_ret)
         self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret
-
-
 
     def _publish(self, p_pyhouse_obj, p_device_obj):
         l_topic = "lighting/{}/info".format(p_device_obj.Name)
@@ -207,6 +204,7 @@ class DecodeResponses(object):
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('/lighting/status', p_controller_obj)  #  /lig
         return
 
     def _decode_51(self, p_controller_obj):
