@@ -14,7 +14,7 @@
 __updated__ = '2017-07-24'
 
 #  Import system type stuff
-import http.cookies
+import http.cookies  #
 import json
 import urllib
 from twisted.internet import ssl
@@ -27,7 +27,6 @@ from autobahn.twisted.resource import WebSocketResource
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-
 
 WEBSOCKET_PORT = 8581
 ENDPOINT_WEBSOCKET_SERVER = 'tcp:port={}'.format(WEBSOCKET_PORT)
@@ -124,10 +123,10 @@ class WebSockServerProtocol(WebSocketServerProtocol):
                 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
                 body = urllib.parse.urlencode({'audience': audience, 'assertion': assertion})
                 from twisted.web.client import getPage
-                d = getPage(url="https://verifier.login.persona.org/verify",
-                            method='POST',
-                            postdata=body,
-                            headers=headers)
+                d = getPage(url = "https://verifier.login.persona.org/verify",
+                            method = 'POST',
+                            postdata = body,
+                            headers = headers)
                 LOG.warn("Authentication request sent.")
 
                 def done(res):
@@ -170,6 +169,7 @@ class ClientConnections(object):
     We can update the browser via COMET when a controlled device changes.
     (Light On/Off, Pool water low, Garage Door open/Close ...)
     """
+
     def __init__(self):
         self.ConnectedBrowsers = []
 
