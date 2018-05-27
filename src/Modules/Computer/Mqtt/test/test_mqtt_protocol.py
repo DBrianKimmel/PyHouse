@@ -19,12 +19,13 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
+from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData
+from Modules.Computer.Mqtt.mqtt_protocol import MQTTProtocol
+from Modules.Computer.test.xml_computer import \
+    TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_MQTT_SECTION, \
     TESTING_MQTT_BROKER
-from Modules.Computer.test.xml_computer import \
-    TESTING_COMPUTER_DIVISION
-from Modules.Computer.Mqtt.mqtt_protocol import MQTTProtocol
 # from Modules.Core.Utilities.tools import PrintBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
@@ -62,7 +63,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.broker.tag, TESTING_MQTT_BROKER)
 
 
-class D1_Encode(SetupMixin, unittest.TestCase):
+class B1_Packet(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -73,33 +74,35 @@ class D1_Encode(SetupMixin, unittest.TestCase):
         pass
 
 
-class P1_Packet(SetupMixin, unittest.TestCase):
+class B2_Packet(SetupMixin, unittest.TestCase):
     """
     """
+    m_broker = {}
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
+        self.m_broker = MqttBrokerData()
+        self.m_broker.BrokerName = "Test BrokerS"
+        self.m_broker.ClientID = "TestClient"
+        self.m_broker.Keepalive = 30000
+        self.m_broker.WillTopic = None
+        self.m_broker.WillMessage = None
+        self.m_broker.WillQoS = 0
+        self.m_broker.WillRetain = False
+        self.m_broker.CleanStart = True
+        self.m_broker.Username = None
+        self.m_broker.Password = None
 
-    def test_01_fixed(self):
+    def test_01_Fixed(self):
         l_packet_type = 0x01
         l_remaining_length = 17
-        l_fixed = MQTTProtocol()._build_fixed_header(l_packet_type, l_remaining_length)
-        # print(PrettyFormatAny.form(l_fixed, 'FixedHeader'))
+        _l_fixed = MQTTProtocol()._build_fixed_header(l_packet_type, l_remaining_length)
+        print(PrettyFormatAny.form(_l_fixed, 'FixedHeader'))
 
     def test_02_connect(self):
         """
         """
-        l_clientID = "TestClient"
-        l_keepalive = 30000
-        l_willTopic = None
-        l_willMessage = None
-        l_willQoS = 0
-        l_willRetain = False
-        l_cleanStart = True
-        l_username = None
-        l_password = None
-
-        l_fixed, l_var, l_pay = MQTTProtocol()._build_connect(l_clientID)
+        l_fixed, l_var, l_pay = MQTTProtocol()._build_connect(self.m_broker)
         print('\n   Fixed: {}'.format(FormatBytes(l_fixed)))
         print('Variable: {}'.format(FormatBytes(l_var)))
         print(' Payload: {}'.format(FormatBytes(l_pay)))

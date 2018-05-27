@@ -32,9 +32,9 @@ import os
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
-from Modules.Housing.house import API as houseAPI
 from Modules.Core.Utilities.config_file import API as configAPI
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
+from Modules.Housing.house import API as houseAPI
 LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
 MINUTES = 60  # Seconds in a minute
@@ -100,7 +100,7 @@ class Utility(object):
         p_pyhouse_obj.Uuids.All = {}
         l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
         try:
-            l_file = open(l_path, mode='r')
+            l_file = open(l_path, mode = 'r')
             l_uuid = l_file.read()
         except IOError:
             l_uuid = toolUuid.create_uuid()

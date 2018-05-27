@@ -1,10 +1,9 @@
 <?xml version='1.0' encoding='us-ascii'?>
-<PyHouse Version="18.2.0"
-	xmlns:comp="http://PyHouse.Org/ComputerDiv"
+<PyHouse Version="18.2.0" xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-04-12 22:01:48.009615 -->
-	<ComputerDivision Active="False" Key="0"
-		Name="pi-01-pp">
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+	<!-- Updated by PyHouse 2018-04-12 22:01:48.009615 -->
+	<ComputerDivision Active="False" Key="0" Name="pi-01-pp">
 		<Comment />
 		<UUID>d8ec093e-e4a8-11e6-b6ac-74da3859e09a</UUID>
 		<BridgesSection />
