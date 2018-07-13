@@ -10,7 +10,7 @@
 Passed all 5 tests - DBK - 2017-04-29
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2018-07-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,6 @@ from twisted.trial import unittest
 from Modules.Core.Utilities import convert
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-
 
 STR_IPV4 = '192.168.1.54'
 LONG_IPV4 = 3232235830
@@ -38,10 +37,11 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_convert')
 
@@ -82,7 +82,7 @@ class C1_Convert(SetupMixin, unittest.TestCase):
     def test_03_Long2Str(self):
         l_str = LONG_IPV4
         l_long = self.m_api.long_to_str(l_str)
-        # print('C1-03-A - ', l_str, l_long)
+        print('C1-03-A - ', l_str, l_long)
         self.assertEqual(l_long, STR_IPV4)
 
     def test_04_Long2Str(self):

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-07-12'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -208,9 +208,9 @@ class API(object):
         """ Read the XML for all Onkyo devices.
         """
         p_pyhouse_obj.House.Entertainment.Onkyo = OnkyoData()  # Clear before loading
-        l_onkyo_obj, _l_count = XML().read_all(p_pyhouse_obj)
+        l_onkyo_obj, l_count = XML().read_all(p_pyhouse_obj)
         p_pyhouse_obj.House.Entertainment.Onkyo = l_onkyo_obj
-        LOG.info("Loaded XML")
+        LOG.info("Loaded {} XML".format(l_count))
         return l_onkyo_obj
 
     def Start(self):

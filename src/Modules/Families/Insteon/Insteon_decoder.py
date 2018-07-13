@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2017-10-09'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 
@@ -79,7 +79,7 @@ class DecodeResponses(object):
                 p_controller_obj._Message = p_controller_obj._Message[1:]
                 return 'Drop'
 
-    def check_for_more_decoding(self, p_controller_obj, p_ret = True):
+    def check_for_more_decoding(self, p_controller_obj, p_ret=True):
         """Chop off the current message from the head of the buffered response stream from the controller.
         @param p_ret: is the result to return.
         """
@@ -152,6 +152,7 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        l_device_obj.BrightnessPct = '?'
         if l_device_obj.DeviceType == 2:  # HVAC Type
             DecodeHvac().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
@@ -204,7 +205,7 @@ class DecodeResponses(object):
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('/lighting/status', p_controller_obj)  #  /lig
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status', p_controller_obj)  #  /lig
         return
 
     def _decode_51(self, p_controller_obj):

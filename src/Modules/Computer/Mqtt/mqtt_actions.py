@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 
@@ -33,6 +33,8 @@ class Actions(object):
         self.m_myname = p_pyhouse_obj.Computer.Name
 
     def _get_field(self, p_message, p_field):
+        """ Get the given field from a JSON message.
+        """
         try:
             l_ret = p_message[p_field]
         except (KeyError, TypeError):
@@ -52,12 +54,13 @@ class Actions(object):
         l_node.NodeId = self._get_field(p_message, 'NodeId')
         l_node.NodeRole = self._get_field(p_message, 'NodeRole')
 
-    def _decode_lighting(self, p_logmsg, _p_topic, p_message):
-        p_logmsg += '\tLighting:\n'
-        p_logmsg += '\tName: {}\n'.format(self.m_name)
-        p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        p_logmsg += '\n\tBrightness: {}'.format(self._get_field(p_message, 'BrightnessPct'))
-        return p_logmsg
+    def _decode_lighting(self, _p_topic, p_message):
+        l_name = self._get_field(p_message, 'Name')
+        l_logmsg = '\tLighting:\n'
+        l_logmsg += '\tName: {}\n'.format(l_name)
+        l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+        l_logmsg += '\tBrightness: {}'.format(self._get_field(p_message, 'BrightnessPct'))
+        return l_logmsg
 
     def _decode_room(self, p_logmsg, p_topic, p_message):
         p_logmsg += '\tRooms:\n'
@@ -94,7 +97,7 @@ class Actions(object):
         return p_logmsg
 
     def mqtt_dispatch(self, p_topic, p_message):
-        """ This is the master dispatch table
+        """ This is the master dispatch table for incoming messages.
 
         @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped
         @param p_message: is the payload that is JSON
@@ -104,20 +107,23 @@ class Actions(object):
         if p_topic[0] == 'lwt':
             l_logmsg += self._decodeLWT(l_logmsg, p_topic, p_message)
             return l_logmsg
-        self.m_sender = self._get_field(p_message, 'Sender')
-        self.m_name = self._get_field(p_message, 'Name')
+        #
+        # Every other topic will have the following fields.
+        l_sender = self._get_field(p_message, 'Sender')
         self.m_room_name = self._get_field(p_message, 'RoomName')
-        l_logmsg += '\tSender: {}\n'.format(self.m_sender)
+        l_logmsg += '\tSender: {}\n'.format(l_sender)
+        #
+        # Now do all the rest of the topic-2 fields.
         if p_topic[0] == 'computer':
             l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'entertainment':
             l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'hvac':
             l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(l_logmsg, p_topic, p_message)
-        elif p_topic[0] == 'lighting':
-            l_logmsg += self._decode_lighting(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'house':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
+        elif p_topic[0] == 'lighting':
+            l_logmsg += self._decode_lighting(p_topic, p_message)
         elif p_topic[0] == 'login':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(l_logmsg, p_topic, p_message)
         elif p_topic[0] == 'schedule':
@@ -127,9 +133,9 @@ class Actions(object):
         elif p_topic[0] == 'weather':
             l_logmsg += self._decode_weather(l_logmsg, p_topic, p_message)
         else:
-            l_logmsg += 'OTHER: Unknown\n'
+            l_logmsg += '   OTHER: Unknown topic\n'
             l_logmsg += '\tTopic: {};\n'.format(p_topic[0])
-            l_logmsg += '\tMessage: {};\n'.format(PrettyFormatAny.form(p_message, 'Message', 160))
+            l_logmsg += '\tMessage: {};\n'.format(p_message)
         return l_logmsg
 
 #  ## END DBK

@@ -12,14 +12,16 @@ Start up entertainment systems.
 
 """
 
-__updated__ = '2018-03-18'
+__updated__ = '2018-07-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
-# from Modules.Housing.Entertainment.onkyo import API as onkyoApi
+from Modules.Housing.Entertainment.onkyo.onkyo import API as onkyoApi
+from Modules.Housing.Entertainment.pioneer.pioneer import API as pioneerApi
+from Modules.Housing.Entertainment.samsung.samsung import API as samsungApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
@@ -93,31 +95,36 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing.")
         self.m_pyhouse_obj = p_pyhouse_obj
-        # self.m_onkyo = onkyoApi(p_pyhouse_obj)
-        # self.m_samsung = samsungApi(p_pyhouse_obj)
+        self.m_onkyo = onkyoApi(p_pyhouse_obj)
+        self.m_pioneer = pioneerApi(p_pyhouse_obj)
+        self.m_samsung = samsungApi(p_pyhouse_obj)
         LOG.info("Initialized.")
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('XML Loading')
         p_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
-        # self.m_onkyo.LoadXml(p_pyhouse_obj)
-        # self.m_samsung.LoadXml(p_pyhouse_obj)
+        self.m_onkyo.LoadXml(p_pyhouse_obj)
+        self.m_pioneer.LoadXml(p_pyhouse_obj)
+        self.m_samsung.LoadXml(p_pyhouse_obj)
         LOG.info('XML Loaded')
 
     def Start(self):
         LOG.info("Starting.")
 
-        # self.m_onkyo.Start()
-        # self.m_samsung.Start()
+        self.m_onkyo.Start()
+        self.m_pioneer.Start()
+        self.m_samsung.Start()
         LOG.info("Started.")
 
     def SaveXml(self, p_xml):
         LOG.info("Saving XML.")
         l_xml = ET.Element('EntertainmentSection')
-        # l_xml = self.m_onkyo.SaveXml(l_xml)
+        l_xml = self.m_onkyo.SaveXml(l_xml)
         p_xml.append(l_xml)
-        # l_xml = self.m_samsung.SaveXml(l_xml)
-        # p_xml.append(l_xml)
+        l_xml = self.m_pioneer.SaveXml(l_xml)
+        p_xml.append(l_xml)
+        l_xml = self.m_samsung.SaveXml(l_xml)
+        p_xml.append(l_xml)
         LOG.info("Saved XML.")
         return p_xml
 

@@ -1,0 +1,23 @@
+Router Reset.
+Step 1. Please disconnect all the cords from the router except for the power cord.
+Step 2. Please locate the reset button on the ASUS router.
+			(In most cases, the Reset button will be denoted by the symbol of two arrows pointing to a circle and often times will be either a Pin hole or a Red button.)
+			This can be found to the rear section of the router.
+Step 3. Please press and hold the Reset button for 8 seconds until all lights flash.
+
+
+Router Quick Internet Setup.
+
+Step 1. Go ahead and connect an Ethernet cord, from your modem, to the WAN port on the back of the ASUS router.
+Step 2. Kindly connect to the ASUS router by WIFI using a wireless device such as a tablet or laptop.
+Step 3. If the ASUS webpage pops up, then you may login using the username as admin and the password as admin.
+		 If the page does not pop up, then you may open a browser and go to the web address 192.168.1.1.
+		 If you try connect to the router and it prompts you for an 8 digit pin, kindly enter this pin which may be found on the router label.
+Step 4. When you are on the Quick Internet Setup page, kindly click where it says “Go” at the bottom of the page.
+Step 5. Do not change the router login name and password.
+Step 6. Click next.
+Step 7. Please enter a network name as well as a security key.
+Step 8. If this is a dual band router, then you can copy the settings for the 2.4 GHz over to the 5 GHz network.
+Step 9. Kindly click “Apply”.
+Step 10. If it says that you have been disconnected from the WIFI network, then you will have to reconnect using the new password/security key.
+Step 11. You will see the “Completed Network Configuration” page. This means you are done.

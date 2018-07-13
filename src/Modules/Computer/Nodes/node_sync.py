@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 import datetime
@@ -117,6 +117,8 @@ class API(object):
         LOG.info("Stopped.")
 
     def DecodeMqttMessage(self, p_topic, p_message):
+        """ decode the /computer/node/ Mqtt message
+        """
         l_msg = '\tNodeSync\n'
         if p_topic[2] == 'whoisthere':
             l_msg += '\tName: {}  who is there'.format(p_message['Name'])
@@ -127,7 +129,7 @@ class API(object):
             l_msg += '\t {}\n'.format(PrettyFormatAny.form(p_message, 'I Am Message', 160))
             Util.add_node(self.m_pyhouse_obj, p_message)
         else:
-            l_msg += '*** Unknown Message type {}'.format(p_topic)
+            l_msg += '*** Unknown computer/node/??? Message type {}'.format(p_topic[2])
         return l_msg
 
 # ## END DBK

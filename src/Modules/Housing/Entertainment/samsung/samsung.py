@@ -15,7 +15,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.data_objects import BaseUUIDObject
 
-__updated__ = '2018-03-19'
+__updated__ = '2018-07-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -40,7 +40,7 @@ class SamsungData(BaseUUIDObject):
         self.Port = None
 
 
-class Xml(object):
+class XML(object):
     """
     """
 
@@ -59,16 +59,16 @@ class Xml(object):
         l_xml = p_pyhouse_obj.Xml.XmlRoot
         l_xml = l_xml.find('HouseDivision')
         if l_xml is None:
-            return l_ret
+            return l_ret, l_count
         l_xml = l_xml.find('EntertainmentSection')
         if l_xml is None:
-            return l_ret
+            return l_ret, l_count
         l_xml = l_xml.find('SamsungSection')
         if l_xml is None:
-            return l_ret
+            return l_ret, l_count
         try:
             for l_device_xml in l_xml.iterfind('Device'):
-                l_device_obj = Xml._read_one_device(l_device_xml)
+                l_device_obj = XML._read_one_device(l_device_xml)
                 l_device_obj.Key = l_count
                 l_ret[l_count] = l_device_obj
                 LOG.info('Loaded Samsung Device {}'.format(l_device_obj.Name))
@@ -76,7 +76,7 @@ class Xml(object):
         except AttributeError as e_err:
             LOG.error('ERROR if getting Samsung Device Data - {}'.format(e_err))
         LOG.info('Loaded {} Samsung Devices.'.format(l_count))
-        return l_ret
+        return l_ret, l_count
 
     @staticmethod
     def _write_one_device(p_obj):
@@ -90,10 +90,10 @@ class Xml(object):
         l_obj = p_pyhouse_obj.House.Entertainment.Samsung
         for l_room_object in l_obj.values():
             l_room_object.Key = l_count
-            l_entry = Xml.write_one_room(l_room_object)
+            l_entry = XML.write_one_device(l_room_object)
             l_xml.append(l_entry)
             l_count += 1
-        LOG.info('Saved {} Rooms XML'.format(l_count))
+        LOG.info('Saved {} Samsung device(s) XML'.format(l_count))
         return l_xml
 
 
@@ -167,20 +167,24 @@ class API(object):
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('XML Loading')
-        l_samsung_obj = SamsungData()
-        l_host = SAMSUNG_ADDRESS
-        l_port = SAMSUNG_PORT
-        l_samsung_obj.Factory = SamsungFactory(p_pyhouse_obj, l_samsung_obj)
-        _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_samsung_obj.Factory)
-        LOG.info('XML Loaded')
+        # l_samsung_obj = SamsungData()
+        p_pyhouse_obj.House.Entertainment.Samsung = SamsungData()  # Clear before loading
+        l_samsung_obj, l_count = XML().read_samsung_section_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Entertainment.Samsung = l_samsung_obj
+        # l_host = SAMSUNG_ADDRESS
+        # l_port = SAMSUNG_PORT
+        # l_samsung_obj.Factory = SamsungFactory(p_pyhouse_obj, l_samsung_obj)
+        # _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_samsung_obj.Factory)
+        LOG.info('Loaded {} XML'.format(l_count))
 
     def Start(self):
         LOG.info("Starting.")
         LOG.info("Started.")
 
     def SaveXml(self, p_xml):
-        LOG.info("Saving XML.")
-        l_xml = ET.Element('EntertainmentSection')
+        # LOG.info("Saving XML.")
+        l_xml = XML().write_samsung_section_xml(self.m_pyhouse_obj)
+        p_xml.append(l_xml)
         LOG.info("Saved XML.")
         return p_xml
 

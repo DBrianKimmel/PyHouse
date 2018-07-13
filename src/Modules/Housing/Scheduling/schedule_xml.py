@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-05-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -75,7 +75,7 @@ class Xml(object):
         elif l_obj.ScheduleType == 'Irrigation':
             l_type = Xml._read_one_irrigation_schedule(p_schedule_element)
         else:
-            LOG.error('ERROR - invalid device found - {} for {}'.format(l_obj.ScheduleType, l_obj.Name))
+            LOG.error('ERROR - invalid ScheduleType found - "{}" for Schedule "{}"({})'.format(l_obj.ScheduleType, l_obj.Name), l_obj.Key)
             l_type = {}
         stuff_new_attrs(l_obj, l_type)
         return l_obj

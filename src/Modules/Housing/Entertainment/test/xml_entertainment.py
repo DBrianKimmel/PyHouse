@@ -9,12 +9,13 @@
 
 """
 
-__updated__ = '2018-03-19'
+__updated__ = '2018-07-11'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import XML_ONKYO_SECTION
+from Modules.Housing.Entertainment.pioneer.test.xml_pioneer import XML_PIONEER_SECTION
 from Modules.Housing.Entertainment.samsung.test.xml_samsung import XML_SAMSUNG_SECTION
 
 TESTING_ENTERTAINMENT_SECTION = 'EntertainmentSection'
@@ -29,6 +30,7 @@ XML_ENTERTAINMENT = '\n'.join([
     L_ENTERTAINMENT_SECTION_START,
     XML_ONKYO_SECTION,
     XML_SAMSUNG_SECTION,
+    XML_PIONEER_SECTION,
     L_ENTERTAINMENT_SECTION_END
 ])
 

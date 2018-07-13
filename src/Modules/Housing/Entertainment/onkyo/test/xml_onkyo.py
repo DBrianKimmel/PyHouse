@@ -11,22 +11,7 @@
 
 """
 
-__updated__ = '2018-03-19'
-
-# ## END DBK
-
-"""
-@name:      PyHouse/src/Modules/Entertainment/test/xml_entertainment.py
-@author:    D. Brian Kimmel
-@contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
-@license:   MIT License
-@note:      Created on Nov 17, 2014
-@Summary:
-
-"""
-
-__updated__ = '2017-06-28'
+__updated__ = '2018-07-11'
 
 TESTING_ONKYO_SECTION = 'OnkyoSection'
 TESTING_DEVICE = 'Device'

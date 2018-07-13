@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 import copy

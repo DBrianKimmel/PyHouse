@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 import platform
@@ -70,6 +70,11 @@ class MqttActions(object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def decode(self, p_logmsg, p_topic, p_message):
+        """ Decode the computer specific portions of the message and append them to the log string.
+        @param p-logmsg: is the partially decoded Mqtt message json
+        @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped
+        @param p_message: is the payload that is JSON
+        """
         p_logmsg += '\tComputer:\n'
         #  computer/browser/***
         if p_topic[1] == 'browser':
@@ -237,6 +242,8 @@ class API(Utility):
     def DecodeMqtt(self, p_logmsg, p_topic, p_message):
         """ Decode messages sent to the computer module.
         """
+        LOG.debug('\n==Topic: {}\n==Message: {}\n==LogMsg: {}'.format(p_topic, p_message, p_logmsg))
         MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
+        return p_logmsg
 
 # ## END DBK

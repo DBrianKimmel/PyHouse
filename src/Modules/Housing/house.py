@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 
@@ -94,6 +94,9 @@ class Xml(object):
         l_obj = HouseInformation()
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml is None:
+            l_obj.Name = 'Default Name'
+            l_obj.Key = 0
+            l_obj.Active = True
             return l_obj
         XmlConfigTools.read_base_UUID_object_xml(l_obj, l_xml)
         Xml._add_uuid(p_pyhouse_obj, l_obj)
@@ -244,5 +247,6 @@ class API(Utility):
         """ Decode messages sent to the house module.
         """
         MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
+        return p_logmsg
 
 #  ##  END DBK

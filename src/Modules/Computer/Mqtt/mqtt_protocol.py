@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-13'
 
 #  Import system type stuff
 import random
@@ -410,7 +410,7 @@ class MQTTProtocol(Protocol):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
-        LOG.info("Sending publish packet\n\tTopic: {};\n\tAddr: {};".format(p_topic, self.m_broker.BrokerAddress))
+        # LOG.info("Sending publish packet\n\tTopic: {};\n\tAddr: {};".format(p_topic, self.m_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = publish
@@ -647,6 +647,7 @@ class MQTTClient(MQTTProtocol):
         This is where we receive all the pyhouse messages from the broker.
         Call the dispatcher to send them on to the correct place.
         """
+        # LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
         self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
 
 ###########################################
