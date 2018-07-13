@@ -14,27 +14,26 @@
 __updated__ = '2017-07-24'
 
 #  Import system type stuff
-import http.cookies
+import http.cookies  #
 import json
 import urllib
 from twisted.internet import ssl
 from twisted.web.static import File
 from twisted.web.server import Site
-from autobahn.util import newid, utcnow
-from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
-from autobahn.twisted.resource import WebSocketResource
+# from autobahn.util import newid, utcnow
+# from autobahn.twisted.websocket import WebSocketServerFactory, WebSocketServerProtocol
+# from autobahn.twisted.resource import WebSocketResource
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-
 
 WEBSOCKET_PORT = 8581
 ENDPOINT_WEBSOCKET_SERVER = 'tcp:port={}'.format(WEBSOCKET_PORT)
 LOG = Logger.getLogger('PyHouse.WebSockets     ')
 
 
-class WebSockServerProtocol(WebSocketServerProtocol):
+class WebSockServerProtocol():  # WebSocketServerProtocol):
     """
     Inherits from autobahn.twisted.websocket
 
@@ -64,13 +63,13 @@ class WebSockServerProtocol(WebSocketServerProtocol):
                         LOG.warn("Cookie already set: %s" % self._cbtid)
         # if no cookie is set, create a new one ..
         if self._cbtid is None:
-            self._cbtid = newid()
+            # self._cbtid = newid()
             maxAge = 86400
-            cbtData = {'created': utcnow(),
-                       'authenticated': None,
-                       'maxAge': maxAge,
-                       'connections': set()}
-            self.factory._cookies[self._cbtid] = cbtData
+            # cbtData = {'created': utcnow(),
+            #           'authenticated': None,
+            #           'maxAge': maxAge,
+            #           'connections': set()}
+            # self.factory._cookies[self._cbtid] = cbtData
             # do NOT add the "secure" cookie attribute! "secure" refers to the scheme of the Web page that triggered the WS, not WS itself!!
             headers['Set-Cookie'] = 'cbtid=%s;max-age=%d' % (self._cbtid, maxAge)
             LOG.warn("Setting new cookie: %s" % self._cbtid)
@@ -122,12 +121,12 @@ class WebSockServerProtocol(WebSocketServerProtocol):
                 #    "status": "okay"
                 # }
                 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
-                body = urllib.parse.urlencode({'audience': audience, 'assertion': assertion})
+                # body = urllib.parse.urlencode({'audience': audience, 'assertion': assertion})
                 from twisted.web.client import getPage
-                d = getPage(url="https://verifier.login.persona.org/verify",
-                            method='POST',
-                            postdata=body,
-                            headers=headers)
+                d = getPage(url = "https://verifier.login.persona.org/verify",
+                            method = 'POST',
+                            postdata = None,  # body,
+                            headers = headers)
                 LOG.warn("Authentication request sent.")
 
                 def done(res):
@@ -170,6 +169,7 @@ class ClientConnections(object):
     We can update the browser via COMET when a controlled device changes.
     (Light On/Off, Pool water low, Garage Door open/Close ...)
     """
+
     def __init__(self):
         self.ConnectedBrowsers = []
 
@@ -185,12 +185,12 @@ class Utility(ClientConnections):
         """
         l_port = WEBSOCKET_PORT  # p_pyhouse_obj.Computer.Web.WebPort
         l_addr = u'ws://127.0.0.1:{}'.format(l_port)
-        l_factory = WebSocketServerFactory(l_addr)
-        l_factory.protocol = WebSockServerProtocol
+        # l_factory = WebSocketServerFactory(l_addr)
+        # l_factory.protocol = WebSockServerProtocol
         # websockets resource on "/ws" path
-        l_resource = WebSocketResource(l_factory)
+        # l_resource = WebSocketResource(l_factory)
         l_root = File('.')
-        l_root.putChild(u"ws", l_resource)
+        # l_root.putChild(u"ws", l_resource)
         l_site = Site(l_root)
         self.m_pyhouse_obj.Twisted.Reactor.listenTCP(l_port, l_site)
         l_site_dir = None

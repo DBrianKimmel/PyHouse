@@ -14,11 +14,14 @@ __updated__ = '2018-07-13'
 #  Import system type stuff
 
 #  Import PyMh files and modules.
+from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.data_objects import NodeData, PyHouseData
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.Housing.Security.security import MqttActions as securityMqtt
+
+LOG = Logger.getLogger('PyHouse.Mqtt_Actions   ')
 
 
 class Actions(object):
@@ -102,6 +105,7 @@ class Actions(object):
         @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped
         @param p_message: is the payload that is JSON
         """
+        # LOG('Dispatch:|n|tTopic: {}\n\tPayload: {}'.format(p_topic, p_message))
         l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
         # Lwt can be from any device
         if p_topic[0] == 'lwt':

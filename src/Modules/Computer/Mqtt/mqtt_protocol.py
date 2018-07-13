@@ -26,7 +26,7 @@ from twisted.internet import error
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
 from Modules.Core.Utilities import json_tools
-from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import FormatBytes  # , PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
@@ -71,7 +71,7 @@ class MQTTProtocol(Protocol):
                     lenLen += 1
                 #  We still haven't got all of the remaining length field
                 if lenLen < len(self.m_buffer) and self.m_buffer[lenLen] & 0x80:
-                    #  LOG.warn('### Early return {}'.format(FormatBytes(self.m_buffer)))
+                    LOG.warn('### Early return {}'.format(FormatBytes(self.m_buffer)))
                     return
                 l_length = EncodeDecode._decodeLength(self.m_buffer[1:])
 
@@ -82,7 +82,7 @@ class MQTTProtocol(Protocol):
                 self.m_buffer = self.m_buffer[l_length + lenLen + 1:]
                 l_length = None
             else:
-                #  LOG.warn('### exit without processing {}'.format(FormatBytes(self.m_buffer)))
+                LOG.warn('### exit without processing {}'.format(FormatBytes(self.m_buffer)))
                 break
 
     def _processPacket(self, packet):
@@ -98,7 +98,7 @@ class MQTTProtocol(Protocol):
             dup = (packet[0] & 0x08) == 0x08
             qos = (packet[0] & 0x06) >> 1
             retain = (packet[0] & 0x01) == 0x01
-        except:
+        except Exception:
             #  Invalid packet type, throw away this packet
             LOG.error("Invalid packet type {:x}".format(packet_type))
             return
@@ -110,7 +110,7 @@ class MQTTProtocol(Protocol):
         #  Get the appropriate handler function
         l_packetHandler = getattr(self, "_event_%s" % packet_type_name, None)
         if l_packetHandler:
-            l_packetHandler(packet, qos, dup, retain)  # this will dispatch to the appropriate routine for the packet type "_event_publish" for example.
+            l_packetHandler(packet, qos, dup, retain)  # this will dispatch to the appropriate routine for the packet type.
         else:
             LOG.error("Invalid packet handler for {}".format(packet_type_name))
             return
@@ -200,12 +200,32 @@ class MQTTProtocol(Protocol):
         #  Extract whatever remains as the message
         l_json = EncodeDecode._get_string(packet)
         # l_json = packet.decode('utf-8')
-        # LOG.debug('Publish message:{}'.format(l_json))
+        LOG.debug('Publish message:{}'.format(l_json))
         l_message = json_tools.decode_json_unicode(l_json)
         # LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
+        LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, l_message))
         # l_topic is a string
         # l_message is a string
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)
+
+    """{
+    "Active": true,
+    "Comment": "",
+    "ConnectionAddr_IPv4": [],
+    "ConnectionAddr_IPv6": [["::1"], ["2001:470:5:417::54", "fe80::12bf:48ff:feb6:eb6f%eth0"], ["2001:470:4:417::2", "fe80::c0a8:136%he-ipv6"],
+        ["fe80::4541:2ad4:2335:4372%tun0"]],
+    "ControllerCount": 0,
+    "ControllerTypes": [],
+    "DateTime": "2018-05-27 12:48:35.484189",
+    "Key": 0,
+    "LastUpdate": "2018-05-27 12:48:20.482007",
+    "Name": "Alki",
+    "NodeId": null,
+    "NodeInterfaces": null,
+    "NodeRole": 0,
+    "Sender": "Alki",
+    "UUID": "c8cbdbe0-14c5-11e7-b450-10bf48b6eb6f"
+    }"""
 
     def _event_puback(self, packet, _qos, _dup, _retain):
         LOG.info('ProtocolEvent "PubAck Packet" received: {} {}\n\tAddr:{}'.format(len(packet), packet, self.m_broker.BrokerAddress))
@@ -246,7 +266,7 @@ class MQTTProtocol(Protocol):
     def _event_suback(self, packet, _qos, _dup, _retain):
         messageId = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
-        LOG.info('Event SubAck received - MsgID:{}  Acks: {} {}\n\tAddr:{}'.format(messageId, len(packet), packet, self.m_broker.BrokerAddress))
+        # LOG.info('Event SubAck received - MsgID:{}  Acks: {} {}\n\tAddr:{}'.format(messageId, len(packet), packet, self.m_broker.BrokerAddress))
         #  Extract the granted QoS levels
         grantedQos = []
         while len(packet):
@@ -297,43 +317,51 @@ class MQTTProtocol(Protocol):
     def connectReceived(self, clientID, keepalive, willTopic, willMessage, willQoS, willRetain, cleanStart, userName, password):
         raise NotImplementedError  # Subclasses must implement this.
 
-    def connackReceived(self, status):
+    # def connackReceived(self, status):
+    #    raise NotImplementedError  # Subclasses must implement this.
+
+    # def publishReceived(self, _topic, _message, _qos=0, _dup=False, _retain=False, _messageId=None):
+    #    raise NotImplementedError  # Subclasses must implement this.
+
+    # def pubackReceived(self, _messageId):
+    #    raise NotImplementedError  # Subclasses must implement this.
+
+    def pubrecReceived(self, _messageId):
+        raise NotImplementedError  # Subclasses must implement this.
+        pass
+
+    def pubrelReceived(self, _messageId):
+        raise NotImplementedError  # Subclasses must implement this.
+        pass
+
+    def pubcompReceived(self, _messageId):
+        raise NotImplementedError  # Subclasses must implement this.
+        pass
+
+    def subscribeReceived(self, _topics, _messageId):
+        raise NotImplementedError  # Subclasses must implement this.
+        pass
+
+    def subackReceived(self, grantedQos, _messageId):
         raise NotImplementedError  # Subclasses must implement this.
 
-    def publishReceived(self, _topic, _message, _qos=0, _dup=False, _retain=False, _messageId=None):
+    def unsubscribeReceived(self, _topics, _messageId):
         raise NotImplementedError  # Subclasses must implement this.
+        pass
 
-    def pubackReceived(self, messageId):
+    def unsubackReceived(self, _messageId):
         raise NotImplementedError  # Subclasses must implement this.
-
-    def pubrecReceived(self, messageId):
-        pass
-
-    def pubrelReceived(self, messageId):
-        pass
-
-    def pubcompReceived(self, messageId):
-        pass
-
-    def subscribeReceived(self, topics, messageId):
-        pass
-
-    def subackReceived(self, grantedQos, messageId):
-        raise NotImplementedError  # Subclasses must implement this.
-
-    def unsubscribeReceived(self, topics, messageId):
-        pass
-
-    def unsubackReceived(self, messageId):
         pass
 
     def pingreqReceived(self):
+        raise NotImplementedError  # Subclasses must implement this.
         pass
 
-    def pingrespReceived(self):
-        raise NotImplementedError  # Subclasses must implement this.
+    # def pingrespReceived(self):
+    #    raise NotImplementedError  # Subclasses must implement this.
 
     def disconnectReceived(self):
+        raise NotImplementedError  # Subclasses must implement this.
         pass
 
     #  these are for sending Mqtt packets.
@@ -381,7 +409,7 @@ class MQTTProtocol(Protocol):
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_broker.ClientID))
         if (p_broker.WillMessage is not None or p_broker.WillMessage != '') and p_broker.WillTopic is not None:
-            LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
+            # LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillMessage))
         if p_broker.UserName is not None and len(p_broker.UserName) > 0:
@@ -397,7 +425,7 @@ class MQTTProtocol(Protocol):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
-        LOG.info("Sending 'connect' packet\n\tClientID: {};\n\tAddr: {};".format(p_broker.ClientID, p_broker.BrokerAddress))
+        # LOG.info("Sending 'connect' packet\n\tClientID: {};\n\tAddr: {};".format(p_broker.ClientID, p_broker.BrokerAddress))
         l_fixHeader, l_varHeader, l_payload = self._build_connect(p_broker)
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
@@ -436,7 +464,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(varHeader)
 
     def pubrec(self, messageId):
-        LOG.info("Sending pubrec packet")
+        # LOG.info("Sending pubrec packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x05 << 4)
@@ -446,7 +474,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(varHeader)
 
     def pubrel(self, messageId):
-        LOG.info("Sending pubrel packet")
+        # LOG.info("Sending pubrel packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x06 << 4)
@@ -456,7 +484,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(varHeader)
 
     def pubcomp(self, messageId):
-        LOG.warn('Sending pubcomp packet')
+        # LOG.warn('Sending pubcomp packet')
         header = bytearray()
         varHeader = bytearray()
         header.append(0x07 << 4)
@@ -470,7 +498,7 @@ class MQTTProtocol(Protocol):
         Only supports QoS = 0 subscribes
         Only supports one subscription per message
         """
-        LOG.info("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.BrokerAddress))
+        # LOG.info("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = subscribe, QoS = 1
@@ -484,7 +512,7 @@ class MQTTProtocol(Protocol):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def suback(self, grantedQos, messageId):
-        LOG.info("Sending suback packet")
+        # LOG.info("Sending suback packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -498,7 +526,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(payload)
 
     def unsubscribe(self, topic, messageId=None):
-        LOG.info("Sending unsubscribe packet")
+        # LOG.info("Sending unsubscribe packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -514,7 +542,7 @@ class MQTTProtocol(Protocol):
         self.transport.write(payload)
 
     def unsuback(self, messageId):
-        LOG.info("Sending unsuback packet")
+        # LOG.info("Sending unsuback packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x0B << 4)
@@ -561,7 +589,7 @@ class MQTTClient(MQTTProtocol):
                  keepalive=None, willQos=0, willTopic=None, willMessage=None, willRetain=False
                  ):
         """ At this point all config has been read in and Set-up """
-        l_comp_name = p_pyhouse_obj.Computer.Name
+        _l_comp_name = p_pyhouse_obj.Computer.Name
         try:
             l_house_name = p_pyhouse_obj.House.Name.lower() + '/'
         except AttributeError:
@@ -575,7 +603,7 @@ class MQTTClient(MQTTProtocol):
         else:
             self.m_keepalive = 60 * 1000
         self.m_willQos = willQos
-        if willTopic != None:
+        if willTopic is not None:
             willTopic = self.m_prefix + 'lwt'
         self.m_willTopic = willTopic
         self.m_willMessage = willMessage
@@ -595,7 +623,7 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.info("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.BrokerAddress))
+        # LOG.info("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.BrokerAddress))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_broker)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
@@ -612,7 +640,7 @@ class MQTTClient(MQTTProtocol):
     def mqttConnected(self):
         """ Now that we have a net connection to the broker, Subscribe.
         """
-        LOG.info("Subscribing to MQTT Feed")
+        # LOG.info("Subscribing to MQTT Feed")
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)
@@ -621,7 +649,7 @@ class MQTTClient(MQTTProtocol):
     def connackReceived(self, p_status):
         """ Override
         """
-        LOG.info("Received Connack from MQTT Broker\n\tAddr:{}".format(self.m_broker.BrokerAddress))
+        # LOG.info("Received Connack from MQTT Broker\n\tAddr:{}".format(self.m_broker.BrokerAddress))
         if p_status == 0:
             self.mqttConnected()
 
@@ -666,7 +694,8 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the PyHouse object for this broker
         """
-        LOG.info('PyHouseMqttFactoryMqtt Initialized.\n\tBroker: {};\n\tClientId: {};\n\tAddr: {};'.format(p_broker.Name, p_broker.ClientID, p_broker.BrokerAddress))
+        LOG.info('PyHouseMqttFactoryMqtt Initialized.\n\tBroker: {};\n\tClientId: {};\n\tAddr: {};'.format(
+                p_broker.Name, p_broker.ClientID, p_broker.BrokerAddress))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
         p_broker._ProtocolAPI = self

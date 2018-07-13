@@ -26,6 +26,7 @@ __updated__ = '2018-03-07'
 #  Import system type stuff
 from datetime import datetime
 import fnmatch  # Filename matching with shell patterns
+# sudo pip3 install netifaces
 import netifaces  # has gateways(), ifaddresses(). interfaces()
 from netifaces import *
 import os
@@ -75,7 +76,7 @@ class Devices(object):
         """
         l_ret = ''
         l_context = pyudev.Context()
-        for l_dev in l_context.list_devices(subsystem='tty'):
+        for l_dev in l_context.list_devices(subsystem = 'tty'):
             if 'ID_VENDOR' not in l_dev:
                 continue
             # if l_dev.subsystem == None:

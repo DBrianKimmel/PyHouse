@@ -27,6 +27,7 @@ from Modules.Computer.test.xml_computer import \
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_MQTT_SECTION, \
     TESTING_MQTT_BROKER, XML_MQTT
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 DATE_TIME = "2017-03-11 10:45:02.464763"
 SENDER = "Laptop-3"
@@ -76,7 +77,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_MQTT)
-        # print(l_xml)
+        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - Parsed'))
         self.assertEqual(l_xml.tag, TESTING_MQTT_SECTION)
 
 
@@ -110,6 +111,7 @@ class B2_Dispatch(SetupMixin, unittest.TestCase):
         l_log = mqtt_actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_payload)
         print("\t--Log: {}\n".format(l_log))
         # self.assertEqual(l_topic[:13], '<MqttSection>')
+        self.assertEqual(l_log[:13], '<MqttSection>')
 
     def test_02_House(self):
         l_topic = list(['house', ''])

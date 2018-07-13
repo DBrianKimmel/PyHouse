@@ -20,16 +20,18 @@ Requirements:
     service_identity
 
 
+    On a fresh install (upgrade) of OpenSuse tumbleweed on 2018-05-25
+    python3  3.5.x
+    pythonn3-setuptools
+    python3-Twisted
+    aniso8601                    sudo pip3 install aniso8601
+    netifaces                    sudo pip3 install netifaces
 
-Windows:
-    pip install dateutils
-    pip install netaddr
-    pip install netifaces
-    pip install pyusb
-    pip install jsonpickle
-    pip install passlib
-    pip install pyopenSSL
-    pip install paho-mqtt        (Windows linux)
+
+
+
+
+
 
 
 
