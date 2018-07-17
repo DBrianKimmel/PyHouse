@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-07-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,9 +27,11 @@ LOG = Logger.getLogger('PyHouse.Security       ')
 
 # LOCATION = House.Security
 
+
 class MqttActions(object):
     """
     """
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
@@ -40,18 +42,19 @@ class MqttActions(object):
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
         return l_ret
 
-    def decode(self, p_logmsg, p_topic, p_message):
-        """ .../security/<type>/<Name>
+    def decode(self, p_topic, p_message):
+        """ Decode the Mqtt message
+        ==> pyhouse/<house name>/security/<type>/<Name>
+        <type> = garage door, motion sensor, camera
         """
-        p_logmsg += '\tSecurity:\n'
+        l_logmsg = '\tSecurity:\n'
         if p_topic[1] == 'garage_door':
-            p_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
         elif p_topic[1] == 'motion_sensor':
-            p_logmsg += '\tMotion Sensor:{}\n\t{}'.format(self._get_field(p_message, 'Name'), self._get_field(p_message, 'Status'))
+            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(self._get_field(p_message, 'Name'), self._get_field(p_message, 'Status'))
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
-        return p_logmsg
-        pass
+            l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
+        return l_logmsg
 
 
 class Utility(object):
@@ -220,7 +223,6 @@ class XML(object):
             l_count += 1
         LOG.info('Saved {} Motion Detectors XML'.format(l_count))
         return l_xml
-
 
     @staticmethod
     def read_all_GarageDoors_xml(p_pyhouse_obj):

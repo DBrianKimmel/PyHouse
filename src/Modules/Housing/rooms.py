@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-07-14'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -174,22 +174,23 @@ class Maint(object):
 class Mqtt(object):
     """
     """
+
     def XX__init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj - p_pyhouse_obj
 
-    def _decode_room(self, p_logmsg, p_topic, p_message):
-        p_logmsg += '\tRooms:\n'
+    def _decode_room(self, p_topic, p_message):
+        l_logmsg = '\tRooms:\n'
         if p_topic[1] == 'add':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         elif p_topic[1] == 'delete':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         elif p_topic[1] == 'sync':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         elif p_topic[1] == 'update':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
-        return p_logmsg
+            l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
+        return l_logmsg
 
     def dispatch(self, p_topic, p_message):
         pass
@@ -236,6 +237,7 @@ class RoomCls(Sync, Xml, Maint):
 
 def all_rooms_getter(p_pyhouse_obj):
     return p_pyhouse_obj.House.Rooms
+
 
 def all_rooms_setter(p_pyhouse, p_rooms):
     p_pyhouse.House.Rooms = p_rooms

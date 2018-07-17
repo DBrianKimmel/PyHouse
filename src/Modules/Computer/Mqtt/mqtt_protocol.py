@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-07-13'
+__updated__ = '2018-07-14'
 
 #  Import system type stuff
 import random
@@ -200,10 +200,10 @@ class MQTTProtocol(Protocol):
         #  Extract whatever remains as the message
         l_json = EncodeDecode._get_string(packet)
         # l_json = packet.decode('utf-8')
-        LOG.debug('Publish message:{}'.format(l_json))
+        # LOG.debug('Publish message:{}'.format(l_json))
         l_message = json_tools.decode_json_unicode(l_json)
         # LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
-        LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, l_message))
+        # LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, l_message))
         # l_topic is a string
         # l_message is a string
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)

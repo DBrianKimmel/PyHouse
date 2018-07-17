@@ -7,21 +7,25 @@
 @note:      Created on Jul 10, 2018
 @summary:   Test
 
-Passed all 15 tests - DBK - 2018-07-11
+Passed all 16 tests - DBK - 2018-07-11
 
 """
 
-__updated__ = '2018-07-11'
+__updated__ = '2018-07-15'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+from twisted.test import proto_helpers
 
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
-from Modules.Housing.Entertainment.pioneer.pioneer import XML as pioneerXml
+from Modules.Housing.Entertainment.pioneer.pioneer import \
+        XML as pioneerXml, \
+        PioneerProtocol as pioProto, \
+        PioneerFactory as pioFactory
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_NAME, \
         TESTING_HOUSE_ACTIVE, \
@@ -51,6 +55,11 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
+        self.m_factory = pioFactory(self.m_pyhouse_obj)
+        self.m_transport = proto_helpers.StringTransport()
+        self.m_proto = self.m_factory.buildProtocol(('127.0.0.1', 0))
+        self.m_proto.makeConnection(self.m_transport)
+
 
 class A0(unittest.TestCase):
 
@@ -75,7 +84,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'A1-01-A - Entertainment XML'))
         self.assertIsNotNone(l_xml.find('PioneerSection'))
 
-    def test_02_FindXml(self):
+    def test_02_XmlTags(self):
         """ Be sure that the XML contains the right stuff.
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))

@@ -1,142 +1,38 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Entertainment/pioneer.py -*-
+-*- test-case-name: src/Modules/Entertainment/pioneer/test/test_pioneer.py -*-
 
-@name:      src.Modules.Entertainment.pioneer
+@name:      src.Modules.Entertainment.pioneer.pioneer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel
 @note:      Created on Jul 10, 2016
-@license:      MIT License
+@license:   MIT License
 @summary:
 
-http://www.mikepoulson.com/2011/06/programmatically-controlling-pioneer.html
-https://dl.dropboxusercontent.com/u/3275573/2010%20USA%20AVR%20RS-232C%20%26%20IP%20Commands%20for%20CI.pdf
+Control of pioneer home entertainment devices'.
+First is an A/V receiver VSX-822-K.
 
+Listen to Mqtt message to control device
+==> pyhouse/<house name>/entertain/<device>/<function>/<value>
 
+    <device> = receiver, tv, etc...
+    <function> = power, zone, volume, input
+    <value> = on, off, 0-100, zone#, input#
 
-Basic Commands (more commands to come in another post):
-?P
-Is Device powered ON?
-PWR0    Device is ON
-PWR1    Device is OFF
-
-PF    Power Device OFF
-PO    Power Device ON
-
-?M     Is Zone MAIN muted
-MUT1    Zone is NOT Muted
-MUT0    Zone is Muted
-
-MO     Mute MAIN zone
-MF     unMute MAIN zone
-
-?V    Get Current Volume level
-VOLxxx    Current volume level, xxx is 000-200
-VOL121    -20.0db
-VOL081    -40.0db
-XXXVL    Set Volume Level to XXX (000 - 200)
-001VL    Set Volume Level to -80.0db
-081VL    Set Volume Level to -40.0db
-
-VU        Set volume Up (822)
-VD        Set volume Down (822)
-
-?RGC    Get inputs on device (i think)
-RGC111001002    *Unknown*
-
-?RGBxx    Get inputs Name (related to above command), available inputs will change based on model
-?RGB01    RGB010CD
-?RGB02    RGB020TUNER
-?RGB03    RGB030CD-R/TAPE
-
-?F    Get current input (use ?RGB to get name)
-FN19    Input 19
-FN15    Input 15
-XXFN    Set current input (XX = Input number)
-XX    Input number
-19FN    Set to input 19
-15FN    Set to input 15
-
-?BP    *UNKNOWN*
-BPR1
-
-?AP    *UNKNOWN*
-APR1
-
-
-
-
-
-Remote control your Pioneer VSX receiver over telnet
-Posted by Raymond Julin on 15/07/2012
-
-
-
-11
-telnet <ip> VU<enter> #win!
-I’m a hacker, developer and lazy guy.
-So when I found myself in the kitchen cooking, just realizing that my Pioneer VSX 921 receiver was turned down too low I didn’t walk over
-to turn it up or find the remote;
-I instead remembered that it has a bad app for iOS, meaning that it accepts being controlled remote over the network.
-A little bit of google searching and I found a plugin for an I-dont-know-what containing an XML with some Lua code (XML with code — yay),
- and also a very nice mapping table for commands the same code runs against a VSX 1021.
-
-So a quick telnet session later I had yanked the volume up without ever leaving the kitchen!
-These commands probably work for most of the VSX  921/1021 series and later. Enjoy:
-
-Volume:
-VD = VOLUME DOWN
-MZ = MUTE ON/OFF
-VU = VOLUME UP
-?V = QUERY VOLUME
-
-Power control:
-PF = POWER OFF
-PO = POWER ON
-?P = QUERY POWER STATUS
-
-Input selection:
-05FN = TV/SAT
-01FN = CD
-03FN = CD-R/TAPE
-04FN = DVD
-19FN = HDMI1
-05FN = TV/SAT
-00FN = PHONO
-03FN = CD-R/TAPE
-26FN = HOME MEDIA GALLERY(Internet Radio)
-15FN = DVR/BDR
-05FN = TV/SAT
-10FN = VIDEO 1(VIDEO)
-14FN = VIDEO 2
-19FN = HDMI1
-20FN = HDMI2
-21FN = HDMI3
-22FN = HDMI4
-23FN = HDMI5
-24FN = HDMI6
-25FN = BD
-17FN = iPod/USB
-FU = INPUT CHANGE (cyclic)
-?F = QUERY INPUT
-
-If you want to change input to the iPod port and turn up the volume, given you’re using OS X or some Unix derivative, you would do this:
-
-Open a terminal
-Run the command telnet <ip>
-Select input by typing: 17FN<enter>
-Nod volume up 1 time: VU<enter>
-Repeat VU until you are happy.
-There is a tone of other commands you can use, I believe this manual for the VSX 1120 is very much valid for other devices in the series.
+See: pioneer/__init__.py for documentation.
 
 """
+
 from Modules.Core.Utilities.convert import long_to_str
 
-__updated__ = '2018-07-12'
+__updated__ = '2018-07-16'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet.error import ConnectionDone
+from twisted.conch.telnet import StatefulTelnetProtocol
+# from twisted.protocols import basic
+# from twisted.internet import defer
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
@@ -144,10 +40,22 @@ from Modules.Core.data_objects import BaseUUIDObject
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pioneer        ')
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 PORT = 8102
 IP = '192.168.9.121'
+
+VSX822K = {
+    'PowerQuery':       b'?P\r\n',
+    'PowerOn':          b'PO\r\n',
+    'PowerOff':         b'PF\r\n',
+    'VolumeQuery':      b'?V\r\n',
+    'VolmeUp':          b'VU\r\n',
+    'VolumeDown':       b'VN\r\n',
+    'MuteQuery':        b'?M\r\n',
+    'FunctionQuery':    b'?F\r\n',
+    'FunctionPandora':  b'01FN\r\n'
+    }
 
 
 class PioneerData(object):
@@ -249,17 +157,41 @@ class XML(object):
         return l_xml
 
 
-class PioneerProtocol(Protocol):
+class Commands(object):
+    """
+    """
+
+    def __init__(self):
+        pass
+
+    def send_command(self, p_command):
+        LOG.info('Send command {}'.format(p_command))
+        self.transport.write(p_command)
+
+
+class PioneerProtocol(StatefulTelnetProtocol, Commands):
     """
     """
 
     def dataReceived(self, p_data):
         Protocol.dataReceived(self, p_data)
+        self.setLineMode()
         LOG.info('Data Received.\n\tData:{}'.format(p_data))
 
+    def lineReceived(self, p_line):
+        StatefulTelnetProtocol.lineReceived(self, p_line)
+        LOG.info('Line Received.\n\tData:{}'.format(p_line))
+
     def connectionMade(self):
+        """ We have connected - now get the initial conditions.
+        """
         Protocol.connectionMade(self)
+        self.setLineMode()
         LOG.info('Connection Made.')
+        self.send_command(b'?P\r\n')  # Query Power
+        self.send_command(b'?M\r\n')
+        self.send_command(b'?V\r\n')
+        self.send_command(b'?F\r\n')
 
     def connectionLost(self, reason=ConnectionDone):
         Protocol.connectionLost(self, reason=reason)
@@ -270,19 +202,19 @@ class PioneerClient(PioneerProtocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_obj, _p_clientID=None):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_obj = p_pioneer_obj
+        # self.m_pioneer_obj = p_pioneer_obj
 
 
 class PioneerFactory(ReconnectingClientFactory):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_obj = p_pioneer_obj
-        LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'Pioneer')))
+        # self.m_pioneer_obj = p_pioneer_obj
+        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'Pioneer')))
 
     def startedConnecting(self, p_connector):
         # ReconnectingClientFactory.startedConnecting(self, p_connector)
@@ -291,7 +223,7 @@ class PioneerFactory(ReconnectingClientFactory):
     def buildProtocol(self, p_addr):
         _protocol = PioneerProtocol()
         LOG.info('BuildProtocol - Addr = {}'.format(p_addr))
-        l_client = PioneerClient(self.m_pyhouse_obj, self.m_pioneer_obj)
+        l_client = PioneerClient(self.m_pyhouse_obj)
         # l_ret = ReconnectingClientFactory.buildProtocol(self, p_addr)
         return l_client
 
@@ -343,19 +275,17 @@ class API(object):
         l_count = 0
         for l_pioneer_obj in self.m_pyhouse_obj.House.Entertainment.Pioneer.values():
             l_count += 1
-            LOG.debug('Working on device {}.'.format(l_pioneer_obj.Name))
+            # LOG.debug('Working on device {}.'.format(l_pioneer_obj.Name))
             if not l_pioneer_obj.Active:
                 continue
             l_host = long_to_str(l_pioneer_obj.IPv4)
             l_port = l_pioneer_obj.Port
-            LOG.debug("Started Pioneer Host:{}; Port:{}.".format(l_host, l_port))
-            l_factory = PioneerFactory(self.m_pyhouse_obj, l_pioneer_obj)
+            # LOG.debug("Started Pioneer Host:{}; Port:{}.".format(l_host, l_port))
+            l_factory = PioneerFactory(self.m_pyhouse_obj)
             l_pioneer_obj._Factory = l_factory
-            LOG.debug('Factory {}'.format(PrettyFormatAny.form(l_factory, 'Factory')))
-
-            l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_pioneer_obj._Factory)
-            LOG.debug('Connector {}'.format(PrettyFormatAny.form(l_connector, 'Connector')))
-
+            # LOG.debug('Factory {}'.format(PrettyFormatAny.form(l_factory, 'Factory')))
+            _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_pioneer_obj._Factory)
+            # LOG.debug('Connector {}'.format(PrettyFormatAny.form(l_connector, 'Connector')))
             LOG.info("Started Pioneer {} {}.".format(l_host, l_port))
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 

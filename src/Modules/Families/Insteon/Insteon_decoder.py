@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-07-13'
+__updated__ = '2018-07-14'
 
 #  Import system type stuff
 
@@ -72,7 +72,7 @@ class DecodeResponses(object):
                     self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
                     return 'Ok'
                 else:
-                    LOG.warning('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
+                    # LOG.warning('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
                 # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, FormatBytes(p_controller_obj._Message)))
@@ -205,7 +205,7 @@ class DecodeResponses(object):
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status', p_controller_obj)  #  /lig
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status', l_device_obj)  #  /lig
         return
 
     def _decode_51(self, p_controller_obj):

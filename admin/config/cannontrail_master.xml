@@ -1,307 +1,539 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<PyHouse
-	Version="18.2.0"
-    xmlns="http://PyHouse.org/schemas"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://PyHouse.org/schemas PyHouse.xsd"
-    xsi:noNamespaceSchemaLocation="PyHouse.xsd"
-    >
-
-    <ComputerDivision>
-        <InternetSection>
-            <LocaterUrlSection>
-                <ExternalUrl>http://snar.co/ip/</ExternalUrl>
-                <ExternalUrl>http://checkip.dyndns.com/</ExternalUrl>
-            </LocaterUrlSection>
-            <UpdaterUrlSection>
-                <UpdateUrl>http://freedns.afraid.org/dynamic/update.php?VDZtSkE2MzFVMVVBQVd5QXg2MDo4MDk0ODM1</UpdateUrl>
-            </UpdaterUrlSection>
-            <ExternalIPv4>65.35.48.61</ExternalIPv4>
-            <ExternalIPv6>2001:4830:1600:84ae::1</ExternalIPv6>
-            <LastChanged>2014-10-02 12:34:56</LastChanged>
-            </InternetSection>
-        <LogSection>
-            <Debug>/var/log/pyhouse/debug</Debug>
-            <Error>/var/log/pyhouse/error</Error>
-        </LogSection>
-        <WebSection>
-            <WebPort>8580</WebPort>
-        </WebSection>
-        <NodeSection>
-            <Node Name='pi-01' Key='0' Active='True'>
-                <UUID>87654321-1001-11e3-b583-082e5f899999</UUID>
-                <ConnectionAddressV4>192.168.9.123</ConnectionAddressV4>
-                <InterfaceSection>
-                    <Interface Name='eth0' Key="0" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300001111</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.9.11</IPv4Address>
-                        <IPv6Address>2000:1D::1, 2000:1D::101</IPv6Address>
-                    </Interface>
-                    <Interface Name='wlan0' Key="1" Active="True">
-                        <UUID>87654321-1001-11e3-b583-012300002222</UUID>
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.9.22</IPv4Address>
-                        <IPv6Address>2000:1D::2, 2000:1D::202</IPv6Address>
-                    </Interface>
-                    <Interface Name='lo' Key="2" Active="True">
-                        <MacAddress>01:02:03:04:05:06</MacAddress>
-                        <IPv4Address>192.168.9.33</IPv4Address>
-                        <IPv6Address>2000:1D::3, 2000:1D::303</IPv6Address>
-                    </Interface>
-                </InterfaceSection>
-            </Node>
-        </NodeSection>
-    </ComputerDivision>
-
-    <HouseDivision Active="True" Key="0" Name="Cannon Trail">
-        <UUID>12345678-1002-11e3-b583-333e5f8cdfd2</UUID>
-        <LocationSection>
-            <Street>718 Cannon Trl</Street>
-            <City>Franklin</City>
-            <State>NC</State>
-            <ZipCode>28734</ZipCode>
-            <Phone>(828) 369-8513</Phone>
-            <Latitude>35.144569</Latitude>
-            <Longitude>-83.458291</Longitude>
-            <TimeZoneName>USA/Eastern</TimeZoneName>
-            <TimeZoneOffset>-5:00</TimeZoneOffset>
-            <DaylightSavingsTime>-4:00</DaylightSavingsTime>
-        </LocationSection>
-        <RoomSection>
-            <Room Active="True" Key="0" Name="Outside">
-                <Comment>All Outside Locations</Comment>
-                <Corner>0, 0</Corner>
-                <Size>0, 0</Size>
-                <Floor>O</Floor>
-            </Room>
-            <Room Active="True" Key="1" Name="Dining Room">
-                <Comment>None</Comment>
-                <Corner>0.83, 10.58</Corner>
-                <Size>14.00, 13.50</Size>
-                <Floor>2</Floor>
-            </Room>
-            <Room Active="True" Key="2" Name="Garage">
-                <Comment />
-                <Corner>0.83, 24.58</Corner>
-                <Size>6.91, 8.91</Size>
-            </Room>
-            <Room Active="False" Key="3" Name="Kitchen">
-                <Comment />
-                <Corner>0.83, 25.08</Corner>
-                <Size>14.00, 18.00</Size>
-            </Room>
-            <Room Active="False" Key="4" Name="LivingRoom">
-                <Comment />
-                <Corner>0.83, 25.08</Corner>
-                <Size>14.00, 18.00</Size>
-            </Room>
-            </RoomSection>
-        <ScheduleSection>
-            <Schedule Active="True" Key="0" Name="Evening">
-                <Level>100</Level>
-                <LightName>FrontDoor</LightName>
-                <Rate>0</Rate>
-                <RoomName>Outside</RoomName>
-                <Time>sunset</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="1" Name="Evening">
-                <Level>100</Level>
-                <LightName>ChandMaster</LightName>
-                <Rate>0</Rate>
-                <RoomName>Dining Room</RoomName>
-                <Time>sunset</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="2" Name="Night">
-                <Level>0</Level>
-                <LightName>FrontDoor</LightName>
-                <Rate>0</Rate>
-                <RoomName>Outside</RoomName>
-                <Time>23:30</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            <Schedule Active="True" Key="3" Name="Night">
-                <Level>0</Level>
-                <LightName>ChandMaster</LightName>
-                <Rate>0</Rate>
-                <RoomName>Dining Room</RoomName>
-                <Time>23:30</Time>
-                <ScheduleType>LightingDevice</ScheduleType>
-            </Schedule>
-            </ScheduleSection>
-        <LightSection>
-            <Light Active="True" Key="0" Name="FrontDoor">
-                <Comment>SwitchLink Dimmer</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Outside</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>1C.A3.1A</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|Outside</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-            </Light>
-            <Light Active="True" Key="1" Name="Garage">
-                <Comment>SwitchLink Dimmer</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Outside</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>1C.98.EF</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|Outside</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-            </Light>
-            <Light Active="True" Key="2" Name="ChandMaster">
-                <Comment>SwitchLink Dimmer</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Dining Room</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>1D.3F.AD</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|DiningRoom</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-            </Light>
-            <Light Active="True" Key="3" Name="ChandSlave">
-                <Comment>SwitchLink Dimmer</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Dining Room</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>1D.2A.CE</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|Pantry(0;0)</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-            </Light>
-            <Light Active="True" Key="4" Name="FireplaceLights">
-                <Comment>SwitchLink Dimmer</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>LivingRoom</RoomName>
-                <LightingType>Light</LightingType>
-                <Address>1D.26.74</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|LivingRoom(0;0)</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-            </Light>
-            </LightSection>
-        <ButtonSection>
-            <Button Active="True" Key="0" Name="Button1">
-                <Comment>Test Button</Comment>
-                <Coords>['0', '0']</Coords>
-                <IsDimmable>True</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Dining Room</RoomName>
-                <LightingType>Button</LightingType>
-                <Address>1D.2A.CE</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList>All_Lights|Pantry(0;0)</GroupList>
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>False</IsResponder>
-            </Button>
-        </ButtonSection>
-        <ControllerSection>
-            <Controller Active="False" Key="0" Name="PLM_1">
-                <Comment>Dongle using serial converter 067B:2303</Comment>
-                <Coords>None</Coords>
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
-                <LightingType>Controller</LightingType>
-                <Address>AA.AA.AA</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat><GroupList />
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-                <InterfaceType>Serial</InterfaceType>
-                <Port>/dev/ttyUSB0</Port>
-                <BaudRate>19200</BaudRate>
-                <ByteSize>8</ByteSize>
-                <Parity>N</Parity>
-                <StopBits>1.0</StopBits>
-                <Timeout>1.0</Timeout>
-                <DsrDtr>False</DsrDtr>
-                <RtsCts>False</RtsCts>
-                <XonXoff>False</XonXoff>
-            </Controller>
-            <Controller Active="True" Key="1" Name="PowerLink">
-                <Comment>2413UH Powerlink Controller</Comment>
-                <Coords>None</Coords>
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>Insteon</ControllerFamily>
-                <RoomName>Office</RoomName>
-                <LightingType>Controller</LightingType>
-                <Address>1B.47.81</Address>
-                <IsController>True</IsController>
-                <DevCat>00.00</DevCat>
-                <GroupList />
-                <GroupNumber>0</GroupNumber>
-                <IsMaster>True</IsMaster>
-                <ProductKey>00.00.00</ProductKey>
-                <IsResponder>True</IsResponder>
-                <InterfaceType>Serial</InterfaceType>
-                <Port>/dev/ttyUSB0</Port>
-                <BaudRate>19200</BaudRate>
-                <ByteSize>8</ByteSize>
-                <Parity>N</Parity>
-                <StopBits>1.0</StopBits>
-                <Timeout>1.0</Timeout>
-                <DsrDtr>False</DsrDtr>
-                <RtsCts>False</RtsCts>
-                <XonXoff>False</XonXoff>
-            </Controller>
-            <Controller Active="False" Key="2" Name="Upb_Pim">
-                <Comment>UPB PIM - using USB connection</Comment>
-                <Coords>None</Coords>
-                <IsDimmable>False</IsDimmable>
-                <ControllerFamily>UPB</ControllerFamily>
-                <RoomName>Master Bath</RoomName>
-                <LightingType>Controller</LightingType>
-                <NetworkID>6</NetworkID>
-                <Password>1293</Password>
-                <UnitID>255</UnitID>
-                <InterfaceType>USB</InterfaceType>
-                <Port>None</Port>
-                <Vendor>6109</Vendor>
-                <Product>21760</Product>
-                <IsController>True</IsController>
-                <IsMaster>True</IsMaster>
-                <IsResponder>True</IsResponder>
-            </Controller>
-        </ControllerSection>
-    </HouseDivision>
+<?xml version='1.0' encoding='us-ascii'?>
+<PyHouse Version="18.2.0"
+	xmlns:comp="http://PyHouse.Org/ComputerDiv"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-07-02 02:18:29.190916 -->
+	<ComputerDivision Active="False" Key="0"
+		Name="pi-01-ct">
+		<Comment />
+		<UUID>391584da-5852-11e7-8389-801f02b5e4e6</UUID>
+		<BridgesSection />
+		<CommunicationSection />
+		<InternetSection />
+		<MqttSection>
+			<Broker Active="True" Key="0" Name="CannonTrail">
+				<Comment />
+				<UUID>392c6466-5852-11e7-8389-801f02b5e4e6</UUID>
+				<BrokerAddress>192.168.9.10</BrokerAddress>
+				<BrokerPort>1883</BrokerPort>
+				<BrokerUser>None</BrokerUser>
+				<BrokerPassword>None</BrokerPassword>
+				<Class>Local</Class>
+			</Broker>
+		</MqttSection>
+		<NodeSection>
+			<Node Active="True" Key="0" Name="pi-01-ct">
+				<Comment />
+				<UUID>391584da-5852-11e7-8389-801f02b5e4e6</UUID>
+				<ConnectionAddressV4>[]</ConnectionAddressV4>
+				<ConnectionAddressV6>[['::1'], ['fe80::1b9a:3c8d:173e:7e85%wlan0']]</ConnectionAddressV6>
+				<NodeRole>0</NodeRole>
+				<LastUpdate>2018-06-26 14:17:28.573663</LastUpdate>
+				<InterfaceSection />
+			</Node>
+			<Node Active="True" Key="1" Name="pi2-01">
+				<Comment />
+				<UUID>392e2102-5852-11e7-8389-801f02b5e4e6</UUID>
+				<ConnectionAddressV4>[]</ConnectionAddressV4>
+				<ConnectionAddressV6>[['::1'], ['fe80::8f0:fdda:3423:294%eth0'],
+					['fe80::afaf:165f:2001:3c94%wlan0']]</ConnectionAddressV6>
+				<NodeRole>0</NodeRole>
+				<LastUpdate>2017-06-23 11:31:52.496247</LastUpdate>
+				<InterfaceSection />
+			</Node>
+		</NodeSection>
+		<Weather />
+		<WebSection>
+			<Port>8580</Port>
+			<SecurePort>8580</SecurePort>
+			<SocketPort>8580</SocketPort>
+			<LoginSection>
+				<Login Active="True" Key="0" Name="admin">
+					<Comment />
+					<UUID>392f54e6-5852-11e7-8389-801f02b5e4e6</UUID>
+					<FullName>Administrator</FullName>
+					<Password>admin</Password>
+					<Role>1</Role>
+				</Login>
+			</LoginSection>
+		</WebSection>
+	</ComputerDivision>
+	<HouseDivision Active="True" Key="0" Name="cannon trail">
+		<Comment />
+		<UUID>393002ce-5852-11e7-8389-801f02b5e4e6</UUID>
+		<LocationSection>
+			<Street>718 Cannon Trl</Street>
+			<City>Franklin</City>
+			<State>NC</State>
+			<ZipCode>28734</ZipCode>
+			<Region>Eastern</Region>
+			<Phone>(828) 369-8513</Phone>
+			<Latitude>35.144569</Latitude>
+			<Longitude>-83.458291</Longitude>
+			<Elevation>700.0</Elevation>
+			<TimeZoneName>America/New_York</TimeZoneName>
+		</LocationSection>
+		<RoomSection>
+			<Room Active="True" Key="0" Name="Outside">
+				<Comment>All Outside Locations</Comment>
+				<UUID>a1dee366-49e0-11e6-855a-801f02b5e4e6</UUID>
+				<Comment>All Outside Locations</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>O</Floor>
+				<LastUpdate>2016-07-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
+			<Room Active="True" Key="1" Name="Dining Room">
+				<Comment>None</Comment>
+				<UUID>a1df9b3a-49e0-11e6-855a-801f02b5e4e6</UUID>
+				<Comment>None</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>2</Floor>
+				<LastUpdate>2016-07-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
+			<Room Active="True" Key="2" Name="Garage">
+				<Comment>None</Comment>
+				<UUID>a1e03be4-49e0-11e6-855a-801f02b5e4e6</UUID>
+				<Comment>None</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>1</Floor>
+				<LastUpdate>2016-07-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
+			<Room Active="True" Key="3" Name="Kitchen">
+				<Comment>None</Comment>
+				<UUID>a1e0e3fa-49e0-11e6-855a-801f02b5e4e6</UUID>
+				<Comment>None</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>1</Floor>
+				<LastUpdate>2016-07-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
+			<Room Active="True" Key="4" Name="LivingRoom">
+				<Comment>None</Comment>
+				<UUID>a1e18058-49e0-11e6-855a-801f02b5e4e6</UUID>
+				<Comment>None</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>1</Floor>
+				<LastUpdate>2016-07-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
+		</RoomSection>
+		<EntertainmentSection />
+		<HvacSection>
+			<ThermostatSection />
+		</HvacSection>
+		<IrrigationSection />
+		<LightingSection>
+			<ButtonSection>
+				<Button Active="True" Key="0" Name="Button1">
+					<Comment>Test Button</Comment>
+					<UUID>0e44987e-4fc0-11e4-a816-b827eb332d6f</UUID>
+					<Comment>Test Button</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>1</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Dining Room</RoomName>
+					<RoomUUID>393307da-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<DevCat>00.00</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>1</FirmwareVersion>
+					<GroupList>All_Lights|Pantry(0;0)</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>99.88.77</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Button>
+			</ButtonSection>
+			<ControllerSection>
+				<Controller Active="True" Key="0" Name="PLM">
+					<Comment>None</Comment>
+					<UUID>093db07e-4c61-11e5-8794-b827eb332d6f</UUID>
+					<Comment>None</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>2</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3933b0d6-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<InterfaceType>Serial</InterfaceType>
+					<Port>/dev/ttyUSB0</Port>
+					<BaudRate>19200</BaudRate>
+					<ByteSize>8</ByteSize>
+					<DsrDtr>False</DsrDtr>
+					<Parity>N</Parity>
+					<RtsCts>False</RtsCts>
+					<StopBits>1.0</StopBits>
+					<Timeout>1.0</Timeout>
+					<XonXoff>False</XonXoff>
+					<DevCat>07.00</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>1</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>34.77.F9</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Controller>
+			</ControllerSection>
+			<LightSection>
+				<Light Active="True" Key="0" Name="FrontDoor">
+					<Comment>SwitchLink Dimmer</Comment>
+					<UUID>0e465452-4fc0-11e4-a816-b827eb332d6f</UUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3934a09a-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<Brightness>0</Brightness>
+					<IsDimmable>False</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3934a09a-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>01.20</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>All_Lights|Outside</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>1C.A3.1A</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="1" Name="Garage">
+					<Comment>SwitchLink Dimmer</Comment>
+					<UUID>0e47f5d2-4fc0-11e4-a816-b827eb332d6f</UUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>393549e6-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<Brightness>0</Brightness>
+					<IsDimmable>False</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>393549e6-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>01.20</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>All_Lights|Outside</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>1C.98.EF</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="2" Name="ChandMaster">
+					<Comment>SwitchLink Dimmer</Comment>
+					<UUID>0e497b64-4fc0-11e4-a816-b827eb332d6f</UUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Dining Room</RoomName>
+					<RoomUUID>3935f59e-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<Brightness>0</Brightness>
+					<IsDimmable>False</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Dining Room</RoomName>
+					<RoomUUID>3935f59e-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>01.20</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>All_Lights|DiningRoom</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>1D.3F.AD</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="3" Name="ChandSlave">
+					<Comment>SwitchLink Dimmer</Comment>
+					<UUID>0e4b2c84-4fc0-11e4-a816-b827eb332d6f</UUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Dining Room</RoomName>
+					<RoomUUID>39369e2c-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<Brightness>0</Brightness>
+					<IsDimmable>False</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Dining Room</RoomName>
+					<RoomUUID>39369e2c-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>01.20</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>All_Lights|Pantry(0;0)</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>1D.2A.CE</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="4" Name="FireplaceLights">
+					<Comment>SwitchLink Dimmer</Comment>
+					<UUID>0e4cdff2-4fc0-11e4-a816-b827eb332d6f</UUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>LivingRoom</RoomName>
+					<RoomUUID>393743fe-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>SwitchLink Dimmer</Comment>
+					<Brightness>0</Brightness>
+					<IsDimmable>False</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>LivingRoom</RoomName>
+					<RoomUUID>393743fe-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>01.20</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>All_Lights|LivingRoom(0;0)</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>1D.26.74</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="5" Name="GDO">
+					<Comment>None</Comment>
+					<UUID>3e2c190c-329f-4525-a4b3-c402b2a8e791</UUID>
+					<Comment>None</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3937f1a0-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>None</Comment>
+					<Brightness>0</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3937f1a0-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>07.00</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>3D.E3.EC</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="6" Name="TV Lights">
+					<Comment>None</Comment>
+					<UUID>c1c49a73-8519-4ac3-aa16-a4b5c2927619</UUID>
+					<Comment>None</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3938986c-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>None</Comment>
+					<Brightness>100</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3938986c-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>00.00</DevCat>
+					<EngineVersion>255</EngineVersion>
+					<FirmwareVersion>255</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>3B.0A.D8</InsteonAddress>
+					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="7" Name="Pond Pump">
+					<Comment>None</Comment>
+					<UUID>25851072-ad1e-11e7-a668-801f02b5e4e6</UUID>
+					<Comment>None</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3938986c-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Comment>None</Comment>
+					<Brightness>100</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>3938986c-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<DevCat>02.38</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>40.07.37</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Light>
+			</LightSection>
+		</LightingSection>
+		<ScheduleSection>
+			<Schedule Active="True" Key="0" Name="Evening">
+				<Comment />
+				<UUID>393938da-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>sunset</Time>
+				<Level>100</Level>
+				<LightName>Garage</LightName>
+				<LightUUID>a1e7c058-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Outside</RoomName>
+				<RoomUUID>a1e80900-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="1" Name="Evening">
+				<Comment />
+				<UUID>3939941a-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>sunset</Time>
+				<Level>25</Level>
+				<LightName>FireplaceLights</LightName>
+				<LightUUID>a1e90c4c-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>LivingRoom</RoomName>
+				<RoomUUID>a1e94162-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="2" Name="Night">
+				<Comment />
+				<UUID>3939e406-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>23:30</Time>
+				<Level>0</Level>
+				<LightName>Garage</LightName>
+				<LightUUID>a1ea1740-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Outside</RoomName>
+				<RoomUUID>a1ea4cf6-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="3" Name="Night">
+				<Comment />
+				<UUID>393a3230-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>23:30</Time>
+				<Level>0</Level>
+				<LightName>FireplaceLights</LightName>
+				<LightUUID>a1eb19e2-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>LivingRoom</RoomName>
+				<RoomUUID>a1eb4cfa-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="4" Name="Night">
+				<Comment />
+				<UUID>393a880c-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>23:45</Time>
+				<Level>0</Level>
+				<LightName>FireplaceLights</LightName>
+				<LightUUID>a1ec2300-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>LivingRoom</RoomName>
+				<RoomUUID>a1ec5712-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="5" Name="Evening">
+				<Comment />
+				<UUID>393adafa-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>sunset</Time>
+				<Level>100</Level>
+				<LightName>FrontDoor</LightName>
+				<LightUUID>a1ed2dfe-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Outside</RoomName>
+				<RoomUUID>a1ed638c-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="6" Name="Night">
+				<Comment />
+				<UUID>393b2956-5852-11e7-8389-801f02b5e4e6</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>23:30</Time>
+				<Level>0</Level>
+				<LightName>FrontDoor</LightName>
+				<LightUUID>a1ee2ee8-49e0-11e6-855a-801f02b5e4e6</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Outside</RoomName>
+				<RoomUUID>a1ee6548-49e0-11e6-855a-801f02b5e4e6</RoomUUID>
+			</Schedule>
+		</ScheduleSection>
+		<SecuritySection>
+			<GarageDoorSection>
+				<GarageDoor Active="True" Key="0" Name="GDO">
+					<Comment>None</Comment>
+					<UUID>db4e8dac-06b8-4473-97bb-e9b75a3e50d6</UUID>
+					<Comment>None</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>3</DeviceType>
+					<DeviceSubType>1</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>393bb786-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<Status>Unknown</Status>
+					<DevCat>00.00</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>1</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>99.88.77</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</GarageDoor>
+			</GarageDoorSection>
+			<MotionDetectorSection>
+				<Motion Active="True" Key="0" Name="LrMotion">
+					<Comment>None</Comment>
+					<UUID>4a1272ad-50c6-4ba2-bed3-1f50b5b0e2d0</UUID>
+					<Comment>None</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>3</DeviceType>
+					<DeviceSubType>2</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Outside</RoomName>
+					<RoomUUID>393c57ea-5852-11e7-8389-801f02b5e4e6</RoomUUID>
+					<DevCat>10.01</DevCat>
+					<EngineVersion>1</EngineVersion>
+					<FirmwareVersion>1</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>37.AD.0A</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Motion>
+			</MotionDetectorSection>
+		</SecuritySection>
+	</HouseDivision>
 </PyHouse>

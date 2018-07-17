@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-07-13'
+__updated__ = '2018-07-14'
 
 #  Import system type stuff
 import datetime
@@ -122,11 +122,11 @@ class API(object):
         l_msg = '\tNodeSync\n'
         if p_topic[2] == 'whoisthere':
             l_msg += '\tName: {}  who is there'.format(p_message['Name'])
-            l_msg += '\t {}\n'.format(PrettyFormatAny.form(p_message, 'Who Is There Message', 160))
+            l_msg += '\t {}\n'.format(p_message)
             Util.send_i_am(self.m_pyhouse_obj)
         elif p_topic[2] == 'iam':
             l_msg += '\tName {}  i am'.format(p_message['Name'])
-            l_msg += '\t {}\n'.format(PrettyFormatAny.form(p_message, 'I Am Message', 160))
+            l_msg += '\t {}\n'.format(p_message)
             Util.add_node(self.m_pyhouse_obj, p_message)
         else:
             l_msg += '*** Unknown computer/node/??? Message type {}'.format(p_topic[2])

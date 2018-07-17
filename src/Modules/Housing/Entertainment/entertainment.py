@@ -12,7 +12,7 @@ Start up entertainment systems.
 
 """
 
-__updated__ = '2018-07-12'
+__updated__ = '2018-07-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,6 +25,12 @@ from Modules.Housing.Entertainment.samsung.samsung import API as samsungApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
+
+VALID_ENTERTAINMENT_MFGRS = [
+    "onkyo",
+    "pioneer",
+    "samsung"
+    ]
 
 
 class Utility(object):
@@ -50,22 +56,51 @@ class MqttActions(object):
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
         return l_ret
 
-    def decode(self, p_logmsg, p_topic, p_message):
-        """ .../entertainment/xxxx
+    def _decode_pandora(self, p_topic, p_message):
         """
-        p_logmsg += '\tEntertainment:\n'
-        if p_topic[1] == 'add':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
-        elif p_topic[1] == 'delete':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
-        elif p_topic[1] == 'sync':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
-        elif p_topic[1] == 'update':
-            p_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        ==> pyhouse/<house name>/entertainment/pandora/<action>/...
+        where <action> is:
+            start
+            stop
+            louder
+            softer
+            hate
+            like
+        """
+        l_name = self._get_field(p_message, 'Name')
+        l_logmsg = '\tPandora:\n'
+        l_logmsg += '\tName: {}\n'.format(l_name)
+
+        if p_topic[2] == 'start':
+            l_logmsg += self._decode_pandora(p_topic, p_message)
+        elif p_topic[2] == 'stop':
+            l_logmsg += self._decode_pandora(p_topic, p_message)
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
-        return p_logmsg
+            l_logmsg += self._decode_pandora(p_topic, p_message)
         pass
+
+    def decode(self, p_topic, p_message):
+        """ Decode Mqtt message
+        ==> pyhouse/<house name>/entertainment/<device>/<name>/...
+        <device> = one of the VALID_ENTERTAINMENT_MFGRS
+
+        These messages probably come from some external source such as node-red or alexa.
+
+        """
+        l_logmsg = '\tEntertainment:\n'
+        if p_topic[1] == 'pandora':
+            l_logmsg += self._decode_pandora(p_topic, p_message)
+        elif p_topic[1] == 'add':
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        elif p_topic[1] == 'delete':
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        elif p_topic[1] == 'sync':
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        elif p_topic[1] == 'update':
+            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+        else:
+            l_logmsg += '\tUnknown sub-topic {} {}'.format(p_topic[1], p_message)
+        return l_logmsg
 
 
 class PlugIn(object):
@@ -117,6 +152,8 @@ class API(Utility):
         LOG.info("Started.")
 
     def SaveXml(self, p_xml):
+        """ Stick in the entertainment section
+        """
         LOG.info("Saving XML.")
         l_xml = ET.Element('EntertainmentSection')
         l_xml = self.m_onkyo.SaveXml(l_xml)

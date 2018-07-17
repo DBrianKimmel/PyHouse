@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-07-13'
+__updated__ = '2018-07-15'
 
 #  Import system type stuff
 
@@ -63,17 +63,17 @@ class MqttActions(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_logmsg, p_topic, p_message):
+    def decode(self, p_topic, p_message):
         """
         --> pyhouse/housname/house/topic03/topic04/...
         """
-        p_logmsg += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
         if p_topic[0] == 'room':
-            p_logmsg += roomsMqtt()._decode_room(p_logmsg, p_topic, p_message)
+            l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
         #  computer/***
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'House msg', 160))
-        return p_logmsg
+            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+        return l_logmsg
 
 
 class Xml(object):
@@ -172,7 +172,7 @@ class Utility(object):
 
     @staticmethod
     def _save_component_apis(p_pyhouse_obj, p_xml):
-        """ Family does not get saved - it is created dynamically when XML is loaded.
+        """ These are sub-module parts of the house.
         """
         p_pyhouse_obj.APIs.House.EntertainmentAPI.SaveXml(p_xml)
         p_pyhouse_obj.APIs.House.HvacAPI.SaveXml(p_xml)
@@ -230,9 +230,9 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        l_house_xml = Xml.write_house_xml(self.m_pyhouse_obj)
-        Utility._save_component_apis(self.m_pyhouse_obj, l_house_xml)
-        p_xml.append(l_house_xml)
+        l_house_xml = Xml.write_house_xml(self.m_pyhouse_obj)  # Location and rooms
+        Utility._save_component_apis(self.m_pyhouse_obj, l_house_xml)  # All the house submodules.
+        p_xml.append(l_house_xml)  # The entire house XML
         LOG.info("Saved House XML.")
         return p_xml
 
@@ -243,10 +243,10 @@ class API(Utility):
         self.stop_house_parts()
         LOG.info("Stopped.")
 
-    def DecodeMqtt(self, p_logmsg, p_topic, p_message):
+    def DecodeMqtt(self, p_topic, p_message):
         """ Decode messages sent to the house module.
         """
-        MqttActions(self.m_pyhouse_obj).decode(p_logmsg, p_topic, p_message)
-        return p_logmsg
+        l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
+        return l_logmsg
 
 #  ##  END DBK
