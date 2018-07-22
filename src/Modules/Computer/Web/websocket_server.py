@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2017-07-24'
+__updated__ = '2018-07-20'
 
 #  Import system type stuff
-import http.cookies  #
+# import http.cookies  #
 import json
-import urllib
+# import urllib
 from twisted.internet import ssl
 from twisted.web.static import File
 from twisted.web.server import Site
@@ -49,18 +49,18 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
         # our cookie tracking ID
         self._cbtid = None
         # see if there already is a cookie set ..
-        if 'cookie' in request.headers:
-            try:
-                cookie = http.cookies.SimpleCookie()
-                cookie.load(str(request.headers['cookie']))
-            except http.cookies.CookieError:
-                pass
-            else:
-                if 'cbtid' in cookie:
-                    cbtid = cookie['cbtid'].value
-                    if cbtid in self.factory._cookies:
-                        self._cbtid = cbtid
-                        LOG.warn("Cookie already set: %s" % self._cbtid)
+#        if 'cookie' in request.headers:
+#            try:
+#                cookie = http.cookies.SimpleCookie()
+#                cookie.load(str(request.headers['cookie']))
+#            except http.cookies.CookieError:
+#                pass
+#            else:
+#                if 'cbtid' in cookie:
+#                    cbtid = cookie['cbtid'].value
+#                    if cbtid in self.factory._cookies:
+#                        self._cbtid = cbtid
+#                        LOG.warn("Cookie already set: %s" % self._cbtid)
         # if no cookie is set, create a new one ..
         if self._cbtid is None:
             # self._cbtid = newid()
@@ -91,7 +91,7 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
             # .. if yes, send info on authenticated user
             self.sendMessage(json.dumps({'cmd': 'AUTHENTICATED', 'email': authenticated}))
 
-    def onClose(self, wasClean, code, reason):
+    def onClose(self, _wasClean, _code, _reason):
         """
         This is called when WebSocket connection is gone
         """
@@ -109,8 +109,8 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
             msg = json.loads(payload)
             if msg['cmd'] == 'AUTHENTICATE':
                 # The client did it's Mozilla Persona authentication thing and now wants to verify the authentication and login.
-                assertion = msg.get('assertion')
-                audience = msg.get('audience')
+                _assertion = msg.get('assertion')
+                _audience = msg.get('audience')
                 # To verify the authentication, we need to send a HTTP/POST to Mozilla Persona.
                 # When successful, Persona will send us back something like:
                 # {
@@ -123,10 +123,10 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
                 headers = {'Content-Type': 'application/x-www-form-urlencoded'}
                 # body = urllib.parse.urlencode({'audience': audience, 'assertion': assertion})
                 from twisted.web.client import getPage
-                d = getPage(url = "https://verifier.login.persona.org/verify",
-                            method = 'POST',
-                            postdata = None,  # body,
-                            headers = headers)
+                d = getPage(url="https://verifier.login.persona.org/verify",
+                            method='POST',
+                            postdata=None,  # body,
+                            headers=headers)
                 LOG.warn("Authentication request sent.")
 
                 def done(res):
@@ -180,11 +180,11 @@ class ClientConnections(object):
 
 class Utility(ClientConnections):
 
-    def start_websocket_server(self, p_pyhouse_obj):
+    def start_websocket_server(self, _p_pyhouse_obj):
         """ Setup for starting a web socket server (encrypted or not).
         """
         l_port = WEBSOCKET_PORT  # p_pyhouse_obj.Computer.Web.WebPort
-        l_addr = u'ws://127.0.0.1:{}'.format(l_port)
+        _l_addr = u'ws://127.0.0.1:{}'.format(l_port)
         # l_factory = WebSocketServerFactory(l_addr)
         # l_factory.protocol = WebSockServerProtocol
         # websockets resource on "/ws" path

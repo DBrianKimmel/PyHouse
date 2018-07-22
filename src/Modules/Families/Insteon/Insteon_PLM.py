@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2017-04-30'
+__updated__ = '2018-07-22'
 
 #  Import system type stuff
 try:
@@ -35,6 +35,7 @@ from Modules.Families.Insteon import Insteon_decoder, Insteon_utils, Insteon_Lin
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
+from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Families.family_utils import FamUtil
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -80,7 +81,6 @@ class ControllerData(InsteonData):
         super(ControllerData, self).__init__()
         self._Command1 = None
         self._Command2 = None
-
 
 
 class Commands(object):
@@ -169,7 +169,6 @@ class Commands(object):
         Insteon_utils.queue_command(p_controller_obj, l_command)
 
 
-
 class PlmDriverProtocol(Commands):
     """
     Check the command queue and send the 1st command if available.
@@ -191,6 +190,15 @@ class PlmDriverProtocol(Commands):
         LOG.info('Stopped.')
         pass
 
+    def _find_to_name(self, p_command):
+        l_name = 'No device'
+        try:
+            l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, p_command[2:5])
+            l_name = l_device_obj.Name
+        except Exception:
+            l_name = "Device does not exist."
+        return l_name
+
     def dequeue_and_send(self, p_controller_obj):
         """Check the sending queue every SEND_TIMEOUT seconds and send if
         anything to send.
@@ -205,7 +213,8 @@ class PlmDriverProtocol(Commands):
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
-            # LOG.info("Send to PLM:{}, Message:{}".format(p_controller_obj.Name, FormatBytes(l_command)))
+            l_name = self._find_to_name(l_command)
+            LOG.info("To:{}, Message:{}".format(l_name, FormatBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -267,7 +276,7 @@ class InsteonPlmAPI(object):
         """
         return Commands._queue_60_command(p_controller_obj)
 
-    def get_link_records(self, p_controller_obj, p_obj):
+    def get_link_records(self, p_controller_obj, _p_obj):
         return Insteon_Link.InsteonAllLinks().get_all_allinks(p_controller_obj)
 
 
@@ -335,6 +344,8 @@ class LightHandlerAPI(object):
 
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
+
+        Used at device start up to populate the database.
         """
         LOG.info('Getting information for all Insteon devices.')
 
@@ -407,7 +418,6 @@ class API(Utility):
         """
         self.m_controller_obj = p_controller_obj
 
-
     def _get_controller(self):
         """ used in testing to load the controller info to be used in testing.
         """
@@ -427,12 +437,10 @@ class API(Utility):
         LOG.info('Started.')
         return l_ret
 
-
     def Stop(self, p_controller_obj):
         self.m_protocol.driver_loop_stop()
         self.stop_controller_driver(p_controller_obj)
         LOG.info('Stopped.')
-
 
     def ChangeLight(self, p_device_obj, _p_source, p_level, p_rate=0):
         """

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_Link.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2018 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   Handle the all-link database(s) in Insteon devices.
@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2017-01-05'
+__updated__ = '2018-07-22'
 
 #  Import system type stuff
 
@@ -38,6 +38,7 @@ class LinkData(object):
         self.Data = '00.00.00'  #  3 bytes
         self.Flag = 0xC2
         self.Group = 0
+        self.IsController = False
 
 
 class InsteonAllLinks(object):
@@ -54,7 +55,7 @@ class InsteonAllLinks(object):
         """Get the first all-link record from the plm (69 command).
         See p 261 of developers guide.
         """
-        LOG.info("Command-69 = get First all-link record.")
+        LOG.info("Command-69 = get First all-link record (0x69).")
         l_command = Insteon_utils.create_command_message('plm_first_all_link')
         Insteon_utils.queue_command(p_controller_obj, l_command)
 
@@ -62,7 +63,7 @@ class InsteonAllLinks(object):
         """Get the next record - will get a nak if no more (6A command).
         Returns True if more - False if no more.
         """
-        LOG.info("Command to get Next all-link record (6A).")
+        LOG.info("Command to get Next all-link record (0x6A).")
         l_command = Insteon_utils.create_command_message('plm_next_all_link')
         Insteon_utils.queue_command(p_controller_obj, l_command)
 
@@ -92,7 +93,6 @@ class InsteonAllLinks(object):
         l_debug_msg = "Resetting PLM - Name:{}".format(p_controller_obj)
         Send().queue_67_command(p_controller_obj)
         LOG.info(l_debug_msg)
-
 
 
 class Send(object):
@@ -161,7 +161,7 @@ class Decode(object):
         LOG.info('All-Linking completed - Link Code:{}, Group:{}, From:{} '.format(l_msg, l_link_group, l_device_obj.Name))
 
     @staticmethod
-    def decode_54(p_pyhouse_obj, p_controller_obj):
+    def decode_54(_p_pyhouse_obj, p_controller_obj):
         """Insteon Button Press event (3 bytes).
         The PLM set button was pressed.
         See p 263(276) of 2009 developers guide.
@@ -174,7 +174,7 @@ class Decode(object):
         LOG.info('The Set button was pressed {}'.format(l_event))
 
     @staticmethod
-    def decode_55(p_pyhouse_obj, p_controller_obj):
+    def decode_55(_p_pyhouse_obj, p_controller_obj):
         """Insteon Reset Detected. (2 bytes)
         See p 256(269) of 2009 developers guide.
 
@@ -188,7 +188,7 @@ class Decode(object):
         LOG.info('The Set button was pressed')
 
     @staticmethod
-    def decode_56(p_pyhouse_obj, p_controller_obj):
+    def decode_56(_p_pyhouse_obj, p_controller_obj):
         """Insteon All-Link cleanup failure report (7 bytes).
         See p 243(256) of 2009 developers guide.
         [0] = 0x02
@@ -204,7 +204,7 @@ class Decode(object):
         LOG.info('All-Linking failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
 
     @staticmethod
-    def decode_57(p_pyhouse_obj, p_controller_obj):
+    def decode_0x57(p_pyhouse_obj, p_controller_obj):
         """All-Link Record Response (10 bytes).
         See p 251(264) of 2009 developers guide.
         [0] = 0x02
@@ -227,11 +227,13 @@ class Decode(object):
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
-        LOG.info("All-Link response-57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
+            l_link_obj.IsController = True
+        LOG.info("All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
+        InsteonAllLinks()._get_next_allink(p_controller_obj)
         return
 
     @staticmethod
-    def decode_58(p_pyhouse_obj, p_controller_obj):
+    def decode_58(_p_pyhouse_obj, p_controller_obj):
         """Insteon All-Link cleanup status report (3 bytes).
         See p 242(255) of 2007 developers guide.
         """
@@ -240,7 +242,7 @@ class Decode(object):
         LOG.info('All-Linking cleanup {}, Group:{}, From:{} '.format(l_status))
 
     @staticmethod
-    def decode_64(p_pyhouse_obj, p_controller_obj):
+    def decode_64(_p_pyhouse_obj, p_controller_obj):
         """Start All-Link ACK response (5 bytes).
         See p 243(256) of 2007 developers guide.
         """
@@ -257,7 +259,7 @@ class Decode(object):
         return l_ret
 
     @staticmethod
-    def decode_65(p_pyhouse_obj, p_controller_obj):
+    def decode_65(_p_pyhouse_obj, p_controller_obj):
         """All-Link Cancel response (5 bytes).
         See p 244(257) of 2007 developers guide.
         """
@@ -267,7 +269,7 @@ class Decode(object):
         return False
 
     @staticmethod
-    def decode_69(p_pyhouse_obj, p_controller_obj):
+    def decode_0x69(_p_pyhouse_obj, p_controller_obj):
         """Get All-Link First Record response (5 bytes).
         See p 248(261) of 2009 developers guide.
         [0] = 0x02
@@ -285,7 +287,7 @@ class Decode(object):
         return
 
     @staticmethod
-    def decode_6A(p_pyhouse_obj, p_controller_obj):
+    def decode_0x6A(_p_pyhouse_obj, p_controller_obj):
         """All-Link Next Record response (3 bytes).
         See p 249(262) of 2009 developers guide.
         [0] = 0x02
@@ -302,7 +304,7 @@ class Decode(object):
         return
 
     @staticmethod
-    def decode_6C(p_pyhouse_obj, p_controller_obj):
+    def decode_6C(_p_pyhouse_obj, p_controller_obj):
         """All-Link Record for sender response (3 bytes).
         See p 250(263) of 2009 developers guide.
         [0] = 0x02

@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2018-07-22'
 
 #  Import system type stuff
 import math
@@ -42,8 +42,10 @@ def create_command_message(p_command):
     l_command_bytes[1] = l_cmd
     return l_command_bytes
 
+
 def queue_command(p_controller, p_command):
     p_controller._Queue.put(p_command)
+
 
 def get_message_length(p_message):
     """ Get the documented length that the message is supposed to be.
@@ -57,6 +59,67 @@ def get_message_length(p_message):
     except KeyError:
         l_message_length = 1
     return l_message_length
+
+
+def decode_link_code(p_code):
+    """
+        LinkCode - 0=PLM is Responder, 1=PLM is Controller, FF=Deleted
+    """
+    l_msg = 'Unknown code {}'.format(p_code)
+    if p_code == 0:
+        l_msg = 'PLM=Responder'
+    elif p_code == 1:
+        l_msg = 'PLM=Controller'
+    elif p_code == 0xFF:
+        l_msg = 'Link Deleted'
+    return l_msg
+
+
+def decode_message_flag(p_byte):
+    """ Get the message flag and convert it to a description of the message.
+    """
+
+    def decode_message_type_flag(p_type):
+        MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']
+        return MESSAGE_TYPE_X[p_type] + '-Msg, '
+
+    def decode_extended_flag(p_extended):
+        MESSAGE_LENGTH_X = [' Std-Len,', ' Ext-Len,']
+        return MESSAGE_LENGTH_X[p_extended]
+
+    l_type = (p_byte & 0xE0) >> 5
+    l_extended = (p_byte & 0x10)
+    l_hops_left = (p_byte & 0x0C) >= 4
+    l_hops_max = (p_byte & 0x03)
+    l_ret = decode_message_type_flag(l_type)
+    l_ret += decode_extended_flag(l_extended)
+    l_ret += " Hops:{:d}/{:d}({:#X})".format(l_hops_left, l_hops_max, p_byte)
+    return l_ret
+
+
+def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
+    """ Given some insteon object feched from its insteon address, update the p_pyhouse_obj storage to reflect
+    the new information gleaned from the insteon responses.
+    """
+    l_ix = p_insteon_obj.Key
+    try:
+        if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
+            p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
+            p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
+            p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 2:
+            p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 1:
+            p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 2:
+            p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
+        else:
+            LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
+            # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
+    except AttributeError as e_err:
+        LOG.error('ERROR {}'.format(e_err))
 
 
 class Util(object):
@@ -119,39 +182,11 @@ class Util(object):
         return p_obj
 
 
-def decode_link_code(p_code):
-    """
-        LinkCode - 0=PLM is Responder, 1=PLM is Controller, FF=Deleted
-    """
-    l_msg = 'Unknown code {}'.format(p_code)
-    if p_code == 0:
-        l_msg = 'PLM=Responder'
-    elif p_code == 1:
-        l_msg = 'PLM=Controller'
-    elif p_code == 0xFF:
-        l_msg = 'Link Deleted'
-    return l_msg
-
-def decode_message_flag(p_byte):
-    """ Get the message flag and convert it to a description of the message.
-    """
-    def decode_message_type_flag(p_type):
-        MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']
-        return MESSAGE_TYPE_X[p_type] + '-Msg, '
-    def decode_extended_flag(p_extended):
-        MESSAGE_LENGTH_X = [' Std-Len,', ' Ext-Len,']
-        return MESSAGE_LENGTH_X[p_extended]
-    l_type = (p_byte & 0xE0) >> 5
-    l_extended = (p_byte & 0x10)
-    l_hops_left = (p_byte & 0x0C) >= 4
-    l_hops_max = (p_byte & 0x03)
-    l_ret = decode_message_type_flag(l_type)
-    l_ret += decode_extended_flag(l_extended)
-    l_ret += " Hops:{:d}/{:d}({:#X})".format(l_hops_left, l_hops_max, p_byte)
-    return l_ret
-
-
 class Decode(object):
+
+    @staticmethod
+    def decode_light_brightness(p_byte):
+        return int(((p_byte + 2) * 100) / 256)
 
     @staticmethod
     def _decode_message_flag(p_byte):
@@ -169,19 +204,22 @@ class Decode(object):
         111 = NAK of All Link Cleanup Message
 
         """
+
         def decode_message_type_flag(p_type):
             MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']
             return MESSAGE_TYPE_X[p_type] + '-Msg, '
+
         def decode_extended_flag(p_extended):
             MESSAGE_LENGTH_X = [' Std-Len,', ' Ext-Len,']
             return MESSAGE_LENGTH_X[p_extended]
+
         l_type = (p_byte & 0xE0) >> 5
         l_extended = (p_byte & 0x10)
         l_hops_left = (p_byte & 0x0C) >= 4
         l_hops_max = (p_byte & 0x03)
         l_ret = decode_message_type_flag(l_type)
         l_ret += decode_extended_flag(l_extended)
-        l_ret += " Hops:{:d}/{:d}({:#X})".format(l_hops_left, l_hops_max, p_byte)
+        l_ret += " Hops:{:d}/{:d}({:#x})".format(l_hops_left, l_hops_max, p_byte)
         return l_ret
 
     @staticmethod
@@ -288,30 +326,5 @@ class Decode(object):
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)
         return l_device_obj
-
-
-def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
-    """ Given some insteon object feched from its insteon address, update the p_pyhouse_obj storage to reflect
-    the new information gleaned from the insteon responses.
-    """
-    l_ix = p_insteon_obj.Key
-    try:
-        if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
-            p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
-            p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
-            p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 2:
-            p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 1:
-            p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 2:
-            p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
-        else:
-            LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
-            # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
-    except AttributeError as e_err:
-        LOG.error('ERROR {}'.format(e_err))
 
 #  ## END DBK

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-07-16'
+__updated__ = '2018-07-22'
 
 #  Import system type stuff
 
@@ -62,7 +62,7 @@ class Actions(object):
         l_logmsg = '\tLighting:\n'
         l_logmsg += '\tName: {}\n'.format(l_name)
         l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        l_logmsg += '\tBrightness: {}'.format(self._get_field(p_message, 'BrightnessPct'))
+        l_logmsg += '\tBrightnessPct: {}'.format(self._get_field(p_message, 'BrightnessPct'))
         return l_logmsg
 
     def _decode_schedule(self, p_topic, p_message):

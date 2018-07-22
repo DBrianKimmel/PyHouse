@@ -12,7 +12,7 @@
 """
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 
-__updated__ = '2017-01-08'
+__updated__ = '2018-07-22'
 
 #  Import system type stuff
 
@@ -26,6 +26,7 @@ LOG = Logger.getLogger('PyHouse.Insteon_Secure ')
 class SensorMessage(object):
     """ This is what will be sent in the mqtt message.
     """
+
     def __init__(self, p_name, p_room, p_type):
         self.Name = p_name
         self.RoomName = p_room
@@ -37,7 +38,7 @@ class DecodeResponses(object):
 
     m_idex = 0
 
-    def decode_50(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
+    def decode_0x50(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
         """
         @param p_device_obj: is the Device (GDO, Motion...) we are decoding.
 

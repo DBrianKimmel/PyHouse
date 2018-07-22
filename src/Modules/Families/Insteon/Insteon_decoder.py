@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-07-14'
+__updated__ = '2018-07-22'
 
 #  Import system type stuff
 
@@ -108,22 +108,22 @@ class DecodeResponses(object):
         if l_cmd == 0:
             LOG.warning("Found a '0' record ->{}.".format(FormatBytes(l_message)))
             return l_ret
-        elif l_cmd == 0x50: l_ret = self._decode_50(p_controller_obj)
+        elif l_cmd == 0x50: l_ret = self._decode_0x50(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_51(p_controller_obj)
         elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
         elif l_cmd == 0x53: linkDecode.decode_53(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x54: linkDecode.decode_54(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x55: linkDecode.decode_55(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x56: linkDecode.decode_56(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x57: linkDecode.decode_57(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x57: linkDecode.decode_0x57(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x58: linkDecode.decode_58(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x60: l_ret = self._decode_60_record(p_controller_obj)
-        elif l_cmd == 0x61: l_ret = self._decode_61_record(p_controller_obj)
-        elif l_cmd == 0x62: l_ret = self._decode_62_record(p_controller_obj)
+        elif l_cmd == 0x61: l_ret = self._decode_0x61_record(p_controller_obj)
+        elif l_cmd == 0x62: l_ret = self._decode_0x62_record(p_controller_obj)
         elif l_cmd == 0x64: linkDecode.decode_64(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x65: linkDecode.decode_65(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x69: linkDecode.decode_69(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x6A: linkDecode.decode_6A(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x69: linkDecode.decode_0x69(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x6A: linkDecode.decode_0x6A(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6B: l_ret = self._decode_6B_record(p_controller_obj)
         elif l_cmd == 0x6C: linkDecode.decode_6C(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
@@ -138,7 +138,7 @@ class DecodeResponses(object):
         l_topic = "lighting/{}/info".format(p_device_obj.Name)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
-    def _decode_50(self, p_controller_obj):
+    def _decode_0x50(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
         See p 233(246) of 2009 developers guide.
@@ -150,14 +150,15 @@ class DecodeResponses(object):
         [9] = command 1
         [10] = command 2
         """
+        l_mqtt = False
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         l_device_obj.BrightnessPct = '?'
         if l_device_obj.DeviceType == 2:  # HVAC Type
-            DecodeHvac().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            DecodeHvac().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         if l_device_obj.DeviceType == 3:  # Security Type
-            DecodeSecurity().decode_50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            DecodeSecurity().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
@@ -190,8 +191,7 @@ class DecodeResponses(object):
                 l_device_obj.BrightnessPct = 0
                 l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
-                l_level = int(((l_cmd2 + 2) * 100) / 256)
-                l_device_obj.BrightnessPct = l_level
+                l_device_obj.BrightnessPct = l_level = utilDecode.decode_light_brightness(l_cmd2)
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
             elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x01:
                 l_debug_msg += ' Device-Set-Button-Pressed '
@@ -199,13 +199,16 @@ class DecodeResponses(object):
                 l_debug_msg += ' Controller-Set-Button-Pressed '
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(FormatBytes(l_message))
+                l_device_obj.BrightnessPct = utilDecode.decode_light_brightness(l_cmd2)
+                l_mqtt = True
         except AttributeError as e_err:
-            LOG.error('ERROR decoding 50 record {}'.format(e_err))
+            LOG.error('ERROR decoding 0x50 record {}'.format(e_err))
 
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status', l_device_obj)  #  /lig
+        if l_mqtt:
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status/debug', l_device_obj)  #  /lig
         return
 
     def _decode_51(self, p_controller_obj):
@@ -285,9 +288,9 @@ class DecodeResponses(object):
             p_controller_obj.Ret = False
         return
 
-    def _decode_61_record(self, p_controller_obj):
-        """Get Insteon Modem Info (6 bytes).
-        See p 254 of developers guide.
+    def _decode_0x61_record(self, p_controller_obj):
+        """ Get response to - Send All-Link command (6 bytes).
+        See p 241(254) of 2009 developers guide.
         """
         l_message = p_controller_obj._Message
         l_grp = l_message[2]
@@ -302,7 +305,7 @@ class DecodeResponses(object):
             p_controller_obj.Ret = False
         return
 
-    def _decode_62_record(self, p_controller_obj):
+    def _decode_0x62_record(self, p_controller_obj):
         """Get response to Send Insteon standard-length message (9 bytes).
         Basically, a response to the 62 command.
         See p 230(243) of 2009 developers guide.

@@ -62,7 +62,7 @@ See those modules to find out what each does.
         Save house info for 'new' house.
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-07-22'
 __version_info__ = (18, 2, 11)
 __version__ = '.'.join(map(str, __version_info__))
 
