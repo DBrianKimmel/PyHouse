@@ -25,7 +25,9 @@ See: pioneer/__init__.py for documentation.
 
 from Modules.Core.Utilities.convert import long_to_str
 
-__updated__ = '2018-07-16'
+__updated__ = '2018-07-24'
+__version_info__ = (18, 7, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -141,7 +143,7 @@ class XML(object):
             l_dict[l_count] = XML._read_one(l_dev_xml)
             LOG.info('Loaded Pioneer device {}'.format(l_dict[l_count].Name))
             l_count += 1
-        LOG.info('Loaded {} Pioneer Devices.'.format(l_count))
+        # LOG.info('Loaded {} Pioneer Device(s).'.format(l_count))
         return l_dict, l_count
 
     @staticmethod
@@ -174,9 +176,14 @@ class PioneerProtocol(StatefulTelnetProtocol, Commands):
     """
 
     def dataReceived(self, p_data):
+        """ This seems to be a line received function
+        """
         Protocol.dataReceived(self, p_data)
         self.setLineMode()
-        LOG.info('Data Received.\n\tData:{}'.format(p_data))
+        l_data = p_data[:-2]
+        if l_data == b'R':
+            return
+        LOG.info('Data Received.\n\tData:{}'.format(l_data))
 
     def lineReceived(self, p_line):
         StatefulTelnetProtocol.lineReceived(self, p_line)
@@ -192,6 +199,7 @@ class PioneerProtocol(StatefulTelnetProtocol, Commands):
         self.send_command(b'?M\r\n')
         self.send_command(b'?V\r\n')
         self.send_command(b'?F\r\n')
+        self.send_command(b'01FN\r\n')
 
     def connectionLost(self, reason=ConnectionDone):
         Protocol.connectionLost(self, reason=reason)
@@ -258,7 +266,7 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized")
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for all Pioneer devices.
@@ -266,7 +274,7 @@ class API(object):
         p_pyhouse_obj.House.Entertainment.Pioneer = PioneerData()  # Clear before loading
         l_pioneer_obj, l_count = XML().read_all(p_pyhouse_obj)
         p_pyhouse_obj.House.Entertainment.Pioneer = l_pioneer_obj
-        LOG.info("Loaded {} XML".format(l_count))
+        LOG.info("Loaded {} Pioneer Device(s).".format(l_count))
         return l_pioneer_obj
 
     def Start(self):

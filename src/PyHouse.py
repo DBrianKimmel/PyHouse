@@ -60,9 +60,29 @@ See those modules to find out what each does.
         Add interfaces, move interface code out of controllers
         Setup to allow house add rooms lights etc
         Save house info for 'new' house.
+
+Idea Links:
+  https://github.com/TheThingSystem/home-controller forked from automategreen/home-controller
+  https://github.com/zonyl/pytomation
+  https://github.com/king-dopey/pytomation forked from zonyl/pytomation
+  http://leftovercode.info/smartlinc.php
+  http://misterhouse.sourceforge.net/lib/Insteon/AllLinkDatabase.html
+  https://github.com/hollie/misterhouse/
+
+
+    SmartHome Wiki: Using Custom Commands in SmartLinc
+    SmartHome Forum: SmartLinc Direct Command for Light Status?
+    SmartHome Forum: Custom Screens on the SmartLinc
+    SmartHome Wiki: Insteon Command Table
+    Smarthome Forum: SmartLinc web automation solved
+    SmartHome Forum: 2412N Insteon Central Controller - Software
+    Ramp Rate
+    Insteon Commands
+
+
 """
 
-__updated__ = '2018-07-22'
+__updated__ = '2018-07-24'
 __version_info__ = (18, 2, 11)
 __version__ = '.'.join(map(str, __version_info__))
 

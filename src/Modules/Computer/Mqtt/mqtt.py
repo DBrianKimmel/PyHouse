@@ -11,11 +11,12 @@
 
 """
 
-__updated__ = '2018-07-13'
+__updated__ = '2018-07-23'
 
 #  Import system type stuff
 import copy
 import datetime
+import traceback
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
@@ -115,9 +116,23 @@ class API(object):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                # LOG.info('Mqtt published:\tTopic:{}'.format(p_topic))
+                LOG.info('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
+
+        """
+            try:
+                raise ValueError
+            except Exception as e_err:
+                l_stack = traceback.extract_stack()[:-3] + traceback.extract_tb(e_err.__traceback__)  # add limit=??
+                l_pretty = traceback.format_list(l_stack)
+                l_tb = ''.join(l_pretty) + '\n  {} {}'.format(e_err.__class__, e_err)
+            else:
+                l_tb = "No error"
+            finally:
+                LOG.exception(l_tb)
+                print(l_tb)
+        """
 
     def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.

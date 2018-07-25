@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-07-22'
+__updated__ = '2018-07-24'
 
 #  Import system type stuff
 
@@ -57,7 +57,7 @@ class DecodeResponses(object):
         """Decode a message that was ACKed / NAked.
         see Insteon Developers Manual pages 238-241
 
-        Since a controller response may contain multiple messages and the last message may not be complete.
+        A controller response may contain multiple messages and the last message may not be complete.
         This should be invoked every time we pick up more messages from the controller.
         It should loop and decode each message present and leave when done
 
@@ -109,25 +109,25 @@ class DecodeResponses(object):
             LOG.warning("Found a '0' record ->{}.".format(FormatBytes(l_message)))
             return l_ret
         elif l_cmd == 0x50: l_ret = self._decode_0x50(p_controller_obj)
-        elif l_cmd == 0x51: l_ret = self._decode_51(p_controller_obj)
-        elif l_cmd == 0x52: l_ret = self._decode_52_record(p_controller_obj)
-        elif l_cmd == 0x53: linkDecode.decode_53(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x54: linkDecode.decode_54(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x55: linkDecode.decode_55(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x56: linkDecode.decode_56(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x51: l_ret = self._decode_0x51(p_controller_obj)
+        elif l_cmd == 0x52: l_ret = self._decode_0x52_record(p_controller_obj)
+        elif l_cmd == 0x53: linkDecode.decode_0x53(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x54: linkDecode.decode_0x54(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x55: linkDecode.decode_0x55(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x56: linkDecode.decode_0x56(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x57: linkDecode.decode_0x57(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x58: linkDecode.decode_58(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x60: l_ret = self._decode_60_record(p_controller_obj)
+        elif l_cmd == 0x58: linkDecode.decode_0x58(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x60: l_ret = self._decode_0x60_record(p_controller_obj)
         elif l_cmd == 0x61: l_ret = self._decode_0x61_record(p_controller_obj)
         elif l_cmd == 0x62: l_ret = self._decode_0x62_record(p_controller_obj)
-        elif l_cmd == 0x64: linkDecode.decode_64(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x65: linkDecode.decode_65(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x64: linkDecode.decode_0x64(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x65: linkDecode.decode_0x65(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x69: linkDecode.decode_0x69(p_pyhouse_obj, p_controller_obj)
         elif l_cmd == 0x6A: linkDecode.decode_0x6A(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x6B: l_ret = self._decode_6B_record(p_controller_obj)
-        elif l_cmd == 0x6C: linkDecode.decode_6C(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x6F: l_ret = self._decode_6F_record(p_controller_obj)
-        elif l_cmd == 0x73: l_ret = self._decode_73_record(p_controller_obj)
+        elif l_cmd == 0x6B: l_ret = self._decode_0x6B_record(p_controller_obj)
+        elif l_cmd == 0x6C: linkDecode.decode_0x6C(p_pyhouse_obj, p_controller_obj)
+        elif l_cmd == 0x6F: l_ret = self._decode_0x6F_record(p_controller_obj)
+        elif l_cmd == 0x73: l_ret = self._decode_0x73_record(p_controller_obj)
         else:
             LOG.error("Unknown message {}, Cmd:{}".format(FormatBytes(p_controller_obj._Message), l_cmd))
             # self.check_for_more_decoding(p_controller_obj, l_ret)
@@ -180,15 +180,17 @@ class DecodeResponses(object):
                 l_debug_msg += 'CleanupSuccess with {} failures; '.format(l_cmd2)
             elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
                 l_device_obj.EngineVersion = l_cmd2
-                l_debug_msg += 'Engine-version:"{}"; '.format(l_cmd2)
+                l_debug_msg += 'Engine-version:"{}(i-{})"; '.format(l_cmd2, l_cmd2 + 1)
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
                 l_device_obj.FirmwareVersion = l_cmd2
                 l_debug_msg += 'Request-ID:"{}"; '.format(l_device_obj.FirmwareVersion)
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.BrightnessPct = 100
+                l_mqtt = True
                 l_debug_msg += 'Turn ON; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
                 l_device_obj.BrightnessPct = 0
+                l_mqtt = True
                 l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
                 l_device_obj.BrightnessPct = l_level = utilDecode.decode_light_brightness(l_cmd2)
@@ -211,7 +213,7 @@ class DecodeResponses(object):
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status/debug', l_device_obj)  #  /lig
         return
 
-    def _decode_51(self, p_controller_obj):
+    def _decode_0x51(self, p_controller_obj):
         """ Insteon Extended Message Received (25 bytes).
         See p 234(247) of 2009 developers guide.
         """
@@ -234,7 +236,7 @@ class DecodeResponses(object):
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj_from)
         return
 
-    def _decode_52_record(self, p_controller_obj):
+    def _decode_0x52_record(self, p_controller_obj):
         """Insteon X-10 message received (4 bytes).
         See p 240(253) of 2009 developers guide.
         [0] = x02
@@ -270,7 +272,7 @@ class DecodeResponses(object):
             l_command = X10_COMMAND[l_key]
         LOG.info("X10 Message - House:{} {}, Command:{}".format(l_house, l_unit, l_command))
 
-    def _decode_60_record(self, p_controller_obj):
+    def _decode_0x60_record(self, p_controller_obj):
         """Get Insteon Modem Info (9 bytes).
         See p 273 of developers guide.
         """
@@ -344,7 +346,7 @@ class DecodeResponses(object):
             LOG.info("Got ACK(62); {}".format(l_debug_msg))
         return
 
-    def _decode_67_record(self, p_controller_obj):
+    def _decode_0x67_record(self, p_controller_obj):
         """Reset IM ACK response (3 bytes).
         See p 258 of developers guide.
         """
@@ -354,7 +356,7 @@ class DecodeResponses(object):
         LOG.info("{}".format(l_debug_msg))
         return
 
-    def _decode_6B_record(self, p_controller_obj):
+    def _decode_0x6B_record(self, p_controller_obj):
         """Get set IM configuration (4 bytes).
         See p 258(271) of 2009 developers guide.
         [0] = x02
@@ -374,7 +376,7 @@ class DecodeResponses(object):
             p_controller_obj.Ret = False
         return
 
-    def _decode_6F_record(self, p_controller_obj):
+    def _decode_0x6F_record(self, p_controller_obj):
         """All-Link manage Record Response (12 bytes).
         See p 252(265) of 2009 developers guide.
 
@@ -410,8 +412,8 @@ class DecodeResponses(object):
         p_controller_obj.Ret = True
         return
 
-    def _decode_73_record(self, p_controller_obj):
-        """Get the PLM response of 'get config' (6 bytes).
+    def _decode_0x73_record(self, p_controller_obj):
+        """ Get the PLM response of 'get config' (6 bytes).
         See p 257(270) of the 2009 developers guide.
         [0] = x02
         [1] = IM Control Flag
@@ -424,7 +426,7 @@ class DecodeResponses(object):
         l_spare1 = l_message[3]
         l_spare2 = l_message[4]
         l_ack = utilDecode.get_ack_nak(l_message[5])
-        LOG.info("== 73 Get IM configuration Flags={:#x}, Spare 1={:#x}, Spare 2={:#x} {} ".format(
+        LOG.info("== 0x73 Get IM configuration Flags={:#x}, Spare 1={:#x}, Spare 2={:#x} {} ".format(
                     l_flags, l_spare1, l_spare2, l_ack))
         return
 

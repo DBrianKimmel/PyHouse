@@ -15,10 +15,14 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-
-__updated__ = '2018-03-26'
-__version_info__ = (18, 2, 0)
+__updated__ = '2018-07-24'
+__version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
+
+#  Import system type stuff
+
+#  Import PyMh files
+from Modules.Core.state import State
 
 
 class PyHouseData(object):
@@ -57,7 +61,8 @@ class PyHouseAPIs(object):
 
 
 class BaseObject(object):
-    """
+    """ This is the base object.
+    It is part of every entry in the PyHouse database.
     This data for non device data.
     Do not use this object, derive objects from it.
     """
@@ -67,6 +72,7 @@ class BaseObject(object):
         self.Key = 0
         self.Active = False
         self.Comment = ''
+        self.LastUpdate = None
 
 
 class CommunicationAPIs(object):
@@ -389,13 +395,12 @@ class XmlInformation(object):
 
 
 class BaseUUIDObject(BaseObject):
-    """
+    """ Takes a base object and adds a Unique ID to it.
     """
 
     def __init__(self):
         super(BaseUUIDObject, self).__init__()
         self.UUID = None
-
 
 """
 BaseObject dependent.
@@ -443,7 +448,6 @@ class JsonHouseData(BaseObject):
         self.Rooms = {}
         self.Schedules = {}
         # self.Thermostats = {}
-
 
 """
 BaseUUIDObject dependent.
@@ -538,7 +542,7 @@ class NodeData(BaseUUIDObject):
         self.ConnectionAddr_IPv6 = None
         self.ControllerTypes = []  # A list of controller types attached to this node
         self.ControllerCount = 0  # Number of USB controllers attached
-        self.LastUpdate = None
+        # self.LastUpdate = None
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
@@ -570,7 +574,7 @@ class RoomData(BaseUUIDObject):
         super(RoomData, self).__init__()
         self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
-        self.LastUpdate = None
+        # self.LastUpdate = None
         self.Size = ''  # CoordinateData()
         self.RoomType = 'Room'
         self._AddFlag = False
@@ -619,7 +623,6 @@ class SensorData(BaseUUIDObject):
         super(SensorData, self).__init__()
         self.Sensor = None
 
-
 """
 ScheduleBaseData dependent
 """
@@ -652,7 +655,6 @@ class ScheduleLightData(ScheduleBaseData):
         self.RoomUUID = None
         self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
-
 """
 DeviceData dependent.
 """
@@ -683,7 +685,6 @@ class ThermostatData(DeviceData):
         self.ThermostatScale = 'F'  # F | C
         self.ThermostatStatus = 'Off'  # On
         self.UUID = None
-
 
 """
 CoreLightingData dependent.
@@ -733,12 +734,18 @@ class GarageDoorData(CoreLightingData):
 class LightData(CoreLightingData):
     """ This is the light info.
 
-    ==> PyHouse.House.Lighting.Lightss.xxx as in the def below
+    ==> PyHouse.House.Lighting.Lights.xxx as in the def below
     """
 
     def __init__(self):
         super(LightData, self).__init__()
         self.BrightnessPct = 0  # 0% to 100%
+        self.Hue = 0  # 0 to 65535
+        self.Saturation = 0  # 0 to 255
+        self.ColorTemperature = 0  # degrees Kelvin - 0 is not supported
+        self.RGB = 0xffffff
+        self.TransitionTime = 0  # time to turn on or off (fade time)
+        self.State = State.UNKNOWN
         self.IsDimmable = False
 
 

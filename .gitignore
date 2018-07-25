@@ -19,6 +19,7 @@ admin/config/*.xml
 build/
 dist/
 html/
+*/Ideas/
 latex/
 .settings/
 
