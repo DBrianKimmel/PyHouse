@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-07-22'
+__updated__ = '2018-08-03'
 
 #  Import system type stuff
 
@@ -28,12 +28,15 @@ class Actions(object):
     """
     """
 
+    m_disp_computer = None
+    m_disp_entertainment = None
     m_myname = 'Not Initialized.'
     m_pyhouse_obj = PyHouseData()
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_myname = p_pyhouse_obj.Computer.Name
+        self.m_disp_entertainment = entertainmentMqtt(p_pyhouse_obj)
 
     def _get_field(self, p_message, p_field):
         """ Get the given field from a JSON message.
@@ -116,7 +119,7 @@ class Actions(object):
         if p_topic[0] == 'computer':
             l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
-            l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
+            l_logmsg += self.m_disp_entertainment.decode(p_topic, p_message)
         elif p_topic[0] == 'hvac':
             l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
         elif p_topic[0] == 'house':

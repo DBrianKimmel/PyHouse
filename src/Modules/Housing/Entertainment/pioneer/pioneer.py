@@ -25,7 +25,7 @@ See: pioneer/__init__.py for documentation.
 
 from Modules.Core.Utilities.convert import long_to_str
 
-__updated__ = '2018-07-24'
+__updated__ = '2018-08-02'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -60,7 +60,7 @@ VSX822K = {
     }
 
 
-class PioneerData(object):
+class PioneerData:
 
     def __init__(self):
         self.DeviceCount = 0

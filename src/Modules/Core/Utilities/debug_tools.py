@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-07-13'
+__updated__ = '2018-08-02'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -282,11 +282,15 @@ class PrettyFormatAny(object):
     def _format_dict(p_dict, maxlen, indent):
         l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
+        # l_tabbedwidths = [indent, maxlen - 30]
         for l_key, l_val in p_dict.items():
             if isinstance(l_val, dict):
-                l_ret += '_d_' + _format_cols(('\t', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
+                # l_ret += '_d_' + _format_cols(('\t', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
+                l_ret += ' ' + _format_cols(('> ', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
             else:
-                l_ret += '_' + _format_cols(('\t', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
+                # l_ret += '_ _' + _format_cols(('\t', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
+                # l_ret += '_'   + _format_cols((str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
+                l_ret += ' ' + _format_cols(('. ', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod

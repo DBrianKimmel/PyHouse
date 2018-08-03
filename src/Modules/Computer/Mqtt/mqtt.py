@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2018-07-23'
+__updated__ = '2018-08-03'
 
 #  Import system type stuff
 import copy
 import datetime
-import traceback
+# import traceback
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
@@ -27,7 +27,7 @@ from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
-from Modules.Core.Utilities.debug_tools import FormatBytes
+# from Modules.Core.Utilities.debug_tools import FormatBytes
 
 
 def _make_topic(p_pyhouse_obj, p_topic):
@@ -57,6 +57,8 @@ def _make_message(p_pyhouse_obj, p_message=None):
 class API(object):
     """This interfaces to all of PyHouse.
     """
+
+    m_actions = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -88,7 +90,7 @@ class API(object):
         """
         """
         LOG.info("Start")
-        pass
+        self.m_actions = Actions(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt.Brokers)
@@ -139,13 +141,13 @@ class API(object):
 
         --> pyhouse/housename/topic02/topic03/topic04/...
 
-        TODO: This needs protection from poorly formed Mqtt messages.
         @param p_topic: is a string of the topic 'pyhouse/housename/light/status/schedule/...
         @param p_message: is the JSON encoded string with all the data of the message
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = p_message
-        l_logmsg = Actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_message)
+        # l_logmsg = Actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_message)
+        l_logmsg = self.m_actions.mqtt_dispatch(l_topic, l_message)
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

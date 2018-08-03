@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Entertainment component access module.
@@ -12,7 +12,7 @@ Start up entertainment systems.
 
 """
 
-__updated__ = '2018-07-16'
+__updated__ = '2018-08-03'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,9 +20,10 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
 from Modules.Housing.Entertainment.onkyo.onkyo import API as onkyoApi
+from Modules.Housing.Entertainment.pandora.pandora import MqttActions as pandoraMqtt
 from Modules.Housing.Entertainment.pioneer.pioneer import API as pioneerApi
 from Modules.Housing.Entertainment.samsung.samsung import API as samsungApi
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
 
@@ -33,7 +34,7 @@ VALID_ENTERTAINMENT_MFGRS = [
     ]
 
 
-class Utility(object):
+class Utility:
 
     def get_all_entertainment_slots(self):
         """
@@ -42,7 +43,7 @@ class Utility(object):
         return self.Entertainment_Data
 
 
-class MqttActions(object):
+class MqttActions:
     """
     """
 
@@ -56,29 +57,6 @@ class MqttActions(object):
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
         return l_ret
 
-    def _decode_pandora(self, p_topic, p_message):
-        """
-        ==> pyhouse/<house name>/entertainment/pandora/<action>/...
-        where <action> is:
-            start
-            stop
-            louder
-            softer
-            hate
-            like
-        """
-        l_name = self._get_field(p_message, 'Name')
-        l_logmsg = '\tPandora:\n'
-        l_logmsg += '\tName: {}\n'.format(l_name)
-
-        if p_topic[2] == 'start':
-            l_logmsg += self._decode_pandora(p_topic, p_message)
-        elif p_topic[2] == 'stop':
-            l_logmsg += self._decode_pandora(p_topic, p_message)
-        else:
-            l_logmsg += self._decode_pandora(p_topic, p_message)
-        pass
-
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/entertainment/<device>/<name>/...
@@ -89,7 +67,7 @@ class MqttActions(object):
         """
         l_logmsg = '\tEntertainment:\n'
         if p_topic[1] == 'pandora':
-            l_logmsg += self._decode_pandora(p_topic, p_message)
+            l_logmsg += pandoraMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
         elif p_topic[1] == 'add':
             l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         elif p_topic[1] == 'delete':
@@ -99,7 +77,7 @@ class MqttActions(object):
         elif p_topic[1] == 'update':
             l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         else:
-            l_logmsg += '\tUnknown sub-topic {} {}'.format(p_topic[1], p_message)
+            l_logmsg += '\tUnknown entertainment sub-topic {} {}'.format(p_topic[1], p_message)
         return l_logmsg
 
 
@@ -131,6 +109,7 @@ class API(Utility):
         LOG.info("Initializing.")
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_onkyo = onkyoApi(p_pyhouse_obj)
+        self.m_pandora = pandoraMqtt(p_pyhouse_obj)
         self.m_pioneer = pioneerApi(p_pyhouse_obj)
         self.m_samsung = samsungApi(p_pyhouse_obj)
         LOG.info("Initialized.")

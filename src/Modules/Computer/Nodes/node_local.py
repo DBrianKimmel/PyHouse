@@ -21,12 +21,11 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2018-03-07'
+__updated__ = '2018-08-02'
 
 #  Import system type stuff
 from datetime import datetime
 import fnmatch  # Filename matching with shell patterns
-# sudo pip3 install netifaces
 import netifaces  # has gateways(), ifaddresses(). interfaces()
 from netifaces import *
 import os
@@ -55,7 +54,8 @@ NODE_PIFACECAD = 0x0008  #
 NODE_V6ROUTER = 0x0010  # Iv6 Router node
 NODE_WINDOWS = 0x0020  # Windows - not Linux
 NODE_TUNNEL = 0x0040  # IPv6 Tunnel
-NODE_IR = 0x0080  # Infra-red receiver and optional transmitter
+NODE_IR = 0x0080  # Infrared receiver and optional transmitter
+NODE_MQTT_BROKER = 0x0100
 
 
 class Devices(object):
@@ -72,11 +72,11 @@ class Devices(object):
         return l_ret
 
     def _find_controllers(self):
-        """ Find out what controllers are attacvhed to this node.
+        """ Find out what controllers are attached to this node.
         """
         l_ret = ''
         l_context = pyudev.Context()
-        for l_dev in l_context.list_devices(subsystem = 'tty'):
+        for l_dev in l_context.list_devices(subsystem='tty'):
             if 'ID_VENDOR' not in l_dev:
                 continue
             # if l_dev.subsystem == None:

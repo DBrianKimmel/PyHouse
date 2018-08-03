@@ -4,7 +4,7 @@
 @name: PyHouse/src/Modules/entertain/pandora.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: (c)2014-2017 by D. Brian Kimmel
+@copyright: (c)2014-2018 by D. Brian Kimmel
 @note: Created on Feb 27, 2014
 @license: MIT License
 @summary: Controls pandora playback thru pianobar.
@@ -20,21 +20,71 @@ Further IR signals control the pianobar process as needed, volume, next station 
 
 When the remotes switches to another device (TV, BluRay, Tuner etc.), pianobar is terminated and
 this module goes back to its initial state ready for another session.
-"""
 
-__updated__ = '2017-04-26'
+Now (2018) will also work with MQTT messages to control Pandora via PioanBar and PatioBar.
+"""
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+__updated__ = '2018-08-03'
 
 # Import system type stuff
 from twisted.internet import protocol
 
+#  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.Pandora     ')
 
-PB_LOC = '/usr/bin/pianobar'
+PIANOBAR_LOC = '/usr/bin/pianobar'
 
 #  (i) Control fifo at /home/briank/.config/pianobar/ctl opened
+
+
+class MqttActions:
+    """
+    """
+
+    m_transport = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _get_field(self, p_message, p_field):
+        try:
+            l_ret = p_message[p_field]
+        except KeyError:
+            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+        return l_ret
+
+    def _decode_control(self, p_topic, p_message):
+        """ Decode the message.
+        As a side effect - control Pandora ( PianoBar ) via the control socket
+        """
+        l_logmsg = '\tControl: '
+        l_control = self._get_field(p_message, 'Control')
+        if l_control == 'On':
+            l_logmsg += ' Turn On '
+            API.Start(self.m_pyhouse_obj)
+        elif l_control == 'Off':
+            l_logmsg += ' Turn Off '
+            API.Stop()
+        elif l_control == 'VolUp1':
+            l_logmsg += ' Volume Up 1 '
+        else:
+            l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
+        return l_logmsg
+
+    def decode(self, p_topic, p_message):
+        """ Decode the Mqtt message
+        ==> pyhouse/<house name>/hvac/<type>/<Name>/...
+        <type> = thermostat, ...
+        """
+        l_logmsg = ''
+        if p_topic[2] == 'control':
+            l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
+        else:
+            l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
+        return l_logmsg
 
 
 class PianobarControlProtocol(protocol.Protocol):
@@ -58,17 +108,17 @@ class BarProcessControl(protocol.ProcessProtocol):
         #        The line is a timestamp - every second
         (i)      This is an information message - Login, new playlist, etc.
         """
-        l_data = p_data.rstrip('\r\n')
-        l_data = l_data.lstrip(' \t')
+        l_data = p_data.rstrip(b'\r\n')
+        l_data = l_data.lstrip(b' \t')
         if l_data[0] == chr(0x1B):
             l_data = l_data[2:]
         if l_data[1] == 'K':  # <ESC>[nK = erase something
             l_data = l_data[2:]
-        if l_data[0] == '#'or l_data.startswith('(i)'):
+        if l_data[0] == '#'or l_data.startswith(b'(i)'):
             return
-        if l_data.startswith('Welcome to pianobar') or l_data.startswith('Press ? for') or l_data.startswith('Ok.'):
+        if l_data.startswith(b'Welcome to pianobar') or l_data.startswith(b'Press ? for') or l_data.startswith(b'Ok.'):
             return
-        if l_data.startswith('|>'):  # This is selection information
+        if l_data.startswith(b'|>'):  # This is selection information
             LOG.info("Info = {}".format(l_data))
             return
         LOG.debug("Data = {}".format(l_data))
@@ -77,12 +127,13 @@ class BarProcessControl(protocol.ProcessProtocol):
         LOG.warning("StdErr received - {}".format(p_data))
 
 
-class API(object):
+class API(MqttActions):
 
     m_started = False
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
         self.m_started = None
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
 
     def Start(self, p_pyhouse_obj):

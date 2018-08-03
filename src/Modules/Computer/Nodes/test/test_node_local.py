@@ -10,13 +10,14 @@
 Passed all 24 tests - DBK - 2018-02-12
 
 """
-import netifaces
 
-__updated__ = '2018-03-07'
+__updated__ = '2018-08-02'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+import netifaces
+from netifaces import *
 
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
@@ -28,7 +29,16 @@ from Modules.Computer.Nodes.node_local import \
     API as localApi, \
     Devices as localDevices, \
     Util as localUtil
+from Modules.Computer.Nodes.test.xml_nodes import \
+    XML_NODES, \
+    TESTING_NODE_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+""" The following definitions are fake in order to keep eclipse errors from coming up on the netifaces module.
+This is cosmetic - the code runs but eclipse does not find the definitions.
+"""
+L_INET = 2
+L_INET6 = 10
 
 
 class SetupMixin(object):
@@ -78,6 +88,23 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_NODES
+        # print('A2-01-A - Raw', l_raw)
+        self.assertEqual(l_raw[:13], '<NodeSection>')
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_NODES)
+        # print('A2-02-A - Parsed', l_xml)
+        self.assertEqual(l_xml.tag, TESTING_NODE_SECTION)
+
+
+class A3_Xml(SetupMixin, unittest.TestCase):
     """
     This section tests the setup of the test
     """
@@ -89,12 +116,12 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Nodes(self):
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
-        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - Nodes Xml'))
+        # print(PrettyFormatAny.form(l_xml, 'A3-01-A - Nodes Xml'))
         self.assertEqual(len(l_xml), 2)
 
     def test_02_Nodes(self):
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A2-02-A - PyHouse Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A3-02-A - PyHouse Computer'))
         self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
@@ -156,7 +183,7 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
         """
         l_gate = Interfaces._list_gateways()
         # print(PrettyFormatAny.form(l_gate, 'B1-02-A - Gateways', 100))
-        l_v4 = l_gate[netifaces.AF_INET]  # 2 = AF_INET
+        l_v4 = l_gate[L_INET]  # 2 = AF_INET
         # print(PrettyFormatAny.form(l_v4, 'B1-02-B - Gateways', 100))
         # self.assertEqual(l_v4[0][0], '192.168.1.1')
 
@@ -213,17 +240,17 @@ class B2_Iface(SetupMixin, unittest.TestCase):
     def test_02_AddrFamilyName(self):
         """
         We are interested in:
-            IPv4 (AF_INET)
-            IPv6 (AF_INET6)
+            IPv4 (AF_INET)     = IPv4
+            IPv6 (AF_INET6)    = IPv6
             MAC  (AF_LINK)
         """
         # l_ret = Interfaces._find_addr_family_name(17)
         # print(PrettyFormatAny.form(l_ret, 'B1-02 A  Address Lists'))
         # self.assertEqual(l_ret, 'AF_PACKET')
-        l_ret = Interfaces._find_addr_family_name(netifaces.AF_INET)
+        l_ret = Interfaces._find_addr_family_name(L_INET)
         # print(PrettyFormatAny.form(l_ret, 'B1-02 B Address Lists'))
         self.assertEqual(l_ret, 'AF_INET')
-        l_ret = Interfaces._find_addr_family_name(netifaces.AF_INET6)
+        l_ret = Interfaces._find_addr_family_name(L_INET6)
         # print(PrettyFormatAny.form(l_ret, 'B1-02 C Address Lists'))
         self.assertEqual(l_ret, 'AF_INET6')
 
@@ -235,26 +262,29 @@ class B2_Iface(SetupMixin, unittest.TestCase):
         l_names = Interfaces._find_all_interface_names()
         #  On my laptop: returns 7 interfaces.
         # print(PrettyFormatAny.form(l_names, 'B2-03-A - Address Lists'))
-        _l_ret = Interfaces._find_addr_lists(l_names[0])
-        # print(PrettyFormatAny.form(_l_ret, 'B2-03-B - Address Lists'))
-        _l_ret = Interfaces._find_addr_lists(l_names[1])
-        # print(PrettyFormatAny.form(_l_ret, 'B2-03-C - Address Lists'))
-        _l_ret = Interfaces._find_addr_lists(l_names[2])
-        # print(PrettyFormatAny.form(_l_ret, 'B2-03-D - Address Lists'))
+        _l_lo = Interfaces._find_addr_lists(l_names[0])
+        # print(PrettyFormatAny.form(_l_lo, 'B2-03-B - lo Address Lists'))
+        _l_eno1 = Interfaces._find_addr_lists(l_names[1])
+        # print(PrettyFormatAny.form(_l_eno1, 'B2-03-C - eno1 Address Lists'))
+        _l_wlo1 = Interfaces._find_addr_lists(l_names[2])
+        # print(PrettyFormatAny.form(_l_wlo1, 'B2-03-D - wlo1 Address Lists'))
 
     def test_04_AddrListInet(self):
         pass
 
-    def test_04_OneInterfaces(self):
+    def test_05_OneInterfaces(self):
         l_names = Interfaces._find_all_interface_names()
-        _l_node = Interfaces._get_one_interface(l_names[1])
-        # print(PrettyFormatAny.form(l_node, 'Node Interfaces'))
+        # print(PrettyFormatAny.form(l_names, 'B2-05-A - Interface Names'))
+        l_node = Interfaces._get_one_interface(l_names[2])
+        # print(PrettyFormatAny.form(l_node[0], 'B2-05-B - Node Interfaces'))
+        self.assertEqual(l_node[0].Name, 'wlo1')
 
-    def test_05_AllInterfaces(self):
+    def test_06_AllInterfaces(self):
         l_node = NodeData()
         l_if, _l_v4, _l_v6 = Interfaces._get_all_interfaces()
         l_node.NodeInterfaces = l_if
-        # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'B2-05-A - Node Interfaces'))
+        # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'B2-06-A - Node Interfaces'))
+        # print(PrettyFormatAny.form(l_node.NodeInterfaces[2], 'B2-06-A - Node Interfaces'))
 
 
 class B3_Node(SetupMixin, unittest.TestCase):
@@ -307,8 +337,9 @@ class D1_Devices(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_1_lsusb(self):
-        _l_usb = localDevices()._lsusb()
-        # print(l_usb, 'D1_1_A - PyHouse Computer')
+        l_usb = localDevices()._lsusb()
+        # l_lines = l_usb.split('\n')
+        print(PrettyFormatAny.form(l_usb, 'D1_1_A - PyHouse Computer'))
 
     def test_2_find(self):
         """Find all controllers
