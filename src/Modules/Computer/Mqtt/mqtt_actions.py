@@ -24,7 +24,7 @@ from Modules.Housing.Security.security import MqttActions as securityMqtt
 LOG = Logger.getLogger('PyHouse.Mqtt_Actions   ')
 
 
-class Actions(object):
+class Actions:
     """
     """
 

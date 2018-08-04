@@ -47,6 +47,8 @@ class MqttActions:
     """
     """
 
+    m_pandora = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
@@ -65,9 +67,13 @@ class MqttActions:
         These messages probably come from some external source such as node-red or alexa.
 
         """
+        if self.m_pandora == None:
+            self.m_pandora = pandoraMqtt(self.m_pyhouse_obj)
+            LOG.debug('Setting up Pandora mqtt')
+
         l_logmsg = '\tEntertainment:\n'
         if p_topic[1] == 'pandora':
-            l_logmsg += pandoraMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
+            l_logmsg += self.m_pandora.decode(p_topic, p_message)
         elif p_topic[1] == 'add':
             l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
         elif p_topic[1] == 'delete':

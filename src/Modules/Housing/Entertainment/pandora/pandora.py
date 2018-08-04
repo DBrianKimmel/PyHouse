@@ -23,7 +23,6 @@ this module goes back to its initial state ready for another session.
 
 Now (2018) will also work with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 __updated__ = '2018-08-03'
 
@@ -32,6 +31,8 @@ from twisted.internet import protocol
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Pandora     ')
 
@@ -44,6 +45,7 @@ class MqttActions:
     """
     """
 
+    m_API = None
     m_transport = None
 
     def __init__(self, p_pyhouse_obj):
@@ -64,10 +66,11 @@ class MqttActions:
         l_control = self._get_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
-            API.Start(self.m_pyhouse_obj)
+            self.m_API.Start()
         elif l_control == 'Off':
             l_logmsg += ' Turn Off '
-            API.Stop()
+            self.m_API.Stop()
+
         elif l_control == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
         else:
@@ -79,6 +82,10 @@ class MqttActions:
         ==> pyhouse/<house name>/hvac/<type>/<Name>/...
         <type> = thermostat, ...
         """
+        if self.m_API == None:
+            LOG.debug('Decoding initializing')
+            self.m_API = API(self.m_pyhouse_obj)
+
         l_logmsg = ''
         if p_topic[2] == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
@@ -108,13 +115,19 @@ class BarProcessControl(protocol.ProcessProtocol):
         #        The line is a timestamp - every second
         (i)      This is an information message - Login, new playlist, etc.
         """
+        LOG.debug('PB Data {}\n{}'.format(p_data, FormatBytes(p_data)))
         l_data = p_data.rstrip(b'\r\n')
         l_data = l_data.lstrip(b' \t')
+        if l_data[0] == b'q':
+            LOG.debug('Quitting')
+            return
+        # <ESC>[
         if l_data[0] == chr(0x1B):
             l_data = l_data[2:]
-        if l_data[1] == 'K':  # <ESC>[nK = erase something
+
+        if l_data[1] == b'K':  # <ESC>[nK = erase something
             l_data = l_data[2:]
-        if l_data[0] == '#'or l_data.startswith(b'(i)'):
+        if l_data[0] == b'#' or l_data.startswith(b'(i)'):
             return
         if l_data.startswith(b'Welcome to pianobar') or l_data.startswith(b'Press ? for') or l_data.startswith(b'Ok.'):
             return
@@ -136,7 +149,7 @@ class API(MqttActions):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
 
-    def Start(self, p_pyhouse_obj):
+    def Start(self):
         """Start the Pandora player when we receive an IR signal to play music.
         This will open the socket for control
         """
@@ -147,7 +160,7 @@ class API(MqttActions):
             l_executable = '/usr/bin/pianobar'
             l_args = ('pianobar',)
             l_env = None  # this will pass <os.environ>
-            self.m_transport = p_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+            self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
             self.m_started = True
         LOG.info("Started.")
 
@@ -155,7 +168,7 @@ class API(MqttActions):
         """Stop the Pandora player when we receive an IR signal to play some other thing.
         """
         self.m_started = False
-        self.m_transport.write('q')
+        self.m_transport.write(b'q')
         self.m_transport.closeStdin()
         LOG.info("Stopped.")
 
