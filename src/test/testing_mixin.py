@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-03-07'
+__updated__ = '2018-08-05'
 
 #  Import system type stuff
 import platform
@@ -34,6 +34,7 @@ from Modules.Core.data_objects import \
     HvacData, \
     SecurityData, \
     AllUuids
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
@@ -61,6 +62,7 @@ class XmlData(object):
         self.entertainment_sect = None
         self.onkyo_sect = None
         self.panasonic_sect = None
+        self.pandora_sect = None
         self.pioneer_sect = None
         self.samsung_sect = None
         self.lighting_sect = None
@@ -142,11 +144,16 @@ class SetupPyHouseObj(object):
         return l_ret
 
     @staticmethod
+    def _build_entertainment(p_pyhouse_obj):
+        pass
+
+    @staticmethod
     def _build_house(p_pyhouse_obj):
         l_ret = HouseInformation()
         # l_ret.Name = 'Test House'
         l_ret.Location = LocationData()
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
+        l_ret.Entertainment = EntertainmentData()
         l_ret.Lighting = LightingData()
         l_ret.Hvac = HvacData()
         l_ret.Security = SecurityData()
@@ -197,6 +204,7 @@ class SetupPyHouseObj(object):
 
         p_xml.entertainment_sect = p_xml.house_div.find('EntertainmentSection')
         p_xml.panasonic_sect = p_xml.entertainment_sect.find('PanasonicSection')
+        p_xml.pandora_sect = p_xml.entertainment_sect.find('PandoraSection')
         p_xml.pioneer_sect = p_xml.entertainment_sect.find('PioneerSection')
         p_xml.samsung_sect = p_xml.entertainment_sect.find('SamsungSection')
         p_xml.onkyo_sect = p_xml.entertainment_sect.find('OnkyoSection')

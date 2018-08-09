@@ -7,23 +7,26 @@
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
 
-Passed all 62 tests - DBK 2018-02-08
+Passed all 64 tests - DBK 2018-08-07
 """
 
-__updated__ = '2018-02-08'
+__updated__ = '2018-08-08'
 
 # Import system type stuff
-# import copy
+import datetime
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-import datetime
 
 # Import PyMh files and modules.
+from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import CoreLightingData, LocationData
+from Modules.Core.Utilities import convert
 from test.xml_data import \
     XML_LONG, \
     XML_EMPTY
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import CoreLightingData, LocationData
+from Modules.Housing.Lighting.test.xml_lighting import \
+    TESTING_LIGHTING_SECTION, \
+    XML_LIGHTING
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_UUID_0, \
@@ -32,8 +35,11 @@ from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_KEY_0, \
     TESTING_CONTROLLER_ACTIVE_0
-from Modules.Core.Utilities.xml_tools import XML, PutGetXML, XmlConfigTools, stuff_new_attrs
-from Modules.Core.Utilities import convert
+from Modules.Core.Utilities.xml_tools import \
+        XML, \
+        PutGetXML, \
+        XmlConfigTools, \
+        stuff_new_attrs
 from Modules.Core.Utilities.test.xml_xml_tools import \
     TESTING_XML_BOOL_0, \
     XML_TEST, \
@@ -68,14 +74,21 @@ from Modules.Core.Utilities.test.xml_xml_tools import \
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
-class SetupMixin(object):
-    """
+class SetupMixin:
+    """        print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-02-B - Pyhouse        print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-02-B - Pyhouse'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-02-B - Pyhouse'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-02-B - Pyhouse'))
+'))
+
     """
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = PutGetXML
+        self.m_apix = XmlConfigTools()
+        # self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+        # self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
 class A0(unittest.TestCase):
@@ -102,8 +115,33 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('Int0').text, TESTING_XML_INT_0)
         self.assertEqual(l_xml.find('IpV40').text, TESTING_XML_IPV4_0)
 
+    def test_02_Setup(self):
+        _l_xml = self.m_pyhouse_obj.Xml.XmlRoot
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-02-A - Pyhouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-02-B - Pyhouse.Xml'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml.XmlRoot, 'A1-02-C - Pyhouse.Xml.XmlRoot'))
+        # self.assertEqual(l_xml.find('Name'), TESTING_HOUSE_NAME)
+        # self.assertEqual(l_xml.find('IpV40').text, TESTING_XML_IPV4_0)
+        pass
+
 
 class A2_XML(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+
+    def test_01_Raw(self):
+        l_raw = XML_LIGHTING
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[1:len(TESTING_LIGHTING_SECTION) + 1], TESTING_LIGHTING_SECTION)
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_LIGHTING)
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
+        self.assertEqual(l_xml.tag, TESTING_LIGHTING_SECTION)
+
+
+class A3_XML(SetupMixin, unittest.TestCase):
     """
     This texts the XML to see if it is proper.
     """
@@ -477,7 +515,6 @@ class F1_Coords(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_fields = ET.fromstring(XML_TEST)
-        self.m_api = PutGetXML
 
     def test_01_Read(self):
         # print(PrettyFormatAny.form(self.m_fields, 'Coords F1-1 A'))
@@ -528,19 +565,19 @@ class F1_Coords(SetupMixin, unittest.TestCase):
         self.assertEqual(l_element[0].text, '[23.7,2.15,3.33]')
 
 
-class J1_Read(SetupMixin, unittest.TestCase):
+class J1_ReadXML(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
 
     def setUp(self):
-        self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = XmlConfigTools()
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_BaseUUIDObject(self):
         l_base_obj = CoreLightingData()
-        self.m_api.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
-        # print(PrettyFormatAny.form(l_base_obj, 'J1-01-A - Base Obj'))
+        self.m_apix.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
+        print(PrettyFormatAny.form(l_base_obj, 'J1-01-A - Base Obj'))
         self.assertEqual(l_base_obj.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(str(l_base_obj.Active), TESTING_LIGHT_ACTIVE_0)
@@ -548,31 +585,61 @@ class J1_Read(SetupMixin, unittest.TestCase):
 
     def test_02_readBaseObject(self):
         l_base_obj = CoreLightingData()
-        self.m_api.read_base_UUID_object_xml(l_base_obj, self.m_xml.controller)
+        self.m_apix.read_base_UUID_object_xml(l_base_obj, self.m_xml.controller)
         self.assertEqual(str(l_base_obj.Name), TESTING_CONTROLLER_NAME_0)
         self.assertEqual(str(l_base_obj.Key), TESTING_CONTROLLER_KEY_0)
         self.assertEqual(str(l_base_obj.Active), TESTING_CONTROLLER_ACTIVE_0)
 
 
-class J2_ReadEmpty(SetupMixin, unittest.TestCase):
+class J2_ReadEmptyXML(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
 
     def setUp(self):
         self.m_pyhouse_obj = SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
-        self.m_api = XmlConfigTools()
+        # self.m_api = XmlConfigTools()
 
     def test_01_BaseObject(self):
         l_base_obj = CoreLightingData()
-        self.m_api.read_base_object_xml(l_base_obj, self.m_xml.light)
+        self.m_apix.read_base_object_xml(l_base_obj, self.m_xml.light)
         # print(PrettyFormatAny.form(l_base_obj, 'J2-01-A Base))
         self.assertEqual(l_base_obj.Name, '')
         self.assertEqual(l_base_obj.Key, 0)
         self.assertEqual(l_base_obj.Active, False)
 
 
-class K1_Write(SetupMixin, unittest.TestCase):
+class J3_Sections(SetupMixin, unittest.TestCase):
+    """
+    This tests the Section finding routines.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_fields = ET.fromstring(XML_TEST)
+
+    def test_01_HouseDiv(self):
+        l_xml = self.m_apix.find_section(self.m_pyhouse_obj, 'HouseDivision')
+        print(PrettyFormatAny.form(l_xml, 'J3-01-A Base'))
+        # self.assertEqual(l_xml.Name, '')
+        pass
+
+    def test_02_Lighting(self):
+        l_xml = self.m_apix.find_section(self.m_pyhouse_obj, 'HouseDivision/LightingSection')
+        print(PrettyFormatAny.form(l_xml, 'J3-02-A Base'))
+        # self.assertEqual(l_xml.Name, '')
+        pass
+
+    def test_03_Lights(self):
+        l_xml = self.m_apix.find_section(self.m_pyhouse_obj, 'HouseDivision/LightingSection/LightSection')
+        print(PrettyFormatAny.form(l_xml, 'J3-03-A Base'))
+        print(PrettyFormatAny.form(l_xml[0], 'J3-03-B Base'))
+        # self.assertEqual(l_xml.Name, '')
+        self.assertEqual(l_xml[0].attrib['Name'], TESTING_LIGHT_NAME_0)
+        pass
+
+
+class K1_WriteXML(SetupMixin, unittest.TestCase):
     """
     This tests the ConfigTools section
     """
@@ -584,11 +651,11 @@ class K1_Write(SetupMixin, unittest.TestCase):
         """Write Base Object XML w/UUID
         """
         l_base_obj = CoreLightingData()
-        XmlConfigTools.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
+        self.m_apix.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 43
         l_uuid = '12345678-fedc-1111-ffff-aaBBccDDeeFF'
         l_base_obj.UUID = l_uuid
-        l_xml = XmlConfigTools.write_base_UUID_object_xml('Light', l_base_obj)
+        l_xml = self.m_apix.write_base_UUID_object_xml('Light', l_base_obj)
         # print(PrettyFormatAny.form(l_xml, 'K1-01-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '43')
@@ -598,9 +665,9 @@ class K1_Write(SetupMixin, unittest.TestCase):
         """Write Base Object XML w/ NO UUID
         """
         l_base_obj = CoreLightingData()
-        XmlConfigTools.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
+        self.m_apix.read_base_UUID_object_xml(l_base_obj, self.m_xml.light)
         l_base_obj.Key = 44
-        l_xml = XmlConfigTools.write_base_object_xml('Light', l_base_obj)
+        l_xml = self.m_apix.write_base_object_xml('Light', l_base_obj)
         # print(PrettyFormatAny.form(l_xml, 'K1-02-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], '44')

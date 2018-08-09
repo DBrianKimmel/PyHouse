@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Entertainment/test/test_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 14, 2013
 @summary:   Test
@@ -10,16 +10,31 @@
 Passed all 2 tests - DBK - 2017-01-12
 
 """
+from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import TESTING_ONKYO_DEVICE_NAME_0
 
-__updated__ = '2017-01-12'
+__updated__ = '2018-08-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from test.xml_data import XML_LONG, TESTING_PYHOUSE
+from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
+from Modules.Housing.test.xml_housing import \
+        TESTING_HOUSE_DIVISION, \
+        TESTING_HOUSE_NAME, \
+        TESTING_HOUSE_ACTIVE, \
+        TESTING_HOUSE_KEY, \
+        TESTING_HOUSE_UUID
+from Modules.Housing.Entertainment.test.xml_entertainment import \
+        TESTING_ENTERTAINMENT_SECTION, \
+        XML_ENTERTAINMENT, \
+        L_ENTERTAINMENT_SECTION_START
+from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
+        TESTING_PANDORA_SECTION
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -30,8 +45,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_entertainment')
 
@@ -48,5 +65,78 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
         self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
+
+    def test_02_XmlTags(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.entertainment_sect.tag, TESTING_ENTERTAINMENT_SECTION)
+        self.assertEqual(self.m_xml.pandora_sect.tag, TESTING_PANDORA_SECTION)
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_ENTERTAINMENT
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[:22], L_ENTERTAINMENT_SECTION_START)
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_ENTERTAINMENT)
+        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
+        self.assertEqual(l_xml.tag, TESTING_ENTERTAINMENT_SECTION)
+
+
+class A3_XML(SetupMixin, unittest.TestCase):
+    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_PyHouseXML(self):
+        """ Test to see if the house XML is built correctly
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml.XmlRoot, 'PyHouse'))
+        pass
+
+    def test_02_HouseDivXml(self):
+        """ Test to see if the house XML is built correctly
+        """
+        l_xml = self.m_xml.house_div
+        # print(PrettyFormatAny.form(l_xml, 'A3-01-A - House'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_HOUSE_UUID)
+
+    def test_03_EntertainmentXml(self):
+        """ Test to see if the Entertainment XML is built properly
+        """
+        l_xml = self.m_xml.entertainment_sect
+        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
+        # print(PrettyFormatAny.form(l_xml[1][0], 'A3-02-B - Entertainment'))
+        self.assertEqual(l_xml[0][0].attrib['Name'], TESTING_ONKYO_DEVICE_NAME_0)
+        self.assertGreater(len(l_xml), 2)
+
+
+class B1_Load(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_XML(self):
+        """ Test
+        """
+        l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_ret, 'B1-01-A - Ret'))
 
 # ## END DBK

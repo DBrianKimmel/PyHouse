@@ -1,10 +1,10 @@
 """
--*- test-case-name: src/Modules/Entertainment/pioneer/test/test_pioneer.py -*-
+-*- test-case-name: src/Modules/Housing/Entertainment/pioneer/test/test_pioneer.py -*-
 
-@name:      src.Modules.Entertainment.pioneer.pioneer.py
+@name:      PyHouse.src.Modules.Housing.Entertainment.pioneer.pioneer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2018 by D. Brian Kimmel
 @note:      Created on Jul 10, 2016
 @license:   MIT License
 @summary:
@@ -22,10 +22,7 @@ Listen to Mqtt message to control device
 See: pioneer/__init__.py for documentation.
 
 """
-
-from Modules.Core.Utilities.convert import long_to_str
-
-__updated__ = '2018-08-02'
+__updated__ = '2018-08-08'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -40,6 +37,8 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import BaseUUIDObject
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+from Modules.Core.Utilities.convert import long_to_str
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pioneer        ')
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -63,6 +62,7 @@ VSX822K = {
 class PioneerData:
 
     def __init__(self):
+        self.Active = False
         self.DeviceCount = 0
         self.Devices = {}  # PioneerDeviceData()
 
@@ -72,9 +72,10 @@ class PioneerDeviceData(BaseUUIDObject):
     def __init__(self):
         super(PioneerDeviceData, self).__init__()
         self.Comment = None
+        self.CommandSet = None
         self.IPv4 = None
         self.Port = None
-        self.RoomCoords = None
+        # self.RoomCoords = None
         self.RoomName = None
         self.RoomUUID = None
         self.Status = None
@@ -92,8 +93,11 @@ class XML(object):
         l_device = PioneerDeviceData()
         XmlConfigTools().read_base_UUID_object_xml(l_device, p_xml)
         l_device.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+        l_device.CommandSet = PutGetXML.get_text_from_xml(p_xml, 'CommandSet')
         l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
         l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
+        l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
+        l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
         l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
         return l_device
 
@@ -101,7 +105,9 @@ class XML(object):
     def _write_device(p_obj):
         l_xml = XmlConfigTools().write_base_UUID_object_xml('Device', p_obj)
         PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
+        PutGetXML().put_text_element(l_xml, 'CommandSet', p_obj.CommandSet)
         PutGetXML().put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
+        PutGetXML().put_int_element(l_xml, 'Port', p_obj.Port)
         PutGetXML().put_int_element(l_xml, 'Port', p_obj.Port)
         PutGetXML().put_text_element(l_xml, 'Type', p_obj.Type)
         return l_xml
@@ -157,6 +163,63 @@ class XML(object):
             l_count += 1
         LOG.info('Saved {} Pioneer device(s) XML'.format(l_count))
         return l_xml
+
+
+class MqttActions:
+    """
+    """
+
+    m_API = None
+    m_transport = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _get_field(self, p_message, p_field):
+        try:
+            l_ret = p_message[p_field]
+        except KeyError:
+            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+        return l_ret
+
+    def _decode_control(self, p_topic, p_message):
+        """ Decode the message.
+        As a side effect - control pioneer.
+        """
+        l_logmsg = '\tControl: '
+        l_control = self._get_field(p_message, 'Control')
+        l_power = self._get_field(p_message, 'Power')
+        l_volume = self._get_field(p_message, 'Volume')
+        l_input = self._get_field(p_message, 'Input')
+        if l_control == 'On':
+            l_logmsg += ' Turn On '
+            self.m_API.Start()
+        elif l_control == 'Off':
+            l_logmsg += ' Turn Off '
+            self.m_API.Stop()
+        elif l_power == 'On':
+            pass
+        elif l_control == 'VolUp1':
+            l_logmsg += ' Volume Up 1 '
+        else:
+            l_logmsg += ' Unknown pioneer Control Message {} {}'.format(p_topic, p_message)
+        return l_logmsg
+
+    def decode(self, p_topic, p_message):
+        """ Decode the Mqtt message
+        ==> pyhouse/<house name>/entertainment/pioneer/<type>/<Name>/...
+        <type> = ?
+        """
+        if self.m_API == None:
+            # LOG.debug('Decoding initializing')
+            self.m_API = API(self.m_pyhouse_obj)
+
+        l_logmsg = ''
+        if p_topic[2] == 'control':
+            l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
+        else:
+            l_logmsg += '\tUnknown Pioneer sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
+        return l_logmsg
 
 
 class Commands(object):

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-07-12'
+__updated__ = '2018-08-08'
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
@@ -28,9 +28,11 @@ DEFAULT_EISCP_IPV4 = '192.168.1.138'
 DEFAULT_EISCP_PORT = 60128
 
 
-class OnkyoData(object):
+class OnkyoData:
 
     def __init__(self):
+        self.Active = False
+        self._API = None
         self.DeviceCount = 0
         self.Devices = {}  # OnkyoDeviceData()
 
@@ -58,7 +60,7 @@ class XML(object):
     @staticmethod
     def _read_device(p_xml):
         l_device = OnkyoDeviceData()
-        XmlConfigTools().read_base_UUID_object_xml(l_device, p_xml)
+        XmlConfigTools.read_base_UUID_object_xml(l_device, p_xml)
         l_device.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
         l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
@@ -67,7 +69,7 @@ class XML(object):
 
     @staticmethod
     def _write_device(p_obj):
-        l_xml = XmlConfigTools().write_base_UUID_object_xml('Device', p_obj)
+        l_xml = XmlConfigTools.write_base_UUID_object_xml('Device', p_obj)
         PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML().put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
         PutGetXML().put_int_element(l_xml, 'Port', p_obj.Port)
@@ -98,6 +100,7 @@ class XML(object):
         """
         l_dict = {}
         l_count = 0
+
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml == None:
             return l_dict, l_count
@@ -107,6 +110,9 @@ class XML(object):
         l_xml = l_xml.find('OnkyoSection')
         if l_xml == None:
             return l_dict, l_count
+
+        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        l_Active = PutGetXML.get_bool_from_xml(l_xml, 'Active', False)
         for l_dev_xml in l_xml.iterfind('Device'):
             l_dict[l_count] = XML._read_one(l_dev_xml)
             LOG.info('Loaded Onkyo device {}'.format(l_dict[l_count]))

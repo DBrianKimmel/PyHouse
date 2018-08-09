@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-08-07'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -84,7 +84,7 @@ class PutGetXML(object):
 #  Bool
 # -----
     @staticmethod
-    def get_bool_from_xml(p_xml, p_name, _default = False):
+    def get_bool_from_xml(p_xml, p_name, _default=False):
         """Get a boolean from xml - element or attribute
 
         @param p_xml: is a parent element containing the item we are interested in.
@@ -103,14 +103,14 @@ class PutGetXML(object):
         return False
 
     @staticmethod
-    def put_bool_attribute(p_xml_element, p_name, p_bool = 'False'):
+    def put_bool_attribute(p_xml_element, p_name, p_bool='False'):
         l_bool = 'False'
         if p_bool is True or p_bool == 'True':
             l_bool = 'True'
         p_xml_element.set(p_name, l_bool)
 
     @staticmethod
-    def put_bool_element(p_parent_xml, p_name, p_bool = 'False'):
+    def put_bool_element(p_parent_xml, p_name, p_bool='False'):
         l_bool = 'False'
         if p_bool is True or p_bool == 'True':
             l_bool = 'True'
@@ -120,7 +120,7 @@ class PutGetXML(object):
 #  float
 # -----
     @staticmethod
-    def get_float_from_xml(p_xml, p_name, p_default = 0.0):
+    def get_float_from_xml(p_xml, p_name, p_default=0.0):
         l_xml = XML.get_any_field(p_xml, p_name)
         try:
             l_var = float(l_xml)
@@ -149,7 +149,7 @@ class PutGetXML(object):
 #  int
 # -----
     @staticmethod
-    def get_int_from_xml(p_xml, p_name, default = 0):
+    def get_int_from_xml(p_xml, p_name, default=0):
         l_xml = XML.get_any_field(p_xml, p_name)
         if l_xml is None:
             l_xml = default
@@ -180,7 +180,7 @@ class PutGetXML(object):
 #  text
 # -----
     @staticmethod
-    def get_text_from_xml(p_xml, p_name, default = ''):
+    def get_text_from_xml(p_xml, p_name, default=''):
         """
         @param p_xml: is the xml where we will find the field
         @param p_name: is the name of the field to fetch
@@ -299,7 +299,7 @@ class PutGetXML(object):
         l_field = XML.get_any_field(p_xml, p_name)
         if l_field is None:
             l_field = str(datetime.datetime.now())
-        l_ret = dparser.parse(l_field, fuzzy = True)
+        l_ret = dparser.parse(l_field, fuzzy=True)
         return l_ret
 
     @staticmethod
@@ -343,7 +343,25 @@ class PutGetXML(object):
         ET.SubElement(p_parent_element, p_name).text = l_coord
 
 
-class XmlConfigTools(object):
+class XmlConfigTools:
+
+    @staticmethod
+    def find_section(p_pyhouse_obj, p_name):
+        """
+        @param p_name: 'HouseDivision/EntertainmentSection/OnkyoSection' will find the section
+        """
+        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        l_name = p_name.split('/')
+        if len(l_name) == 1:
+            l_xml = l_xml.find(l_name[0])
+            return l_xml
+        # print(l_name)
+        for l_part in l_name:
+            # print('Finding ', l_part)
+            l_xml = l_xml.find(l_part)
+            if l_xml == None:
+                return l_xml
+        return l_xml
 
     @staticmethod
     def read_base_object_xml(p_base_obj, p_entry_element_xml):

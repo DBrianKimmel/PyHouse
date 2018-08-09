@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2018-07-11
 
 """
 
-__updated__ = '2018-07-15'
+__updated__ = '2018-08-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,7 +30,9 @@ from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_NAME, \
         TESTING_HOUSE_ACTIVE, \
         TESTING_HOUSE_KEY, \
-        TESTING_HOUSE_UUID
+        TESTING_HOUSE_UUID, TESTING_HOUSE_DIVISION
+from Modules.Housing.Entertainment.test.xml_entertainment import \
+        TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.Entertainment.pioneer.test.xml_pioneer import \
         XML_PIONEER_SECTION, \
         TESTING_PIONEER_SECTION, \
@@ -45,7 +47,9 @@ from Modules.Housing.Entertainment.pioneer.test.xml_pioneer import \
         TESTING_PIONEER_DEVICE_ACTIVE_1, \
         TESTING_PIONEER_DEVICE_UUID_1, \
         TESTING_PIONEER_DEVICE_IPV4_1, \
-        TESTING_PIONEER_DEVICE_PORT_1
+        TESTING_PIONEER_DEVICE_PORT_1, \
+        L_PIONEER_SECTION_START, TESTING_PIONEER_DEVICE_COMMAND_SET_0, TESTING_PIONEER_DEVICE_ROOM_NAME_0, TESTING_PIONEER_DEVICE_COMMENT_0, \
+    TESTING_PIONEER_DEVICE_ROOM_UUID_0
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -89,9 +93,9 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.entertainment_sect.tag, 'EntertainmentSection')
-        self.assertEqual(self.m_xml.pioneer_sect.tag, 'PioneerSection')
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+        self.assertEqual(self.m_xml.entertainment_sect.tag, TESTING_ENTERTAINMENT_SECTION)
+        self.assertEqual(self.m_xml.pioneer_sect.tag, TESTING_PIONEER_SECTION)
 
 
 class A2_Xml(SetupMixin, unittest.TestCase):
@@ -102,12 +106,12 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Raw(self):
         l_raw = XML_PIONEER_SECTION
-        print('A2-01-A - Raw', l_raw)
-        self.assertEqual(l_raw[:16], '<PioneerSection>')
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[:16], L_PIONEER_SECTION_START)
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_PIONEER_SECTION)
-        print('A2-02-A - Parsed', l_xml)
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
         self.assertEqual(l_xml.tag, TESTING_PIONEER_SECTION)
 
 
@@ -132,7 +136,8 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """ Test
         """
         l_xml = self.m_xml.entertainment_sect
-        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
+        print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
+        self.assertEqual(self.m_xml.entertainment_sect.tag, TESTING_ENTERTAINMENT_SECTION)
         self.assertGreater(len(l_xml), 2)
 
     def test_03_PioneerXml(self):
@@ -171,10 +176,15 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_PIONEER_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_PIONEER_DEVICE_ACTIVE_0)
-        self.assertEqual(l_obj.UUID, TESTING_PIONEER_DEVICE_UUID_0)
+        self.assertEqual(str(l_obj.UUID), TESTING_PIONEER_DEVICE_UUID_0)
+        self.assertEqual(str(l_obj.Comment), TESTING_PIONEER_DEVICE_COMMENT_0)
+        self.assertEqual(str(l_obj.RoomName), TESTING_PIONEER_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_PIONEER_DEVICE_ROOM_UUID_0)
         # .
         self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_PIONEER_DEVICE_IPV4_0)
         self.assertEqual(str(l_obj.Port), TESTING_PIONEER_DEVICE_PORT_0)
+        self.assertEqual(str(l_obj.CommandSet), TESTING_PIONEER_DEVICE_COMMAND_SET_0)
+        self.assertEqual(str(l_obj.Status), TESTING_PIONEER_DEVICE_S)
 
     def test_2_Device1(self):
         """ Read the xml and fill in the first room's dict
