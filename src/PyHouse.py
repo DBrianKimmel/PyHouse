@@ -82,7 +82,7 @@ Idea Links:
 
 """
 
-__updated__ = '2018-08-04'
+__updated__ = '2018-08-21'
 __version_info__ = (18, 8, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -213,7 +213,13 @@ class Utilities(object):
     """
 
     @staticmethod
-    def _create_pyhouse_obj():
+    def _nor_create_pyhouse_obj():
+        """ This creates the master PyHouse_Obj from scratch.
+
+        Everything is initialized from the empty definitions.
+        Computer and house components are initialized later on.
+        The reactor is not yet running.
+        """
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = PyHouseAPIs()
         l_pyhouse_obj.Twisted = TwistedInformation()
@@ -224,14 +230,14 @@ class Utilities(object):
         return l_pyhouse_obj
 
 
-class API(object):
+class API:
     """
     """
 
     m_pyhouse_obj = {}
 
     def __init__(self):
-        """This is the startup of the entire system.
+        """ This is the startup of the entire system.
         All permanent services are started here.
         These Core routines are an integral part of the daemon process.
 
@@ -240,18 +246,6 @@ class API(object):
         """
         global g_API
         g_API = self
-        #  Utilities.do_setup_stuff(self)
-        self.m_pyhouse_obj = Utilities._create_pyhouse_obj()
-        print('PyHouse.API()')  # For development - so we can see when we get to this point...
-        self.m_pyhouse_obj.APIs.PyHouseMainAPI = self
-        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
-        #
-        #  When the reactor stops we continue here
-        #
-        LOG.info("PyHouse says Bye Now.\n")
-        raise SystemExit("PyHouse says Bye Now.")
 
     def LoadXml(self, p_pyhouse_obj):
         """LoadXml loads all the XML configuration.
@@ -266,7 +260,8 @@ class API(object):
     def Start(self):
         """ This is automatically invoked when the reactor starts from API().
         """
-        LOG.info('Starting')
+        print('Reactor is now running.')
+        LOG.info('Starting - Reactor is now running.')
         self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
 
@@ -292,12 +287,52 @@ class API(object):
         self.m_pyhouse_obj.Twisted.Reactor.stop()
 
 
+class NoReactorAPI(API):
+    """ This class is for initialization before the reactor starts.
+    """
+
+    def __init__(self):
+        """
+        Notice that the reactor starts here as the very last step here and that
+        call never returns until the reactor is stopped (permanent stoppage).
+        """
+        self.m_pyhouse_obj = self._nor_create_pyhouse_obj()
+        print('PyHouse.NoReactorAPI()')  # For development - so we can see when we get to this point...
+        self.m_pyhouse_obj.APIs.PyHouseMainAPI = self
+        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, self.m_pyhouse_obj)
+        LOG.info("Initialized - Version:{}".format(__version__))
+        LOG.info('Starting Reactor...')
+        self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        #
+        #  When the reactor stops we continue here
+        #
+        LOG.info("PyHouse says Bye Now.\n")
+        raise SystemExit("PyHouse says Bye Now.")
+
+    def _nor_create_pyhouse_obj(self):
+        """ This creates the master PyHouse_Obj from scratch.
+
+        Everything is initialized from the empty definitions.
+        Computer and house components are initialized later on.
+        The reactor is not yet running.
+        """
+        l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj.APIs = PyHouseAPIs()
+        l_pyhouse_obj.Twisted = TwistedInformation()
+        l_pyhouse_obj.Twisted.Reactor = reactor
+        l_pyhouse_obj.Uuids = AllUuids()
+        l_pyhouse_obj.Uuids.All = UuidData()
+        l_pyhouse_obj.Xml = XmlInformation()
+        return l_pyhouse_obj
+
+
 if __name__ == "__main__":
     si = Singleton()
     try:
         if si.is_running:
             sys.exit("This app is already running!")
-        API()
+        NoReactorAPI()
     finally:
         si.clean_up()
 

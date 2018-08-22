@@ -10,8 +10,9 @@
 @summary:   Various XML functions and utility methods.
 
 """
+from thriftpy.parser.parser import p_namespace
 
-__updated__ = '2018-08-07'
+__updated__ = '2018-08-21'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -346,18 +347,31 @@ class PutGetXML(object):
 class XmlConfigTools:
 
     @staticmethod
+    def extract_section_name(p_element):
+        """ Given SomenameSection as a container in XML, extract the 'somename' portion and make it lower case.
+
+        @param p_element: is the section XML Element <SamaungSection>
+        @return: the name "samsung"
+        """
+        l_name = p_element.tag.lower()[:-7]
+        return l_name
+
+    @staticmethod
     def find_section(p_pyhouse_obj, p_name):
-        """
+        """ Find the element within the path.
+
         @param p_name: 'HouseDivision/EntertainmentSection/OnkyoSection' will find the section
+        @return: the Xml Element selected b y the p_name given, None if the path does not exist
         """
+        # Be sure something was passed in
+        if len(p_name) == 0:
+            return None
         l_xml = p_pyhouse_obj.Xml.XmlRoot
         l_name = p_name.split('/')
         if len(l_name) == 1:
             l_xml = l_xml.find(l_name[0])
             return l_xml
-        # print(l_name)
         for l_part in l_name:
-            # print('Finding ', l_part)
             l_xml = l_xml.find(l_part)
             if l_xml == None:
                 return l_xml

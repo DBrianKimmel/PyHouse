@@ -7,9 +7,34 @@
 @license:   MIT License
 @summary:
 
+<PioneerSection Active="True">
+    <Device Active="True" Key="0" Name="L/R Receiver VSX-822-K">
+        <UUID>Pioneer.-0000-0000-0000-0123456789ab</UUID>
+        <Comment>VSX-822-K Receiver</Comment>
+        <CommandSet>2015</CommandSet>
+        <IPv4>192.168.9.121</IPv4>
+        <Port>8102</Port>
+        <RoomName>Living Room</RoomName>
+        <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+        <Status>On</Status>
+        <Type>Receiver</Type>
+        <Volume>75</Volume>
+    </Device>
+    <Device Active="True" Key="0" Name="Missing Device">
+        <UUID>Pioneer.-0001-0000-0000-0123456789ab</UUID>
+        <CommandSet>2015</CommandSet>
+        <Comment>VSX-822-K Bogus</Comment>
+        <IPv4>192.168.1.122</IPv4>
+        <Port>8102</Port>
+        <RoomName>Master Bedroom</RoomName>
+        <RoomUUID>Room....-0001-0000-0000-0123456789ab</RoomUUID>
+        <Type>Fake Receiver</Type>
+    </Device>
+</PioneerSection>
+
 """
 
-__updated__ = '2018-08-08'
+__updated__ = '2018-08-11'
 
 TESTING_PIONEER_SECTION = 'PioneerSection'
 TESTING_DEVICE = 'Device'
@@ -28,7 +53,7 @@ TESTING_PIONEER_DEVICE_ACTIVE_0 = 'True'
 TESTING_PIONEER_DEVICE_UUID_0 = 'Pioneer.-0000-0000-0000-0123456789ab'
 TESTING_PIONEER_DEVICE_COMMENT_0 = 'VSX-822-K Receiver'
 TESTING_PIONEER_DEVICE_COMMAND_SET_0 = '2015'
-TESTING_PIONEER_DEVICE_IPV4_0 = '192.168.1.121'
+TESTING_PIONEER_DEVICE_IPV4_0 = '192.168.9.121'
 TESTING_PIONEER_DEVICE_PORT_0 = '8102'
 TESTING_PIONEER_DEVICE_ROOM_NAME_0 = 'Living Room'
 TESTING_PIONEER_DEVICE_ROOM_UUID_0 = 'Room....-0000-0000-0000-0123456789ab'
@@ -49,17 +74,22 @@ L_PIONEER_IPV4_0 = '<IPv4>' + TESTING_PIONEER_DEVICE_IPV4_0 + '</IPv4>'
 L_PIONEER_PORT_0 = '<Port>' + TESTING_PIONEER_DEVICE_PORT_0 + '</Port>'
 L_PIONEER_ROOM_NAME_0 = '<RoomName>' + TESTING_PIONEER_DEVICE_ROOM_NAME_0 + '</RoomName>'
 L_PIONEER_ROOM_UUID_0 = '<RoomUUID>' + TESTING_PIONEER_DEVICE_ROOM_UUID_0 + '</RoomUUID>'
+L_PIONEER_STATUS_0 = '<Status>' + TESTING_PIONEER_DEVICE_STATUS_0 + '</Status>'
 L_PIONEER_TYPE_0 = '<Type>' + TESTING_PIONEER_DEVICE_TYPE_0 + '</Type>'
+L_PIONEER_VOLUME_0 = '<Volume>' + TESTING_PIONEER_DEVICE_VOLUME_0 + '</Volume>'
 
 L_PIONEER_DEVICE_0 = '\n'.join([
     L_PIONEER_DEVICE_START_0,
     L_PIONEER_UUID_0,
     L_PIONEER_COMMENT_0,
+    L_PIONEER_COMMAND_SET_0,
     L_PIONEER_IPV4_0,
     L_PIONEER_PORT_0,
     L_PIONEER_ROOM_NAME_0,
     L_PIONEER_ROOM_UUID_0,
+    L_PIONEER_STATUS_0,
     L_PIONEER_TYPE_0,
+    L_PIONEER_VOLUME_0,
     L_DEVICE_END
 ])
 
@@ -67,6 +97,7 @@ TESTING_PIONEER_DEVICE_NAME_1 = 'Missing Device'
 TESTING_PIONEER_DEVICE_KEY_1 = '0'
 TESTING_PIONEER_DEVICE_ACTIVE_1 = 'True'
 TESTING_PIONEER_DEVICE_UUID_1 = 'Pioneer.-0001-0000-0000-0123456789ab'
+TESTING_PIONEER_DEVICE_COMMAND_SET_1 = '2015'
 TESTING_PIONEER_DEVICE_COMMENT_1 = 'VSX-822-K Bogus'
 TESTING_PIONEER_DEVICE_IPV4_1 = '192.168.1.122'
 TESTING_PIONEER_DEVICE_PORT_1 = '8102'
@@ -81,6 +112,7 @@ L_PIONEER_DEVICE_START_1 = \
     '" Active="' + TESTING_PIONEER_DEVICE_ACTIVE_1 + \
     '">'
 L_PIONEER_UUID_1 = '<UUID>' + TESTING_PIONEER_DEVICE_UUID_1 + '</UUID>'
+L_PIONEER_COMMAND_SET_1 = '<CommandSet>' + TESTING_PIONEER_DEVICE_COMMAND_SET_1 + '</CommandSet>'
 L_PIONEER_COMMENT_1 = '<Comment>' + TESTING_PIONEER_DEVICE_COMMENT_1 + '</Comment>'
 L_PIONEER_IPV4_1 = '<IPv4>' + TESTING_PIONEER_DEVICE_IPV4_1 + '</IPv4>'
 L_PIONEER_PORT_1 = '<Port>' + TESTING_PIONEER_DEVICE_PORT_1 + '</Port>'
@@ -91,6 +123,7 @@ L_PIONEER_TYPE_1 = '<Type>' + TESTING_PIONEER_DEVICE_TYPE_1 + '</Type>'
 L_PIONEER_DEVICE_1 = '\n'.join([
     L_PIONEER_DEVICE_START_1,
     L_PIONEER_UUID_1,
+    L_PIONEER_COMMAND_SET_1,
     L_PIONEER_COMMENT_1,
     L_PIONEER_IPV4_1,
     L_PIONEER_PORT_1,

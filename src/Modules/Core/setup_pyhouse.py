@@ -22,8 +22,11 @@ The second part is the house.
 This will set up this node and then find all other nodes in the same domain (House).
 Then start the House and all the sub systems.
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-08-21'
+__version_info__ = (18, 3, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
@@ -100,7 +103,7 @@ class Utility(object):
         p_pyhouse_obj.Uuids.All = {}
         l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
         try:
-            l_file = open(l_path, mode = 'r')
+            l_file = open(l_path, mode='r')
             l_uuid = l_file.read()
         except IOError:
             l_uuid = toolUuid.create_uuid()
@@ -131,26 +134,26 @@ class API(Utility):
     """
 
     def __init__(self, p_pyhouse_obj):
-        """
+        """ **NOR**
         This will initialize much (all?) of the API infrastructure.
         Note that the Configuration file is NOT read until the following Start() method begins.
-        Also note that the reactor is *NOT* running.
+        Also note that the reactor is *NOT* yet running.
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initializing')
         Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
-        Utility._sync_startup_logging(self.m_pyhouse_obj)
+        Utility._sync_startup_logging(p_pyhouse_obj)
+        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.\n==================================================================\n')
 
     def LoadXml(self, p_pyhouse_obj):
-        LOG.info('Loading XML')
+        LOG.info("Loading XML - Version:{}".format(__version__))
         p_pyhouse_obj = configAPI(p_pyhouse_obj).read_xml_config_file(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI.LoadXml(p_pyhouse_obj)
-        LOG.info('Loaded XML.')
+        LOG.info('Loaded XML.\n==========\n')
 
     def Start(self):
         """
@@ -164,7 +167,7 @@ class API(Utility):
         self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
-        LOG.info("Started.")
+        LOG.info("Started.\n==========\n")
         #  print('Everything Started setup_pyhouse-117')
 
     def SaveXml(self):
@@ -183,6 +186,6 @@ class API(Utility):
         self.SaveXml()
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
-        LOG.info("Stopped.")
+        LOG.info("Stopped.\n==========\n")
 
 # ## END DBK

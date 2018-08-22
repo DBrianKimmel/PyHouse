@@ -11,23 +11,56 @@
 
 """
 
-__updated__ = '2018-08-08'
+__updated__ = '2018-08-19'
+
+# Import system type stuff
+
+#  Import PyMh files and modules.
+from Modules.Core.data_objects import BaseObject
 
 
 class EntertainmentData:
-    """
+    """ This is the PyHouse.House.Entertainment node of the master object.
+    It is a dynamic structure for the various entertainment devices in a house.
 
     ==> PyHouse.House.Entertainment.xxx as in the def below.
     """
 
     def __init__(self):
-        self.Onkyo = None
-        self.Panasonic = None
-        self.Pandora = None
-        self.Pioneer = None
-        self.Samsung = None
-        self.Sharp = None
-        self.Sony = None
+        self.Active = False
+        self.Count = 0
+        self.Plugins = {}  # EntertainmentPluginData()
+
+
+class EntertainmentPluginData:
+    """ This is filled in for every xxxSection under the EntertainmentSection of the XML file
+
+    ==> PyHouse.House.Entertainment.Plugins[name].xxx
+
+    Valid Types:
+        Service is a provided service such as Pandora, Netflix, Hulu, etc.
+        Component is a device such as a TV, DVD Player, Receiver, etc.
+    """
+
+    def __init__(self):
+        self.Active = False
+        self.API = None  # The API pointer for this class of plugin
+        self.Count = 0
+        self.Devices = {}  # EntertainmentDeviceData()
+        self.Module = None
+        self.Name = None
+        self.Type = 'Missing Type'  # Service: Component
+
+
+class EntertainmentDeviceData(BaseObject):
+    """ This is a skeleton entry.
+    Other device parameters are placed in here by the specific entertainment device.
+    """
+
+    def __init__(self):
+        super(EntertainmentDeviceData, self).__init__()
+        self.DeviceCount = 0
+        self.Factory = None  # The factory pointer for this device of an entertainment sub-section
 
 
 class EntertainmentDeviceControl:

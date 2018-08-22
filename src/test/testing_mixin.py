@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-05'
+__updated__ = '2018-08-18'
 
 #  Import system type stuff
 import platform
@@ -34,7 +34,7 @@ from Modules.Core.data_objects import \
     HvacData, \
     SecurityData, \
     AllUuids
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
 from Modules.Computer import logging_pyh as Logger
@@ -145,15 +145,16 @@ class SetupPyHouseObj(object):
 
     @staticmethod
     def _build_entertainment(p_pyhouse_obj):
-        pass
+        l_ret = EntertainmentData()
+        l_ret.Plugins = EntertainmentPluginData()
+        return l_ret
 
     @staticmethod
-    def _build_house(p_pyhouse_obj):
+    def _build_house_data(p_pyhouse_obj):
         l_ret = HouseInformation()
-        # l_ret.Name = 'Test House'
         l_ret.Location = LocationData()
         l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
-        l_ret.Entertainment = EntertainmentData()
+        l_ret.Entertainment = SetupPyHouseObj._build_entertainment(p_pyhouse_obj)
         l_ret.Lighting = LightingData()
         l_ret.Hvac = HvacData()
         l_ret.Security = SecurityData()
@@ -249,7 +250,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj = PyHouseData()
         l_pyhouse_obj.APIs = self._build_apis()
         l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
-        l_pyhouse_obj.House = SetupPyHouseObj._build_house(l_pyhouse_obj)
+        l_pyhouse_obj.House = SetupPyHouseObj._build_house_data(l_pyhouse_obj)
         l_pyhouse_obj.Twisted = self._build_twisted()
         l_pyhouse_obj.Uuids = AllUuids()
         l_pyhouse_obj.Uuids.All = {}

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-08-03'
+__updated__ = '2018-08-15'
 
 #  Import system type stuff
 
@@ -31,7 +31,7 @@ class Actions:
     m_disp_computer = None
     m_disp_entertainment = None
     m_myname = 'Not Initialized.'
-    m_pyhouse_obj = PyHouseData()
+    # m_pyhouse_obj = PyHouseData()
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

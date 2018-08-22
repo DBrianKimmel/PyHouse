@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2018-07-24'
+__updated__ = '2018-08-21'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -156,13 +156,13 @@ class EthernetControllerData(object):
 
 
 class HouseAPIs(object):
-    """
+    """ These are all the sub-systems of House.
 
     ==> PyHouse.APIs.House
     """
 
     def __init__(self):
-        self.EntertainmentAPI = None
+        self.EntertainmentAPI = None  # Uses Plugins
         self.FamilyAPI = None
         self.HouseAPI = None
         self.HvacAPI = None
@@ -498,7 +498,7 @@ class HouseInformation(BaseUUIDObject):
         super(HouseInformation, self).__init__()
         self.FamilyData = {}  # FamilyData['FamilyName']
         self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = {}  # EntertainmentData()
+        self.Entertainment = {}  # EntertainmentData() in Entertainment/entertainment_data.py
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
         self.Lighting = {}  # LightingData()

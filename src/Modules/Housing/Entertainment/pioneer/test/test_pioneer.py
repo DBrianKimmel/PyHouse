@@ -7,11 +7,11 @@
 @note:      Created on Jul 10, 2018
 @summary:   Test
 
-Passed all 16 tests - DBK - 2018-07-11
+Passed all 17 tests - DBK - 2018-08-17
 
 """
 
-__updated__ = '2018-08-05'
+__updated__ = '2018-08-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,9 @@ from twisted.test import proto_helpers
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
 from Modules.Housing.Entertainment.pioneer.pioneer import \
+        SECTION, \
         XML as pioneerXml, \
         PioneerProtocol as pioProto, \
         PioneerFactory as pioFactory
@@ -49,7 +51,8 @@ from Modules.Housing.Entertainment.pioneer.test.xml_pioneer import \
         TESTING_PIONEER_DEVICE_IPV4_1, \
         TESTING_PIONEER_DEVICE_PORT_1, \
         L_PIONEER_SECTION_START, TESTING_PIONEER_DEVICE_COMMAND_SET_0, TESTING_PIONEER_DEVICE_ROOM_NAME_0, TESTING_PIONEER_DEVICE_COMMENT_0, \
-    TESTING_PIONEER_DEVICE_ROOM_UUID_0
+    TESTING_PIONEER_DEVICE_ROOM_UUID_0, TESTING_PIONEER_DEVICE_STATUS_0, TESTING_PIONEER_DEVICE_TYPE_0, TESTING_PIONEER_DEVICE_VOLUME_0, \
+    TESTING_PIONEER_ACTIVE
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -107,7 +110,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     def test_01_Raw(self):
         l_raw = XML_PIONEER_SECTION
         # print('A2-01-A - Raw\n{}'.format(l_raw))
-        self.assertEqual(l_raw[:16], L_PIONEER_SECTION_START)
+        self.assertEqual(l_raw[:16], L_PIONEER_SECTION_START[:16])
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_PIONEER_SECTION)
@@ -136,7 +139,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """ Test
         """
         l_xml = self.m_xml.entertainment_sect
-        print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
+        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
         self.assertEqual(self.m_xml.entertainment_sect.tag, TESTING_ENTERTAINMENT_SECTION)
         self.assertGreater(len(l_xml), 2)
 
@@ -167,12 +170,15 @@ class B1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_xml_pioneer = self.m_xml.pioneer_sect.find('Device')
 
-    def test_1_Device0(self):
+    def test_01_Device(self):
         """ Read the xml and fill in the first room's dict
         """
-        l_obj = pioneerXml._read_one(self.m_xml.pioneer_sect[0])
-        # print(PrettyFormatAny.form(l_obj, 'B1-1-A - One Device'))
+        l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[0])
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - PioneerDeviceData'))
         self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_PIONEER_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_PIONEER_DEVICE_ACTIVE_0)
@@ -184,13 +190,35 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_PIONEER_DEVICE_IPV4_0)
         self.assertEqual(str(l_obj.Port), TESTING_PIONEER_DEVICE_PORT_0)
         self.assertEqual(str(l_obj.CommandSet), TESTING_PIONEER_DEVICE_COMMAND_SET_0)
-        self.assertEqual(str(l_obj.Status), TESTING_PIONEER_DEVICE_S)
+        # self.assertEqual(str(l_obj.Status), TESTING_PIONEER_DEVICE_STATUS_0)
+        self.assertEqual(str(l_obj.Type), TESTING_PIONEER_DEVICE_TYPE_0)
+        self.assertEqual(str(l_obj.Volume), TESTING_PIONEER_DEVICE_VOLUME_0)
 
-    def test_2_Device1(self):
+    def test_02_Device0(self):
         """ Read the xml and fill in the first room's dict
         """
-        l_obj = pioneerXml._read_one(self.m_xml.pioneer_sect[1])
-        # print(PrettyFormatAny.form(l_obj, 'B1-1-A - One Device'))
+        l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[0])
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-A - One Device'))
+        self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_0)
+        self.assertEqual(str(l_obj.Key), TESTING_PIONEER_DEVICE_KEY_0)
+        self.assertEqual(str(l_obj.Active), TESTING_PIONEER_DEVICE_ACTIVE_0)
+        self.assertEqual(str(l_obj.UUID), TESTING_PIONEER_DEVICE_UUID_0)
+        self.assertEqual(str(l_obj.Comment), TESTING_PIONEER_DEVICE_COMMENT_0)
+        self.assertEqual(str(l_obj.RoomName), TESTING_PIONEER_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_PIONEER_DEVICE_ROOM_UUID_0)
+        # .
+        self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_PIONEER_DEVICE_IPV4_0)
+        self.assertEqual(str(l_obj.Port), TESTING_PIONEER_DEVICE_PORT_0)
+        self.assertEqual(str(l_obj.CommandSet), TESTING_PIONEER_DEVICE_COMMAND_SET_0)
+        # self.assertEqual(str(l_obj.Status), TESTING_PIONEER_DEVICE_STATUS_0)
+        self.assertEqual(str(l_obj.Type), TESTING_PIONEER_DEVICE_TYPE_0)
+        self.assertEqual(str(l_obj.Volume), TESTING_PIONEER_DEVICE_VOLUME_0)
+
+    def test_03_Device1(self):
+        """ Read the xml and fill in the first room's dict
+        """
+        l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[1])
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - One Device'))
         self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_1)
         self.assertEqual(str(l_obj.Key), TESTING_PIONEER_DEVICE_KEY_1)
         self.assertEqual(str(l_obj.Active), TESTING_PIONEER_DEVICE_ACTIVE_1)
@@ -199,56 +227,74 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_PIONEER_DEVICE_IPV4_1)
         self.assertEqual(str(l_obj.Port), TESTING_PIONEER_DEVICE_PORT_1)
 
-    def test_3_AllDevices(self):
+    def test_04_AllDevices(self):
         """ Read the xml and fill in the first room's dict
         """
-        l_obj, _count = pioneerXml.read_all(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj[0], 'B1-2-A - All Devices'))
-        print(PrettyFormatAny.form(l_obj[1], 'B1-2-B - All Devices'))
-        self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_1)
+        l_obj = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_obj, 'B1-04-A - All Devices'))
+        # print(PrettyFormatAny.form(l_obj.Devices, 'B1-04-B - Devices'))
+        # print(PrettyFormatAny.form(l_obj.Devices[0], 'B1-04-C - Device[0]'))
+        self.assertEqual(l_obj.Count, 2)
+        self.assertEqual(str(l_obj.Active), TESTING_PIONEER_ACTIVE)
+        self.assertEqual(l_obj.Devices[0].Name, TESTING_PIONEER_DEVICE_NAME_0)
+        self.assertEqual(l_obj.Devices[1].Name, TESTING_PIONEER_DEVICE_NAME_1)
 
 
-class C1_Write(SetupMixin, unittest.TestCase):
-    """ Test that we read in the XML config properly.
+class D1_Write(SetupMixin, unittest.TestCase):
+    """ Test that we write out the xml properly
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pioneer, _count = pioneerXml.read_all(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pioneer = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_pioneer
 
-    def test_1_Device0(self):
-        """ Read the xml and fill in the first room's dict
+    def test_01_Device(self):
+        """ Write the XML for a device
         """
-        l_obj = pioneerXml._read_one(self.m_xml.pioneer_sect[0])
-        # print(PrettyFormatAny.form(l_obj, 'C1-1-A - One Device'))
-        self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_0)
-        self.assertEqual(str(l_obj.Key), TESTING_PIONEER_DEVICE_KEY_0)
-        self.assertEqual(str(l_obj.Active), TESTING_PIONEER_DEVICE_ACTIVE_0)
-        self.assertEqual(l_obj.UUID, TESTING_PIONEER_DEVICE_UUID_0)
-        # .
-        self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_PIONEER_DEVICE_IPV4_0)
-        self.assertEqual(str(l_obj.Port), TESTING_PIONEER_DEVICE_PORT_0)
+        l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[0])
+        # print(PrettyFormatAny.form(l_obj, 'D1-01-A - One Device'))
+        l_xml = pioneerXml._write_device(l_obj)
+        # print(PrettyFormatAny.form(l_xml, 'D1-01-B - One Device'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_PIONEER_DEVICE_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_PIONEER_DEVICE_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_PIONEER_DEVICE_ACTIVE_0)
+        self.assertEqual(l_xml.find('UUID').text, TESTING_PIONEER_DEVICE_UUID_0)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_PIONEER_DEVICE_COMMENT_0)
+        #
+        self.assertEqual(l_xml.find('IPv4').text, TESTING_PIONEER_DEVICE_IPV4_0)
 
-    def test_2_Device1(self):
-        """ Read the xml and fill in the first room's dict
+    def test_02_Device0(self):
+        """ Write
         """
-        l_obj = pioneerXml._read_one(self.m_xml.pioneer_sect[1])
-        # print(PrettyFormatAny.form(l_obj, 'C1-2-A - One Device'))
-        self.assertEqual(l_obj.Name, TESTING_PIONEER_DEVICE_NAME_1)
-        self.assertEqual(str(l_obj.Key), TESTING_PIONEER_DEVICE_KEY_1)
-        self.assertEqual(str(l_obj.Active), TESTING_PIONEER_DEVICE_ACTIVE_1)
-        self.assertEqual(l_obj.UUID, TESTING_PIONEER_DEVICE_UUID_1)
-        # .
-        self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_PIONEER_DEVICE_IPV4_1)
-        self.assertEqual(str(l_obj.Port), TESTING_PIONEER_DEVICE_PORT_1)
+        l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[0])
+        # print(PrettyFormatAny.form(l_obj, 'D1-02-A - One Device'))
+        l_xml = pioneerXml._write_device(l_obj)
+        # print(PrettyFormatAny.form(l_xml, 'D1-02-B - One Device'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_PIONEER_DEVICE_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_PIONEER_DEVICE_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_PIONEER_DEVICE_ACTIVE_0)
 
-    def test_3_AllDevices(self):
-        """ Read the xml and fill in the first room's dict
+    def test_03_Device1(self):
+        """ Write
         """
-        l_obj = pioneerXml.read_all(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'C2-3-A - All Devices'))
-        l_xml = pioneerXml.write_all(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C2-3-B - All Devices'))
+        l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[1])
+        # print(PrettyFormatAny.form(l_obj, 'D1-03-A - One Device'))
+        l_xml = pioneerXml._write_device(l_obj)
+        # print(PrettyFormatAny.form(l_xml, 'D1-03-B - One Device'))
+        self.assertEqual(l_xml.attrib['Name'], TESTING_PIONEER_DEVICE_NAME_1)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_PIONEER_DEVICE_KEY_1)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_PIONEER_DEVICE_ACTIVE_1)
+
+    def test_04_AllDevices(self):
+        """ Write
+        """
+        l_obj = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_obj
+        print(PrettyFormatAny.form(l_obj, 'C1-04-A - EntertainmentPluginData'))
+        l_xml = pioneerXml.write_pioneer_section_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'C1-04-B - All Devices'))
 
 # ## END DBK

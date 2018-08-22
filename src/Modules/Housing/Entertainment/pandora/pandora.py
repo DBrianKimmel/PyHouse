@@ -11,69 +11,49 @@
 
 When PyHouse starts initially, Pandora is inactive.
 
-My (briank) system is controlled by an IR signal coming from an attached Pifacecad module vi lircd.
+When "pandora" button is pressed on a web page, pianobar is fired up as a process.
 
-When a signal is recieved indicate the "pandora" button was pressed on a remote control,
- pianobar is fires up as a process.
+Further Mqtt messages control the pianobar process as needed, volume, next station etc.
 
-Further IR signals control the pianobar process as needed, volume, next station etc.
-
-When the remotes switches to another device (TV, BluRay, Tuner etc.), pianobar is terminated and
+When the stop button is pressed on a web page, pianobar is terminated and
 this module goes back to its initial state ready for another session.
 
-Now (2018) will also work with MQTT messages to control Pandora via PioanBar and PatioBar.
+Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
-from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 
-__updated__ = '2018-08-08'
+__updated__ = '2018-08-22'
+__version_info__ = (18, 8, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.internet import protocol
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import BaseObject
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceControl
+from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+from Modules.Housing.Entertainment.entertainment_data import \
+        EntertainmentDeviceControl, EntertainmentDeviceData, EntertainmentPluginData
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-LOG = Logger.getLogger('PyHouse.Pandora     ')
+LOG = Logger.getLogger('PyHouse.Pandora        ')
 
-PIANOBAR_LOC = '/usr/bin/pianobar'
+PIANOBAR_LOCATION = '/usr/bin/pianobar'
+SECTION = 'pandora'
 
 #  (i) Control fifo at /home/briank/.config/pianobar/ctl opened
 
 
-class PandoraData:
+class PandoraDeviceData(EntertainmentDeviceData):
 
     def __init__(self):
-        self.Active = False
-        self.DeviceCount = 0
-        self.Devices = {}  # PandoraDeviceData()
-
-
-class DeviceControl:
-    """ Standardized control message for Entertainment devices
-    """
-
-    def __init__(self):
-        self.Channel = '01'
-        self.Input = '1'
-        self.Power = 'Off'
-        self.Volume = '50'
-        self.Zone = '1'
-
-
-class PandoraDeviceData(BaseObject):
-
-    def __init__(self):
-        self.Active = False
-        self.DeviceCount = 0
-        self.Factory = None
-        self.Api = None
-        self.IPv4 = None
-        self.Port = None
+        super(PandoraDeviceData, self).__init__()
+        self.Host = '1.2.3.4'
+        self.ConnectionName = None  # pioneer, Onkyo
+        self.InputName = None
+        self.InputCode = None
+        self.Volume = 0  # Default volume
+        self.MaxPlayTime = 12 * 60 * 60  # Seconds
 
 
 class XML:
@@ -81,50 +61,92 @@ class XML:
     """
 
     @staticmethod
-    def _read_one_entry(p_entry_xml):
+    def _read_device(p_entry_xml):
+        """
+        @param p_entry_xml: Element <Device> within <PandoraSection>
+        @return: a PandoraDeviceData object
+        """
         l_obj = PandoraDeviceData()
         XmlConfigTools.read_base_object_xml(l_obj, p_entry_xml)
-        l_obj.IPv4 = PutGetXML.get_ip_from_xml(p_entry_xml, 'IPv4')
+        l_obj.Host = PutGetXML.get_ip_from_xml(p_entry_xml, 'Host')
+        l_obj.ConnectionName = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionName')
+        l_obj.InputName = PutGetXML.get_text_from_xml(p_entry_xml, 'InputName')
+        l_obj.InputCode = PutGetXML.get_text_from_xml(p_entry_xml, 'InputCode')
+        l_obj.MaxPlayTime = PutGetXML.get_int_from_xml(p_entry_xml, 'MaxPlayTime')
+        l_obj.Volume = PutGetXML.get_int_from_xml(p_entry_xml, 'Volume')
         return l_obj
 
     @staticmethod
-    def _write_one_entry():
-        pass
+    def _write_device(p_obj):
+        """
+        @param p_obj: a filled in PandorDeviceData object
+        @return: An XML element for <Device> to be appended to <PandoraSection> Element
+        """
+
+        l_xml = XmlConfigTools.write_base_object_xml('Device', p_obj)
+        # PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
+        PutGetXML.put_ip_element(l_xml, 'Host', p_obj.Host)
+        PutGetXML.put_text_element(l_xml, 'ConnectionName', p_obj.ConnectionName)
+        PutGetXML.put_text_element(l_xml, 'InputName', p_obj.InputName)
+        PutGetXML.put_text_element(l_xml, 'InputCode', p_obj.InputCode)
+        PutGetXML.put_text_element(l_xml, 'MaxPlayTime', p_obj.MaxPlayTime)
+        PutGetXML.put_int_element(l_xml, 'Volume', p_obj.Volume)
+        return l_xml
 
     @staticmethod
     def read_pandora_section_xml(p_pyhouse_obj):
-        l_ret = {}
+        """
+        This has to:
+            Fill in an entry in Entertainment Plugins
+
+        @param p_pyhouse_obj: containing an XML Element for the <PandoraSection>
+        @return: a EntertainmentPluginData object filled in.
+        """
+        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
+        l_entertain_obj = p_pyhouse_obj.House.Entertainment
+        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_plugin_obj.Name = SECTION
+        l_plugin_obj.Active = PutGetXML.get_bool_from_xml(l_xml, 'Active')
         l_count = 0
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        l_xml = l_xml.find('HouseDivision')
         if l_xml is None:
-            return l_ret, l_count
-        l_xml = l_xml.find('EntertainmentSection')
-        if l_xml is None:
-            return l_ret, l_count
-        l_xml = l_xml.find('PandoraSection')
-        if l_xml is None:
-            return l_ret, l_count
+            return l_plugin_obj
         try:
-            for l_entry_xml in l_xml.iterfind('Device'):
-                l_entry_obj = XML._read_one_entry(l_entry_xml)
-                l_entry_obj.Key = l_count
-                l_ret[l_count] = l_entry_obj
-                LOG.info('Loaded Pandora Device {}'.format(l_entry_obj.Name))
+            l_plugin_obj.Type = PutGetXML.get_text_from_xml(l_xml, 'Type')
+            for l_device_xml in l_xml.iterfind('Device'):
+                l_device_obj = XML._read_device(l_device_xml)
+                l_device_obj.Key = l_count
+                l_plugin_obj.Devices[l_count] = l_device_obj
+                LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
                 l_count += 1
+                l_plugin_obj.Count = l_count
         except AttributeError as e_err:
-            LOG.error('ERROR if getting Pandora Device Data - {}'.format(e_err))
-        LOG.info('Loaded {} Pandora Devices.'.format(l_count))
-        return l_ret, l_count
+            LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj
+        LOG.info('Loaded {} {}Devices.'.format(l_count, SECTION))
+        return l_plugin_obj
 
     @staticmethod
     def write_pandora_section_xml(p_pyhouse_obj):
-        l_xml = ET.Element('PandoraSection')
+        """ Create the <PandoraSection> portion of the <EntertainmentSection>
+
+        @param p_pyhouse_obj: containing an object with pandora data filled in.
+        @return: An Element of the tree which can be appended to the EntertainmentSection
+        """
+        l_entertain_obj = p_pyhouse_obj.House.Entertainment
+        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_active = l_plugin_obj.Active
+        l_xml = ET.Element('PandoraSection', attrib={'Active': str(l_active)})
+        PutGetXML.put_text_element(l_xml, 'Type', l_plugin_obj.Type)
         l_count = 0
-        l_obj = p_pyhouse_obj.House.Entertainment.Pandora
-        for l_pandora_object in l_obj.values():
+
+        # print(PrettyFormatAny.form(l_entertain_obj, 'Wr-1 Pandora', 180))
+        # print(PrettyFormatAny.form(l_entertain_obj.Plugins, 'Wr-2 Pandora Plugins', 180))
+        # print(PrettyFormatAny.form(l_entertain_obj.Plugins[SECTION], 'Wr-3 Pandora Plugin', 180))
+        # print(PrettyFormatAny.form(l_entertain_obj.Plugins[SECTION].Devices, 'Wr-4 Pandora Devices', 180))
+
+        for l_pandora_object in l_plugin_obj.Devices.values():
             l_pandora_object.Key = l_count
-            l_entry = XML._write_one_entry(l_pandora_object)
+            l_entry = XML._write_device(l_pandora_object)
             l_xml.append(l_entry)
             l_count += 1
         LOG.info('Saved {} Pandora device(s) XML'.format(l_count))
@@ -151,15 +173,17 @@ class MqttActions:
     def _decode_control(self, p_topic, p_message):
         """ Decode the message.
         As a side effect - control Pandora ( PianoBar ) via the control socket
+        ==> pyhouse/<house name>/entertainment/pandora/control/<do-this>
+        <do-this> = On, Off, VolUp1, VolDown1, VolUp5, VolDown5, Like, Dislike
         """
         l_logmsg = '\tControl: '
         l_control = self._get_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
-            self.m_API.Start()
+            self.m_API._play_pandora()
         elif l_control == 'Off':
             l_logmsg += ' Turn Off '
-            self.m_API.Stop()
+            self.m_API._halt_pandora()
 
         elif l_control == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
@@ -169,13 +193,9 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
-        ==> pyhouse/<house name>/hvac/<type>/<Name>/...
-        <type> = thermostat, ...
+        ==> pyhouse/<house name>/entertainment/pandora/<Action>/...
+        <action> = control, status
         """
-        if self.m_API == None:
-            # LOG.debug('Decoding initializing')
-            self.m_API = API(self.m_pyhouse_obj)
-
         l_logmsg = ''
         if p_topic[2] == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
@@ -269,32 +289,38 @@ class API(MqttActions):
     m_started = False
 
     def __init__(self, p_pyhouse_obj):
+        """ Do the housekeeping for the pandora plugin.
+        """
+        # print(PrettyFormatAny.form(p_pyhouse_obj.House, 'Pandora.API() House'))
+        # print(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment, 'Pandora.API() Entertainment'))
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Name = SECTION
         self.m_started = None
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized.")
+        LOG.info("Initialized - Version:{}".format(__version__))
+
+    def LoadXml(self, p_pyhouse_obj):
+        """ Read the XML for pandora.
+        """
+        l_obj = XML.read_pandora_section_xml(p_pyhouse_obj)
+        LOG.info("Loaded Pandora XML.")
+        return l_obj
 
     def Start(self):
-        """Start the Pandora player when we receive an IR signal to play music.
-        This will open the socket for control
+        """ Start the Pandora plugin since we have it configured in the XML.
+        This does not start playing pandora.  That takes a control message to play.
         """
         # LOG.info("Starting")
-        l_topic = 'entertainment/pioneer/control'
-        l_obj = EntertainmentDeviceControl()
         if not self.m_started:
-            self.m_processProtocol = BarProcessControl()
-            self.m_processProtocol.deferred = BarProcessControl()
-            l_executable = '/usr/bin/pianobar'
-            l_args = ('pianobar',)
-            l_env = None  # this will pass <os.environ>
-            self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
-            self.m_started = True
-
-            # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, 'On')
-            l_obj.Power = "On"
-            l_obj.Channel = '01'
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
-
+            pass
         LOG.info("Started.")
+
+    def SaveXml(self, _p_xml):
+        """
+        """
+        l_xml = XML.write_pandora_section_xml(self.m_pyhouse_obj)
+        LOG.info("Saved Pandora XML.")
+        return l_xml
 
     def Stop(self):
         """Stop the Pandora player when we receive an IR signal to play some other thing.
@@ -303,5 +329,38 @@ class API(MqttActions):
         self.m_transport.write(b'q')
         self.m_transport.closeStdin()
         LOG.info("Stopped.")
+
+    def _play_pandora(self):
+        """ When we receive a proper Mqtt message to start (power on) the pandora player.
+        We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
+
+        TODO:    Allow for multiple pandora players within one house.time
+                 Allow one pandora player to drive multiple amps to have whole house music.
+                 Implement max play
+        """
+        self.m_processProtocol = BarProcessControl()
+        self.m_processProtocol.deferred = BarProcessControl()
+        l_executable = PIANOBAR_LOCATION
+        l_args = ('pianobar',)
+        l_env = None  # this will pass <os.environ>
+        self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+        self.m_started = True
+
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, 'On')
+        l_obj = EntertainmentDeviceControl()
+        l_obj.Power = "On"
+        l_obj.Channel = '01'
+        LOG.info('Sending power on')
+        l_topic = 'entertainment/pioneer/control'
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+
+    def _halt_pandora(self):
+        """ We have received a control message and therefore we stop the pandora player.
+        This control message may come from a control screen or from a timer.
+        """
+        self.m_started = False
+        self.m_transport.write(b'q')
+        self.m_transport.closeStdin()
+        LOG.info("Stopped Pandora.")
 
 # ## END DBK

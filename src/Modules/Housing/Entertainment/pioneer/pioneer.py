@@ -22,7 +22,8 @@ Listen to Mqtt message to control device
 See: pioneer/__init__.py for documentation.
 
 """
-__updated__ = '2018-08-08'
+
+__updated__ = '2018-08-22'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,7 +36,7 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import BaseUUIDObject
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -45,6 +46,7 @@ LOG = Logger.getLogger('PyHouse.Pioneer        ')
 
 PORT = 8102
 IP = '192.168.9.121'
+SECTION = 'pioneer'
 
 VSX822K = {
     'PowerQuery':       b'?P\r\n',
@@ -59,29 +61,17 @@ VSX822K = {
     }
 
 
-class PioneerData:
-
-    def __init__(self):
-        self.Active = False
-        self.DeviceCount = 0
-        self.Devices = {}  # PioneerDeviceData()
-
-
-class PioneerDeviceData(BaseUUIDObject):
+class PioneerDeviceData(EntertainmentDeviceData):
 
     def __init__(self):
         super(PioneerDeviceData, self).__init__()
-        self.Comment = None
         self.CommandSet = None
         self.IPv4 = None
         self.Port = None
-        # self.RoomCoords = None
         self.RoomName = None
         self.RoomUUID = None
-        self.Status = None
         self.Type = None
         self.Volume = None
-        self._Factory = None
 
 
 class XML(object):
@@ -90,19 +80,33 @@ class XML(object):
 
     @staticmethod
     def _read_device(p_xml):
+        """
+        @param p_entry_xml: Element <Device> within <PandoraSection>
+        @return: a PandoraDeviceData object
+        """
         l_device = PioneerDeviceData()
         XmlConfigTools().read_base_UUID_object_xml(l_device, p_xml)
-        l_device.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+        # l_device.Name = PutGetXML.get_text_from_xml(p_xml, 'Name')
+        # l_device.Active = PutGetXML.get_bool_from_xml(p_xml, 'Active')
+        # l_device.Key = PutGetXML.get_int_from_xml(p_xml, 'Key')
+        # l_device.UUID = PutGetXML.get_uuid_from_xml(p_xml, 'UUID')
+        # l_device.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_device.CommandSet = PutGetXML.get_text_from_xml(p_xml, 'CommandSet')
         l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
         l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
         l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
         l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
+        # l_device.Status = PutGetXML.get_text_from_xml(p_xml, 'Status')
         l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
+        l_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
         return l_device
 
     @staticmethod
     def _write_device(p_obj):
+        """
+        @param p_obj: is a PioneerDeviceData
+        @return: a xml element for the device
+        """
         l_xml = XmlConfigTools().write_base_UUID_object_xml('Device', p_obj)
         PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML().put_text_element(l_xml, 'CommandSet', p_obj.CommandSet)
@@ -113,53 +117,51 @@ class XML(object):
         return l_xml
 
     @staticmethod
-    def _read_one(p_xml):
-        """ Read in one entire PioneerDeviceData
+    def read_pioneer_section_xml(p_pyhouse_obj):
+        """ Get the entire PioneerDeviceData object from the xml.
         """
-        l_obj = XML._read_device(p_xml)
-        l_obj.Status = 'off'
-        l_obj.Type = 'Receiver'
-        l_obj.Volume = 0
-        return l_obj
-
-    @staticmethod
-    def _write_one(_p_pyhouse_obj, p_obj):
-        """ Create the complete Device XML for one Pioneer device.
-        """
-        l_xml = XML._write_device(p_obj)
-        PutGetXML.put_text_element(l_xml, 'Volume', p_obj.Volume)
-        return l_xml
-
-    @staticmethod
-    def read_all(p_pyhouse_obj):
-        """ Get the entire PioneerData object from the xml.
-        """
-        l_dict = {}
+        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PioneerSection')
+        l_entertain_obj = p_pyhouse_obj.House.Entertainment
+        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_plugin_obj.Name = SECTION
+        l_plugin_obj.Active = PutGetXML.get_bool_from_xml(l_xml, 'Active')
         l_count = 0
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
-        if l_xml == None:
-            return l_dict, l_count
-        l_xml = l_xml.find('EntertainmentSection')
-        if l_xml == None:
-            return l_dict, l_count
-        l_xml = l_xml.find('PioneerSection')
-        if l_xml == None:
-            return l_dict, l_count
-        for l_dev_xml in l_xml.iterfind('Device'):
-            l_dict[l_count] = XML._read_one(l_dev_xml)
-            LOG.info('Loaded Pioneer device {}'.format(l_dict[l_count].Name))
-            l_count += 1
-        # LOG.info('Loaded {} Pioneer Device(s).'.format(l_count))
-        return l_dict, l_count
+        if l_xml is None:
+            return l_plugin_obj
+        try:
+            l_plugin_obj.Type = PutGetXML.get_text_from_xml(l_xml, 'Type')
+            for l_device_xml in l_xml.iterfind('Device'):
+                l_device_obj = XML._read_device(l_device_xml)
+                l_device_obj.Key = l_count
+                l_plugin_obj.Devices[l_count] = l_device_obj
+                LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
+                l_count += 1
+                l_plugin_obj.Count = l_count
+        except AttributeError as e_err:
+            LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj
+        LOG.info('Loaded {} {}Devices.'.format(l_count, SECTION))
+        return l_plugin_obj
 
     @staticmethod
-    def write_all(p_pyhouse_obj):
+    def write_pioneer_section_xml(p_pyhouse_obj):
         """ Create the entire PioneerSection of the XML.
         """
-        l_xml = ET.Element('PioneerSection')
+        l_entertain_obj = p_pyhouse_obj.House.Entertainment
+        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_active = l_plugin_obj.Active
+        l_xml = ET.Element('PioneerSection', attrib={'Active': str(l_active)})
+        PutGetXML.put_text_element(l_xml, 'Type', l_plugin_obj.Type)
         l_count = 0
-        for l_obj in p_pyhouse_obj.House.Entertainment.Pioneer.values():
-            l_xml.append(XML._write_one(p_pyhouse_obj, l_obj))
+
+        # print(PrettyFormatAny.form(l_entertain_obj, 'Wr-1 Pioneer', 180))
+        # print(PrettyFormatAny.form(l_entertain_obj.Plugins, 'Wr-2 Pioneer', 180))
+        # print(PrettyFormatAny.form(l_entertain_obj.Plugins[SECTION], 'Wr-3 Pioneer', 180))
+        # print(PrettyFormatAny.form(l_entertain_obj.Plugins[SECTION].Devices, 'Wr-4 Pioneer', 180))
+
+        for l_obj in l_plugin_obj.Devices.values():
+            l_dev_xml = XML._write_device(l_obj)
+            l_xml.append(l_dev_xml)
             l_count += 1
         LOG.info('Saved {} Pioneer device(s) XML'.format(l_count))
         return l_xml
@@ -323,7 +325,7 @@ class Util(object):
         pass
 
 
-class API(object):
+class API(MqttActions):
     """This interfaces to all of PyHouse.
     """
 
@@ -331,18 +333,21 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
+    def _playPioneer(self):
+        pass
+
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for all Pioneer devices.
         """
-        p_pyhouse_obj.House.Entertainment.Pioneer = PioneerData()  # Clear before loading
-        l_pioneer_obj, l_count = XML().read_all(p_pyhouse_obj)
-        p_pyhouse_obj.House.Entertainment.Pioneer = l_pioneer_obj
-        LOG.info("Loaded {} Pioneer Device(s).".format(l_count))
+        l_pioneer_obj = XML.read_pioneer_section_xml(p_pyhouse_obj)
+        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_pioneer_obj
+        LOG.info("Loaded Pioneer Device(s).")
         return l_pioneer_obj
 
     def Start(self):
         """ Start all the Pioneer factories if we have any Pioneer devices.
         """
+        return
         l_count = 0
         for l_pioneer_obj in self.m_pyhouse_obj.House.Entertainment.Pioneer.values():
             l_count += 1
@@ -361,10 +366,10 @@ class API(object):
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveXml(self, p_xml):
-        l_xml = XML().write_all(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
+        l_xml = XML().write_pioneer_section_xml(self.m_pyhouse_obj)
+        # p_xml.append(l_xml)
         LOG.info("Saved Pioneer XML.")
-        return p_xml
+        return l_xml
 
     def Stop(self):
         LOG.info("Stopped.")

@@ -11,7 +11,9 @@
 
 """
 
-__updated__ = '2018-08-08'
+__updated__ = '2018-08-19'
+__version_info__ = (18, 8, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,36 +22,27 @@ from twisted.internet import error
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import BaseUUIDObject
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 LOG = Logger.getLogger('PyHouse.Samsung        ')
 
 SAMSUNG_ADDRESS = '192.168.1.103'
 SAMSUNG_PORT = 55000
+SECTION = 'samsung'
 
 
-class SamsungData:
-
-    def __init__(self):
-        self.Active = False
-        self.DeviceCount = 0
-        self.Devices = {}  # SamsungDeviceData()
-
-
-class SamsungDeviceData(BaseUUIDObject):
+class SamsungDeviceData(EntertainmentDeviceData):
 
     def __init__(self):
-        self.DeviceCount = 0
-        self.Factory = None
-        self.Api = None
-        self.Installed = None
+        super(SamsungDeviceData, self).__init__()
         self.IPv4 = None
         self.Model = None
         self.Port = None
         self.RoomName = None
         self.RoomUUID = None
         self.Type = None
+        self.Volume = None
 
 
 class XML:
@@ -57,59 +50,64 @@ class XML:
     """
 
     @staticmethod
-    def _read_one_device(p_xml):
+    def _read_device(p_xml):
         l_obj = SamsungDeviceData()
         XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)
         l_obj.Installed = PutGetXML.get_text_from_xml(p_xml, 'Installed')
         l_obj.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
-        l_obj.Model = PutGetXML.get_text_from_xml(p_xml, 'Model')
+        # l_obj.Model = PutGetXML.get_text_from_xml(p_xml, 'Model')
         l_obj.Port = PutGetXML.get_int_from_xml(p_xml, 'Port', 55000)
         l_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
         l_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
         l_obj.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
+        l_obj.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
         return l_obj
 
     @staticmethod
-    def read_samsung_section_xml(p_pyhouse_obj):
-        l_ret = {}
-        l_count = 0
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        l_xml = l_xml.find('HouseDivision')
-        if l_xml is None:
-            return l_ret, l_count
-        l_xml = l_xml.find('EntertainmentSection')
-        if l_xml is None:
-            return l_ret, l_count
-        l_xml = l_xml.find('SamsungSection')
-        if l_xml is None:
-            return l_ret, l_count
-        try:
-            for l_device_xml in l_xml.iterfind('Device'):
-                l_device_obj = XML._read_one_device(l_device_xml)
-                l_device_obj.Key = l_count
-                l_ret[l_count] = l_device_obj
-                LOG.info('Loaded Samsung Device {}'.format(l_device_obj.Name))
-                l_count += 1
-        except AttributeError as e_err:
-            LOG.error('ERROR if getting Samsung Device Data - {}'.format(e_err))
-        p_pyhouse_obj.House.Entertainment.Samsung = l_ret
-        LOG.info('Loaded {} Samsung Devices.'.format(l_count))
-        return l_ret, l_count
-
-    @staticmethod
-    def _write_one_device(p_obj):
+    def _write_device(p_obj):
         l_xml = XmlConfigTools.write_base_UUID_object_xml('Device', p_obj)
-        PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
+        PutGetXML.put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
+        PutGetXML.put_int_element(l_xml, 'Port', p_obj.Port)
+        PutGetXML.put_text_element(l_xml, 'RoomName', p_obj.RoomName)
+        PutGetXML.put_text_element(l_xml, 'RoomUUID', p_obj.RoomUUID)
+        PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
+        PutGetXML.put_text_element(l_xml, 'Volume', p_obj.Volume)
         return l_xml
 
     @staticmethod
-    def write_samsung_section_xml(p_pyhouse_obj):
-        l_xml = ET.Element('SamsungSection')
+    def read_samsung_section_xml(p_pyhouse_obj):
+        l_entry_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_device_obj = SamsungDeviceData()
         l_count = 0
-        l_obj = p_pyhouse_obj.House.Entertainment.Samsung
-        for l_room_object in l_obj.values():
-            l_room_object.Key = l_count
-            l_entry = XML.write_one_device(l_room_object)
+        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/SamsungSection')
+        if l_xml is None:
+            l_entry_obj.Name = 'Did not find xml section '
+            return l_entry_obj
+        try:
+            for l_device_xml in l_xml.iterfind('Device'):
+                l_device_obj = XML._read_device(l_device_xml)
+                l_device_obj.Key = l_count
+                l_entry_obj.Devices[l_count] = l_device_obj
+                l_entry_obj.Count += 1
+                LOG.info('Loaded Samsung Device {}'.format(l_entry_obj.Name))
+                l_count += 1
+        except AttributeError as e_err:
+            LOG.error('ERROR if getting Samsung Device Data - {}'.format(e_err))
+        if l_count > 0:
+            l_entry_obj.Active = True
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_entry_obj
+        LOG.info('Loaded {} Samsung Devices.'.format(l_count))
+        return l_entry_obj  # l_ret, l_count
+
+    @staticmethod
+    def write_samsung_section_xml(p_pyhouse_obj):
+        l_active = p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Count > 0
+        l_xml = ET.Element('SamsungSection', attrib={'Active': str(l_active)})
+        l_count = 0
+        l_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        for l_device_object in l_obj.Devices.values():
+            l_device_object.Key = l_count
+            l_entry = XML._write_device(l_device_object)
             l_xml.append(l_entry)
             l_count += 1
         LOG.info('Saved {} Samsung device(s) XML'.format(l_count))
@@ -233,21 +231,20 @@ class SamsungFactory(ReconnectingClientFactory):
 class API(object):
 
     def __init__(self, p_pyhouse_obj):
-        LOG.info("Initializing.")
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized.")
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         LOG.info('XML Loading')
         # l_samsung_obj = SamsungDeviceData()
-        p_pyhouse_obj.House.Entertainment.Samsung = SamsungDeviceData()  # Clear before loading
-        l_samsung_obj, l_count = XML().read_samsung_section_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Entertainment.Samsung = l_samsung_obj
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = SamsungDeviceData()  # Clear before loading
+        l_samsung_obj = XML.read_samsung_section_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_samsung_obj
         # l_host = SAMSUNG_ADDRESS
         # l_port = SAMSUNG_PORT
         # l_samsung_obj.Factory = SamsungFactory(p_pyhouse_obj, l_samsung_obj)
         # _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_samsung_obj.Factory)
-        LOG.info('Loaded {} XML'.format(l_count))
+        LOG.info('Loaded XML')
 
     def Start(self):
         LOG.info("Starting.")
@@ -261,7 +258,6 @@ class API(object):
         return p_xml
 
     def Stop(self):
-        LOG.info("Stopping.")
         LOG.info("Stopped.")
 
 # ## END DBK

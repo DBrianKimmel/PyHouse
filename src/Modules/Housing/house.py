@@ -29,7 +29,9 @@ PyHouse.House.
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-07-15'
+__updated__ = '2018-08-21'
+__version_info__ = (18, 8, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -91,7 +93,7 @@ class Xml(object):
 
     @staticmethod
     def _read_house_base(p_pyhouse_obj):
-        l_obj = HouseInformation()
+        l_obj = p_pyhouse_obj.House
         l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
         if l_xml is None:
             l_obj.Name = 'Default Name'
@@ -132,6 +134,7 @@ class Utility(object):
         """
         Initialize all the house APIs
         """
+        # print(PrettyFormatAny.form(p_pyhouse_obj.House, 'house.API-2', 180))
         p_pyhouse_obj.APIs.House.HouseAPI = p_api
         p_pyhouse_obj.APIs.House.EntertainmentAPI = entertainmentAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.FamilyAPI = familyAPI(p_pyhouse_obj)
@@ -193,25 +196,26 @@ class API(Utility):
     """
 
     def __init__(self, p_pyhouse_obj):
-        """
+        """ **NoReactor**
+        This is part of Core PyHouse - House is the reason we are running!
+        Note that the reactor is not yet running.
         """
         LOG.info('Initializing')
+        p_pyhouse_obj.House = HouseInformation()
         p_pyhouse_obj.Name = 'No Name yet'
         p_pyhouse_obj.Key = 0
         p_pyhouse_obj.Active = True
         p_pyhouse_obj.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
-
         p_pyhouse_obj.APIs.House = HouseAPIs()
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized')
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """
         Read in the HouseDivision portion XML file and update the internal data.
         """
         LOG.info('Loading XML')
-        p_pyhouse_obj.House = HouseInformation()  # Clear before loading
         l_house = Xml.read_house_xml(p_pyhouse_obj)
         p_pyhouse_obj.House = l_house
         Utility._load_component_xml(p_pyhouse_obj)

@@ -7,13 +7,11 @@
 @note:      Created on Jul 14, 2016
 @summary:
 
-Passed all 13 tests - DBK - 2018-08-05
+Passed all 14 tests - DBK - 2018-08-17
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.data_objects import HouseInformation
 
-__updated__ = '2018-08-05'
+__updated__ = '2018-08-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,6 +20,8 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import HouseInformation
+from Modules.Core.Utilities import convert
 from Modules.Housing.Entertainment.samsung.samsung import XML as samsungXml
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
@@ -29,7 +29,8 @@ from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_NAME, \
         TESTING_HOUSE_ACTIVE, \
         TESTING_HOUSE_KEY, \
-        TESTING_HOUSE_UUID, TESTING_HOUSE_DIVISION
+        TESTING_HOUSE_UUID, \
+        TESTING_HOUSE_DIVISION
 from Modules.Housing.Entertainment.samsung.test.xml_samsung import \
         TESTING_SAMSUNG_DEVICE_NAME_0, \
         TESTING_SAMSUNG_DEVICE_KEY_0, \
@@ -37,9 +38,11 @@ from Modules.Housing.Entertainment.samsung.test.xml_samsung import \
         TESTING_SAMSUNG_DEVICE_UUID_0, \
         TESTING_SAMSUNG_DEVICE_IPV4_0, \
         TESTING_SAMSUNG_DEVICE_PORT_0, \
-        TESTING_SAMSUNG_SECTION, XML_SAMSUNG_SECTION, L_SAMSUNG_SECTION_START, TESTING_SAMSUNG_DEVICE_COMMENT_0
-from Modules.Core.Utilities import convert
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+        TESTING_SAMSUNG_SECTION, \
+        XML_SAMSUNG_SECTION, \
+        L_SAMSUNG_SECTION_START, \
+        TESTING_SAMSUNG_DEVICE_COMMENT_0
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -86,7 +89,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'A1-03-A - PyHouse'))
         # print(PrettyFormatAny.form(l_obj.House, 'A1-03-B - House'))
         print(PrettyFormatAny.form(l_obj.House.Entertainment, 'A1-03-C - Entertainment'))
-        print(PrettyFormatAny.form(l_obj.House.Entertainment.Samsung, 'A1-03-D - Samsung'))
+        print(PrettyFormatAny.form(l_obj.House.Entertainment, 'A1-03-D - Samsung'))
         # self.assertIs(self.m_pyhouse_obj.House, HouseInformation())
 
 
@@ -99,7 +102,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     def test_01_Raw(self):
         l_raw = XML_SAMSUNG_SECTION
         # print('A2-01-A - Raw\n{}'.format(l_raw))
-        self.assertEqual(l_raw[:16], L_SAMSUNG_SECTION_START)
+        self.assertEqual(l_raw[1:len(TESTING_SAMSUNG_SECTION) + 1], TESTING_SAMSUNG_SECTION)
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_SAMSUNG_SECTION)
@@ -129,7 +132,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.entertainment_sect
         # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
-        self.assertEqual(len(l_xml), 4)
+        self.assertEqual(len(l_xml), 5)
 
     def test_03_SamsungXml(self):
         """ Test
@@ -162,7 +165,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_1_OneDevice(self):
         """ Read the xml and fill in the first room's dict
         """
-        l_obj = samsungXml._read_one_device(self.m_xml.samsung_sect.find('Device'))
+        l_obj = samsungXml._read_device(self.m_xml.samsung_sect.find('Device'))
         print(PrettyFormatAny.form(l_obj, 'B1-1-A - One Device'))
         self.assertEqual(l_obj.Name, TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_SAMSUNG_DEVICE_KEY_0)
@@ -187,14 +190,11 @@ class D1_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_samsung = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Samsung = self.m_samsung
 
     def test_01_OneDevice(self):
         """ Read the xml and fill in the first room's dict
         """
-        print(PrettyFormatAny.form(self.m_samsung, 'D1-01-A - Samsung'))
-        print(PrettyFormatAny.form(self.m_samsung[0], 'D1-01-B - Samsung'))
-        l_xml = samsungXml._write_one_device(self.m_samsung)
+        l_xml = samsungXml._write_device(self.m_samsung.Devices[0])
         print(PrettyFormatAny.form(l_xml, 'D1-01-C - One Device'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_SAMSUNG_DEVICE_KEY_0)
@@ -202,10 +202,10 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('UUID').text, TESTING_SAMSUNG_DEVICE_UUID_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_SAMSUNG_DEVICE_COMMENT_0)
 
-    def test_02_AllDevices(self):
-        """ Read the xml and fill in the first room's dict
+    def test_03_AllDevices(self):
         """
-        l_xml = samsungXml.write_samsung_section_xml(self.m_xml.samsung_sect.find('Device'))
-        print(PrettyFormatAny.form(l_xml, 'D1-02-A - All Devices'))
+        """
+        l_xml = samsungXml.write_samsung_section_xml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(l_xml, 'D1-03-A - XML'))
 
 # ## END DBK
