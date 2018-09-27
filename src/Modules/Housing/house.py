@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-08-21'
+__updated__ = '2018-08-23'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -200,7 +200,7 @@ class API(Utility):
         This is part of Core PyHouse - House is the reason we are running!
         Note that the reactor is not yet running.
         """
-        LOG.info('Initializing')
+        LOG.info('Initializing - Version:{}'.format(__version__))
         p_pyhouse_obj.House = HouseInformation()
         p_pyhouse_obj.Name = 'No Name yet'
         p_pyhouse_obj.Key = 0

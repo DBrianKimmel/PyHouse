@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-08-15'
+__updated__ = '2018-08-23'
 
 #  Import system type stuff
 
@@ -119,7 +119,7 @@ class Actions:
         if p_topic[0] == 'computer':
             l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
-            l_logmsg += self.m_disp_entertainment.decode(p_topic, p_message)
+            l_logmsg += self.m_disp_entertainment.decode(p_topic[1:], p_message)
         elif p_topic[0] == 'hvac':
             l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
         elif p_topic[0] == 'house':

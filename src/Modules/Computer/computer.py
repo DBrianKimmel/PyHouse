@@ -29,7 +29,9 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2018-07-14'
+__updated__ = '2018-08-24'
+__version_info__ = (18, 4, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import platform
@@ -197,7 +199,7 @@ class API(Utility):
     def __init__(self, p_pyhouse_obj):
         """ Initialize the computer section of PyHouse.
         """
-        LOG.info('Initializing')
+        LOG.info("Initializing - Version:{}".format(__version__))
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Key = 0
@@ -205,7 +207,7 @@ class API(Utility):
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized.')
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """

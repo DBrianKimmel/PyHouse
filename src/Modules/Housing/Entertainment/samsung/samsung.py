@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-19'
+__updated__ = '2018-08-24'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -242,8 +242,8 @@ class API(object):
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_samsung_obj
         # l_host = SAMSUNG_ADDRESS
         # l_port = SAMSUNG_PORT
-        # l_samsung_obj.Factory = SamsungFactory(p_pyhouse_obj, l_samsung_obj)
-        # _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_samsung_obj.Factory)
+        # l_samsung_obj._Factory = SamsungFactory(p_pyhouse_obj, l_samsung_obj)
+        # _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_samsung_obj._Factory)
         LOG.info('Loaded XML')
 
     def Start(self):

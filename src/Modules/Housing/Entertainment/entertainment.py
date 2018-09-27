@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-08-22'
+__updated__ = '2018-08-23'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -89,21 +89,26 @@ class MqttActions:
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/entertainment/<device>/...
+
         <device-or-service> = one of the VALID_ENTERTAINMENT_MFGRS
 
         These messages probably come from some external source such as node-red or alexa.
+
+        @param p_topic: is the topic after 'entertainment'
         """
-        l_ref = self.m_pyhouse_obj.House.Entertainment.Plugins[p_topic[1]].API
-        l_logmsg = '\tEntertainment:\n'
-        if p_topic[1] == 'pandora':
-            l_logmsg += l_ref.decode(p_topic, p_message)
-
-        elif p_topic[1] == 'pioneer':
-            l_logmsg += l_ref.decode(p_topic, p_message)
-
-        elif p_topic[1] == 'samsung' and m_samsung != None:
-            l_logmsg += l_ref.decode(p_topic, p_message)
-
+        l_topic = p_topic[0].lower()
+        l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic].API
+        l_logmsg = '\tEntertainment: '
+        #
+        if l_topic == 'pandora':
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
+        #
+        elif l_topic == 'pioneer':
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
+        #
+        elif l_topic == 'samsung' and m_samsung != None:
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
+        #
         else:
             l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
         return l_logmsg
@@ -160,6 +165,7 @@ class API(Utility, Ent):
             p_pyhouse_obj.House.Entertainment.Plugins[l_name] = l_plugin_data
             LOG.info('Created Entertainment Plugin for {}'.format(l_name))
             l_devices = l_plugin_data.API.LoadXml(p_pyhouse_obj)
+            l_plugin_data.API.Start()
             l_plugin_data.Devices = l_devices.Devices
 
     def LoadXml(self, p_pyhouse_obj):
@@ -196,11 +202,11 @@ class API(Utility, Ent):
             # print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 1', 190))
             for l_plug in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
                 l_module_xml = l_plug.API.SaveXml(l_entertainment_xml)
-                print(PrettyFormatAny.form(l_module_xml, 'Entertainment XML - 2', 190))
+                # print(PrettyFormatAny.form(l_module_xml, 'Entertainment XML - 2', 190))
                 if l_module_xml != None:
                     l_entertainment_xml.append(l_module_xml)
             p_xml.append(l_entertainment_xml)
-            print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 3', 190))
+            # print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 3', 190))
         LOG.info("Saved XML.")
         return l_entertainment_xml  # For debugging
 

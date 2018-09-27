@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-19'
+__updated__ = '2018-08-24'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -220,8 +220,8 @@ class API(object):
                 continue
             l_host = l_onkyo_obj.IPv4
             l_port = l_onkyo_obj.Port
-            l_onkyo_obj.Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
-            _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj.Factory)
+            l_onkyo_obj._Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
+            _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj._Factory)
             LOG.info("Started Onkyo {} {}".format(l_host, l_port))
         LOG.info("Started {} Onkyo devices".format(l_count))
 

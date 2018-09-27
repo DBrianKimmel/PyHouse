@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-19'
+__updated__ = '2018-08-25'
 
 # Import system type stuff
 
@@ -60,7 +60,9 @@ class EntertainmentDeviceData(BaseObject):
     def __init__(self):
         super(EntertainmentDeviceData, self).__init__()
         self.DeviceCount = 0
-        self.Factory = None  # The factory pointer for this device of an entertainment sub-section
+        self._Factory = None  # The factory pointer for this device of an entertainment sub-section
+        self._Transport = None
+        self._Connector = None
 
 
 class EntertainmentDeviceControl:
@@ -70,7 +72,8 @@ class EntertainmentDeviceControl:
 
     def __init__(self):
         self.Channel = None  # '01'
-        self.Direction = None  # 'F'  # F or R
+        self.Device = None  #   The name and Key for the device
+        self.Direction = None  # F or R  - Foreward, Reverse (think Video play)
         self.Input = None  # '01'  # Input ID
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Volume = None  # '0'  # 0-100 - Percent

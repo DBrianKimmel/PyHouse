@@ -10,9 +10,8 @@
 @summary:   Various XML functions and utility methods.
 
 """
-from thriftpy.parser.parser import p_namespace
 
-__updated__ = '2018-08-21'
+__updated__ = '2018-09-27'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET

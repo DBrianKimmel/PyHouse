@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-08-22'
+__updated__ = '2018-08-24'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -180,10 +180,10 @@ class MqttActions:
         l_control = self._get_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
-            self.m_API._play_pandora()
+            self._play_pandora()
         elif l_control == 'Off':
             l_logmsg += ' Turn Off '
-            self.m_API._halt_pandora()
+            self._halt_pandora()
 
         elif l_control == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
@@ -195,9 +195,10 @@ class MqttActions:
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/entertainment/pandora/<Action>/...
         <action> = control, status
+        @param p_topic: is the topic after ',,,/pandora/'
         """
         l_logmsg = ''
-        if p_topic[2] == 'control':
+        if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
@@ -297,6 +298,7 @@ class API(MqttActions):
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Name = SECTION
         self.m_started = None
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_API = self
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
@@ -346,12 +348,16 @@ class API(MqttActions):
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         self.m_started = True
 
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, 'On')
+        # Turn on the connected device
+        l_connection = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_con_name = l_connection.Devices[0].ConnectionName
+        l_topic = 'entertainment/{}/control'.format(l_con_name)
         l_obj = EntertainmentDeviceControl()
+        l_obj.Device = l_con_name
         l_obj.Power = "On"
-        l_obj.Channel = '01'
-        LOG.info('Sending power on')
-        l_topic = 'entertainment/pioneer/control'
+        l_obj.Input = l_connection.Devices[0].InputCode
+        l_obj.Volume = l_connection.Devices[0].Volume
+        LOG.info('Sending control-command to {}'.format(l_con_name))
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _halt_pandora(self):
@@ -361,6 +367,18 @@ class API(MqttActions):
         self.m_started = False
         self.m_transport.write(b'q')
         self.m_transport.closeStdin()
+
+        l_connection = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_topic = 'entertainment/{}/control'.format(l_connection.Name)
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, 'On')
+        l_obj = EntertainmentDeviceControl()
+        l_obj.Power = "Off"
+        l_obj.Input = l_connection.Devices[0].InputCode
+        l_obj.Volume = l_connection.Devices[0].Volume
+        LOG.info('Sending power off')
+        # l_topic = 'entertainment/pioneer/control'
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+
         LOG.info("Stopped Pandora.")
 
 # ## END DBK

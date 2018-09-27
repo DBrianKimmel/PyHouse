@@ -2,16 +2,21 @@ r"""
 http://www.mikepoulson.com/2011/06/programmatically-controlling-pioneer.html
 https://dl.dropboxusercontent.com/u/3275573/2010%20USA%20AVR%20RS-232C%20%26%20IP%20Commands%20for%20CI.pdf
 
+Telnet Protocol
+PORT = 8102
+IP = '192.168.9.121'
 
 
 Basic Commands (more commands to come in another post):
-?P
-Is Device powered ON?
+----------
+?P    Is Device powered ON?
 PWR0    Device is ON
 PWR1    Device is OFF
 
 PF    Power Device OFF
 PO    Power Device ON
+
+----------
 
 ?M     Is Zone MAIN muted
 MUT1    Zone is NOT Muted
@@ -19,6 +24,8 @@ MUT0    Zone is Muted
 
 MO     Mute MAIN zone
 MF     unMute MAIN zone
+
+----------
 
 ?V    Get Current Volume level
 VOLxxx    Current volume level, xxx is 000-200
@@ -30,6 +37,8 @@ XXXVL    Set Volume Level to XXX (000 - 200)
 
 VU        Set volume Up (822)Open a terminal
 VD        Set volume Down (822)
+
+----------
 
 ?RGC    Get inputs on device (i think)
 RGC111001002    *Unknown*
