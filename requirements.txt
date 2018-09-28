@@ -16,6 +16,7 @@ jsonpickle >= 1.0
 python-dateutil >= 2.7.3
 aniso8601 >= 3.0.2
 pyudev >= 0.21.0
+pyserial >= 3.4.0
 
 ### END DBK
                                                                                                                                                                                              

@@ -26,7 +26,7 @@ House.Entertainment.Plugins{}.API
 """
 
 __updated__ = '2018-09-28'
-__version_info__ = (18, 8, 0)
+__version_info__ = (18, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -40,9 +40,9 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData, \
         EntertainmentDeviceControl
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
-from Modules.Housing.Entertainment.pandora.pandora import MqttActions as pandoraMqtt
-from Modules.Housing.Entertainment.pioneer.pioneer import MqttActions as pioneerMqtt
-from Modules.Housing.Entertainment.samsung.samsung import MqttActions as samsungMqtt
+# from Modules.Housing.Entertainment.pandora.pandora import MqttActions as pandoraMqtt
+# from Modules.Housing.Entertainment.pioneer.pioneer import MqttActions as pioneerMqtt
+# from Modules.Housing.Entertainment.samsung.samsung import MqttActions as samsungMqtt
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
@@ -103,19 +103,23 @@ class MqttActions:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic].API
         except KeyError:
             print("{}".format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, "Plugins", 180)))
+            l_module = None
         l_logmsg = '\tEntertainment: '
         #
-        if l_topic == 'pandora':
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-        #
-        elif l_topic == 'pioneer':
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-        #
-        elif l_topic == 'samsung' and m_samsung != None:
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-        #
-        else:
-            l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
+        try:
+            if l_topic == 'pandora':
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            elif l_topic == 'pioneer':
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            elif l_topic == 'samsung' and m_samsung != None:
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            else:
+                l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
+        except Exception as e_err:
+            l_logmsg += "Error: {}".format(e_err)
         return l_logmsg
 
 
