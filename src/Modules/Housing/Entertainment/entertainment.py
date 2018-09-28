@@ -37,7 +37,8 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData, \
-        EntertainmentPluginData
+        EntertainmentPluginData, \
+        EntertainmentDeviceControl
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.pandora.pandora import MqttActions as pandoraMqtt
 from Modules.Housing.Entertainment.pioneer.pioneer import MqttActions as pioneerMqtt
@@ -95,9 +96,13 @@ class MqttActions:
         These messages probably come from some external source such as node-red or alexa.
 
         @param p_topic: is the topic after 'entertainment'
+        @return: a message to be logged as a Mqtt message
         """
         l_topic = p_topic[0].lower()
-        l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic].API
+        try:
+            l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic].API
+        except KeyError:
+            print("{}".format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, "Plugins", 180)))
         l_logmsg = '\tEntertainment: '
         #
         if l_topic == 'pandora':
@@ -121,6 +126,8 @@ class API(Utility, Ent):
     """
 
     def __init__(self, p_pyhouse_obj):
+        """
+        """
         p_pyhouse_obj.House.Entertainment = EntertainmentData()  # Create empty entertainment plugin section
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
@@ -165,8 +172,13 @@ class API(Utility, Ent):
             p_pyhouse_obj.House.Entertainment.Plugins[l_name] = l_plugin_data
             LOG.info('Created Entertainment Plugin for {}'.format(l_name))
             l_devices = l_plugin_data.API.LoadXml(p_pyhouse_obj)
-            l_plugin_data.API.Start()
             l_plugin_data.Devices = l_devices.Devices
+            l_plugin_data.API.Start()
+            l_topic = 'entertainment/{}/status'.format(l_name)
+            l_obj = EntertainmentDeviceControl()
+            l_obj.Device = l_name
+            l_obj.HostName = p_pyhouse_obj.Computer.Name
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the entertainment section.

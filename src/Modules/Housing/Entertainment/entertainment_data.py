@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-25'
+__updated__ = '2018-09-28'
 
 # Import system type stuff
 
@@ -74,6 +74,7 @@ class EntertainmentDeviceControl:
         self.Channel = None  # '01'
         self.Device = None  #   The name and Key for the device
         self.Direction = None  # F or R  - Foreward, Reverse (think Video play)
+        self.HostName = None  # name of computer holding definitions
         self.Input = None  # '01'  # Input ID
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Volume = None  # '0'  # 0-100 - Percent

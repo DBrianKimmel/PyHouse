@@ -226,36 +226,17 @@
 		</RoomSection>
 		<EntertainmentSection>
 			<OnkyoSection />
-			<PioneerSection>
-				<Device Active="True" Key="0" Name="VSX-8220K A/V Receiver">
-					<Comment />
-					<UUID>dc575f69-85ee-11e8-8a4d-a08cfd2fc483</UUID>
-					<Comment />
-					<IPv4>192.168.9.121</IPv4>
-					<Port>8102</Port>
-					<Type>Receiver</Type>
-					<Volume>0</Volume>
+			<PandoraSection>
+				<Device Active="True" Key="0" Name="Pandora Running on pi-06-ct">
+			        <Comment>Living Room</Comment>
+			        <Host>192.168.9.16</Host>
+			        <Type>Service</Type>
+			        <ConnectionName>Pioneer</ConnectionName>
+			        <InputName>CD</InputName>
+			        <InputCode>01FN</InputCode>
+			        <Volume>47</Volume>
 				</Device>
-			</PioneerSection>
-			<SamsungSection />
-		</EntertainmentSection>
-		<EntertainmentSection>
-			<OnkyoSection />
-			<PioneerSection>
-				<Device Active="True" Key="0" Name="VSX-8220K A/V Receiver">
-					<Comment />
-					<UUID>dc575f69-85ee-11e8-8a4d-a08cfd2fc483</UUID>
-					<Comment />
-					<IPv4>192.168.9.121</IPv4>
-					<Port>8102</Port>
-					<Type>Receiver</Type>
-					<Volume>0</Volume>
-				</Device>
-			</PioneerSection>
-			<SamsungSection />
-		</EntertainmentSection>
-		<EntertainmentSection>
-			<OnkyoSection />
+			</PandoraSection>
 			<PioneerSection>
 				<Device Active="True" Key="0" Name="VSX-8220K A/V Receiver">
 					<Comment />

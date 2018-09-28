@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-08-25'
+__updated__ = '2018-09-28'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -276,7 +276,10 @@ class PioneerClient(PioneerProtocol):
 
     def send_command(self, p_command):
         LOG.info('Send command {}'.format(p_command))
-        self.m_pioneer_obj._Transport.write(p_command + b'\r\n')
+        try:
+            self.m_pioneer_obj._Transport.write(p_command + b'\r\n')
+        except AttributeError:
+            LOG.error("Tried to call send_command without a pioneer device configured.")
 
 
 class PioneerFactory(ReconnectingClientFactory):
