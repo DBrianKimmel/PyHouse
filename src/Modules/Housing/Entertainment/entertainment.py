@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-08-23'
+__updated__ = '2018-09-28'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -197,8 +197,8 @@ class API(Utility, Ent):
         """ Stick in the entertainment section
         """
         LOG.info("Saving XML.")
+        l_entertainment_xml = ET.Element('EntertainmentSection')
         if self.m_pyhouse_obj.House.Entertainment.Active == True:
-            l_entertainment_xml = ET.Element('EntertainmentSection')
             # print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 1', 190))
             for l_plug in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
                 l_module_xml = l_plug.API.SaveXml(l_entertainment_xml)

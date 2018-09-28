@@ -1,13 +1,21 @@
+#name:      PyHouse/requirements.txt
+#author:    D. Brian Kimmel
+#contact:   D.BrianKimmel@gmail.com
+#copyright: (c) 2018-2018 by D. Brian Kimmel
+#created:	2018-09-28
+#updated:	2018-09-28
+#license:   MIT License
+#summary:   For pip ina virtualenv
 
-sudo apt install -y libffi-dev libssl-dev
-sudo apt install -y python3-dev python3-pip python3-dateutil python3-cffi
+twisted >= 18.0.0
+service-identity >= 17.0.0                                                                                                                                                                                          
+astral >= 1.6.1
+netaddr >= 0.7.19
+netifaces >= 0.10.7
+jsonpickle >= 1.0
+python-dateutil >= 2.7.3
+aniso8601 >= 3.0.2
+pyudev >= 0.21.0
 
-sudo pip3 install --upgrade cffi
-sudo pip3 install service_identity
-
-sudo pip3 install twisted autobahn
-sudo pip3 install netaddr netifaces
-sudo pip3 install jsonpickle pyudev
-sudo pip3 install cryptography
-sudo pip3 install astral aniso8601
-
+### END DBK
+                                                                                                                                                                                             
