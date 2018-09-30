@@ -1,7 +1,7 @@
-# Python
+### Python
 *.py[cod]
 
-# Project
+### Project
 .buildpath
 .directory
 .project
@@ -14,7 +14,7 @@ lock
 minimal
 doc/html
 
-# Dirs
+### Dirs
 admin/config/*.xml
 build/
 dist/

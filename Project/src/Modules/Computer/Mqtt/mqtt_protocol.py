@@ -13,7 +13,9 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-07-14'
+__updated__ = '2018-09-29'
+__version_info__ = (18, 9, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import random
@@ -82,7 +84,7 @@ class MQTTProtocol(Protocol):
                 self.m_buffer = self.m_buffer[l_length + lenLen + 1:]
                 l_length = None
             else:
-                LOG.warn('### exit without processing {}'.format(FormatBytes(self.m_buffer)))
+                LOG.warn('### exit without processing\n\t{}'.format(FormatBytes(self.m_buffer)))
                 break
 
     def _processPacket(self, packet):

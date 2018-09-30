@@ -21,8 +21,8 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-08-24'
-__version_info__ = (18, 8, 0)
+__updated__ = '2018-09-30'
+__version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -32,7 +32,9 @@ from twisted.internet import protocol
 #  Import PyMh files and modules.
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentDeviceControl, EntertainmentDeviceData, EntertainmentPluginData
+        EntertainmentDeviceControl, \
+        EntertainmentDeviceData, \
+        EntertainmentPluginData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -171,7 +173,7 @@ class MqttActions:
         return l_ret
 
     def _decode_control(self, p_topic, p_message):
-        """ Decode the message.
+        """ Decode the message we just got.
         As a side effect - control Pandora ( PianoBar ) via the control socket
         ==> pyhouse/<house name>/entertainment/pandora/control/<do-this>
         <do-this> = On, Off, VolUp1, VolDown1, VolUp5, VolDown5, Like, Dislike
@@ -191,6 +193,11 @@ class MqttActions:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
         return l_logmsg
 
+    def _decode_status(self, p_topic, p_message):
+        """
+        """
+        pass
+
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/entertainment/pandora/<Action>/...
@@ -198,8 +205,11 @@ class MqttActions:
         @param p_topic: is the topic after ',,,/pandora/'
         """
         l_logmsg = ''
+        LOG.debg('decoding {}'.format(p_topic))
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
+        elif p_topic[0].lower() == 'status':
+            l_logmsg += '\tPandora: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -358,6 +368,7 @@ class API(MqttActions):
         l_obj.Input = l_connection.Devices[0].InputCode
         l_obj.Volume = l_connection.Devices[0].Volume
         LOG.info('Sending control-command to {}'.format(l_con_name))
+        LOG.debug('Controlling: {}\n{}'.format(l_topic, PrettyFormatAny.form(l_obj, 'Message', 180)))
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _halt_pandora(self):

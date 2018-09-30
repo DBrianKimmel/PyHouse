@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-09-28'
+__updated__ = '2018-09-29'
 __version_info__ = (18, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -119,7 +119,7 @@ class MqttActions:
             else:
                 l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
         except Exception as e_err:
-            l_logmsg += "Error: {}".format(e_err)
+            l_logmsg += "(entertainment.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
         return l_logmsg
 
 

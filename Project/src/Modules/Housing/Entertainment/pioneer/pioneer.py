@@ -23,8 +23,8 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-09-28'
-__version_info__ = (18, 7, 0)
+__updated__ = '2018-09-29'
+__version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -42,7 +42,6 @@ from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pioneer        ')
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 SECTION = 'pioneer'
 XML_PATH = 'HouseDivision/EntertainmentSection/PioneerSection'
@@ -273,13 +272,14 @@ class PioneerClient(PioneerProtocol):
     def __init__(self, p_pyhouse_obj, p_pioneer_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_pioneer_obj = p_pioneer_obj
+        LOG.debug('PioneerClient init for {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'PioneerClient Init-')))
 
     def send_command(self, p_command):
         LOG.info('Send command {}'.format(p_command))
         try:
             self.m_pioneer_obj._Transport.write(p_command + b'\r\n')
-        except AttributeError:
-            LOG.error("Tried to call send_command without a pioneer device configured.")
+        except AttributeError as e_err:
+            LOG.error("Tried to call send_command without a pioneer device configured.\n\tError:{}".format(e_err))
 
 
 class PioneerFactory(ReconnectingClientFactory):
@@ -363,9 +363,9 @@ class API(MqttActions, PioneerClient):
         """ Read the XML for all Pioneer devices.
         """
         self.m_started = False
-        l_pioneer_obj = XML.read_pioneer_section_xml(p_pyhouse_obj)
+        l_pioneer_device_obj = XML.read_pioneer_section_xml(p_pyhouse_obj)
         LOG.info("Loaded Pioneer Device(s).")
-        return l_pioneer_obj
+        return l_pioneer_device_obj
 
     def Start(self):
         """ Start all the Pioneer factories if we have any Pioneer devices.
@@ -385,7 +385,9 @@ class API(MqttActions, PioneerClient):
             l_pioneer_obj._Factory = l_factory
             l_pioneer_obj._Factory = l_connector
             l_pioneer_obj.isRunning = True
+            self.m_pioneer_obj = l_pioneer_obj
             LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_pioneer_obj.Name, l_host, l_port))
+            LOG.debug('Pioneer-Start {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'PioneerStart-')))
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveXml(self, _p_xml):

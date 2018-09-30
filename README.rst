@@ -163,7 +163,7 @@ The communication component will include telephone, cell phone, fax, email etc.
 
 
 2015-04-22 UPDATE.
-I am tired of some people and companies releasing individula moduses of something
+I am tired of some people and companies releasing individual modules of something
 to do with Home Automation.
 
 We do NOT need more "Islands of Automation".
