@@ -2,7 +2,7 @@
 """
 -*- test-case-name: PyHouse.src.test.test_PyHouse -*-
 
-@name:      PyHouse/src/Pyhouse.py
+@name:      PyHouse/Project/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2018 by D. Brian Kimmel
@@ -82,7 +82,7 @@ Idea Links:
 
 """
 
-__updated__ = '2018-08-21'
+__updated__ = '2018-09-30'
 __version_info__ = (18, 8, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
