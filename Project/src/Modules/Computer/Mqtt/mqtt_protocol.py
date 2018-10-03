@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-09-29'
+__updated__ = '2018-10-02'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -389,11 +389,9 @@ class MQTTProtocol(Protocol):
         l_packet += p_payload
         self.transport.write(l_packet)
 
-    def _build_connect(self, p_broker):
+    def _build_connect(self, p_broker, p_mqtt):
         """
         """
-        # LOG.info("Building 'connect' packet\n\tClientID:{};\n\tUser:'{}';\n\tPass:'{}';\n\tWill:'{}','{}'\n\tAddr:{};".format(
-        #    p_broker.ClientID, p_broker.UserName, p_broker.Password, p_broker.WillTopic, p_broker.WillMessage, p_broker.BrokerAddress))
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
@@ -409,7 +407,7 @@ class MQTTProtocol(Protocol):
         else:
             l_varHeader.append(varLogin << 6 | p_broker.WillRetain << 5 | p_broker.WillQoS << 3 | 1 << 2 | 1 << 1)
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
-        l_payload.extend(EncodeDecode._encodeString(p_broker.ClientID))
+        l_payload.extend(EncodeDecode._encodeString(p_mqtt.ClientID))
         if (p_broker.WillMessage is not None or p_broker.WillMessage != '') and p_broker.WillTopic is not None:
             # LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillTopic))
@@ -423,12 +421,11 @@ class MQTTProtocol(Protocol):
         l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
         return (l_fixHeader, l_varHeader, l_payload)
 
-    def connect(self, p_broker):
+    def connect(self, p_broker, p_mqtt):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
-        # LOG.info("Sending 'connect' packet\n\tClientID: {};\n\tAddr: {};".format(p_broker.ClientID, p_broker.BrokerAddress))
-        l_fixHeader, l_varHeader, l_payload = self._build_connect(p_broker)
+        l_fixHeader, l_varHeader, l_payload = self._build_connect(p_broker, p_mqtt)
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
@@ -585,6 +582,7 @@ class MQTTClient(MQTTProtocol):
 
     m_pingPeriod = 50
     m_prefix = ''
+    m_mqtt = None
     m_broker = {}
 
     def __init__(self, p_pyhouse_obj, p_broker,
@@ -592,6 +590,7 @@ class MQTTClient(MQTTProtocol):
                  ):
         """ At this point all config has been read in and Set-up """
         _l_comp_name = p_pyhouse_obj.Computer.Name
+        self.m_mqtt = p_pyhouse_obj.Computer.Mqtt
         try:
             l_house_name = p_pyhouse_obj.House.Name.lower() + '/'
         except AttributeError:
@@ -613,7 +612,7 @@ class MQTTClient(MQTTProtocol):
         self.m_UserName = p_broker.UserName
         self.m_Password = p_broker.Password
         p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
-        l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_broker.ClientID)
+        l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Computer.Mqtt.ClientID)
         l_msg += "\n\tUser:'{}';\n\tPass:'{}';".format(p_broker.UserName, p_broker.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.BrokerAddress)
         LOG.info(l_msg)
@@ -627,7 +626,7 @@ class MQTTClient(MQTTProtocol):
         """
         # LOG.info("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.BrokerAddress))
         self.m_state = MQTT_FACTORY_CONNECTING
-        self.connect(self.m_broker)
+        self.connect(self.m_broker, self.m_pyhouse_obj.Computer.Mqtt)
         self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
@@ -696,10 +695,10 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         @param p_client_id: is the ID of this computer that will be supplied to the broker
         @param p_broker: is the PyHouse object for this broker
         """
-        LOG.info('PyHouseMqttFactoryMqtt Initialized.\n\tBroker: {};\n\tClientId: {};\n\tAddr: {};'.format(
-                p_broker.Name, p_broker.ClientID, p_broker.BrokerAddress))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
+        LOG.info('PyHouseMqttFactoryMqtt Initialized.\n\tBroker: {};\n\tClientId: {};\n\tAddr: {};'.format(
+                p_broker.Name, p_pyhouse_obj.Computer.Mqtt.ClientID, p_broker.BrokerAddress))
         p_broker._ProtocolAPI = self
 
     def buildProtocol(self, _p_addr):
@@ -717,7 +716,6 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
-        # LOG.info("\n\tClientID: {};\n\tAddr: {};".format(self.m_broker.ClientID, self.m_broker.BrokerAddress))
         self.resetDelay()
         return l_client
 

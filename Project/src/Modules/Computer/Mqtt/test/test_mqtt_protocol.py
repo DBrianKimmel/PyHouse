@@ -7,10 +7,10 @@
 @note:      Created on Jun 3, 2015
 @Summary:
 
-Passed 4 of 5 tests - DBK- 2017-03-11
+Passed all 5 tests - DBK- 2018-10-02
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2018-10-02'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData
+from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData, MqttInformation
 from Modules.Computer.Mqtt.mqtt_protocol import MQTTProtocol
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
@@ -81,9 +81,10 @@ class B2_Packet(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
+        self.m_mqtt = MqttInformation()
+        self.m_mqtt.ClientID = "TestClient"
         self.m_broker = MqttBrokerData()
         self.m_broker.BrokerName = "Test BrokerS"
-        self.m_broker.ClientID = "TestClient"
         self.m_broker.Keepalive = 30000
         self.m_broker.WillTopic = None
         self.m_broker.WillMessage = None
@@ -97,15 +98,15 @@ class B2_Packet(SetupMixin, unittest.TestCase):
         l_packet_type = 0x01
         l_remaining_length = 17
         _l_fixed = MQTTProtocol()._build_fixed_header(l_packet_type, l_remaining_length)
-        print(PrettyFormatAny.form(_l_fixed, 'FixedHeader'))
+        # print(PrettyFormatAny.form(_l_fixed, 'FixedHeader'))
 
     def test_02_connect(self):
         """
         """
-        l_fixed, l_var, l_pay = MQTTProtocol()._build_connect(self.m_broker)
-        print('\n   Fixed: {}'.format(FormatBytes(l_fixed)))
-        print('Variable: {}'.format(FormatBytes(l_var)))
-        print(' Payload: {}'.format(FormatBytes(l_pay)))
+        l_fixed, l_var, l_pay = MQTTProtocol()._build_connect(self.m_broker, self.m_mqtt)
+        # print('\n   Fixed: {}'.format(FormatBytes(l_fixed)))
+        # print('Variable: {}'.format(FormatBytes(l_var)))
+        # print(' Payload: {}'.format(FormatBytes(l_pay)))
         self.assertEqual(l_fixed, bytearray(b'\x10\x16'))
 
 #  ## END DBK

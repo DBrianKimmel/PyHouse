@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-09-29'
+__updated__ = '2018-10-01'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,7 +33,6 @@ class Actions:
     m_disp_computer = None
     m_disp_entertainment = None
     m_myname = 'Not Initialized.'
-    # m_pyhouse_obj = PyHouseData()
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

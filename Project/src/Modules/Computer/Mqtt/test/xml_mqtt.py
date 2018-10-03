@@ -7,9 +7,29 @@
 @note:      Created on Jun 3, 2015
 @Summary:
 
+<?xml version="1.0" ?>
+<MqttSection>
+    <Broker Active="True" Key="0" Name="CannonTrail">
+        <UUID>Broker..-0000-0000-0000-0123456789ab</UUID>
+        <BrokerAddress>192.168.9.10</BrokerAddress>
+        <BrokerPort>8883</BrokerPort>
+        <BrokerUser>pyhouse</BrokerUser>
+        <BrokerPassword>ChangeMe</BrokerPassword>
+        <Class>Local</Class>
+    </Broker>
+    <Broker Active="True" Key="1" Name="PinkPoppy">
+        <UUID>Broker..-0001-0001-0001-0123456789ab</UUID>
+        <BrokerAddress>192.168.1.10</BrokerAddress>
+        <BrokerPort>1883</BrokerPort>
+        <BrokerUser>pyhouse</BrokerUser>
+        <BrokerPassword>ChangeMe</BrokerPassword>
+        <Class>Local</Class>
+    </Broker>
+</MqttSection>
+
 """
 
-__updated__ = '2017-12-28'
+__updated__ = '2018-10-02'
 
 #  Import system type stuff
 
@@ -21,6 +41,8 @@ TESTING_MQTT_BROKER = 'Broker'
 L_MQTT_SECTION_START = '<' + TESTING_MQTT_SECTION + '>'
 L_MQTT_SECTION_END = '  </' + TESTING_MQTT_SECTION + '>'
 L_MQTT_BROKER_END = '    </' + TESTING_MQTT_BROKER + '>'
+
+TESTING_MQTT_CLIENT_ID = 'PyH-Comp-pi-99-ct'
 
 TESTING_BROKER_NAME_0 = 'CannonTrail'
 TESTING_BROKER_KEY_0 = '0'

@@ -17,7 +17,9 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-10-01'
+__version_info__ = (18, 10, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -35,7 +37,7 @@ class API(object):
         self.m_local = localAPI(p_pyhouse_obj)
         self.m_sync = syncAPI(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized.')
+        LOG.info('Initialized - Version:{}'.format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Node xml info.
@@ -43,11 +45,13 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Nodes = l_nodes
+        LOG.info('Loaded XML - Version:{}'.format(__version__))
         return l_nodes
 
     def Start(self):
         self.m_local.Start()
         self.m_sync.Start()
+        LOG.info('Started - Version:{}'.format(__version__))
 
     def SaveXml(self, p_xml):
         l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)

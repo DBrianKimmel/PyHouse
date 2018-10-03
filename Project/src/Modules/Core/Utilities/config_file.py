@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_config_file -*-
 
-@name:      PyHouse/src/Modules.Core.Utilities.config_file.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities.config_file.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2018 by D. Brian Kimmel
@@ -11,7 +11,9 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2018-10-01'
+__version_info__ = (18, 10, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime

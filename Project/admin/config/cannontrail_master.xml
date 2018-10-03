@@ -2,9 +2,9 @@
 <PyHouse Version="18.7.0"
 	xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-07-24 05:00:33.438825 -->
-	<ComputerDivision Active="False" Key="0"
-		Name="Laptop-3">
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+	<!-- Updated by PyHouse 2018-07-24 05:00:33.438825 -->
+	<ComputerDivision Active="False" Key="0" Name="Laptop-3">
 		<Comment />
 		<UUID>222ec0e9-d76e-11e6-b40f-74dfbfae5aed</UUID>
 		<BridgesSection />

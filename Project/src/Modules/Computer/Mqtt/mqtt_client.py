@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-17'
+__updated__ = '2018-10-01'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -44,7 +44,7 @@ class Util(object):
         """ Provide a TCP connection to the designated broker.
         @param p_broker: Designates which broker to connect.
         """
-        p_broker.ClientID = self._make_client_name(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Connecting via TCP...')
         if p_broker.BrokerAddress is None or p_broker.BrokerPort is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker.BrokerAddress, p_broker.BrokerPort))
@@ -59,7 +59,7 @@ class Util(object):
     def connect_to_one_broker_TLS(self, p_pyhouse_obj, p_broker):
         """
         """
-        p_broker.ClientID = self._make_client_name(p_pyhouse_obj)
+        p_pyhouse_obj.Computer.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Connecting via TLS...')
         # l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
         # l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker)

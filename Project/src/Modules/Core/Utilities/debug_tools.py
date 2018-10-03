@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-08-13'
+__updated__ = '2018-10-01'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -19,11 +19,11 @@ from xml.dom import minidom
 #  Import PyMh files
 
 
-def _trunc_string(s, maxlen=2000):
-    if len(s) > maxlen:
-        return s[0:maxlen]  # + ' ...(%d more chars)...' % (len(s) - maxlen)
+def _trunc_string(p_str, maxlen=2000):
+    if len(p_str) > maxlen:
+        return p_str[0:maxlen]  # + ' ...(%d more chars)...' % (len(p_str) - maxlen)
     else:
-        return s
+        return p_str + ' '
 
 
 def _nuke_newlines(p_string):
@@ -248,6 +248,7 @@ class PrettyFormatAny(object):
             l_ret = PrettyFormatAny._format_string(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, type(str)):
             l_ret = PrettyFormatAny._format_unicode(p_any, maxlen=maxlen, indent=indent)
+
         elif isinstance(p_any, bytearray):
             l_ret = PrettyFormatAny._format_bytearray(p_any, maxlen=maxlen, indent=indent)
         elif isinstance(p_any, list):
@@ -343,16 +344,19 @@ class PrettyFormatAny(object):
     def _format_object(p_obj, maxlen, indent=24, maxspew=2000):
         l_col_1_width = 28
         l_tab = 4
-        l_attrs = []
-        l_tabbedwidths = [indent, l_col_1_width - l_tab, maxlen - l_col_1_width - l_tab]
+        l_tupple_list = []
+        l_tabbedwidths = [indent, (l_col_1_width - l_tab), (maxlen - l_col_1_width - l_tab)]  # 3 widths
+        # Get every object attr except those starting with __ - They are by convention, private
         l_filtered = filter(lambda aname: not aname.startswith('__'), dir(p_obj))
         l_ret = ''
-        for l_slot in l_filtered:
-            l_attr = getattr(p_obj, l_slot)
-            l_attrs.append((l_slot, l_attr))
-        l_attrs.sort()
-        for (attr, l_val) in l_attrs:
-            l_ret += _format_cols(('Obj: ', attr, _trunc_string(str(l_val), maxspew)), l_tabbedwidths, ' ') + '\n'
+        for l_attr_name in l_filtered:
+            l_attr_val = getattr(p_obj, l_attr_name)
+            l_tupple_list.append((l_attr_name, l_attr_val))
+        l_tupple_list.sort()
+        for (l_name, l_val) in l_tupple_list:
+            l_strings = ('Obj: ', l_name, _trunc_string(str(l_val), maxspew) + '.')  # 3 strings
+            # l_ret += ">>{}<< >>{}<<\n".format(l_name, str(l_val))
+            l_ret += _format_cols(l_strings, l_tabbedwidths, ' ') + '\n'
         return l_ret
 
     @staticmethod

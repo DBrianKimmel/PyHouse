@@ -22,10 +22,9 @@ The second part is the house.
 This will set up this node and then find all other nodes in the same domain (House).
 Then start the House and all the sub systems.
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-08-21'
-__version_info__ = (18, 3, 0)
+__updated__ = '2018-10-01'
+__version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -37,6 +36,7 @@ from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.computer import API as computerAPI
 from Modules.Core.Utilities.config_file import API as configAPI
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.house import API as houseAPI
 LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
@@ -104,9 +104,9 @@ class Utility(object):
         l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
         try:
             l_file = open(l_path, mode='r')
-            l_uuid = l_file.read()
+            _l_uuid = l_file.read()
         except IOError:
-            l_uuid = toolUuid.create_uuid()
+            _l_uuid = toolUuid.create_uuid()
 
     @staticmethod
     def save_uuids(p_pyhouse_obj):
@@ -115,7 +115,7 @@ class Utility(object):
         House.uuid
         Domain.uuid
         """
-        l_uuids = p_pyhouse_obj.Uuids.All
+        _l_uuids = p_pyhouse_obj.Uuids.All
 
     @staticmethod
     def _sync_startup_logging(p_pyhouse_obj):
@@ -139,7 +139,7 @@ class API(Utility):
         Note that the Configuration file is NOT read until the following Start() method begins.
         Also note that the reactor is *NOT* yet running.
         """
-        LOG.info('Initializing')
+        LOG.info('Initializing - Version:{}'.format(__version__))
         Utility.init_uuids(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)

@@ -29,8 +29,8 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2018-08-24'
-__version_info__ = (18, 4, 0)
+__updated__ = '2018-10-01'
+__version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -147,7 +147,7 @@ class Utility(object):
 
     @staticmethod
     def _load_component_xml(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages/
+        p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages.
         p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         #
         p_pyhouse_obj.APIs.Computer.BridgesAPI.LoadXml(p_pyhouse_obj)

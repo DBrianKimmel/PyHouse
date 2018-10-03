@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_xml.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel
@@ -9,14 +9,15 @@
 
 """
 
-__updated__ = '2018-03-16'
+__updated__ = '2018-10-02'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData
+from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData, MqttInformation
 from Modules.Computer import logging_pyh as Logger
+from Modules.Core.data_objects import HouseInformation, ComputerInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Xml       ')
@@ -26,6 +27,30 @@ BROKER = 'Broker'
 
 
 class Xml(object):
+
+    @staticmethod
+    def _read_computer_name(p_pyhouse_obj):
+        l_obj = ComputerInformation()
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        if l_xml is None:
+            l_obj.Name = 'Default Name'
+            l_obj.Key = 0
+            l_obj.Active = True
+            return l_obj
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, l_xml)
+        return l_obj
+
+    @staticmethod
+    def _read_house_name(p_pyhouse_obj):
+        l_obj = HouseInformation()
+        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        if l_xml is None:
+            l_obj.Name = 'Default Name'
+            l_obj.Key = 0
+            l_obj.Active = True
+            return l_obj
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, l_xml)
+        return l_obj
 
     @staticmethod
     def _read_one_broker(p_xml):
@@ -55,28 +80,23 @@ class Xml(object):
         Allow for several brokers.
         @return: a dict of broker objects keys = 0, 1, 2...
         """
-        l_dict = {}
+        l_mqtt = MqttInformation()
         l_count = 0
+        l_house = Xml._read_house_name(p_pyhouse_obj).Name
+        l_computer = Xml._read_computer_name(p_pyhouse_obj).Name
+        l_section = XmlConfigTools.find_section(p_pyhouse_obj, 'ComputerDivision/MqttSection')
         try:
-            l_section = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-            if l_section == None:
-                return l_dict
-            l_section = l_section.find('MqttSection')
-            if l_section == None:
-                return l_dict
-        except AttributeError as e_err:
-            LOG.error('Reading MQTT Configuration information - {}'.format(e_err))
-            l_section = None
-        try:
+            l_mqtt.ClientID = 'PyH-Comp-' + l_computer
+            l_mqtt.Prefix = 'pyhouse/' + l_house
             for l_xml in l_section.iterfind('Broker'):
                 l_broker = Xml._read_one_broker(l_xml)
                 l_broker.Key = l_count
                 l_broker._ClientAPI = p_api
-                l_dict[l_count] = l_broker
+                l_mqtt.Brokers[l_count] = l_broker
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('Mqtt Errors: {}'.format(e_err))
-        return l_dict
+        return l_mqtt
 
     @staticmethod
     def _write_one_broker(p_mqtt):
@@ -99,11 +119,11 @@ class Xml(object):
         """
         l_count = 0
         l_xml = ET.Element('MqttSection')
-        if p_obj == {}:
-            LOG.info('No MQTT congig to write.')
+        if p_obj.Brokers == {}:
+            LOG.info('No MQTT config to write.')
             return l_xml
         try:
-            for l_obj in p_obj.values():
+            for l_obj in p_obj.Brokers.values():
                 l_sys = Xml._write_one_broker(l_obj)
                 l_xml.append(l_sys)
                 l_count += 1

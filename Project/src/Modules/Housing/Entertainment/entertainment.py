@@ -24,8 +24,9 @@ House.Entertainment.Plugins{}.API
                              .Devices{}
 
 """
+import jsonpickle
 
-__updated__ = '2018-09-29'
+__updated__ = '2018-10-02'
 __version_info__ = (18, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -159,30 +160,37 @@ class API(Utility, Ent):
         else:
             p_module.API.Start()
 
-    def _module_loop(self, p_pyhouse_obj, p_section_element):
+    def _module_load_loop(self, p_pyhouse_obj, p_section_element):
         """
         """
-        l_name = XmlConfigTools.extract_section_name(p_section_element)
-        l_active = PutGetXML.get_bool_from_xml(p_section_element, 'Active', False)
         l_plugin_data = EntertainmentPluginData()
-        l_plugin_data.Name = l_name
-        l_plugin_data.Active = l_active
+        l_plugin_data.Name = l_name = XmlConfigTools.extract_section_name(p_section_element)
+        l_plugin_data.Active = l_active = PutGetXML.get_bool_from_xml(p_section_element, 'Active', False)
         if l_active:
             # Create the module plugin
             l_module_name = 'Modules.Housing.Entertainment.' + l_name + '.' + l_name
             l_module = importlib.import_module(l_module_name)
             l_plugin_data.Module = l_module
+            # Initialize Plugin
             l_plugin_data.API = l_module.API(self.m_pyhouse_obj)
             p_pyhouse_obj.House.Entertainment.Plugins[l_name] = l_plugin_data
-            LOG.info('Created Entertainment Plugin for {}'.format(l_name))
+            LOG.info('Created Entertainment Plugin "{}".'.format(l_name))
+            # Load XML for Plugin
             l_devices = l_plugin_data.API.LoadXml(p_pyhouse_obj)
             l_plugin_data.Devices = l_devices.Devices
-            l_plugin_data.API.Start()
-            l_topic = 'entertainment/{}/status'.format(l_name)
-            l_obj = EntertainmentDeviceControl()
-            l_obj.Device = l_name
-            l_obj.HostName = p_pyhouse_obj.Computer.Name
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+
+    def _module_start_loop(self, p_pyhouse_obj, p_plugin):
+        """
+        """
+        l_name = p_plugin.Name
+        # Start Plugin
+        p_plugin.API.Start()
+        l_topic = 'entertainment/{}/status'.format(l_name)
+        l_obj = EntertainmentDeviceControl()
+        l_obj.Device = l_name
+        l_obj.HostName = p_pyhouse_obj.Computer.Name
+        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the entertainment section.
@@ -190,7 +198,7 @@ class API(Utility, Ent):
 
         @return: the Entertainment object of PyHouse_obj
         """
-        LOG.info('XML Loading')
+        LOG.info("XML Loading - Version:{}".format(__version__))
         l_entertain = p_pyhouse_obj.House.Entertainment
         l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         if l_xml == None:
@@ -198,7 +206,7 @@ class API(Utility, Ent):
             return l_entertain
         l_count = 0
         for l_section_element in l_xml:
-            self._module_loop(p_pyhouse_obj, l_section_element)
+            self._module_load_loop(p_pyhouse_obj, l_section_element)
             l_count += 1
         l_entertain.Active = True
         l_entertain.Count = l_count
@@ -207,7 +215,11 @@ class API(Utility, Ent):
 
     def Start(self):
         LOG.info("Starting.")
-        LOG.info("Started.")
+        l_count = 0
+        for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
+            self._module_start_loop(self.m_pyhouse_obj, l_plugin)
+            l_count += 1
+        LOG.info("Started {} plugin(s)- Version:{}".format(l_count, __version__))
 
     def SaveXml(self, p_xml):
         """ Stick in the entertainment section

@@ -15,7 +15,7 @@ If multiple house UUISs match - one of them is master and any/all different ones
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-10-01'
 
 #  Import system type stuff
 
@@ -30,7 +30,6 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # p_pyhouse_obj.APIs.Computer.MqttAPI = self
         LOG.info("Initialized.")
 
     def LoadXml(self, p_pyhouse_obj):

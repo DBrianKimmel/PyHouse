@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-09-30'
+__updated__ = '2018-10-02'
 __version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -124,7 +124,7 @@ class XML:
         except AttributeError as e_err:
             LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj
-        LOG.info('Loaded {} {}Devices.'.format(l_count, SECTION))
+        LOG.info('Loaded {} {} Devices.'.format(l_count, SECTION))
         return l_plugin_obj
 
     @staticmethod
@@ -205,7 +205,7 @@ class MqttActions:
         @param p_topic: is the topic after ',,,/pandora/'
         """
         l_logmsg = ''
-        LOG.debg('decoding {}'.format(p_topic))
+        LOG.debug('decoding {}'.format(p_topic))
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
@@ -314,8 +314,9 @@ class API(MqttActions):
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for pandora.
         """
+        LOG.info("Loading XML - Version:{}".format(__version__))
         l_obj = XML.read_pandora_section_xml(p_pyhouse_obj)
-        LOG.info("Loaded Pandora XML.")
+        LOG.info("Loaded Pandora XML - Version:{}".format(__version__))
         return l_obj
 
     def Start(self):
@@ -325,7 +326,7 @@ class API(MqttActions):
         # LOG.info("Starting")
         if not self.m_started:
             pass
-        LOG.info("Started.")
+        LOG.info("Started - Version:{}".format(__version__))
 
     def SaveXml(self, _p_xml):
         """
@@ -368,7 +369,7 @@ class API(MqttActions):
         l_obj.Input = l_connection.Devices[0].InputCode
         l_obj.Volume = l_connection.Devices[0].Volume
         LOG.info('Sending control-command to {}'.format(l_con_name))
-        LOG.debug('Controlling: {}\n{}'.format(l_topic, PrettyFormatAny.form(l_obj, 'Message', 180)))
+        # LOG.debug('Controlling: {}\n{}'.format(l_topic, PrettyFormatAny.form(l_obj, 'Message', 180)))
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _halt_pandora(self):

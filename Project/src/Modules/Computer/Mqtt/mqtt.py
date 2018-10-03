@@ -11,8 +11,8 @@
 
 """
 
-__updated__ = '2018-09-29'
-__version_info__ = (18, 9, 0)
+__updated__ = '2018-10-02'
+__version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -64,19 +64,19 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # p_pyhouse_obj.APIs.Computer.MqttAPI = self
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
         p_pyhouse_obj.Computer.Mqtt.Brokers = {}
-        LOG.info("Initialized.")
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        LOG.info("Loading XML")
+        LOG.info("Loading XML - Version:{}".format(__version__))
         l_mqtt = MqttInformation()
-        l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
-        l_mqtt.Brokers = mqttXML.read_mqtt_xml(p_pyhouse_obj, self)
+        # l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
+        # l_mqtt.ClientID = 'PyH-Comp' + p_pyhouse_obj.Computer.Name
+        l_mqtt = mqttXML.read_mqtt_xml(p_pyhouse_obj, self)
         p_pyhouse_obj.Computer.Mqtt = l_mqtt
         LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
         if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
@@ -85,17 +85,17 @@ class API(object):
             LOG.info("Mqtt {} broker Connection(s) Started.".format(l_count))
         else:
             LOG.info('No Mqtt brokers are configured.')
-        LOG.info("Loaded XML")
+        LOG.info("Loaded XML - Version:{}".format(__version__))
         return l_mqtt
 
     def Start(self):
         """
         """
-        LOG.info("Start")
+        LOG.info("Starting - Version:{}".format(__version__))
         self.m_actions = Actions(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
-        l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt.Brokers)
+        l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)
         p_xml.append(l_xml)
         LOG.info("Saved Mqtt XML.")
         return p_xml
@@ -106,7 +106,10 @@ class API(object):
 # ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
-        """Send a topic, message to the broker for it to distribute to the subscription list
+        """ Send a topic, message to the broker for it to distribute to the subscription list
+
+        All publish commands point to here.
+        This routine will run thru the list of brokers and publish to each broker.
 
         # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule)
         @param p_topic: is the partial topic, the prefix will be prepended.

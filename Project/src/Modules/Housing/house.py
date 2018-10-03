@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-08-23'
+__updated__ = '2018-10-01'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -215,18 +215,18 @@ class API(Utility):
         """
         Read in the HouseDivision portion XML file and update the internal data.
         """
-        LOG.info('Loading XML')
+        LOG.info('Loading XML - Version:{}'.format(__version__))
         l_house = Xml.read_house_xml(p_pyhouse_obj)
         p_pyhouse_obj.House = l_house
         Utility._load_component_xml(p_pyhouse_obj)
-        LOG.info('Loaded XML')
+        LOG.info('Loaded XML - Version:{}'.format(__version__))
         return l_house
 
     def Start(self):
         """Start processing for all things house.
         May be stopped and then started anew to force reloading info.
         """
-        LOG.info("Starting.")
+        LOG.info("Starting - Version:{}".format(__version__))
         self.start_house_parts(self.m_pyhouse_obj)
         LOG.info("Started House {}".format(self.m_pyhouse_obj.House.Name))
 
