@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2018-08-18
 
 """
 
-__updated__ = '2018-08-22'
+__updated__ = '2018-10-03'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -39,8 +39,12 @@ from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
         TESTING_PANDORA_DEVICE_COMMENT_0, \
         TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0, \
         TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0, \
+        TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, \
         TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0, \
-        TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0, TESTING_PANDORA_TYPE, TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0, TESTING_PANDORA_ACTIVE
+        TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0, \
+        TESTING_PANDORA_TYPE, \
+        TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0, \
+        TESTING_PANDORA_ACTIVE
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \
@@ -168,7 +172,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Read one entire device entry and set up the PandoraDeviceData_obj correctly.
         """
         l_obj = pandoraXml._read_device(self.m_xml_pandora)
-        # print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Pandora device.'))
+        print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Pandora device.'))
         # Base
         self.assertEqual(str(l_obj.Name), TESTING_PANDORA_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_PANDORA_DEVICE_KEY_0)
@@ -176,6 +180,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Comment), TESTING_PANDORA_DEVICE_COMMENT_0)
         # OnkyoDeviceData
         self.assertEqual(convert.long_to_str(l_obj.Host), TESTING_PANDORA_DEVICE_HOST_0)
+        self.assertEqual(str(l_obj.ConnectionFamily), TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0)
         self.assertEqual(str(l_obj.ConnectionName), TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
         self.assertEqual(str(l_obj.InputName), TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
         self.assertEqual(str(l_obj.InputCode), TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
@@ -255,7 +260,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """ Write the entire PandoraSection XML
         """
         l_xml = pandoraXml.write_pandora_section_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'D1-03-A - All Devices'))
+        print(PrettyFormatAny.form(l_xml, 'D1-03-A - All Devices'))
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_ACTIVE)
         self.assertEqual(l_xml.find('Type').text, TESTING_PANDORA_DEVICE_TYPE_0)
 

@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-02'
+__updated__ = '2018-10-04'
 __version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -87,17 +87,11 @@ class XML:
         """
         l_device = PioneerDeviceData()
         XmlConfigTools().read_base_UUID_object_xml(l_device, p_xml)
-        # l_device.Name = PutGetXML.get_text_from_xml(p_xml, 'Name')
-        # l_device.Active = PutGetXML.get_bool_from_xml(p_xml, 'Active')
-        # l_device.Key = PutGetXML.get_int_from_xml(p_xml, 'Key')
-        # l_device.UUID = PutGetXML.get_uuid_from_xml(p_xml, 'UUID')
-        # l_device.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_device.CommandSet = PutGetXML.get_text_from_xml(p_xml, 'CommandSet')
         l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
         l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
         l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
         l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
-        # l_device.Status = PutGetXML.get_text_from_xml(p_xml, 'Status')
         l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
         l_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
         return l_device
@@ -109,12 +103,13 @@ class XML:
         @return: a xml element for the device
         """
         l_xml = XmlConfigTools().write_base_UUID_object_xml('Device', p_obj)
-        PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML().put_text_element(l_xml, 'CommandSet', p_obj.CommandSet)
         PutGetXML().put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
         PutGetXML().put_int_element(l_xml, 'Port', p_obj.Port)
-        PutGetXML().put_int_element(l_xml, 'Port', p_obj.Port)
+        PutGetXML().put_text_element(l_xml, 'RoomName', p_obj.RoomName)
+        PutGetXML().put_uuid_element(l_xml, 'RoomUUID', p_obj.RoomUUID)
         PutGetXML().put_text_element(l_xml, 'Type', p_obj.Type)
+        PutGetXML().put_int_element(l_xml, 'Volume', p_obj.Volume)
         return l_xml
 
     @staticmethod
@@ -185,14 +180,21 @@ class MqttActions:
 
         @param p_message: is the payload used to control
         """
+        LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
+        l_family = self._get_field(p_message, 'Family')
         l_device = self._get_field(p_message, 'Device')
         l_power = self._get_field(p_message, 'Power')
         l_volume = self._get_field(p_message, 'Volume')
         l_input = self._get_field(p_message, 'Input')
-        l_logmsg = '\tPioneer Control:\n\t\tDevice:{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_device, l_power, l_volume, l_input)
+        l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
+        #
         if l_power != None:
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
             self.m_API._pioneer_power(l_device, l_power)
+        #
+        if l_input != None:
+            l_logmsg += ' Turn input to {}.'.format(l_input)
+            self.m_API._pioneer_input(l_input)
         #
         if l_volume == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
@@ -202,6 +204,7 @@ class MqttActions:
             l_logmsg += ' Volume Down 1 '
         elif l_volume == 'VolDown5':
             l_logmsg += ' Volume Down 5 '
+        #
         return l_logmsg
 
     def _decode_status(self, _p_topic, p_message):
@@ -214,7 +217,7 @@ class MqttActions:
         l_power = self._get_field(p_message, 'Power')
         l_volume = self._get_field(p_message, 'Volume')
         l_input = self._get_field(p_message, 'Input')
-        l_logmsg = '\tStatus: Power:{}\tVolume:{}\tInput:{}'.format(l_power, l_volume, l_input)
+        l_logmsg = '\tPioneer Status: Power:{}\tVolume:{}\tInput:{}'.format(l_power, l_volume, l_input)
         if l_power != None:
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
             self.m_API._pioneer_power(l_device, l_power)
@@ -236,11 +239,12 @@ class MqttActions:
 
         @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
         """
+        LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         if self.m_API == None:
             # LOG.debug('Decoding initializing')
             self.m_API = API(self.m_pyhouse_obj)
 
-        l_logmsg = ''
+        l_logmsg = ' Pioneer-243-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
@@ -303,8 +307,8 @@ class PioneerClient(PioneerProtocol):
 
     def send_command(self, p_command):
         LOG.info('Send command {}'.format(p_command))
-        l_host = self.m_pioneer_obj._Connector.host
         try:
+            l_host = self.m_pioneer_obj._Connector.host
             self.m_pioneer_obj._Transport.write(p_command + b'\r\n')
             LOG.info('Send TCP command:{} to {}'.format(p_command, l_host))
         except AttributeError as e_err:
@@ -376,18 +380,19 @@ class API(MqttActions, PioneerClient):
             self.send_command(b'PN')  # Query Power
         else:
             self.send_command(b'PF')  # Query Power
+        LOG.debug('Change Power to {}'.format(p_power))
 
     def _pioneer_volume(self, p_volume):
         """
         @param p_volume: 'Up1', 'Up5', 'Down1' or 'Down5'
         """
-        pass
+        LOG.debug('Change Volume to {}'.format(p_volume))
 
     def _pioneer_input(self, p_input):
         """
         @param p_input: Channel Code
         """
-        self.send_command(p_input)  # Query Power
+        self.send_command(b'01FN')  # Query Power
         LOG.debug('Change input channel to {}'.format(p_input))
 
     def LoadXml(self, p_pyhouse_obj):

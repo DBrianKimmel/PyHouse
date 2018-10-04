@@ -1,13 +1,17 @@
-@name:      PyHouse/Project/src/Modules/Housing/Entertainment/Docs/Design
-@author:    D. Brian Kimmel
-@contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
-@note:      Created on Sep 30, 2018
-@license:   MIT License
-@summary:   This is the design documentation for the Entertainment Module of PyHouse.
+* Name:      PyHouse/Project/src/Modules/Housing/Entertainment/Docs/Design
+* Author:    D. Brian Kimmel
+* Contact:   D.BrianKimmel@gmail.com
+* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Created:   2018-09-30
+* Updated:   2018-10-04
+* License:   MIT License
+* Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
-Design
-======
+
+# Housing
+
+
+## Design
 
 The entertainment is a load on demand module.
 In a running instance of PyHouse only the sub-modules that are defined in the config file are loaded.
@@ -43,6 +47,31 @@ Obj:stopConnecting          <bound method BaseConnector.stopConnecting of <twist
 Obj:timeout                 30 .
 Obj:timeoutID               <DelayedCall 0x7f22669d5160 [29.99857497215271s] called=0 cancelled=0 _BaseBaseClient.failIfNotConnected(TimeoutError('',))> .
 Obj:transport               <<class 'twisted.internet.tcp.Client'> to ('192.168.9.121', 8102) at 7f22669d50f0> .
+
+
+### EntertainmentDeviceData
+
+super(EntertainmentDeviceData, self).__init__()
+self.DeviceCount = 0
+self._Factory = None  # The factory pointer for this device of an entertainment sub-section
+self._Transport = None
+self._Connector = None
+
+
+### EntertainmentDeviceControl
+
+Used to control a device.
+All defaults are None - Only fill in what you need so inadvertent controls are not done.
+
+# Family The device family we are controlling (onkyo, pioneer, ...)
+# Device The name of the device (822-k)
+self.Channel = None  # '01'
+self.Direction = None  # F or R  - Foreward, Reverse (think Video play)
+self.HostName = None  # name of computer holding definitions
+self.Input = None  # '01'  # Input ID
+self.Power = None  # 'Off'  # On or Off which is standby
+self.Volume = None  # '0'  # 0-100 - Percent
+self.Zone = None  # '1'  # For multi zone output
 
 
 ### END DBK

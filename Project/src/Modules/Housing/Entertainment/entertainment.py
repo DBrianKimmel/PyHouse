@@ -24,14 +24,13 @@ House.Entertainment.Plugins{}.API
                              .Devices{}
 
 """
-import jsonpickle
 
-__updated__ = '2018-10-02'
+__updated__ = '2018-10-04'
 __version_info__ = (18, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
-# from builtins import setattr
+# import jsonpickle
 import importlib
 import xml.etree.ElementTree as ET
 
@@ -41,20 +40,9 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData, \
         EntertainmentDeviceControl
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
-# from Modules.Housing.Entertainment.pandora.pandora import MqttActions as pandoraMqtt
-# from Modules.Housing.Entertainment.pioneer.pioneer import MqttActions as pioneerMqtt
-# from Modules.Housing.Entertainment.samsung.samsung import MqttActions as samsungMqtt
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
-
-m_onkyo = None
-m_panasonic = None
-m_pandora = None
-m_pioneer = None
-m_samsung = None
-m_sharp = None
-m_sony = None
 
 
 class Ent:
@@ -63,15 +51,6 @@ class Ent:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-
-class Utility:
-
-    def XXXget_all_entertainment_slots(self):
-        """
-        """
-        self.m_logger.info("Retrieving Entertainment Info")
-        return self.Entertainment_Data
 
 
 class MqttActions:
@@ -102,10 +81,11 @@ class MqttActions:
         l_topic = p_topic[0].lower()
         try:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic].API
-        except KeyError:
-            print("{}".format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, "Plugins", 180)))
+        except KeyError as e_err:
+            print(" entertainment-85 - KeyError {}".format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, "Plugins", 180)))
+            LOG.error('Key error:{}\n\tTopic:{}\n\tMessage:{}'.format(e_err, p_topic, p_message))
             l_module = None
-        l_logmsg = '\tEntertainment: '
+        l_logmsg = '\tEntertainment-87: '
         #
         try:
             if l_topic == 'pandora':
@@ -114,17 +94,17 @@ class MqttActions:
             elif l_topic == 'pioneer':
                 l_logmsg += l_module.decode(p_topic[1:], p_message)
             #
-            elif l_topic == 'samsung' and m_samsung != None:
+            elif l_topic == 'samsung':
                 l_logmsg += l_module.decode(p_topic[1:], p_message)
             #
             else:
                 l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
         except Exception as e_err:
-            l_logmsg += "(entertainment.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
+            l_logmsg += "(entertainment-102.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
         return l_logmsg
 
 
-class API(Utility, Ent):
+class API(Ent):
     """ Entertainment is a core module.
     However, there are a large number of subsystems possible.
     We do not want to load all the modules so we implement a load if Defined/Enabled in XML here.
@@ -166,6 +146,7 @@ class API(Utility, Ent):
         l_plugin_data = EntertainmentPluginData()
         l_plugin_data.Name = l_name = XmlConfigTools.extract_section_name(p_section_element)
         l_plugin_data.Active = l_active = PutGetXML.get_bool_from_xml(p_section_element, 'Active', False)
+        LOG.debug('Working on {}'.format(l_name))
         if l_active:
             # Create the module plugin
             l_module_name = 'Modules.Housing.Entertainment.' + l_name + '.' + l_name

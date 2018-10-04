@@ -2,7 +2,7 @@
 <PyHouse Version="18.7.0"
 	xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-08-22 09:36:03.940708 -->
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-10-04 11:40:08.912025 -->
 	<ComputerDivision Active="False" Key="0"
 		Name="Laptop-3">
 		<Comment />
@@ -25,12 +25,12 @@
 			<Node Active="True" Key="0" Name="Laptop-3">
 				<Comment />
 				<UUID>222ec0e9-d76e-11e6-b40f-74dfbfae5aed</UUID>
-				<ConnectionAddressV4>[['172.17.0.1'], ['169.254.9.179']]</ConnectionAddressV4>
-				<ConnectionAddressV6>[['::1'], ['fe80::f7d1:6dcb:a2f2:355d%wlo1'],
+				<ConnectionAddressV4>[['169.254.9.179']]</ConnectionAddressV4>
+				<ConnectionAddressV6>[['::1'], ['fe80::7d65:9bc0:8182:356b%wlo1'],
 					['fccc:db71:198a:fbd2:90bb::1',
 					'fe80::d43a:13ff:fe02:5e7a%zt2lrss7qh']]</ConnectionAddressV6>
 				<NodeRole>0</NodeRole>
-				<LastUpdate>2018-08-22 09:35:18.922231</LastUpdate>
+				<LastUpdate>2018-10-04 11:39:23.850948</LastUpdate>
 				<InterfaceSection />
 			</Node>
 			<Node Active="True" Key="1" Name="pi-01-ct">
@@ -39,7 +39,28 @@
 				<ConnectionAddressV4>[]</ConnectionAddressV4>
 				<ConnectionAddressV6>[['::1'], ['fe80::1b9a:3c8d:173e:7e85%wlan0']]</ConnectionAddressV6>
 				<NodeRole>0</NodeRole>
-				<LastUpdate>2018-08-22 09:35:18.923514</LastUpdate>
+				<LastUpdate>2018-10-04 11:39:23.895674</LastUpdate>
+				<InterfaceSection />
+			</Node>
+			<Node Active="True" Key="2" Name="pi-02-ct">
+				<Comment />
+				<UUID>e404c406-c29a-11e8-acdf-b827eb26b057</UUID>
+				<ConnectionAddressV4>[]</ConnectionAddressV4>
+				<ConnectionAddressV6>[['::1'], ['fe80::c11b:406d:aa75:2f20%wlan0'],
+					['2001:470:4:417::2', 'fe80::c0a8:136%he-ipv6']]</ConnectionAddressV6>
+				<NodeRole>0</NodeRole>
+				<LastUpdate>2018-09-30 23:57:58.158661</LastUpdate>
+				<InterfaceSection />
+			</Node>
+			<Node Active="True" Key="3" Name="pi-06-ct">
+				<Comment />
+				<UUID>d7fdc298-c33a-11e8-8d1f-b827ebbcc8f7</UUID>
+				<ConnectionAddressV4>[]</ConnectionAddressV4>
+				<ConnectionAddressV6>[['::1'], ['fe80::411e:53e1:ab7d:689c%wlan0'],
+					['fccc:db71:1933:88a7:626f::1',
+					'fe80::d483:60ff:fe77:acae%zt2lrss7qh']]</ConnectionAddressV6>
+				<NodeRole>0</NodeRole>
+				<LastUpdate>2018-10-04 11:39:23.894727</LastUpdate>
 				<InterfaceSection />
 			</Node>
 		</NodeSection>
@@ -227,24 +248,32 @@
 			</Room>
 		</RoomSection>
 		<EntertainmentSection>
-			<PioneerSection Active="True">
-				<Type />
-			</PioneerSection>
-			<PioneerSection Active="True">
-				<Type />
-			</PioneerSection>
 			<PandoraSection Active="True">
-				<Type />
+				<Type>Service</Type>
 				<Device Active="True" Key="0" Name="on pi-06">
 					<Comment>Living Room</Comment>
 					<Host>192.168.9.16</Host>
-					<ConnectionName>Pioneer</ConnectionName>
+					<ConnectionFamily>pandora</ConnectionFamily>
+					<ConnectionName>822-k</ConnectionName>
 					<InputName>CD</InputName>
 					<InputCode>01FN</InputCode>
 					<MaxPlayTime>0</MaxPlayTime>
-					<Volume>0</Volume>
+					<Type>Service</Type>
+					<Volume>50</Volume>
 				</Device>
 			</PandoraSection>
+			<PioneerSection Active="True">
+				<Type>Component</Type>
+				<Device Active="True" Key="0" Name="822-k">
+					<Comment>X-822-K Receiver</Comment>
+					<UUID>dc575f69-85ee-11e8-8a4d-a08cfd2fc483</UUID>
+					<CommandSet>2015</CommandSet>
+					<IPv4>192.168.9.121</IPv4>
+					<Port>8102</Port>
+					<Room>Living Room</Room>
+					<Type>Receiver</Type>
+				</Device>
+			</PioneerSection>
 		</EntertainmentSection>
 		<HvacSection>
 			<ThermostatSection />

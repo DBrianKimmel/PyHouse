@@ -1,16 +1,32 @@
-@name:      PyHouse/Project/src/Modules/Housing/Entertainment/pioneer/Docs/Design
-@author:    D. Brian Kimmel
-@contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
-@note:      Created on Oct 1, 2018
-@license:   MIT License
-@summary:   This is the design documentation for thePandora Module of PyHouse.
+* Name:      PyHouse/Project/src/Modules/Housing/Entertainment/pioneer/Docs/Design
+* Author:    D. Brian Kimmel
+* Contact:   D.BrianKimmel@gmail.com
+* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Created:   2018-09-30
+* Updated:   2018-10-04
+* License:   MIT License
+* Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
-Design
-======
 
-XML
-===
+# Pioneer
+
+
+## Design
+
+The pioneer module (so far) is kinda a passive module.
+It gets set up when the XML defines one or more Pioneer devices.
+Then it sends out a Mqtt status message declaring the status when first connected to.]
+It then waits for a control message.
+Control messages can come from services sch as Pandora, or from a Node-Red dashboard triggering something.
+
+The pioneer device I have does not wake up from a TCP connection.
+
+There is the possibility of having more than one pioneer devices in a house.
+The name of the devide is used for the key.
+Be sure to configure the name to be unique and reference the name in the services.
+
+
+## XML / Config
 
 <PioneerSection Active="True">
     <Device Active="True" Key="0" Name="L/R Receiver VSX-822-K">
