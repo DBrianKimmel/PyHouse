@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-04'
+__updated__ = '2018-10-06'
 
 # Import system type stuff
 
@@ -44,7 +44,7 @@ class EntertainmentPluginData:
 
     def __init__(self):
         self.Active = False
-        self.API = None  # The API pointer for this class of plugin
+        self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self.Count = 0
         self.Devices = {}  # EntertainmentDeviceData()
         self.Module = None

@@ -2,7 +2,10 @@
 <PyHouse Version="18.7.0"
 	xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-10-04 11:40:08.912025 -->
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+
+	<!-- Updated by PyHouse 2018-10-04 11:40:08.912025 -->
+
 	<ComputerDivision Active="False" Key="0"
 		Name="Laptop-3">
 		<Comment />
@@ -80,6 +83,7 @@
 			</LoginSection>
 		</WebSection>
 	</ComputerDivision>
+
 	<HouseDivision Active="True" Key="0" Name="cannon trail">
 		<Comment />
 		<UUID>cd83b93e-8463-11e8-8a4d-a08cfd2fc483</UUID>
@@ -247,13 +251,14 @@
 				<RoomType />
 			</Room>
 		</RoomSection>
+
 		<EntertainmentSection>
 			<PandoraSection Active="True">
 				<Type>Service</Type>
 				<Device Active="True" Key="0" Name="on pi-06">
 					<Comment>Living Room</Comment>
 					<Host>192.168.9.16</Host>
-					<ConnectionFamily>pandora</ConnectionFamily>
+					<ConnectionFamily>pioneer</ConnectionFamily>
 					<ConnectionName>822-k</ConnectionName>
 					<InputName>CD</InputName>
 					<InputCode>01FN</InputCode>
@@ -275,10 +280,13 @@
 				</Device>
 			</PioneerSection>
 		</EntertainmentSection>
+
 		<HvacSection>
 			<ThermostatSection />
 		</HvacSection>
+
 		<IrrigationSection />
+
 		<LightingSection>
 			<ButtonSection>
 				<Button Active="True" Key="0" Name="Button1">

@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-10-04'
+__updated__ = '2018-10-06'
 __version_info__ = (18, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -65,6 +65,7 @@ class MqttActions:
             l_ret = p_message[p_field]
         except KeyError:
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+            LOG.error(l_ret)
         return l_ret
 
     def decode(self, p_topic, p_message):
@@ -80,7 +81,7 @@ class MqttActions:
         """
         l_topic = p_topic[0].lower()
         try:
-            l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic].API
+            l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
         except KeyError as e_err:
             print(" entertainment-85 - KeyError {}".format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, "Plugins", 180)))
             LOG.error('Key error:{}\n\tTopic:{}\n\tMessage:{}'.format(e_err, p_topic, p_message))
@@ -100,6 +101,7 @@ class MqttActions:
             else:
                 l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
         except Exception as e_err:
+            LOG.error('Error {}'.format(e_err))
             l_logmsg += "(entertainment-102.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
         return l_logmsg
 
@@ -153,11 +155,11 @@ class API(Ent):
             l_module = importlib.import_module(l_module_name)
             l_plugin_data.Module = l_module
             # Initialize Plugin
-            l_plugin_data.API = l_module.API(self.m_pyhouse_obj)
+            l_plugin_data._API = l_module.API(self.m_pyhouse_obj)
             p_pyhouse_obj.House.Entertainment.Plugins[l_name] = l_plugin_data
             LOG.info('Created Entertainment Plugin "{}".'.format(l_name))
             # Load XML for Plugin
-            l_devices = l_plugin_data.API.LoadXml(p_pyhouse_obj)
+            l_devices = l_plugin_data._API.LoadXml(p_pyhouse_obj)
             l_plugin_data.Devices = l_devices.Devices
 
     def _module_start_loop(self, p_pyhouse_obj, p_plugin):
@@ -165,7 +167,7 @@ class API(Ent):
         """
         l_name = p_plugin.Name
         # Start Plugin
-        p_plugin.API.Start()
+        p_plugin._API.Start()
         l_topic = 'entertainment/{}/status'.format(l_name)
         l_obj = EntertainmentDeviceControl()
         l_obj.Device = l_name
@@ -210,7 +212,7 @@ class API(Ent):
         if self.m_pyhouse_obj.House.Entertainment.Active == True:
             # print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 1', 190))
             for l_plug in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
-                l_module_xml = l_plug.API.SaveXml(l_entertainment_xml)
+                l_module_xml = l_plug._API.SaveXml(l_entertainment_xml)
                 # print(PrettyFormatAny.form(l_module_xml, 'Entertainment XML - 2', 190))
                 if l_module_xml != None:
                     l_entertainment_xml.append(l_module_xml)

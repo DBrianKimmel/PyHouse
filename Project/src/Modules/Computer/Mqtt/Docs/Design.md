@@ -5,12 +5,14 @@
 * Created:   2018-10-01
 * Updated:   2018-10-01
 * License:   MIT License
-* Summary:   This is the design documentation for the Entertainment Module of PyHouse.
+* Summary:   This is the design documentation for the Mqtt Module of PyHouse.
 
-MAIN
-====
 
-This module is accessed by every other module.
+# MQTT
+
+## Design
+
+This Mqtt module is accessed by every other module.
 
 The API is setup from the computer module.
 It initialized as the first thing in the computer setup so it can be called to post and decode messages early on.

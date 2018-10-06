@@ -21,13 +21,14 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-04'
+__updated__ = '2018-10-06'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.internet import protocol
+from _datetime import datetime
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
@@ -37,7 +38,7 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Core.Utilities.extract_tools import extract_quoted
+from Modules.Core.Utilities.extract_tools import extract_quoted
 
 LOG = Logger.getLogger('PyHouse.Pandora        ')
 
@@ -189,6 +190,7 @@ class MqttActions:
             l_ret = p_message[p_field]
         except KeyError:
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+            LOG.error(l_ret)
         return l_ret
 
     def _decode_control(self, p_topic, p_message):
@@ -201,7 +203,7 @@ class MqttActions:
         We need to issue a message to control all connected devices.
         As a side effect, we need to control Pandora ( PianoBar ) via the control socket
         """
-        l_logmsg = '\tControl: '
+        l_logmsg = '\tControl-205: '
         l_control = self._get_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
@@ -228,7 +230,7 @@ class MqttActions:
         @param p_topic: is the topic after ',,,/pandora/'
         """
         l_logmsg = ' Pandora-218 '
-        LOG.debug('decoding {}'.format(p_topic))
+        # LOG.debug('decoding {}'.format(p_topic))
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
@@ -253,8 +255,16 @@ class BarProcessControl(protocol.ProcessProtocol):
     def _extract_nowplaying(self, p_playline):
         """
         """
-        # l_title = extract_quoted(p_playline, b'\"')
-        pass
+        l_obj = PandoraStatusData()
+        l_obj.From = self.m_pyhouse_obj.Computer.Name
+        l_obj.DateTimePlayed = datetime.now()
+        l_playline = p_playline
+        l_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
+        l_obj.Artist, l_playline = extract_quoted(l_playline, b'\"')
+        l_obj.Album, l_playline = extract_quoted(l_playline, b'\"')
+        # l_title, l_playline = extract_quoted(p_playline, b'\"')
+        # l_obj.Station = l_playline.decode('utf-8')
+        return l_obj
 
     def _extract_errors(self, p_playline):
         """
@@ -278,7 +288,7 @@ class BarProcessControl(protocol.ProcessProtocol):
             # LOG.debug('found Press')
             return
         if p_line.startswith(b'Ok.'):
-            LOG.info(p_line)
+            # sLOG.info(p_line)
             return
         # <ESC>[
         if p_line[0] == 0x1B:
@@ -288,12 +298,15 @@ class BarProcessControl(protocol.ProcessProtocol):
         if p_line.startswith(b'#'):
             # LOG.debug('found # {}'.format(p_line))
             return
+        # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
-            LOG.info(p_line)
+            # LOG.info(p_line)
             return
         if p_line.startswith(b'|>'):  # This is selection information
             LOG.info("Playing: {}".format(p_line[2:]))
-            self._extract_nowplaying(p_line[2:])
+            l_topic = 'entertainment/pandora/status'
+            l_msg = self._extract_nowplaying(p_line[2:])
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
             return
         LOG.debug("Data = {}".format(p_line))
         pass
@@ -301,7 +314,7 @@ class BarProcessControl(protocol.ProcessProtocol):
     def connectionMade(self):
         """Write to stdin.
         """
-        LOG.info("Connection Made.")
+        LOG.info("Connection to PianoBar Made.")
 
     def outReceived(self, p_data):
         """Data received from stdout.
@@ -349,7 +362,7 @@ class API(MqttActions):
         self.m_started = None
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_API = self
-        LOG.info("Initialized - Version:{}".format(__version__))
+        LOG.info("API Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for pandora.
@@ -363,7 +376,7 @@ class API(MqttActions):
         """ Start the Pandora plugin since we have it configured in the XML.
         This does not start playing pandora.  That takes a control message to play.
         """
-        # LOG.info("Starting")
+        # LOG.info("Starting")API
         if not self.m_started:
             pass
         LOG.info("Started - Version:{}".format(__version__))
@@ -425,17 +438,22 @@ class API(MqttActions):
         self.m_transport.write(b'q')
         self.m_transport.closeStdin()
 
-        l_connection = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        l_topic = 'entertainment/{}/control'.format(l_connection.Name)
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, 'On')
-        l_obj = EntertainmentDeviceControl()
-        l_obj.Power = "Off"
-        l_obj.Input = l_connection.Devices[0].InputCode
-        l_obj.Volume = l_connection.Devices[0].Volume
-        LOG.info('Sending power off')
-        # l_topic = 'entertainment/pioneer/control'
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        for l_device in l_service.Devices.values():
+            l_obj = EntertainmentDeviceControl()
+            l_name = l_device.ConnectionName
+            l_family = l_device.ConnectionFamily
+            l_topic = 'entertainment/{}/control'.format(l_family)
+            l_obj.Family = l_family
+            l_obj.Device = l_name
+            l_obj.From = SECTION
+            l_obj.Power = "Off"
+            l_obj.Input = l_device.InputCode
+            l_obj.Volume = l_device.Volume
+            LOG.info('Sending power off')
+            # l_topic = 'entertainment/pioneer/control'
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
-        LOG.info("Stopped Pandora.")
+            LOG.info("Stopped Pandora.")
 
 # ## END DBK

@@ -23,8 +23,8 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-04'
-__version_info__ = (18, 9, 2)
+__updated__ = '2018-10-06'
+__version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -161,7 +161,7 @@ class MqttActions:
     """
     """
 
-    m_API = None
+    # m_API = None
     m_transport = None
 
     def __init__(self, p_pyhouse_obj):
@@ -172,6 +172,7 @@ class MqttActions:
             l_ret = p_message[p_field]
         except KeyError:
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+            LOG.error(l_ret)
         return l_ret
 
     def _decode_control(self, _p_topic, p_message):
@@ -190,11 +191,11 @@ class MqttActions:
         #
         if l_power != None:
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
-            self.m_API._pioneer_power(l_device, l_power)
+            self._pioneer_power(l_family, l_device, l_power)
         #
         if l_input != None:
             l_logmsg += ' Turn input to {}.'.format(l_input)
-            self.m_API._pioneer_input(l_input)
+            self._pioneer_input(l_family, l_device, l_input)
         #
         if l_volume == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
@@ -213,6 +214,7 @@ class MqttActions:
 
         @param p_message: is the payload used to control
         """
+        l_family = self._get_field(p_message, 'Family')
         l_device = self._get_field(p_message, 'Device')
         l_power = self._get_field(p_message, 'Power')
         l_volume = self._get_field(p_message, 'Volume')
@@ -220,7 +222,7 @@ class MqttActions:
         l_logmsg = '\tPioneer Status: Power:{}\tVolume:{}\tInput:{}'.format(l_power, l_volume, l_input)
         if l_power != None:
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
-            self.m_API._pioneer_power(l_device, l_power)
+            self._pioneer_power(l_family, l_device, l_power)
         #
         if l_volume == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
@@ -240,9 +242,9 @@ class MqttActions:
         @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
         """
         LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
-        if self.m_API == None:
-            # LOG.debug('Decoding initializing')
-            self.m_API = API(self.m_pyhouse_obj)
+        # if self.m_API == None:
+        #    # LOG.debug('Decoding initializing')
+        #    self.m_API = API(self.m_pyhouse_obj)
 
         l_logmsg = ' Pioneer-243-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
@@ -259,6 +261,12 @@ class PioneerProtocol(StatefulTelnetProtocol):
 
     Each protocol instance is mapped to a Pioneer Device (and visa  versa)
     """
+
+    def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pioneer_device_obj = p_pioneer_device_obj
+        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
+        LOG.info('Protocol Init - Version:{}'.format(__version__))
 
     def dataReceived(self, p_data):
         """ This seems to be a line received function
@@ -282,12 +290,13 @@ class PioneerProtocol(StatefulTelnetProtocol):
         Protocol.connectionMade(self)
         self.setLineMode()
         LOG.info('Connection Made.')
-        self.m_pioneer_obj._Transport = self.transport
-        self.send_command(b'?P')  # Query Power
-        self.send_command(b'?M')
-        self.send_command(b'?V')
-        self.send_command(b'?F')
-        self.send_command(b'01FN')
+        self.m_pioneer_device_obj._Transport = self.transport
+        # LOG.debug('Connection Transport. {}'.format(PrettyFormatAny.form(self.transport, '_Transport', 180)))
+        self.send_command(self.m_pioneer_device_obj, b'?P')  # Query Power
+        self.send_command(self.m_pioneer_device_obj, b'?M')
+        self.send_command(self.m_pioneer_device_obj, b'?V')
+        self.send_command(self.m_pioneer_device_obj, b'?F')
+        self.send_command(self.m_pioneer_device_obj, b'01FN')
 
     def connectionLost(self, reason=ConnectionDone):
         """ TearDown
@@ -300,16 +309,16 @@ class PioneerClient(PioneerProtocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_obj):
+    def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_obj = p_pioneer_obj
-        # LOG.debug('PioneerClient init for {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'PioneerClient Init-')))
+        self.m_pioneer_device_obj = p_pioneer_device_obj
+        # LOG.debug('PioneerClient init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerClient Init-')))
 
-    def send_command(self, p_command):
+    def send_command(self, p_device_obj, p_command):
         LOG.info('Send command {}'.format(p_command))
         try:
-            l_host = self.m_pioneer_obj._Connector.host
-            self.m_pioneer_obj._Transport.write(p_command + b'\r\n')
+            l_host = p_device_obj._Connector.host
+            p_device_obj._Transport.write(p_command + b'\r\n')
             LOG.info('Send TCP command:{} to {}'.format(p_command, l_host))
         except AttributeError as e_err:
             LOG.error("Tried to call send_command without a pioneer device configured.\n\tError:{}".format(e_err))
@@ -321,10 +330,10 @@ class PioneerFactory(ReconnectingClientFactory):
     By default, buildProtocol will create a protocol of the class given in self.protocol.
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_obj):
+    def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_obj = p_pioneer_obj
-        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'PioneerFactory-')))
+        self.m_pioneer_device_obj = p_pioneer_device_obj
+        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
         LOG.info('Init - Version:{}'.format(__version__))
 
     def startedConnecting(self, p_connector):
@@ -332,8 +341,8 @@ class PioneerFactory(ReconnectingClientFactory):
         Called when we are connecting to the device.
         Provides access to the connector.
         """
-        self.m_pioneer_obj._Connector = p_connector
-        LOG.info('Started to connect. {}'.format(PrettyFormatAny.form(p_connector, '_Connector', 180)))
+        self.m_pioneer_device_obj._Connector = p_connector
+        # LOG.debug('Started to connect. {}'.format(PrettyFormatAny.form(p_connector, '_Connector', 180)))
 
     def buildProtocol(self, p_addr):
         """ *2
@@ -342,8 +351,8 @@ class PioneerFactory(ReconnectingClientFactory):
         @param p_addr: an object implementing twisted.internet.interfaces.IAddress
         @return:
         """
-        self.protocol = PioneerProtocol()
-        l_client = PioneerClient(self.m_pyhouse_obj, self.m_pioneer_obj)
+        self.protocol = PioneerProtocol(self.m_pyhouse_obj, self.m_pioneer_device_obj)
+        l_client = PioneerClient(self.m_pyhouse_obj, self.m_pioneer_device_obj)
         LOG.info('BuildProtocol - Addr = {}; Client:{}'.format(p_addr, l_client))
         return l_client
 
@@ -370,29 +379,42 @@ class API(MqttActions, PioneerClient):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized - Version:{}".format(__version__))
+        LOG.info("API Initialized - Version:{}".format(__version__))
 
-    def _pioneer_power(self, _p_device, p_power):
+    def _find_device(self, _p_family, p_device):
+        l_pioneer = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        for l_device in l_pioneer.values():
+            if l_device.Name == p_device:
+                LOG.debug("found device")
+                return l_device
+        LOG.error('No such device')
+        return None
+
+    def _pioneer_power(self, p_family, p_device, p_power):
         """
         @param p_power: 'On' or 'Off'
         """
+        # Get the device_obj to control
+        l_device_obj = self._find_device(p_family, p_device)
         if p_power == 'On':
-            self.send_command(b'PN')  # Query Power
+            self.send_command(l_device_obj, b'PN')  # Query Power
         else:
-            self.send_command(b'PF')  # Query Power
+            self.send_command(l_device_obj, b'PF')  # Query Power
         LOG.debug('Change Power to {}'.format(p_power))
 
-    def _pioneer_volume(self, p_volume):
+    def _pioneer_volume(self, p_family, p_device, p_volume):
         """
         @param p_volume: 'Up1', 'Up5', 'Down1' or 'Down5'
         """
+        l_device_obj = self._find_device(p_family, p_device)
         LOG.debug('Change Volume to {}'.format(p_volume))
 
-    def _pioneer_input(self, p_input):
+    def _pioneer_input(self, p_family, p_device, p_input):
         """
         @param p_input: Channel Code
         """
-        self.send_command(b'01FN')  # Query Power
+        l_device_obj = self._find_device(p_family, p_device)
+        self.send_command(l_device_obj, b'01FN')  # Query Power
         LOG.debug('Change input channel to {}'.format(p_input))
 
     def LoadXml(self, p_pyhouse_obj):
@@ -408,22 +430,24 @@ class API(MqttActions, PioneerClient):
         """
         LOG.info('Starting...')
         l_count = 0
-        for l_pioneer_obj in self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices.values():
+        for l_pioneer_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices.values():
             l_count += 1
-            if not l_pioneer_obj.Active:
+            if not l_pioneer_device_obj.Active:
                 continue
-            if l_pioneer_obj.isRunning:
-                LOG.info('Pioneer device {} is already running.'.format(l_pioneer_obj.Name))
-            l_host = long_to_str(l_pioneer_obj.IPv4)
-            l_port = l_pioneer_obj.Port
-            l_factory = PioneerFactory(self.m_pyhouse_obj, l_pioneer_obj)
+            if l_pioneer_device_obj.isRunning:
+                LOG.info('Pioneer device {} is already running.'.format(l_pioneer_device_obj.Name))
+            l_host = long_to_str(l_pioneer_device_obj.IPv4)
+            l_port = l_pioneer_device_obj.Port
+            l_factory = PioneerFactory(self.m_pyhouse_obj, l_pioneer_device_obj)
             l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-            l_pioneer_obj._Factory = l_factory
-            l_pioneer_obj._Factory = l_connector
-            l_pioneer_obj.isRunning = True
-            self.m_pioneer_obj = l_pioneer_obj
-            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_pioneer_obj.Name, l_host, l_port))
-            # LOG.debug('Pioneer-Start {}'.format(PrettyFormatAny.form(self.m_pioneer_obj, 'PioneerStart-')))
+            l_pioneer_device_obj._Factory = l_factory
+            l_pioneer_device_obj._Connector = l_connector
+            l_pioneer_device_obj.isRunning = True
+            self.m_pioneer_device_obj = l_pioneer_device_obj
+            # LOG.debug('Connection Factory. {}'.format(PrettyFormatAny.form(l_factory, '_Factory', 180)))
+            # LOG.debug('Connection Connector. {}'.format(PrettyFormatAny.form(l_connector, '_Connector', 180)))
+            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_pioneer_device_obj.Name, l_host, l_port))
+            # LOG.debug('Pioneer-Start {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerStart-')))
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveXml(self, _p_xml):
