@@ -253,7 +253,7 @@ class MqttActions:
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
             l_family = l_device.ConnectionFamily
-            l_topic = 'entertainment/{}/control'.format(l_family)
+            # l_topic = 'entertainment/{}/control'.format(l_family)
             l_obj.Device = l_name
             l_obj.Family = l_family
             l_obj.From = SECTION
@@ -276,7 +276,7 @@ class MqttActions:
         @param p_topic: is the topic after ',,,/pandora/'
         """
         l_logmsg = ' Pandora-218 '
-        # LOG.debug('decoding {}'.format(p_topic))
+        # LOG.debug('decoding {}'.format(p_topic
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
@@ -312,7 +312,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         l_playline = p_playline
         p_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
         p_obj.Artist, l_playline = extract_quoted(l_playline, b'\"')
-        p_obj.Album, l_playline = extract_quoted(l_playline, b'\"')
+        p_obj.Album, l_playline = extract_quoted(l_playline)
         p_obj.Station, l_playline = self._extract_station(p_obj, l_playline)
         p_obj.Likability = l_playline.decode('utf-8')
         p_obj.Status = 'Playing'
@@ -371,7 +371,7 @@ class BarProcessControl(protocol.ProcessProtocol):
 
         # We gather the play data here but we do not send the message yet
         # We will wait for the first time to arrive.
-        if p_line.startswith(b'|>'):  # This is selection information
+        if p_line.startswith(b'|>'):  # This is
             self.m_time = None
             self.m_now_playing = PandoraStatusData()
             LOG.info("Playing: {}".format(p_line[2:]))
