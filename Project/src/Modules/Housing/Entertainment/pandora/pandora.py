@@ -405,22 +405,22 @@ class BarProcessControl(protocol.ProcessProtocol):
         #        The line is a timestamp - every second
         (i)      This is an information message - Login, new playlist, etc.
         """
-        # LOG.debug('PB Data-1 {}'.format(p_data))
+        LOG.debug('PB Data-1 {}'.format(p_data))
         self.m_buffer += p_data
         while self.m_buffer[0] == b'\n' or self.m_buffer[0] == b'\r':  # Strip off all leading newlines
             self.m_buffer = self.m_buffer[1:]
-        # LOG.debug('PB Data-2 {}'.format(self.m_buffer))
+        LOG.debug('PB Data-2 {}'.format(self.m_buffer))
         while len(self.m_buffer) > 0:
             l_ix = self.m_buffer.find(b'\n')
             if l_ix > 0:
                 l_line = self.m_buffer[:l_ix]
-                # LOG.debug('PB Data-3 {}'.format(l_line))
+                LOG.debug('PB Data-3 {}'.format(l_line))
                 self.m_buffer = self.m_buffer[l_ix + 1:]
                 self._extract_line(l_line)
                 continue
             else:
                 l_line = self.m_buffer
-                # LOG.debug('PB Data-4 {}'.format(l_line))
+                LOG.debug('PB Data-4 {}'.format(l_line))
                 self._extract_line(l_line)
                 self.m_buffer = bytes()
 
@@ -437,8 +437,6 @@ class API(MqttActions):
     def __init__(self, p_pyhouse_obj):
         """ Do the housekeeping for the pandora plugin.
         """
-        # print(PrettyFormatAny.form(p_pyhouse_obj.House, 'Pandora.API() House'))
-        # print(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment, 'Pandora.API() Entertainment'))
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Name = SECTION
         self.m_started = None
