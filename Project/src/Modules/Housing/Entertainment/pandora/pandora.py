@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-07'
+__updated__ = '2018-10-08'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -74,6 +74,7 @@ class PandoraStatusData():
         self.PlayingTime = None
         self.Song = None
         self.Station = None
+        self.Status = 'Idle'
 
 
 class XML:
@@ -297,25 +298,34 @@ class BarProcessControl(protocol.ProcessProtocol):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
 
-    def _extract_station(self, p_line):
+    def _extract_station(self, p_obj, p_line):
         l_ix = p_line.find(b'@')
         l_sta = p_line[l_ix + 1:].decode('utf-8')
         l_remain = p_line[:l_ix]
         return l_sta, l_remain
 
-    def _extract_nowplaying(self, p_playline):
+    def _extract_nowplaying(self, p_obj, p_playline):
         """
         """
-        l_obj = PandoraStatusData()
-        l_obj.From = self.m_pyhouse_obj.Computer.Name
-        l_obj.DateTimePlayed = datetime.now()
+        p_obj.From = self.m_pyhouse_obj.Computer.Name
+        p_obj.DateTimePlayed = datetime.now()
         l_playline = p_playline
-        l_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
-        l_obj.Artist, l_playline = extract_quoted(l_playline, b'\"')
-        l_obj.Album, l_playline = extract_quoted(l_playline, b'\"')
-        l_obj.Station, l_playline = self._extract_station(l_playline)
-        l_obj.Likability = l_playline
-        return l_obj
+        p_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
+        p_obj.Artist, l_playline = extract_quoted(l_playline, b'\"')
+        p_obj.Album, l_playline = extract_quoted(l_playline, b'\"')
+        p_obj.Station, l_playline = self._extract_station(p_obj, l_playline)
+        p_obj.Likability = l_playline.decode('utf-8')
+        p_obj.Status = 'Playing'
+        return p_obj
+
+    def _extract_playtime(self, p_obj, p_playline):
+        """
+        b'#   -03:00/03:00\r'
+        """
+        l_line = p_playline.strip()
+        l_ix = l_line.find('/')
+        p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
+        return
 
     def _extract_errors(self, p_playline):
         """
@@ -329,6 +339,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         if p_line[0] == b'q':
             LOG.info('Quitting Pandora')
             return
+
         if p_line.startswith(b'Welcome'):
             l_topic = 'entertainment/pandora/status'
             l_msg = str(p_line)
@@ -341,27 +352,37 @@ class BarProcessControl(protocol.ProcessProtocol):
         if p_line.startswith(b'Ok.'):
             # sLOG.info(p_line)
             return
+
         # <ESC>[
         if p_line[0] == 0x1B:
             # LOG.debug('found esc sequence')
             p_line = p_line[4:]
-        # Time
-        if p_line.startswith(b'#'):
-            if self.m_time == None:
-                self.m_time = p_line[2:]
-                LOG.debug('found # {}'.format(p_line))
-            return
+
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
             # LOG.info(p_line)
             return
+
+        # We gather the play data here but we do not send the message yet
+        # We will wait for the first time to arrive.
         if p_line.startswith(b'|>'):  # This is selection information
             self.m_time = None
+            self.m_now_playing = PandoraStatusData()
             LOG.info("Playing: {}".format(p_line[2:]))
             l_topic = 'entertainment/pandora/status'
-            l_msg = self._extract_nowplaying(p_line[2:])
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+            l_msg = self._extract_nowplaying(self.m_now_playing, p_line[2:])
+            # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
             return
+        # get the time and then send the message of now-playing
+        if p_line.startswith(b'#'):
+            if self.m_time == None:
+                self.m_time = p_line[2:]
+                self._extract_playtime(self.m_now_playing, p_line[2:])
+                LOG.debug('found # {}'.format(p_line))
+                l_topic = 'entertainment/pandora/status'
+                self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, self.m_now_playing)
+            return
+
         LOG.debug("Data = {}".format(p_line))
         pass
 

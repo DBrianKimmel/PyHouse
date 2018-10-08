@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-07'
+__updated__ = '2018-10-08'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -292,7 +292,7 @@ class PioneerProtocol(StatefulTelnetProtocol):
         LOG.info('Connection Made.')
         self.m_pioneer_device_obj._Transport = self.transport
         # LOG.debug('Connection Transport. {}'.format(PrettyFormatAny.form(self.transport, '_Transport', 180)))
-        self.send_command(self.m_pioneer_device_obj, VSX822K.PowerQuery)  # Query Power
+        self.send_command(self.m_pioneer_device_obj, VSX822K['PowerQuery'])  # Query Power
         self.send_command(self.m_pioneer_device_obj, VSX822K['MuteQuery'])
         self.send_command(self.m_pioneer_device_obj, VSX822K['VolumeQuery'])
         self.send_command(self.m_pioneer_device_obj, VSX822K['FunctionQuery'])
