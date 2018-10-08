@@ -253,9 +253,9 @@
 		</RoomSection>
 
 		<EntertainmentSection>
-			<PandoraSection Active="True">
+			<PandoraSection Active="False">
 				<Type>Service</Type>
-				<Device Active="True" Key="0" Name="on pi-06">
+				<Device Active="False" Key="0" Name="on pi-06">
 					<Comment>Living Room</Comment>
 					<Host>192.168.9.16</Host>
 					<ConnectionFamily>pioneer</ConnectionFamily>
@@ -267,9 +267,9 @@
 					<Volume>50</Volume>
 				</Device>
 			</PandoraSection>
-			<PioneerSection Active="True">
+			<PioneerSection Active="False">
 				<Type>Component</Type>
-				<Device Active="True" Key="0" Name="822-k">
+				<Device Active="False" Key="0" Name="822-k">
 					<Comment>X-822-K Receiver</Comment>
 					<UUID>dc575f69-85ee-11e8-8a4d-a08cfd2fc483</UUID>
 					<CommandSet>2015</CommandSet>

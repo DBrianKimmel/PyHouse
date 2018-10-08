@@ -7,16 +7,15 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 15 tests - DBK - 2018-08-18
+Passed all 20 tests - DBK - 2018-10-08
 
 """
 
-__updated__ = '2018-10-03'
+__updated__ = '2018-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-# from twisted.test import proto_helpers
 
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
@@ -51,7 +50,9 @@ from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_ACTIVE, \
         TESTING_HOUSE_KEY, \
         TESTING_HOUSE_UUID
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
+from Modules.Housing.Entertainment.entertainment_data import \
+        EntertainmentData, \
+        EntertainmentPluginData
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -266,7 +267,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
 
 class E1_API(SetupMixin, unittest.TestCase):
-    """ Test that we write XML correctly
+    """ Test that we are initializing properly
     """
 
     def setUp(self):
@@ -278,9 +279,9 @@ class E1_API(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        self.assertIsNone(l_base.API)
+        self.assertIsNone(l_base._API)
         self.assertEqual(l_base.Active, False)
         self.assertEqual(l_base.Count, 0)
 

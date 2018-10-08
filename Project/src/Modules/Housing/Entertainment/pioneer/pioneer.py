@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-06'
+__updated__ = '2018-10-07'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,15 +47,15 @@ SECTION = 'pioneer'
 XML_PATH = 'HouseDivision/EntertainmentSection/PioneerSection'
 
 VSX822K = {
-    'PowerQuery':       b'?P\r\n',
-    'PowerOn':          b'PO\r\n',
-    'PowerOff':         b'PF\r\n',
-    'VolumeQuery':      b'?V\r\n',
-    'VolmeUp':          b'VU\r\n',
-    'VolumeDown':       b'VN\r\n',
-    'MuteQuery':        b'?M\r\n',
-    'FunctionQuery':    b'?F\r\n',
-    'FunctionPandora':  b'01FN\r\n'
+    'PowerQuery':       b'?P',
+    'PowerOn':          b'PN',
+    'PowerOff':         b'PF',
+    'VolumeQuery':      b'?V',
+    'VolmeUp':          b'VU',
+    'VolumeDown':       b'VN',
+    'MuteQuery':        b'?M',
+    'FunctionQuery':    b'?F',
+    'FunctionPandora':  b'01FN'
     }
 
 
@@ -292,10 +292,10 @@ class PioneerProtocol(StatefulTelnetProtocol):
         LOG.info('Connection Made.')
         self.m_pioneer_device_obj._Transport = self.transport
         # LOG.debug('Connection Transport. {}'.format(PrettyFormatAny.form(self.transport, '_Transport', 180)))
-        self.send_command(self.m_pioneer_device_obj, b'?P')  # Query Power
-        self.send_command(self.m_pioneer_device_obj, b'?M')
-        self.send_command(self.m_pioneer_device_obj, b'?V')
-        self.send_command(self.m_pioneer_device_obj, b'?F')
+        self.send_command(self.m_pioneer_device_obj, VSX822K.PowerQuery)  # Query Power
+        self.send_command(self.m_pioneer_device_obj, VSX822K['MuteQuery'])
+        self.send_command(self.m_pioneer_device_obj, VSX822K['VolumeQuery'])
+        self.send_command(self.m_pioneer_device_obj, VSX822K['FunctionQuery'])
         self.send_command(self.m_pioneer_device_obj, b'01FN')
 
     def connectionLost(self, reason=ConnectionDone):
@@ -397,9 +397,9 @@ class API(MqttActions, PioneerClient):
         # Get the device_obj to control
         l_device_obj = self._find_device(p_family, p_device)
         if p_power == 'On':
-            self.send_command(l_device_obj, b'PN')  # Query Power
+            self.send_command(l_device_obj, VSX822K['PowerOn'])  # Query Power
         else:
-            self.send_command(l_device_obj, b'PF')  # Query Power
+            self.send_command(l_device_obj, VSX822K['PowerOff'])  # Query Power
         LOG.debug('Change Power to {}'.format(p_power))
 
     def _pioneer_volume(self, p_family, p_device, p_volume):
@@ -407,6 +407,10 @@ class API(MqttActions, PioneerClient):
         @param p_volume: 'Up1', 'Up5', 'Down1' or 'Down5'
         """
         l_device_obj = self._find_device(p_family, p_device)
+        if p_volume == 'Up1':
+            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+        elif p_volume == 'Down1':
+            self.send_command(l_device_obj, VSX822K['VolumeDown'])
         LOG.debug('Change Volume to {}'.format(p_volume))
 
     def _pioneer_input(self, p_family, p_device, p_input):

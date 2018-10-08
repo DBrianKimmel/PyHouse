@@ -25,7 +25,7 @@ These messages have topics that begin with:
 
 The modules may return a status message, control other submodules or ...
 
-
+```python
 ===== _Connector ===== <class 'twisted.internet.tcp.Connector'>
 Obj:_addressType            <class 'twisted.internet.address.IPv4Address'> .
 Obj:_makeTransport          <bound method Connector._makeTransport of <twisted.internet.tcp.Connector object at 0x7f22669d5048>> .
@@ -47,15 +47,18 @@ Obj:stopConnecting          <bound method BaseConnector.stopConnecting of <twist
 Obj:timeout                 30 .
 Obj:timeoutID               <DelayedCall 0x7f22669d5160 [29.99857497215271s] called=0 cancelled=0 _BaseBaseClient.failIfNotConnected(TimeoutError('',))> .
 Obj:transport               <<class 'twisted.internet.tcp.Client'> to ('192.168.9.121', 8102) at 7f22669d50f0> .
+```
 
 
 ### EntertainmentDeviceData
 
+```python
 super(EntertainmentDeviceData, self).__init__()
 self.DeviceCount = 0
 self._Factory = None  # The factory pointer for this device of an entertainment sub-section
 self._Transport = None
 self._Connector = None
+```
 
 
 ### EntertainmentDeviceControl
@@ -63,15 +66,18 @@ self._Connector = None
 Used to control a device.
 All defaults are None - Only fill in what you need so inadvertent controls are not done.
 
-# Family The device family we are controlling (onkyo, pioneer, ...)
-# Device The name of the device (822-k)
-self.Channel = None  # '01'
-self.Direction = None  # F or R  - Foreward, Reverse (think Video play)
-self.HostName = None  # name of computer holding definitions
-self.Input = None  # '01'  # Input ID
-self.Power = None  # 'Off'  # On or Off which is standby
-self.Volume = None  # '0'  # 0-100 - Percent
-self.Zone = None  # '1'  # For multi zone output
 
+* Channel = None
+   The channel or frequency (TV, Radio)
+* Device - The name of the device within a family (822-k)
+* Direction = None  # F or R  - Foreward, Reverse (think Video play)
+* Family - The device family we are controlling (onkyo, pioneer, ...)
+* From - The node
+* HostName = None  # name of computer holding definitions
+* Input = None  # '01'  # Input ID
+* Power = None  # 'Off'  # On or Off which is standby
+* Skip - Skip the rest of this unit
+* Volume = None  # '0'  # 0-100 - Percent
+* Zone = None  # '1'  # For multi zone output
 
 ### END DBK

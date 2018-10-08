@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-06'
+__updated__ = '2018-10-07'
 
 # Import system type stuff
 
@@ -73,12 +73,13 @@ class EntertainmentDeviceControl:
     def __init__(self):
         self.Channel = None  # '01'
         self.Device = None  #   The name and Key for the device
-        self.Direction = None  # F or R  - Foreward, Reverse (think Video play)
+        self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
         self.Input = None  # '01'  # Input ID
         self.Power = None  # 'Off'  # On or Off which is standby
+        self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent
         self.Zone = None  # '1'  # For multi zone output
 

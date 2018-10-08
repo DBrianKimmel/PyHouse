@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-06'
+__updated__ = '2018-10-07'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -70,6 +70,7 @@ class PandoraStatusData():
         self.DateTimePlayed = None
         self.Error = None  # If some error occurred
         self.From = None  # This host id to identify where it came from
+        self.Likability = None
         self.PlayingTime = None
         self.Song = None
         self.Station = None
@@ -203,19 +204,63 @@ class MqttActions:
         We need to issue a message to control all connected devices.
         As a side effect, we need to control Pandora ( PianoBar ) via the control socket
         """
-        l_logmsg = '\tControl-205: '
+        l_logmsg = '\tPandora Control'
+        l_like = None
+        l_power = None
+        l_skip = None
+        l_volume = None
         l_control = self._get_field(p_message, 'Control')
+
         if l_control == 'On':
             l_logmsg += ' Turn On '
+            l_power = 'On'
             self._play_pandora()
         elif l_control == 'Off':
             l_logmsg += ' Turn Off '
+            l_power = 'On'
             self._halt_pandora()
 
-        elif l_control == 'VolUp1':
+        elif l_control == 'Up1':
             l_logmsg += ' Volume Up 1 '
+            l_volume = '+1'
+        elif l_control == 'Up5':
+            l_logmsg += ' Volume Up 5 '
+            l_volume = '+5'
+        elif l_control == 'Down1':
+            l_logmsg += ' Volume Down 1 '
+            l_volume = '-1'
+        elif l_control == 'Down1':
+            l_logmsg += ' Volume Down 5 '
+            l_volume = '-5'
+
+        elif l_control == 'Like':
+            l_logmsg += ' Like '
+            l_like = 'Yes'
+        elif l_control == 'Dislike':
+            l_logmsg += ' Dislike '
+            l_like = 'No'
+
+        elif l_control == 'Skip':
+            l_logmsg += ' Skip '
+            l_skip = 'Yes'
+
         else:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
+
+        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        for l_device in l_service.Devices.values():
+            l_obj = EntertainmentDeviceControl()
+            l_name = l_device.ConnectionName
+            l_family = l_device.ConnectionFamily
+            l_topic = 'entertainment/{}/control'.format(l_family)
+            l_obj.Device = l_name
+            l_obj.Family = l_family
+            l_obj.From = SECTION
+            l_obj.Input = l_device.InputCode
+            l_obj.Like = l_like
+            l_obj.Power = l_power
+            l_obj.Skip = l_skip
+            l_obj.Volume = l_volume
         return l_logmsg
 
     def _decode_status(self, p_topic, p_message):
@@ -252,6 +297,12 @@ class BarProcessControl(protocol.ProcessProtocol):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
 
+    def _extract_station(self, p_line):
+        l_ix = p_line.find(b'@')
+        l_sta = p_line[l_ix + 1:].decode('utf-8')
+        l_remain = p_line[:l_ix]
+        return l_sta, l_remain
+
     def _extract_nowplaying(self, p_playline):
         """
         """
@@ -262,8 +313,8 @@ class BarProcessControl(protocol.ProcessProtocol):
         l_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
         l_obj.Artist, l_playline = extract_quoted(l_playline, b'\"')
         l_obj.Album, l_playline = extract_quoted(l_playline, b'\"')
-        # l_title, l_playline = extract_quoted(p_playline, b'\"')
-        # l_obj.Station = l_playline.decode('utf-8')
+        l_obj.Station, l_playline = self._extract_station(l_playline)
+        l_obj.Likability = l_playline
         return l_obj
 
     def _extract_errors(self, p_playline):
@@ -294,15 +345,18 @@ class BarProcessControl(protocol.ProcessProtocol):
         if p_line[0] == 0x1B:
             # LOG.debug('found esc sequence')
             p_line = p_line[4:]
-        #
+        # Time
         if p_line.startswith(b'#'):
-            # LOG.debug('found # {}'.format(p_line))
+            if self.m_time == None:
+                self.m_time = p_line[2:]
+                LOG.debug('found # {}'.format(p_line))
             return
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
             # LOG.info(p_line)
             return
         if p_line.startswith(b'|>'):  # This is selection information
+            self.m_time = None
             LOG.info("Playing: {}".format(p_line[2:]))
             l_topic = 'entertainment/pandora/status'
             l_msg = self._extract_nowplaying(p_line[2:])

@@ -30,28 +30,16 @@ Be sure to configure the name to be unique and reference the name in the service
 ## XML / Config
 
 <PioneerSection Active="True">
-    <Device Active="True" Key="0" Name="L/R Receiver VSX-822-K">
-        <UUID>Pioneer.-0000-0000-0000-0123456789ab</UUID>
-        <Comment>VSX-822-K Receiver</Comment>
-        <CommandSet>2015</CommandSet>
-        <IPv4>192.168.9.121</IPv4>
-        <Port>8102</Port>
-        <RoomName>Living Room</RoomName>
-        <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
-        <Status>On</Status>
-        <Type>Receiver</Type>
-        <Volume>75</Volume>
-    </Device>
-    <Device Active="True" Key="0" Name="Missing Device">
-        <UUID>Pioneer.-0001-0000-0000-0123456789ab</UUID>
-        <CommandSet>2015</CommandSet>
-        <Comment>VSX-822-K Bogus</Comment>
-        <IPv4>192.168.1.122</IPv4>
-        <Port>8102</Port>
-        <RoomName>Master Bedroom</RoomName>
-        <RoomUUID>Room....-0001-0000-0000-0123456789ab</RoomUUID>
-        <Type>Fake Receiver</Type>
-    </Device>
+	<Type>Component</Type>
+	<Device Active="True" Key="0" Name="822-k">
+		<Comment>X-822-K Receiver</Comment>
+		<UUID>dc575f69-85ee-11e8-8a4d-a08cfd2fc483</UUID>
+		<CommandSet>2015</CommandSet>
+		<IPv4>192.168.9.121</IPv4>
+		<Port>8102</Port>
+		<Room>Living Room</Room>
+		<Type>Receiver</Type>
+	</Device>
 </PioneerSection>
 
 

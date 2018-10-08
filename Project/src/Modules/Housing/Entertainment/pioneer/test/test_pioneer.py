@@ -11,7 +11,7 @@ Passed all 17 tests - DBK - 2018-08-17
 
 """
 
-__updated__ = '2018-08-22'
+__updated__ = '2018-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,9 @@ from twisted.test import proto_helpers
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
+from Modules.Housing.Entertainment.entertainment_data import \
+        EntertainmentData, \
+        EntertainmentPluginData
 from Modules.Housing.Entertainment.pioneer.pioneer import \
         SECTION, \
         XML as pioneerXml, \
@@ -37,6 +39,7 @@ from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.Entertainment.pioneer.test.xml_pioneer import \
         XML_PIONEER_SECTION, \
+        L_PIONEER_SECTION_START, \
         TESTING_PIONEER_SECTION, \
         TESTING_PIONEER_DEVICE_NAME_0, \
         TESTING_PIONEER_DEVICE_KEY_0, \
@@ -50,9 +53,14 @@ from Modules.Housing.Entertainment.pioneer.test.xml_pioneer import \
         TESTING_PIONEER_DEVICE_UUID_1, \
         TESTING_PIONEER_DEVICE_IPV4_1, \
         TESTING_PIONEER_DEVICE_PORT_1, \
-        L_PIONEER_SECTION_START, TESTING_PIONEER_DEVICE_COMMAND_SET_0, TESTING_PIONEER_DEVICE_ROOM_NAME_0, TESTING_PIONEER_DEVICE_COMMENT_0, \
-    TESTING_PIONEER_DEVICE_ROOM_UUID_0, TESTING_PIONEER_DEVICE_STATUS_0, TESTING_PIONEER_DEVICE_TYPE_0, TESTING_PIONEER_DEVICE_VOLUME_0, \
-    TESTING_PIONEER_ACTIVE
+        TESTING_PIONEER_DEVICE_COMMAND_SET_0, \
+        TESTING_PIONEER_DEVICE_ROOM_NAME_0, \
+        TESTING_PIONEER_DEVICE_COMMENT_0, \
+        TESTING_PIONEER_DEVICE_ROOM_UUID_0, \
+        TESTING_PIONEER_DEVICE_STATUS_0, \
+        TESTING_PIONEER_DEVICE_TYPE_0, \
+        TESTING_PIONEER_DEVICE_VOLUME_0, \
+        TESTING_PIONEER_ACTIVE
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -62,6 +70,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
+    def setup2(self):
         self.m_factory = pioFactory(self.m_pyhouse_obj)
         self.m_transport = proto_helpers.StringTransport()
         self.m_proto = self.m_factory.buildProtocol(('127.0.0.1', 0))

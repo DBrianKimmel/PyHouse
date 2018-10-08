@@ -11,10 +11,9 @@
 
 """
 
-__updated__ = '2018-10-05'
+__updated__ = '2018-10-07'
 
 # Import system type stuff
-from operator import index
 
 
 def extract_quoted(p_string, p_delim=b'"'):
