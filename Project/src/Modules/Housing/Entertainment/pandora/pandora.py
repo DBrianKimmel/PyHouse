@@ -338,13 +338,17 @@ class BarProcessControl(protocol.ProcessProtocol):
 
         b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
         b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
-
-
+        b'\x1b[2K|>  "Mississippi Blues" by "Tim Sparks" on "Sidewalk Blues" <3 @ Acoustic Blues Radio\n'
+        b'\x1b[2K#   -02:29/03:09\r'
         """
+        # <ESC>[2K  Ansi esc sequence needs stripped off first.
+        if p_line[0] == 0x1B:
+            # LOG.debug('found esc sequence')
+            p_line = p_line[4:]
+
         if p_line[0] == b'q':
             LOG.info('Quitting Pandora')
             return
-
         if p_line.startswith(b'Welcome'):
             l_topic = 'entertainment/pandora/status'
             l_msg = str(p_line)
@@ -356,12 +360,6 @@ class BarProcessControl(protocol.ProcessProtocol):
             return
         if p_line.startswith(b'Ok.'):
             # sLOG.info(p_line)
-            return
-
-        # <ESC>[
-        if p_line[0] == 0x1B:
-            # LOG.debug('found esc sequence')
-            p_line = p_line[4:]
             return
 
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
@@ -405,22 +403,22 @@ class BarProcessControl(protocol.ProcessProtocol):
         #        The line is a timestamp - every second
         (i)      This is an information message - Login, new playlist, etc.
         """
-        LOG.debug('PB Data-1 {}'.format(p_data))
+        # LOG.debug('PB Data-1 {}'.format(p_data))
         self.m_buffer += p_data
         while self.m_buffer[0] == b'\n' or self.m_buffer[0] == b'\r':  # Strip off all leading newlines
             self.m_buffer = self.m_buffer[1:]
-        LOG.debug('PB Data-2 {}'.format(self.m_buffer))
+        # LOG.debug('PB Data-2 {}'.format(self.m_buffer))
         while len(self.m_buffer) > 0:
             l_ix = self.m_buffer.find(b'\n')
             if l_ix > 0:
                 l_line = self.m_buffer[:l_ix]
-                LOG.debug('PB Data-3 {}'.format(l_line))
+                # LOG.debug('PB Data-3 {}'.format(l_line))
                 self.m_buffer = self.m_buffer[l_ix + 1:]
                 self._extract_line(l_line)
                 continue
             else:
                 l_line = self.m_buffer
-                LOG.debug('PB Data-4 {}'.format(l_line))
+                # LOG.debug('PB Data-4 {}'.format(l_line))
                 self._extract_line(l_line)
                 self.m_buffer = bytes()
 
