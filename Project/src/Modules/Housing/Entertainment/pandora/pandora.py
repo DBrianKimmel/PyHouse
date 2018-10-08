@@ -335,6 +335,11 @@ class BarProcessControl(protocol.ProcessProtocol):
 
     def _extract_line(self, p_line):
         """
+
+        b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
+        b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
+
+
         """
         if p_line[0] == b'q':
             LOG.info('Quitting Pandora')
@@ -381,7 +386,8 @@ class BarProcessControl(protocol.ProcessProtocol):
                 self._extract_playtime(self.m_now_playing, p_line[2:])
                 LOG.debug('found # {}'.format(p_line))
                 l_topic = 'entertainment/pandora/status'
-                self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, self.m_now_playing)
+                l_msg = self.m_now_playing
+                self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
             return
 
         LOG.debug("Data = {}".format(p_line))
