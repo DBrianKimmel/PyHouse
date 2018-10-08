@@ -323,9 +323,9 @@ class BarProcessControl(protocol.ProcessProtocol):
         b'#   -03:00/03:00\r'
         """
         l_line = p_playline.strip()
-        l_ix = l_line.find('/')
+        l_ix = l_line.find(b'/')
         p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
-        return
+        return p_obj
 
     def _extract_errors(self, p_playline):
         """
@@ -357,6 +357,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         if p_line[0] == 0x1B:
             # LOG.debug('found esc sequence')
             p_line = p_line[4:]
+            return
 
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
