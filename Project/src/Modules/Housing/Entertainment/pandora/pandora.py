@@ -253,7 +253,7 @@ class MqttActions:
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
             l_family = l_device.ConnectionFamily
-            # l_topic = 'entertainment/{}/control'.format(l_family)
+            l_topic = 'entertainment/{}/control'.format(l_family)
             l_obj.Device = l_name
             l_obj.Family = l_family
             l_obj.From = SECTION
@@ -262,6 +262,9 @@ class MqttActions:
             l_obj.Power = l_power
             l_obj.Skip = l_skip
             l_obj.Volume = l_volume
+            l_topic = 'entertainment/{}/control'.format(l_family)
+            l_msg = l_obj
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
         return l_logmsg
 
     def _decode_status(self, p_topic, p_message):
@@ -298,7 +301,17 @@ class BarProcessControl(protocol.ProcessProtocol):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
 
-    def _extract_station(self, p_obj, p_line):
+    def _extract_like(self, p_line):
+        l_ix = p_line.find(b'>')
+        if l_ix > 0:
+            l_like = p_line[l_ix + 1:l_ix + 3]
+            l_remain = p_line[:l_ix] + p_line[l_ix + 4:]
+        else:
+            l_like = ' '
+            l_remain = p_line
+        return l_like, l_remain
+
+    def _extract_station(self, p_line):
         l_ix = p_line.find(b'@')
         l_sta = p_line[l_ix + 1:].decode('utf-8')
         l_remain = p_line[:l_ix]
@@ -311,10 +324,11 @@ class BarProcessControl(protocol.ProcessProtocol):
         p_obj.DateTimePlayed = datetime.now()
         l_playline = p_playline
         p_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
-        p_obj.Artist, l_playline = extract_quoted(l_playline, b'\"')
+        p_obj.Artist, l_playline = extract_quoted(l_playline)
         p_obj.Album, l_playline = extract_quoted(l_playline)
-        p_obj.Station, l_playline = self._extract_station(p_obj, l_playline)
-        p_obj.Likability = l_playline.decode('utf-8')
+        p_obj.Likability, l_playline = self.extract_like(l_playline)
+        p_obj.Station, l_playline = self._extract_station(l_playline)
+        # p_obj.Likability, l_playline = l_playline.decode('utf-8')
         p_obj.Status = 'Playing'
         return p_obj
 
@@ -335,7 +349,6 @@ class BarProcessControl(protocol.ProcessProtocol):
 
     def _extract_line(self, p_line):
         """
-
         b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
         b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
         b'\x1b[2K|>  "Mississippi Blues" by "Tim Sparks" on "Sidewalk Blues" <3 @ Acoustic Blues Radio\n'
