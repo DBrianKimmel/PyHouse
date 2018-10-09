@@ -246,7 +246,7 @@ class MqttActions:
         #    # LOG.debug('Decoding initializing')
         #    self.m_API = API(self.m_pyhouse_obj)
 
-        l_logmsg = ' Pioneer-243-{}'.format(p_topic[0])
+        l_logmsg = ' Pioneer-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
@@ -407,9 +407,21 @@ class API(MqttActions, PioneerClient):
         @param p_volume: 'Up1', 'Up5', 'Down1' or 'Down5'
         """
         l_device_obj = self._find_device(p_family, p_device)
-        if p_volume == 'Up1':
+        if p_volume == 'VolUp1':
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
-        elif p_volume == 'Down1':
+        elif p_volume == 'VolUp5':
+            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+        elif p_volume == 'VolDown1':
+            self.send_command(l_device_obj, VSX822K['VolumeDown'])
+        elif p_volume == 'VolDown5':
+            self.send_command(l_device_obj, VSX822K['VolumeDown'])
+            self.send_command(l_device_obj, VSX822K['VolumeDown'])
+            self.send_command(l_device_obj, VSX822K['VolumeDown'])
+            self.send_command(l_device_obj, VSX822K['VolumeDown'])
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
         LOG.debug('Change Volume to {}'.format(p_volume))
 
