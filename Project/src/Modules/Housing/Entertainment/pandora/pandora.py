@@ -206,6 +206,7 @@ class MqttActions:
         As a side effect, we need to control Pandora ( PianoBar ) via the control socket
         """
         l_logmsg = '\tPandora Control'
+        l_input = None
         l_like = None
         l_power = None
         l_skip = None
@@ -215,6 +216,7 @@ class MqttActions:
         if l_control == 'On':
             l_logmsg += ' Turn On '
             l_power = 'On'
+            l_input = self._get_field(p_message, 'Input')
             self._play_pandora()
         elif l_control == 'Off':
             l_logmsg += ' Turn Off '
@@ -223,16 +225,16 @@ class MqttActions:
 
         elif l_control == 'Up1':
             l_logmsg += ' Volume Up 1 '
-            l_volume = '+1'
+            l_volume = 'VolUp1'
         elif l_control == 'Up5':
             l_logmsg += ' Volume Up 5 '
-            l_volume = '+5'
+            l_volume = 'VolUp5'
         elif l_control == 'Down1':
             l_logmsg += ' Volume Down 1 '
-            l_volume = '-1'
+            l_volume = 'VolDown1'
         elif l_control == 'Down1':
             l_logmsg += ' Volume Down 5 '
-            l_volume = '-5'
+            l_volume = 'VolDown5'
 
         elif l_control == 'Like':
             l_logmsg += ' Like '
@@ -257,7 +259,7 @@ class MqttActions:
             l_obj.Device = l_name
             l_obj.Family = l_family
             l_obj.From = SECTION
-            l_obj.Input = l_device.InputCode
+            l_obj.Input = l_input
             l_obj.Like = l_like
             l_obj.Power = l_power
             l_obj.Skip = l_skip
@@ -326,7 +328,7 @@ class BarProcessControl(protocol.ProcessProtocol):
         p_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
         p_obj.Artist, l_playline = extract_quoted(l_playline)
         p_obj.Album, l_playline = extract_quoted(l_playline)
-        p_obj.Likability, l_playline = self.extract_like(l_playline)
+        p_obj.Likability, l_playline = self._extract_like(l_playline)
         p_obj.Station, l_playline = self._extract_station(l_playline)
         # p_obj.Likability, l_playline = l_playline.decode('utf-8')
         p_obj.Status = 'Playing'
