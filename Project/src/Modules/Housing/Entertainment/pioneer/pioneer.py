@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-08'
+__updated__ = '2018-10-09'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -197,14 +197,9 @@ class MqttActions:
             l_logmsg += ' Turn input to {}.'.format(l_input)
             self._pioneer_input(l_family, l_device, l_input)
         #
-        if l_volume == 'VolUp1':
-            l_logmsg += ' Volume Up 1 '
-        elif l_volume == 'VolUp5':
-            l_logmsg += ' Volume Up 5 '
-        elif l_volume == 'VolDown1':
-            l_logmsg += ' Volume Down 1 '
-        elif l_volume == 'VolDown5':
-            l_logmsg += ' Volume Down 5 '
+        if l_volume != None:
+            l_logmsg += ' Change volume {}.'.format(l_volume)
+            self._pioneer_volume(l_family, l_device, l_volume)
         #
         return l_logmsg
 
@@ -220,18 +215,6 @@ class MqttActions:
         l_volume = self._get_field(p_message, 'Volume')
         l_input = self._get_field(p_message, 'Input')
         l_logmsg = '\tPioneer Status: Power:{}\tVolume:{}\tInput:{}'.format(l_power, l_volume, l_input)
-        if l_power != None:
-            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
-            self._pioneer_power(l_family, l_device, l_power)
-        #
-        if l_volume == 'VolUp1':
-            l_logmsg += ' Volume Up 1 '
-        elif l_volume == 'VolUp5':
-            l_logmsg += ' Volume Up 5 '
-        elif l_volume == 'VolDown1':
-            l_logmsg += ' Volume Down 1 '
-        elif l_volume == 'VolDown5':
-            l_logmsg += ' Volume Down 5 '
         return l_logmsg
 
     def decode(self, p_topic, p_message):
@@ -241,16 +224,12 @@ class MqttActions:
 
         @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
         """
-        LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
-        # if self.m_API == None:
-        #    # LOG.debug('Decoding initializing')
-        #    self.m_API = API(self.m_pyhouse_obj)
-
+        # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_logmsg = ' Pioneer-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
-        elif p_topic[0].lower() == 'status':
-            l_logmsg += '\tPioneer: {}\n'.format(self._decode_status(p_topic, p_message))
+        # elif p_topic[0].lower() == 'status':
+        #    l_logmsg += '\tPioneer: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -399,13 +378,15 @@ class API(MqttActions, PioneerClient):
         if p_power == 'On':
             self.send_command(l_device_obj, VSX822K['PowerOn'])  # Query Power
         else:
-            self.send_command(l_device_obj, VSX822K['PowerOff'])  # Query Power
+            # self.send_command(l_device_obj, VSX822K['PowerOff'])  # Query Power
+            pass
         LOG.debug('Change Power to {}'.format(p_power))
 
     def _pioneer_volume(self, p_family, p_device, p_volume):
         """
         @param p_volume: 'Up1', 'Up5', 'Down1' or 'Down5'
         """
+        LOG.debug('Volume:{}'.format(p_volume))
         l_device_obj = self._find_device(p_family, p_device)
         if p_volume == 'VolUp1':
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
@@ -423,6 +404,8 @@ class API(MqttActions, PioneerClient):
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
+        else:
+            pass
         LOG.debug('Change Volume to {}'.format(p_volume))
 
     def _pioneer_input(self, p_family, p_device, p_input):
