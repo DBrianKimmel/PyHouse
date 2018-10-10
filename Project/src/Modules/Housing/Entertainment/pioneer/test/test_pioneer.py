@@ -7,11 +7,11 @@
 @note:      Created on Jul 10, 2018
 @summary:   Test
 
-Passed all 17 tests - DBK - 2018-08-17
+Passed all 18 tests - DBK - 2018-10-10
 
 """
 
-__updated__ = '2018-10-08'
+__updated__ = '2018-10-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,6 +27,7 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData
 from Modules.Housing.Entertainment.pioneer.pioneer import \
         SECTION, \
+        API as pioneerAPI, \
         XML as pioneerXml, \
         PioneerProtocol as pioProto, \
         PioneerFactory as pioFactory
@@ -302,8 +303,31 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """
         l_obj = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_obj
-        print(PrettyFormatAny.form(l_obj, 'C1-04-A - EntertainmentPluginData'))
+        # print(PrettyFormatAny.form(l_obj, 'D1-04-A - EntertainmentPluginData'))
         l_xml = pioneerXml.write_pioneer_section_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C1-04-B - All Devices'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-04-B - All Devices'))
+
+
+class E1_API(SetupMixin, unittest.TestCase):
+    """ Test that we write out the xml properly
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pioneer = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_pioneer
+        self.m_api = pioneerAPI(self.m_pyhouse_obj)
+
+    def test_01_Find(self):
+        """ Write
+        """
+        l_family = 'pioneer'
+        l_device = '822-k'
+        l_x = self.m_api._find_device(l_family, l_device)
+        # print(PrettyFormatAny.form(l_x, 'E1-01-A - All Devices'))
+        # print(PrettyFormatAny.form(self.m_api, 'E1-01-B - API'))
+        self.assertEqual(l_x.Name, TESTING_PIONEER_DEVICE_NAME_0)
 
 # ## END DBK

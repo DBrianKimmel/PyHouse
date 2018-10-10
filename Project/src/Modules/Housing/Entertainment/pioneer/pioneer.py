@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-09'
+__updated__ = '2018-10-10'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -51,7 +51,7 @@ VSX822K = {
     'PowerOn':          b'PN',
     'PowerOff':         b'PF',
     'VolumeQuery':      b'?V',
-    'VolmeUp':          b'VU',
+    'VolumeUp':         b'VU',
     'VolumeDown':       b'VN',
     'MuteQuery':        b'?M',
     'FunctionQuery':    b'?F',
@@ -391,7 +391,7 @@ class API(MqttActions, PioneerClient):
         if p_volume == 'VolUp1':
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
         elif p_volume == 'VolUp5':
-            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, b'VU')
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
