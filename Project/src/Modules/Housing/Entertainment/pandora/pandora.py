@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-08'
+__updated__ = '2018-10-10'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -232,7 +232,7 @@ class MqttActions:
         elif l_control == 'Down1':
             l_logmsg += ' Volume Down 1 '
             l_volume = 'VolDown1'
-        elif l_control == 'Down1':
+        elif l_control == 'Down5':
             l_logmsg += ' Volume Down 5 '
             l_volume = 'VolDown5'
 

@@ -46,13 +46,14 @@ LOG = Logger.getLogger('PyHouse.Pioneer        ')
 SECTION = 'pioneer'
 XML_PATH = 'HouseDivision/EntertainmentSection/PioneerSection'
 
+# See https://tylerwatt12.com/vsx-822k-telnet-interface/
 VSX822K = {
     'PowerQuery':       b'?P',
     'PowerOn':          b'PN',
     'PowerOff':         b'PF',
     'VolumeQuery':      b'?V',
     'VolumeUp':         b'VU',
-    'VolumeDown':       b'VN',
+    'VolumeDown':       b'VD',
     'MuteQuery':        b'?M',
     'FunctionQuery':    b'?F',
     'FunctionPandora':  b'01FN'
