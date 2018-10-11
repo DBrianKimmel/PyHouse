@@ -23,12 +23,12 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-10'
+__updated__ = '2018-10-11'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from twisted.internet.protocol import Protocol, ReconnectingClientFactory
+from twisted.internet.protocol import Protocol, ClientFactory
 from twisted.internet.error import ConnectionDone
 from twisted.conch.telnet import StatefulTelnetProtocol
 # from twisted.protocols import basic
@@ -73,7 +73,8 @@ class PioneerDeviceData(EntertainmentDeviceData):
         self.RoomUUID = None
         self.Type = None
         self.Volume = None
-        self.isRunning = False
+        self._isConnected = False
+        self._isRunning = False
 
 
 class XML:
@@ -248,6 +249,12 @@ class PioneerProtocol(StatefulTelnetProtocol):
         # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
         LOG.info('Protocol Init - Version:{}'.format(__version__))
 
+    def _get_status(self):
+        self.send_command(self.m_pioneer_device_obj, VSX822K['PowerQuery'])  # Query Power
+        self.send_command(self.m_pioneer_device_obj, VSX822K['MuteQuery'])
+        self.send_command(self.m_pioneer_device_obj, VSX822K['VolumeQuery'])
+        self.send_command(self.m_pioneer_device_obj, VSX822K['FunctionQuery'])
+
     def dataReceived(self, p_data):
         """ This seems to be a line received function
         """
@@ -272,11 +279,7 @@ class PioneerProtocol(StatefulTelnetProtocol):
         LOG.info('Connection Made.')
         self.m_pioneer_device_obj._Transport = self.transport
         # LOG.debug('Connection Transport. {}'.format(PrettyFormatAny.form(self.transport, '_Transport', 180)))
-        self.send_command(self.m_pioneer_device_obj, VSX822K['PowerQuery'])  # Query Power
-        self.send_command(self.m_pioneer_device_obj, VSX822K['MuteQuery'])
-        self.send_command(self.m_pioneer_device_obj, VSX822K['VolumeQuery'])
-        self.send_command(self.m_pioneer_device_obj, VSX822K['FunctionQuery'])
-        self.send_command(self.m_pioneer_device_obj, b'01FN')
+        self._get_status()
 
     def connectionLost(self, reason=ConnectionDone):
         """ TearDown
@@ -304,7 +307,7 @@ class PioneerClient(PioneerProtocol):
             LOG.error("Tried to call send_command without a pioneer device configured.\n\tError:{}".format(e_err))
 
 
-class PioneerFactory(ReconnectingClientFactory):
+class PioneerFactory(ClientFactory):
     """
     This is a factory which produces protocols.
     By default, buildProtocol will create a protocol of the class given in self.protocol.
@@ -313,7 +316,6 @@ class PioneerFactory(ReconnectingClientFactory):
     def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_pioneer_device_obj = p_pioneer_device_obj
-        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
         LOG.info('Init - Version:{}'.format(__version__))
 
     def startedConnecting(self, p_connector):
@@ -338,11 +340,11 @@ class PioneerFactory(ReconnectingClientFactory):
 
     def clientConnectionLost(self, p_connector, p_reason):
         LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
+        ClientFactory.clientConnectionLost(self, p_connector, p_reason)
 
     def clientConnectionFailed(self, p_connector, p_reason):
         LOG.error('Connection failed.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
+        ClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def connectionLost(self, p_reason):
         """ This is required. """
@@ -434,7 +436,7 @@ class API(MqttActions, PioneerClient):
             l_count += 1
             if not l_pioneer_device_obj.Active:
                 continue
-            if l_pioneer_device_obj.isRunning:
+            if l_pioneer_device_obj._isRunning:
                 LOG.info('Pioneer device {} is already running.'.format(l_pioneer_device_obj.Name))
             l_host = long_to_str(l_pioneer_device_obj.IPv4)
             l_port = l_pioneer_device_obj.Port
@@ -442,12 +444,9 @@ class API(MqttActions, PioneerClient):
             l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
             l_pioneer_device_obj._Factory = l_factory
             l_pioneer_device_obj._Connector = l_connector
-            l_pioneer_device_obj.isRunning = True
+            l_pioneer_device_obj._isRunning = True
             self.m_pioneer_device_obj = l_pioneer_device_obj
-            # LOG.debug('Connection Factory. {}'.format(PrettyFormatAny.form(l_factory, '_Factory', 180)))
-            # LOG.debug('Connection Connector. {}'.format(PrettyFormatAny.form(l_connector, '_Connector', 180)))
             LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_pioneer_device_obj.Name, l_host, l_port))
-            # LOG.debug('Pioneer-Start {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerStart-')))
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveXml(self, _p_xml):

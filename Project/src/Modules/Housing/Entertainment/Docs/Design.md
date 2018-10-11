@@ -8,7 +8,7 @@
 * Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
 
-# Housing
+# Entertainment
 
 
 ## Design

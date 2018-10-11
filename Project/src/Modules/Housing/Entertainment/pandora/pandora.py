@@ -78,7 +78,8 @@ class PandoraStatusData():
 
 
 class XML:
-    """
+    """ Read the XML and initialize device objects,
+    Write the object to an XML structure for safekeeping
     """
 
     @staticmethod
@@ -178,7 +179,9 @@ class XML:
 
 
 class MqttActions:
-    """
+    """ Process messages to and from this module.
+    Output Control messages use Mqtt to send messages to control the amplifier type device attached to the raspberry pi computer.
+    Input Control messages come from a node red computer and are the listener (user) commands for their listening experience.
     """
 
     m_API = None
@@ -291,11 +294,9 @@ class MqttActions:
         return l_logmsg
 
 
-class PianobarControlProtocol(protocol.Protocol):
-    pass
-
-
-class BarProcessControl(protocol.ProcessProtocol):
+class PianoBarProcessControl(protocol.ProcessProtocol):
+    """
+    """
 
     m_buffer = bytes()
 
@@ -304,9 +305,9 @@ class BarProcessControl(protocol.ProcessProtocol):
         self.m_buffer = bytes()
 
     def _extract_like(self, p_line):
-        l_ix = p_line.find(b'>')
+        l_ix = p_line.find(b'<')
         if l_ix > 0:
-            l_like = p_line[l_ix + 1:l_ix + 3]
+            l_like = p_line[l_ix + 1:l_ix + 3].decode('utf-8')
             l_remain = p_line[:l_ix] + p_line[l_ix + 4:]
         else:
             l_like = ' '
@@ -408,6 +409,8 @@ class BarProcessControl(protocol.ProcessProtocol):
 
     def connectionMade(self):
         """Write to stdin.
+        We do not have to do any initialization here.
+        When we connect, the data flow from pianobar begins,
         """
         LOG.info("Connection to PianoBar Made.")
 
@@ -418,22 +421,18 @@ class BarProcessControl(protocol.ProcessProtocol):
         #        The line is a timestamp - every second
         (i)      This is an information message - Login, new playlist, etc.
         """
-        # LOG.debug('PB Data-1 {}'.format(p_data))
         self.m_buffer += p_data
         while self.m_buffer[0] == b'\n' or self.m_buffer[0] == b'\r':  # Strip off all leading newlines
             self.m_buffer = self.m_buffer[1:]
-        # LOG.debug('PB Data-2 {}'.format(self.m_buffer))
         while len(self.m_buffer) > 0:
             l_ix = self.m_buffer.find(b'\n')
             if l_ix > 0:
                 l_line = self.m_buffer[:l_ix]
-                # LOG.debug('PB Data-3 {}'.format(l_line))
                 self.m_buffer = self.m_buffer[l_ix + 1:]
                 self._extract_line(l_line)
                 continue
             else:
                 l_line = self.m_buffer
-                # LOG.debug('PB Data-4 {}'.format(l_line))
                 self._extract_line(l_line)
                 self.m_buffer = bytes()
 
@@ -493,12 +492,13 @@ class API(MqttActions):
         """ When we receive a proper Mqtt message to start (power on) the pandora player.
         We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
 
-        TO DO:    Allow for multiple pandora players within one house.time
-                 Allow one pandora player to drive multiple amps to have whole house music.
-                 Implement max play
+        TO DO:
+            Allow for multiple pandora players within one house.time
+            Allow one pandora player to drive multiple amps to have whole house music.
+            Implement max play
         """
-        self.m_processProtocol = BarProcessControl(self.m_pyhouse_obj)
-        self.m_processProtocol.deferred = BarProcessControl(self.m_pyhouse_obj)
+        self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
+        self.m_processProtocol.deferred = PianoBarProcessControl(self.m_pyhouse_obj)
         l_executable = PIANOBAR_LOCATION
         l_args = ('pianobar',)
         l_env = None  # this will pass <os.environ>

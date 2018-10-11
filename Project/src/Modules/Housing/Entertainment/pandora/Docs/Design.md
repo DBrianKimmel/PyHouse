@@ -75,26 +75,26 @@ pyhouse/house name/entertainment/pandora/status  <Payload>
 </PandoraSection>
 ```
 
-Host is the IP address of the computer running PyHouse and PianoBar.
-Type is always Service.
-ConnectionFamily must match one of the Entertainment modules that are programmed and must be lower case.
-ConnectionName must match one of the devices in the family and also must be lower case.
-InputName is the name of the connection on the family device where the cable from the pandora computer is plugged in.
-InputCode is the code that must be sent to the family-device to cause the device to select that input channel.
-Volume is a precent of full volume to be selected when first connecting.
+* Host is the IP address of the computer running PyHouse and PianoBar.
+* Type is always Service.
+* ConnectionFamily must match one of the Entertainment modules that are programmed and must be lower case.
+* ConnectionName must match one of the devices in the family and also must be lower case.
+* InputName is the name of the connection on the family device where the cable from the pandora computer is plugged in.
+* InputCode is the code that must be sent to the family-device to cause the device to select that input channel.
+* Volume is a precent of full volume to be selected when first connecting.
 
 
 ## Now Playing
 
 format of now-playing song = "%t" by "%a" on "%l"%r%@%s
 Now playing song message format. Available format characters are:
-# %t Song title
-# %a Song artist
-# %l Album name
-# %r Rating icon (only love icon)
-# %@ at_icon if station is quickmix, empty otherwise.
-# %s Real station name if quickmix
-# %u Song detail url
+* %t Song title
+* %a Song artist
+* %l Album name
+* %r Rating icon (only love icon)
+* %@ at_icon if station is quickmix, empty otherwise.
+* %s Real station name if quickmix
+* %u Song detail url
 
 
 ### END DBK
