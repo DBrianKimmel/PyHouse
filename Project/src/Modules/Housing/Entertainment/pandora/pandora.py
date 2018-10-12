@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-10'
+__updated__ = '2018-10-12'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -200,7 +200,7 @@ class MqttActions:
 
     def _decode_control(self, p_topic, p_message):
         """ Decode the message we just got.
-         Someone wants to control pandora in some manner.
+         Someone (web page via node-red) wants to control pandora in some manner.
 
         ==> pyhouse/<house name>/entertainment/pandora/control/<do-this>
         <do-this> = On, Off, VolUp1, VolDown1, VolUp5, VolDown5, Like, Dislike
@@ -216,37 +216,37 @@ class MqttActions:
         l_volume = None
         l_control = self._get_field(p_message, 'Control')
 
-        if l_control == 'On':
+        if l_control == 'PowerOn':
             l_logmsg += ' Turn On '
             l_power = 'On'
             l_input = self._get_field(p_message, 'Input')
             self._play_pandora()
-        elif l_control == 'Off':
+        elif l_control == 'PowerOff':
             l_logmsg += ' Turn Off '
             l_power = 'On'
             self._halt_pandora()
 
-        elif l_control == 'Up1':
+        elif l_control == 'VolumeUp1':
             l_logmsg += ' Volume Up 1 '
             l_volume = 'VolUp1'
-        elif l_control == 'Up5':
+        elif l_control == 'VolumeUp5':
             l_logmsg += ' Volume Up 5 '
             l_volume = 'VolUp5'
-        elif l_control == 'Down1':
+        elif l_control == 'VolumeDown1':
             l_logmsg += ' Volume Down 1 '
             l_volume = 'VolDown1'
-        elif l_control == 'Down5':
+        elif l_control == 'VolumeDown5':
             l_logmsg += ' Volume Down 5 '
             l_volume = 'VolDown5'
 
-        elif l_control == 'Like':
+        elif l_control == 'LikeYes':
             l_logmsg += ' Like '
             l_like = 'Yes'
-        elif l_control == 'Dislike':
+        elif l_control == 'LikeNo':
             l_logmsg += ' Dislike '
             l_like = 'No'
 
-        elif l_control == 'Skip':
+        elif l_control == 'SkipYes':
             l_logmsg += ' Skip '
             l_skip = 'Yes'
 

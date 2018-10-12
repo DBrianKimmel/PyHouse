@@ -11,7 +11,7 @@ Passed all 18 tests - DBK - 2018-10-10
 
 """
 
-__updated__ = '2018-10-10'
+__updated__ = '2018-10-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -321,13 +321,13 @@ class E1_API(SetupMixin, unittest.TestCase):
         self.m_api = pioneerAPI(self.m_pyhouse_obj)
 
     def test_01_Find(self):
-        """ Write
+        """ Find the correct device obj
         """
         l_family = 'pioneer'
         l_device = '822-k'
-        l_x = self.m_api._find_device(l_family, l_device)
-        # print(PrettyFormatAny.form(l_x, 'E1-01-A - All Devices'))
+        l_dev_obj = self.m_api._find_device(l_family, l_device)
+        # print(PrettyFormatAny.form(l_dev_obj, 'E1-01-A - All Devices'))
         # print(PrettyFormatAny.form(self.m_api, 'E1-01-B - API'))
-        self.assertEqual(l_x.Name, TESTING_PIONEER_DEVICE_NAME_0)
+        self.assertEqual(l_dev_obj.Name, TESTING_PIONEER_DEVICE_NAME_0)
 
 # ## END DBK

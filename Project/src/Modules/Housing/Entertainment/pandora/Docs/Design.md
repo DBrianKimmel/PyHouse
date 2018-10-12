@@ -35,15 +35,15 @@ These messages have topics:
 		pyhouse/house name/entertainment/pandora/control
 The message payload will include "Control: xxx"
 where xxx is one of:
-* On
-* Off
-* Up1
-* Up5
-* Down1
-* Down5
-* Like
-* Dislike
-* Skip
+* PowerOn
+* PowerOff
+* VolumeUp1
+* VolumeUp5
+* VolumeDown1
+* VolumeDown5
+* LikeYes
+* LikeNo
+* SkipYes
 
 .../control msg=on will have side effects of turning on and setting the "ConnectionName" device.
 

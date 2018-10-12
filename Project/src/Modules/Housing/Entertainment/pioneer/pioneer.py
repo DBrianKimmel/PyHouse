@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-11'
+__updated__ = '2018-10-12'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,8 +31,6 @@ __version__ = '.'.join(map(str, __version_info__))
 from twisted.internet.protocol import Protocol, ClientFactory
 from twisted.internet.error import ConnectionDone
 from twisted.conch.telnet import StatefulTelnetProtocol
-# from twisted.protocols import basic
-# from twisted.internet import defer
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
@@ -163,7 +161,6 @@ class MqttActions:
     """
     """
 
-    # m_API = None
     m_transport = None
 
     def __init__(self, p_pyhouse_obj):
@@ -186,9 +183,9 @@ class MqttActions:
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
         l_family = self._get_field(p_message, 'Family')
         l_device = self._get_field(p_message, 'Device')
+        l_input = self._get_field(p_message, 'Input')
         l_power = self._get_field(p_message, 'Power')
         l_volume = self._get_field(p_message, 'Volume')
-        l_input = self._get_field(p_message, 'Input')
         l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
         #
         if l_power != None:
@@ -205,20 +202,6 @@ class MqttActions:
         #
         return l_logmsg
 
-    def _decode_status(self, _p_topic, p_message):
-        """ Decode the message.
-        As a side effect - control pioneer.
-
-        @param p_message: is the payload used to control
-        """
-        l_family = self._get_field(p_message, 'Family')
-        l_device = self._get_field(p_message, 'Device')
-        l_power = self._get_field(p_message, 'Power')
-        l_volume = self._get_field(p_message, 'Volume')
-        l_input = self._get_field(p_message, 'Input')
-        l_logmsg = '\tPioneer Status: Power:{}\tVolume:{}\tInput:{}'.format(l_power, l_volume, l_input)
-        return l_logmsg
-
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/entertainment/pioneer/<type>/<Name>/...
@@ -230,8 +213,6 @@ class MqttActions:
         l_logmsg = ' Pioneer-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
-        # elif p_topic[0].lower() == 'status':
-        #    l_logmsg += '\tPioneer: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -278,7 +259,6 @@ class PioneerProtocol(StatefulTelnetProtocol):
         self.setLineMode()
         LOG.info('Connection Made.')
         self.m_pioneer_device_obj._Transport = self.transport
-        # LOG.debug('Connection Transport. {}'.format(PrettyFormatAny.form(self.transport, '_Transport', 180)))
         self._get_status()
 
     def connectionLost(self, reason=ConnectionDone):
@@ -295,7 +275,6 @@ class PioneerClient(PioneerProtocol):
     def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_pioneer_device_obj = p_pioneer_device_obj
-        # LOG.debug('PioneerClient init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerClient Init-')))
 
     def send_command(self, p_device_obj, p_command):
         LOG.info('Send command {}'.format(p_command))
@@ -324,7 +303,6 @@ class PioneerFactory(ClientFactory):
         Provides access to the connector.
         """
         self.m_pioneer_device_obj._Connector = p_connector
-        # LOG.debug('Started to connect. {}'.format(PrettyFormatAny.form(p_connector, '_Connector', 180)))
 
     def buildProtocol(self, p_addr):
         """ *2
@@ -381,7 +359,6 @@ class API(MqttActions, PioneerClient):
         if p_power == 'On':
             self.send_command(l_device_obj, VSX822K['PowerOn'])  # Query Power
         else:
-            # self.send_command(l_device_obj, VSX822K['PowerOff'])  # Query Power
             pass
         LOG.debug('Change Power to {}'.format(p_power))
 
@@ -416,7 +393,7 @@ class API(MqttActions, PioneerClient):
         @param p_input: Channel Code
         """
         l_device_obj = self._find_device(p_family, p_device)
-        self.send_command(l_device_obj, b'01FN')  # Query Power
+        self.send_command(l_device_obj, b'01FN')
         LOG.debug('Change input channel to {}'.format(p_input))
 
     def LoadXml(self, p_pyhouse_obj):

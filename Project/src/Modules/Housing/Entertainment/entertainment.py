@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-10-06'
+__updated__ = '2018-10-11'
 __version_info__ = (18, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -80,13 +80,13 @@ class MqttActions:
         @return: a message to be logged as a Mqtt message
         """
         l_topic = p_topic[0].lower()
+        l_logmsg = '\tEntertainment: '
         try:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
         except KeyError as e_err:
-            print(" entertainment-85 - KeyError {}".format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, "Plugins", 180)))
-            LOG.error('Key error:{}\n\tTopic:{}\n\tMessage:{}'.format(e_err, p_topic, p_message))
+            l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
             l_module = None
-        l_logmsg = '\tEntertainment-87: '
+            return l_logmsg
         #
         try:
             if l_topic == 'pandora':

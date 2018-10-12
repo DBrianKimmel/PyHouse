@@ -19,7 +19,7 @@ We need a pyhouse user to run the PyHouse software.
 * Add the user pyhouse to the computer.
 * Add pyhouse to the proper groups.
 * Add the user to sudo authoriation.
-   be sure the following line exists in the file '/etc/sudoers.d/pyhouse'
+   Be sure the following line exists in the file '/etc/sudoers.d/pyhouse'
 ```bash
 pyhouse ALL=(ALL) NOPASSWD: ALL
 ```
