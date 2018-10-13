@@ -86,9 +86,8 @@ Passed all 11 tests - DBK - 2018-08-17
 </EntertainmentSection>
 
 """
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
 
-__updated__ = '2018-08-17'
+__updated__ = '2018-10-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -99,6 +98,8 @@ from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
+from Modules.Housing.Entertainment.entertainment_data import \
+        EntertainmentData
 from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
         TESTING_ONKYO_DEVICE_NAME_0
 from Modules.Housing.test.xml_housing import \

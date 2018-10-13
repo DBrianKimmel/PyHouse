@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-12'
+__updated__ = '2018-10-13'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -108,7 +108,6 @@ class XML:
         """
 
         l_xml = XmlConfigTools.write_base_object_xml('Device', p_obj)
-        # PutGetXML().put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_ip_element(l_xml, 'Host', p_obj.Host)
         PutGetXML.put_text_element(l_xml, 'ConnectionFamily', p_obj.ConnectionFamily)
         PutGetXML.put_text_element(l_xml, 'ConnectionName', p_obj.ConnectionName)
@@ -163,12 +162,6 @@ class XML:
         l_xml = ET.Element('PandoraSection', attrib={'Active': str(l_active)})
         PutGetXML.put_text_element(l_xml, 'Type', l_plugin_obj.Type)
         l_count = 0
-
-        # print(PrettyFormatAny.form(l_entertain_obj, 'Wr-1 Pandora', 180))
-        # print(PrettyFormatAny.form(l_entertain_obj.Plugins, 'Wr-2 Pandora Plugins', 180))
-        # print(PrettyFormatAny.form(l_entertain_obj.Plugins[SECTION], 'Wr-3 Pandora Plugin', 180))
-        # print(PrettyFormatAny.form(l_entertain_obj.Plugins[SECTION].Devices, 'Wr-4 Pandora Devices', 180))
-
         for l_pandora_object in l_plugin_obj.Devices.values():
             l_pandora_object.Key = l_count
             l_entry = XML._write_device(l_pandora_object)
@@ -197,6 +190,14 @@ class MqttActions:
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
             LOG.error(l_ret)
         return l_ret
+
+    def _send_status(self, p_message):
+            l_topic = 'entertainment/pandora/status'
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
+
+    def _send_control(self, p_device, p_message):
+            l_topic = 'entertainment/{}/control'.format(p_device.ConnectionFamily)
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
     def _decode_control(self, p_topic, p_message):
         """ Decode the message we just got.
@@ -258,7 +259,6 @@ class MqttActions:
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
             l_family = l_device.ConnectionFamily
-            l_topic = 'entertainment/{}/control'.format(l_family)
             l_obj.Device = l_name
             l_obj.Family = l_family
             l_obj.From = SECTION
@@ -267,28 +267,24 @@ class MqttActions:
             l_obj.Power = l_power
             l_obj.Skip = l_skip
             l_obj.Volume = l_volume
-            l_topic = 'entertainment/{}/control'.format(l_family)
-            l_msg = l_obj
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+            self._send_status(l_obj)
         return l_logmsg
-
-    def _decode_status(self, p_topic, p_message):
-        """
-        """
-        pass
 
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
+        We currently handle only control messages.
+        We arenot interested in other peoples status.
+
         ==> pyhouse/<house name>/entertainment/pandora/<Action>/...
-        <action> = control, status
+            where: <action> = control, status
+
         @param p_topic: is the topic after ',,,/pandora/'
+        @return: the log message with information stuck in there.
+
         """
-        l_logmsg = ' Pandora-218 '
-        # LOG.debug('decoding {}'.format(p_topic
+        l_logmsg = ' Pandora '
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
-        elif p_topic[0].lower() == 'status':
-            l_logmsg += '\tPandora: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -307,16 +303,16 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
     def _extract_like(self, p_line):
         l_ix = p_line.find(b'<')
         if l_ix > 0:
-            l_like = p_line[l_ix + 1:l_ix + 3].decode('utf-8')
-            l_remain = p_line[:l_ix] + p_line[l_ix + 4:]
+            l_like = p_line[l_ix + 1:l_ix + 2].decode('utf-8')
+            l_remain = p_line[:l_ix] + p_line[l_ix + 3:]
         else:
-            l_like = ' '
+            l_like = ''
             l_remain = p_line
         return l_like, l_remain
 
     def _extract_station(self, p_line):
         l_ix = p_line.find(b'@')
-        l_sta = p_line[l_ix + 1:].decode('utf-8')
+        l_sta = p_line[l_ix + 1:].decode('utf-8').strip()
         l_remain = p_line[:l_ix]
         return l_sta, l_remain
 
@@ -331,9 +327,8 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         p_obj.Album, l_playline = extract_quoted(l_playline)
         p_obj.Likability, l_playline = self._extract_like(l_playline)
         p_obj.Station, l_playline = self._extract_station(l_playline)
-        # p_obj.Likability, l_playline = l_playline.decode('utf-8')
         p_obj.Status = 'Playing'
-        return p_obj
+        return p_obj  # for debugging
 
     def _extract_playtime(self, p_obj, p_playline):
         """
@@ -359,28 +354,20 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         """
         # <ESC>[2K  Ansi esc sequence needs stripped off first.
         if p_line[0] == 0x1B:
-            # LOG.debug('found esc sequence')
             p_line = p_line[4:]
-
         if p_line[0] == b'q':
             LOG.info('Quitting Pandora')
             return
         if p_line.startswith(b'Welcome'):
-            l_topic = 'entertainment/pandora/status'
-            l_msg = str(p_line)
             LOG.info(p_line)
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
             return
         if p_line.startswith(b'Press ? for'):
-            # LOG.debug('found Press')
             return
         if p_line.startswith(b'Ok.'):
-            # sLOG.info(p_line)
             return
 
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
-            # LOG.info(p_line)
             return
 
         # We gather the play data here but we do not send the message yet
@@ -389,19 +376,14 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
             self.m_time = None
             self.m_now_playing = PandoraStatusData()
             LOG.info("Playing: {}".format(p_line[2:]))
-            l_topic = 'entertainment/pandora/status'
-            l_msg = self._extract_nowplaying(self.m_now_playing, p_line[2:])
-            # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+            self._extract_nowplaying(self.m_now_playing, p_line[2:])
             return
         # get the time and then send the message of now-playing
         if p_line.startswith(b'#'):
             if self.m_time == None:
                 self.m_time = p_line[2:]
                 self._extract_playtime(self.m_now_playing, p_line[2:])
-                LOG.debug('found # {}'.format(p_line))
-                l_topic = 'entertainment/pandora/status'
-                l_msg = self.m_now_playing
-                self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+                MqttActions(self.m_pyhouse_obj)._send_status(self.m_now_playing)
             return
 
         LOG.debug("Data = {}".format(p_line))
@@ -468,9 +450,6 @@ class API(MqttActions):
         """ Start the Pandora plugin since we have it configured in the XML.
         This does not start playing pandora.  That takes a control message to play.
         """
-        # LOG.info("Starting")API
-        if not self.m_started:
-            pass
         LOG.info("Started - Version:{}".format(__version__))
 
     def SaveXml(self, _p_xml):
@@ -493,8 +472,6 @@ class API(MqttActions):
         We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
 
         TO DO:
-            Allow for multiple pandora players within one house.time
-            Allow one pandora player to drive multiple amps to have whole house music.
             Implement max play
         """
         self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
@@ -504,10 +481,7 @@ class API(MqttActions):
         l_env = None  # this will pass <os.environ>
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         self.m_started = True
-
-        # Turn on the connected device(s)
         l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        # l_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]  # Only one allowed
         for l_device in l_service.Devices.values():
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
@@ -520,7 +494,6 @@ class API(MqttActions):
             l_obj.Input = l_device.InputCode
             l_obj.Volume = l_device.Volume
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
-            # LOG.debug('Controlling: {}\n{}'.format(l_topic, PrettyFormatAny.form(l_obj, 'Message', 180)))
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _halt_pandora(self):
@@ -530,7 +503,6 @@ class API(MqttActions):
         self.m_started = False
         self.m_transport.write(b'q')
         self.m_transport.closeStdin()
-
         l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         for l_device in l_service.Devices.values():
             l_obj = EntertainmentDeviceControl()
@@ -544,9 +516,7 @@ class API(MqttActions):
             l_obj.Input = l_device.InputCode
             l_obj.Volume = l_device.Volume
             LOG.info('Sending power off')
-            # l_topic = 'entertainment/pioneer/control'
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
-
             LOG.info("Stopped Pandora.")
 
 # ## END DBK

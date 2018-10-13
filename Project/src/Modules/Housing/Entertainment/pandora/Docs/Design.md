@@ -49,9 +49,7 @@ where xxx is one of:
 
 ### Status Message
 
-This module listens for messages and responds to them.
-
-pyhouse/house name/entertainment/pandora/status  <Payload>
+This module issues status messages,
 
 
 ## XML / Configuration

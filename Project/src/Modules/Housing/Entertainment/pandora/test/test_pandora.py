@@ -7,11 +7,11 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 20 tests - DBK - 2018-10-08
+Passed all 26 tests - DBK - 2018-10-13
 
 """
 
-__updated__ = '2018-10-08'
+__updated__ = '2018-10-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,7 +25,8 @@ from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Housing.Entertainment.pandora.pandora import \
         XML as pandoraXml, \
         API as pandoraAPI, \
-        SECTION
+        SECTION, \
+        MqttActions, PianoBarProcessControl, PandoraStatusData
 from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
         XML_PANDORA_SECTION, \
         TESTING_PANDORA_SECTION, \
@@ -56,6 +57,14 @@ from Modules.Housing.Entertainment.entertainment_data import \
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+CTL = {
+    'Sender' : 'Computer_1',
+    'Control': 'PowerOff'
+    }
+
+TIME_LN = b'#   -03:00/03:00\r'
+PLAY_LN = b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
 
 
 class SetupMixin:
@@ -98,7 +107,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.pandora_sect.tag, TESTING_PANDORA_SECTION)
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
+class A2_SetupXml(SetupMixin, unittest.TestCase):
     """ Test that the XML contains no syntax errors.
     """
 
@@ -338,5 +347,87 @@ class E3_API(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+
+
+class F1_Mqtt(SetupMixin, unittest.TestCase):
+    """ Test that we handle messages properly
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
+        self.m_api = pandoraAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_api.LoadXml(self.m_pyhouse_obj)
+        self.m_mqtt = MqttActions(self.m_pyhouse_obj)
+
+    def test_01_Decode(self):
+        """ Test that the data structure is correct.
+        """
+        l_topic = ['control']
+        l_message = 'X'
+        # l_log = self.m_api.decode(l_topic, CTL)
+        # print(l_log)
+
+    def test_02_Control(self):
+        """ Test that the data structure is correct.
+        """
+        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+
+
+class F2_Extract(SetupMixin, unittest.TestCase):
+    """ Test that we handle messages properly
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
+        self.m_api = pandoraAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_api.LoadXml(self.m_pyhouse_obj)
+
+    def test_01_Time(self):
+        """ Test that the data structure is correct.
+        """
+        l_obj = PandoraStatusData()
+        l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_playtime(l_obj, TIME_LN)
+        # print(PrettyFormatAny.form(l_obj, 'F2-01-A - Status', 180))
+        self.assertEqual(l_res.PlayingTime, '03:00')
+
+    def test_02_Line(self):
+        """ Test that the data structure is correct.
+        """
+        l_obj = PandoraStatusData()
+        l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_nowplaying(l_obj, PLAY_LN)
+        print(PrettyFormatAny.form(l_obj, 'F2-02-A - Status', 180))
+        self.assertEqual(l_res.Album, 'Greatest Hits')
+        self.assertEqual(l_res.Artist, 'Dave Koz')
+        self.assertEqual(l_res.Likability, '3')
+        self.assertEqual(l_res.Song, 'Love Is On The Way')
+        self.assertEqual(l_res.Station, 'Smooth Jazz Radio')
+
+
+class G1_Extract(SetupMixin, unittest.TestCase):
+    """ Test that we handle messages properly
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
+        self.m_api = pandoraAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_api.LoadXml(self.m_pyhouse_obj)
+
+
+class G2_Extract(SetupMixin, unittest.TestCase):
+    """ Test that we handle messages properly
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
+        self.m_api = pandoraAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_api.LoadXml(self.m_pyhouse_obj)
 
 # ## END DBK
