@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-10-02'
+__updated__ = '2018-10-13'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -187,12 +187,9 @@ class MQTTProtocol(Protocol):
         Extract the parts of the packet.
         @param packet: is a bytearray containing the variable header and payload combined.
         """
-        # LOG.info('ProtocolEvent "Publish Packet" received.')
         #  Extract the topic portion of the packet.
         l_topic = EncodeDecode._decodeString(packet)
         packet = packet[len(l_topic) + 2:]
-        # LOG.debug('Publish qos:{}'.format(qos))
-        # LOG.debug('Publish topic:{}'.format(l_topic))
         #  Extract the message ID if appropriate
         messageId = None
         if qos > 0:
@@ -202,10 +199,7 @@ class MQTTProtocol(Protocol):
         #  Extract whatever remains as the message
         l_json = EncodeDecode._get_string(packet)
         # l_json = packet.decode('utf-8')
-        # LOG.debug('Publish message:{}'.format(l_json))
         l_message = json_tools.decode_json_unicode(l_json)
-        # LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, PrettyFormatAny.form(l_message, 'Publish')))
-        # LOG.info('Publish:\n\tTopic: {}\n\tPayload: {}'.format(l_topic, l_message))
         # l_topic is a string
         # l_message is a string
         self.publishReceived(l_topic, l_message, qos, dup, retain, messageId)

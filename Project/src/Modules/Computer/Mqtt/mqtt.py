@@ -11,14 +11,13 @@
 
 """
 
-__updated__ = '2018-10-02'
+__updated__ = '2018-10-13'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import copy
 import datetime
-# import traceback
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
@@ -29,7 +28,6 @@ from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
-# from Modules.Core.Utilities.debug_tools import FormatBytes
 
 
 def _make_topic(p_pyhouse_obj, p_topic):
@@ -73,14 +71,10 @@ class API(object):
         """ Load the Mqtt xml info.
         """
         LOG.info("Loading XML - Version:{}".format(__version__))
-        l_mqtt = MqttInformation()
-        # l_mqtt.Prefix = p_pyhouse_obj.Computer.Name
-        # l_mqtt.ClientID = 'PyH-Comp' + p_pyhouse_obj.Computer.Name
         l_mqtt = mqttXML.read_mqtt_xml(p_pyhouse_obj, self)
         p_pyhouse_obj.Computer.Mqtt = l_mqtt
         LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
         if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            #  LOG.info('Connecting to all MQTT Brokers.')
             l_count = mqttUtil().connect_to_all_brokers(p_pyhouse_obj)
             LOG.info("Mqtt {} broker Connection(s) Started.".format(l_count))
         else:
@@ -127,20 +121,6 @@ class API(object):
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
 
-        """
-            try:
-                raise ValueError
-            except Exception as e_err:
-                l_stack = traceback.extract_stack()[:-3] + traceback.extract_tb(e_err.__traceback__)  # add limit=??
-                l_pretty = traceback.format_list(l_stack)
-                l_tb = ''.join(l_pretty) + '\n  {} {}'.format(e_err.__class__, e_err)
-            else:
-                l_tb = "No error"
-            finally:
-                LOG.exception(l_tb)
-                print(l_tb)
-        """
-
     def MqttDispatch(self, p_topic, p_message):
         """Dispatch a received MQTT message according to the topic.
 
@@ -151,7 +131,6 @@ class API(object):
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = p_message
-        # l_logmsg = Actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_message)
         l_logmsg = self.m_actions.mqtt_dispatch(l_topic, l_message)
         LOG.info(l_logmsg)
 

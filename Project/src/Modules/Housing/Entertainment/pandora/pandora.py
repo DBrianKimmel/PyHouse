@@ -229,16 +229,16 @@ class MqttActions:
 
         elif l_control == 'VolumeUp1':
             l_logmsg += ' Volume Up 1 '
-            l_volume = 'VolUp1'
+            l_volume = 'VolumeUp1'
         elif l_control == 'VolumeUp5':
             l_logmsg += ' Volume Up 5 '
-            l_volume = 'VolUp5'
+            l_volume = 'VolumeUp5'
         elif l_control == 'VolumeDown1':
             l_logmsg += ' Volume Down 1 '
-            l_volume = 'VolDown1'
+            l_volume = 'VolumeDown1'
         elif l_control == 'VolumeDown5':
             l_logmsg += ' Volume Down 5 '
-            l_volume = 'VolDown5'
+            l_volume = 'VolumeDown5'
 
         elif l_control == 'LikeYes':
             l_logmsg += ' Like '

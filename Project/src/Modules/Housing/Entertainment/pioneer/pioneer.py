@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2018-10-12'
+__updated__ = '2018-10-13'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -213,6 +213,8 @@ class MqttActions:
         l_logmsg = ' Pioneer-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
+        elif p_topic[0].lower() == 'status':
+            pass
         else:
             l_logmsg += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -364,21 +366,21 @@ class API(MqttActions, PioneerClient):
 
     def _pioneer_volume(self, p_family, p_device, p_volume):
         """
-        @param p_volume: 'Up1', 'Up5', 'Down1' or 'Down5'
+        @param p_volume: 'VolumeUp1', 'VolumeUp5', 'VolumeDown1' or 'VolumeDown5'
         """
         LOG.debug('Volume:{}'.format(p_volume))
         l_device_obj = self._find_device(p_family, p_device)
-        if p_volume == 'VolUp1':
+        if p_volume == 'VolumeUp1':
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
-        elif p_volume == 'VolUp5':
+        elif p_volume == 'VolumeUp5':
             self.send_command(l_device_obj, b'VU')
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
             self.send_command(l_device_obj, VSX822K['VolumeUp'])
-        elif p_volume == 'VolDown1':
+        elif p_volume == 'VolumeDown1':
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
-        elif p_volume == 'VolDown5':
+        elif p_volume == 'VolumeDown5':
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
             self.send_command(l_device_obj, VSX822K['VolumeDown'])
