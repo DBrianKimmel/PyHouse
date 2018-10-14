@@ -257,17 +257,15 @@ class MqttActions:
         l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         for l_device in l_service.Devices.values():
             l_obj = EntertainmentDeviceControl()
-            l_name = l_device.ConnectionName
-            l_family = l_device.ConnectionFamily
-            l_obj.Device = l_name
-            l_obj.Family = l_family
+            l_obj.Device = l_device.ConnectionName
+            l_obj.Family = l_device.ConnectionFamily
             l_obj.From = SECTION
             l_obj.Input = l_input
             l_obj.Like = l_like
             l_obj.Power = l_power
             l_obj.Skip = l_skip
             l_obj.Volume = l_volume
-            self._send_status(l_obj)
+            self._send_control(l_device, l_obj)
         return l_logmsg
 
     def decode(self, p_topic, p_message):
@@ -285,6 +283,8 @@ class MqttActions:
         l_logmsg = ' Pandora '
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
+        elif p_topic[0].lower() == 'status':
+            pass
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
