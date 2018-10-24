@@ -11,8 +11,8 @@
 
 """
 
-__updated__ = '2018-08-24'
-__version_info__ = (18, 8, 0)
+__updated__ = '2018-10-16'
+__version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -51,17 +51,17 @@ class XML:
 
     @staticmethod
     def _read_device(p_xml):
-        l_obj = SamsungDeviceData()
-        XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)
-        l_obj.Installed = PutGetXML.get_text_from_xml(p_xml, 'Installed')
-        l_obj.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
-        # l_obj.Model = PutGetXML.get_text_from_xml(p_xml, 'Model')
-        l_obj.Port = PutGetXML.get_int_from_xml(p_xml, 'Port', 55000)
-        l_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-        l_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
-        l_obj.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
-        l_obj.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
-        return l_obj
+        l_device = SamsungDeviceData()
+        XmlConfigTools.read_base_UUID_object_xml(l_device, p_xml)
+        l_device.Installed = PutGetXML.get_text_from_xml(p_xml, 'Installed')
+        l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
+        # l_device.Model = PutGetXML.get_text_from_xml(p_xml, 'Model')
+        l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port', 55000)
+        l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
+        l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
+        l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
+        l_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
+        return l_device
 
     @staticmethod
     def _write_device(p_obj):
@@ -76,39 +76,41 @@ class XML:
 
     @staticmethod
     def read_samsung_section_xml(p_pyhouse_obj):
-        l_entry_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        l_device_obj = SamsungDeviceData()
-        l_count = 0
         l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/SamsungSection')
+        l_entertain_obj = p_pyhouse_obj.House.Entertainment
+        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_plugin_obj.Name = SECTION
+        l_plugin_obj.Active = PutGetXML.get_bool_from_xml(l_xml, 'Active')
+        l_count = 0
         if l_xml is None:
-            l_entry_obj.Name = 'Did not find xml section '
-            return l_entry_obj
+            return l_plugin_obj
         try:
+            l_plugin_obj.Type = PutGetXML.get_text_from_xml(l_xml, 'Type')
             for l_device_xml in l_xml.iterfind('Device'):
                 l_device_obj = XML._read_device(l_device_xml)
                 l_device_obj.Key = l_count
-                l_entry_obj.Devices[l_count] = l_device_obj
-                l_entry_obj.Count += 1
-                LOG.info('Loaded Samsung Device {}'.format(l_entry_obj.Name))
+                l_plugin_obj.Devices[l_count] = l_device_obj
+                LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
                 l_count += 1
+                l_plugin_obj.Count = l_count
         except AttributeError as e_err:
-            LOG.error('ERROR if getting Samsung Device Data - {}'.format(e_err))
-        if l_count > 0:
-            l_entry_obj.Active = True
-        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_entry_obj
-        LOG.info('Loaded {} Samsung Devices.'.format(l_count))
-        return l_entry_obj  # l_ret, l_count
+            LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj
+        LOG.info('Loaded {} {} Device(s).'.format(l_count, SECTION))
+        return l_plugin_obj
 
     @staticmethod
     def write_samsung_section_xml(p_pyhouse_obj):
-        l_active = p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Count > 0
+        """
+        """
+        l_entertain_obj = p_pyhouse_obj.House.Entertainment
+        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_active = l_plugin_obj.Active
         l_xml = ET.Element('SamsungSection', attrib={'Active': str(l_active)})
         l_count = 0
-        l_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        for l_device_object in l_obj.Devices.values():
-            l_device_object.Key = l_count
-            l_entry = XML._write_device(l_device_object)
-            l_xml.append(l_entry)
+        for l_obj in l_plugin_obj.Devices.values():
+            l_dev_xml = XML._write_device(l_obj)
+            l_xml.append(l_dev_xml)
             l_count += 1
         LOG.info('Saved {} Samsung device(s) XML'.format(l_count))
         return l_xml

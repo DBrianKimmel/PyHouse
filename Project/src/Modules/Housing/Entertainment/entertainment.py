@@ -25,12 +25,11 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-10-11'
-__version_info__ = (18, 9, 1)
+__updated__ = '2018-10-17'
+__version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
-# import jsonpickle
 import importlib
 import xml.etree.ElementTree as ET
 
@@ -39,8 +38,8 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData, \
         EntertainmentPluginData, \
         EntertainmentDeviceControl
-from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.xml_tools import XmlConfigTools  # , PutGetXML
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
 
@@ -83,12 +82,15 @@ class MqttActions:
         l_logmsg = '\tEntertainment: '
         try:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
         except KeyError as e_err:
-            l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
             l_module = None
-            return l_logmsg
+            l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
+        return l_logmsg
         #
         try:
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
+
             if l_topic == 'pandora':
                 l_logmsg += l_module.decode(p_topic[1:], p_message)
             #
@@ -113,7 +115,7 @@ class API(Ent):
     """
 
     def __init__(self, p_pyhouse_obj):
-        """
+        """ Create all the empty structures needed to load, run and save the entertainment information.
         """
         p_pyhouse_obj.House.Entertainment = EntertainmentData()  # Create empty entertainment plugin section
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -123,9 +125,10 @@ class API(Ent):
         """
         Create the structure we will need to Load, Start and Save the modules defined for this house.
         If there is no subsection (sony e.g.) in the Xml, we will not be called.
-        If the subsection is present and Active is false, we should not load the module.
+        If the subsection is present and Active is false, we should load the XML but not load the module.
         If the subsection is present and Active, we should load the module.
         This leaves only the active entertainment modules in memory expanding the size of PyHouse.
+        The XML is present so it will be properly saved.
 
         There will be a Plugin record even if the module is not loaded.
 
@@ -145,9 +148,10 @@ class API(Ent):
     def _module_load_loop(self, p_pyhouse_obj, p_section_element):
         """
         """
+        l_active = True
         l_plugin_data = EntertainmentPluginData()
         l_plugin_data.Name = l_name = XmlConfigTools.extract_section_name(p_section_element)
-        l_plugin_data.Active = l_active = PutGetXML.get_bool_from_xml(p_section_element, 'Active', False)
+        l_plugin_data.Active = l_active  # = PutGetXML.get_bool_from_xml(p_section_element, 'Active', True)
         LOG.debug('Working on {}'.format(l_name))
         if l_active:
             # Create the module plugin
@@ -177,6 +181,10 @@ class API(Ent):
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the entertainment section.
+        Everything present in the XML must be read into the pyhouse_obj structure.
+
+        SubSections not active will not be loaded or instantiated.
+
         If a subsection is available, load its module and let it read the xml for itself.
 
         @return: the Entertainment object of PyHouse_obj

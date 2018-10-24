@@ -5,6 +5,7 @@ PyHouse
 PyHouse is a home automation tool.
 
 See src.__init__ module for developer documentation.
+Also see the Docs directories throught the code.
 
 
 This Git repository (PyHouse) is for the software that runs PyHouse,

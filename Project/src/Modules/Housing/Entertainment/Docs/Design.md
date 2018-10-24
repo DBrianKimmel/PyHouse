@@ -80,4 +80,83 @@ All defaults are None - Only fill in what you need so inadvertent controls are n
 * Volume = None  # '0'  # 0-100 - Percent
 * Zone = None  # '1'  # For multi zone output
 
+## XML
+
+```xml
+<EntertainmentSection>
+    <OnkyoSection Active="True">
+        <Type>Component</Type>
+        <Device Active="True" Key="0" Name="L/R Receiver TX-555">
+            <UUID>Onkyo...-0000-0000-0000-0123456789ab</UUID>
+            <Comment>Tx-555 Receiver</Comment>
+            <IPv4>192.168.1.138</IPv4>
+            <Port>60128</Port>
+            <RoomName>Living Room</RoomName>
+            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+            <Type>Receiver</Type>
+        </Device>
+        <Device Active="False" Key="1" Name="Receiver T2 = X-555">
+            <UUID>Onkyo...-0000-0001-0001-0123456789ab</UUID>
+            <Comment>Tx-555 Receiver_2</Comment>
+            <IPv4>192.168.1.139</IPv4>
+            <Port>60128</Port>
+            <RoomName>Living Room</RoomName>
+            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+            <Type>Receiver</Type>
+        </Device>
+    </OnkyoSection>
+    <PanasonicSection Active="False">
+    </PanasonicSection>
+    <PandoraSection Active="True">
+        <Type>Service</Type>
+        <Device Active="True" Key="0" Name="On pi-06-ct ">
+            <Comment>Living Room</Comment>
+            <Host>192.168.9.16</Host>
+            <Type>Service</Type>
+            <ConnectionName>Pioneer</ConnectionName>
+            <InputName>CD</InputName>
+            <InputCode>01FN</InputCode>
+            <Volume>47</Volume>
+        </Device>
+    </PandoraSection>
+    <PioneerSection Active="True">
+        <Device Active="True" Key="0" Name="L/R Receiver VSX-822-K">
+            <UUID>Pioneer.-0000-0000-0000-0123456789ab</UUID>
+            <Comment>VSX-822-K Receiver</Comment>
+            <CommandSet>2015</CommandSet>
+            <IPv4>192.168.9.121</IPv4>
+            <Port>8102</Port>
+            <RoomName>Living Room</RoomName>
+            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+            <Status>On</Status>
+            <Type>Receiver</Type>
+            <Volume>75</Volume>
+        </Device>
+        <Device Active="True" Key="0" Name="Missing Device">
+            <UUID>Pioneer.-0001-0000-0000-0123456789ab</UUID>
+            <CommandSet>2015</CommandSet>
+            <Comment>VSX-822-K Bogus</Comment>
+            <IPv4>192.168.1.122</IPv4>
+            <Port>8102</Port>
+            <RoomName>Master Bedroom</RoomName>
+            <RoomUUID>Room....-0001-0000-0000-0123456789ab</RoomUUID>
+            <Type>Fake Receiver</Type>
+        </Device>
+    </PioneerSection>
+    <SamsungSection Active="True">
+        <Device Active="True" Key="0" Name="ct - L/R - TV 48abc1234">
+            <UUID>Samsung.-0000-0000-0000-0123456789ab</UUID>
+            <Comment>48in Smart-Tv  </Comment>
+            <Installed>2016-07-29</Installed>
+            <IPv4>192.168.9.118</IPv4>
+            <Model>UN48J5201AFXZA</Model>
+            <Port>55000</Port>
+            <RoomName>Living Room</RoomName>
+            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+            <Type>TV</Type>
+        </Device>
+    </SamsungSection>
+</EntertainmentSection>
+```
+
 ### END DBK

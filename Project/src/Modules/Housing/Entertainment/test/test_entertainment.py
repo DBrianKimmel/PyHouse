@@ -7,87 +7,11 @@
 @note:      Created on Apr 14, 2013
 @summary:   Test
 
-Passed all 11 tests - DBK - 2018-08-17
-
-
-<EntertainmentSection>
-    <OnkyoSection Active="True">
-        <Type>Component</Type>
-        <Device Active="True" Key="0" Name="L/R Receiver TX-555">
-            <UUID>Onkyo...-0000-0000-0000-0123456789ab</UUID>
-            <Comment>Tx-555 Receiver</Comment>
-            <IPv4>192.168.1.138</IPv4>
-            <Port>60128</Port>
-            <RoomName>Living Room</RoomName>
-            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
-            <Type>Receiver</Type>
-        </Device>
-        <Device Active="False" Key="1" Name="Receiver T2 = X-555">
-            <UUID>Onkyo...-0000-0001-0001-0123456789ab</UUID>
-            <Comment>Tx-555 Receiver_2</Comment>
-            <IPv4>192.168.1.139</IPv4>
-            <Port>60128</Port>
-            <RoomName>Living Room</RoomName>
-            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
-            <Type>Receiver</Type>
-        </Device>
-    </OnkyoSection>
-    <PanasonicSection Active="False">
-    </PanasonicSection>
-    <PandoraSection Active="True">
-        <Type>Service</Type>
-        <Device Active="True" Key="0" Name="On pi-06-ct ">
-            <Comment>Living Room</Comment>
-            <Host>192.168.9.16</Host>
-            <Type>Service</Type>
-            <ConnectionName>Pioneer</ConnectionName>
-            <InputName>CD</InputName>
-            <InputCode>01FN</InputCode>
-            <Volume>47</Volume>
-        </Device>
-    </PandoraSection>
-    <PioneerSection Active="True">
-        <Device Active="True" Key="0" Name="L/R Receiver VSX-822-K">
-            <UUID>Pioneer.-0000-0000-0000-0123456789ab</UUID>
-            <Comment>VSX-822-K Receiver</Comment>
-            <CommandSet>2015</CommandSet>
-            <IPv4>192.168.9.121</IPv4>
-            <Port>8102</Port>
-            <RoomName>Living Room</RoomName>
-            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
-            <Status>On</Status>
-            <Type>Receiver</Type>
-            <Volume>75</Volume>
-        </Device>
-        <Device Active="True" Key="0" Name="Missing Device">
-            <UUID>Pioneer.-0001-0000-0000-0123456789ab</UUID>
-            <CommandSet>2015</CommandSet>
-            <Comment>VSX-822-K Bogus</Comment>
-            <IPv4>192.168.1.122</IPv4>
-            <Port>8102</Port>
-            <RoomName>Master Bedroom</RoomName>
-            <RoomUUID>Room....-0001-0000-0000-0123456789ab</RoomUUID>
-            <Type>Fake Receiver</Type>
-        </Device>
-    </PioneerSection>
-    <SamsungSection Active="True">
-        <Device Active="True" Key="0" Name="ct - L/R - TV 48abc1234">
-            <UUID>Samsung.-0000-0000-0000-0123456789ab</UUID>
-            <Comment>48in Smart-Tv  </Comment>
-            <Installed>2016-07-29</Installed>
-            <IPv4>192.168.9.118</IPv4>
-            <Model>UN48J5201AFXZA</Model>
-            <Port>55000</Port>
-            <RoomName>Living Room</RoomName>
-            <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
-            <Type>TV</Type>
-        </Device>
-    </SamsungSection>
-</EntertainmentSection>
+Passed all 12 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2018-10-13'
+__updated__ = '2018-10-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -215,21 +139,26 @@ class C1_Load(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_entertainment_obj = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
 
-    def test_01_Create(self):
+    def test_01_Setup(self):
         """
         """
         # print(PrettyFormatAny.form(self.m_xml, 'C1-01-A - Entertainment XML'))
         self.assertEqual(self.m_xml.tag, TESTING_ENTERTAINMENT_SECTION)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C1-01-B - Entertainment'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C1-01-B - Entertainment'))
+        self.assertEqual(self.m_entertainment_obj.Active, False)
+        self.assertEqual(self.m_entertainment_obj.Count, 0)
+        self.assertEqual(self.m_entertainment_obj.Plugins, {})
 
-    def test_02_CrMod(self):
+    def test_02_CreateModuleRefs(self):
         """ Test that _create_module_refs is functional
         """
         for l_section in self.m_xml:
-            # print(PrettyFormatAny.form(l_section, 'C1-02-A - Section'))
+            print(PrettyFormatAny.form(l_section, 'C1-02-A - Section'))
             l_plug = self.m_api._create_module_refs(l_section)
-            # print(PrettyFormatAny.form(l_plug, 'C1-02-B - One Plugin'))
+            print(PrettyFormatAny.form(l_plug, 'C1-02-B - One Plugin'))
             self.m_pyhouse_obj.House.Entertainment.Plugins[l_plug.Name] = l_plug
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'C1-02-C - Plugins'))
         self.assertEqual(self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Device[0].Name, TESTING_ONKYO_DEVICE_NAME_0)
@@ -237,7 +166,6 @@ class C1_Load(SetupMixin, unittest.TestCase):
     def test_03_XML(self):
         """ Test
         """
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
         l_ret = self.m_api.LoadXml(self.m_pyhouse_obj)
         l_entertain = self.m_pyhouse_obj.House.Entertainment
         print(PrettyFormatAny.form(l_entertain, 'C1-01-A - Entertainment'))
@@ -256,7 +184,14 @@ class D1_Save(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_XML(self):
+    def test_01_Setup(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_xml, 'C1-01-A - Entertainment XML'))
+        self.assertEqual(self.m_xml.tag, TESTING_ENTERTAINMENT_SECTION)
+
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C1-01-B - Entertainment'))
+    def test_02_XML(self):
         """ Test
         """
         l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)

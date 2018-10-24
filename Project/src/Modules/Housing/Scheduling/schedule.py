@@ -40,12 +40,11 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2018-10-16'
 
 #  Import system type stuff
 import datetime
 import dateutil.parser as dparser
-# sudo pip install hexdump aniso8601
 import aniso8601
 
 #  Import PyMh files
@@ -243,7 +242,7 @@ class ScheduleExecution(object):
             irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
 
     @staticmethod
-    def execute_schedules_list(p_pyhouse_obj, p_key_list = []):
+    def execute_schedules_list(p_pyhouse_obj, p_key_list=[]):
         """ The timer calls this when a list of schedules is due to be executed.
         For each Schedule in the list, call the dispatcher for that type of schedule.
 
@@ -309,7 +308,7 @@ class Utility(object):
         return l_runID
 
     @staticmethod
-    def schedule_next_event(p_pyhouse_obj, p_delay = 0):
+    def schedule_next_event(p_pyhouse_obj, p_delay=0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
         @param p_pyhouse_obj: is the grand repository of information
         @param p_delay: is the (forced) delay time for the timer.

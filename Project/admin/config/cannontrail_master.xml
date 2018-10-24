@@ -157,7 +157,21 @@
 				<RoomType>Room</RoomType>
 			</Room>
 		</RoomSection>
-		<EntertainmentSection />
+		<EntertainmentSection>
+			<SamsungSection Active="True">
+				<Device Name="L/R TV" Active="True">
+					<Comment>Living Room TV</Comment>
+        			<Installed>2017-07-29</Installed>
+			        <IPv4>192.168.9.118</IPv4>
+			        <Model>UN48J5201AFXZA</Model>
+			        <Port>55000</Port>
+			        <RoomName>Living Room</RoomName>
+			        <RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+			        <Type>TV</Type>
+			        <Volume>53</Volume>
+				</Device>
+			</SamsungSection>
+		</EntertainmentSection>
 		<HvacSection>
 			<ThermostatSection />
 		</HvacSection>

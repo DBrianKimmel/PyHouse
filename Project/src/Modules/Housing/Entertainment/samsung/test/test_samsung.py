@@ -7,11 +7,11 @@
 @note:      Created on Jul 14, 2016
 @summary:
 
-Passed all 14 tests - DBK - 2018-08-17
+Passed all 15 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2018-08-17'
+__updated__ = '2018-10-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,9 +20,11 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import HouseInformation
 from Modules.Core.Utilities import convert
-from Modules.Housing.Entertainment.samsung.samsung import XML as samsungXml
+from Modules.Housing.Entertainment.entertainment_data import \
+        EntertainmentData, \
+        EntertainmentPluginData
+from Modules.Housing.Entertainment.samsung.samsung import XML as samsungXml, SECTION
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.test.xml_housing import \
@@ -40,7 +42,6 @@ from Modules.Housing.Entertainment.samsung.test.xml_samsung import \
         TESTING_SAMSUNG_DEVICE_PORT_0, \
         TESTING_SAMSUNG_SECTION, \
         XML_SAMSUNG_SECTION, \
-        L_SAMSUNG_SECTION_START, \
         TESTING_SAMSUNG_DEVICE_COMMENT_0
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -161,6 +162,9 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_xml_pioneer = self.m_xml.pioneer_sect.find('Device')
 
     def test_1_OneDevice(self):
         """ Read the xml and fill in the first room's dict
@@ -189,13 +193,22 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_samsung = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_section = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_section
 
-    def test_01_OneDevice(self):
+    def test_01_Setup(self):
         """ Read the xml and fill in the first room's dict
         """
-        l_xml = samsungXml._write_device(self.m_samsung.Devices[0])
-        print(PrettyFormatAny.form(l_xml, 'D1-01-C - One Device'))
+        print(PrettyFormatAny.form(self.m_section, 'D1-01-A - Section'))
+        print(PrettyFormatAny.form(self.m_section.Devices[0], 'D1-01-B - One Device'))
+
+    def test_02_OneDevice(self):
+        """ Read the xml and fill in the first room's dict
+        """
+        l_xml = samsungXml._write_device(self.m_section.Devices[0])
+        print(PrettyFormatAny.form(l_xml, 'D1-02-A - One Device'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_SAMSUNG_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_SAMSUNG_DEVICE_ACTIVE_0)

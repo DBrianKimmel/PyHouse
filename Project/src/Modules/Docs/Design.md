@@ -1,10 +1,11 @@
-@name:      PyHouse/Project/src/Modules/Docs/Design
-@author:    D. Brian Kimmel
-@contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
-@note:      Created on Sep 30, 2018
-@license:   MIT License
-@summary:   This is the design documentation for the Modules of PyHouse.
+* Name:      PyHouse/Project/src/Modules/Docs/Design
+* Author:    D. Brian Kimmel
+* Contact:   D.BrianKimmel@gmail.com
+* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Created:   2018-09-30
+* Updated:   2018-10-04
+* License:   MIT License
+* Summary:   This is the design documentation for the Modules of PyHouse.
 
 Design
 ======

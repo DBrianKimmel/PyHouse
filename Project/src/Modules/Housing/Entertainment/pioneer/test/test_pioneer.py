@@ -11,7 +11,7 @@ Passed all 18 tests - DBK - 2018-10-10
 
 """
 
-__updated__ = '2018-10-12'
+__updated__ = '2018-10-17'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -258,10 +258,18 @@ class D1_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
-        self.m_pioneer = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_pioneer
+        self.m_section = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_section
 
-    def test_01_Device(self):
+    def test_01_Setup(self):
+        """ Write the XML for a device
+        """
+        print(PrettyFormatAny.form(self.m_section, 'D1-01-A - Section'))
+        print(PrettyFormatAny.form(self.m_section.Devices[0], 'D1-01-A - Section'))
+        print(PrettyFormatAny.form(self.m_section.Devices[1], 'D1-01-A - Section'))
+
+        # print(PrettyFormatAny.form(l_xml, 'D1-01-B - One Device'))
+    def test_02_Device(self):
         """ Write the XML for a device
         """
         l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[0])
@@ -276,7 +284,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         #
         self.assertEqual(l_xml.find('IPv4').text, TESTING_PIONEER_DEVICE_IPV4_0)
 
-    def test_02_Device0(self):
+    def test_03_Device0(self):
         """ Write
         """
         l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[0])
@@ -287,7 +295,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_PIONEER_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_PIONEER_DEVICE_ACTIVE_0)
 
-    def test_03_Device1(self):
+    def test_04_Device1(self):
         """ Write
         """
         l_obj = pioneerXml._read_device(self.m_xml.pioneer_sect[1])
@@ -298,11 +306,11 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_PIONEER_DEVICE_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_PIONEER_DEVICE_ACTIVE_1)
 
-    def test_04_AllDevices(self):
+    def test_05_AllDevices(self):
         """ Write
         """
         l_obj = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_obj
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_obj
         # print(PrettyFormatAny.form(l_obj, 'D1-04-A - EntertainmentPluginData'))
         l_xml = pioneerXml.write_pioneer_section_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_xml, 'D1-04-B - All Devices'))

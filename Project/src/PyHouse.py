@@ -82,7 +82,7 @@ Idea Links:
 
 """
 
-__updated__ = '2018-09-30'
+__updated__ = '2018-10-24'
 __version_info__ = (18, 8, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -137,7 +137,7 @@ class Singleton:
                 os.unlink(LOCK_PATH)
         except Exception as e_err:
             LOG.exception(e_err)
-            raise  # for debugging porpuses, do not raise it on production
+            raise  # for debugging purposes, do not raise it on production
 
 
 def daemonize():
