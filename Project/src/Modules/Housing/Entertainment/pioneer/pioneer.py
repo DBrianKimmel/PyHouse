@@ -22,8 +22,9 @@ Listen to Mqtt message to control device
 See: pioneer/__init__.py for documentation.
 
 """
+from Modules.Housing.Entertainment.samsung.samsung import SamsungDeviceData
 
-__updated__ = '2018-10-13'
+__updated__ = '2018-11-10'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,6 +36,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -42,10 +44,11 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pioneer        ')
 
 SECTION = 'pioneer'
+DISCONNECT_TIMER = 30  # Seconds
 XML_PATH = 'HouseDivision/EntertainmentSection/PioneerSection'
 
 # See https://tylerwatt12.com/vsx-822k-telnet-interface/
-VSX822K = {
+CONTROL_COMMANDS = {
     'PowerQuery':       b'?P',
     'PowerOn':          b'PN',
     'PowerOff':         b'PF',
@@ -81,19 +84,8 @@ class XML:
 
     @staticmethod
     def _read_device(p_xml):
-        """
-        @param p_entry_xml: Element <Device> within <PandoraSection>
-        @return: a PandoraDeviceData object
-        """
-        l_device = PioneerDeviceData()
-        XmlConfigTools().read_base_UUID_object_xml(l_device, p_xml)
-        l_device.CommandSet = PutGetXML.get_text_from_xml(p_xml, 'CommandSet')
-        l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
-        l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
-        l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-        l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
-        l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
-        l_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
+        l_obj = SamsungDeviceData()
+        l_device = entertainmentXML().read_entertainment_device(p_xml, l_obj)
         return l_device
 
     @staticmethod
@@ -132,7 +124,7 @@ class XML:
                 l_plugin_obj.Devices[l_count] = l_device_obj
                 LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
                 l_count += 1
-                l_plugin_obj.Count = l_count
+                l_plugin_obj.DeviceCount = l_count
         except AttributeError as e_err:
             LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj
@@ -233,10 +225,10 @@ class PioneerProtocol(StatefulTelnetProtocol):
         LOG.info('Protocol Init - Version:{}'.format(__version__))
 
     def _get_status(self):
-        self.send_command(self.m_pioneer_device_obj, VSX822K['PowerQuery'])  # Query Power
-        self.send_command(self.m_pioneer_device_obj, VSX822K['MuteQuery'])
-        self.send_command(self.m_pioneer_device_obj, VSX822K['VolumeQuery'])
-        self.send_command(self.m_pioneer_device_obj, VSX822K['FunctionQuery'])
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['PowerQuery'])  # Query Power
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['MuteQuery'])
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['VolumeQuery'])
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['FunctionQuery'])
 
     def dataReceived(self, p_data):
         """ This seems to be a line received function
@@ -359,7 +351,7 @@ class API(MqttActions, PioneerClient):
         # Get the device_obj to control
         l_device_obj = self._find_device(p_family, p_device)
         if p_power == 'On':
-            self.send_command(l_device_obj, VSX822K['PowerOn'])  # Query Power
+            self.send_command(l_device_obj, CONTROL_COMMANDS['PowerOn'])  # Query Power
         else:
             pass
         LOG.debug('Change Power to {}'.format(p_power))
@@ -371,21 +363,21 @@ class API(MqttActions, PioneerClient):
         LOG.debug('Volume:{}'.format(p_volume))
         l_device_obj = self._find_device(p_family, p_device)
         if p_volume == 'VolumeUp1':
-            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
         elif p_volume == 'VolumeUp5':
             self.send_command(l_device_obj, b'VU')
-            self.send_command(l_device_obj, VSX822K['VolumeUp'])
-            self.send_command(l_device_obj, VSX822K['VolumeUp'])
-            self.send_command(l_device_obj, VSX822K['VolumeUp'])
-            self.send_command(l_device_obj, VSX822K['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
         elif p_volume == 'VolumeDown1':
-            self.send_command(l_device_obj, VSX822K['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
         elif p_volume == 'VolumeDown5':
-            self.send_command(l_device_obj, VSX822K['VolumeDown'])
-            self.send_command(l_device_obj, VSX822K['VolumeDown'])
-            self.send_command(l_device_obj, VSX822K['VolumeDown'])
-            self.send_command(l_device_obj, VSX822K['VolumeDown'])
-            self.send_command(l_device_obj, VSX822K['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
         else:
             pass
         LOG.debug('Change Volume to {}'.format(p_volume))

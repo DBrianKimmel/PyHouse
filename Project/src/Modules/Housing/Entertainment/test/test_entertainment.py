@@ -11,7 +11,7 @@ Passed all 12 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2018-10-17'
+__updated__ = '2018-10-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -149,7 +149,7 @@ class C1_Load(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.tag, TESTING_ENTERTAINMENT_SECTION)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C1-01-B - Entertainment'))
         self.assertEqual(self.m_entertainment_obj.Active, False)
-        self.assertEqual(self.m_entertainment_obj.Count, 0)
+        self.assertEqual(self.m_entertainment_obj.PluginCount, 0)
         self.assertEqual(self.m_entertainment_obj.Plugins, {})
 
     def test_02_CreateModuleRefs(self):

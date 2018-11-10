@@ -24,7 +24,9 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-07-24'
+__updated__ = '2018-10-24'
+__version_info__ = (18, 10, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -150,7 +152,7 @@ class DecodeResponses(object):
         [9] = command 1
         [10] = command 2
         """
-        l_mqtt = False
+        l_mqtt_publish = False
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         l_device_obj.BrightnessPct = '?'
@@ -186,11 +188,11 @@ class DecodeResponses(object):
                 l_debug_msg += 'Request-ID:"{}"; '.format(l_device_obj.FirmwareVersion)
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 l_device_obj.BrightnessPct = 100
-                l_mqtt = True
+                l_mqtt_publish = True
                 l_debug_msg += 'Turn ON; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
                 l_device_obj.BrightnessPct = 0
-                l_mqtt = True
+                l_mqtt_publish = True
                 l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
                 l_device_obj.BrightnessPct = l_level = utilDecode.decode_light_brightness(l_cmd2)
@@ -202,15 +204,15 @@ class DecodeResponses(object):
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(FormatBytes(l_message))
                 l_device_obj.BrightnessPct = utilDecode.decode_light_brightness(l_cmd2)
-                l_mqtt = True
+                l_mqtt_publish = True
         except AttributeError as e_err:
             LOG.error('ERROR decoding 0x50 record {}'.format(e_err))
 
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
-        if l_mqtt:
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status/debug', l_device_obj)  #  /lig
+        if l_mqtt_publish:
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status/debug', l_device_obj)
         return
 
     def _decode_0x51(self, p_controller_obj):

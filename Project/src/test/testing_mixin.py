@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-18'
+__updated__ = '2018-10-31'
 
 #  Import system type stuff
 import platform
@@ -178,23 +178,27 @@ class SetupPyHouseObj(object):
             return
         #
         p_xml.bridges_sect = p_xml.computer_div.find('BridgesSection')
-        p_xml.bridge = p_xml.bridges_sect.find('Bridge')
-
+        if p_xml.bridges_sect is not None:
+            p_xml.bridge = p_xml.bridges_sect.find('Bridge')
         p_xml.communication_sect = p_xml.computer_div.find('CommunicationSection')
-        p_xml.email_sect = p_xml.communication_sect.find('EmailSection')
-        p_xml.twitter_sect = p_xml.communication_sect.find('TwitterSection')
-        p_xml.node_sect = p_xml.root.find('ComputerDivision').find('NodeSection')
-        p_xml.node = p_xml.node_sect.find('Node')
-        p_xml.interface_sect = p_xml.node.find('InterfaceSection')
-        p_xml.interface = p_xml.interface_sect.find('Interface')
+        if p_xml.communication_sect is not None:
+            p_xml.email_sect = p_xml.communication_sect.find('EmailSection')
+            p_xml.twitter_sect = p_xml.communication_sect.find('TwitterSection')
+        p_xml.node_sect = p_xml.computer_div.find('NodeSection')
+        if p_xml.node_sect is not None:
+            p_xml.node = p_xml.node_sect.find('Node')
+            p_xml.interface_sect = p_xml.node.find('InterfaceSection')
+            p_xml.interface = p_xml.interface_sect.find('Interface')
         #
         p_xml.internet_sect = p_xml.computer_div.find('InternetSection')
-        p_xml.internet = p_xml.internet_sect.find('Internet')
-        p_xml.internet_locater_sect = p_xml.internet.find('LocateUrlSection')
-        p_xml.internet_updater_sect = p_xml.internet.find('UpdateUrlSection')
+        if p_xml.internet_sect is not None:
+            p_xml.internet = p_xml.internet_sect.find('Internet')
+            p_xml.internet_locater_sect = p_xml.internet.find('LocateUrlSection')
+            p_xml.internet_updater_sect = p_xml.internet.find('UpdateUrlSection')
         #
         p_xml.mqtt_sect = p_xml.computer_div.find('MqttSection')
         p_xml.broker = p_xml.mqtt_sect.find('Broker')
+
         p_xml.web_sect = p_xml.computer_div.find('WebSection')
         p_xml.login_sect = p_xml.web_sect.find('LoginSection')
 
@@ -204,45 +208,55 @@ class SetupPyHouseObj(object):
             return
 
         p_xml.entertainment_sect = p_xml.house_div.find('EntertainmentSection')
-        p_xml.panasonic_sect = p_xml.entertainment_sect.find('PanasonicSection')
-        p_xml.pandora_sect = p_xml.entertainment_sect.find('PandoraSection')
-        p_xml.pioneer_sect = p_xml.entertainment_sect.find('PioneerSection')
-        p_xml.samsung_sect = p_xml.entertainment_sect.find('SamsungSection')
-        p_xml.onkyo_sect = p_xml.entertainment_sect.find('OnkyoSection')
+        if p_xml.entertainment_sect is not None:
+            p_xml.panasonic_sect = p_xml.entertainment_sect.find('PanasonicSection')
+            p_xml.pandora_sect = p_xml.entertainment_sect.find('PandoraSection')
+            p_xml.pioneer_sect = p_xml.entertainment_sect.find('PioneerSection')
+            p_xml.samsung_sect = p_xml.entertainment_sect.find('SamsungSection')
+            p_xml.onkyo_sect = p_xml.entertainment_sect.find('OnkyoSection')
         #
         p_xml.irrigation_sect = p_xml.house_div.find('IrrigationSection')
-        p_xml.irrigation_system = p_xml.irrigation_sect.find('System')
-        p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
+        if p_xml.irrigation_sect is not None:
+            p_xml.irrigation_system = p_xml.irrigation_sect.find('System')
+            if p_xml.irrigation_system is not None:
+                p_xml.irrigation_zone = p_xml.irrigation_system.find('Zone')
 
         p_xml.pool_sect = p_xml.house_div.find('PoolSection')
-        p_xml.pool = p_xml.pool_sect.find('Pool')
+        if p_xml.pool_sect is not None:
+            p_xml.pool = p_xml.pool_sect.find('Pool')
 
         p_xml.room_sect = p_xml.house_div.find('RoomSection')
-        p_xml.room = p_xml.room_sect.find('Room')
+        if p_xml.room_sect is not None:
+            p_xml.room = p_xml.room_sect.find('Room')
 
         p_xml.rules_sect = p_xml.house_div.find('RulesSection')
-        p_xml.rule = p_xml.rules_sect.find('Rule')
+        if p_xml.rules_sect is not None:
+            p_xml.rule = p_xml.rules_sect.find('Rule')
 
         p_xml.schedule_sect = p_xml.house_div.find('ScheduleSection')
-        p_xml.schedule = p_xml.schedule_sect.find('Schedule')
+        if p_xml.schedule_sect is not None:
+            p_xml.schedule = p_xml.schedule_sect.find('Schedule')
 
         p_xml.security_sect = p_xml.house_div.find('SecuritySection')
-        p_xml.garagedoor_sect = p_xml.security_sect.find('GarageDoorSection')
-        p_xml.garagedoor = p_xml.garagedoor_sect.find('GarageDoor')
-        p_xml.motiondetector_sect = p_xml.security_sect.find('MotionDetectorSection')
-        p_xml.motiondetector = p_xml.motiondetector_sect.find('Motion')
+        if p_xml.security_sect is not None:
+            p_xml.garagedoor_sect = p_xml.security_sect.find('GarageDoorSection')
+            p_xml.garagedoor = p_xml.garagedoor_sect.find('GarageDoor')
+            p_xml.motiondetector_sect = p_xml.security_sect.find('MotionDetectorSection')
+            p_xml.motiondetector = p_xml.motiondetector_sect.find('Motion')
 
         p_xml.lighting_sect = p_xml.house_div.find('LightingSection')
-        p_xml.button_sect = p_xml.lighting_sect.find('ButtonSection')
-        p_xml.button = p_xml.button_sect.find('Button')
-        p_xml.controller_sect = p_xml.lighting_sect.find('ControllerSection')
-        p_xml.controller = p_xml.controller_sect.find('Controller')
-        p_xml.light_sect = p_xml.lighting_sect.find('LightSection')
-        p_xml.light = p_xml.light_sect.find('Light')
+        if p_xml.lighting_sect is not None:
+            p_xml.button_sect = p_xml.lighting_sect.find('ButtonSection')
+            p_xml.button = p_xml.button_sect.find('Button')
+            p_xml.controller_sect = p_xml.lighting_sect.find('ControllerSection')
+            p_xml.controller = p_xml.controller_sect.find('Controller')
+            p_xml.light_sect = p_xml.lighting_sect.find('LightSection')
+            p_xml.light = p_xml.light_sect.find('Light')
 
         p_xml.hvac_sect = p_xml.house_div.find('HvacSection')
-        p_xml.thermostat_sect = p_xml.hvac_sect.find('ThermostatSection')
-        p_xml.thermostat = p_xml.thermostat_sect.find('Thermostat')
+        if p_xml.hvac_sect is not None:
+            p_xml.thermostat_sect = p_xml.hvac_sect.find('ThermostatSection')
+            p_xml.thermostat = p_xml.thermostat_sect.find('Thermostat')
 
         p_xml.location_sect = p_xml.house_div.find('LocationSection')
 

@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2017-04-20
 
 """
 
-__updated__ = '2017-04-28'
+__updated__ = '2018-10-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -61,8 +61,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_Insteon_xml')
 
@@ -123,7 +125,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_LIGHT_SECTION)
-        # print(l_xml)
+        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
         self.assertEqual(l_xml.tag, TESTING_LIGHT_SECTION)
 
 

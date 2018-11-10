@@ -13,7 +13,7 @@ Cannon Trail Blueray Player
 
 """
 
-__updated__ = '2018-08-19'
+__updated__ = '2018-10-25'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -92,7 +92,7 @@ class XML:
                 l_device_obj = XML._read_device(l_device_xml)
                 l_device_obj.Key = l_count
                 l_entry_obj.Devices[l_count] = l_device_obj
-                l_entry_obj.Count += 1
+                l_entry_obj.DeviceCount += 1
                 LOG.info('Loaded Panasonic Device {}'.format(l_entry_obj.Name))
                 l_count += 1
         except AttributeError as e_err:
@@ -107,7 +107,7 @@ class XML:
         """ Create the entire PanasonicSection of the XML.
         @param p_pyhouse_obj: containing an object with panasonic
         """
-        l_active = p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Count > 0
+        l_active = p_pyhouse_obj.House.Entertainment.Plugins[SECTION].DeviceCount > 0
         l_xml = ET.Element('PanasonicSection', attrib={'Active': str(l_active)})
         l_count = 0
         l_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]

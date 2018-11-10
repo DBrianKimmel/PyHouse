@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-10-13'
+__updated__ = '2018-11-07'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,8 +34,9 @@ from _datetime import datetime
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
-        EntertainmentDeviceData, \
-        EntertainmentPluginData
+        EntertainmentPluginData, \
+        EntertainmentServiceData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
@@ -46,20 +47,6 @@ PIANOBAR_LOCATION = '/usr/bin/pianobar'
 SECTION = 'pandora'
 
 #  (i) Control fifo at /home/briank/.config/pianobar/ctl opened
-
-
-class PandoraDeviceData(EntertainmentDeviceData):
-
-    def __init__(self):
-        super(PandoraDeviceData, self).__init__()
-        self.Host = '1.2.3.4'
-        self.ConnectionFamily = None  # pioneer, onkyo
-        self.ConnectionName = None  # Device Name
-        self.InputName = None
-        self.InputCode = None
-        self.Type = 'service'
-        self.Volume = 0  # Default volume
-        self.MaxPlayTime = 12 * 60 * 60  # Seconds
 
 
 class PandoraStatusData():
@@ -86,18 +73,10 @@ class XML:
     def _read_device(p_entry_xml):
         """
         @param p_entry_xml: Element <Device> within <PandoraSection>
-        @return: a PandoraDeviceData object
+        @return: a EntertainmentServiceData object
         """
-        l_obj = PandoraDeviceData()
-        XmlConfigTools.read_base_object_xml(l_obj, p_entry_xml)
-        l_obj.Host = PutGetXML.get_ip_from_xml(p_entry_xml, 'Host')
-        l_obj.ConnectionFamily = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionFamily')
-        l_obj.ConnectionName = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionName').lower()
-        l_obj.InputName = PutGetXML.get_text_from_xml(p_entry_xml, 'InputName')
-        l_obj.InputCode = PutGetXML.get_text_from_xml(p_entry_xml, 'InputCode')
-        l_obj.MaxPlayTime = PutGetXML.get_int_from_xml(p_entry_xml, 'MaxPlayTime')
-        l_obj.Type = PutGetXML.get_text_from_xml(p_entry_xml, 'Type')
-        l_obj.Volume = PutGetXML.get_int_from_xml(p_entry_xml, 'Volume')
+        l_service = EntertainmentServiceData()
+        l_obj = entertainmentXML().read_entertainment_service(p_entry_xml, l_service)
         return l_obj
 
     @staticmethod
@@ -107,15 +86,7 @@ class XML:
         @return: An XML element for <Device> to be appended to <PandoraSection> Element
         """
 
-        l_xml = XmlConfigTools.write_base_object_xml('Device', p_obj)
-        PutGetXML.put_ip_element(l_xml, 'Host', p_obj.Host)
-        PutGetXML.put_text_element(l_xml, 'ConnectionFamily', p_obj.ConnectionFamily)
-        PutGetXML.put_text_element(l_xml, 'ConnectionName', p_obj.ConnectionName)
-        PutGetXML.put_text_element(l_xml, 'InputName', p_obj.InputName)
-        PutGetXML.put_text_element(l_xml, 'InputCode', p_obj.InputCode)
-        PutGetXML.put_text_element(l_xml, 'MaxPlayTime', p_obj.MaxPlayTime)
-        PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
-        PutGetXML.put_int_element(l_xml, 'Volume', p_obj.Volume)
+        l_xml = entertainmentXML().write_entertainment_service(p_obj)
         return l_xml
 
     @staticmethod
@@ -142,7 +113,7 @@ class XML:
                 l_plugin_obj.Devices[l_count] = l_device_obj
                 LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
                 l_count += 1
-                l_plugin_obj.Count = l_count
+                l_plugin_obj.DeviceCount = l_count
         except AttributeError as e_err:
             LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj

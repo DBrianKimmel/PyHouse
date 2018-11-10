@@ -11,7 +11,7 @@ Passed all 18 tests - DBK - 2018-10-10
 
 """
 
-__updated__ = '2018-10-17'
+__updated__ = '2018-10-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,6 +25,7 @@ from Modules.Core.Utilities import convert
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData, \
         EntertainmentPluginData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Housing.Entertainment.pioneer.pioneer import \
         SECTION, \
         API as pioneerAPI, \
@@ -244,7 +245,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'B1-04-A - All Devices'))
         # print(PrettyFormatAny.form(l_obj.Devices, 'B1-04-B - Devices'))
         # print(PrettyFormatAny.form(l_obj.Devices[0], 'B1-04-C - Device[0]'))
-        self.assertEqual(l_obj.Count, 2)
+        self.assertEqual(l_obj.DeviceCount, 2)
         self.assertEqual(str(l_obj.Active), TESTING_PIONEER_ACTIVE)
         self.assertEqual(l_obj.Devices[0].Name, TESTING_PIONEER_DEVICE_NAME_0)
         self.assertEqual(l_obj.Devices[1].Name, TESTING_PIONEER_DEVICE_NAME_1)
@@ -264,11 +265,11 @@ class D1_Write(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Write the XML for a device
         """
-        print(PrettyFormatAny.form(self.m_section, 'D1-01-A - Section'))
-        print(PrettyFormatAny.form(self.m_section.Devices[0], 'D1-01-A - Section'))
-        print(PrettyFormatAny.form(self.m_section.Devices[1], 'D1-01-A - Section'))
+        # print(PrettyFormatAny.form(self.m_section, 'D1-01-A - Section'))
+        # print(PrettyFormatAny.form(self.m_section.Devices[0], 'D1-01-B - Section'))
+        # print(PrettyFormatAny.form(self.m_section.Devices[1], 'D1-01-C - Section'))
+        pass
 
-        # print(PrettyFormatAny.form(l_xml, 'D1-01-B - One Device'))
     def test_02_Device(self):
         """ Write the XML for a device
         """

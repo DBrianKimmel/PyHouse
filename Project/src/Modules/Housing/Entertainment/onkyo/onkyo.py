@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Entertainment/test_onkyo.py -*-
+-*- test-case-name: PyHouse/Project/src/Modules/Entertainment/test_onkyo.py -*-
 
 @name:      PyHouse/src/Modules/Entertainment/onkyo.py
 @author:    D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-08-24'
+__updated__ = '2018-11-10'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,6 +22,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
@@ -31,97 +32,89 @@ DEFAULT_EISCP_IPV4 = '192.168.1.138'
 DEFAULT_EISCP_PORT = 60128
 SECTION = 'onkyo'
 
+DISCONNECT_TIMER = 30  # Seconds
+XML_PATH = 'HouseDivision/EntertainmentSection/OnkyoSection'
 
-class OnkyoDeviceData(EntertainmentDeviceData):
+# See https://tylerwatt12.com/vsx-822k-telnet-interface/
+CONTROL_COMMANDS = {
+    'PowerQuery':       b'?P',
+    'PowerOn':          b'PN',
+    'PowerOff':         b'PF',
+    'VolumeQuery':      b'?V',
+    'VolumeUp':         b'VU',
+    'VolumeDown':       b'VD',
+    'MuteQuery':        b'?M',
+    'FunctionQuery':    b'?F',
+    'FunctionPandora':  b'01FN'
+    }
 
-    def __init__(self):
-        super(OnkyoDeviceData, self).__init__()
-        self.IPv4 = None
-        self.Port = None
-        self.RoomName = None
-        self.RoomUUID = None
-        self.Type = None
-        self.Volume = None  # Default volume for initial turn on (usually low but audible)
-        # self._Factory = None
 
-
-class XML(object):
+class MqttActions:
     """
     """
 
-    @staticmethod
-    def _read_device(p_xml):
-        """ Read an entire <Device> section of XML and fill in the OnkyoDeviceData Object
+    m_transport = None
 
-        @return: a completed OnkyoDeviceData object
-        """
-        l_device = OnkyoDeviceData()
-        XmlConfigTools.read_base_UUID_object_xml(l_device, p_xml)
-        l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
-        l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port')
-        l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-        l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
-        l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
-        l_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
-        return l_device
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
-    @staticmethod
-    def _write_device(p_obj):
-        l_xml = XmlConfigTools.write_base_UUID_object_xml('Device', p_obj)
-        PutGetXML.put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
-        PutGetXML.put_int_element(l_xml, 'Port', p_obj.Port)
-        PutGetXML.put_text_element(l_xml, 'RoomName', p_obj.RoomName)
-        PutGetXML.put_text_element(l_xml, 'RoomUUID', p_obj.RoomUUID)
-        PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
-        PutGetXML.put_text_element(l_xml, 'Volume', p_obj.Volume)
-        return l_xml
-
-    @staticmethod
-    def read_onkyo_section_xml(p_pyhouse_obj):
-        """ Get the entire OnkyoDeviceData object from the xml.
-        """
-        # Clear out the data sections
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
-        l_entry_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        l_entry_obj.Name = SECTION
-        l_device_obj = OnkyoDeviceData()
-        l_count = 0
-        if l_xml is None:
-            l_entry_obj.Name = 'Did not find xml section '
-            return l_entry_obj
+    def _get_field(self, p_message, p_field):
         try:
-            l_entry_obj.Type = PutGetXML.get_text_from_xml(l_xml, 'Type')
-            for l_device_xml in l_xml.iterfind('Device'):
-                l_device_obj = XML._read_device(l_device_xml)
-                l_device_obj.Key = l_count
-                l_entry_obj.Devices[l_count] = l_device_obj
-                l_entry_obj.Count += 1
-                LOG.info('Loaded Onkyo Device {}'.format(l_entry_obj.Name))
-                l_count += 1
-        except AttributeError as e_err:
-            LOG.error('ERROR if getting Onkyo Device Data - {}'.format(e_err))
-        if l_count > 0:
-            l_entry_obj.Active = True
-        LOG.info('Loaded {} Onkyo Devices.'.format(l_count))
-        return l_entry_obj
+            l_ret = p_message[p_field]
+        except KeyError:
+            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+            LOG.error(l_ret)
+        return l_ret
 
-    @staticmethod
-    def write_onkyo_section_xml(p_pyhouse_obj):
-        """ Create the entire OnkyoSection of the XML.
-        @param p_pyhouse_obj: containing an object with onkyo
+    def _decode_control(self, _p_topic, p_message):
+        """ Decode the message.
+        As a side effect - control pioneer.
+
+        @param p_message: is the payload used to control
         """
-        l_active = p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Count > 0
-        l_xml = ET.Element('OnkyoSection', attrib={'Active': str(l_active)})
-        l_count = 0
-        l_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        PutGetXML.put_text_element(l_xml, 'Type', l_obj.Type)
-        for l_device_object in l_obj.Devices.values():
-            l_device_object.Key = l_count
-            l_entry = XML._write_device(l_device_object)
-            l_xml.append(l_entry)
-            l_count += 1
-        LOG.info('Saved {} Onkyo device(s) XML'.format(l_count))
-        return l_xml
+        LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
+        l_family = self._get_field(p_message, 'Family')
+        l_device = self._get_field(p_message, 'Device')
+        l_input = self._get_field(p_message, 'Input')
+        l_power = self._get_field(p_message, 'Power')
+        l_volume = self._get_field(p_message, 'Volume')
+        l_zone = self._get_field(p_message, 'Zone')
+        l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
+        #
+        if l_input != None:
+            l_logmsg += ' Turn input to {}.'.format(l_input)
+            self._control_input(l_family, l_device, l_input)
+        #
+        if l_power != None:
+            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
+            self._control_power(l_family, l_device, l_power)
+        #
+        if l_volume != None:
+            l_logmsg += ' Change volume {}.'.format(l_volume)
+            self._control_volume(l_family, l_device, l_volume)
+        #
+        if l_zone != None:
+            l_logmsg += ' Turn Zone to {}.'.format(l_zone)
+            self._control_zone(l_family, l_device, l_zone)
+        #
+        return l_logmsg
+
+    def decode(self, p_topic, p_message):
+        """ Decode the Mqtt message
+        ==> pyhouse/<house name>/entertainment/pioneer/<type>/<Name>/...
+        <type> = ?
+
+        @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
+        """
+        # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
+        l_logmsg = ' Pioneer-{}'.format(p_topic[0])
+        if p_topic[0].lower() == 'control':
+            l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
+        elif p_topic[0].lower() == 'status':
+            pass
+        else:
+            l_logmsg += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
+        return l_logmsg
 
 
 class OnkyoProtocol(Protocol):
@@ -193,7 +186,7 @@ class Util(object):
         pass
 
 
-class API(object):
+class API(MqttActions):
     """This interfaces to all of PyHouse.
     """
 
@@ -204,8 +197,8 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for all Onkyo devices.
         """
-        l_onkyo_obj = XML.read_onkyo_section_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_onkyo_obj
+        # l_onkyo_obj = XML.read_onkyo_section_xml(p_pyhouse_obj)
+        l_onkyo_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         LOG.info("Loaded Onkyo XML")
         return l_onkyo_obj
 
@@ -225,12 +218,65 @@ class API(object):
             LOG.info("Started Onkyo {} {}".format(l_host, l_port))
         LOG.info("Started {} Onkyo devices".format(l_count))
 
-    def SaveXml(self, _p_xml):
-        l_xml = XML.write_onkyo_section_xml(self.m_pyhouse_obj)
-        LOG.info("Saved Onkyo XML.")
-        return l_xml
+    def SaveXml(self, p_xml):
+        # LOG.info("Saved Onkyo XML.")
+        return p_xml
 
     def Stop(self):
         LOG.info("Stopped.")
+
+    def _change_input(self, p_family, p_device, p_input):
+        """
+        @param p_input: Channel Code
+        """
+        l_device_obj = self._find_device(p_family, p_device)
+        self.send_command(l_device_obj, b'01FN')
+        LOG.debug('Change input channel to {}'.format(p_input))
+
+    def _change_power(self, p_family, p_device, p_power):
+        """
+        @param p_power: 'On' or 'Off'
+        """
+        # Get the device_obj to control
+        l_device_obj = self._find_device(p_family, p_device)
+        if p_power == 'On':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['PowerOn'])  # Query Power
+        else:
+            pass
+        LOG.debug('Change Power to {}'.format(p_power))
+
+    def _change_volume(self, p_family, p_device, p_volume):
+        """
+        @param p_volume: 'VolumeUp1', 'VolumeUp5', 'VolumeDown1' or 'VolumeDown5'
+        """
+        LOG.debug('Volume:{}'.format(p_volume))
+        l_device_obj = self._find_device(p_family, p_device)
+        if p_volume == 'VolumeUp1':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+        elif p_volume == 'VolumeUp5':
+            self.send_command(l_device_obj, b'VU')
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+        elif p_volume == 'VolumeDown1':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+        elif p_volume == 'VolumeDown5':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+        else:
+            pass
+        LOG.debug('Change Volume to {}'.format(p_volume))
+
+    def _change_zone(self, p_family, p_device, p_input):
+        """
+        @param p_input: Channel Code
+        """
+        l_device_obj = self._find_device(p_family, p_device)
+        self.send_command(l_device_obj, b'01FN')
+        LOG.debug('Change input channel to {}'.format(p_input))
 
 # ## END DBK

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-08-17'
+__updated__ = '2018-10-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -205,7 +205,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_obj.Devices, 'C1-04-B - Devices'))
         print(PrettyFormatAny.form(l_obj.Devices[0], 'C1-04-C - Device 0'))
         self.assertEqual(l_obj.Active, True)
-        self.assertEqual(l_obj.Count, 2)
+        self.assertEqual(l_obj.DeviceCount, 2)
         self.assertEqual(str(l_obj.Devices[0].Name), TESTING_PANASONIC_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Devices[1].Name), TESTING_PANASONIC_DEVICE_NAME_1)
 
@@ -308,7 +308,7 @@ class E1_Load(SetupMixin, unittest.TestCase):
         """
         l_plugins = self.m_pyhouse_obj.House.Entertainment.Plugins
         print(PrettyFormatAny.form(l_plugins, 'E1-01-A - Plugins'))
-        self.assertEqual(l_plugins['panasonic'].Count, 2)
+        self.assertEqual(l_plugins['panasonic'].DeviceCount, 2)
 
     def test_03_Base(self):
         """Test the write for proper XML elements

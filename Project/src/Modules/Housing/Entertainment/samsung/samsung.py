@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-16'
+__updated__ = '2018-10-25'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -23,6 +23,7 @@ from twisted.internet import error
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 LOG = Logger.getLogger('PyHouse.Samsung        ')
@@ -51,27 +52,13 @@ class XML:
 
     @staticmethod
     def _read_device(p_xml):
-        l_device = SamsungDeviceData()
-        XmlConfigTools.read_base_UUID_object_xml(l_device, p_xml)
-        l_device.Installed = PutGetXML.get_text_from_xml(p_xml, 'Installed')
-        l_device.IPv4 = PutGetXML.get_ip_from_xml(p_xml, 'IPv4')
-        # l_device.Model = PutGetXML.get_text_from_xml(p_xml, 'Model')
-        l_device.Port = PutGetXML.get_int_from_xml(p_xml, 'Port', 55000)
-        l_device.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-        l_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
-        l_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
-        l_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
+        l_obj = SamsungDeviceData()
+        l_device = entertainmentXML().read_entertainment_device(p_xml, l_obj)
         return l_device
 
     @staticmethod
     def _write_device(p_obj):
-        l_xml = XmlConfigTools.write_base_UUID_object_xml('Device', p_obj)
-        PutGetXML.put_ip_element(l_xml, 'IPv4', p_obj.IPv4)
-        PutGetXML.put_int_element(l_xml, 'Port', p_obj.Port)
-        PutGetXML.put_text_element(l_xml, 'RoomName', p_obj.RoomName)
-        PutGetXML.put_text_element(l_xml, 'RoomUUID', p_obj.RoomUUID)
-        PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
-        PutGetXML.put_text_element(l_xml, 'Volume', p_obj.Volume)
+        l_xml = entertainmentXML().write_entertainment_device(p_obj)
         return l_xml
 
     @staticmethod
@@ -81,7 +68,7 @@ class XML:
         l_plugin_obj = l_entertain_obj.Plugins[SECTION]
         l_plugin_obj.Name = SECTION
         l_plugin_obj.Active = PutGetXML.get_bool_from_xml(l_xml, 'Active')
-        l_count = 0
+        l_plugin_obj.DeviceCount = l_count = 0
         if l_xml is None:
             return l_plugin_obj
         try:
@@ -92,7 +79,7 @@ class XML:
                 l_plugin_obj.Devices[l_count] = l_device_obj
                 LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
                 l_count += 1
-                l_plugin_obj.Count = l_count
+                l_plugin_obj.DeviceCount = l_count
         except AttributeError as e_err:
             LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj

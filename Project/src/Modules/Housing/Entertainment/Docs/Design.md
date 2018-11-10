@@ -14,16 +14,20 @@
 ## Design
 
 The entertainment is a load on demand module.
-In a running instance of PyHouse only the sub-modules that are defined in the config file are loaded.
+In a running instance of PyHouse only the sub-modules that are defined as active in the config file are loaded.
 This makes it sort of a plugin system.
 This lowers the memory footprint of the system.  Since there are a lot of different entertainment device modules,
 this will be a big savings of memory.
 
 This module is message driven.  A Mqtt message is sent to entertainment.py and it dispatches it to the appropriate module.
 These messages have topics that begin with:
-		pyhouse/house name/entertainment/...
+		pyhouse/house name/entertainment/<device or service>/
 
 The modules may return a status message, control other submodules or ...
+
+
+
+
 
 ```python
 ===== _Connector ===== <class 'twisted.internet.tcp.Connector'>

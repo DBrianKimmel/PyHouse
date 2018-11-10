@@ -13,7 +13,7 @@
 Utility routines to convert external readable numbers to integers for ease in comparing.
 """
 
-__updated__ = '2018-01-04'
+__updated__ = '2018-11-05'
 
 # Import system type stuff
 import re
@@ -27,12 +27,20 @@ Handle IP V-4 32 bit numbers or V6 128 bit numbers
 
 
 def str_to_long(p_str):
-    l_long = int(netaddr.IPAddress(p_str))
+    """ If we get an error - just return a None
+    """
+    try:
+        l_long = int(netaddr.IPAddress(p_str))
+    except:
+        l_long = None
     return l_long
 
 
 def long_to_str(p_int):
-    l_str = str(netaddr.IPAddress(p_int))
+    try:
+        l_str = str(netaddr.IPAddress(p_int))
+    except:
+        l_str = None
     return l_str
 
 

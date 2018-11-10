@@ -7,11 +7,11 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 26 tests - DBK - 2018-10-13
+Passed all 26 tests - DBK - 2018-10-25
 
 """
 
-__updated__ = '2018-10-13'
+__updated__ = '2018-10-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -122,7 +122,7 @@ class A2_SetupXml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_PANDORA_SECTION)
-        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
         self.assertEqual(l_xml.tag, TESTING_PANDORA_SECTION)
 
 
@@ -182,7 +182,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Read one entire device entry and set up the PandoraDeviceData_obj correctly.
         """
         l_obj = pandoraXml._read_device(self.m_xml_pandora)
-        print(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Pandora device.'))
+        # sprint(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Pandora device.'))
         # Base
         self.assertEqual(str(l_obj.Name), TESTING_PANDORA_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_PANDORA_DEVICE_KEY_0)
@@ -258,7 +258,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_DEVICE_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_PANDORA_DEVICE_COMMENT_0)
-        # PandoraDeviceData
+        # EntertainmentServiceData
         self.assertEqual(l_xml.find('Host').text, TESTING_PANDORA_DEVICE_HOST_0)
         self.assertEqual(l_xml.find('MaxPlayTime').text, TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0)
         self.assertEqual(l_xml.find('ConnectionName').text, TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
@@ -270,7 +270,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """ Write the entire PandoraSection XML
         """
         l_xml = pandoraXml.write_pandora_section_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'D1-03-A - All Devices'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-03-A - All Devices'))
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_ACTIVE)
         self.assertEqual(l_xml.find('Type').text, TESTING_PANDORA_DEVICE_TYPE_0)
 
@@ -288,11 +288,11 @@ class E1_API(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         self.assertIsNone(l_base._API)
         self.assertEqual(l_base.Active, False)
-        self.assertEqual(l_base.Count, 0)
+        self.assertEqual(l_base.DeviceCount, 0)
 
 
 class E2_API(SetupMixin, unittest.TestCase):
@@ -317,7 +317,7 @@ class E2_API(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_pandora_sect.Devices[0], 'E2-02-A - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         self.assertEqual(l_base.Active, True)
-        self.assertEqual(l_base.Count, 1)
+        self.assertEqual(l_base.DeviceCount, 1)
 
 
 class E3_API(SetupMixin, unittest.TestCase):
@@ -341,7 +341,7 @@ class E3_API(SetupMixin, unittest.TestCase):
         """
         l_xml = ET.Element('EntertainmentSection')
         l_section = self.m_api.SaveXml(l_xml)
-        print(PrettyFormatAny.form(l_section, 'E3-04-A - Section'))
+        # print(PrettyFormatAny.form(l_section, 'E3-04-A - Section'))
 
     def test_05_Stop(self):
         """ Test that the data structure is correct.
@@ -399,7 +399,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
         """
         l_obj = PandoraStatusData()
         l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_nowplaying(l_obj, PLAY_LN)
-        print(PrettyFormatAny.form(l_obj, 'F2-02-A - Status', 180))
+        # print(PrettyFormatAny.form(l_obj, 'F2-02-A - Status', 180))
         self.assertEqual(l_res.Album, 'Greatest Hits')
         self.assertEqual(l_res.Artist, 'Dave Koz')
         self.assertEqual(l_res.Likability, '3')

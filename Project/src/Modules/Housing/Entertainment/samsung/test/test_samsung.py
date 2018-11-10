@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2018-10-17'
+__updated__ = '2018-10-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,7 +42,7 @@ from Modules.Housing.Entertainment.samsung.test.xml_samsung import \
         TESTING_SAMSUNG_DEVICE_PORT_0, \
         TESTING_SAMSUNG_SECTION, \
         XML_SAMSUNG_SECTION, \
-        TESTING_SAMSUNG_DEVICE_COMMENT_0
+        TESTING_SAMSUNG_DEVICE_COMMENT_0, TESTING_SAMSUNG_DEVICE_COMMAND_SET_0
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -89,8 +89,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         l_obj = self.m_pyhouse_obj
         # print(PrettyFormatAny.form(l_obj, 'A1-03-A - PyHouse'))
         # print(PrettyFormatAny.form(l_obj.House, 'A1-03-B - House'))
-        print(PrettyFormatAny.form(l_obj.House.Entertainment, 'A1-03-C - Entertainment'))
-        print(PrettyFormatAny.form(l_obj.House.Entertainment, 'A1-03-D - Samsung'))
+        # print(PrettyFormatAny.form(l_obj.House.Entertainment, 'A1-03-C - Entertainment'))
+        # print(PrettyFormatAny.form(l_obj.House.Entertainment, 'A1-03-D - Samsung'))
         # self.assertIs(self.m_pyhouse_obj.House, HouseInformation())
 
 
@@ -107,7 +107,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_SAMSUNG_SECTION)
-        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
         self.assertEqual(l_xml.tag, TESTING_SAMSUNG_SECTION)
 
 
@@ -166,25 +166,26 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
         self.m_xml_pioneer = self.m_xml.pioneer_sect.find('Device')
 
-    def test_1_OneDevice(self):
+    def test_01_Device(self):
         """ Read the xml and fill in the first room's dict
         """
         l_obj = samsungXml._read_device(self.m_xml.samsung_sect.find('Device'))
-        print(PrettyFormatAny.form(l_obj, 'B1-1-A - One Device'))
+        print(PrettyFormatAny.form(l_obj, 'C1-01-A - Device'))
         self.assertEqual(l_obj.Name, TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(str(l_obj.Key), TESTING_SAMSUNG_DEVICE_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_SAMSUNG_DEVICE_ACTIVE_0)
         self.assertEqual(l_obj.UUID, TESTING_SAMSUNG_DEVICE_UUID_0)
-        # .
+        #
         self.assertEqual(convert.long_to_str(l_obj.IPv4), TESTING_SAMSUNG_DEVICE_IPV4_0)
         self.assertEqual(str(l_obj.Port), TESTING_SAMSUNG_DEVICE_PORT_0)
+        self.assertEqual(str(l_obj.CommandSet), TESTING_SAMSUNG_DEVICE_COMMAND_SET_0)
 
-    def test_2_AllDevices(self):
+    def test_02_AllDevices(self):
         """ Read the xml and fill in the first room's dict
         """
         l_obj = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'B1-2-A - All Devices'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'B1-2-AB - All Devices'))
+        print(PrettyFormatAny.form(l_obj, 'C1-02-A - All Devices'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C1-02-B - All Devices'))
 
 
 class D1_Write(SetupMixin, unittest.TestCase):
@@ -201,14 +202,15 @@ class D1_Write(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Read the xml and fill in the first room's dict
         """
-        print(PrettyFormatAny.form(self.m_section, 'D1-01-A - Section'))
-        print(PrettyFormatAny.form(self.m_section.Devices[0], 'D1-01-B - One Device'))
+        pass
+        # print(PrettyFormatAny.form(self.m_section, 'D1-01-A - Section'))
+        # print(PrettyFormatAny.form(self.m_section.Devices[0], 'D1-01-B - One Device'))
 
     def test_02_OneDevice(self):
         """ Read the xml and fill in the first room's dict
         """
         l_xml = samsungXml._write_device(self.m_section.Devices[0])
-        print(PrettyFormatAny.form(l_xml, 'D1-02-A - One Device'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - One Device'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_SAMSUNG_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_SAMSUNG_DEVICE_ACTIVE_0)
@@ -219,6 +221,9 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """
         """
         l_xml = samsungXml.write_samsung_section_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'D1-03-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-03-A - XML'))
+        self.assertEqual(l_xml.find('Device').attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
+        self.assertEqual(l_xml.find('Device').attrib['Key'], TESTING_SAMSUNG_DEVICE_KEY_0)
+        self.assertEqual(l_xml.find('Device').attrib['Active'], TESTING_SAMSUNG_DEVICE_ACTIVE_0)
 
 # ## END DBK

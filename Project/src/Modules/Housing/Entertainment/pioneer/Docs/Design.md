@@ -10,23 +10,37 @@
 
 # Pioneer
 
+These are all 'Component' devices.
+
 
 ## Design
 
 The pioneer module (so far) is kind of a passive module.
 It gets set up when the XML defines one or more Pioneer devices.
 
-Then it sends out a Mqtt status message declaring the status when first connected to.]
+Then it sends out a Mqtt status message declaring the status when first connected to.
 It then waits for a control message.
 Control messages can come from services sch as Pandora, or from a Node-Red dashboard triggering something.
 
 The pioneer device I have does not wake up from a TCP connection.
 Only one telnet session is allowed at any time.
-Therefore, the telnet session will be released after three minutes of inactivity.
+Therefore, the telnet session will be released after thirty seconds of inactivity.
 
 There is the possibility of having more than one pioneer devices in a house.
-The name of the devide is used for the key.
+The name of the device is used for the key.
 Be sure to configure the name to be unique and reference the name in the services.
+
+
+### Status Messages
+
+The pioneer device module will send out status messages at various times.
+* On connection
+* On disconnection
+
+
+### Control Messages
+
+When the pioneer device module receives a control command, it will open a tcp connection to the device and issue the appropriate command().
 
 
 ## XML / Config

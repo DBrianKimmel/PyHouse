@@ -20,7 +20,9 @@ serial_port
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-10-24'
+__version_info__ = (18, 10, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-09-27'
+__updated__ = '2018-10-31'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -59,8 +59,11 @@ class XML(object):
         if l_xml is None:
             l_xml = XML.get_attribute_field(p_xml, p_name)
         if l_xml is None:
-            if p_xml.tag == p_name:
-                l_xml = p_xml.text
+            try:
+                if p_xml.tag == p_name:
+                    l_xml = p_xml.text
+            except AttributeError:
+                l_xml = None
         return l_xml
 
 
@@ -246,13 +249,18 @@ class PutGetXML(object):
 #  IP
 # -----
     @staticmethod
-    def get_ip_from_xml(p_xml, p_name):
+    def get_ip_from_xml(p_xml, p_name, default=''):
         """
         Get either IPv4 or IPv6 from the xml file
         Return a (very) long Integer for the result
         """
-        l_field = XML.get_any_field(p_xml, p_name)
-        l_long = convert.str_to_long(l_field)
+        l_xml = XML.get_any_field(p_xml, p_name)
+        if l_xml is None:
+            l_xml = default
+        try:
+            l_long = convert.str_to_long(l_xml)
+        except (ValueError, TypeError):
+            l_long = convert.str_to_long(default)
         return l_long
 
     @staticmethod

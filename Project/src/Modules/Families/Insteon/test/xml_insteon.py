@@ -9,9 +9,48 @@
 
 This information will be present in a device's XML for Insteon type devices.
 
+
+<?xml version="1.0" ?>
+<LightSection>
+    <Light Active="True" Key="0" Name="Light, Insteon (xml_lights) ">
+        <UUID>Light...-0000-0000-0000-0123456789ab</UUID>
+        <Comment>SwitchLink On/Off Light Comment</Comment>
+        <CurLevel>42</CurLevel>
+        <DeviceFamily>Insteon</DeviceFamily>
+        <DeviceType>1</DeviceType>
+        <DeviceSubType>3</DeviceSubType>
+        <RoomName>Master Bath (xml_lights)</RoomName>
+        <RoomCoords>[1.23,4.56,7.89]</RoomCoords>
+        <RoomUUID>Light...-Room-0000-0000-123458b6eb6f</RoomUUID>
+        <IsDimmable>True</IsDimmable>
+        <InsteonAddress>16.62.2D</InsteonAddress>
+        <DevCat>02.1C</DevCat>
+        <EngineVersion>1</EngineVersion>
+        <FirmwareVersion>32</FirmwareVersion>
+        <GroupNumber>0</GroupNumber>
+        <GroupList>Insteon Group List 0</GroupList>
+        <ProductKey>20.69.35</ProductKey>
+    </Light>
+    <Light Active="True" Key="1" Name="UPB Light">
+        <UUID>Light...-Lgt.-0000-0001-Light.b6eb6f</UUID>
+        <Comment>UPB Dimmer Light Comment</Comment>
+        <Brightness>12</Brightness>
+        <DeviceFamily>UPB</DeviceFamily>
+        <DeviceType>1</DeviceType>
+        <DeviceSubType>25</DeviceSubType>
+        <IsDimmable>True</IsDimmable>
+        <RoomName>Master Bath</RoomName>
+        <RoomCoords>[1.23,4.56,7.89]</RoomCoords>
+        <RoomUUID>Light...-Room-0000-0000-123458b6eb6f</RoomUUID>
+        <UPBAddress>255</UPBAddress>
+        <UPBNetworkID>6</UPBNetworkID>
+        <UPBPassword>1253</UPBPassword>
+    </Light>
+</LightSection>
+
 """
 
-__updated__ = '2016-11-07'
+__updated__ = '2018-10-24'
 
 # Insteon Light
 
@@ -126,8 +165,6 @@ XML_INSTEON = '\n'.join([
     XML_INSTEON_3,  # Button
     XML_INSTEON_4  # Button
     ])
-
-
 
 INSTEON_XSD = """
 <xs:element type="xs:string" name="InsteonAddress"/>

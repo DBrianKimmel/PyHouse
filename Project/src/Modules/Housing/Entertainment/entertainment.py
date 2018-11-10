@@ -25,8 +25,8 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-10-17'
-__version_info__ = (18, 10, 1)
+__updated__ = '2018-11-10'
+__version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -38,6 +38,7 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData, \
         EntertainmentPluginData, \
         EntertainmentDeviceControl
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools  # , PutGetXML
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
@@ -83,7 +84,7 @@ class MqttActions:
         try:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
             l_logmsg += l_module.decode(p_topic[1:], p_message)
-        except KeyError as e_err:
+        except (KeyError, AttributeError) as e_err:
             l_module = None
             l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
         return l_logmsg
@@ -200,7 +201,7 @@ class API(Ent):
             self._module_load_loop(p_pyhouse_obj, l_section_element)
             l_count += 1
         l_entertain.Active = True
-        l_entertain.Count = l_count
+        l_entertain.PluginCount = l_count
         LOG.info('XML Loaded {} Entertainment Sections'.format(l_count))
         return l_entertain
 
@@ -216,16 +217,8 @@ class API(Ent):
         """ Stick in the entertainment section
         """
         LOG.info("Saving XML.")
-        l_entertainment_xml = ET.Element('EntertainmentSection')
-        if self.m_pyhouse_obj.House.Entertainment.Active == True:
-            # print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 1', 190))
-            for l_plug in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
-                l_module_xml = l_plug._API.SaveXml(l_entertainment_xml)
-                # print(PrettyFormatAny.form(l_module_xml, 'Entertainment XML - 2', 190))
-                if l_module_xml != None:
-                    l_entertainment_xml.append(l_module_xml)
-            p_xml.append(l_entertainment_xml)
-            # print(PrettyFormatAny.form(l_entertainment_xml, 'Entertainment XML - 3', 190))
+        l_entertainment_xml = entertainmentXML().write_entertainment_all(self.m_pyhouse_obj)
+        p_xml.append(l_entertainment_xml)
         LOG.info("Saved XML.")
         return l_entertainment_xml  # For debugging
 
