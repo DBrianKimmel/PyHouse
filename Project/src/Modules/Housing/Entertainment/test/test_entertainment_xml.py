@@ -11,7 +11,7 @@ Passed all 29 tests - DBK - 2018-11-02
 
 """
 
-__updated__ = '2018-11-08'
+__updated__ = '2018-11-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,6 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
+from Modules.Core.Utilities import convert
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Housing.Entertainment.entertainment_data import \
@@ -44,7 +45,8 @@ from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
         TESTING_ONKYO_DEVICE_ROOM_UUID_0, \
         TESTING_ONKYO_DEVICE_TYPE_0, \
         TESTING_ONKYO_DEVICE_VOLUME_0, \
-        TESTING_ONKYO_DEVICE_PORT_0, TESTING_ONKYO_ACTIVE
+        TESTING_ONKYO_DEVICE_PORT_0, \
+        TESTING_ONKYO_ACTIVE, TESTING_ONKYO_DEVICE_COMMAND_SET_0, TESTING_ONKYO_DEVICE_HOST_0, TESTING_ONKYO_DEVICE_IPV4_1, TESTING_ONKYO_TYPE
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \
@@ -60,9 +62,15 @@ from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
         TESTING_PANDORA_DEVICE_NAME_0, \
         TESTING_PANDORA_DEVICE_ACTIVE_0, \
         TESTING_PANDORA_DEVICE_KEY_0, \
-        TESTING_PANDORA_DEVICE_COMMENT_0, TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0, \
-    TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0, TESTING_PANDORA_DEVICE_TYPE_0, TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0, \
-    TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0, TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0, TESTING_PANDORA_ACTIVE
+        TESTING_PANDORA_DEVICE_COMMENT_0, \
+        TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, \
+        TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0, \
+        TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0, \
+        TESTING_PANDORA_DEVICE_TYPE_0, \
+        TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0, \
+        TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0, \
+        TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0, \
+        TESTING_PANDORA_ACTIVE
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 BAD_TYPE = """
@@ -227,6 +235,16 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_ret.Active), TESTING_ONKYO_DEVICE_ACTIVE_0)
         self.assertEqual(str(l_ret.Key), TESTING_ONKYO_DEVICE_KEY_0)
         self.assertEqual(l_ret.Comment, TESTING_ONKYO_DEVICE_COMMENT_0)
+        self.assertEqual(l_ret.CommandSet, TESTING_ONKYO_DEVICE_COMMAND_SET_0)
+        self.assertEqual(l_ret.Host, TESTING_ONKYO_DEVICE_HOST_0)
+        self.assertEqual(convert.long_to_str(l_ret.IPv4), TESTING_ONKYO_DEVICE_IPV4_0)
+        self.assertEqual(convert.long_to_str(l_ret.IPv6).lower(), TESTING_ONKYO_DEVICE_IPV6_0.lower())
+        self.assertEqual(l_ret.Model, TESTING_ONKYO_DEVICE_MODEL_0)
+        self.assertEqual(str(l_ret.Port), TESTING_ONKYO_DEVICE_PORT_0)
+        self.assertEqual(l_ret.RoomName, TESTING_ONKYO_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_ret.RoomUUID, TESTING_ONKYO_DEVICE_ROOM_UUID_0)
+        self.assertEqual(l_ret.Type, TESTING_ONKYO_DEVICE_TYPE_0)
+        self.assertEqual(str(l_ret.Volume), TESTING_ONKYO_DEVICE_VOLUME_0)
 
     def test_03_OneDevice1(self):
         """ Test
@@ -359,7 +377,7 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
         """
         l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         # print(PrettyFormatAny.form(l_xml, 'C4-02-A - Entertainment XML'))
-        l_ret = entertainmentXML().read_entertainment_all(l_xml)
+        l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_ret, 'C4-02-B - Entertainment'))
         # print(PrettyFormatAny.form(l_ret.Plugins, 'C4-02-C - Plugins'))
         self.assertEqual(l_ret.Plugins['pandora'].Services[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
@@ -375,7 +393,7 @@ class D1_WriteDevice(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Setup(self):
@@ -397,7 +415,7 @@ class D1_WriteDevice(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], TESTING_ONKYO_DEVICE_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_ONKYO_DEVICE_COMMENT_0)
         self.assertEqual(l_xml.find('IPv4').text, TESTING_ONKYO_DEVICE_IPV4_0)
-        self.assertEqual(l_xml.find('IPv6').text.upper(), TESTING_ONKYO_DEVICE_IPV6_0)
+        self.assertEqual(l_xml.find('IPv6').text.upper(), TESTING_ONKYO_DEVICE_IPV6_0.upper())
         self.assertEqual(l_xml.find('Model').text, TESTING_ONKYO_DEVICE_MODEL_0)
         self.assertEqual(l_xml.find('Port').text, TESTING_ONKYO_DEVICE_PORT_0)
         self.assertEqual(l_xml.find('RoomName').text, TESTING_ONKYO_DEVICE_ROOM_NAME_0)
@@ -424,7 +442,7 @@ class D2_WriteService(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Pandora(self):
@@ -453,7 +471,7 @@ class D3_WriteSubSection(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Component(self):
@@ -464,8 +482,9 @@ class D3_WriteSubSection(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj.Devices, 'D3-01-B - Devices'))
         # print(PrettyFormatAny.form(l_obj.Devices[0], 'D3-01-C - Drvice-0'))
         l_xml = entertainmentXML().write_entertainment_subsection(l_obj)
-        # print(PrettyFormatAny.form(l_xml, 'D3-01-F - XML'))
+        print(PrettyFormatAny.form(l_xml, 'D3-01-F - XML'))
         self.assertEqual(l_xml.attrib['Active'], TESTING_ONKYO_ACTIVE)
+        self.assertEqual(l_xml.find('Type').text, TESTING_ONKYO_TYPE)
 
     def test_02_Service(self):
         """ Test
@@ -483,7 +502,7 @@ class D4_WriteAll(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Setup(self):
