@@ -7,7 +7,7 @@
 @note:      Created on Oct 17, 2018
 @summary:   Test
 
-Passed all 29 tests - DBK - 2018-11-02
+Passed all 31 tests - DBK - 2018-11-13
 
 """
 
@@ -161,7 +161,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """ Test to see if the house XML is built correctly
         """
         l_xml = self.m_xml.house_div
-        # print(PrettyFormatAny.form(l_xml, 'A3-01-A - House'))
+        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - House'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
@@ -171,10 +171,19 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """ Test to see if the Entertainment XML is built properly
         """
         l_xml = self.m_xml.entertainment_sect
-        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
-        # print(PrettyFormatAny.form(l_xml[1][0], 'A3-02-B - Entertainment'))
+        # print(PrettyFormatAny.form(l_xml, 'A3-03-A - Entertainment'))
+        # print(PrettyFormatAny.form(l_xml[1][0], 'A3-03-B - Entertainment'))
         self.assertEqual(l_xml.tag, TESTING_ENTERTAINMENT_SECTION)
         self.assertGreater(len(l_xml), 2)
+
+    def test_04_EmptyEntertain(self):
+        """ This will be sure the Entertainment portion of the PyHouse Object is empty
+        """
+        l_plugin = self.m_pyhouse_obj.House.Entertainment
+        # print(PrettyFormatAny.form(l_plugin, 'A3-04-A - Entertainment'))
+        self.assertEqual(l_plugin.Active, False)
+        self.assertEqual(l_plugin.PluginCount, 0)
+        self.assertEqual(l_plugin.Plugins, {})
 
 
 class B1_Setup(SetupMixin, unittest.TestCase):
