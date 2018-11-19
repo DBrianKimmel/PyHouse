@@ -46,7 +46,11 @@ from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
         TESTING_ONKYO_DEVICE_TYPE_0, \
         TESTING_ONKYO_DEVICE_VOLUME_0, \
         TESTING_ONKYO_DEVICE_PORT_0, \
-        TESTING_ONKYO_ACTIVE, TESTING_ONKYO_DEVICE_COMMAND_SET_0, TESTING_ONKYO_DEVICE_HOST_0, TESTING_ONKYO_DEVICE_IPV4_1, TESTING_ONKYO_TYPE
+        TESTING_ONKYO_ACTIVE, \
+        TESTING_ONKYO_DEVICE_COMMAND_SET_0, \
+        TESTING_ONKYO_DEVICE_HOST_0, \
+        TESTING_ONKYO_TYPE, \
+        TESTING_ONKYO_DEVICE_UUID_0
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \
@@ -207,6 +211,7 @@ class B1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'B1-02-A - Bad XML'))
         l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
         # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Pandora Device'))
+        self.assertEqual(l_ret.Type, 'Missing Type')
 
 
 class C1_ReadDevice(SetupMixin, unittest.TestCase):
@@ -243,6 +248,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret.Name, TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(str(l_ret.Active), TESTING_ONKYO_DEVICE_ACTIVE_0)
         self.assertEqual(str(l_ret.Key), TESTING_ONKYO_DEVICE_KEY_0)
+        self.assertEqual(str(l_ret.UUID), TESTING_ONKYO_DEVICE_UUID_0)
         self.assertEqual(l_ret.Comment, TESTING_ONKYO_DEVICE_COMMENT_0)
         self.assertEqual(l_ret.CommandSet, TESTING_ONKYO_DEVICE_COMMAND_SET_0)
         self.assertEqual(l_ret.Host, TESTING_ONKYO_DEVICE_HOST_0)
@@ -389,6 +395,8 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
         l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_ret, 'C4-02-B - Entertainment'))
         # print(PrettyFormatAny.form(l_ret.Plugins, 'C4-02-C - Plugins'))
+        self.assertEqual(l_ret.Active, True)
+        self.assertGreater(l_ret.PluginCount, 0)
         self.assertEqual(l_ret.Plugins['pandora'].Services[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
         self.assertEqual(str(l_ret.Plugins['pandora'].Services[0].Active), TESTING_PANDORA_DEVICE_ACTIVE_0)
         self.assertEqual(str(l_ret.Plugins['pandora'].Services[0].Key), TESTING_PANDORA_DEVICE_KEY_0)
@@ -417,7 +425,7 @@ class D1_WriteDevice(SetupMixin, unittest.TestCase):
         """ Test
         """
         l_xml = entertainmentXML().write_entertainment_device(self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Devices[0])
-        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - Ret'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - XML'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'D1-02-B - HouseInformation()'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_ONKYO_DEVICE_KEY_0)

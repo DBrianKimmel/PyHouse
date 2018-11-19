@@ -191,19 +191,10 @@ class API(Ent):
         @return: the Entertainment object of PyHouse_obj
         """
         LOG.info("XML Loading - Version:{}".format(__version__))
-        l_entertain = p_pyhouse_obj.House.Entertainment
         l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        if l_xml == None:
-            l_entertain.Active = False
-            return l_entertain
-        l_count = 0
-        for l_section_element in l_xml:
-            self._module_load_loop(p_pyhouse_obj, l_section_element)
-            l_count += 1
-        l_entertain.Active = True
-        l_entertain.PluginCount = l_count
-        LOG.info('XML Loaded {} Entertainment Sections'.format(l_count))
-        return l_entertain
+        l_entertainment_obj = entertainmentXML().read_entertainment_all(p_pyhouse_obj, l_xml)
+        p_pyhouse_obj.House.Entertainment = l_entertainment_obj
+        return l_entertainment_obj
 
     def Start(self):
         LOG.info("Starting.")
