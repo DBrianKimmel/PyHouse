@@ -25,13 +25,13 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-11-10'
+__updated__ = '2018-11-16'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import importlib
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import \
@@ -122,7 +122,7 @@ class API(Ent):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def _create_module_refs(self, p_element):
+    def XXX_create_module_refs(self, p_element):
         """
         Create the structure we will need to Load, Start and Save the modules defined for this house.
         If there is no subsection (sony e.g.) in the Xml, we will not be called.
@@ -137,7 +137,7 @@ class API(Ent):
         @return: a EntertainmentPluginData filled in from the section
         """
 
-    def _start_modules(self, p_module):
+    def XXX_start_modules(self, p_module):
         """
         """
         # print(PrettyFormatAny.form(p_module, 'ent_sm1 - p+module', 180))
@@ -146,7 +146,7 @@ class API(Ent):
         else:
             p_module.API.Start()
 
-    def _module_load_loop(self, p_pyhouse_obj, p_section_element):
+    def XXX_module_load_loop(self, p_pyhouse_obj, p_section_element):
         """
         """
         l_active = True
@@ -158,7 +158,7 @@ class API(Ent):
             # Create the module plugin
             l_module_name = 'Modules.Housing.Entertainment.' + l_name + '.' + l_name
             l_module = importlib.import_module(l_module_name)
-            l_plugin_data.Module = l_module
+            l_plugin_data._Module = l_module
             # Initialize Plugin
             l_plugin_data._API = l_module.API(self.m_pyhouse_obj)
             p_pyhouse_obj.House.Entertainment.Plugins[l_name] = l_plugin_data
@@ -177,7 +177,8 @@ class API(Ent):
         l_obj = EntertainmentDeviceControl()
         l_obj.Device = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name
-        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))
+        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(
+        #    l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def LoadXml(self, p_pyhouse_obj):
@@ -197,8 +198,8 @@ class API(Ent):
             l_entertain.Active = False
             return l_entertain
         l_count = 0
-        for l_section_element in l_xml:
-            self._module_load_loop(p_pyhouse_obj, l_section_element)
+        for _section_element in l_xml:
+            # self._module_load_loop(p_pyhouse_obj, l_section_element)
             l_count += 1
         l_entertain.Active = True
         l_entertain.PluginCount = l_count

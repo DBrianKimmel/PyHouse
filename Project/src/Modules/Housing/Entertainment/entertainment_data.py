@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-11-02'
+__updated__ = '2018-11-16'
 
 # Import system type stuff
 
@@ -48,7 +48,7 @@ class EntertainmentPluginData:
         self.Active = False
         self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self.DeviceCount = 0
-        self.Module = None
+        self._Module = None
         self.Name = None
         self.Type = 'Missing Type'  # Service: Component (a device):
         self.Devices = {}  # EntertainmentDeviceData()

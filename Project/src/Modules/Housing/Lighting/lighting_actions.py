@@ -70,12 +70,13 @@ class API(object):
 
     @staticmethod
     def DoSchedule(p_pyhouse_obj, p_schedule_obj):
-        """
+        """ A schedule action has been called for on a Light
         """
         l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_schedule_obj.LightName)
-        LOG.info("Name:{}, Light:{}, Level:{}  {}  {}".format(p_schedule_obj.Name, p_schedule_obj.LightName,
-                p_schedule_obj.Level, l_light_obj.Name, l_light_obj.Key))
-        API.ChangeLight(p_pyhouse_obj, l_light_obj, 'shedule', p_schedule_obj.Level)
+        LOG.info("SchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
+                p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level,
+                l_light_obj.Name, l_light_obj.Key))
+        API.ChangeLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", p_schedule_obj)
 
     @staticmethod
@@ -84,11 +85,11 @@ class API(object):
         Called by:
             web_controlLights
             schedule
-            @param p_pyhouse_obj: The entire data set.
-            @param p_light_obj: is the partial obj of the particular light we are changing
-            @param p_source: is a string denoting the source of the change.
-            @param p_new_level: is the percent of light we are changing to
-            @param p_rate: is the rate the change will ramp to.
+        @param p_pyhouse_obj: The entire data set.
+        @param p_light_obj: is the partial obj of the particular light we are changing
+        @param p_source: is a string denoting the source of the change.
+        @param p_new_level: is the percent of light brightness we are changing to
+        @param p_rate: is the rate the change will ramp to.
         """
         l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_light_obj.Name)  #  web has some info missing - get all the object
         try:

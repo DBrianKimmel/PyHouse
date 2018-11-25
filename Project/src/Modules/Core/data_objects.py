@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2018-08-21'
+__updated__ = '2018-11-25'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -596,6 +596,10 @@ class RulesData(BaseUUIDObject):
 class ScheduleBaseData(BaseUUIDObject):
     """ A schedule of when events happen.
 
+    ==> PyHouse.House.Schedules.xxx as in the def below
+
+    See schedule.ScheduleExecution().dispatch_one_schedule() for all the valid types.
+
     DOW is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
             0 is no days of the week
             1 is valid on Monday
@@ -626,6 +630,15 @@ class SensorData(BaseUUIDObject):
 """
 ScheduleBaseData dependent
 """
+
+
+class ScheduleHvacData(ScheduleBaseData):
+    """
+    """
+
+    def __init__(self):
+        super(ScheduleHvacData, self).__init__()
+        self.ScheduleType = 'Hvac'
 
 
 class ScheduleIrrigationData(ScheduleBaseData):

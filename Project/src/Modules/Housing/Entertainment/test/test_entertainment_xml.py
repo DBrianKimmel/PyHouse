@@ -11,7 +11,7 @@ Passed all 29 tests - DBK - 2018-11-02
 
 """
 
-__updated__ = '2018-11-11'
+__updated__ = '2018-11-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -46,7 +46,10 @@ from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
         TESTING_ONKYO_DEVICE_TYPE_0, \
         TESTING_ONKYO_DEVICE_VOLUME_0, \
         TESTING_ONKYO_DEVICE_PORT_0, \
-        TESTING_ONKYO_ACTIVE, TESTING_ONKYO_DEVICE_COMMAND_SET_0, TESTING_ONKYO_DEVICE_HOST_0, TESTING_ONKYO_DEVICE_IPV4_1, TESTING_ONKYO_TYPE
+        TESTING_ONKYO_ACTIVE, \
+        TESTING_ONKYO_DEVICE_COMMAND_SET_0, \
+        TESTING_ONKYO_DEVICE_HOST_0, \
+        TESTING_ONKYO_TYPE
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \
@@ -194,9 +197,9 @@ class B1_Setup(SetupMixin, unittest.TestCase):
     def test_02_Type(self):
         """ Test detecting bad type
         """
-        l_xml = ET.fromstring(BAD_TYPE)
+        # l_xml = ET.fromstring(BAD_TYPE)
         # print(PrettyFormatAny.form(l_xml, 'B1-02-A - Bad XML'))
-        l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
+        # l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
         # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Pandora Device'))
 
 
@@ -278,7 +281,7 @@ class C2_ReadService(SetupMixin, unittest.TestCase):
         """
         l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         l_xml = l_xml.findall('Device')[0]
-        l_service = EntertainmentServiceData()
+        # l_service = EntertainmentServiceData()
         # print(PrettyFormatAny.form(self.m_xml, 'C2-01-A - Entertainment XML'))
         self.assertEqual(self.m_xml.tag, TESTING_ENTERTAINMENT_SECTION)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C2-01-B - Entertainment'))
@@ -327,8 +330,8 @@ class C3_ReadSubSection(SetupMixin, unittest.TestCase):
         """
         l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         # print(PrettyFormatAny.form(l_xml, 'C3-02-A - Onkyo XML'))
-        l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
-        # print(PrettyFormatAny.form(l_ret, 'C3-02-B - Onkyo Plugin'))
+        l_ret = entertainmentXML().read_entertainment_subsection(self.m_pyhouse_obj, l_xml)
+        print(PrettyFormatAny.form(l_ret, 'C3-02-B - Onkyo Plugin'))
         # print(PrettyFormatAny.form(l_ret.Devices, 'C3-02-C - Onkyo Devices'))
         self.assertEqual(l_ret.Active, TESTING_ONKYO_ACTIVE)
         self.assertEqual(l_ret.Name, 'onkyo')
@@ -342,7 +345,7 @@ class C3_ReadSubSection(SetupMixin, unittest.TestCase):
         """
         l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         # print(PrettyFormatAny.form(l_xml, 'C3-03-A - Pandora XML'))
-        l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
+        l_ret = entertainmentXML().read_entertainment_subsection(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_ret, 'C3-03-B - Pandora Plugin'))
         # print(PrettyFormatAny.form(l_ret.Services, 'C3-03-C - Pandora Services'))
         self.assertEqual(l_ret.Services[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
@@ -375,9 +378,7 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
     def test_02_All(self):
         """
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        # print(PrettyFormatAny.form(l_xml, 'C4-02-A - Entertainment XML'))
-        l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, l_xml)
+        l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_ret, 'C4-02-B - Entertainment'))
         # print(PrettyFormatAny.form(l_ret.Plugins, 'C4-02-C - Plugins'))
         self.assertEqual(l_ret.Plugins['pandora'].Services[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
@@ -393,7 +394,7 @@ class D1_WriteDevice(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Setup(self):
@@ -442,7 +443,7 @@ class D2_WriteService(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Pandora(self):
@@ -471,7 +472,7 @@ class D3_WriteSubSection(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Component(self):
@@ -502,7 +503,7 @@ class D4_WriteAll(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj, self.m_xml)
+        self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
     def test_01_Setup(self):
@@ -514,7 +515,7 @@ class D4_WriteAll(SetupMixin, unittest.TestCase):
     def test_02_All(self):
         """
         """
-        l_xml = entertainmentXML().write_entertainment_all(self.m_pyhouse_obj)
+        # l_xml = entertainmentXML().write_entertainment_all(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_xml, 'D4-02-A - Entertainment XML'))
         self.assertEqual(self.m_xml.tag, TESTING_ENTERTAINMENT_SECTION)
 
@@ -543,11 +544,11 @@ class E1_Device(SetupMixin, unittest.TestCase):
     def test_02_CreateModuleRefs(self):
         """ Test that _create_module_refs is functional
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        # l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         # print(PrettyFormatAny.form(l_xml, 'E1-02-A - Onkyo XML'))
-        for l_section in self.m_xml:
+        # for l_section in self.m_xml:
             # print(PrettyFormatAny.form(l_section, 'E1-02-B - Section'))
-            l_plug = self.m_api._create_module_refs(l_section)
+            # l_plug = self.m_api._create_module_refs(l_section)
             # print(PrettyFormatAny.form(l_plug, 'E1-02-B - One Plugin'))
             # self.m_pyhouse_obj.House.Entertainment.Plugins[l_plug.Name] = l_plug
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'E1-02-C - Plugins'))

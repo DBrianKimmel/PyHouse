@@ -40,11 +40,11 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2018-10-16'
+__updated__ = '2018-11-25'
 
 #  Import system type stuff
 import datetime
-import dateutil.parser as dparser
+# import dateutil.parser as dparser
 import aniso8601
 
 #  Import PyMh files
@@ -55,20 +55,38 @@ from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Housing.Scheduling import sunrisesunset
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule       ')
+
 SECONDS_IN_MINUTE = 60
 SECONDS_IN_HOUR = SECONDS_IN_MINUTE * 60  # 3600
 SECONDS_IN_DAY = SECONDS_IN_HOUR * 24  # 86400
 SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
+
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
+MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
 
 
-def to_minutes(p_datetime):
-    return (p_datetime.hour * 60 + p_datetime.minute)
+def to_seconds(p_datetime):
+    """ Converts a datetime to seconds
+    @param p_datetime: is a datetime.datetime object
+    @return: an int of the time portion of the datetime
+    """
+    return (((p_datetime.hour * 60) + p_datetime.minute) * 60 + p_datetime.second)
+
+
+def to_dhms(p_seconds):
+    """ Convert seconds to a datetime
+    Mostly used for testing to allow seconds to be displayed more clearly.
+    """
+    l_ret = datetime.datetime(1970, 1, 1, 0, tzinfo=None)
+    l_ret = l_ret.fromtimestamp(p_seconds)
+    return l_ret
 
 
 def _get_schedule_timefield(p_schedule_obj):
     """
+    @param p_schedule_obj: is a schedule obj
+    @return: a datetime.time object extracted from the Time field of the schedule object
     """
     l_timefield = p_schedule_obj.Time.lower()
     try:
@@ -76,7 +94,7 @@ def _get_schedule_timefield(p_schedule_obj):
         l_time = aniso8601.parse_time(l_timefield)
     except ValueError:
         l_time = datetime.time(0)
-    return l_time, l_timefield
+    return l_time
 
 
 class RiseSet(object):
@@ -86,7 +104,7 @@ class RiseSet(object):
         self.SunSet = None
 
 
-class SchedTime(object):
+class SchedTime:
     """
     Get the when scheduled time.  It may be from about a minute to about 1 week.
     If the schedule is not active return a None
@@ -128,6 +146,16 @@ class SchedTime(object):
         return 10
 
     @staticmethod
+    def _extract_time_part(p_timefield):
+        """
+        """
+        try:
+            l_time = aniso8601.parse_time(p_timefield)
+        except Exception:
+            l_time = datetime.time(0)
+        return to_seconds(l_time)
+
+    @staticmethod
     def _extract_schedule_time(p_schedule_obj, p_rise_set):
         """ Find the number of minutes from midnight until the schedule time for action.
 
@@ -137,78 +165,67 @@ class SchedTime(object):
             sunrise
             sunrise + hh:mm
             sunrise - hh:mm
-        @return: the number of minutes
+        @return: the number of seconds
         """
         l_timefield = p_schedule_obj.Time.lower()
         if 'dawn' in l_timefield:
             # print('Dawn - {}'.format(l_timefield))
-            l_base = to_minutes(p_rise_set.Dawn)
+            l_base = to_seconds(p_rise_set.Dawn)
             l_timefield = l_timefield[4:]
         elif 'sunrise' in l_timefield:
             # print('SunRise - {}'.format(l_timefield))
-            l_base = to_minutes(p_rise_set.SunRise)
+            l_base = to_seconds(p_rise_set.SunRise)
             l_timefield = l_timefield[7:]
         elif 'noon' in l_timefield:
             # print('Noon - {}'.format(l_timefield))
-            l_base = to_minutes(p_rise_set.Noon)
+            l_base = to_seconds(p_rise_set.Noon)
             l_timefield = l_timefield[4:]
         elif 'sunset' in l_timefield:
             # print('SunSet - {}'.format(l_timefield))
-            l_base = to_minutes(p_rise_set.SunSet)
+            l_base = to_seconds(p_rise_set.SunSet)
             l_timefield = l_timefield[6:]
         elif 'dusk' in l_timefield:
             # print('Dusk - {}'.format(l_timefield))
-            l_base = to_minutes(p_rise_set.Dusk)
+            l_base = to_seconds(p_rise_set.Dusk)
             l_timefield = l_timefield[4:]
         else:
             l_base = 0
-
         l_timefield = l_timefield.strip()
-        # print('==time== - {}'.format(l_timefield))
-
         l_subflag = False
         if '-' in l_timefield:
-            # print(" found - ")
             l_subflag = True
             l_timefield = l_timefield[1:]
         elif '+' in l_timefield:
-            # print(" found + ")
             l_subflag = False
             l_timefield = l_timefield[1:]
-        l_timefield = l_timefield.strip()
+        # l_timefield = l_timefield.strip()
 
-        try:
-            # l_time = dparser.parse(l_timefield, fuzzy=True)
-            l_time = aniso8601.parse_time(l_timefield)
-            # print('Parsable time field "{}" = "{}"'.format(l_timefield, l_time))
-        except ValueError:
-            # print('Unparsable time field "{}"'.format(l_timefield))
-            l_time = datetime.time(0)
-
-        l_offset = to_minutes(l_time)
+        l_offset = SchedTime._extract_time_part(l_timefield)
         #
         #
         if l_subflag:
-            l_minutes = l_base - l_offset
+            l_seconds = l_base - l_offset
         else:
-            l_minutes = l_base + l_offset
+            l_seconds = l_base + l_offset
         #
-        return l_minutes
+        return l_seconds
 
     @staticmethod
     def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
         """ Compute the seconds to go from now to the next scheduled time.
+        May be from 30 seconds to a full week.
+
         @param p_pyhouse_obj: Not used yet
         @param p_schedule_obj: is the schedule object we are working on.
         @param p_now: is the datetime for now.
         @param p_rise_set: is the sunrise/sunset structure.
         @return: The number of seconds from now to the scheduled time.
         """
-        l_dow_mins = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60
-        l_sched_mins = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
-        l_sched_secs = 60 * (l_dow_mins + l_sched_mins)
-        l_now_secs = to_minutes(p_now) * 60
-        l_seconds = l_sched_secs - l_now_secs
+        l_dow_seconds = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
+        l_sched_seconds = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
+        l_sched_secs = l_dow_seconds + l_sched_seconds
+        l_now_seconds = to_seconds(p_now)
+        l_seconds = l_sched_secs - l_now_seconds
         if l_seconds < 0:
             l_seconds += SECONDS_IN_DAY
         return l_seconds
@@ -243,7 +260,8 @@ class ScheduleExecution(object):
 
     @staticmethod
     def execute_schedules_list(p_pyhouse_obj, p_key_list=[]):
-        """ The timer calls this when a list of schedules is due to be executed.
+        """ The timer calls this with a list of schedules to be executed.
+
         For each Schedule in the list, call the dispatcher for that type of schedule.
 
         Delay before generating the next schedule to avoid a race condition
@@ -279,16 +297,18 @@ class Utility(object):
         """ Go thru all the schedules and find the next schedule list to run.
         Note that there may be several scheduled events for that time
 
-        @param p_now: is a datetime of now()
+        @param p_now: is a datetime that we are searching for.
+        @return: a delay time to the next event chain, and a list of events in the chain.
         """
         l_schedule_key_list = []
         l_min_seconds = SECONDS_IN_WEEK
         l_riseset = Utility.fetch_sunrise_set(p_pyhouse_obj)
+        # Loop through the possible scheduled events.
         for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
             if not l_schedule_obj.Active:
-                continue
+                continue  # Skip inactive schedules.
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
-            if l_seconds < 30:
+            if l_seconds < MINIMUM_TIME:
                 continue
             if l_min_seconds == l_seconds:  # Add to lists for the given time.
                 l_schedule_key_list.append(l_key)
@@ -297,11 +317,13 @@ class Utility(object):
                 l_schedule_key_list = []
                 l_schedule_key_list.append(l_key)
         l_debug_msg = "Delaying {} for list {}".format(l_min_seconds, l_schedule_key_list)
-        LOG.info("find_next_scheduled_events complete. {}".format(l_debug_msg))
+        LOG.info("find next scheduled events complete. {}".format(l_debug_msg))
         return l_min_seconds, l_schedule_key_list
 
     @staticmethod
     def run_after_delay(p_pyhouse_obj, p_delay, p_list):
+        """
+        """
         l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
         l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
         LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
@@ -310,10 +332,20 @@ class Utility(object):
     @staticmethod
     def schedule_next_event(p_pyhouse_obj, p_delay=0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
+
+        This is the main schedule loop.
+        It may be restarted if the schedules change.
+
+        Scans through the list of scheduled events.
+        Picks out all the events next to perform (there may be several).
+        Puts all the events in a list.
+        Schedules an execution event on the list of scheduled events.
+
         @param p_pyhouse_obj: is the grand repository of information
         @param p_delay: is the (forced) delay time for the timer.
         """
-        l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, datetime.datetime.now())
+        l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
+        l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, l_now)
         if p_delay != 0:
             l_delay = p_delay
         Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
@@ -336,7 +368,7 @@ class Timers(object):
         return l_runID
 
 
-class API(object):
+class API:
 
     m_pyhouse_obj = None
 
@@ -346,7 +378,7 @@ class API(object):
         LOG.info("Initialized.")
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Load the Schedule xml info.
+        """ Load the Schedule from the XML info.
         """
         p_pyhouse_obj.House.Schedules = {}
         l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
@@ -368,6 +400,8 @@ class API(object):
         LOG.info("Stopped.")
 
     def SaveXml(self, p_xml):
+        """
+        """
         l_xml, l_count = scheduleXml.write_schedules_xml(self.m_pyhouse_obj.House.Schedules)
         p_xml.append(l_xml)
         LOG.info('Saved {} Schedules XML.'.format(l_count))

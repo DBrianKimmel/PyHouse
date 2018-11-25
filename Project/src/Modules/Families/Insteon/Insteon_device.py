@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2018-10-24'
+__updated__ = '2018-11-22'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -110,9 +110,12 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_plm = None
         # LOG.info('Created an instance of Insteon_device.')
 
     def Start(self):
+        """ Note that the controller may not be available on this node.
+        """
         self.m_plm = Utility._start_all_controllers(self.m_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
 
@@ -126,6 +129,9 @@ class API(object):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
+        if self.m_plm == None:
+            LOG.info('No PLM was defined - Quitting.')
+            return
         LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm))
         self.m_plm.ChangeLight(p_light_obj, p_source, p_level, p_rate)
 

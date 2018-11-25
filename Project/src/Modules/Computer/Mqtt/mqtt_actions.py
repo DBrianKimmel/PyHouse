@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-10-01'
+__updated__ = '2018-11-23'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -113,7 +113,7 @@ class Actions:
         #
         # Every other topic will have the following fields.
         l_sender = self._get_field(p_message, 'Sender')
-        self.m_room_name = self._get_field(p_message, 'RoomName')
+        # self.m_room_name = self._get_field(p_message, 'RoomName')
         l_logmsg += '\tSender: {}\n'.format(l_sender)
         #
         # Now do all the rest of the topic-2 fields.

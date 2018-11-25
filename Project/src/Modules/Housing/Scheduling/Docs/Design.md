@@ -10,6 +10,9 @@
 
 # Scheduling
 
+Pyhouse maintains the series of events to be done in a house.
+They include lights turning on and off, Thermostat settings, Irrigation Schedules, Pool pump on and off times and many others
+
 ## Schedule
 
 ## Sunrise / Sunset

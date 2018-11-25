@@ -10,6 +10,13 @@
 
 # Housing
 
+Under the PyHouse banner, a user has one or more houses to automate/control.
+
+Each house has one or more Mqtt brokers running.
+They usually operate as a controlling broker with redundant brokers for backup.
+
+Mqtt came into the picture after PyHous was up and running, so not everything runs reom a message.
+
 
 ## Design
 

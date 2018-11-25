@@ -11,7 +11,7 @@ Passed all 12 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2018-10-25'
+__updated__ = '2018-11-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -151,17 +151,6 @@ class C1_Load(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_entertainment_obj.Active, False)
         self.assertEqual(self.m_entertainment_obj.PluginCount, 0)
         self.assertEqual(self.m_entertainment_obj.Plugins, {})
-
-    def test_02_CreateModuleRefs(self):
-        """ Test that _create_module_refs is functional
-        """
-        for l_section in self.m_xml:
-            print(PrettyFormatAny.form(l_section, 'C1-02-A - Section'))
-            l_plug = self.m_api._create_module_refs(l_section)
-            print(PrettyFormatAny.form(l_plug, 'C1-02-B - One Plugin'))
-            self.m_pyhouse_obj.House.Entertainment.Plugins[l_plug.Name] = l_plug
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'C1-02-C - Plugins'))
-        self.assertEqual(self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Device[0].Name, TESTING_ONKYO_DEVICE_NAME_0)
 
     def test_03_XML(self):
         """ Test
