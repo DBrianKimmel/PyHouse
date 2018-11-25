@@ -208,7 +208,7 @@ class API(Ent):
         return l_entertain
         """
 
-        l_entertainment_obj = entertainmentXML().read_entertainment_all(p_pyhouse_obj, l_xml)
+        l_entertainment_obj = entertainmentXML().read_entertainment_all(p_pyhouse_obj)
         p_pyhouse_obj.House.Entertainment = l_entertainment_obj
         return l_entertainment_obj
 
