@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-11-18'
+__updated__ = '2018-11-25'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -151,11 +151,11 @@ class XML:
         l_plugin.Active = l_active = PutGetXML.get_text_from_xml(l_xml, 'Active')
         l_count = 0
         l_module_name = None
-        if l_xml.find('Type') == None:
+        if l_xml.find('Type') is None:
             LOG.warn('Entertainment subsection {} must have a "Type" element'.format(l_name))
             return l_plugin
         l_type = PutGetXML.get_text_from_xml(l_xml, 'Type')
-        if l_type != None:
+        if l_type is not None:
             l_plugin.Type = l_type
             l_plugin.Name = l_name.lower()[:-7]
             l_module_name = 'Modules.Housing.Entertainment.' + l_plugin.Name + '.' + l_plugin.Name
@@ -192,17 +192,21 @@ class XML:
         l_xml = ET.Element(l_name)
         PutGetXML.put_bool_attribute(l_xml, 'Active', p_obj.Active)
         PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
+        LOG.debug('Saving Section:{}; Type:{}'.format(p_obj.Name, p_obj.Type))
         if p_obj.Type == 'Component':
             for l_obj in p_obj.Devices.values():
+                LOG.debug('Saving Component {}'.format(l_obj.Name))
                 # print(PrettyFormatAny.form(l_obj, ' Ret'))
                 l_xml.append(self.write_entertainment_device(l_obj))
         else:
             for l_obj in p_obj.Services.values():
+                LOG.debug('Saving Service {}'.format(l_obj.Name))
                 l_xml.append(self.write_entertainment_service(l_obj))
         return l_xml
 
     def read_entertainment_all(self, p_pyhouse_obj):
         """ Read one complete subsection (pioneer, onkyo, pandora, ...
+        Place all the plugins into the PyHouse Object structure
         """
         l_plugins = EntertainmentData()
         l_count = 0
@@ -212,16 +216,20 @@ class XML:
             l_name = l_sub.Name.lower()
             l_plugins.Plugins[l_name] = l_sub
             l_count += 1
+        if l_count > 0:
+            l_plugins.Active = True
         l_plugins.PluginCount = l_count
+        p_pyhouse_obj.House.Entertainment = l_plugins
         return l_plugins
 
     def write_entertainment_all(self, p_pyhouse_obj):
         """ Read one complete subsection (pioneer, onkyo, pandora, ...
         """
-        l_ent_obj = p_pyhouse_obj.House.Entertainment.Plugins
+        l_entertainment_obj = p_pyhouse_obj.House.Entertainment.Plugins
         l_xml = ET.Element('EntertainmentSection')
-        for l_plugin in l_ent_obj.values():
-            l_xml.append(self.write_entertainment_subsection(l_plugin))
+        for l_plugin_obj in l_entertainment_obj.values():
+            LOG.debug('Saving {} section'.format(l_plugin_obj.Name))
+            l_xml.append(self.write_entertainment_subsection(l_plugin_obj))
         return l_xml
 
 # ## END DBK

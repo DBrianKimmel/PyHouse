@@ -348,7 +348,7 @@
 			</OnkyoSection>
 			<PandoraSection Active="True">
 				<Type>Service</Type>
-				<Device Active="True" Key="0" Name="555">
+				<Device Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Living Room</Comment>
 					<Host>None</Host>
 					<ConnectionFamily>Onkyo</ConnectionFamily>

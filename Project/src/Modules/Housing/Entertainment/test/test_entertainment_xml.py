@@ -7,11 +7,11 @@
 @note:      Created on Oct 17, 2018
 @summary:   Test
 
-Passed all 29 tests - DBK - 2018-11-02
+Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2018-11-18'
+__updated__ = '2018-11-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,8 @@ from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
         TESTING_ONKYO_ACTIVE, \
         TESTING_ONKYO_DEVICE_COMMAND_SET_0, \
         TESTING_ONKYO_DEVICE_HOST_0, \
-        TESTING_ONKYO_TYPE
+        TESTING_ONKYO_TYPE, \
+        TESTING_ONKYO_DEVICE_UUID_0
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \
@@ -164,7 +165,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """ Test to see if the house XML is built correctly
         """
         l_xml = self.m_xml.house_div
-        # print(PrettyFormatAny.form(l_xml, 'A3-01-A - House'))
+        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - House'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
@@ -174,10 +175,19 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """ Test to see if the Entertainment XML is built properly
         """
         l_xml = self.m_xml.entertainment_sect
-        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
-        # print(PrettyFormatAny.form(l_xml[1][0], 'A3-02-B - Entertainment'))
+        # print(PrettyFormatAny.form(l_xml, 'A3-03-A - Entertainment'))
+        # print(PrettyFormatAny.form(l_xml[1][0], 'A3-03-B - Entertainment'))
         self.assertEqual(l_xml.tag, TESTING_ENTERTAINMENT_SECTION)
         self.assertGreater(len(l_xml), 2)
+
+    def test_04_EmptyEntertain(self):
+        """ This will be sure the Entertainment portion of the PyHouse Object is empty
+        """
+        l_plugin = self.m_pyhouse_obj.House.Entertainment
+        # print(PrettyFormatAny.form(l_plugin, 'A3-04-A - Entertainment'))
+        self.assertEqual(l_plugin.Active, False)
+        self.assertEqual(l_plugin.PluginCount, 0)
+        self.assertEqual(l_plugin.Plugins, {})
 
 
 class B1_Setup(SetupMixin, unittest.TestCase):
@@ -201,6 +211,7 @@ class B1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'B1-02-A - Bad XML'))
         # l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
         # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Pandora Device'))
+        self.assertEqual(l_ret.Type, 'Missing Type')
 
 
 class C1_ReadDevice(SetupMixin, unittest.TestCase):
@@ -237,6 +248,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret.Name, TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(str(l_ret.Active), TESTING_ONKYO_DEVICE_ACTIVE_0)
         self.assertEqual(str(l_ret.Key), TESTING_ONKYO_DEVICE_KEY_0)
+        self.assertEqual(str(l_ret.UUID), TESTING_ONKYO_DEVICE_UUID_0)
         self.assertEqual(l_ret.Comment, TESTING_ONKYO_DEVICE_COMMENT_0)
         self.assertEqual(l_ret.CommandSet, TESTING_ONKYO_DEVICE_COMMAND_SET_0)
         self.assertEqual(l_ret.Host, TESTING_ONKYO_DEVICE_HOST_0)
@@ -381,6 +393,8 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
         l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_ret, 'C4-02-B - Entertainment'))
         # print(PrettyFormatAny.form(l_ret.Plugins, 'C4-02-C - Plugins'))
+        self.assertEqual(l_ret.Active, True)
+        self.assertGreater(l_ret.PluginCount, 0)
         self.assertEqual(l_ret.Plugins['pandora'].Services[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
         self.assertEqual(str(l_ret.Plugins['pandora'].Services[0].Active), TESTING_PANDORA_DEVICE_ACTIVE_0)
         self.assertEqual(str(l_ret.Plugins['pandora'].Services[0].Key), TESTING_PANDORA_DEVICE_KEY_0)
@@ -409,7 +423,7 @@ class D1_WriteDevice(SetupMixin, unittest.TestCase):
         """ Test
         """
         l_xml = entertainmentXML().write_entertainment_device(self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Devices[0])
-        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - Ret'))
+        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - XML'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'D1-02-B - HouseInformation()'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_ONKYO_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_ONKYO_DEVICE_KEY_0)
