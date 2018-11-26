@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-11-23'
+__updated__ = '2018-11-25'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -65,7 +65,7 @@ class Actions:
         l_name = self._get_field(p_message, 'Name')
         l_logmsg = '\tLighting:\n'
         l_logmsg += '\tName: {}\n'.format(l_name)
-        l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+        # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
         l_logmsg += '\tBrightnessPct: {}'.format(self._get_field(p_message, 'BrightnessPct'))
         return l_logmsg
 
@@ -73,7 +73,7 @@ class Actions:
         l_logmsg = '\tSchedule:\n'
         if p_topic[1] == 'execute':
             l_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
-            l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+            # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
             l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
             l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
         else:
