@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2018-11-26'
 
 #  Import system type stuff
 import pyudev
@@ -38,9 +38,11 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 #  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+
 class FindPort(object):
     """
     """
+
     def __init__(self):
         #  l_devices = subprocess.call(['lsusb'])
         #  print l_devices
@@ -50,7 +52,6 @@ class FindPort(object):
                 continue
             # print(l_dev.device_node)
             pass
-
 
 
 class SerialProtocol(Protocol):
@@ -172,6 +173,8 @@ class API(SerialAPI):
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
         @param p_controller_obj: is the Controller_Data object for a serial device to open.
+        @return: True if the driver opened OK and is usable
+                 False if the driver is not functional for any reason.
         """
         #  print(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         self.m_pyhouse_obj = p_pyhouse_obj

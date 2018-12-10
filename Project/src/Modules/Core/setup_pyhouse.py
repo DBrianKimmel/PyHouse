@@ -23,8 +23,8 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2018-10-01'
-__version_info__ = (18, 10, 0)
+__updated__ = '2018-11-26'
+__version_info__ = (18, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

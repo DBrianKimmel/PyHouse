@@ -10,7 +10,7 @@
 Passed all 19 tests - DBK - 2017-01-19
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-11-26'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -79,8 +79,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_lighting_controllers')
 
@@ -118,7 +120,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_CONTROLLER_SECTION)
-        # print(l_xml)
+        print(PrettyFormatAny.form(l_xml, 'A2-02-A Parsed'))
         self.assertEqual(l_xml.tag, TESTING_CONTROLLER_SECTION)
 
     def test_03_Family(self):

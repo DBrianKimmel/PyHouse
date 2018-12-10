@@ -10,8 +10,9 @@
 Passed all 10 tests.  DBK 2017-01-19
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-19'
+__updated__ = '2018-12-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -54,8 +55,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_lighting')
 
@@ -90,12 +93,12 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Raw(self):
         l_raw = XML_LIGHTING
-        print(l_raw)
+        # print(l_raw)
         self.assertEqual(l_raw[:17], '<LightingSection>')
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_LIGHTING)
-        # print(l_xml)
+        # print(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed XML'))
         self.assertEqual(l_xml.tag, TESTING_LIGHTING_SECTION)
 
 

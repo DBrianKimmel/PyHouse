@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2018-07-22'
+__updated__ = '2018-11-26'
 
 #  Import system type stuff
 try:
@@ -285,6 +285,10 @@ class LightHandlerAPI(object):
     """
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
+        """
+        @return: True if the driver opened OK and is usable
+                 False if the driver is not functional for any reason.
+        """
         self.m_pyhouse_obj = p_pyhouse_obj
         l_msg = "Controller:{}, ".format(p_controller_obj.Name)
         l_msg += "DeviceFamily:{}, ".format(p_controller_obj.DeviceFamily)
@@ -384,7 +388,8 @@ class Utility(LightHandlerAPI):
         """
         @param p_pyhouse_obj: is the master obj
         @param p_controller_obj: is the particular controller that we will be starting
-
+        @return: True if the driver opened OK and is usable
+                 False if the driver is not functional for any reason.
         """
         LOG.info('Starting Controller:{}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
@@ -429,11 +434,20 @@ class API(Utility):
         Note that not all insteon devices are known when we start.
 
         @param p_controller_obj: is the controller we are starting
+
+        @return: True if the driver opened OK and is usable
+                 False if the driver is not functional for any reason.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         l_ret = self.start_controller_and_driver(p_pyhouse_obj, p_controller_obj)
         self.get_plm_info(p_pyhouse_obj, p_controller_obj)
+
+        l_topic = 'lighting/controller/status'
+        l_msg = {}
+        l_msg.Name = ''
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+
         LOG.info('Started.')
         return l_ret
 

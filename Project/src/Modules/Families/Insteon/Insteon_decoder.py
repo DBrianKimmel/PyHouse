@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-10-24'
+__updated__ = '2018-12-06'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,6 +33,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_HVAC import DecodeResponses as DecodeHvac
+from Modules.Families.Insteon.Insteon_Light import DecodeResponses as DecodeLight
 from Modules.Families.Insteon.Insteon_Security import DecodeResponses as DecodeSecurity
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
 from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
@@ -82,7 +83,7 @@ class DecodeResponses(object):
                 return 'Drop'
 
     def check_for_more_decoding(self, p_controller_obj, p_ret=True):
-        """Chop off the current message from the head of the buffered response stream from the controller.
+        """ Chop off the current message from the head of the buffered response stream from the controller.
         @param p_ret: is the result to return.
         """
         l_ret = p_ret
@@ -98,7 +99,7 @@ class DecodeResponses(object):
         return l_ret
 
     def _decode_dispatch(self, p_pyhouse_obj, p_controller_obj):
-        """Decode a message that was ACKed / NAked.
+        """ Decode a message that was ACKed / NAked.
         see IDM pages 238-241
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
@@ -106,7 +107,6 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
         l_ret = False
         l_cmd = p_controller_obj._Message[1]
-        # LOG.debug('  Dispatch: {:#02x}'.format(l_cmd))
         if l_cmd == 0:
             LOG.warning("Found a '0' record ->{}.".format(FormatBytes(l_message)))
             return l_ret
@@ -151,17 +151,27 @@ class DecodeResponses(object):
         [8] = message flags
         [9] = command 1
         [10] = command 2
+
+
         """
-        l_mqtt_publish = False
         l_message = p_controller_obj._Message
         l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        l_device_obj.BrightnessPct = '?'
-        if l_device_obj.DeviceType == 2:  # HVAC Type
+        #
+        if l_device_obj.DeviceType == 1:  # Light Type
+            DecodeLight().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
+            return
+        elif l_device_obj.DeviceType == 2:  # HVAC Type
             DecodeHvac().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
-        if l_device_obj.DeviceType == 3:  # Security Type
+        elif l_device_obj.DeviceType == 3:  # Security Type
             DecodeSecurity().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
+        else:
+            LOG.error()
+            return
+
+        l_mqtt_publish = False
+        l_device_obj.BrightnessPct = '?'
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]

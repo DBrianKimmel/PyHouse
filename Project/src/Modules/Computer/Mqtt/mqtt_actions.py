@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-11-25'
+__updated__ = '2018-12-04'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -105,17 +105,15 @@ class Actions:
         @return: a message to send to the log detailing the Mqtt message received.
         """
         # LOG('Dispatch:|n|tTopic: {}\n\tPayload: {}'.format(p_topic, p_message))
-        l_logmsg = 'Dispatch\n\tTopic: {}\n'.format(p_topic)
+        l_logmsg = 'Dispatch\n\tTopic: {}'.format(p_topic)
         # Lwt can be from any device
         if p_topic[0] == 'lwt':
             l_logmsg += self._decodeLWT(p_topic, p_message)
-            return l_logmsg
-        #
-        # Every other topic will have the following fields.
-        l_sender = self._get_field(p_message, 'Sender')
-        # self.m_room_name = self._get_field(p_message, 'RoomName')
-        l_logmsg += '\tSender: {}\n'.format(l_sender)
-        #
+            LOG.info(l_logmsg)
+        else:
+            # Every other topic will have the following field(s).
+            l_sender = self._get_field(p_message, 'Sender')
+            l_logmsg += '\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
         if p_topic[0] == 'computer':
             l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
@@ -139,6 +137,6 @@ class Actions:
             l_logmsg += '   OTHER: Unknown topic\n'
             l_logmsg += '\tTopic: {};\n'.format(p_topic[0])
             l_logmsg += '\tMessage: {};\n'.format(p_message)
-        return l_logmsg
+        LOG.info(l_logmsg)
 
 #  ## END DBK

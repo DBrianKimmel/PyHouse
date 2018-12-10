@@ -20,8 +20,8 @@ serial_port
 
 """
 
-__updated__ = '2018-11-22'
-__version_info__ = (18, 10, 0)
+__updated__ = '2018-11-26'
+__version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -58,6 +58,8 @@ class Utility(object):
     def _start_plm(p_pyhouse_obj, p_controller_obj):
         """
         import PLM module when we run this otherwise we will get a circular import
+        @param p_controller_obj: ==> ControllerData(CoreLightingData)
+        @return: None if no PLM, API Pointer if OK
         """
         from Modules.Families.Insteon import Insteon_PLM
         l_plmAPI = Insteon_PLM.API()

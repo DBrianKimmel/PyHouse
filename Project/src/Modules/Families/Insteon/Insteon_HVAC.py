@@ -22,7 +22,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2018-07-22'
+__updated__ = '2018-12-04'
 
 #  Import system type stuff
 
@@ -66,6 +66,17 @@ THERMOSTAT_CMD_1 = {
 }
 
 
+class InsteonThermostatStatus:
+
+    def __init__(self):
+        self.Name = None
+        self.Family = 'Insteon'
+        self.Type = 2  # 2 = HVAC
+        self.SubType = 1  # 1 =
+        self.Brightness = None
+        self.RoomName = None
+
+
 class Util(object):
     """
     """
@@ -91,9 +102,12 @@ class DecodeResponses(object):
         [9] = command 1
         [10] = command 2
         """
+
+        l_message = p_controller_obj._Message
+
         l_mqtt_topic = 'hvac/{}'.format(p_device_obj.Name)
         l_mqtt_message = "thermostat: "
-        l_message = p_controller_obj._Message
+
         l_firmware = l_message[7]
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
@@ -127,7 +141,7 @@ class DecodeResponses(object):
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp UP = {}; '.format(l_cmd2)
         elif l_cmd1 == MESSAGE_TYPES['thermostat_temp_down']:  # 0x69:  #  Set Thermostat temperature down (half degrees)
-            #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
+            #  p_device_obj.CurrentTemperature = l_cmd2 * HALFdecode_0x50decode_0x50
             l_mqtt_topic += '/temperature'
             l_mqtt_message += ' temp DOWN = {}; '.format(l_cmd2)
         elif l_cmd1 == MESSAGE_TYPES['thermostat_status']:  # 0x6A:  #  Send request for thermostat status

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Lighting/test/xml_lights.py
+@name:      PyHouse/Project/src/Modules/Housing/Lighting/test/xml_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2018 by D. Brian Kimmel
@@ -7,11 +7,11 @@
 @note:      Created on Nov 22, 2014
 @Summary:
 
-See PyHouse/src/test/xml_data.py for the entire hierarchy.
+See PyHouse/Project/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2018-01-24'
+__updated__ = '2018-12-06'
 
 # Import system type stuff
 
@@ -85,6 +85,8 @@ L_LIGHT_0 = '\n'.join([
     L_LIGHT_END
     ])
 
+# ##
+
 TESTING_LIGHT_NAME_1 = "UPB Light"
 TESTING_LIGHT_KEY_1 = '1'
 TESTING_LIGHT_ACTIVE_1 = 'True'
@@ -136,10 +138,64 @@ L_LIGHT_1 = '\n'.join([
     L_LIGHT_END
     ])
 
+# ##
+
+TESTING_LIGHT_NAME_2 = "Insteon Light"
+TESTING_LIGHT_KEY_2 = '2'
+TESTING_LIGHT_ACTIVE_2 = 'True'
+TESTING_LIGHT_UUID_2 = 'Light...-Lgt.-0000-0002-Light.b6eb6f'
+TESTING_LIGHT_COMMENT_2 = "Insteon Dimmer Light Comment 2"
+TESTING_LIGHT_CUR_LEVEL_2 = "63"
+TESTING_LIGHT_DEVICE_FAMILY_2 = 'Insteon'
+TESTING_LIGHT_DEVICE_TYPE_2 = '1'
+TESTING_LIGHT_DEVICE_SUBTYPE_2 = '2'
+TESTING_LIGHT_IS_DIMMABLE_2 = 'True'
+TESTING_LIGHT_ROOM_X2 = '1.23'
+TESTING_LIGHT_ROOM_Y2 = '4.56'
+TESTING_LIGHT_ROOM_Z2 = '7.89'
+# TESTING_LIGHT_ROOM_COORDS = '[' + TESTING_LIGHT_ROOM_X + ', ' + TESTING_LIGHT_ROOM_Y + ', ' + TESTING_LIGHT_ROOM_Z + ']'
+TESTING_LIGHT_ROOM_COORDS_2 = '[1.23,4.56,7.89]'
+TESTING_LIGHT_ROOM_NAME_2 = 'Master Bath'
+TESTING_LIGHT_ROOM_UUID_2 = 'Light...-Room-0002-0002-123458b6eb6f'
+
+L_LIGHT_START_2 = \
+        '<' + TESTING_LIGHT + ' ' + \
+        'Name="' + TESTING_LIGHT_NAME_2 + '" ' + \
+        'Key="' + TESTING_LIGHT_KEY_2 + '" ' + \
+        'Active="' + TESTING_LIGHT_ACTIVE_2 + '" ' + \
+        '>'
+L_LIGHT_UUID_2 = '    <UUID>' + TESTING_LIGHT_UUID_2 + '</UUID>'
+L_LIGHT_COMMENT_2 = '    <Comment>' + TESTING_LIGHT_COMMENT_2 + '</Comment>'
+L_LIGHT_CUR_LEVEL_2 = "    <Brightness>" + TESTING_LIGHT_CUR_LEVEL_2 + "</Brightness>"
+L_LIGHT_DEVICE_FAMILY_2 = "    <DeviceFamily>" + TESTING_LIGHT_DEVICE_FAMILY_2 + "</DeviceFamily>"
+L_LIGHT_DEVICE_TYPE_2 = '    <DeviceType>' + TESTING_LIGHT_DEVICE_TYPE_2 + '</DeviceType>'
+L_LIGHT_DEVICE_SUBTYPE_2 = '    <DeviceSubType>' + TESTING_LIGHT_DEVICE_SUBTYPE_2 + '</DeviceSubType>'
+L_LIGHT_IS_DIMMABLE_2 = '    <IsDimmable>' + TESTING_LIGHT_IS_DIMMABLE_2 + '</IsDimmable>'
+L_LIGHT_ROOM_COORDS_2 = '    <RoomCoords>' + TESTING_LIGHT_ROOM_COORDS_2 + '</RoomCoords>'
+L_LIGHT_ROOM_NAME_2 = '    <RoomName>' + TESTING_LIGHT_ROOM_NAME_2 + '</RoomName>'
+L_LIGHT_ROOM_UUID_2 = '    <RoomUUID>' + TESTING_LIGHT_ROOM_UUID_2 + '</RoomUUID>'
+
+L_LIGHT_2 = '\n'.join([
+    L_LIGHT_START_2,
+    L_LIGHT_UUID_2,
+    L_LIGHT_COMMENT_2,
+    L_LIGHT_CUR_LEVEL_2,
+    L_LIGHT_DEVICE_FAMILY_2,
+    L_LIGHT_DEVICE_TYPE_2,
+    L_LIGHT_DEVICE_SUBTYPE_2,
+    L_LIGHT_IS_DIMMABLE_2,
+    L_LIGHT_ROOM_NAME_2,
+    L_LIGHT_ROOM_COORDS_2,
+    L_LIGHT_ROOM_UUID_2,
+    XML_INSTEON_1,
+    L_LIGHT_END
+    ])
+
 XML_LIGHT_SECTION = '\n'.join([
     L_LIGHT_SECTION_START,
     L_LIGHT_0,
     L_LIGHT_1,
+    L_LIGHT_2,
     L_LIGHT_SECTION_END
     ])
 

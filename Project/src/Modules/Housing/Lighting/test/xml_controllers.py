@@ -9,9 +9,62 @@
 
 There is a matrix of controllers to create here
 
+<ControllerSection>
+    <Controller Active="True" Key="0" Name="Insteon Serial Controller">
+        <UUID>Controlr-0000-0000-0000-2468acb6eb6f</UUID>
+        <Comment>Device Comment 0</Comment>
+        <DeviceFamily>Insteon</DeviceFamily>
+        <DeviceType>1</DeviceType>
+        <DeviceSubType>2</DeviceSubType>
+        <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+        <RoomName>Testing Room Name ABDG</RoomName>
+        <RoomUUID>Device..-Room-0001-0002-deadbeef1234</RoomUUID>
+        <UUID>Device..-Dev.-0001-0002-deadbeef1234</UUID>
+        <InsteonAddress>21.34.1F</InsteonAddress>
+        <DevCat>01.1C</DevCat>
+        <EngineVersion>1</EngineVersion>
+        <FirmwareVersion>32</FirmwareVersion>
+        <GroupNumber>5</GroupNumber>
+        <GroupList>Insteon Group list 1</GroupList>
+        <ProductKey>11.1A.DD</ProductKey>
+        <InterfaceType>Serial</InterfaceType>
+        <Port>/dev/ttyS0</Port>
+        <Serial>
+            <BaudRate>19200</BaudRate>
+            <ByteSize>8</ByteSize>
+            <Parity>N</Parity>
+            <StopBits>1.0</StopBits>
+            <Timeout>1.0</Timeout>
+            <DsrDtr>False</DsrDtr>
+            <RtsCts>False</RtsCts>
+            <XonXoff>False</XonXoff>
+        </Serial>
+    </Controller>
+    <Controller Active="True" Key="1" Name="UPB USB Controller">
+        <UUID>Controlr-0001-0001-0001-2468acb6eb6f</UUID>
+        <Comment>Device Comment 0</Comment>
+        <DeviceFamily>UPB</DeviceFamily>
+        <DeviceType>1</DeviceType>
+        <DeviceSubType>2</DeviceSubType>
+        <RoomCoords>[3.4, 5.6, 1.2]</RoomCoords>
+        <RoomName>Testing Room Name ABDG</RoomName>
+        <RoomUUID>Device..-Room-0001-0002-deadbeef1234</RoomUUID>
+        <UUID>Device..-Dev.-0001-0002-deadbeef1234</UUID>
+        <UPBAddress>255</UPBAddress>
+        <UPBNetworkID>6</UPBNetworkID>
+        <UPBPassword>1253</UPBPassword>
+        <InterfaceType>USB</InterfaceType>
+        <Port>/dev/ttyUSB0</Port>
+        <USB>
+            <Vendor>6109</Vendor>
+            <Product>21760</Product>
+        </USB>
+    </Controller>
+</ControllerSection>
+
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2018-11-26'
 
 # Import system type stuff
 

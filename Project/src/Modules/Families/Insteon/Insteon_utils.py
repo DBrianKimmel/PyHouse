@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2018-07-22'
+__updated__ = '2018-12-06'
 
 #  Import system type stuff
 import math
@@ -192,6 +192,9 @@ class Decode(object):
     def _decode_message_flag(p_byte):
         """ Get the message flag and convert it to a description of the message.
         See p 42(55) of 2009 developers guide.
+
+        @param b_byte: is a byte containing the flags
+        @return: A string describing the flags
 
         Message Types  -  Bits 7,6, 5  0xE0 >> 5
         000 = Direct Message

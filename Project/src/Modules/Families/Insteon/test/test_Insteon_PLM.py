@@ -2,17 +2,16 @@
 @name:      PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2018 by D. Brian Kimmel
 @note:      Created on Apr 8, 2013
 @license:   MIT License
 @summary:   This module is for driving serial devices
 
-Passed all 6 tests - DBK - 2016-07-17
+Passed all 8 tests - DBK - 2016-07-17
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2016-10-31'
+__updated__ = '2018-12-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,7 +22,7 @@ from Modules.Core.data_objects import ControllerData, HouseInformation
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 ADR_16C9D0 = '16.C9.D0'
 ADR_17C272 = '17.C2.72'
@@ -44,8 +43,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_Insteon_PLM')
 
@@ -62,6 +63,23 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_house, 'A1-01-A - House'))
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
         self.assertEqual(l_house.Name, 'Test House')  # Default name
+
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_PIONEER_SECTION
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[:16], L_PIONEER_SECTION_START[:16])
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_PIONEER_SECTION)
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
+        self.assertEqual(l_xml.tag, TESTING_PIONEER_SECTION)
 
 
 class C1_Utility(SetupMixin, unittest.TestCase):
