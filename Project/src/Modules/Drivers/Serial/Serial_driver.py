@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2018-11-26'
+__updated__ = '2018-12-17'
 
 #  Import system type stuff
 import pyudev
@@ -172,7 +172,7 @@ class API(SerialAPI):
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj: is the Controller_Data object for a serial device to open.
+        @param p_controller_obj: is the ControllerData() object for a serial device to open.
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """

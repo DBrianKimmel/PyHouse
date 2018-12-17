@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-12-13'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,6 +34,62 @@ from Modules.Core.Utilities.xml_tools import PutGetXML
 
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'
+
+
+class MqttActions:
+    """ Mqtt section
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _get_field(self, p_message, p_field):
+        try:
+            l_ret = p_message[p_field]
+        except KeyError:
+            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+            LOG.error(l_ret)
+        return l_ret
+
+    def decode(self, p_topic, p_message):
+        """ Decode Mqtt message
+        ==> pyhouse/<house name>/entertainment/<device>/...
+
+        <device-or-service> = one of the VALID_ENTERTAINMENT_MFGRS
+
+        These messages probably come from some external source such as node-red or alexa.
+
+        @param p_topic: is the topic after 'entertainment'
+        @return: a message to be logged as a Mqtt message
+        """
+        l_topic = p_topic[0].lower()
+        l_logmsg = '\tEntertainment: '
+        try:
+            l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
+        except (KeyError, AttributeError) as e_err:
+            l_module = None
+            l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
+        return l_logmsg
+        #
+        try:
+            l_logmsg += l_module.decode(p_topic[1:], p_message)
+
+            if l_topic == 'pandora':
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            elif l_topic == 'pioneer':
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            elif l_topic == 'samsung':
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            else:
+                l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
+        except Exception as e_err:
+            LOG.error('Error {}'.format(e_err))
+            l_logmsg += "(entertainment-102.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
+        return l_logmsg
 
 
 class Utility(object):

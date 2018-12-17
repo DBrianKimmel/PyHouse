@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-12-06'
+__updated__ = '2018-12-17'
 
 #  Import system type stuff
 
@@ -105,7 +105,8 @@ class DecodeResponses:
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
         if l_mqtt_publish:
-            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status/debug', p_device_obj)
+            l_topic = 'lighting/status/debug'
+            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)
             pass
         return l_debug_msg
 

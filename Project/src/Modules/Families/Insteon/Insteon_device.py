@@ -127,7 +127,7 @@ class API(object):
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, p_rate=0):
+    def ControlLight(self, p_light_obj, p_source, p_level, p_rate=0):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
@@ -135,6 +135,6 @@ class API(object):
             LOG.info('No PLM was defined - Quitting.')
             return
         LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm))
-        self.m_plm.ChangeLight(p_light_obj, p_source, p_level, p_rate)
+        self.m_plm.ControlLight(p_light_obj, p_source, p_level, p_rate)
 
 #  ## END DBK

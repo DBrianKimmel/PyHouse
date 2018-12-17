@@ -12,7 +12,7 @@ This may be instanced as many times as there are USB devices to control.
 This should also allow control of many different houses.
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2018-12-17'
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
@@ -37,7 +37,6 @@ g_debug = 0
 LOG = Logger.getLogger('PyHouse.USBHIDDriver ')
 g_usb = None
 
-
 # Timeouts for send/receive delays
 RECEIVE_TIMEOUT = 0.3
 
@@ -47,7 +46,6 @@ HID_GET_PROTOCOL = 0x03
 HID_SET_REPORT = 0x09
 HID_SET_IDLE = 0x0A
 HID_SET_PROTOCOL = 0x0B
-
 
 
 class UsbDeviceData(object):
@@ -72,6 +70,7 @@ class UsbDeviceData(object):
     def __str__(self):
         l_ret = "USB_driver.UsbDeviceData: Name: {:}, Vendor: {:#04x}, Product: {:#04x}, Device: {}, Port: {}".format(self.Name, self.Vendor, self.Product, self.Device, self.Port)
         return l_ret
+
 
 class UsbDriverAPI(UsbDeviceData):
 
@@ -235,6 +234,7 @@ class UsbDriverAPI(UsbDeviceData):
         l_len = g_usb.Device.write(0, p_message, timeout=100)
         return l_len
 
+
 class API(UsbDriverAPI):
 
     def __init__(self):
@@ -244,7 +244,7 @@ class API(UsbDriverAPI):
 
     def Start(self, p_controller_obj, p_parent):
         """
-        @param p_controller_obj: is the Controller_Data object we are starting.
+        @param p_controller_obj: is the ControllerData() object we are starting.
         @param p_parent: is the address of the caller USB device driver
         """
         global g_usb

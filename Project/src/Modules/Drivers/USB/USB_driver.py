@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-04-26'
+__updated__ = '2018-12-17'
 
 # Import system type stuff
 import usb
@@ -201,7 +201,7 @@ class API(UsbDriverAPI):
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj: is the Controller_Data object we are starting.
+        @param p_controller_obj: is the ControllerData() object we are starting.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj

@@ -23,7 +23,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2018-11-26'
+__updated__ = '2018-12-17'
 __version_info__ = (18, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -182,7 +182,8 @@ class API(Utility):
         LOG.info("Saved all XML sections to config file.\n----------\n")
 
     def Stop(self):
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/shutdown', self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        l_topic = 'computer/shutdown'
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
         self.SaveXml()
         self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
         self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()

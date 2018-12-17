@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-12-04'
+__updated__ = '2018-12-13'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,6 +19,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import NodeData, PyHouseData
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
+from Modules.Housing.Lighting.lighting_lights import MqttActions as lightsMqtt
 from Modules.Housing.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.Housing.Security.security import MqttActions as securityMqtt
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -32,12 +33,14 @@ class Actions:
 
     m_disp_computer = None
     m_disp_entertainment = None
+    m_disp_lights = None
     m_myname = 'Not Initialized.'
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_myname = p_pyhouse_obj.Computer.Name
         self.m_disp_entertainment = entertainmentMqtt(p_pyhouse_obj)
+        self.m_disp_lights = lightsMqtt(p_pyhouse_obj)
 
     def _get_field(self, p_message, p_field):
         """ Get the given field from a JSON message.
@@ -123,8 +126,8 @@ class Actions:
             l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
         elif p_topic[0] == 'house':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
-        elif p_topic[0] == 'lighting':
-            l_logmsg += self._decode_lighting(p_topic, p_message)
+        elif p_topic[0] == 'lighting' or p_topic[0] == 'lights':
+            l_logmsg += self.m_disp_lights.decode(p_topic, p_message)
         elif p_topic[0] == 'login':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'schedule':

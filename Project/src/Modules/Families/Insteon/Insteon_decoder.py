@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-12-06'
+__updated__ = '2018-12-17'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -167,7 +167,7 @@ class DecodeResponses(object):
             DecodeSecurity().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         else:
-            LOG.error()
+            LOG.error('Unknown Device Type:{};'.format(l_device_obj.DeviceType))
             return
 
         l_mqtt_publish = False
@@ -222,7 +222,8 @@ class DecodeResponses(object):
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
         if l_mqtt_publish:
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('lighting/status/debug', l_device_obj)
+            l_topic = 'lighting/status/debug'
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)
         return
 
     def _decode_0x51(self, p_controller_obj):

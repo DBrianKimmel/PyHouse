@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2018-11-25'
+__updated__ = '2018-12-17'
 
 #  Import system type stuff
 import datetime
@@ -287,6 +287,7 @@ class Utility(object):
 
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):
+        l_topic = 'schedule/sunrise_set'
         l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('schedule/sunrise_set', l_riseset)

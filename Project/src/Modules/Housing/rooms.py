@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-07-14'
+__updated__ = '2018-12-17'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -203,7 +203,8 @@ class Mqtt(object):
                 room/update - to add or modify a room
         """
         l_json = encode_json(p_room_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('house/room/' + p_topic, l_json)
+        l_topic = 'house/room/' + p_topic
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_json)
 
 
 class Sync(object):

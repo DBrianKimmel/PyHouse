@@ -276,7 +276,7 @@ class B3_Utils_Family(SetupMixin, unittest.TestCase):
 
 class B4_Utils_Family(SetupMixin, unittest.TestCase):
     """ This section tests family API retrieval
-            Obj:ChangeLight             <bound method API.ChangeLight of <Modules.Families.UPB.UPB_device.API object at
+            Obj:ControlLight             <bound method API.ControlLight of <Modules.Families.UPB.UPB_device.API object at
             Obj:SaveXml                 <bound method API.SaveXml of <Modules.Families.UPB.UPB_device.API object at
             Obj:Start                   <bound method API.Start of <Modules.Families.UPB.UPB_device.API object at
             Obj:Stop                    <bound method API.Stop of <Modules.Families.UPB.UPB_device.API object at

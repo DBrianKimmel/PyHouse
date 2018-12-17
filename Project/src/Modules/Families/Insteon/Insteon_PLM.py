@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2018-11-26'
+__updated__ = '2018-12-17'
 
 #  Import system type stuff
 try:
@@ -286,6 +286,7 @@ class LightHandlerAPI(object):
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         """
+        @param p_controller_obj: is the ControllerData() info
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
@@ -393,6 +394,7 @@ class Utility(LightHandlerAPI):
         """
         LOG.info('Starting Controller:{}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
+        l_topic = 'lighting/controller/status'
         if l_ret:
             LOG.info('Controller Driver Start was OK.')
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
@@ -400,6 +402,7 @@ class Utility(LightHandlerAPI):
             self.get_all_device_information(p_pyhouse_obj, p_controller_obj)
         else:
             LOG.error('Insteon Controller start failed')
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 
     def get_plm_info(self, p_pyhouse_obj, p_controller_obj):
@@ -444,8 +447,7 @@ class API(Utility):
         self.get_plm_info(p_pyhouse_obj, p_controller_obj)
 
         l_topic = 'lighting/controller/status'
-        l_msg = {}
-        l_msg.Name = ''
+        l_msg = p_controller_obj
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
 
         LOG.info('Started.')
@@ -456,7 +458,7 @@ class API(Utility):
         self.stop_controller_driver(p_controller_obj)
         LOG.info('Stopped.')
 
-    def ChangeLight(self, p_device_obj, _p_source, p_level, p_rate=0):
+    def ControlLight(self, p_device_obj, _p_source, p_level, p_rate=0):
         """
         Send a command to change a device (light's level)
         """

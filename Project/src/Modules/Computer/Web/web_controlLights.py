@@ -64,6 +64,6 @@ class ControlLightsElement(athena.LiveElement):
         LOG.info('Control Light via Web - Change {} device to Brightness {}'.format(l_light_obj.Name, l_light_obj.BrightnessPct))
         l_topic = 'lighting/web/{}/control'.format(l_light_obj.Name)
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
-        self.m_pyhouse_obj.APIs.House.LightingAPI.ChangeLight(l_light_obj, 'web', l_brightness)
+        self.m_pyhouse_obj.APIs.House.LightingAPI.ControlLight(l_light_obj, 'web', l_brightness)
 
 # ## END DBK

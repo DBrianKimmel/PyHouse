@@ -29,7 +29,7 @@ PyHouse.House.
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-10-01'
+__updated__ = '2018-12-13'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -67,7 +67,7 @@ class MqttActions(object):
 
     def decode(self, p_topic, p_message):
         """
-        --> pyhouse/housname/house/topic03/topic04/...
+        --> pyhouse/housename/house/topic03/topic04/...
         """
         l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
         if p_topic[0] == 'room':

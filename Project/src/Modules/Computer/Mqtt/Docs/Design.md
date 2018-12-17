@@ -30,6 +30,17 @@ House names must be unique within the realm that the broker and backup brokers s
 The next section is the message category.
 ==>pyhouse/housename/lighting
 
+Categories:
+- computer
+- entertainment
+- hvac
+- irrigation
+- lighting
+- pool
+- rule
+- schedule
+- security
+
 
 ### Payload
 

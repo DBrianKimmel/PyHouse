@@ -77,8 +77,8 @@ class API(object):
         """
         return p_xml
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate=0):
+    def ControlLight(self, p_light_obj, p_source, p_level, _p_rate=0):
         LOG.debug('Change light Name:{}, DeviceFamily:{}'.format(p_light_obj.Name, p_light_obj.DeviceFamily))
-        self.m_plm.ChangeLight(p_light_obj, p_source, p_level)
+        self.m_plm.ControlLight(p_light_obj, p_source, p_level)
 
 # ## END

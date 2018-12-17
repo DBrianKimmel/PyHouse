@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-12-13'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,6 +31,26 @@ from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
+
+
+class MqttActions:
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_topic, p_message):
+        """
+        --> pyhouse/housename/lighting/
+        """
+        l_logmsg = '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        if p_topic[0] == 'room':
+            l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
+        #  computer/***
+        else:
+            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+        return l_logmsg
 
 
 class Utility(object):
@@ -102,7 +122,7 @@ class API(Utility):
         #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def ChangeLight(self, p_light_obj, p_source, p_new_level, p_rate=None):
+    def ControlLight(self, p_light_obj, p_source, p_new_level, p_rate=None):
         """
         Set an Insteon controlled light to a value - On, Off, or Dimmed.
 
@@ -120,7 +140,7 @@ class API(Utility):
             LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
 
             l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
-            l_api.ChangeLight(l_light_obj, p_source, p_new_level)
+            l_api.ControlLight(l_light_obj, p_source, p_new_level)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 

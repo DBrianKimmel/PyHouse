@@ -72,15 +72,16 @@ class API(object):
     def DoSchedule(p_pyhouse_obj, p_schedule_obj):
         """ A schedule action has been called for on a Light
         """
+        l_topic = 'schedule/execute'
         l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_schedule_obj.LightName)
         LOG.info("SchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
                 p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level,
                 l_light_obj.Name, l_light_obj.Key))
-        API.ChangeLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", p_schedule_obj)
+        API.ControlLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_schedule_obj)
 
     @staticmethod
-    def ChangeLight(p_pyhouse_obj, p_light_obj, p_source, p_new_level, _p_rate=None):
+    def ControlLight(p_pyhouse_obj, p_light_obj, p_source, p_new_level, _p_rate=None):
         """ Set a light to a value - On, Off, or Dimmed.
         Called by:
             web_controlLights
@@ -95,7 +96,7 @@ class API(object):
         try:
             LOG.info('Turn Light: "{}" to level: "{}", DeviceFamily: "{}"'.format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, l_light_obj)
-            l_family_api.ChangeLight(l_light_obj, p_source, p_new_level)
+            l_family_api.ControlLight(l_light_obj, p_source, p_new_level)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 

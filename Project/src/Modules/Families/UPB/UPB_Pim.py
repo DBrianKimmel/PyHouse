@@ -431,7 +431,7 @@ class API(UpbPimAPI):
     def Stop(self, p_controller_obj):
         pass
 
-    def ChangeLight(self, p_light_obj, p_source, p_level, _p_rate=0):
+    def ControlLight(self, p_light_obj, p_source, p_level, _p_rate=0):
         for l_obj in self.m_house_obj.Lights.values():
             if l_obj.Active == False:
                 continue
