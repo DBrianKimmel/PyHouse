@@ -261,7 +261,8 @@ class ScheduleExecution(object):
         Send information to one device to execute a schedule.
         """
         l_topic = 'schedule/'
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_json)
+        l_obj = p_schedule_obj
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
         if p_schedule_obj.ScheduleType == 'Lighting':
             LOG.info('Execute_one_schedule type = Lighting')

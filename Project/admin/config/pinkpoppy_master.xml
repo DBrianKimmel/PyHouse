@@ -411,7 +411,7 @@
 				</Button>
 			</ButtonSection>
 			<ControllerSection>
-				<Controller Active="False" Key="0" Name="PLM_1">
+				<Controller Active="True" Key="0" Name="PLM_1">
 					<Comment>None</Comment>
 					<UUID>c1490758-092e-11e4-bffa-b827eb189eb4</UUID>
 					<Comment>None</Comment>
