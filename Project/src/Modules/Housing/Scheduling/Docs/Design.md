@@ -20,4 +20,15 @@ They include lights turning on and off, Thermostat settings, Irrigation Schedule
 Originally I wrote a lot of cpmplicated code to compute sunrise and sunset but then I found Astral.
 I switched to astral and the code is now gone.  Hurrah!
 
+## Mqtt
+
+.../schedule/<Command>
+- status
+- control
+
+### status
+
+This is a schedule object published.
+
+
 ### END DBK

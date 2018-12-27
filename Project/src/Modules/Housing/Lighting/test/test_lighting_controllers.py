@@ -10,7 +10,7 @@
 Passed all 19 tests - DBK - 2017-01-19
 """
 
-__updated__ = '2018-11-26'
+__updated__ = '2018-12-22'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -26,11 +26,11 @@ from Modules.Housing.Lighting.lighting_controllers import Utility, API as contro
 from Modules.Core.Utilities import json_tools
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
-    TESTING_DEVICE_TYPE, \
-    TESTING_DEVICE_SUBTYPE, \
-    TESTING_DEVICE_ROOM_NAME, \
-    TESTING_DEVICE_ROOM_UUID, \
-    TESTING_DEVICE_COMMENT_0
+    TESTING_DEVICE_TYPE_0, \
+    TESTING_DEVICE_SUBTYPE_0, \
+    TESTING_DEVICE_ROOM_NAME_0, \
+    TESTING_DEVICE_ROOM_UUID_0, \
+    TESTING_DEVICE_COMMENT_0, TESTING_DEVICE_UUID_0, TESTING_DEVICE_COMMENT_1, TESTING_DEVICE_FAMILY_UPB
 from Modules.Drivers.Serial.test.xml_serial import \
     TESTING_SERIAL_BAUD_RATE, \
     TESTING_SERIAL_BYTE_SIZE, \
@@ -62,7 +62,12 @@ from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_ACTIVE_0, \
     TESTING_CONTROLLER_KEY_0, \
-    TESTING_CONTROLLER_UUID_0, TESTING_CONTROLLER_SECTION, TESTING_CONTROLLER, XML_CONTROLLER_SECTION
+    TESTING_CONTROLLER_UUID_0, \
+    TESTING_CONTROLLER_SECTION, \
+    TESTING_CONTROLLER, \
+    XML_CONTROLLER_SECTION, \
+    TESTING_CONTROLLER_NAME_1, \
+    TESTING_CONTROLLER_ACTIVE_1, TESTING_CONTROLLER_KEY_1
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -134,32 +139,112 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_BaseDevice(self):
+    def test_01_BaseDevice0(self):
         """Read Base Device
         Skip testing of room coords
         """
-        l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.controller)
-        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Base Device'))
+        l_xml = self.m_xml.controller_sect[0]
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
+        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Base Device'))
         self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(str(l_obj.Key), TESTING_CONTROLLER_KEY_0)
         self.assertEqual(str(l_obj.Active), TESTING_CONTROLLER_ACTIVE_0)
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
+        self.assertEqual(l_obj.UUID, TESTING_CONTROLLER_UUID_0)
+        # Plus Device Info
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(str(l_obj.DeviceType), TESTING_DEVICE_TYPE)
-        self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE)
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_obj.RoomUUID, TESTING_DEVICE_ROOM_UUID)
+        self.assertEqual(str(l_obj.DeviceType), TESTING_DEVICE_TYPE_0)
+        self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE_0)
+        # Plus Room Info
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_DEVICE_ROOM_UUID_0)
 
-    def test_02_Controller(self):
+    def test_02_BaseDevice1(self):
+        """Read Base Device
+        Skip testing of room coords
+        """
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.controller_sect[1])
+        # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Base Device'))
+        self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_1)
+        self.assertEqual(str(l_obj.Key), TESTING_CONTROLLER_KEY_1)
+        self.assertEqual(str(l_obj.Active), TESTING_CONTROLLER_ACTIVE_1)
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_1)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_UPB)
+        self.assertEqual(str(l_obj.DeviceType), TESTING_DEVICE_TYPE_1)
+        self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE_0)
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_DEVICE_ROOM_UUID_0)
+
+    def test_03_Controller0(self):
         """Read Controller 0 Serial
         """
-        l_xml = self.m_xml.controller
+        l_xml = self.m_xml.controller_sect[0]
         l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
         l_obj = Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
         # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Controller'))
         self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
         self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
 
-    def test_03_Interface(self):
+    def test_04_Controller1(self):
+        """Read Controller 0 Serial
+        """
+        l_xml = self.m_xml.controller_sect[1]
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
+        l_obj = Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
+        # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Controller'))
+        self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
+        self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
+
+    def test_05_Interface0(self):
+        """Read Controller Interface.
+        """
+        l_xml = self.m_xml.controller_sect[0]
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
+        l_obj = Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
+        Utility._read_interface_data(self.m_pyhouse_obj, l_obj, l_xml)
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Interface'))
+        self.assertEqual(str(l_obj.BaudRate), TESTING_SERIAL_BAUD_RATE)
+        self.assertEqual(str(l_obj.ByteSize), TESTING_SERIAL_BYTE_SIZE)
+        self.assertEqual(str(l_obj.DsrDtr), TESTING_SERIAL_DSR_DTR)
+        self.assertEqual(l_obj.Parity, TESTING_SERIAL_PARITY)
+        self.assertEqual(str(l_obj.RtsCts), TESTING_SERIAL_RTS_CTS)
+        self.assertEqual(str(l_obj.StopBits), TESTING_SERIAL_STOP_BITS)
+        self.assertEqual(str(l_obj.Timeout), TESTING_SERIAL_TIMEOUT)
+        self.assertEqual(str(l_obj.XonXoff), TESTING_SERIAL_XON_XOFF)
+
+    def test_06_Interface1(self):
+        """Read Controller Interface.
+        """
+        l_xml = self.m_xml.controller_sect[1]
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
+        l_obj = Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
+        Utility._read_interface_data(self.m_pyhouse_obj, l_obj, l_xml)
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Interface'))
+        self.assertEqual(str(l_obj.BaudRate), TESTING_SERIAL_BAUD_RATE)
+        self.assertEqual(str(l_obj.ByteSize), TESTING_SERIAL_BYTE_SIZE)
+        self.assertEqual(str(l_obj.DsrDtr), TESTING_SERIAL_DSR_DTR)
+        self.assertEqual(l_obj.Parity, TESTING_SERIAL_PARITY)
+        self.assertEqual(str(l_obj.RtsCts), TESTING_SERIAL_RTS_CTS)
+        self.assertEqual(str(l_obj.StopBits), TESTING_SERIAL_STOP_BITS)
+        self.assertEqual(str(l_obj.Timeout), TESTING_SERIAL_TIMEOUT)
+        self.assertEqual(str(l_obj.XonXoff), TESTING_SERIAL_XON_XOFF)
+
+    def test_07_Family0(self):
+        """Read controller family
+        """
+        l_xml = self.m_xml.controller_sect[0]
+        l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
+        Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
+        Utility._read_interface_data(self.m_pyhouse_obj, l_obj, l_xml)
+        Utility._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
+        # print(PrettyFormatAny.form(l_obj, 'B1-04-A - Family'))
+        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
+        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
+        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_1)
+        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
+        self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
+
+    def test_07_Interface0(self):
         """Read Controller Interface.
         """
         l_xml = self.m_xml.controller
@@ -176,22 +261,24 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Timeout), TESTING_SERIAL_TIMEOUT)
         self.assertEqual(str(l_obj.XonXoff), TESTING_SERIAL_XON_XOFF)
 
-    def test_04_Family(self):
-        """Read controller family
+    def test_08_Interface1(self):
+        """Read Controller Interface.
         """
         l_xml = self.m_xml.controller
         l_obj = Utility._read_base_device(self.m_pyhouse_obj, l_xml)
-        Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
+        l_obj = Utility._read_controller_data(self.m_pyhouse_obj, l_obj, l_xml)
         Utility._read_interface_data(self.m_pyhouse_obj, l_obj, l_xml)
-        Utility._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
-        # print(PrettyFormatAny.form(l_obj, 'B1-04-A - Family'))
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_1)
-        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
-        self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
+        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Interface'))
+        self.assertEqual(str(l_obj.BaudRate), TESTING_SERIAL_BAUD_RATE)
+        self.assertEqual(str(l_obj.ByteSize), TESTING_SERIAL_BYTE_SIZE)
+        self.assertEqual(str(l_obj.DsrDtr), TESTING_SERIAL_DSR_DTR)
+        self.assertEqual(l_obj.Parity, TESTING_SERIAL_PARITY)
+        self.assertEqual(str(l_obj.RtsCts), TESTING_SERIAL_RTS_CTS)
+        self.assertEqual(str(l_obj.StopBits), TESTING_SERIAL_STOP_BITS)
+        self.assertEqual(str(l_obj.Timeout), TESTING_SERIAL_TIMEOUT)
+        self.assertEqual(str(l_obj.XonXoff), TESTING_SERIAL_XON_XOFF)
 
-    def test_05_OneController(self):
+    def test_05_OneController0(self):
         """ Read in the xml file and fill in the lights
         """
         l_obj = Utility._read_one_controller_xml(self.m_pyhouse_obj, self.m_xml.controller)
@@ -200,9 +287,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_0 == 'True'))
         self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE))
-        self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE))
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE_0))
+        self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE_0))
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
         self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
         self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
         self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
@@ -217,11 +304,39 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
         self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
 
-    def test_06_AllControllers(self):
+    def test_06_OneController1(self):
+        """ Read in the xml file and fill in the lights
+        """
+        l_obj = Utility._read_one_controller_xml(self.m_pyhouse_obj, self.m_xml.controller)
+        # print(PrettyFormatAny.form(l_obj, 'B1-05-A - OneController', 100))
+        self.assertEqual(l_obj.Name, TESTING_CONTROLLER_NAME_0)
+        self.assertEqual(l_obj.Active, (TESTING_CONTROLLER_ACTIVE_0 == 'True'))
+        self.assertEqual(l_obj.Comment, TESTING_DEVICE_COMMENT_0)
+        self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
+        self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE_0))
+        self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE_0))
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
+        self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
+        self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
+        self.assertEqual(l_obj.ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
+        self.assertEqual(l_obj.Parity, TESTING_SERIAL_PARITY)
+        self.assertEqual(str(l_obj.RtsCts), TESTING_SERIAL_RTS_CTS)
+        self.assertEqual(l_obj.StopBits, float(TESTING_SERIAL_STOP_BITS))
+        self.assertEqual(l_obj.Timeout, float(TESTING_SERIAL_TIMEOUT))
+        self.assertEqual(l_obj.XonXoff, TESTING_SERIAL_XON_XOFF == 'True')
+        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
+        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
+        self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
+        self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
+
+    def test_07_AllControllers(self):
         """Read all controllers.
         """
         l_objs = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_objs, 'B1-06-A - AllControllers'))
+        print(PrettyFormatAny.form(l_objs, 'B1-06-A - AllControllers'))
+        print(PrettyFormatAny.form(l_objs[0], 'B1-06-B - AllControllers'))
+        print(PrettyFormatAny.form(l_objs[1], 'B1-06-C - AllControllers'))
         self.assertEqual(len(l_objs), 2)
         self.assertEqual(l_objs[0].BaudRate, int(TESTING_SERIAL_BAUD_RATE))
         self.assertEqual(l_objs[0].ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
@@ -249,10 +364,10 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('UUID').text, TESTING_CONTROLLER_UUID_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_DEVICE_COMMENT_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_xml.find('DeviceType').text, TESTING_DEVICE_TYPE)
-        self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_DEVICE_SUBTYPE)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_DEVICE_ROOM_UUID)
+        self.assertEqual(l_xml.find('DeviceType').text, TESTING_DEVICE_TYPE_0)
+        self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_DEVICE_SUBTYPE_0)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_DEVICE_ROOM_UUID_0)
 
     def test_02_Controller(self):
         """ Write out the XML file for the Base + Controller
@@ -313,7 +428,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         l_controllers = self.m_api.read_all_controllers_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
         l_xml = self.m_api.write_all_controllers_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'C1-06-A - AllControllers', 100))
+        print(PrettyFormatAny.form(l_xml, 'C1-06-A - AllControllers', 100))
         self.assertEqual(l_xml.find('Controller/InsteonAddress').text, TESTING_INSTEON_ADDRESS_1)
         self.assertEqual(l_xml.find('Controller/DevCat').text, TESTING_INSTEON_DEVCAT_1)
         self.assertEqual(l_xml.find('Controller/GroupList').text, TESTING_INSTEON_GROUP_LIST_1)

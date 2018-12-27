@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2018-12-27'
 
 #  Import system type stuff
 import datetime
@@ -95,6 +95,28 @@ def _get_schedule_timefield(p_schedule_obj):
     except ValueError:
         l_time = datetime.time(0)
     return l_time
+
+
+class MqttActions(object):
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_topic, p_message):
+        """
+        --> pyhouse/housename/schedule/...
+        """
+        l_logmsg = '\tSchedule: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        LOG.debug('MqttSchedule Dispatch Topic:{}'.format(p_topic))
+        # if p_topic[0] == 'room':
+        #    l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
+        # elif p_topic[0] == 'schedule':
+        #    l_logmsg += scheduleAPI.
+        # else:
+        #    l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+        return l_logmsg
 
 
 class RiseSet(object):
@@ -238,6 +260,9 @@ class ScheduleExecution(object):
         """
         Send information to one device to execute a schedule.
         """
+        l_topic = 'schedule/'
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_json)
+
         if p_schedule_obj.ScheduleType == 'Lighting':
             LOG.info('Execute_one_schedule type = Lighting')
             lightActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
@@ -412,5 +437,11 @@ class API:
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
+
+    def DecodeMqtt(self, p_topic, p_message):
+        """ Decode messages sent to the house module.
+        """
+        l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
+        return l_logmsg
 
 # ## END DBK

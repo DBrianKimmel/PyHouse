@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2018-11-03'
+__updated__ = '2018-12-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -97,7 +97,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_ONKYO_SECTION)
-        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
+        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
         self.assertEqual(l_xml.tag, TESTING_ONKYO_SECTION)
 
 

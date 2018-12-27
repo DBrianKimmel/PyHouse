@@ -37,6 +37,7 @@ Categories:
 - irrigation
 - lighting
 - pool
+- room
 - rule
 - schedule
 - security

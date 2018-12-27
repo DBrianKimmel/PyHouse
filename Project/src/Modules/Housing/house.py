@@ -27,9 +27,8 @@ PyHouse.House.
               Schedules
               ...
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-12-13'
+__updated__ = '2018-12-18'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -37,8 +36,8 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files
 from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
-from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Families.family import API as familyAPI
+from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML, Mqtt as roomsMqtt
 from Modules.Housing.Hvac.hvac import API as hvacAPI
@@ -51,6 +50,7 @@ from Modules.Housing.Sync.sync import API as syncAPI
 from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 
@@ -70,9 +70,11 @@ class MqttActions(object):
         --> pyhouse/housename/house/topic03/topic04/...
         """
         l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'room':
             l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
-        #  computer/***
+        elif p_topic[0] == 'schedule':
+            l_logmsg = scheduleAPI.DecodeMqtt(p_topic, p_message)
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
         return l_logmsg

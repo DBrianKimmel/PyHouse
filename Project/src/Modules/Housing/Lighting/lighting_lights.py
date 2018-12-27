@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2018-12-13'
+__updated__ = '2018-12-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,6 +31,7 @@ from Modules.Computer import logging_pyh as Logging
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'
@@ -62,33 +63,8 @@ class MqttActions:
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        l_topic = p_topic[0].lower()
-        l_logmsg = '\tEntertainment: '
-        try:
-            l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-        except (KeyError, AttributeError) as e_err:
-            l_module = None
-            l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
-        return l_logmsg
-        #
-        try:
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-
-            if l_topic == 'pandora':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            elif l_topic == 'pioneer':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            elif l_topic == 'samsung':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            else:
-                l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
-        except Exception as e_err:
-            LOG.error('Error {}'.format(e_err))
-            l_logmsg += "(entertainment-102.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
+        l_topic = p_topic[1].lower()
+        l_logmsg = '\tLighting: ' + PrettyFormatAny.form(p_message, 'debug')
         return l_logmsg
 
 
@@ -126,14 +102,8 @@ class Utility(object):
 
     @staticmethod
     def _write_light_data(p_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_text_element(p_xml, 'Brightness', p_obj.BrightnessPct)
         PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
-        PutGetXML.put_int_element(p_xml, 'DeviceType', p_obj.DeviceType)
-        PutGetXML.put_int_element(p_xml, 'DeviceSubType', p_obj.DeviceSubType)
-        PutGetXML.put_text_element(p_xml, 'RoomName', p_obj.RoomName)
-        PutGetXML.put_uuid_element(p_xml, 'RoomUUID', p_obj.RoomUUID)
-        PutGetXML.put_coords_element(p_xml, 'RoomCoords', p_obj.RoomCoords)
         return p_xml
 
     @staticmethod

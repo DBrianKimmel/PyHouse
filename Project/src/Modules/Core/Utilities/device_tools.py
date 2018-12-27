@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-23'
+__updated__ = '2018-12-22'
 
 #  Import system type stuff
 
@@ -29,6 +29,8 @@ class XML(object):
     def read_base_device_object_xml(p_pyhouse_obj, p_obj, p_xml):
         """
         Get the BaseUUIDObject entries from the XML element.
+        Adds: Device Info, Room Info.
+
         @param p_obj: is the object we wish to populate with data
         @param p_xml: is the element we will extract data from (including children).
         """
@@ -50,13 +52,7 @@ class XML(object):
         @param p_obj: is the object that contains the device data for which we will output the XML
         @return: the XML element with children that we will create.
         """
-        # l_elem = ET.Element(p_element_tag)
         l_elem = XmlConfigTools.write_base_UUID_object_xml(p_element_tag, p_obj)
-        PutGetXML.put_text_attribute(l_elem, 'Name', p_obj.Name)
-        PutGetXML.put_int_attribute(l_elem, 'Key', p_obj.Key)
-        PutGetXML.put_bool_attribute(l_elem, 'Active', p_obj.Active)
-        #  add sub elements
-        PutGetXML.put_text_element(l_elem, 'Comment', p_obj.Comment)
         PutGetXML.put_text_element(l_elem, 'DeviceFamily', p_obj.DeviceFamily)
         PutGetXML.put_int_element(l_elem, 'DeviceType', p_obj.DeviceType)
         PutGetXML.put_int_element(l_elem, 'DeviceSubType', p_obj.DeviceSubType)
@@ -64,6 +60,7 @@ class XML(object):
         PutGetXML.put_text_element(l_elem, 'RoomName', p_obj.RoomName)
         PutGetXML.put_text_element(l_elem, 'RoomUUID', p_obj.RoomUUID)
         return l_elem
+
 
 def stuff_new_attrs(p_target_obj, p_data_obj):
     """Put the NEW information from the data object into the target object.

@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/Housing/Lighting/test/test_lighting_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on May 23, 2014
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 24 tests - DBK - 2017-12-24
+Passed all 26 tests - DBK - 2018-12-21
 
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS, TESTING_UPB_NETWORK, TESTING_UPB_PASSWORD
 
-__updated__ = '2017-12-24'
+__updated__ = '2018-12-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -37,7 +37,7 @@ from Modules.Core.test.xml_device import \
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_DIVISION
 from Modules.Housing.Lighting.test.xml_lighting import \
-    TESTING_LIGHTING_SECTION
+    TESTING_LIGHTING_SECTION, XML_LIGHTING
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_CUR_LEVEL_0, \
@@ -66,9 +66,9 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_UUID_1, \
     TESTING_LIGHT_CUR_LEVEL_1, \
     TESTING_LIGHT_IS_DIMMABLE_1, \
-    TESTING_LIGHT
+    TESTING_LIGHT, L_LIGHT_SECTION_START, TESTING_LIGHT_SECTION, XML_LIGHT_SECTION
 from Modules.Core.Utilities import json_tools
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -121,7 +121,26 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # self.assertEqual(self.m_pyhouse_obj.House.Name, TESTING_HOUSE_NAME)
 
 
-class A2_XML(SetupMixin, unittest.TestCase):
+class A2_SetupXml(SetupMixin, unittest.TestCase):
+    """ Test that the XML contains no syntax errors.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_LIGHT_SECTION
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[:14], L_LIGHT_SECTION_START)
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_LIGHT_SECTION)
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
+        self.assertEqual(l_xml.tag, TESTING_LIGHT_SECTION)
+
+
+class A3_XML(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by lighting_lights.
     """
@@ -271,7 +290,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_objs, 'B1-09-A - All Lights'))
         # print(PrettyFormatAny.form(l_objs[0], 'B1-5-B - All Lights'))
         # print(PrettyFormatAny.form(l_objs[0].RoomCoords, 'B1-5-c - All Lights'))
-        self.assertEqual(len(l_objs), 2)
+        self.assertEqual(len(l_objs), 3)
 
 
 class B2_Write(SetupMixin, unittest.TestCase):

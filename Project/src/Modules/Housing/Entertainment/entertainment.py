@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2018-11-25'
+__updated__ = '2018-12-18'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -81,6 +81,7 @@ class MqttActions:
         """
         l_topic = p_topic[0].lower()
         l_logmsg = '\tEntertainment: '
+        LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
         try:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
             l_logmsg += l_module.decode(p_topic[1:], p_message)
@@ -121,51 +122,6 @@ class API(Ent):
         p_pyhouse_obj.House.Entertainment = EntertainmentData()  # Create empty entertainment plugin section
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
-
-    def XXX_create_module_refs(self, p_element):
-        """
-        Create the structure we will need to Load, Start and Save the modules defined for this house.
-        If there is no subsection (sony e.g.) in the Xml, we will not be called.
-        If the subsection is present and Active is false, we should load the XML but not load the module.
-        If the subsection is present and Active, we should load the module.
-        This leaves only the active entertainment modules in memory expanding the size of PyHouse.
-        The XML is present so it will be properly saved.
-
-        There will be a Plugin record even if the module is not loaded.
-
-        @param p_element: is an Xml element for the EntertainmentSection xxxSection
-        @return: a EntertainmentPluginData filled in from the section
-        """
-
-    def XXX_start_modules(self, p_module):
-        """
-        """
-        # print(PrettyFormatAny.form(p_module, 'ent_sm1 - p+module', 180))
-        if p_module.API == None:
-            LOG.error('Missing info for module')
-        else:
-            p_module.API.Start()
-
-    def XXX_module_load_loop(self, p_pyhouse_obj, p_section_element):
-        """
-        """
-        l_active = True
-        l_plugin_data = EntertainmentPluginData()
-        l_plugin_data.Name = l_name = XmlConfigTools.extract_section_name(p_section_element)
-        l_plugin_data.Active = l_active  # = PutGetXML.get_bool_from_xml(p_section_element, 'Active', True)
-        LOG.debug('Working on {}'.format(l_name))
-        if l_active:
-            # Create the module plugin
-            l_module_name = 'Modules.Housing.Entertainment.' + l_name + '.' + l_name
-            l_module = importlib.import_module(l_module_name)
-            l_plugin_data._Module = l_module
-            # Initialize Plugin
-            l_plugin_data._API = l_module.API(self.m_pyhouse_obj)
-            p_pyhouse_obj.House.Entertainment.Plugins[l_name] = l_plugin_data
-            LOG.info('Created Entertainment Plugin "{}".'.format(l_name))
-            # Load XML for Plugin
-            l_devices = l_plugin_data._API.LoadXml(p_pyhouse_obj)
-            l_plugin_data.Devices = l_devices.Devices
 
     def _module_start_loop(self, p_pyhouse_obj, p_plugin):
         """
@@ -231,5 +187,11 @@ class API(Ent):
 
     def Stop(self):
         LOG.info("Stopped.")
+
+    def DecodeMqtt(self, p_topic, p_message):
+        """ Decode messages sent to the house module.
+        """
+        l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
+        return l_logmsg
 
 # ## END DBK

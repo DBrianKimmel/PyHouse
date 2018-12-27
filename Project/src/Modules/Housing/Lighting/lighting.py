@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2018-12-13'
+__updated__ = '2018-12-18'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,7 +28,7 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
-from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
+from Modules.Housing.Lighting.lighting_lights import API as lightsAPI, MqttActions as lightMqtt
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
@@ -45,8 +45,9 @@ class MqttActions:
         --> pyhouse/housename/lighting/
         """
         l_logmsg = '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'room':
-            l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
+            l_logmsg += lightMqtt(self.m_pyhouse_obj)._decode_room(p_topic, p_message)
         #  computer/***
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)

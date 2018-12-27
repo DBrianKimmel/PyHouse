@@ -9,9 +9,11 @@
 @license:   MIT License
 @summary:
 
+We get these only if a controller is attached.
+
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2018-12-21'
 
 #  Import system type stuff
 
@@ -39,6 +41,10 @@ class DecodeResponses:
 
     def decode_0x50(self, p_pyhouse_obj, p_controller_obj, p_device_obj):
         """
+        There are 2 types of responses here.
+        One is from a request for information from the light type device.
+        The other is a change of status from a light type device.
+
         @param p_controller_obj: is the controller that received the message
 
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
@@ -69,7 +75,12 @@ class DecodeResponses:
             l_group = l_message[7]
             l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
         try:
-            if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
+            # Query responses
+            if l_cmd1 == MESSAGE_TYPES['assign_to_group'] and l_message[8] & 0xE0 == 0x80:  # 0x01
+                l_debug_msg += ' Device-Set-Button-Pressed '
+            elif l_cmd1 == MESSAGE_TYPES['delete_from_group'] and l_message[8] & 0xE0 == 0x80:  # 0x02
+                l_debug_msg += ' Controller-Set-Button-Pressed '
+            elif l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
             elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
                 l_debug_msg += 'CleanupSuccess with {} failures; '.format(l_cmd2)
@@ -79,6 +90,7 @@ class DecodeResponses:
             elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
                 p_device_obj.FirmwareVersion = l_cmd2
                 l_debug_msg += 'Request-ID:"{}"; '.format(p_device_obj.FirmwareVersion)
+
             elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
                 p_device_obj.BrightnessPct = 100
                 l_mqtt_publish = True
@@ -89,11 +101,8 @@ class DecodeResponses:
                 l_debug_msg += 'Turn OFF; '.format(p_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
                 p_device_obj.BrightnessPct = l_level = utilDecode.decode_light_brightness(l_cmd2)
+                l_mqtt_publish = True
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(p_device_obj.Name, l_level)
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x01:
-                l_debug_msg += ' Device-Set-Button-Pressed '
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x02:
-                l_debug_msg += ' Controller-Set-Button-Pressed '
             else:
                 l_debug_msg += '\n\tUnknown-type -"{}"; '.format(FormatBytes(l_message))
                 p_device_obj.BrightnessPct = utilDecode.decode_light_brightness(l_cmd2)
@@ -105,7 +114,7 @@ class DecodeResponses:
         p_controller_obj.Ret = True
         LOG.info('{}'.format(l_debug_msg))
         if l_mqtt_publish:
-            l_topic = 'lighting/status/debug'
+            l_topic = 'lighting/light/status/debug'
             p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)
             pass
         return l_debug_msg

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-12-13'
+__updated__ = '2018-12-18'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -118,6 +118,7 @@ class Actions:
             l_sender = self._get_field(p_message, 'Sender')
             l_logmsg += '\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
+        LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'computer':
             l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
@@ -127,7 +128,7 @@ class Actions:
         elif p_topic[0] == 'house':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'lighting' or p_topic[0] == 'lights':
-            l_logmsg += self.m_disp_lights.decode(p_topic, p_message)
+            l_logmsg += self.m_disp_lights.decode(p_topic[1:], p_message)
         elif p_topic[0] == 'login':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'schedule':

@@ -118,7 +118,7 @@
 				<Size>[0.0,0.0,0.0]</Size>
 				<RoomType>Room</RoomType>
 			</Room>
-			<Room Active="True" Key="1" Name="MBR Closet 1">
+			<Room Active="True" Key="1" Name="MBR Closet">
 				<Comment>None</Comment>
 				<UUID>df6427ae-2dda-11e6-953b-74da3859e09a</UUID>
 				<Comment>None</Comment>
@@ -128,7 +128,7 @@
 				<Size>[0.0,0.0,0.0]</Size>
 				<RoomType>Room</RoomType>
 			</Room>
-			<Room Active="True" Key="2" Name="Master Bed">
+			<Room Active="True" Key="2" Name="MBR">
 				<Comment>None</Comment>
 				<UUID>df646e9e-2dda-11e6-953b-74da3859e09a</UUID>
 				<Comment>None</Comment>
@@ -298,7 +298,7 @@
 				<Size>[0.0,0.0,0.0]</Size>
 				<RoomType>Room</RoomType>
 			</Room>
-			<Room Active="True" Key="19" Name="Brkfast Nook">
+			<Room Active="True" Key="19" Name="Breakfast Nook">
 				<Comment>None</Comment>
 				<UUID>df68c778-2dda-11e6-953b-74da3859e09a</UUID>
 				<Comment>None</Comment>
@@ -336,7 +336,7 @@
 					<UUID>Onkyo...-0001-0000-0000-0123456789ab</UUID>
 					<Comment>Tx-555 Receiver</Comment>
 					<Host/>
-					<IPv4>192.168.1.138</IPv4>
+					<IPv4>192.168.1.230</IPv4>
 					<IPv6>2001:DB8::1</IPv6>
 					<Model>Tx-555</Model>
 					<Port>60128</Port>
@@ -350,7 +350,7 @@
 				<Type>Service</Type>
 				<Device Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Living Room</Comment>
-					<Host>None</Host>
+					<Host>192.168.1.17</Host>
 					<ConnectionFamily>Onkyo</ConnectionFamily>
 					<ConnectionName>Tx-555</ConnectionName>
 					<InputName>Game</InputName>
@@ -487,7 +487,7 @@
 				</Controller>
 			</ControllerSection>
 			<LightSection>
-				<Light Active="True" Key="0" Name="Outside Gar">
+				<Light Active="True" Key="0" Name="Outside Garage">
 					<Comment>None</Comment>
 					<UUID>5b6ea2e6-c826-4935-9a55-10a989aea5fa</UUID>
 					<Comment>None</Comment>
@@ -565,7 +565,7 @@
 					<InsteonAddress>18.C5.8F</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
-				<Light Active="True" Key="3" Name="LR Cans">
+				<Light Active="True" Key="3" Name="LR Ceiling">
 					<Comment>None</Comment>
 					<UUID>f38d3655-4b56-437d-8b39-54314999669e</UUID>
 					<Comment>None</Comment>
@@ -773,7 +773,7 @@
 					<InsteonAddress>1A.EB.29</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
-				<Light Active="True" Key="11" Name="MBR Rope">
+				<Light Active="True" Key="11" Name="MBR Ceiling">
 					<Comment>None</Comment>
 					<UUID>046c5ebd-0cf9-4c51-b6b9-526b6c3ac4ba</UUID>
 					<Comment>None</Comment>
@@ -799,7 +799,7 @@
 					<InsteonAddress>42.A5.6D</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
-				<Light Active="True" Key="12" Name="Kit Cans">
+				<Light Active="True" Key="12" Name="Kitchen Ceiling">
 					<Comment>None</Comment>
 					<UUID>9ccfa9af-ceb6-46e2-822f-d3cfb83d5dd9</UUID>
 					<Comment>None</Comment>
@@ -877,7 +877,7 @@
 					<InsteonAddress>43.B9.75</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
-				<Light Active="True" Key="15" Name="Closet">
+				<Light Active="True" Key="15" Name="MBR Closet">
 					<Comment />
 					<UUID>4be55901-dcc2-4698-b898-f465ab213554</UUID>
 					<Comment />
@@ -903,7 +903,7 @@
 					<InsteonAddress>43.C0.C1</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
-				<Light Active="True" Key="16" Name="Hall">
+				<Light Active="True" Key="16" Name="MBR Hall">
 					<Comment />
 					<UUID>234e4a49-9794-44d6-9b28-b445be2fa9e8</UUID>
 					<Comment />
@@ -929,7 +929,7 @@
 					<InsteonAddress>43.D4.87</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
-				<Light Active="True" Key="17" Name="Hall">
+				<Light Active="True" Key="17" Name="Coat Closet Hall">
 					<Comment />
 					<UUID>99fa229b-07f1-47ce-8746-6db3f84cf47f</UUID>
 					<Comment />
@@ -939,14 +939,8 @@
 					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
 					<RoomName>Foyer</RoomName>
 					<RoomUUID>df65f868-2dda-11e6-953b-74da3859e09a</RoomUUID>
-					<Comment />
 					<Brightness>0</Brightness>
 					<IsDimmable>True</IsDimmable>
-					<DeviceType>1</DeviceType>
-					<DeviceSubType>3</DeviceSubType>
-					<RoomName>Foyer</RoomName>
-					<RoomUUID>df65f868-2dda-11e6-953b-74da3859e09a</RoomUUID>
-					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
 					<DevCat>01.20</DevCat>
 					<EngineVersion>2</EngineVersion>
 					<FirmwareVersion>0</FirmwareVersion>
@@ -965,14 +959,8 @@
 					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
 					<RoomName>Back Bath</RoomName>
 					<RoomUUID>df66c752-2dda-11e6-953b-74da3859e09a</RoomUUID>
-					<Comment />
 					<Brightness>0</Brightness>
 					<IsDimmable>True</IsDimmable>
-					<DeviceType>1</DeviceType>
-					<DeviceSubType>3</DeviceSubType>
-					<RoomName>Back Bath</RoomName>
-					<RoomUUID>df66c752-2dda-11e6-953b-74da3859e09a</RoomUUID>
-					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
 					<DevCat>01.20</DevCat>
 					<EngineVersion>2</EngineVersion>
 					<FirmwareVersion>0</FirmwareVersion>
@@ -980,6 +968,13 @@
 					<GroupNumber>0</GroupNumber>
 					<InsteonAddress>43.B6.25</InsteonAddress>
 					<ProductKey>00.00.00</ProductKey>
+				</Light>
+				<Light Active="True" Key="19" Name="Breakfast Nook Slave">
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomName>Breakfast Nook</RoomName>
+					<InsteonAddress>17.C3.30</InsteonAddress>
 				</Light>
 			</LightSection>
 		</LightingSection>
@@ -1006,7 +1001,7 @@
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset - 00:15</Time>
 				<Level>35</Level>
-				<LightName>LR Cans</LightName>
+				<LightName>LR Ceiling</LightName>
 				<LightUUID>1ef875e6-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
 				<RoomName>Living Room</RoomName>
@@ -1020,7 +1015,7 @@
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset - 00:10</Time>
 				<Level>100</Level>
-				<LightName>Outside Gar</LightName>
+				<LightName>Outside Garage</LightName>
 				<LightUUID>1ef95268-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
 				<RoomName>Outside</RoomName>
@@ -1062,7 +1057,7 @@
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset + 00:15</Time>
 				<Level>50</Level>
-				<LightName>MBR Rope</LightName>
+				<LightName>MBR Ceiling</LightName>
 				<LightUUID>1efbce9e-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
 				<RoomName>Master Bed</RoomName>
@@ -1076,7 +1071,7 @@
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>23:00</Time>
 				<Level>0</Level>
-				<LightName>Outside Gar</LightName>
+				<LightName>Outside Garage</LightName>
 				<LightUUID>1efca5d0-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
 				<RoomName>Garage</RoomName>
@@ -1104,7 +1099,7 @@
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>23:30</Time>
 				<Level>0</Level>
-				<LightName>LR Cans</LightName>
+				<LightName>LR Ceiling</LightName>
 				<LightUUID>1efe55b0-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
 				<RoomName>Living Room</RoomName>
@@ -1146,7 +1141,7 @@
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunrise</Time>
 				<Level>0</Level>
-				<LightName>MBR Rope</LightName>
+				<LightName>MBR Ceiling</LightName>
 				<LightUUID>1f00d100-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
 				<RoomName>Master Bed</RoomName>

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-11-10'
+__updated__ = '2018-12-27'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,8 +52,6 @@ CONTROL_COMMANDS = {
 class MqttActions:
     """
     """
-
-    m_transport = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -176,6 +174,7 @@ class OnkyoFactory(ReconnectingClientFactory):
     def makeConnection(self, p_transport):
         """ This is required. """
         LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+        self.m_onkyo_obj._Transport = p_transport
 
 
 class Util(object):
@@ -211,11 +210,14 @@ class API(MqttActions):
         for l_onkyo_obj in l_mfg.Devices.values():
             if not l_onkyo_obj.Active:
                 continue
-            l_host = l_onkyo_obj.IPv4
-            l_port = l_onkyo_obj.Port
-            l_onkyo_obj._Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
-            _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj._Factory)
-            LOG.info("Started Onkyo {} {}".format(l_host, l_port))
+            try:
+                l_host = l_onkyo_obj.IPv4
+                l_port = l_onkyo_obj.Port
+                l_onkyo_obj._Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
+                _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj._Factory)
+                LOG.info("Started Onkyo {} {}".format(l_host, l_port))
+            except Exception as e_err:
+                LOG.error('Error found: {}'.format(e_err))
         LOG.info("Started {} Onkyo devices".format(l_count))
 
     def SaveXml(self, p_xml):

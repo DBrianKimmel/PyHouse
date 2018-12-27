@@ -11,7 +11,7 @@ Passed all 26 tests - DBK - 2018-10-25
 
 """
 
-__updated__ = '2018-10-31'
+__updated__ = '2018-12-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -122,7 +122,7 @@ class A2_SetupXml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_PANDORA_SECTION)
-        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
+        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
         self.assertEqual(l_xml.tag, TESTING_PANDORA_SECTION)
 
 

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2018-12-22'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,13 +25,13 @@ from Modules.Core.Utilities.device_tools import XML as deviceXML
 
 LOG = Logging.getLogger('PyHouse.LightingButton ')
 
-
 """ Data
 
     x_pyhouse_obj.House.Lighting.Buttons.
                     BaseUUIDObject
                     DeviceObject
 """
+
 
 class Utility(object):
 
@@ -43,8 +43,8 @@ class Utility(object):
         """
         l_obj = ButtonData()  # Create an empty controller object.
         l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
-        l_obj.DeviceType = 1
-        l_obj.DeviceSubType = 1
+        l_obj.DeviceType = 1  # Lighting
+        l_obj.DeviceSubType = 1  # Button
         return l_obj
 
     @staticmethod
