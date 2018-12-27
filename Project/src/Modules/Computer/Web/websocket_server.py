@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-07-20'
+__updated__ = '2018-12-27'
 
 #  Import system type stuff
 # import http.cookies  #
@@ -28,7 +28,7 @@ from twisted.web.server import Site
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-WEBSOCKET_PORT = 8581
+WEBSOCKET_PORT = 8586
 ENDPOINT_WEBSOCKET_SERVER = 'tcp:port={}'.format(WEBSOCKET_PORT)
 LOG = Logger.getLogger('PyHouse.WebSockets     ')
 
