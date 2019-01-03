@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2018-10-13'
+__updated__ = '2019-01-03'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,7 +34,18 @@ LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 
 
-class MQTTProtocol(Protocol):
+class Packets:
+    """ Routines to create and decode Mqtt Message Packets.
+    """
+
+    def _build_fixed_header(self, p_packet_type, p_remaining_length, dup=0, qosLevel=0, retain=0):
+        l_header = bytearray()
+        l_header.append((p_packet_type & 0x0f) << 4 | (dup & 0x01) << 3 | (qosLevel & 0x03) << 1 | (retain & 0x01))
+        l_header.extend(EncodeDecode._encodeLength(p_remaining_length))
+        return l_header
+
+
+class MQTTProtocol(Protocol, Packets):
     """
     This protocol is used for communication with the MQTT broker.
     """
@@ -57,34 +68,46 @@ class MQTTProtocol(Protocol):
         self._accumulatePacket(p_data)
 
     def _accumulatePacket(self, p_data):
+        """ Get 1 packet.
+        Packet format:
+            Fixed Header(2 - 5 bytes)
+            Variable Header (0 - 268,435,455 bytes)
+
+        Fixed Header:
+           Various Flags: 1 Byte
+           RemainingLength = 1-4 Bytes
+
+        Variable Header:
+            :
+        """
         self.m_buffer.extend(p_data)
-        l_length = None
+        l_RemainingLength = None
         while len(self.m_buffer):
-            if l_length is None:
+            if l_RemainingLength is None:
                 #  Start on a new packet
-                #  Haven't got enough data to start a new packet, wait for some more
                 if len(self.m_buffer) < 2:
-                    break
-                lenLen = 1
-                #  Calculate the length of the length field
-                while lenLen < len(self.m_buffer):
-                    if not self.m_buffer[lenLen] & 0x80:
-                        break
-                    lenLen += 1
-                #  We still haven't got all of the remaining length field
-                if lenLen < len(self.m_buffer) and self.m_buffer[lenLen] & 0x80:
-                    LOG.warn('### Early return {}'.format(FormatBytes(self.m_buffer)))
+                    break  #  Haven't got enough data to start a new packet, wait for some more
+                l_rl_len = 1  # Initial length of the RemainingLength field.
+                #  get the variable length RemainingLength field
+                while l_rl_len < len(self.m_buffer):  # Find the bytes in the RemainingLength field.
+                    if not self.m_buffer[l_rl_len] & 0x80:
+                        break  # We have the full RemainingLength field
+                    l_rl_len += 1  # Field is longer - get another byte
+                # Get the variable part -  We still haven't got all of the remaining length field so quit and wait for another chunk
+                if l_rl_len < len(self.m_buffer) and self.m_buffer[l_rl_len] & 0x80:  # Is there more to to come of the RemainingLength field?
+                    LOG.debug('### Early return - Another chunk is needed {}'.format(FormatBytes(self.m_buffer)))
                     return
-                l_length = EncodeDecode._decodeLength(self.m_buffer[1:])
+                l_RemainingLength = EncodeDecode._decodeLength(self.m_buffer[1:])
+            l_FixedHeaderLength = l_rl_len + 1  # Length of the fixed Header portion of the packet
+            l_PacketLength = l_FixedHeaderLength + +l_RemainingLength
+            if len(self.m_buffer) >= l_PacketLength:
+                l_one_message_packet = self.m_buffer[:l_PacketLength]
+                self._processPacket(l_one_message_packet)
 
-            if len(self.m_buffer) >= l_length + lenLen + 1:
-                chunk = self.m_buffer[:l_length + lenLen + 1]
-                self._processPacket(chunk)
-
-                self.m_buffer = self.m_buffer[l_length + lenLen + 1:]
-                l_length = None
+                self.m_buffer = self.m_buffer[l_PacketLength:]
+                l_RemainingLength = None
             else:
-                LOG.warn('### exit without processing\n\t{}'.format(FormatBytes(self.m_buffer)))
+                LOG.debug('### exit without processing\n\t{}'.format(FormatBytes(self.m_buffer)))
                 break
 
     def _processPacket(self, packet):

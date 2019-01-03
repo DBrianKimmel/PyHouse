@@ -10,7 +10,7 @@
 Passed all 17 tests - DBK - 2018-01-22                                                                                                                   tests - DBK - 2018-01-10
 """
 
-__updated__ = '2018-01-22'
+__updated__ = '2019-01-03'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -48,10 +48,6 @@ class A0(unittest.TestCase):
 
     def test_00_Print(self):
         print('Id: test_setup_pyhouse')
-
-    def XXX_test_01_Print(self):
-        # print(XML_LONG)
-        pass
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):

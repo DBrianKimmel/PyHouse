@@ -11,7 +11,7 @@
 		<CommunicationSection />
 		<InternetSection />
 		<MqttSection>
-			<Broker Active="True" Key="0" Name="Mqtt">
+			<Broker Active="True" Key="0" Name="Mqtt-Pi-05">
 				<Comment />
 				<UUID>c87c8b96-b1e5-11e6-8a14-74da3859e09a</UUID>
 				<BrokerAddress>192.168.1.15</BrokerAddress>
@@ -422,7 +422,7 @@
 					<RoomName>12</RoomName>
 					<RoomUUID>c894ef92-b1e5-11e6-8a14-74da3859e09a</RoomUUID>
 					<InterfaceType>Serial</InterfaceType>
-					<Port>/dev/ttyUSB0</Port>
+					<Port>/dev/ttyUSB_insteonPLM</Port>
 					<BaudRate>19200</BaudRate>
 					<ByteSize>8</ByteSize>
 					<DsrDtr>False</DsrDtr>
@@ -970,10 +970,12 @@
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
 				<Light Active="True" Key="19" Name="Breakfast Nook Slave">
+					<UUID>a3c69489-0b78-11e9-9f2e-a08cfd2fc483</UUID>
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
 					<RoomName>Breakfast Nook</RoomName>
+					<RoomUUID>df68c778-2dda-11e6-953b-74da3859e09a</RoomUUID>
 					<InsteonAddress>17.C3.30</InsteonAddress>
 				</Light>
 			</LightSection>

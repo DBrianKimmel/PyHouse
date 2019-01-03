@@ -4,15 +4,15 @@
 @name:      PyHouse/src/Modules/Entertainment/onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c)2016-2017 by D. Brian Kimmel
+@copyright: (c)2016-2019 by D. Brian Kimmel
 @note:      Created on Jul 9, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-12-27'
-__version_info__ = (18, 8, 0)
+__updated__ = '2019-01-03'
+__version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -206,7 +206,7 @@ class API(MqttActions):
         """
         l_count = 0
         l_mfg = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        print(PrettyFormatAny.form(l_mfg, 'onkyo.Start() Plugins'))
+        LOG.info(PrettyFormatAny.form(l_mfg, 'onkyo.Start() Plugins'))
         for l_onkyo_obj in l_mfg.Devices.values():
             if not l_onkyo_obj.Active:
                 continue

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-13'
+__updated__ = '2018-12-28'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,7 @@ import datetime
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Core.Utilities import json_tools, xml_tools
-from Modules.Computer.Mqtt.mqtt_actions import Actions
+from Modules.Computer.Mqtt.mqtt_actions import Actions as MqttActions
 from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
@@ -86,7 +86,7 @@ class API(object):
         """
         """
         LOG.info("Starting - Version:{}".format(__version__))
-        self.m_actions = Actions(self.m_pyhouse_obj)
+        self.m_actions = MqttActions(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)

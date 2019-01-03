@@ -8,7 +8,6 @@
 * Summary:   This is the design documentation for PyHouse.
 
 # PyHouse
-====
 
 This is the top level documentation for PyHouse.
 

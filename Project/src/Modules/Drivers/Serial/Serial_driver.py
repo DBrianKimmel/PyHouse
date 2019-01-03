@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2018-12-30'
 
 #  Import system type stuff
 import pyudev
@@ -113,16 +113,17 @@ class SerialAPI(object):
         p_controller_obj._Data = bytearray()
         try:
             l_serial = \
-                SerialPort(SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
-                p_controller_obj.Port,
-                p_pyhouse_obj.Twisted.Reactor,
-                baudrate=p_controller_obj.BaudRate)
+                SerialPort(
+                    SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
+                    p_controller_obj.Port,
+                    p_pyhouse_obj.Twisted.Reactor,
+                    baudrate=p_controller_obj.BaudRate)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
             p_controller_obj.Active = True
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Port, e_err))
-            p_controller_obj.Active = False
+            p_controller_obj.Active = True
         self.m_serial = l_serial
         return l_serial
 

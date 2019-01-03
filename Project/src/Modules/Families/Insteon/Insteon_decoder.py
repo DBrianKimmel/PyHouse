@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-01-03'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,10 +72,11 @@ class DecodeResponses(object):
                 l_need_len = Insteon_utils.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
+                    LOG.debug('Got response:{}'.format(FormatBytes(p_controller_obj._Message[0:l_need_len])))
                     self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
                     return 'Ok'
                 else:
-                    # LOG.warning('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
+                    LOG.debug('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
                 # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, FormatBytes(p_controller_obj._Message)))
@@ -169,62 +170,6 @@ class DecodeResponses(object):
         else:
             LOG.error('Unknown Device Type:{};'.format(l_device_obj.DeviceType))
             return
-
-        l_mqtt_publish = False
-        l_device_obj.BrightnessPct = '?'
-        l_flags = utilDecode._decode_message_flag(l_message[8])
-        l_cmd1 = l_message[9]
-        l_cmd2 = l_message[10]
-        l_data = [l_cmd1, l_cmd2]
-        l_debug_msg = 'Fm:"{}"; Flg:{}; C1:{:#x},{:#x}; '.format(l_device_obj.Name, l_flags, l_cmd1, l_cmd2)
-        #
-        #  Break down bits 7(msb), 6, 5 into message type
-        #
-        if l_message[8] & 0xE0 == 0x80:  #  100 - SB [Broadcast]
-            l_debug_msg += utilDecode._devcat(l_message[5:7], l_device_obj)
-        elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
-            l_group = l_message[7]
-            l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
-        try:
-            if l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
-                l_debug_msg += " Product-data-request."
-            elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06
-                l_debug_msg += 'CleanupSuccess with {} failures; '.format(l_cmd2)
-            elif l_cmd1 == MESSAGE_TYPES['engine_version']:  #  0x0D
-                l_device_obj.EngineVersion = l_cmd2
-                l_debug_msg += 'Engine-version:"{}(i-{})"; '.format(l_cmd2, l_cmd2 + 1)
-            elif l_cmd1 == MESSAGE_TYPES['id_request']:  #  0x10
-                l_device_obj.FirmwareVersion = l_cmd2
-                l_debug_msg += 'Request-ID:"{}"; '.format(l_device_obj.FirmwareVersion)
-            elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
-                l_device_obj.BrightnessPct = 100
-                l_mqtt_publish = True
-                l_debug_msg += 'Turn ON; '.format(l_device_obj.Name)
-            elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
-                l_device_obj.BrightnessPct = 0
-                l_mqtt_publish = True
-                l_debug_msg += 'Turn OFF; '.format(l_device_obj.Name)
-            elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
-                l_device_obj.BrightnessPct = l_level = utilDecode.decode_light_brightness(l_cmd2)
-                l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(l_device_obj.Name, l_level)
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x01:
-                l_debug_msg += ' Device-Set-Button-Pressed '
-            elif l_message[8] & 0xE0 == 0x80 and l_cmd1 == 0x02:
-                l_debug_msg += ' Controller-Set-Button-Pressed '
-            else:
-                l_debug_msg += '\n\tUnknown-type -"{}"; '.format(FormatBytes(l_message))
-                l_device_obj.BrightnessPct = utilDecode.decode_light_brightness(l_cmd2)
-                l_mqtt_publish = True
-        except AttributeError as e_err:
-            LOG.error('ERROR decoding 0x50 record {}'.format(e_err))
-
-        Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_device_obj)
-        p_controller_obj.Ret = True
-        LOG.info('{}'.format(l_debug_msg))
-        if l_mqtt_publish:
-            l_topic = 'lighting/status/debug'
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_obj)
-        return
 
     def _decode_0x51(self, p_controller_obj):
         """ Insteon Extended Message Received (25 bytes).

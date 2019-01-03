@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2018-11-26'
+__updated__ = '2018-12-29'
 __version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -73,7 +73,7 @@ class Utility(object):
             return l_plmAPI
         else:
             LOG.error('Controller {} failed to start.'.format(p_controller_obj.Name))
-            p_controller_obj.Active = False
+            p_controller_obj._isFunctional = False
             return None
 
     @staticmethod

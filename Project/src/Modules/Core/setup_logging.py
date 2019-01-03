@@ -17,7 +17,7 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2018-01-22'
+__updated__ = '2019-01-03'
 
 #  Import system type stuff
 import datetime
@@ -90,7 +90,25 @@ LOGGING_DICT = {
             'class'       : 'logging.handlers.TimedRotatingFileHandler',
             'level'       : 'DEBUG',
             'formatter'   : 'verbose',
-            'filename'    : '/var/log/pyhouse/debug',
+            'filename'    : LOG_DIRECTORY + 'debug',
+            'when'        : 'midnight',
+            'filters'     : ['http'],
+            'backupCount' : 2,
+        },
+        'info'   : {
+            'class'       : 'logging.handlers.TimedRotatingFileHandler',
+            'level'       : 'INFO',
+            'formatter'   : 'standard',
+            'filename'    : LOG_DIRECTORY + 'info',
+            'when'        : 'midnight',
+            'filters'     : ['http'],
+            'backupCount' : 20,
+        },
+        'warning'   : {
+            'class'       : 'logging.handlers.TimedRotatingFileHandler',
+            'level'       : 'WARNING',
+            'formatter'   : 'verbose',
+            'filename'    : LOG_DIRECTORY + 'warning',
             'when'        : 'midnight',
             'filters'     : ['http'],
             'backupCount' : 20,
@@ -98,10 +116,10 @@ LOGGING_DICT = {
         'error'   : {
             'class'       : 'logging.handlers.TimedRotatingFileHandler',
             'level'       : 'ERROR',
-            'formatter'   : 'standard',
+            'formatter'   : 'verbose',
             'filename'    : ERROR_LOG_LOCTION,
             'when'        : 'midnight',
-            'backupCount' : 20,
+            'backupCount' : 30,
         },
         'console' : {
             'class'       : 'logging.StreamHandler',
@@ -112,7 +130,7 @@ LOGGING_DICT = {
     },
 
     'root' : {
-        'handlers' : ['debug', 'error'],
+        'handlers' : ['debug', 'info', 'warning', 'error'],
         'level'    : 'DEBUG',
     },
     'PyHouse' : {

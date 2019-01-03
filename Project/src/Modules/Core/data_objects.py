@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2018-11-25'
+__updated__ = '2018-12-29'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -717,6 +717,9 @@ class ButtonData(CoreLightingData):
 class ControllerData(CoreLightingData):
     """ This data is common to all lighting controllers.
 
+    _isFunctional is used to disable the controller for the current run.
+    It remains an active in the XML so it restarts when problem is solved with device.
+
     ==> PyHouse.House.Lighting.Controllers.xxx as in the def below
     """
 
@@ -726,6 +729,7 @@ class ControllerData(CoreLightingData):
         self.Port = ''
         self.Ret = None  # Return Code
         #  The following are not in XML config file
+        self._isFunctional = True  # if controller is not working currently
         self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         self._Data = bytearray()  # Rx InterfaceType specific data
