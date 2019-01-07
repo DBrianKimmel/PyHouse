@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for driving serial devices
@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2018-12-30'
+__updated__ = '2019-01-05'
 
 #  Import system type stuff
 import pyudev
@@ -33,7 +33,7 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
-from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 #  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -111,14 +111,17 @@ class SerialAPI(object):
         """
         l_serial = None
         p_controller_obj._Data = bytearray()
+        l_baud = p_controller_obj.BaudRate
+        l_port = p_controller_obj.Port
+        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
         try:
             l_serial = \
                 SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
-                    p_controller_obj.Port,
+                    l_port,
                     p_pyhouse_obj.Twisted.Reactor,
-                    baudrate=p_controller_obj.BaudRate)
-            LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, p_controller_obj.Port))
+                    baudrate=l_baud)
+            LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
             p_controller_obj.Active = True
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(

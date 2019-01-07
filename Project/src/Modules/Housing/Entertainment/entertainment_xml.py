@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-11-25'
+__updated__ = '2019-01-05'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -211,11 +211,12 @@ class XML:
         l_plugins = EntertainmentData()
         l_count = 0
         l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        for l_sect in l_xml:
-            l_sub = self.read_entertainment_subsection(p_pyhouse_obj, l_sect)
-            l_name = l_sub.Name.lower()
-            l_plugins.Plugins[l_name] = l_sub
-            l_count += 1
+        if l_xml != None:
+            for l_sect in l_xml:
+                l_sub = self.read_entertainment_subsection(p_pyhouse_obj, l_sect)
+                l_name = l_sub.Name.lower()
+                l_plugins.Plugins[l_name] = l_sub
+                l_count += 1
         if l_count > 0:
             l_plugins.Active = True
         l_plugins.PluginCount = l_count

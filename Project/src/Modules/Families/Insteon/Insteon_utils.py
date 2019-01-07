@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 27, 2013
 @summary:   This module is for Insteon conversion routines.
@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2018-12-06'
+__updated__ = '2019-01-06'
 
 #  Import system type stuff
 import math
@@ -293,7 +293,6 @@ class Decode(object):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_dotted = conversions.int2dotted_hex(p_address, 3)
         l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
@@ -307,6 +306,7 @@ class Decode(object):
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
         #  Add additional classes in here
         if l_ret == None:
+            l_dotted = conversions.int2dotted_hex(p_address, 3)
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
             l_ret = CoreLightingData()
             device_tools.stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
@@ -315,10 +315,10 @@ class Decode(object):
 
     @staticmethod
     def get_obj_from_message(p_pyhouse_obj, p_message_addr):
-        """ Here we have a message from the PLM.  Find out what device has that address.
+        """ Here we have a message to or from an Insteon device.  Find out what device has that address.
 
         @param p_message_addr: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
-        @return: The object that contains the address -OR- a dummy object with noname in Name
+        @return: The device object that contains the address -OR- a dummy object with noname in Name
         """
         l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
         if l_address < (256 * 256):  #  First byte zero ?

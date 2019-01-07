@@ -5,7 +5,7 @@
 @name:      PyHouse/Project/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2018 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -82,8 +82,8 @@ Idea Links:
 
 """
 
-__updated__ = '2018-10-24'
-__version_info__ = (18, 10, 0)
+__updated__ = '2019-01-05'
+__version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -308,6 +308,7 @@ class NoReactorAPI(API):
         #  When the reactor stops we continue here
         #
         LOG.info("PyHouse says Bye Now.\n")
+        print('PyHouse is exiting.')
         raise SystemExit("PyHouse says Bye Now.")
 
     def _nor_create_pyhouse_obj(self):

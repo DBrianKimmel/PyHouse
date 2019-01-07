@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2018-12-29'
+__updated__ = '2019-01-05'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -726,6 +726,8 @@ class ControllerData(CoreLightingData):
     def __init__(self):
         super(ControllerData, self).__init__()
         self.InterfaceType = ''  # Serial | USB | Ethernet
+        self.LasuUsed = None  # Date time of successful start
+        self.Node = None  # node the controller is connected to
         self.Port = ''
         self.Ret = None  # Return Code
         #  The following are not in XML config file

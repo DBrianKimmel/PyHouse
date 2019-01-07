@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2018-07-16'
+__updated__ = '2019-01-06'
 
 #  Import system type stuff
 
@@ -52,7 +52,7 @@ class MqttActions(object):
         <type> = thermostat, ...
         """
         l_logmsg = '\tHVAC:\n'
-        if p_topic[1] == 'Thermostat':
+        if p_topic[0] == 'Thermostat':
             l_logmsg += '\tThermostat: {}\n'.format(self._get_field(p_message, 'Name'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))

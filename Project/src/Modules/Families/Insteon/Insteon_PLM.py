@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for sending commands to and receiving responses from an Insteon Controller.
@@ -21,9 +21,10 @@ TODO:
 
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-01-06'
 
 #  Import system type stuff
+import datetime
 try:
     import Queue
 except ImportError:
@@ -191,6 +192,8 @@ class PlmDriverProtocol(Commands):
         pass
 
     def _find_to_name(self, p_command):
+        """ Finf the device we are sending a message "To"
+        """
         l_name = 'No device'
         try:
             l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, p_command[2:5])
@@ -206,15 +209,13 @@ class PlmDriverProtocol(Commands):
         Uses twisted to get a callback when the timer expires.
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
-        #  LOG.info('Within send loop.  Size: {}'.format(p_controller_obj._Queue.qsize()))
         try:
             l_command = p_controller_obj._Queue.get(False)
-            #  LOG.info('Got command:  {}'.format((l_command)))
         except Queue.Empty:
             return
         if p_controller_obj._DriverAPI != None:
             l_name = self._find_to_name(l_command)
-            LOG.info("To:{}, Message:{}".format(l_name, FormatBytes(l_command)))
+            LOG.debug("To: {}, Message: {}".format(l_name, FormatBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:
@@ -394,14 +395,17 @@ class Utility(LightHandlerAPI):
         """
         LOG.info('Starting Controller:{}'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
-        l_topic = 'lighting/controller/status'
         if l_ret:
+            p_controller_obj.Node = p_pyhouse_obj.Computer.Name
+            p_controller_obj.LastUsed = datetime.datetime.now()
+
             LOG.info('Controller Driver Start was OK.')
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(p_controller_obj)
             self.get_all_device_information(p_pyhouse_obj, p_controller_obj)
         else:
             LOG.error('Insteon Controller start failed')
+        l_topic = 'lighting/controller/status'
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 

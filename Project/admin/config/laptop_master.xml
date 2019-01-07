@@ -411,7 +411,7 @@
 				</Button>
 			</ButtonSection>
 			<ControllerSection>
-				<Controller Active="True="0" Name="PLM_1">
+				<Controller Active="False=" Key="0" Name="PLM_1">
 					<Comment>None</Comment>
 					<UUID>c1490758-092e-11e4-bffa-b827eb189eb4</UUID>
 					<Comment>None</Comment>
@@ -485,7 +485,7 @@
 					<UPBNetworkID>0</UPBNetworkID>
 					<UPBPassword>0</UPBPassword>
 				</Controller>
-				<Controller Active="False" Key="3" Name="PLM_3">
+				<Controller Active="True" Key="3" Name="PLM_3">
 					<Comment>Mobile Version</Comment>
 					<UUID>c1490758-092e-3333-bffa-b827eb189eb4</UUID>
 					<DeviceFamily>Insteon</DeviceFamily>

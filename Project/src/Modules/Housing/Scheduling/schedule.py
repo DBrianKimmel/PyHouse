@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2018-12-27'
+__updated__ = '2019-01-06'
 
 #  Import system type stuff
 import datetime
@@ -108,14 +108,14 @@ class MqttActions(object):
         """
         --> pyhouse/housename/schedule/...
         """
-        l_logmsg = '\tSchedule: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        LOG.debug('MqttSchedule Dispatch Topic:{}'.format(p_topic))
-        # if p_topic[0] == 'room':
-        #    l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
-        # elif p_topic[0] == 'schedule':
-        #    l_logmsg += scheduleAPI.
-        # else:
-        #    l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+        l_logmsg = '\tSchedule:\n'
+        if p_topic[0] == 'execute':
+            l_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
+            # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+            l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
+            l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
+        else:
+            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
         return l_logmsg
 
 
@@ -260,7 +260,7 @@ class ScheduleExecution(object):
         """
         Send information to one device to execute a schedule.
         """
-        l_topic = 'schedule/'
+        l_topic = 'schedule'
         l_obj = p_schedule_obj
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
@@ -295,7 +295,7 @@ class ScheduleExecution(object):
 
         @param p_key_list: a list of schedule keys in the next time schedule to be executed.
         """
-        LOG.info("About to execute - Schedules:{}".format(p_key_list))
+        LOG.info("About to execute - Schedule Items:{}".format(p_key_list))
         for l_slot in range(len(p_key_list)):
             l_schedule_obj = p_pyhouse_obj.House.Schedules[p_key_list[l_slot]]
             ScheduleExecution.dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
@@ -313,7 +313,7 @@ class Utility(object):
 
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):
-        l_topic = 'schedule/sunrise_set'
+        _l_topic = 'schedule/sunrise_set'
         l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('schedule/sunrise_set', l_riseset)

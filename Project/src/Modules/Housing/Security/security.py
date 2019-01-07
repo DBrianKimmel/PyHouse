@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-07-16'
+__updated__ = '2019-01-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -48,9 +48,9 @@ class MqttActions(object):
         <type> = garage door, motion sensor, camera
         """
         l_logmsg = '\tSecurity:\n'
-        if p_topic[1] == 'garage_door':
+        if p_topic[0] == 'garage_door':
             l_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
-        elif p_topic[1] == 'motion_sensor':
+        elif p_topic[0] == 'motion_sensor':
             l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(self._get_field(p_message, 'Name'), self._get_field(p_message, 'Status'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))

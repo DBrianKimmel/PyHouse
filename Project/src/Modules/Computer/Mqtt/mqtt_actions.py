@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2018 by D. Brian Kimmel
+@copyright: (c) 2016-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created Feb 20, 2016
 @Summary:
 
 """
 
-__updated__ = '2018-12-18'
-__version_info__ = (18, 9, 0)
+__updated__ = '2019-01-06'
+__version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -19,8 +19,10 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import NodeData, PyHouseData
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
+from Modules.Housing.Lighting.lighting import MqttActions as lightingMqtt
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightsMqtt
 from Modules.Housing.Hvac.hvac import MqttActions as hvacMqtt
+from Modules.Housing.Scheduling.schedule import MqttActions as scheduleMqtt
 from Modules.Housing.Security.security import MqttActions as securityMqtt
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -50,38 +52,6 @@ class Actions:
         except (KeyError, TypeError):
             l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
         return l_ret
-
-    def _extract_node(self, p_message):
-        l_node = NodeData()
-        l_node.Name = self._get_field(p_message, 'Name')
-        l_node.Key = l_node.Name
-        l_node.Active = True
-        l_node.Comment = ''
-        l_node.ConnectionAddr_IPv4 = self._get_field(p_message, 'ConnectionAddr_IPv4')
-        l_node.ConnectionAddr_IPv6 = self._get_field(p_message, 'ConnectionAddr_IPv6')
-        l_node.ControllerCount = self._get_field(p_message, 'ControllerCount')
-        l_node.ControllerTypes = self._get_field(p_message, 'ControllerTypes')
-        l_node.NodeId = self._get_field(p_message, 'NodeId')
-        l_node.NodeRole = self._get_field(p_message, 'NodeRole')
-
-    def _decode_lighting(self, _p_topic, p_message):
-        l_name = self._get_field(p_message, 'Name')
-        l_logmsg = '\tLighting:\n'
-        l_logmsg += '\tName: {}\n'.format(l_name)
-        # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        l_logmsg += '\tBrightnessPct: {}'.format(self._get_field(p_message, 'BrightnessPct'))
-        return l_logmsg
-
-    def _decode_schedule(self, p_topic, p_message):
-        l_logmsg = '\tSchedule:\n'
-        if p_topic[1] == 'execute':
-            l_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
-            # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-            l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
-            l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
-        else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
-        return l_logmsg
 
     def _decode_weather(self, _p_topic, p_message):
         l_logmsg = '\tWeather:\n'
@@ -124,17 +94,17 @@ class Actions:
         elif p_topic[0] == 'entertainment':
             l_logmsg += self.m_disp_entertainment.decode(p_topic[1:], p_message)
         elif p_topic[0] == 'hvac':
-            l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
+            l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'house':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
-        elif p_topic[0] == 'lighting' or p_topic[0] == 'lights':
-            l_logmsg += self.m_disp_lights.decode(p_topic[1:], p_message)
+        elif p_topic[0] == 'lighting':
+            l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'login':
             l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'schedule':
-            l_logmsg += self._decode_schedule(p_topic, p_message)
+            l_logmsg += scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'security':
-            l_logmsg += securityMqtt(self.m_pyhouse_obj).decode(p_topic, p_message)
+            l_logmsg += securityMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'weather':
             l_logmsg += self._decode_weather(p_topic, p_message)
         else:

@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2019 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2018-12-29'
+__updated__ = '2019-01-06'
 __version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -63,7 +63,6 @@ class Utility(object):
         """
         from Modules.Families.Insteon import Insteon_PLM
         l_plmAPI = Insteon_PLM.API()
-        _l_name = p_pyhouse_obj.Computer.Name
         l_uuid = p_pyhouse_obj.Computer.UUID
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
@@ -134,7 +133,7 @@ class API(object):
         if self.m_plm == None:
             LOG.info('No PLM was defined - Quitting.')
             return
-        LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm))
+        LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm.Name))
         self.m_plm.ControlLight(p_light_obj, p_source, p_level, p_rate)
 
 #  ## END DBK

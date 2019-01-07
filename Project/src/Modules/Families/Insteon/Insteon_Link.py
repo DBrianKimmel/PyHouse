@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_Link.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2018 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   Handle the all-link database(s) in Insteon devices.
@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2018-07-24'
+__updated__ = '2019-01-06'
 
 #  Import system type stuff
 
@@ -77,6 +77,15 @@ class Send(object):
     def queue_0x6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data):
         """Manage All-Link Record (11 bytes)
          See p 252(265) of 2009 developers guide.
+        [0] = 0x02
+        [1] = 0x6F
+        [2] = Control Code
+        [3] = All-Link record flag
+        [4] = All-Link ecord group
+        [5-7] = 3 Byte Link to address
+        [8] = Data
+        [9] = Data
+        [10] = Data
        """
         LOG.info("Command to manage all-link record (6F).")
         l_command = Insteon_utils.create_command_message('manage_all_link_record')
@@ -186,6 +195,10 @@ class Decode(object):
             l_type = 'Controller'
             l_link_obj.IsController = True
         LOG.info("All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
+
+        # Ask for next record
+        Send.queue_0x6A_command(p_controller_obj)
+
         return
 
     @staticmethod

@@ -1,10 +1,10 @@
 """
--*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting -*-
+-*- test-case-name: PyHouse.Project.src.Modules.Housing.Lighting.test.test_lighting -*-
 
-@name:      PyHouse/src/Modules/Lighting/lighting.py
+@name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2018-12-18'
+__updated__ = '2019-01-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,15 +42,21 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """
-        --> pyhouse/housename/lighting/
+        --> pyhouse/housename/lighting/xxx
         """
         l_logmsg = '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
         LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
-        if p_topic[0] == 'room':
+        if p_topic[0] == 'button':
+            pass
+        elif p_topic[0] == 'controller':
+            pass
+        elif p_topic[0] == 'light':
+            pass
+        elif p_topic[0] == 'room':
             l_logmsg += lightMqtt(self.m_pyhouse_obj)._decode_room(p_topic, p_message)
         #  computer/***
         else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+            l_logmsg += '\tUnknown Lighting sub-topic {}'.format(p_message)
         return l_logmsg
 
 

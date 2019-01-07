@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 11, 2014
 @Summary:   Handle lighting scheduled events.
@@ -74,7 +74,7 @@ class API(object):
         """
         l_topic = 'schedule/execute'
         l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_schedule_obj.LightName)
-        LOG.info("SchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
+        LOG.debug("SchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
                 p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level,
                 l_light_obj.Name, l_light_obj.Key))
         API.ControlLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
