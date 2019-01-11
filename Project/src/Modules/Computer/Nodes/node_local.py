@@ -21,7 +21,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2018-08-02'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 from datetime import datetime
@@ -410,7 +410,8 @@ class Util(object):
         Devices().find_devices(l_node)
         l_node.NodeRole = Util.find_node_role()
         l_node.LastUpdate = datetime.now()
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("computer/local", l_node)
+        # l_topic = 'computer/local'
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)
         return l_node
 
 

@@ -11,9 +11,10 @@
 
 """
 
-__updated__ = '2016-07-16'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import SerialControllerData
@@ -40,18 +41,19 @@ class XML(object):
         return l_serial
 
     @staticmethod
-    def write_interface_xml(p_xml, p_controller_obj):
+    def write_interface_xml(p_controller_obj):
+        l_xml = ET.Element('Serial')
         try:
-            PutGetXML.put_int_element(p_xml, 'BaudRate', p_controller_obj.BaudRate)
-            PutGetXML.put_int_element(p_xml, 'ByteSize', p_controller_obj.ByteSize)
-            PutGetXML.put_bool_element(p_xml, 'DsrDtr', p_controller_obj.DsrDtr)
-            PutGetXML.put_text_element(p_xml, 'Parity', p_controller_obj.Parity)
-            PutGetXML.put_bool_element(p_xml, 'RtsCts', p_controller_obj.RtsCts)
-            PutGetXML.put_float_element(p_xml, 'StopBits', p_controller_obj.StopBits)
-            PutGetXML.put_float_element(p_xml, 'Timeout', p_controller_obj.Timeout)
-            PutGetXML.put_bool_element(p_xml, 'XonXoff', p_controller_obj.XonXoff)
+            PutGetXML.put_int_element(l_xml, 'BaudRate', p_controller_obj.BaudRate)
+            PutGetXML.put_int_element(l_xml, 'ByteSize', p_controller_obj.ByteSize)
+            PutGetXML.put_bool_element(l_xml, 'DsrDtr', p_controller_obj.DsrDtr)
+            PutGetXML.put_text_element(l_xml, 'Parity', p_controller_obj.Parity)
+            PutGetXML.put_bool_element(l_xml, 'RtsCts', p_controller_obj.RtsCts)
+            PutGetXML.put_float_element(l_xml, 'StopBits', p_controller_obj.StopBits)
+            PutGetXML.put_float_element(l_xml, 'Timeout', p_controller_obj.Timeout)
+            PutGetXML.put_bool_element(l_xml, 'XonXoff', p_controller_obj.XonXoff)
         except Exception as e_err:
             LOG.error('Error writing XML - {}'.format(e_err))
-        return p_xml
+        return l_xml
 
 # ## END DBK

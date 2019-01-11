@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/Lighting/lighting_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2019 by D. Brian Kimmel
 @note:      Created on May 1, 2011
 @license:   MIT License
 @summary:   This module handles the lights component of the lighting system.
@@ -19,22 +19,43 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2018-12-21'
+__updated__ = '2019-01-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
-from Modules.Core.data_objects import LightData, UuidData
+from Modules.Core.data_objects import LightData, UuidData, CoreLightingData
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.state import State
 
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'
+
+
+class LightData(CoreLightingData):
+    """ This is the idealized light info.
+    This class contains all the reportable and controllable information a light might have.
+
+    ==> PyHouse.House.Lighting.Lights.xxx as in the def below
+    """
+
+    def __init__(self):
+        super(LightData, self).__init__()
+        self.BrightnessPct = 0  # 0% to 100%
+        self.Hue = 0  # 0 to 65535
+        self.Saturation = 0  # 0 to 255
+        self.ColorTemperature = 0  # degrees Kelvin - 0 is not supported
+        self.RGB = 0xffffff
+        self.TransitionTime = 0  # time to turn on or off (fade time)
+        self.State = State.UNKNOWN
+        self.IsDimmable = False
 
 
 class MqttActions:
@@ -54,7 +75,7 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
-        ==> pyhouse/<house name>/entertainment/<device>/...
+        ==> pyhouse/<house name>/lighting/light/<action>
 
         <device-or-service> = one of the VALID_ENTERTAINMENT_MFGRS
 
@@ -63,8 +84,14 @@ class MqttActions:
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        l_topic = p_topic[1].lower()
-        l_logmsg = '\tLighting: ' + PrettyFormatAny.form(p_message, 'debug')
+        l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
+        LOG.debug('MqttLightingLightsDispatch Topic:{}'.format(p_topic))
+        if p_topic[0] == 'control':
+            pass
+        elif p_topic[0] == 'status':
+            pass
+        else:
+            l_logmsg += '\tUnknown Lighting/Light sub-topic:{} {}'.format(p_topic, p_message)
         return l_logmsg
 
 
@@ -144,7 +171,7 @@ class Utility(object):
         return l_xml
 
 
-class API(object):
+class XML:
 
     @staticmethod
     def read_all_lights_xml(p_pyhouse_obj):
@@ -195,5 +222,51 @@ class API(object):
             l_count += 1
         LOG.info('Saved {} Lights XML'.format(l_count))
         return l_xml
+
+
+class API:
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Initialized')
+
+    def ControlLight(self, p_light_obj, p_source, p_new_level, p_rate=None):
+        """
+        Set an Insteon controlled light to a value - On, Off, or Dimmed.
+
+        Called by:
+            web_controlLights
+            schedule
+
+        @param p_light_obj:
+        @param p_source: is a string denoting the source of the change.
+        @param p_new_level: is the new light level (0 - 100%)
+        @param p_rate: is the ramp up rate (not uese)
+        """
+        l_light_obj = actionUtility._find_full_obj(self.m_pyhouse_obj, p_light_obj)
+        try:
+            LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
+
+            l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
+            l_api.ControlLight(l_light_obj, p_source, p_new_level)
+        except Exception as e_err:
+            LOG.error('ERROR - {}'.format(e_err))
+
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+        """
+        Insteon specific version of control light
+        All that Insteon can control is Brightness and Fade Rate.
+
+        @param p_controller_obj: optional
+        @param p_device_obj: the device being controlled
+        @param p_control: the idealized light control params
+        """
+        if self.m_plm == None:
+            LOG.info('No PLM was defined - Quitting.')
+            return
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
+        l_api.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

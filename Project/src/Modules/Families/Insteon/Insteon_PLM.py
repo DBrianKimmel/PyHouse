@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2019-01-06'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 import datetime
@@ -473,6 +473,28 @@ class API(Utility):
             Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
         else:
             l_level = int(p_level * 255 / 100)
+            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
+
+    def AbstractControlLight(self, p_device_obj, _p_controller_obj, p_control):
+        """
+        Insteon PLM specific version of control light
+        All that Insteon can control is Brightness and Fade Rate.
+
+        This actually queues upthe commands
+
+        @param p_controller_obj: optional
+        @param p_device_obj: the device being controlled
+        @param p_control: the idealized light control params
+        """
+        l_level = int(p_control.BrightnessPct)
+        l_rate = 0  # The transition time is not implemented currently.
+        LOG.debug("Insteon Device Name:{}; to level:{}; at rate:{};".format(p_device_obj.Name, l_level, l_rate))
+        if l_level == 0:
+            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  #  0x13
+        elif l_level > 95:
+            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
+        else:
+            l_level = l_level * 255 / 100
             Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
 
 #  ## END DBK

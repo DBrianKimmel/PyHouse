@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2017-04-20
 
 """
 
-__updated__ = '2018-10-24'
+__updated__ = '2019-01-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -189,6 +189,9 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
 
+from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
+
+
 class C2_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
@@ -217,7 +220,7 @@ class C2_Write(SetupMixin, unittest.TestCase):
     def test_03_InsteonLight(self):
         l_xml = self.m_api.write_base_device_object_xml('Light', self.m_light)
         insteonXml.WriteXml(l_xml, self.m_light)
-        # print(PrettyFormatAny.form(l_xml, 'C2_03-A - Lights XML'))
+        print(PrettyFormatAny.form(l_xml, 'C2_03-A - Lights XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)

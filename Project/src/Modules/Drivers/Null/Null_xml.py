@@ -11,9 +11,10 @@
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import NullControllerData
@@ -30,7 +31,8 @@ class XML(object):
         return l_obj
 
     @staticmethod
-    def write_interface_xml(p_xml, p_controller_obj):
-        return p_xml
+    def write_interface_xml(p_controller_obj):
+        l_xml = ET.Element('Null')
+        return l_xml
 
 # ## END DBK

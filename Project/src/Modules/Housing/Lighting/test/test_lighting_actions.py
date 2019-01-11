@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Lighting/test/test_lighting_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 3, 2015
 @Summary:
 
-Passed all 3 tests - DBK - 2015-11-21
+Passed all 3 tests - DBK - 20159-01-10
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,8 +31,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_lighting_actions')
 

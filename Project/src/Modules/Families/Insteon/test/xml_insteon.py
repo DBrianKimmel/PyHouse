@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/test/xml_insteon.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 9, 2014
 @summary:   Insteon specific information.
@@ -50,7 +50,7 @@ This information will be present in a device's XML for Insteon type devices.
 
 """
 
-__updated__ = '2018-11-26'
+__updated__ = '2019-01-09'
 
 # Insteon Light
 

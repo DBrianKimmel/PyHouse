@@ -10,7 +10,7 @@
 Passed all 6 tests - DBK - 2017-12-28
 """
 
-__updated__ = '2018-10-02'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -108,7 +108,7 @@ class B2_Dispatch(SetupMixin, unittest.TestCase):
         l_payload = {"DateTime": DATE_TIME, "Sender": SENDER}
         self.m_pyhouse_obj.APIs.ComputerAPI = computerAPI(self.m_pyhouse_obj)
         # print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
-        l_log = mqtt_actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_payload)
+        l_log = mqtt_actions(self.m_pyhouse_obj).mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_payload)
         # print("\t--Log: {}\n".format(l_log))
         # self.assertEqual(l_topic[:13], '<MqttSection>')
         self.assertEqual(l_log[:13], '<MqttSection>')
@@ -118,7 +118,7 @@ class B2_Dispatch(SetupMixin, unittest.TestCase):
         l_payload = {"DateTime": DATE_TIME, "Sender": SENDER}
         self.m_pyhouse_obj.APIs.HouseAPI = houseAPI(self.m_pyhouse_obj)
         # print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
-        l_log = mqtt_actions(self.m_pyhouse_obj).mqtt_dispatch(l_topic, l_payload)
+        l_log = mqtt_actions(self.m_pyhouse_obj).mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_payload)
         # print("\t--Log: {}\n".format(l_log))
         # self.assertEqual(l_raw[:13], '<MqttSection>')
 

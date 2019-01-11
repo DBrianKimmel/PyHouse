@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2019-01-06'
+__updated__ = '2019-01-09'
 __version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -102,7 +102,7 @@ class Utility(object):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 
 
-class API(object):
+class API:
     """
     These are the public methods available to use Devices from any family.
     """
@@ -126,7 +126,7 @@ class API(object):
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
-    def ControlLight(self, p_light_obj, p_source, p_level, p_rate=0):
+    def XXXControlLight(self, p_light_obj, p_source, p_level, p_rate=0):
         """
         Do the Insteon thing to change the level of an Insteon light
         """
@@ -135,5 +135,19 @@ class API(object):
             return
         LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm.Name))
         self.m_plm.ControlLight(p_light_obj, p_source, p_level, p_rate)
+
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+        """
+        Insteon specific version of control light
+        All that Insteon can control is Brightness and Fade Rate.
+
+        @param p_controller_obj: ControllerData()
+        @param p_device_obj: the device being controlled
+        @param p_control: the idealized light control params
+        """
+        for l_controller in self.m_pyhouse_obj.House.Lighting.Controllers.values():
+            LOG.debug('Controlling Insteon device {} using '.format(p_device_obj.Name, p_controller_obj.Name))
+            l_plm = l_controller._HandlerAPI(self.m_pyhouse_obj)
+            self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

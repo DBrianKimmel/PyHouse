@@ -13,7 +13,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2018-12-28'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 
@@ -104,7 +104,7 @@ class DecodeResponses:
                 l_mqtt_publish = True
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(p_device_obj.Name, l_level)
             else:
-                l_debug_msg += '\n\tUnknown-type -"{}"; '.format(FormatBytes(l_message))
+                l_debug_msg += '\n\tUnknown-type:{} - "{}"; '.format(l_cmd1, FormatBytes(l_message))
                 p_device_obj.BrightnessPct = utilDecode.decode_light_brightness(l_cmd2)
                 l_mqtt_publish = True
         except AttributeError as e_err:
@@ -112,7 +112,8 @@ class DecodeResponses:
 
         Insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)
         p_controller_obj.Ret = True
-        LOG.info('Light Response {}'.format(l_debug_msg))
+        LOG.debug('Light Response {}'.format(l_debug_msg))
+        LOG.info('Light: {}, Brightness: {}'.format(p_device_obj.Name, p_device_obj.BrightnessPct))
         if l_mqtt_publish:
             l_topic = 'lighting/light/status/debug'
             p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)

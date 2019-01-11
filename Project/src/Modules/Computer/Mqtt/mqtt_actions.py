@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-06'
+__updated__ = '2019-01-07'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,7 +17,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import NodeData, PyHouseData
+# from Modules.Core.data_objects import NodeData, PyHouseData
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.Lighting.lighting import MqttActions as lightingMqtt
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightsMqtt
@@ -34,14 +34,12 @@ class Actions:
     """
 
     m_disp_computer = None
-    m_disp_entertainment = None
     m_disp_lights = None
     m_myname = 'Not Initialized.'
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_myname = p_pyhouse_obj.Computer.Name
-        self.m_disp_entertainment = entertainmentMqtt(p_pyhouse_obj)
         self.m_disp_lights = lightsMqtt(p_pyhouse_obj)
 
     def _get_field(self, p_message, p_field):
@@ -66,7 +64,7 @@ class Actions:
         l_logmsg += p_message
         return l_logmsg
 
-    def mqtt_dispatch(self, p_topic, p_message):
+    def mqtt_dispatch(self, p_pyhouse_obj, p_topic, p_message):
         """ This is the master dispatch table for incoming messages.
         It has two functions:
             Acting on the message received.
@@ -90,21 +88,21 @@ class Actions:
         # Now do all the rest of the topic-2 fields.
         LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'computer':
-            l_logmsg += self.m_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
+            l_logmsg += p_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
-            l_logmsg += self.m_disp_entertainment.decode(p_topic[1:], p_message)
+            l_logmsg += entertainmentMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'hvac':
-            l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg += hvacMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'house':
-            l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
+            l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'lighting':
-            l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg += lightingMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'login':
-            l_logmsg += self.m_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
+            l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'schedule':
-            l_logmsg += scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg += scheduleMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'security':
-            l_logmsg += securityMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg += securityMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'weather':
             l_logmsg += self._decode_weather(p_topic, p_message)
         else:

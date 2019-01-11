@@ -2,15 +2,15 @@
 @name:      PyHouse/src/Modules/Drivers/test/test_interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   This module is for testing driver interface data.
 
-Passed all 10 tests - DBK - 2018-03-13
+Passed all 10 tests - DBK - 2019-09-10
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -81,7 +81,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_04_Parsed(self):
         l_xml = ET.fromstring(XML_USB)
-        # print('A2-04-A - Parsed\n', l_xml)
+        # sprint(PrettyFormatAny.form(l_xml, 'A2-04-A Parsed'))
         self.assertEqual(l_xml.tag, "USB")
 
 
@@ -106,8 +106,9 @@ class A3_XML(SetupMixin, unittest.TestCase):
 
     def test_02_ExtractXML(self):
         l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_controllers[0], 'A3-02-a - First Controller Obj'))
+        print(PrettyFormatAny.form(l_controllers[0], 'A3-02-A - First Controller Obj'))
         l_interface = interfaceXml.read_interface_xml(self.m_controller_obj, l_controllers[0])
+        print(PrettyFormatAny.form(l_interface, 'A3-02-B - First Controller Obj'))
 
 
 class R1_Read(SetupMixin, unittest.TestCase):
@@ -146,5 +147,6 @@ class W1_Write(SetupMixin, unittest.TestCase):
     def test_02_ExtractXML(self):
         l_controllers = self.m_ctlr_api.read_all_controllers_xml(self.m_pyhouse_obj)
         l_interface = interfaceXml.read_interface_xml(self.m_controller_obj, l_controllers[0])
+        print(PrettyFormatAny.form(l_controllers[0], 'R1-01-C - Controller Obj'))
 
 # ## END

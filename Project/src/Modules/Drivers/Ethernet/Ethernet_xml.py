@@ -11,9 +11,10 @@
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
+import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import EthernetControllerData
@@ -32,12 +33,13 @@ class XML(object):
         return l_ethernet
 
     @staticmethod
-    def write_interface_xml(p_xml, p_controller_obj):
+    def write_interface_xml(p_controller_obj):
+        l_xml = ET.Element('Ethernet')
         try:
-            PutGetXML.put_int_element(p_xml, 'PortNumber', p_controller_obj.PortNumber)
-            PutGetXML.put_text_element(p_xml, 'Protocol', p_controller_obj.Protocol)
+            PutGetXML.put_int_element(l_xml, 'PortNumber', p_controller_obj.PortNumber)
+            PutGetXML.put_text_element(l_xml, 'Protocol', p_controller_obj.Protocol)
         except Exception:
             pass
-        return p_xml
+        return l_xml
 
 # ## END DBK

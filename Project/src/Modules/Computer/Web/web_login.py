@@ -19,7 +19,7 @@ After the user is authenticated, this element is converted to a "loged in as" en
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 import os
@@ -137,7 +137,8 @@ class LoginElement(athena.LiveElement):
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
-                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish('computer/browser/login', l_login_obj)  #  lighting/web/{}/control
+                    l_topic = 'comouter/browser/login'
+                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
                 return l_login_obj
         return l_login_obj
 
@@ -170,7 +171,6 @@ class UnixChecker(object):
     implements(ICredentialsChecker)
     credentialInterfaces = (IUsernamePassword,)
 
-
     def checkPwd(self, pwd, username, password):
         try:
             cryptedPass = pwd.getpwnam(username)[1]
@@ -183,7 +183,6 @@ class UnixChecker(object):
             elif verifyCryptedPassword(cryptedPass, password):
                 return defer.succeed(username)
 
-
     def checkSpwd(self, spwd, username, password):
         try:
             cryptedPass = spwd.getspnam(username)[1]
@@ -192,7 +191,6 @@ class UnixChecker(object):
         else:
             if verifyCryptedPassword(cryptedPass, password):
                 return defer.succeed(username)
-
 
     def requestAvatarId(self, credentials):
         username, password = credentials.username, credentials.password
@@ -248,6 +246,5 @@ class PyHouseRealm(object):
         #  else:
         #    LOG.error('No Interface.')
         pass
-
 
 #  ## END DBK

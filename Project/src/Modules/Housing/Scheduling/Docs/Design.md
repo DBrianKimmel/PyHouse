@@ -26,9 +26,41 @@ I switched to astral and the code is now gone.  Hurrah!
 - status
 - control
 
+The Mqtt message is the new way to execute a schedule.  Each node executes a schedule and sends a message ot all othefr nodes.
+If the node receiving the message has a controller capable of acting on the message it does so by sending the proper commands to the controller
+
+
 ### status
 
 This is a schedule object published.
+
+### Object
+
+#### BaseObject
+- Name = 'undefined baseobject'
+- Key = 0
+- Active = False
+- Comment = ''
+- LastUpdate = None (datetime)
+#### BaseUUIDObject
+- UUID = None
+#### ScheduleBaseData
+- DOW = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
+- ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
+- ScheduleType = ''  # Valid Schedule Type
+- Time = None
+-   for use by web browser - not saved in xml
+- _AddFlag = False
+- _DeleteFlag = False
+#### ScheduleLightData
+- Level = 0
+- LightName = None
+- LightUUID = None
+- Rate = 0
+- RoomName = None
+- RoomUUID = None
+- ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
+
 
 
 ### END DBK

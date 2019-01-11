@@ -12,7 +12,7 @@
 """
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 
@@ -55,7 +55,7 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
 
         l_device = SensorMessage(p_device_obj.Name, p_device_obj.RoomName, 'Generic ')
-        l_topic = 'security/'
+        l_topic = 'security/xxx'
         l_mqtt_msg = 'security '
         if p_device_obj.DeviceSubType == 1:
             l_mqtt_msg += 'Garage Door: '

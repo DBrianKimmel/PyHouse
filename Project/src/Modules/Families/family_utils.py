@@ -15,7 +15,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2018-01-22'
+__updated__ = '2019-01-09'
 
 #  Import system type stuff.
 
@@ -99,7 +99,10 @@ class FamUtil(object):
 
     @staticmethod
     def _get_family_device_api(p_pyhouse_obj, p_device_obj):
-        """
+        """ Get the pointer to the correct family module API class.
+
+        @param p_device_obj: is the device to find the API for.
+        @return: the pointer to the API class of the proper device family
         """
         l_dev_name = FamUtil._get_device_name(p_device_obj)
         try:

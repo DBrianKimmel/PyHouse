@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Drivers/test/test_USB.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 30, 2015
 @Summary:
 
-Passed all tests - DBK - 2018-02-13
+Passed all tests - DBK - 2019-01-10
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner

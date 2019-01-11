@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-01-05'
+__updated__ = '2019-01-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,7 +28,7 @@ from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Lighting.lighting_actions import Utility as actionUtility
 from Modules.Housing.Lighting.lighting_buttons import API as buttonsAPI
 from Modules.Housing.Lighting.lighting_controllers import API as controllersAPI
-from Modules.Housing.Lighting.lighting_lights import API as lightsAPI, MqttActions as lightMqtt
+from Modules.Housing.Lighting.lighting_lights import API as lightAPI, MqttActions as lightMqtt, XML as lightXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
@@ -79,7 +79,7 @@ class Utility(object):
             return p_pyhouse_obj.House.Lighting
         p_pyhouse_obj.House.Lighting.Buttons = buttonsAPI.read_all_buttons_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Lighting.Controllers = controllersAPI.read_all_controllers_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Lighting.Lights = lightsAPI.read_all_lights_xml(p_pyhouse_obj)
+        p_pyhouse_obj.House.Lighting.Lights = lightXML.read_all_lights_xml(p_pyhouse_obj)
         return p_pyhouse_obj.House.Lighting
 
     @staticmethod
@@ -91,7 +91,7 @@ class Utility(object):
         l_lighting_xml = ET.Element('LightingSection')
         l_lighting_xml.append(buttonsAPI.write_all_buttons_xml(p_pyhouse_obj))
         l_lighting_xml.append(controllersAPI.write_all_controllers_xml(p_pyhouse_obj))
-        l_lighting_xml.append(lightsAPI.write_all_lights_xml(p_pyhouse_obj))
+        l_lighting_xml.append(lightXML.write_all_lights_xml(p_pyhouse_obj))
         return l_lighting_xml
 
 
@@ -150,5 +150,20 @@ class API(Utility):
             l_api.ControlLight(l_light_obj, p_source, p_new_level)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
+
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+        """
+        Insteon specific version of control light
+        All that Insteon can control is Brightness and Fade Rate.
+
+        @param p_controller_obj: optional
+        @param p_device_obj: the device being controlled
+        @param p_control: the idealized light control params
+        """
+        if self.m_plm == None:
+            LOG.info('No PLM was defined - Quitting.')
+            return
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
+        self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

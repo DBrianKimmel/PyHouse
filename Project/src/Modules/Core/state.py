@@ -1,15 +1,15 @@
 """
-@name:      PyHouse/src/Modules/Core/Mqtt/state.py
+@name:      PyHouse/Project/src/Modules/Core/Mqtt/state.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created Jul 23, 2018
 @Summary:
 
 """
 
-__updated__ = '2018-07-23'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 

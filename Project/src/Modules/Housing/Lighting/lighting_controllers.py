@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Lighting/lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -19,7 +19,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2018-12-22'
+__updated__ = '2019-01-10'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -83,7 +83,8 @@ class Utility(object):
     @staticmethod
     def _write_interface_data(p_obj, p_xml):
         try:
-            interfaceXML.write_interface_xml(p_obj, p_xml)
+            l_xml = interfaceXML.write_interface_xml(p_obj)
+            p_xml.append(l_xml)
         except Exception:
             pass
         return p_xml

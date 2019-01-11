@@ -12,7 +12,7 @@ Passed all 26 tests - DBK - 2018-12-21
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS, TESTING_UPB_NETWORK, TESTING_UPB_PASSWORD
 
-__updated__ = '2018-12-21'
+__updated__ = '2019-01-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -163,7 +163,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
 
 
-class B1_Read(SetupMixin, unittest.TestCase):
+class B1_XmlRead(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by lighting_lights.
     """
@@ -293,7 +293,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(len(l_objs), 3)
 
 
-class B2_Write(SetupMixin, unittest.TestCase):
+class B2_XmlWrite(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of XML used by lighting_lights.
     """

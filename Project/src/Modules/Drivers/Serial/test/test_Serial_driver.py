@@ -1,16 +1,16 @@
 """
-@name:      PyHouse/src/Modules/Drivers/Serial/test/test_Serial_driver.py
+@name:      PyHouse/Project/src/Modules/Drivers/Serial/test/test_Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013_2018 by D. Brian Kimmel
+@copyright: (c) 2013_2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 4, 2013
 @summary:   This module is for testing local node data.
 
-Passed all 9 tests - DBK - 2018-02-12
+Passed all 9 tests - DBK - 2019-01-10
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

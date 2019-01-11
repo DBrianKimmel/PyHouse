@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Drivers/Serial/test/test_serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 5, 2014
 @Summary:
 
-Passed all 6 tests - DBK - 2018-02-12
+Passed all 6 tests - DBK - 2019-01-10
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-01-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -134,9 +134,8 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def test_01_SerialXml(self):
         l_interface = serialXML.read_interface_xml(self.m_xml.controller)
         stuff_new_attrs(self.m_controller_obj, l_interface)
-        l_xml = ET.Element('TestOutput')
-        l_xml = serialXML.write_interface_xml(l_xml, self.m_controller_obj)
-        # print(PrettyFormatAny.form(l_xml, "Interface"))
+        l_xml = serialXML.write_interface_xml(self.m_controller_obj)
+        print(PrettyFormatAny.form(l_xml, "Interface"))
         self.assertEqual(l_xml.find('BaudRate').text, TESTING_SERIAL_BAUD_RATE)
         self.assertEqual(l_xml.find('ByteSize').text, TESTING_SERIAL_BYTE_SIZE)
         self.assertEqual(l_xml.find('DsrDtr').text, TESTING_SERIAL_DSR_DTR)

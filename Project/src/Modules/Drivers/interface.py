@@ -65,17 +65,17 @@ class Xml(object):
         return l_interface  # for testing
 
     @staticmethod
-    def write_interface_xml(p_controller_obj, p_xml):
+    def write_interface_xml(p_controller_obj):
         if p_controller_obj.InterfaceType == 'Ethernet':
-            p_xml = ethernetXML.write_interface_xml(p_xml, p_controller_obj)
+            l_xml = ethernetXML.write_interface_xml(p_controller_obj)
         elif p_controller_obj.InterfaceType == 'Serial':
-            p_xml = serialXML.write_interface_xml(p_xml, p_controller_obj)
+            l_xml = serialXML.write_interface_xml(p_controller_obj)
         elif p_controller_obj.InterfaceType == 'USB':
-            p_xml = usbXML.write_interface_xml(p_xml, p_controller_obj)
+            l_xml = usbXML.write_interface_xml(p_controller_obj)
         elif p_controller_obj.InterfaceType == 'Null':
-            p_xml = nullXML.write_interface_xml(p_xml, p_controller_obj)
+            l_xml = nullXML.write_interface_xml(p_controller_obj)
         else:
             LOG.error('ERROR - WriteDriverXml - Unknown InterfaceType - {} for {}'.format(p_controller_obj.InterfaceType, p_controller_obj.Name))
-        p_xml  # for testing
+        return l_xml
 
 # ## END DBK
