@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Housing/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the rooms information for a house.
 
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -36,10 +36,10 @@ class Xml(object):
         l_room_obj = RoomData()
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_room_obj, p_room_element)
-            l_room_obj.Comment = PutGetXML.get_text_from_xml(p_room_element, 'Comment')
+            # l_room_obj.Comment = PutGetXML.get_text_from_xml(p_room_element, 'Comment')
             l_room_obj.Corner = PutGetXML.get_coords_from_xml(p_room_element, 'Corner')
             l_room_obj.Floor = PutGetXML.get_text_from_xml(p_room_element, 'Floor', '1')
-            l_room_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_room_element, 'LastUpdate')
+            # l_room_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_room_element, 'LastUpdate')
             l_room_obj.Size = PutGetXML.get_coords_from_xml(p_room_element, 'Size')
             l_room_obj.RoomType = PutGetXML.get_text_from_xml(p_room_element, 'RoomType')
         except:
@@ -49,10 +49,10 @@ class Xml(object):
     @staticmethod
     def write_one_room(p_room_object):
         l_entry = XmlConfigTools.write_base_UUID_object_xml('Room', p_room_object)
-        PutGetXML.put_text_element(l_entry, 'Comment', p_room_object.Comment)
+        # PutGetXML.put_text_element(l_entry, 'Comment', p_room_object.Comment)
         PutGetXML.put_coords_element(l_entry, 'Corner', p_room_object.Corner)
         PutGetXML.put_text_element(l_entry, 'Floor', p_room_object.Floor)
-        PutGetXML.put_date_time_element(l_entry, 'LastUpdate', p_room_object.LastUpdate)
+        # PutGetXML.put_date_time_element(l_entry, 'LastUpdate', p_room_object.LastUpdate)
         PutGetXML.put_coords_element(l_entry, 'Size', p_room_object.Size)
         PutGetXML.put_text_element(l_entry, 'RoomType', p_room_object.RoomType)
         return l_entry

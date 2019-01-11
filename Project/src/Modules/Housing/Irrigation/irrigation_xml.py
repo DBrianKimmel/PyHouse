@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @Summary:   Read/Write the Irrigation portions of the XML Configuration file.
@@ -14,7 +14,7 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 """
 from opcode import cmp_op
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,7 +43,7 @@ class Xml(object):
         """
         l_obj = IrrigationZoneData()
         XmlConfigTools.read_base_object_xml(l_obj, p_xml)  # Name, Key, Active
-        l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+        # l_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         l_obj.Duration = PutGetXML.get_time_from_xml(p_xml, 'Duration')
         l_obj.EmitterCount = PutGetXML.get_int_from_xml(p_xml, 'EmitterCount', 0)
         l_obj.EmitterType = PutGetXML.get_text_from_xml(p_xml, 'EmitterType')
@@ -61,7 +61,7 @@ class Xml(object):
         @return the XML for one Zone
         """
         l_xml = XmlConfigTools.write_base_object_xml('Zone', p_obj)
-        PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
+        # PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         PutGetXML.put_time_element(l_xml, 'Duration', p_obj.Duration)
         PutGetXML.put_int_element(l_xml, 'EmitterCount', p_obj.EmitterCount)
         PutGetXML.put_int_element(l_xml, 'EmitterType', p_obj.EmitterType)
@@ -81,7 +81,7 @@ class Xml(object):
         l_count = 0
         XmlConfigTools.read_base_UUID_object_xml(l_sys, p_xml)
         try:
-            l_sys.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+            # l_sys.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             l_sys.FirstZone = PutGetXML.get_int_from_xml(p_xml, 'FirstZone')
             l_sys.UsesMasterValve = PutGetXML.get_bool_from_xml(p_xml, 'MasterValve')
             l_sys.UsesPumpStartRelay = PutGetXML.get_bool_from_xml(p_xml, 'PumpRelay')
@@ -101,7 +101,7 @@ class Xml(object):
         @return: the XML for one complete IrrigationSystem
         """
         l_xml = XmlConfigTools.write_base_UUID_object_xml('IrrigationSystem', p_obj)
-        PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
+        # PutGetXML.put_text_element(l_xml, 'Comment', p_obj.Comment)
         for l_obj in p_obj.Zones.values():
             l_zone = Xml._write_one_zone(l_obj)
             l_xml.append(l_zone)

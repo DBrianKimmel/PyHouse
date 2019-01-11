@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -38,14 +38,14 @@ class Xml(object):
     @staticmethod
     def _read_one_pool(p_pool_element):
         l_pool_obj = Xml._read_base(p_pool_element)
-        l_pool_obj.Comment = PutGetXML.get_text_from_xml(p_pool_element, 'Comment')
+        # l_pool_obj.Comment = PutGetXML.get_text_from_xml(p_pool_element, 'Comment')
         l_pool_obj.PoolType = PutGetXML.get_text_from_xml(p_pool_element, 'PoolType')
         return l_pool_obj
 
     @staticmethod
     def _write_one_pool(p_pool_obj):
         l_entry = XmlConfigTools.write_base_UUID_object_xml('Pool', p_pool_obj)
-        PutGetXML().put_text_element(l_entry, 'Comment', p_pool_obj.Comment)
+        # PutGetXML().put_text_element(l_entry, 'Comment', p_pool_obj.Comment)
         PutGetXML().put_text_element(l_entry, 'PoolType', p_pool_obj.PoolType)
         return l_entry
 

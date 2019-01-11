@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-12-22'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 
@@ -36,7 +36,7 @@ class XML(object):
         """
         XmlConfigTools.read_base_UUID_object_xml(p_obj, p_xml)
         try:
-            p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+            # p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             p_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_xml, 'DeviceFamily')
             p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType')
             p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType')

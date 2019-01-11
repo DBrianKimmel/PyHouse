@@ -4,14 +4,14 @@
 @name:      PyHouse/Project/src/Modules/Core/Utilities.config_file.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 15, 2014
 @Summary:   This handles creation, read and write of the XML Config file.
 
 """
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-01-11'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

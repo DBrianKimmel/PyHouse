@@ -1,16 +1,16 @@
 """
-@name: PyHouse/src/Modules.Core.Utilities.test/test_convert.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2013-2017 by D. Brian Kimmel
-@license: MIT License
-@note: Created on Apr 4, 2013
-@summary: This module is for testing conversion tools.
+@name:      PyHouse/Project/src/Modules/Core/Utilities/test/test_convert.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: 2013-2019 by D. Brian Kimmel
+@license:   MIT License
+@note:      Created on Apr 4, 2013
+@summary:   This module is for testing conversion tools.
 
 Passed all 5 tests - DBK - 2017-04-29
 """
 
-__updated__ = '2018-07-12'
+__updated__ = '2019-01-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

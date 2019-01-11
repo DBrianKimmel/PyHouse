@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Nodes/nodes_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 15, 2014
 @Summary:
@@ -10,7 +10,7 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2018-02-12'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -93,10 +93,10 @@ class Xml(object):
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')
         l_node_obj.NodeRole = PutGetXML.get_int_from_xml(p_node_xml, 'NodeRole')
-        try:
-            l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
-        except AttributeError:
-            l_node_obj.LastUpdate = datetime.datetime.now()
+        # try:
+        #    l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
+        # except AttributeError:
+        #    l_node_obj.LastUpdate = datetime.datetime.now()
         try:
             l_node_obj.NodeInterfaces = Xml._read_interfaces_xml(p_node_xml.find('InterfaceSection'))
         except AttributeError as e_err:

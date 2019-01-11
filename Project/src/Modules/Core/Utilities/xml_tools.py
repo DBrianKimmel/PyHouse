@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules.Core.Utilities.xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2018 by D. Brian Kimmel
+@copyright: (c) 2012-2019 by D. Brian Kimmel
 @note:      Created on Jun 2, 2012
 @license:   MIT License
 @summary:   Various XML functions and utility methods.
 
 """
 
-__updated__ = '2018-10-31'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -396,6 +396,7 @@ class XmlConfigTools:
             p_base_obj.Key = PutGetXML.get_int_from_xml(p_entry_element_xml, 'Key', 0)
             p_base_obj.Active = PutGetXML.get_bool_from_xml(p_entry_element_xml, 'Active', False)
             p_base_obj.Comment = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Comment', '')
+            p_base_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_entry_element_xml, 'LastUpdate')
         except Exception as e_err:
             LOG.error('Base Object - {}'.format(e_err))
         return p_base_obj
@@ -427,6 +428,7 @@ class XmlConfigTools:
             PutGetXML.put_int_attribute(l_elem, 'Key', p_object.Key)
             PutGetXML.put_bool_attribute(l_elem, 'Active', p_object.Active)
             PutGetXML.put_text_element(l_elem, 'Comment', p_object.Comment)
+            PutGetXML.put_date_time_element(l_elem, 'LastUpdate', p_object.LastUpdate)
         except AttributeError as e_err:
             PutGetXML.put_text_attribute(l_elem, 'Error: ', e_err)
         return l_elem

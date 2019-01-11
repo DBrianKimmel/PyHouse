@@ -22,4 +22,23 @@ Mqtt came into the picture after PyHous was up and running, so not everything ru
 
 Nodes are removed if last used > 2 months
 
+## Rooms
+
+- Name = 'undefined baseobject'
+- Key = 0
+- Active = False
+- Comment = ''
+- LastUpdate = None
+
+- UUID = None
+
+- Corner = ''  # CoordinateData()
+- Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
+- Size = ''  # CoordinateData()
+- RoomType = 'Room'
+- _AddFlag = False
+- _DeleteFlag = False
+
+
+
 ### END DBK

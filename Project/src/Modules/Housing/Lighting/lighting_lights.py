@@ -115,7 +115,7 @@ class Utility(object):
 
     @staticmethod
     def _read_light_data(_p_pyhouse_obj, p_obj, p_xml):
-        p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
+        # p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
         if (p_xml.find('Brightness') != None):
             p_obj.BrightnessPct = PutGetXML.get_int_from_xml(p_xml, 'Brightness', 44)
         else:
