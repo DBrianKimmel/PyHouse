@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 import datetime
@@ -109,13 +109,14 @@ class MqttActions(object):
         --> pyhouse/housename/schedule/...
         """
         l_logmsg = '\tSchedule:\n'
-        if p_topic[0] == 'execute':
-            l_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
-            # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-            l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
-            l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
-        else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+        if len(p_topic) > 0:
+            if p_topic[0] == 'execute':
+                l_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
+                # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
+                l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
+                l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
+            else:
+                l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
         return l_logmsg
 
 

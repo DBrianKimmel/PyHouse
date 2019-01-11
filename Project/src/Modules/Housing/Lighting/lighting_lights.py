@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -53,9 +53,10 @@ class LightData(CoreLightingData):
         self.Saturation = 0  # 0 to 255
         self.ColorTemperature = 0  # degrees Kelvin - 0 is not supported
         self.RGB = 0xffffff
-        self.TransitionTime = 0  # time to turn on or off (fade time)
+        self.TransitionTime = 0  # 0 to 65535 ms = time to turn on or off (fade Time or Rate)
         self.State = State.UNKNOWN
         self.IsDimmable = False
+        self.IsColorChanging = False
 
 
 class MqttActions:

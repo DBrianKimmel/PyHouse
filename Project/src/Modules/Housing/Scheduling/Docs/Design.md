@@ -60,6 +60,16 @@ This is a schedule object published.
 - RoomName = None
 - RoomUUID = None
 - ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
+#### LightData
+- BrightnessPct = 0  # 0% to 100%
+- Hue = 0  # 0 to 65535
+- Saturation = 0  # 0 to 255
+- ColorTemperature = 0  # degrees Kelvin - 0 is not supported
+- RGB = 0xffffff
+- TransitionTime = 0  # 0 to 65535 ms = time to turn on or off (fade Time or Rate)
+- State = State.UNKNOWN
+- IsDimmable = False
+- IsColorChanging = False
 
 
 
