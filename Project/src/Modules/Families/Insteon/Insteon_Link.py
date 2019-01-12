@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-01-11'
 
 #  Import system type stuff
 
@@ -298,7 +298,7 @@ class InsteonAllLinks(object):
         LOG.info("Get all All-Links from controller {}.".format(p_controller_obj.Name))
         Send.queue_0x69_command(p_controller_obj)
 
-        Send.queue
+        # Send.queue
 
     def add_link(self, p_link):
         """Add an all link record.
