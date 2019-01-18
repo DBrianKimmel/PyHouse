@@ -13,8 +13,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-01-15'
 
 # strategy:
 #
@@ -24,16 +23,35 @@ __updated__ = '2017-01-20'
 
 # Import system type stuff
 import os.path
+from twisted.web.client import getPage
+from lxml import etree
 
 # Import PyHouse files
 
+VERSION_PATH = '../../../../VERSION'
+REPOSITORY = b'https://github.com/DBrianKimmel/PyHouse/'
+REPOSITORY_PATH = 'Project/VERSION'
+
+
+def _find_pyhouse_version_file():
+    """
+    Find the normalized VERSION file name
+    PyHouse/Project/src/VERSION
+    """
+    l_dir = os.path.abspath(__file__)
+    l_filename = os.path.join(os.path.dirname(l_dir), VERSION_PATH)
+    l_filename = os.path.normpath(l_filename)
+    return l_filename
+
 
 class FindLocalVersion(object):
+    """ Find out what version that we are.
+    """
 
     def __init__(self):
         self.m_version = 'latest'
         self.m_source = 'latest'
-        self.m_filename = self._find_pyhouse_version_file()
+        self.m_filename = _find_pyhouse_version_file()
         try:
             with open(self.m_filename) as f:
                 self.m_version = f.read().strip()
@@ -58,27 +76,46 @@ class FindLocalVersion(object):
             except OSError:
                 pass
 
-    def _find_pyhouse_version_file(self):
-        """
-        Find the normalized VERSION file name
-        PyHouse/src/VERSION
-        """
-        l_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../VERSION')
-        # l_filename = os.path.splitunc(l_filename)[1]
-        l_filename = os.path.normpath(l_filename)
-        return l_filename
-
     def get_version(self):
         return (self.m_version, self.m_source, self.m_filename)
 
 
 class FindRepositoryVersion(object):
+    """ Check the version in the repository
+    """
 
     def __init__(self):
         self.m_version = '0.0.0'
 
+    def print_page(self, p_html):
+        """
+        """
+        print(p_html)
+        pass
+
+    def get_page(self):
+        """
+        """
+        l_defer = getPage(REPOSITORY)
+        l_defer.addCallback(self.print_page)
+
     def get_version(self):
         return self.m_version
+
+    def parseHtml(self, p_html):
+        l_parser = etree.HTMLParser(encoding='utf8')
+        # tree = etree.parse(StringIO.StringIO(html), parser)
+        # return tree
+
+    def extractTitle(self, p_tree):
+        # titleText = unicode(tree.xpath("//title/text()")[0])
+        # return titleText
+        pass
+
+    # d = getPage('http://www.google.com')
+    # d.addCallback(parseHtml)
+    # d.addCallback(extraTitle)
+    # d.addBoth(println)
 
 
 class Utility(object):

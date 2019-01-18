@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Core/test/test_conversions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 14, 2014
 @Summary:
@@ -11,16 +11,15 @@
 All 6 tests working - DBK - 2017-10-08
 """
 
-__updated__ = '2017-10-09'
-
+__updated__ = '2019-01-12'
 
 # Import system type stuff
 from twisted.trial import unittest
+import datetime
 
 # Import PyMh files and modules.
 from Modules.Core import conversions
 from test.xml_data import XML_LONG
-
 
 ADDR_DR_SLAVE_MSG = bytearray(b'\x16\xc9\xd0')
 ADDR_DR_SLAVE_DOT = '16.C9.D0'
@@ -35,8 +34,10 @@ MSG_62 = bytearray(b'\x02\x62\x17\xc2\x72\x0f\x19\x00\x06')
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_conversions')
 
@@ -74,7 +75,6 @@ class B1_Factor(unittest.TestCase):
 
 
 class B2_Int(unittest.TestCase):
-
 
     def setUp(self):
         self.inst = conversions
@@ -143,7 +143,6 @@ class B3_Hex(unittest.TestCase):
 
 class C1_dh2i(unittest.TestCase):
 
-
     def setUp(self):
         self.inst = conversions
         pass
@@ -162,7 +161,6 @@ class C1_dh2i(unittest.TestCase):
 
 
 class C2_i2dh(unittest.TestCase):
-
 
     def setUp(self):
         self.inst = conversions

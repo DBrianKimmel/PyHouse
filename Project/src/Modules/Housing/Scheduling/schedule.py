@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Schedule events
@@ -39,8 +39,9 @@ Operation:
   Create a twisted timer that goes off when the scheduled time arrives.
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
+from Modules.Core.Utilities import convert
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-13'
 
 #  Import system type stuff
 import datetime
@@ -66,37 +67,6 @@ PAUSE_DELAY = 5
 MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
 
 
-def to_seconds(p_datetime):
-    """ Converts a datetime to seconds
-    @param p_datetime: is a datetime.datetime object
-    @return: an int of the time portion of the datetime
-    """
-    return (((p_datetime.hour * 60) + p_datetime.minute) * 60 + p_datetime.second)
-
-
-def to_dhms(p_seconds):
-    """ Convert seconds to a datetime
-    Mostly used for testing to allow seconds to be displayed more clearly.
-    """
-    l_ret = datetime.datetime(1970, 1, 1, 0, tzinfo=None)
-    l_ret = l_ret.fromtimestamp(p_seconds)
-    return l_ret
-
-
-def _get_schedule_timefield(p_schedule_obj):
-    """
-    @param p_schedule_obj: is a schedule obj
-    @return: a datetime.time object extracted from the Time field of the schedule object
-    """
-    l_timefield = p_schedule_obj.Time.lower()
-    try:
-        # l_time = dparser.parse(l_timefield, fuzzy=True) # Worked ok in Python2
-        l_time = aniso8601.parse_time(l_timefield)
-    except ValueError:
-        l_time = datetime.time(0)
-    return l_time
-
-
 class MqttActions(object):
     """
     """
@@ -115,8 +85,12 @@ class MqttActions(object):
                 # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
                 l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
                 l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
+            elif p_topic[0] == 'status':
+                pass
+            elif p_topic[0] == 'control':
+                pass
             else:
-                l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+                l_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
         return l_logmsg
 
 
@@ -176,7 +150,7 @@ class SchedTime:
             l_time = aniso8601.parse_time(p_timefield)
         except Exception:
             l_time = datetime.time(0)
-        return to_seconds(l_time)
+        return convert.datetime_to_seconds(l_time)
 
     @staticmethod
     def _extract_schedule_time(p_schedule_obj, p_rise_set):
@@ -193,23 +167,23 @@ class SchedTime:
         l_timefield = p_schedule_obj.Time.lower()
         if 'dawn' in l_timefield:
             # print('Dawn - {}'.format(l_timefield))
-            l_base = to_seconds(p_rise_set.Dawn)
+            l_base = convert.datetime_to_seconds(p_rise_set.Dawn)
             l_timefield = l_timefield[4:]
         elif 'sunrise' in l_timefield:
             # print('SunRise - {}'.format(l_timefield))
-            l_base = to_seconds(p_rise_set.SunRise)
+            l_base = convert.datetime_to_seconds(p_rise_set.SunRise)
             l_timefield = l_timefield[7:]
         elif 'noon' in l_timefield:
             # print('Noon - {}'.format(l_timefield))
-            l_base = to_seconds(p_rise_set.Noon)
+            l_base = convert.datetime_to_seconds(p_rise_set.Noon)
             l_timefield = l_timefield[4:]
         elif 'sunset' in l_timefield:
             # print('SunSet - {}'.format(l_timefield))
-            l_base = to_seconds(p_rise_set.SunSet)
+            l_base = convert.datetime_to_seconds(p_rise_set.SunSet)
             l_timefield = l_timefield[6:]
         elif 'dusk' in l_timefield:
             # print('Dusk - {}'.format(l_timefield))
-            l_base = to_seconds(p_rise_set.Dusk)
+            l_base = convert.datetime_to_seconds(p_rise_set.Dusk)
             l_timefield = l_timefield[4:]
         else:
             l_base = 0
@@ -247,7 +221,7 @@ class SchedTime:
         l_dow_seconds = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
         l_sched_seconds = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
         l_sched_secs = l_dow_seconds + l_sched_seconds
-        l_now_seconds = to_seconds(p_now)
+        l_now_seconds = convert.datetime_to_seconds(p_now)
         l_seconds = l_sched_secs - l_now_seconds
         if l_seconds < 0:
             l_seconds += SECONDS_IN_DAY

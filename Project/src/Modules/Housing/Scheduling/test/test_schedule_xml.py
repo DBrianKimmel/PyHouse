@@ -1,17 +1,17 @@
 """
-@name:      PyHouse/src/Modules/Scheduling/test/test_schedule_xml.py
+@name:      PyHouse/Project/src/Modules/Scheduling/test/test_schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 2, 2014
 @Summary:
 
-Passed all 16 tests - DBK - 2018-02-11
+Passed all 16 tests - DBK - 2019-01-14
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2018 by D. Brian Kimmel
 * Created:   2018-09-30
-* Updated:   2018-10-04
+* Updated:   2019-01-11
 * License:   MIT License
 * Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
@@ -20,25 +20,26 @@ Mqtt came into the picture after PyHous was up and running, so not everything ru
 
 ## Design
 
-Nodes are removed if last used > 2 months
+Nodes are removed if last used > 2 months ago.
 
 ## Rooms
 
-- Name = 'undefined baseobject'
-- Key = 0
-- Active = False
-- Comment = ''
-- LastUpdate = None
-
-- UUID = None
-
-- Corner = ''  # CoordinateData()
-- Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
-- Size = ''  # CoordinateData()
-- RoomType = 'Room'
-- _AddFlag = False
-- _DeleteFlag = False
-
-
+```python
+class BaseObject(object):
+        self.Name = 'undefined baseobject'
+        self.Key = 0
+        self.Active = False
+        self.Comment = ''
+        self.LastUpdate = None
+class BaseUUIDObject(BaseObject):
+        self.UUID = None
+class RoomData(BaseUUIDObject):
+        self.Corner = ''  # CoordinateData()
+        self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
+        self.Size = ''  # CoordinateData()
+        self.RoomType = 'Room'
+        self._AddFlag = False
+        self._DeleteFlag = False
+```
 
 ### END DBK
