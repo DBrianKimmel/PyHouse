@@ -21,7 +21,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-01-19'
 
 #  Import system type stuff
 from datetime import datetime
@@ -90,7 +90,9 @@ class Devices(object):
             LOG.info(l_msg)
             l_id = '{}:{}'.format(l_dev.get('ID_VENDOR_ID'), l_dev.get('ID_MODEL_ID'))
             if l_id == '0403:6001':
-                l_ret = 'Insteon'
+                l_ret = 'Insteon PLM (0403:6001)'
+            elif l_id == '067b:2303':
+                l_ret = 'USB Serial port (067b:2303)'
         return l_ret
 
     def _add_controller(self, p_node, p_obj):
@@ -103,6 +105,8 @@ class Devices(object):
         return
 
     def find_devices(self, p_node_obj):
+        """
+        """
         return p_node_obj
 
 

@@ -13,7 +13,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-01-21'
 
 #  Import system type stuff
 
@@ -33,7 +33,7 @@ class InsteonLightStatus:
         self.Family = 'Insteon'
         self.Type = 1  # 1 = Lighting
         self.SubType = 1  # 1 = Button
-        self.Brightness = None
+        self.BrightnessPct = None
         self.RoomName = None
 
 

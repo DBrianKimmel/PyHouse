@@ -4,20 +4,20 @@
 @name:      PyHouse/src/Modules/families/UPB/UPB_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 6, 2014
 @summary:   This module is for communicating with UPB controllers.
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-01-22'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import LightData
+# from Modules.Core.data_objects import LightData
+from Modules.Housing.Lighting.lighting_lights import LightData
 
 
 class UPBData(LightData):

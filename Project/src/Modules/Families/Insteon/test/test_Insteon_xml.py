@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2017-04-20
 
 """
 
-__updated__ = '2019-01-09'
+__updated__ = '2019-01-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,11 +20,12 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Core.data_objects import LightData, HouseInformation, ButtonData
+from Modules.Core.data_objects import HouseInformation, ButtonData
 from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
 from Modules.Core import conversions
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON
+from Modules.Housing.Lighting.lighting_lights import LightData
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_ADDRESS_0, \
     TESTING_INSTEON_DEVCAT_0, \
@@ -141,7 +142,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_product_key, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_02_Core(self):
-        l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
+        l_light = self.m_api.read_base_device_object_xml(self.m_device, self.m_xml.light)
         # print(PrettyFormatAny.form(l_light, 'C1-02-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.Key, int(TESTING_LIGHT_KEY_0))
@@ -181,7 +182,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_05_InsteonLight(self):
-        l_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
+        l_light = self.m_api.read_base_device_object_xml(self.m_device, self.m_xml.light)
         insteonXml.ReadXml(l_light, self.m_xml.light)
         # print(PrettyFormatAny.form(l_light, 'C1-05-A - Insteon Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
@@ -198,7 +199,7 @@ class C2_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_light = self.m_api.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
+        self.m_light = self.m_api.read_base_device_object_xml(self.m_device, self.m_xml.light)
         insteonXml.ReadXml(self.m_light, self.m_xml.light)
 
     def test_01_setup(self):

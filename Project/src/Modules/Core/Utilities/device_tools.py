@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-22'
 
 #  Import system type stuff
 
@@ -26,7 +26,7 @@ LOG = Logger.getLogger('PyHouse.DeviceTools    ')
 class XML(object):
 
     @staticmethod
-    def read_base_device_object_xml(p_pyhouse_obj, p_obj, p_xml):
+    def read_base_device_object_xml(p_obj, p_xml):
         """
         Get the BaseUUIDObject entries from the XML element.
         Adds: Device Info, Room Info.
@@ -60,16 +60,5 @@ class XML(object):
         PutGetXML.put_text_element(l_elem, 'RoomName', p_obj.RoomName)
         PutGetXML.put_text_element(l_elem, 'RoomUUID', p_obj.RoomUUID)
         return l_elem
-
-
-def stuff_new_attrs(p_target_obj, p_data_obj):
-    """Put the NEW information from the data object into the target object.
-    Preserve any attributes already in the target object.
-    Skip system '__' and private '_' attributes
-    """
-    l_attrs = filter(lambda aname: not aname.startswith('_'), dir(p_data_obj))
-    for l_attr in l_attrs:
-        if not hasattr(p_target_obj, l_attr):
-            setattr(p_target_obj, l_attr, getattr(p_data_obj, l_attr))
 
 #  ## END DBK

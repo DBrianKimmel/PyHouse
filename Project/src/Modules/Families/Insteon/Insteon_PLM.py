@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-20'
 
 #  Import system type stuff
 import datetime
@@ -484,7 +484,7 @@ class API(Utility):
 
         @param p_controller_obj: optional
         @param p_device_obj: the device being controlled
-        @param p_control: the idealized light control params
+        @param p_control: the idealized light control params ==> Modules.Housing.Lighting.lighting_lights.LightData()
         """
         l_level = int(p_control.BrightnessPct)
         l_rate = 0  # The transition time is not implemented currently.

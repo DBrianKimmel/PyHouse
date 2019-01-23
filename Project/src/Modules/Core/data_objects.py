@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-21'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -194,9 +194,9 @@ class LightingData(object):
     """
 
     def __init__(self):
-        self.Buttons = {}  # ButtonData()  Sub = 3
-        self.Controllers = {}  # ControllerData()  Sub = 1
-        self.Lights = {}  # LightData()  Sub = 2
+        self.Buttons = {}  # ButtonData()  DeviceSubType = 3
+        self.Controllers = {}  # ControllerData()  DeviceSubType = 1
+        self.Lights = {}  # LightData()  DeviceSubType = 2
 
 
 class LocationData(object):
@@ -748,24 +748,6 @@ class GarageDoorData(CoreLightingData):
     def __init__(self):
         super(GarageDoorData, self).__init__()
         self.Status = None  # Open | Closed
-
-
-class LightData(CoreLightingData):
-    """ This is the light info.
-
-    ==> PyHouse.House.Lighting.Lights.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(LightData, self).__init__()
-        self.BrightnessPct = 0  # 0% to 100%
-        self.Hue = 0  # 0 to 65535
-        self.Saturation = 0  # 0 to 255
-        self.ColorTemperature = 0  # degrees Kelvin - 0 is not supported
-        self.RGB = 0xffffff
-        self.TransitionTime = 0  # time to turn on or off (fade time)
-        self.State = State.UNKNOWN
-        self.IsDimmable = False
 
 
 class MotionSensorData(CoreLightingData):

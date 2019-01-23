@@ -2,7 +2,7 @@
 @name:      PyHouse/Project/src/Modules/Housing/Lighting/test/xml_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 22, 2014
 @Summary:
@@ -11,7 +11,7 @@ See PyHouse/Project/src/test/xml_data.py for the entire hierarchy.
 
 """
 
-__updated__ = '2018-12-06'
+__updated__ = '2019-01-20'
 
 # Import system type stuff
 

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-06'
+__updated__ = '2019-01-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -66,7 +66,7 @@ class Utility(object):
         @return: a Lighting device data object with the base info filled in
         """
         l_obj = GarageDoorData()
-        l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj = deviceXML.read_base_device_object_xml(l_obj, p_xml)
         l_obj.DeviceType = 3
         l_obj.DeviceSubType = 1
         return l_obj
@@ -83,7 +83,7 @@ class Utility(object):
         @return: a Lighting device data object with the base info filled in
         """
         l_obj = MotionSensorData()
-        l_obj = deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
+        l_obj = deviceXML.read_base_device_object_xml(l_obj, p_xml)
         l_obj.DeviceType = 3
         l_obj.DeviceSubType = 2
         return l_obj

@@ -11,22 +11,22 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-19'
 
 #  Import system type stuff
 import datetime
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeSync       ')
 
-MINUTES = 60
+SECONDS = 1
+MINUTES = 60 * SECONDS
 HOURS = MINUTES * 60
-INITIAL_DELAY = 15
+INITIAL_DELAY = 15 * SECONDS
 REPEAT_DELAY = 4 * HOURS
-TOPIC = 'computer/node/'
 
 
 class NodeMessage():
@@ -40,7 +40,7 @@ class Util(object):
 
     @staticmethod
     def send_who_is_there(p_pyhouse_obj):
-        l_topic = TOPIC + "whoisthere"
+        l_topic = "computer/node/whoisthere"
         l_uuid = p_pyhouse_obj.Computer.UUID
         try:
             l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
@@ -91,7 +91,11 @@ class Util(object):
             l_obj.LastUpdate = l_now
             l_obj.UUID = l_uuid
             p_pyhouse_obj.Computer.Nodes[l_uuid] = l_obj
-        LOG.info('Contains {} Nodes'.format(len(p_pyhouse_obj.Computer.Nodes)))
+        l_list = ''
+        for l_node in p_pyhouse_obj.Computer.Nodes:
+            l_list += l_node + '\n\t'
+        pass
+        LOG.info('Contains {} Nodes - {}'.format(len(p_pyhouse_obj.Computer.Nodes), l_list))
 
 
 class API(object):

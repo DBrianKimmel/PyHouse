@@ -14,7 +14,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-01-06'
+__updated__ = '2019-01-22'
 
 #  Import system type stuff
 import math
@@ -22,13 +22,14 @@ import math
 #  Import PyMh files
 from Modules.Core import conversions
 from Modules.Core.data_objects import CoreLightingData
+from Modules.Core.Utilities.xml_tools import stuff_new_attrs
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_constants import \
     MESSAGE_LENGTH, \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
     STX
-from Modules.Core.Utilities import device_tools
+# from Modules.Core.Utilities import device_tools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
@@ -309,7 +310,7 @@ class Decode(object):
             l_dotted = conversions.int2dotted_hex(p_address, 3)
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
             l_ret = CoreLightingData()
-            device_tools.stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
+            stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
             l_ret.Name = '**NoName-' + l_dotted + '-**'
         return l_ret
 
@@ -324,7 +325,7 @@ class Decode(object):
         if l_address < (256 * 256):  #  First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = CoreLightingData()
-            device_tools.stuff_new_attrs(l_device_obj, InsteonData())  #  an empty new object
+            stuff_new_attrs(l_device_obj, InsteonData())  #  an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)

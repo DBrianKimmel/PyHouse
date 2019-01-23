@@ -12,7 +12,7 @@ Passed all 30 tests.  DBK 2018-01-22
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -413,7 +413,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light_sect[1]
         print(PrettyFormatAny.form(l_xml, 'C3-02-A - XML'))
         l_device = self.m_device_obj
-        l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
+        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
         print(PrettyFormatAny.form(l_light, 'C3-02-B - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_1)
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_1)
@@ -425,7 +425,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         #
-        l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
+        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
         # print(PrettyFormatAny.form(l_light, 'C3-03-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
@@ -480,7 +480,7 @@ class C4_Read(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
-        l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
+        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
         # print(PrettyFormatAny.form(l_light, 'C4-04-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
@@ -491,7 +491,7 @@ class C4_Read(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.light
         l_device = self.m_device_obj
         #
-        l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_xml)
+        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
         # print(PrettyFormatAny.form(l_light, 'C4-05-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
@@ -509,14 +509,14 @@ class E1_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_device_obj.DeviceFamily = TESTING_DEVICE_FAMILY_INSTEON
         self.m_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        self.m_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, self.m_device_obj, self.m_xml.controller)
+        self.m_light = deviceXML.read_base_device_object_xml(self.m_device_obj, self.m_xml.controller)
 
     def test_01_All(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         l_in_xml = self.m_xml.light
         l_device = self.m_device_obj
-        l_light = deviceXML.read_base_device_object_xml(self.m_pyhouse_obj, l_device, l_in_xml)
+        l_light = deviceXML.read_base_device_object_xml(l_device, l_in_xml)
         FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_in_xml)
         l_out_xml = deviceXML.write_base_device_object_xml('Light', l_light)
         FamUtil.write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)

@@ -33,7 +33,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2018-01-22'
+__updated__ = '2019-01-21'
 
 # Import system type stuff
 import importlib
@@ -94,9 +94,10 @@ class Utility(object):
         """
         try:
             l_api = p_module_ref.Xml()
+            return l_api
         except Exception as e_err:
             LOG.error('ERROR - Module:{} - {}'.format(p_module_name, e_err))
-        return l_api
+        return None
 
     @staticmethod
     def _build_one_family_data(p_pyhouse_obj, p_name):

@@ -10,7 +10,7 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-01-09'
+__updated__ = '2019-01-21'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,7 @@ class C01_API(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Insteon_device.API(self.m_pyhouse_obj)
         self.m_device = InsteonData()
-        self.m_light = deviceXML().read_base_device_object_xml(self.m_pyhouse_obj, self.m_device, self.m_xml.light)
+        self.m_light = deviceXML().read_base_device_object_xml(self.m_device, self.m_xml.light)
         insteonXml.ReadXml(self.m_light, self.m_xml.light)
 
     def test_01_Init(self):

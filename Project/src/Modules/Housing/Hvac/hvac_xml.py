@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2019-01-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,7 +31,7 @@ class Utility(object):
     @staticmethod
     def _read_base(p_pyhouse_obj, p_xml):
         l_obj = ThermostatData()
-        deviceXML.read_base_device_object_xml(p_pyhouse_obj, l_obj, p_xml)
+        deviceXML.read_base_device_object_xml(l_obj, p_xml)
         return l_obj
 
     @staticmethod

@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Core/test/test_node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 24 tests - DBK - 2018-02-12
+Passed all 26 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2018-08-02'
+__updated__ = '2019-01-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -336,14 +336,15 @@ class D1_Devices(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_lsusb(self):
+    def test_01_lsusb(self):
         l_usb = localDevices()._lsusb()
         # l_lines = l_usb.split('\n')
-        print(PrettyFormatAny.form(l_usb, 'D1_1_A - PyHouse Computer'))
+        print(l_usb)
 
-    def test_2_find(self):
+    def test_02_find(self):
         """Find all controllers
         """
-        _l_ret = localDevices()._find_controllers()
+        l_ret = localDevices()._find_controllers()
+        print(l_ret, len(l_ret))
 
 #  ## END DBK

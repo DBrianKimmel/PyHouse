@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-01-04'
+__updated__ = '2019-01-21'
 
 #  Import system type stuff
 
@@ -30,7 +30,7 @@ class InsteonData(object):
         self.GroupList = ''
         self.GroupNumber = 0
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
-        self.ProductKey = ''
+        self.ProductKey = ''  # 3 bytes
         self.Links = {}
 
 #  ## END DBK

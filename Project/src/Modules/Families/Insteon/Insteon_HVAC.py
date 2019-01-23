@@ -22,7 +22,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-01-21'
 
 #  Import system type stuff
 
@@ -73,7 +73,7 @@ class InsteonThermostatStatus:
         self.Family = 'Insteon'
         self.Type = 2  # 2 = HVAC
         self.SubType = 1  # 1 =
-        self.Brightness = None
+        self.BrightnessPct = None
         self.RoomName = None
 
 
