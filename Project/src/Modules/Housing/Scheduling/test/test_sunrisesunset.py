@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/scheduling/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2018 by D. Brian Kimmel
+@copyright: (c) 2011-2019 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
-Passed all 9 tests - DBK - 2018-02-13
+Passed all 9 tests - DBK - 2019-01-24
 
 http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-24'
 
 # Import system type stuff
 import datetime
@@ -23,7 +23,7 @@ from math import pi
 # Import PyMh files
 from Modules.Core.data_objects import LocationData
 from Modules.Housing.Scheduling import sunrisesunset
-from Modules.Housing.Scheduling.sunrisesunset import Util as AstralUtil
+from Modules.Housing.Scheduling.sunrisesunset import Utility as astralUtil
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
@@ -40,7 +40,7 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_NOON_0, \
     TESTING_SCHEDULE_SUNSET_0, \
     TESTING_SCHEDULE_DUSK_0
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 # Conversion constants.
 RAD2DEG = 180.0 / pi
@@ -116,7 +116,7 @@ class B1_Astral(SetupMixin, unittest.TestCase):
         self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
 
     def test_01_Date_0(self):
-        l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, TESTING_SCHEDULE_DATE_0)
+        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, TESTING_SCHEDULE_DATE_0)
         # print('B1-01-A - Dawn', l_ret.Dawn)
         # print('B1-01-B - Sun Rise', l_ret.SunRise)
         # print('B1-01-C - Noon', l_ret.Noon)
@@ -134,7 +134,7 @@ class B1_Astral(SetupMixin, unittest.TestCase):
         self.assertApproximates(l_ret.Dusk.minute, TESTING_SCHEDULE_DUSK_0.minute, 1)
 
     def test_02_Loc(self):
-        l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_1)
+        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_1)
         # print('B1-02-A - Sun Rise', l_ret.SunRise)
         # print('B1-02-B - Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_1.hour)
@@ -143,7 +143,7 @@ class B1_Astral(SetupMixin, unittest.TestCase):
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_1.minute, 1)
 
     def test_03_Loc(self):
-        l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_2)
+        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_2)
         # print('B1-03-A - Sun Rise', l_ret.SunRise)
         # print('B1-03-B - Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_2.hour)
@@ -152,7 +152,7 @@ class B1_Astral(SetupMixin, unittest.TestCase):
         self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_2.minute, 1)
 
     def test_04_Loc(self):
-        l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_3)
+        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_3)
         # print('B1-04-A - Sun Rise', l_ret.SunRise)
         # print('B1-04-B - Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_3.hour)
@@ -164,7 +164,7 @@ class B1_Astral(SetupMixin, unittest.TestCase):
         """ Nearly the shortest day of the year.
         Also, Standard time.
         """
-        l_ret = AstralUtil.calc_solar_times(self.m_pyhouse_obj, T_DATE_4)
+        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_4)
         # print('Sun Rise', l_ret.SunRise)
         # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_4.hour)
@@ -183,10 +183,24 @@ class C1_Delay(SetupMixin, unittest.TestCase):
         self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
 
     def test_01_Loc(self):
-        l_delay = sunrisesunset.Util._till_next()
-        # print(PrettyFormatAny.form(l_delay, 'Next'))
+        l_delay = astralUtil()._till_next()
+        print(PrettyFormatAny.form(l_delay, 'Next'))
 
     def test_02(self):
         pass
+
+
+class D1_Now(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj = self.load_earth(self.m_pyhouse_obj)
+        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+
+    def test_01_Loc(self):
+        l_now = astralUtil().get_seconds_to_recalc()
+        print(PrettyFormatAny.form(l_now, 'Next'))
 
 # ## END DBK

@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-01-21'
+__updated__ = '2019-01-24'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -542,7 +542,7 @@ class NodeData(BaseUUIDObject):
         self.ConnectionAddr_IPv6 = None
         self.ControllerTypes = []  # A list of controller types attached to this node
         self.ControllerCount = 0  # Number of USB controllers attached
-        # self.LastUpdate = None
+        self.MasterNode = None
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()

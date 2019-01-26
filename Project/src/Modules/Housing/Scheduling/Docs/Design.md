@@ -21,6 +21,15 @@ They include lights turning on and off, Thermostat settings, Irrigation Schedule
 Originally I wrote a lot of cpmplicated code to compute sunrise and sunset but then I found Astral.
 I switched to astral and the code is now gone.  Hurrah!
 
+## Time
+Now every day at 10:00 AM a series of timers are calculated (this accounts for daylight savings time).
+They are noon, solar noon, midnight, dusk, dawn, sunrise, sunset.
+The Master node transmits the time messages.
+
+## Master Node
+At noon, each node checks to see if it is the master and if so transmits Mqtt messages as each time is reached.
+If a node has not gotten a noon message by 12:01 PM it adds a random delay of a minute and schedules a transmit time of master node message.
+
 ## Mqtt
 
 .../schedule/<Command>

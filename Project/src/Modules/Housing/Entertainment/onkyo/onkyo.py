@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-03'
+__updated__ = '2019-01-24'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -177,7 +177,7 @@ class OnkyoFactory(ReconnectingClientFactory):
         self.m_onkyo_obj._Transport = p_transport
 
 
-class Util(object):
+class Utility(object):
     """
     """
 
