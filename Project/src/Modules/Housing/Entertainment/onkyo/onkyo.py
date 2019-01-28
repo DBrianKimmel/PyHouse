@@ -21,7 +21,10 @@ from twisted.internet.error import ConnectionDone
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML

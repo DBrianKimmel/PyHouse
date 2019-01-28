@@ -49,7 +49,10 @@ import datetime
 import aniso8601
 
 #  Import PyMh files
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Housing.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI

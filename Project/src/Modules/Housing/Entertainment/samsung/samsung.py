@@ -21,7 +21,10 @@ from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet import error
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Computer import logging_pyh as Logger
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML

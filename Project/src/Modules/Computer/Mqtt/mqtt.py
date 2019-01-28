@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-01-28'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,10 @@ import datetime
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Core.Utilities import json_tools, xml_tools
-from Modules.Computer.Mqtt.mqtt_actions import Actions as MqttActions
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import Actions as MqttActions
+except Exception:
+    pass
 from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML

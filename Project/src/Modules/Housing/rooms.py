@@ -23,7 +23,10 @@ from Modules.Core.Utilities.coordinate_tools import Coords
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 

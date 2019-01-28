@@ -37,7 +37,10 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData, \
         EntertainmentServiceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted

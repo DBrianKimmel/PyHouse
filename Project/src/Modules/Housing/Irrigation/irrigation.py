@@ -16,7 +16,10 @@ __updated__ = '2019-01-28'
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Housing.Irrigation.irrigation_data import IrrigationData
 from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 from Modules.Computer import logging_pyh as Logging

@@ -22,7 +22,10 @@ from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
