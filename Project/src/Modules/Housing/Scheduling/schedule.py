@@ -41,7 +41,7 @@ Operation:
 """
 from Modules.Core.Utilities import convert
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 
 #  Import system type stuff
 import datetime
@@ -49,7 +49,7 @@ import datetime
 import aniso8601
 
 #  Import PyMh files
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Housing.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI
@@ -82,10 +82,10 @@ class MqttActions(object):
         l_logmsg = '\tSchedule:\n'
         if len(p_topic) > 0:
             if p_topic[0] == 'execute':
-                l_logmsg += '\tType: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'ScheduleType'))
+                l_logmsg += '\tType: {}\n'.format(get_mqtt_field(p_message, 'ScheduleType'))
                 # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-                l_logmsg += '\tLight: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'LightName'))
-                l_logmsg += '\tLevel: {}'.format(mqtt_actions.get_mqtt_field(p_message, 'Level'))
+                l_logmsg += '\tLight: {}\n'.format(get_mqtt_field(p_message, 'LightName'))
+                l_logmsg += '\tLevel: {}'.format(get_mqtt_field(p_message, 'Level'))
             elif p_topic[0] == 'status':
                 pass
             elif p_topic[0] == 'control':

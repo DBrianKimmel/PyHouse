@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -37,7 +37,7 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData, \
         EntertainmentServiceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
@@ -179,12 +179,12 @@ class MqttActions:
         l_power = None
         l_skip = None
         l_volume = None
-        l_control = self._get_fieldmqtt_actions.get_mqtt_field(p_message, 'Control')
+        l_control = get_mqtt_field(p_message, 'Control')
 
         if l_control == 'PowerOn':
             l_logmsg += ' Turn On '
             l_power = 'On'
-            l_input = mqtt_actions.get_mqtt_field(p_message, 'Input')
+            l_input = get_mqtt_field(p_message, 'Input')
             self._play_pandora()
         elif l_control == 'PowerOff':
             l_logmsg += ' Turn Off '

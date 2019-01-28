@@ -10,7 +10,7 @@
 Passed all 8 tests - DBK - 2019-02-27
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,7 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field, Actions
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import \
@@ -151,14 +151,14 @@ class B1_Field(SetupMixin, unittest.TestCase):
     def test_01_HVAC(self):
         l_topic = 'pyhouse/pink poppy/irrigation'
         l_payload = {"DateTime": DATE_TIME, "Sender": SENDER}
-        l_sender = mqtt_actions.get_mqtt_field(l_payload, 'Sender')
+        l_sender = get_mqtt_field(l_payload, 'Sender')
         print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
         self.assertEqual(l_sender, SENDER)
 
     def test_02_Msg(self):
         l_topic = 'pyhouse/pink poppy/irrigation'
         l_payload = LIGHTING_MSG
-        l_sender = mqtt_actions.get_mqtt_field(l_payload, 'Sender')
+        l_sender = get_mqtt_field(l_payload, 'Sender')
         print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
         print(PrettyFormatAny.form(l_payload, 'B1-02-A - Json'))
         self.assertEqual(l_sender, SENDER)
@@ -177,7 +177,7 @@ class B2_Dispatch(SetupMixin, unittest.TestCase):
         l_payload = {"DateTime": DATE_TIME, "Sender": SENDER}
         self.m_pyhouse_obj.APIs.ComputerAPI = computerAPI(self.m_pyhouse_obj)
         # print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
-        l_log = mqtt_actions.Actions(self.m_pyhouse_obj).mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_payload)
+        l_log = Actions(self.m_pyhouse_obj).mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_payload)
         print("\t--Log: {}\n".format(l_log))
         # self.assertEqual(l_topic[:13], '<MqttSection>')
         self.assertEqual(l_log[:13], '<MqttSection>')
@@ -187,7 +187,7 @@ class B2_Dispatch(SetupMixin, unittest.TestCase):
         l_payload = {"DateTime": DATE_TIME, "Sender": SENDER}
         self.m_pyhouse_obj.APIs.HouseAPI = houseAPI(self.m_pyhouse_obj)
         # print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
-        l_log = mqtt_actions.Actions(self.m_pyhouse_obj).mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_payload)
+        l_log = Actions(self.m_pyhouse_obj).mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_payload)
         print("\t--Log: {}\n".format(l_log))
         # self.assertEqual(l_raw[:13], '<MqttSection>')
 

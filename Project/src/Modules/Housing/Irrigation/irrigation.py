@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Housing.Irrigation.irrigation_data import IrrigationData
 from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 from Modules.Computer import logging_pyh as Logging
@@ -35,9 +35,9 @@ class MqttActions(object):
         """ pyhouse/<HouseName>/irrigation
         """
         p_logmsg += '\tIrrigation:\n'
-        p_logmsg += '\tSystem: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'System'))
-        p_logmsg += '\tZone: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Zone'))
-        p_logmsg += '\tStatus: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Status'))
+        p_logmsg += '\tSystem: {}\n'.format(get_mqtt_field(p_message, 'System'))
+        p_logmsg += '\tZone: {}\n'.format(get_mqtt_field(p_message, 'Zone'))
+        p_logmsg += '\tStatus: {}\n'.format(get_mqtt_field(p_message, 'Status'))
         return p_logmsg
 
 

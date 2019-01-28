@@ -24,7 +24,7 @@ See: pioneer/__init__.py for documentation.
 """
 from Modules.Housing.Entertainment.samsung.samsung import SamsungDeviceData
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,7 +35,7 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
@@ -166,11 +166,11 @@ class MqttActions:
         @param p_message: is the payload used to control
         """
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
-        l_family = self._get_fieldmqtt_actions.get_mqtt_field(p_message, 'Family')
-        l_device = mqtt_actions.get_mqtt_field(p_message, 'Device')
-        l_input = mqtt_actions.get_mqtt_field(p_message, 'Input')
-        l_power = mqtt_actions.get_mqtt_field(p_message, 'Power')
-        l_volume = mqtt_actions.get_mqtt_field(p_message, 'Volume')
+        l_family = get_mqtt_field(p_message, 'Family')
+        l_device = get_mqtt_field(p_message, 'Device')
+        l_input = get_mqtt_field(p_message, 'Input')
+        l_power = get_mqtt_field(p_message, 'Power')
+        l_volume = get_mqtt_field(p_message, 'Volume')
         l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
         #
         if l_power != None:

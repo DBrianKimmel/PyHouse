@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
@@ -43,9 +43,9 @@ class MqttActions(object):
         """
         l_logmsg = '\tSecurity:\n'
         if p_topic[0] == 'garage_door':
-            l_logmsg += '\tGarage Door: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
+            l_logmsg += '\tGarage Door: {}\n'.format(get_mqtt_field(p_message, 'Name'))
         elif p_topic[0] == 'motion_sensor':
-            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'), mqtt_actions.get_mqtt_field(p_message, 'Status'))
+            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(get_mqtt_field(p_message, 'Name'), get_mqtt_field(p_message, 'Status'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg

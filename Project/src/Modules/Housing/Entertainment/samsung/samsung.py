@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,7 +21,7 @@ from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet import error
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt import mqtt_actions
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Computer import logging_pyh as Logger
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
@@ -119,7 +119,7 @@ class MqttActions:
         As a side effect - control samsung.
         """
         l_logmsg = '\tControl: '
-        l_control = mqtt_actions.get_mqtt_field(p_message, 'Control')
+        l_control = get_mqtt_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
             self.m_API.Start()
