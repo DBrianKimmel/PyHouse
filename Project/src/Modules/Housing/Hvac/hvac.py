@@ -14,12 +14,15 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-01-28'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+try:
+    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
+except Exception:
+    pass
 # from Modules.Core.data_objects import ThermostatData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
