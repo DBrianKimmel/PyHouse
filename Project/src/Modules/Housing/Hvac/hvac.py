@@ -19,12 +19,12 @@ __updated__ = '2019-01-27'
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer.Mqtt import mqtt_actions
-from Modules.Computer import logging_pyh as Logger
+from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 # from Modules.Core.data_objects import ThermostatData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac           ')
 
 
@@ -47,7 +47,7 @@ class MqttActions(object):
         """
         l_logmsg = '\tHVAC:\n'
         if p_topic[0] == 'Thermostat':
-            l_logmsg += '\tThermostat: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
+            l_logmsg += '\tThermostat: {}\n'.format(get_mqtt_field(p_message, 'Name'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg
@@ -56,7 +56,7 @@ class MqttActions(object):
         p_logmsg += '\tThermostat:\n'
         p_logmsg += '\tName: {}'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        p_logmsg += '\tTemp: {}'.format(mqtt_actions.get_mqtt_field(p_message, 'CurrentTemperature'))
+        p_logmsg += '\tTemp: {}'.format(get_mqtt_field(p_message, 'CurrentTemperature'))
         return p_logmsg
 
 

@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 11, 2017
 @summary:   Test
 
-Passed all 6 tests - DBK - 2017-12-28
+Passed all 8 tests - DBK - 2019-02-27
 """
 
 __updated__ = '2019-01-27'
