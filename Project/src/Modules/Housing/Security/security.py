@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-01-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,6 +22,7 @@ from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
@@ -35,13 +36,6 @@ class MqttActions(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-        return l_ret
-
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/security/<type>/<Name>
@@ -49,9 +43,9 @@ class MqttActions(object):
         """
         l_logmsg = '\tSecurity:\n'
         if p_topic[0] == 'garage_door':
-            l_logmsg += '\tGarage Door: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tGarage Door: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
         elif p_topic[0] == 'motion_sensor':
-            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(self._get_field(p_message, 'Name'), self._get_field(p_message, 'Status'))
+            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'), mqtt_actions.get_mqtt_field(p_message, 'Status'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg

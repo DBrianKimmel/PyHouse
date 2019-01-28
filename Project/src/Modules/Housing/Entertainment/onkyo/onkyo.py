@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-24'
+__updated__ = '2019-01-27'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,6 +21,7 @@ from twisted.internet.error import ConnectionDone
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
@@ -56,14 +57,6 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-            LOG.error(l_ret)
-        return l_ret
-
     def _decode_control(self, _p_topic, p_message):
         """ Decode the message.
         As a side effect - control pioneer.
@@ -71,12 +64,12 @@ class MqttActions:
         @param p_message: is the payload used to control
         """
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
-        l_family = self._get_field(p_message, 'Family')
-        l_device = self._get_field(p_message, 'Device')
-        l_input = self._get_field(p_message, 'Input')
-        l_power = self._get_field(p_message, 'Power')
-        l_volume = self._get_field(p_message, 'Volume')
-        l_zone = self._get_field(p_message, 'Zone')
+        l_family = self._get_fieldmqtt_actions.get_mqtt_field(p_message, 'Family')
+        l_device = mqtt_actions.get_mqtt_field(p_message, 'Device')
+        l_input = mqtt_actions.get_mqtt_field(p_message, 'Input')
+        l_power = mqtt_actions.get_mqtt_field(p_message, 'Power')
+        l_volume = mqtt_actions.get_mqtt_field(p_message, 'Volume')
+        l_zone = mqtt_actions.get_mqtt_field(p_message, 'Zone')
         l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
         #
         if l_input != None:

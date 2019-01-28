@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-01-23'
+__updated__ = '2019-01-27'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -66,14 +66,6 @@ class MqttActions:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-            LOG.error(l_ret)
-        return l_ret
 
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message

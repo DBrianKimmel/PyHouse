@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-01-26'
 
 #  Import system type stuff
 
@@ -43,11 +43,11 @@ class Utility:
 
     def _get_object_by_id(self, p_objs, name=None, key=None, UUID=None):
         """
-        Return the light object for a house using the given value.
+        Return the device object from a dict of objects using the given value.
         Either a name or a key may be used to identify the light.
 
-        @param p_objs: is the tree of lighting objects such as lighrs, burrons or controllers
-        @return: the Light object found or None.
+        @param p_objs: is the tree of lighting objects such as lights, buttons or controllers
+        @return: the object found or None.
         """
         for l_obj in p_objs.values():
             l_ret = self._test_object_by_id(l_obj, name, key, UUID)

@@ -41,7 +41,7 @@ Operation:
 """
 from Modules.Core.Utilities import convert
 
-__updated__ = '2019-01-13'
+__updated__ = '2019-01-27'
 
 #  Import system type stuff
 import datetime
@@ -49,6 +49,7 @@ import datetime
 import aniso8601
 
 #  Import PyMh files
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Housing.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI
@@ -81,10 +82,10 @@ class MqttActions(object):
         l_logmsg = '\tSchedule:\n'
         if len(p_topic) > 0:
             if p_topic[0] == 'execute':
-                l_logmsg += '\tType: {}\n'.format(self._get_field(p_message, 'ScheduleType'))
+                l_logmsg += '\tType: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'ScheduleType'))
                 # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-                l_logmsg += '\tLight: {}\n'.format(self._get_field(p_message, 'LightName'))
-                l_logmsg += '\tLevel: {}'.format(self._get_field(p_message, 'Level'))
+                l_logmsg += '\tLight: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'LightName'))
+                l_logmsg += '\tLevel: {}'.format(mqtt_actions.get_mqtt_field(p_message, 'Level'))
             elif p_topic[0] == 'status':
                 pass
             elif p_topic[0] == 'control':
@@ -228,17 +229,16 @@ class SchedTime:
         return l_seconds
 
 
-class ScheduleExecution(object):
+class ScheduleExecution:
 
-    @staticmethod
-    def dispatch_one_schedule(p_pyhouse_obj, p_schedule_obj):
+    def dispatch_one_schedule(self, p_pyhouse_obj, p_schedule_obj):
         """
         Send information to one device to execute a schedule.
         """
-        l_topic = 'schedule/execute'
+        l_topic = 'schedule/execute/{}'.format(p_schedule_obj.ScheduleType)
         l_obj = p_schedule_obj
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
-
+        #
         if p_schedule_obj.ScheduleType == 'Lighting':
             LOG.info('Execute_one_schedule type = Lighting')
             lightActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
@@ -273,7 +273,7 @@ class ScheduleExecution(object):
         LOG.info("About to execute - Schedule Items:{}".format(p_key_list))
         for l_slot in range(len(p_key_list)):
             l_schedule_obj = p_pyhouse_obj.House.Schedules[p_key_list[l_slot]]
-            ScheduleExecution.dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
+            ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
         Utility.schedule_next_event(p_pyhouse_obj)
 
 

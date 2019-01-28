@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2018-11-07'
+__updated__ = '2019-01-27'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -37,6 +37,7 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentPluginData, \
         EntertainmentServiceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
@@ -154,14 +155,6 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-            LOG.error(l_ret)
-        return l_ret
-
     def _send_status(self, p_message):
             l_topic = 'entertainment/pandora/status'
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
@@ -186,12 +179,12 @@ class MqttActions:
         l_power = None
         l_skip = None
         l_volume = None
-        l_control = self._get_field(p_message, 'Control')
+        l_control = self._get_fieldmqtt_actions.get_mqtt_field(p_message, 'Control')
 
         if l_control == 'PowerOn':
             l_logmsg += ' Turn On '
             l_power = 'On'
-            l_input = self._get_field(p_message, 'Input')
+            l_input = mqtt_actions.get_mqtt_field(p_message, 'Input')
             self._play_pandora()
         elif l_control == 'PowerOff':
             l_logmsg += ' Turn Off '

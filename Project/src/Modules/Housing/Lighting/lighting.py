@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-01-23'
+__updated__ = '2019-01-27'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,7 +26,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import LightingData
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Families.family_utils import FamUtil
-from Modules.Housing.Lighting.lighting_utility import Utility
+# from Modules.Housing.Lighting.lighting_utility import Utility
 from Modules.Housing.Lighting.lighting_buttons import XML as buttonsXML
 from Modules.Housing.Lighting.lighting_controllers import XML as controllersXML
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightMqtt, XML as lightXML
@@ -124,28 +124,6 @@ class API(XML):
         #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def ControlLight(self, p_light_obj, p_source, p_new_level, p_rate=None):
-        """
-        Set an Insteon controlled light to a value - On, Off, or Dimmed.
-
-        Called by:
-            web_controlLights
-            schedule
-
-        @param p_light_obj:
-        @param p_source: is a string denoting the source of the change.
-        @param p_new_level: is the new light level (0 - 100%)
-        @param p_rate: is the ramp up rate (not uese)
-        """
-        l_light_obj = actionUtility._find_full_obj(self.m_pyhouse_obj, p_light_obj)
-        try:
-            LOG.info("Turn Light {} to level {}, DeviceFamily:{}".format(l_light_obj.Name, p_new_level, l_light_obj.DeviceFamily))
-
-            l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
-            l_api.ControlLight(l_light_obj, p_source, p_new_level)
-        except Exception as e_err:
-            LOG.error('ERROR - {}'.format(e_err))
-
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         """
         Insteon specific version of control light
@@ -158,7 +136,7 @@ class API(XML):
         if self.m_plm == None:
             LOG.info('No PLM was defined - Quitting.')
             return
-        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
+        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
         self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

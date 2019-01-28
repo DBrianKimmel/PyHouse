@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-01-27'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,6 +41,7 @@ from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
 from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
@@ -84,7 +85,7 @@ class MqttActions(object):
             l_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         #  computer/ip
         elif p_topic[1] == 'ip':
-            l_ip = self._get_field(p_message, 'ExternalIPv4Address')
+            l_ip = mqtt_actions.get_mqtt_field(p_message, 'ExternalIPv4Address')
             l_logmsg += '\tIPv4: {}'.format(l_ip)
         #  computer/startup
         elif p_topic[1] == 'startup':

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-25'
+__updated__ = '2019-01-27'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,6 +21,7 @@ from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet import error
 
 #  Import PyMh files and modules.
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Computer import logging_pyh as Logger
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
@@ -113,19 +114,12 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-        return l_ret
-
     def _decode_control(self, p_topic, p_message):
         """ Decode the message.
         As a side effect - control samsung.
         """
         l_logmsg = '\tControl: '
-        l_control = self._get_field(p_message, 'Control')
+        l_control = mqtt_actions.get_mqtt_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
             self.m_API.Start()

@@ -11,11 +11,12 @@
 
 """
 
-__updated__ = '2018-02-09'
+__updated__ = '2019-01-27'
 
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Housing.Irrigation.irrigation_data import IrrigationData
 from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 from Modules.Computer import logging_pyh as Logging
@@ -30,20 +31,13 @@ class MqttActions(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-        return l_ret
-
     def decode(self, p_logmsg, p_topic, p_message):
         """ pyhouse/<HouseName>/irrigation
         """
         p_logmsg += '\tIrrigation:\n'
-        p_logmsg += '\tSystem: {}\n'.format(self._get_field(p_message, 'System'))
-        p_logmsg += '\tZone: {}\n'.format(self._get_field(p_message, 'Zone'))
-        p_logmsg += '\tStatus: {}\n'.format(self._get_field(p_message, 'Status'))
+        p_logmsg += '\tSystem: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'System'))
+        p_logmsg += '\tZone: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Zone'))
+        p_logmsg += '\tStatus: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Status'))
         return p_logmsg
 
 

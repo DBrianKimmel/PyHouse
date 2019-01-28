@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-01-27'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,6 +29,16 @@ from Modules.Housing.Security.security import MqttActions as securityMqtt
 LOG = Logger.getLogger('PyHouse.Mqtt_Actions   ')
 
 
+def get_mqtt_field(p_message, p_field):
+    """ Get the given field from a JSON message.
+    """
+    try:
+        l_ret = p_message[p_field]
+    except (KeyError, TypeError):
+        l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+    return l_ret
+
+
 class Actions:
     """
     """
@@ -42,19 +52,10 @@ class Actions:
         self.m_myname = p_pyhouse_obj.Computer.Name
         self.m_disp_lights = lightsMqtt(p_pyhouse_obj)
 
-    def _get_field(self, p_message, p_field):
-        """ Get the given field from a JSON message.
-        """
-        try:
-            l_ret = p_message[p_field]
-        except (KeyError, TypeError):
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-        return l_ret
-
     def _decode_weather(self, _p_topic, p_message):
         l_logmsg = '\tWeather:\n'
-        l_temp = float(self._get_field(p_message, 'Temperature_F'))
-        l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Location'))
+        l_temp = float(get_mqtt_field(p_message, 'Temperature_F'))
+        l_logmsg += '\tName: {}\n'.format(get_mqtt_field(p_message, 'Location'))
         l_logmsg += '\tTemp: {} ({})'.format(l_temp, ((l_temp / 5.0) * 9.0) + 32.0)
         l_logmsg += '\tWeather info {}'.format(p_message)
         return l_logmsg
@@ -83,7 +84,7 @@ class Actions:
             LOG.info(l_logmsg)
         else:
             # Every other topic will have the following field(s).
-            l_sender = self._get_field(p_message, 'Sender')
+            l_sender = get_mqtt_field(p_message, 'Sender')
             l_logmsg += '\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
         LOG.debug('MqttDispatch Topic:{}'.format(p_topic))

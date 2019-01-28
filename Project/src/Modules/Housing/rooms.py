@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-27'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,6 +23,7 @@ from Modules.Core.Utilities.coordinate_tools import Coords
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 
@@ -181,13 +182,13 @@ class Mqtt(object):
     def _decode_room(self, p_topic, p_message):
         l_logmsg = '\tRooms:\n'
         if p_topic[1] == 'add':
-            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'delete':
-            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'sync':
-            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'update':
-            l_logmsg += '\tName: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tName: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
         return l_logmsg

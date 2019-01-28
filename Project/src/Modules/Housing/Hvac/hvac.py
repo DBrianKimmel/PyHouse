@@ -14,11 +14,12 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-01-06'
+__updated__ = '2019-01-27'
 
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Computer.Mqtt import mqtt_actions
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Core.data_objects import ThermostatData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
@@ -39,13 +40,6 @@ class MqttActions(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_field(self, p_message, p_field):
-        try:
-            l_ret = p_message[p_field]
-        except KeyError:
-            l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-        return l_ret
-
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/hvac/<type>/<Name>/...
@@ -53,7 +47,7 @@ class MqttActions(object):
         """
         l_logmsg = '\tHVAC:\n'
         if p_topic[0] == 'Thermostat':
-            l_logmsg += '\tThermostat: {}\n'.format(self._get_field(p_message, 'Name'))
+            l_logmsg += '\tThermostat: {}\n'.format(mqtt_actions.get_mqtt_field(p_message, 'Name'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg
@@ -62,7 +56,7 @@ class MqttActions(object):
         p_logmsg += '\tThermostat:\n'
         p_logmsg += '\tName: {}'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        p_logmsg += '\tTemp: {}'.format(self._get_field(p_message, 'CurrentTemperature'))
+        p_logmsg += '\tTemp: {}'.format(mqtt_actions.get_mqtt_field(p_message, 'CurrentTemperature'))
         return p_logmsg
 
 
