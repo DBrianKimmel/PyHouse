@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-26'
+__updated__ = '2019-01-30'
 
 #  Import system type stuff
 
@@ -56,10 +56,16 @@ class Utility:
         LOG.error('Light Lookup failed - arg error Name:{}, Key:{}, UUID:{}'.format(name, key, UUID))
         return None
 
-    def get_controller_objs_by_family(self):
+    def get_controller_objs_by_family(self, p_objs, p_family):
+        """ Gets a controller for a device.
+
+        Check for this Node
         """
-        Gets a controller for a device.
-        """
-        pass
+        for l_obj in p_objs.values():
+            l_family = l_obj.DeviceFamily
+            if l_family == p_family:
+                return l_obj
+        LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
+        return None
 
 # ## END DBK

@@ -20,7 +20,7 @@ from Modules.Housing.Lighting.lighting_utility import Utility
 from Modules.Housing.Lighting.lighting_lights import LightData
 from Modules.Computer import logging_pyh as Logger
 
-LOG = Logger.getLogger('PyHouse.LightAction    ')
+LOG = Logger.getLogger('PyHouse.LightingAction ')
 
 
 class API:
@@ -31,12 +31,13 @@ class API:
         """ A schedule action has been called for on a Light
         """
         # l_topic = 'schedule/execute'
-        l_objs = p_pyhouse_obj.House.Lighting.Lights
-        l_light_obj = Utility()._get_object_by_id(l_objs, name=p_schedule_obj.LightName)
+        l_lighting_objs = p_pyhouse_obj.House.Lighting
+
+        l_light_obj = Utility()._get_object_by_id(l_lighting_objs.Lights, name=p_schedule_obj.LightName)
+        l_controller_obj = Utility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.DeviceFamily)
         l_control = LightData()
         l_control.BrightnessPct = p_schedule_obj.Level
         l_control.TransitionTime = p_schedule_obj.Rate
-        l_controller_obj = Utility().get_controller_objs_by_family()
         LOG.debug("\n\tSchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
                 p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level, l_light_obj.Name, l_light_obj.Key))
         # API.ControlLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
@@ -51,7 +52,6 @@ class API:
         @param p_control: the idealized light control params
 
         """
-        # l_light_obj = Utility.get_light_object(p_pyhouse_obj, name=p_light_obj.Name)  #  web has some info missing - get all the object
         try:
             LOG.info('Turn Light: "{}" to level: "{}", DeviceFamily: "{}"'.format(p_light_obj.Name, p_control.BrightnessPct, p_light_obj.DeviceFamily))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
