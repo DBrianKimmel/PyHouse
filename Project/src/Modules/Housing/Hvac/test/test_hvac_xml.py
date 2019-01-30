@@ -11,7 +11,7 @@ Passed all 17 tests - DBK - 2016-11-08
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Core import conversions
+from Modules.Core.Utilities import convert
 # from Modules.Housing.Hvac.hvac_xml import Utility, XML as hvacXML
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_ROOM_NAME, \
@@ -56,8 +56,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_hvac_xml')
 
@@ -155,11 +157,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = Utility._read_thermostat_base(self.m_pyhouse_obj, l_xml)
         Utility._read_thermostat_data(self.m_pyhouse_obj, l_obj, l_xml)
         Utility._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_0)
+        self.assertEqual(convert.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(convert.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_0)
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_0)
         self.assertEqual(l_obj.GroupNumber, int(TESTING_INSTEON_GROUP_NUM_0))
-        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
+        self.assertEqual(convert.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
     def test_05_OneThermostat(self):
         """Read one thermostat entirely.
@@ -168,7 +170,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'C1-05-A - One Thermostat'))
         self.assertEqual(l_obj.Name, TESTING_HVAC_THERMOSTAT_NAME_0)
         self.assertEqual(l_obj.CoolSetPoint, float(TESTING_THERMOSTAT_COOL_SETPOINT_0))
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
+        self.assertEqual(convert.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_0)
 
     def test_06_AllThermostats(self):
         """Read all the thermostats on file.

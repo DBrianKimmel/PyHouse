@@ -27,8 +27,7 @@ class API:
     """
     """
 
-    @staticmethod
-    def DoSchedule(p_pyhouse_obj, p_schedule_obj):
+    def DoSchedule(self, p_pyhouse_obj, p_schedule_obj):
         """ A schedule action has been called for on a Light
         """
         # l_topic = 'schedule/execute'
@@ -41,7 +40,7 @@ class API:
         LOG.debug("\n\tSchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
                 p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level, l_light_obj.Name, l_light_obj.Key))
         # API.ControlLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
-        API.AbstractControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)
+        self.AbstractControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_schedule_obj)
 
     def AbstractControlLight(self, p_pyhouse_obj, p_light_obj, p_controller_obj, p_control):

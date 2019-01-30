@@ -12,7 +12,7 @@ Passed all 30 tests.  DBK 2018-01-22
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-01-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightData
-from Modules.Core import conversions
+from Modules.Core.Utilities import convert
 from Modules.Families import VALID_FAMILIES
 from Modules.Families.family import API as familyAPI
 from Modules.Families.family_utils import FamUtil
@@ -405,7 +405,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
         print(PrettyFormatAny.form(l_light, 'C3-01-B - Light'))
         self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_02_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -417,7 +417,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_light, 'C3-02-B - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_1)
         self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_1)
-        self.assertEqual(l_light.UPBAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.UPBAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_03_All(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -430,9 +430,9 @@ class C3_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light, 'C3-03-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-        self.assertEqual(l_light.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
-        self.assertEqual(conversions.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
+        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.DevCat, convert.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
+        self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
 class C4_Read(SetupMixin, unittest.TestCase):
@@ -496,9 +496,9 @@ class C4_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light, 'C4-05-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-        self.assertEqual(l_light.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
-        self.assertEqual(conversions.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
+        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.DevCat, convert.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
+        self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
 class E1_Write(SetupMixin, unittest.TestCase):
@@ -522,6 +522,6 @@ class E1_Write(SetupMixin, unittest.TestCase):
         FamUtil.write_family_data(self.m_pyhouse_obj, l_out_xml, l_light)
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
 # ## END DBK

@@ -39,25 +39,21 @@ Operation:
   Create a twisted timer that goes off when the scheduled time arrives.
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
-from Modules.Core.Utilities import convert
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 import datetime
-# import dateutil.parser as dparser
 import aniso8601
 
 #  Import PyMh files
-try:
-    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
-except Exception:
-    pass
+from Modules.Core.Utilities import convert, extract_tools
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Housing.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Housing.Scheduling import sunrisesunset
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule       ')
 
@@ -85,10 +81,10 @@ class MqttActions(object):
         l_logmsg = '\tSchedule:\n'
         if len(p_topic) > 0:
             if p_topic[0] == 'execute':
-                l_logmsg += '\tType: {}\n'.format(get_mqtt_field(p_message, 'ScheduleType'))
+                l_logmsg += '\tType: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'ScheduleType'))
                 # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-                l_logmsg += '\tLight: {}\n'.format(get_mqtt_field(p_message, 'LightName'))
-                l_logmsg += '\tLevel: {}'.format(get_mqtt_field(p_message, 'Level'))
+                l_logmsg += '\tLight: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'LightName'))
+                l_logmsg += '\tLevel: {}'.format(extract_tools.get_mqtt_field(p_message, 'Level'))
             elif p_topic[0] == 'status':
                 pass
             elif p_topic[0] == 'control':
@@ -244,23 +240,23 @@ class ScheduleExecution:
         #
         if p_schedule_obj.ScheduleType == 'Lighting':
             LOG.info('Execute_one_schedule type = Lighting')
-            lightActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            lightActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.ScheduleType == 'Hvac':
             LOG.info('Execute_one_schedule type = Hvac')
-            hvacActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            hvacActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.ScheduleType == 'Irrigation':
             LOG.info('Execute_one_schedule type = Hvac')
-            irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.ScheduleType == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
-            #  irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            #  scheduleActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         else:
             LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.ScheduleType))
-            irrigationActionsAPI.DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
 
     @staticmethod
     def execute_schedules_list(p_pyhouse_obj, p_key_list=[]):

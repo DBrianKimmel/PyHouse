@@ -10,7 +10,7 @@
 Passed all 12 tests - DBK - 2019-01-22
 """
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-01-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,6 +20,7 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ButtonData
+from Modules.Core.Utilities import convert, json_tools
 from Modules.Housing.Lighting.lighting_buttons import XML as buttonsXML
 from Modules.Housing.Lighting.lighting_xml import LightingXML
 from Modules.Housing.test.xml_housing import \
@@ -39,8 +40,6 @@ from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_ROOM_UUID_0, \
     TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0, TESTING_BUTTON_SECTION, TESTING_BUTTON, XML_BUTTON_SECTION
 from Modules.Families.family import API as familyAPI
-from Modules.Core import conversions
-from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -138,7 +137,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_button.Key, 0, 'Bad key')
         self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_button.DeviceFamily, TESTING_LIGHTING_BUTTON_FAMILY_0)
-        self.assertEqual(l_button.InsteonAddress, conversions.dotted_hex2int(TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0))
+        self.assertEqual(l_button.InsteonAddress, convert.dotted_hex2int(TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0))
 
     def test_03_ReadAllButtonsXml(self):
         l_buttons = buttonsXML().read_all_buttons_xml(self.m_pyhouse_obj)

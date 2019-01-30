@@ -9,9 +9,8 @@
 
 Passed all 24 tests - DBK - 2019-01-10
 """
-from Modules.Housing.Lighting.lighting_xml import LightingXML
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -20,11 +19,11 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Core import conversions
 from Modules.Core.data_objects import ControllerData
+from Modules.Core.Utilities import json_tools, convert
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting_controllers import XML as controllerXML
-from Modules.Core.Utilities import json_tools
+from Modules.Housing.Lighting.lighting_xml import LightingXML
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_TYPE_0, \
@@ -236,9 +235,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         controllerXML()._read_interface_data(self.m_pyhouse_obj, l_obj, l_xml)
         LightingXML()._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
         # print(PrettyFormatAny.form(l_obj, 'B1-07-A - Family'))
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_1)
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
         self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
 
@@ -251,9 +250,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         controllerXML()._read_interface_data(self.m_pyhouse_obj, l_obj, l_xml)
         LightingXML()._read_family_data(self.m_pyhouse_obj, l_obj, l_xml)
         # print(PrettyFormatAny.form(l_obj, 'B1-08-A - Family'))
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_1)
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
         self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
 
@@ -278,8 +277,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.StopBits, float(TESTING_SERIAL_STOP_BITS))
         self.assertEqual(l_obj.Timeout, float(TESTING_SERIAL_TIMEOUT))
         self.assertEqual(l_obj.XonXoff, TESTING_SERIAL_XON_XOFF == 'True')
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
         self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
 
@@ -304,8 +303,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.StopBits, float(TESTING_SERIAL_STOP_BITS))
         self.assertEqual(l_obj.Timeout, float(TESTING_SERIAL_TIMEOUT))
         self.assertEqual(l_obj.XonXoff, TESTING_SERIAL_XON_XOFF == 'True')
-        self.assertEqual(conversions.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
-        self.assertEqual(conversions.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.InsteonAddress, 3), TESTING_INSTEON_ADDRESS_1)
+        self.assertEqual(convert.int2dotted_hex(l_obj.DevCat, 2), TESTING_INSTEON_DEVCAT_1)
         self.assertEqual(l_obj.GroupList, TESTING_INSTEON_GROUP_LIST_1)
         self.assertEqual(str(l_obj.GroupNumber), TESTING_INSTEON_GROUP_NUM_1)
 

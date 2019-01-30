@@ -14,13 +14,13 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 import math
 
 #  Import PyMh files
-from Modules.Core import conversions
+from Modules.Core.Utilities import convert
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
 from Modules.Families.Insteon.Insteon_data import InsteonData
@@ -275,7 +275,7 @@ class Decode(object):
         return l_debug_msg
 
     @staticmethod
-    def _find_addr_one_class(p_pyhouse_obj, p_class, p_addr):
+    def _find_addr_one_class(_sp_pyhouse_obj, p_class, p_addr):
         """
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.Lighting.Controllers that we will look thru to find the object.
@@ -307,7 +307,7 @@ class Decode(object):
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
         #  Add additional classes in here
         if l_ret == None:
-            l_dotted = conversions.int2dotted_hex(p_address, 3)
+            l_dotted = convert.int2dotted_hex(p_address, 3)
             LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
             l_ret = CoreLightingData()
             stuff_new_attrs(l_ret, InsteonData())  #  an empty new object

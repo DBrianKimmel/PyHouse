@@ -13,13 +13,13 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerData.
 """
 
-__updated__ = '2018-01-04'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core import conversions
+from Modules.Core.Utilities import convert
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Core.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 
@@ -39,7 +39,7 @@ class Xml(object):
         l_ret = p_default
         try:
             l_prod = PutGetXML.get_text_from_xml(p_entry_xml, 'ProductKey', p_default)
-            l_ret = conversions.dotted_hex2int(l_prod)
+            l_ret = convert.dotted_hex2int(l_prod)
         except Exception:
             l_ret.ProductKey = p_default
         return l_ret
@@ -48,9 +48,9 @@ class Xml(object):
     def _read_insteon(p_in_xml):
         l_insteon_obj = InsteonData()
         l_insteon_obj.ProductKey = Xml._read_product_key(p_in_xml)
-        l_insteon_obj.InsteonAddress = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'InsteonAddress'))
+        l_insteon_obj.InsteonAddress = convert.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'InsteonAddress'))
         try:
-            l_insteon_obj.DevCat = conversions.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
+            l_insteon_obj.DevCat = convert.dotted_hex2int(PutGetXML.get_text_from_xml(p_in_xml, 'DevCat', 'A1.B2'))
             l_insteon_obj.GroupList = PutGetXML.get_text_from_xml(p_in_xml, 'GroupList')
             l_insteon_obj.GroupNumber = PutGetXML.get_int_from_xml(p_in_xml, 'GroupNumber', 0)
         except Exception as e_err:
@@ -88,13 +88,13 @@ class Xml(object):
         """
         @param p_xml_out: is a parent element to which the Insteon Specific information is appended.
         """
-        PutGetXML.put_int_element(p_out_xml, 'DevCat', conversions.int2dotted_hex(p_device.DevCat, 2))
+        PutGetXML.put_int_element(p_out_xml, 'DevCat', convert.int2dotted_hex(p_device.DevCat, 2))
         PutGetXML.put_int_element(p_out_xml, 'EngineVersion', p_device.EngineVersion)
         PutGetXML.put_int_element(p_out_xml, 'FirmwareVersion', p_device.FirmwareVersion)
         PutGetXML.put_text_element(p_out_xml, 'GroupList', p_device.GroupList)
         PutGetXML.put_int_element(p_out_xml, 'GroupNumber', p_device.GroupNumber)
-        PutGetXML.put_text_element(p_out_xml, 'InsteonAddress', conversions.int2dotted_hex(p_device.InsteonAddress, 3))
-        PutGetXML.put_text_element(p_out_xml, 'ProductKey', conversions.int2dotted_hex(p_device.ProductKey, 3))
+        PutGetXML.put_text_element(p_out_xml, 'InsteonAddress', convert.int2dotted_hex(p_device.InsteonAddress, 3))
+        PutGetXML.put_text_element(p_out_xml, 'ProductKey', convert.int2dotted_hex(p_device.ProductKey, 3))
         return p_out_xml
 
 #  ## END DBK

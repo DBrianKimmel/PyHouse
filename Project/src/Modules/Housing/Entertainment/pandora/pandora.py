@@ -4,7 +4,7 @@
 @name: PyHouse/src/Modules/entertain/pandora.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
-@copyright: (c)2014-2018 by D. Brian Kimmel
+@copyright: (c)2014-2019 by D. Brian Kimmel
 @note: Created on Feb 27, 2014
 @license: MIT License
 @summary: Controls pandora playback thru pianobar.
@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-29'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,20 +31,17 @@ from twisted.internet import protocol
 from _datetime import datetime
 
 #  Import PyMh files and modules.
+from Modules.Core.Utilities import extract_tools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.extract_tools import extract_quoted
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
         EntertainmentPluginData, \
         EntertainmentServiceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
-try:
-    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
-except Exception:
-    pass
-from Modules.Computer import logging_pyh as Logger
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.Utilities.extract_tools import extract_quoted
 
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pandora        ')
 
 PIANOBAR_LOCATION = '/usr/bin/pianobar'
@@ -182,12 +179,12 @@ class MqttActions:
         l_power = None
         l_skip = None
         l_volume = None
-        l_control = get_mqtt_field(p_message, 'Control')
+        l_control = extract_tools.get_mqtt_field(p_message, 'Control')
 
         if l_control == 'PowerOn':
             l_logmsg += ' Turn On '
             l_power = 'On'
-            l_input = get_mqtt_field(p_message, 'Input')
+            l_input = extract_tools.get_mqtt_field(p_message, 'Input')
             self._play_pandora()
         elif l_control == 'PowerOff':
             l_logmsg += ' Turn Off '

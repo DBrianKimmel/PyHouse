@@ -4,14 +4,14 @@
 @name:      src.Modules.Housing.Entertainment.samsung.samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2018 by D. Brian Kimmel
+@copyright: (c) 2016-2019 by D. Brian Kimmel
 @note:      Created on Jul 11, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-29'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,15 +21,13 @@ from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet import error
 
 #  Import PyMh files and modules.
-try:
-    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
-except Exception:
-    pass
-from Modules.Computer import logging_pyh as Logger
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
-from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Samsung        ')
 
 SAMSUNG_ADDRESS = '192.168.1.103'
@@ -122,7 +120,7 @@ class MqttActions:
         As a side effect - control samsung.
         """
         l_logmsg = '\tControl: '
-        l_control = get_mqtt_field(p_message, 'Control')
+        l_control = extract_tools.get_mqtt_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
             self.m_API.Start()

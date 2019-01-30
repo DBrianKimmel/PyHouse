@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-01-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,8 +21,7 @@ from twisted.trial import unittest
 from Modules.Core.data_objects import GarageDoorData
 from Modules.Housing.Security.security import Utility, XML, API as securityAPI
 from Modules.Families.family import API as familyAPI
-from Modules.Core import conversions
-from Modules.Core.Utilities import json_tools
+from Modules.Core.Utilities import convert, json_tools
 from Modules.Housing.Security.test.xml_garage_door import \
     TESTING_GARAGE_DOOR_NAME_0, \
     TESTING_GARAGE_DOOR_ACTIVE_0, \
@@ -133,9 +132,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_door.Name), TESTING_GARAGE_DOOR_NAME_0)
         self.assertEqual(str(l_door.Active), TESTING_GARAGE_DOOR_ACTIVE_0)
         self.assertEqual(str(l_door.Key), TESTING_GARAGE_DOOR_KEY_0)
-        self.assertEqual(l_door.DevCat, conversions.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
+        self.assertEqual(l_door.DevCat, convert.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
         self.assertEqual(str(l_door.EngineVersion), TESTING_INSTEON_ENGINE_VERSION_0)
-        self.assertEqual(l_door.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_door.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_03_AllDoors(self):
         l_doors = XML().read_all_GarageDoors_xml(self.m_pyhouse_obj)
@@ -166,9 +165,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_dev.Name), TESTING_MOTION_SENSOR_NAME_0)
         self.assertEqual(str(l_dev.Active), TESTING_MOTION_SENSOR_ACTIVE_0)
         self.assertEqual(str(l_dev.Key), TESTING_MOTION_SENSOR_KEY_0)
-        self.assertEqual(l_dev.DevCat, conversions.dotted_hex2int(TESTING_MOTION_SENSOR_DEVCAT_0))
+        self.assertEqual(l_dev.DevCat, convert.dotted_hex2int(TESTING_MOTION_SENSOR_DEVCAT_0))
         self.assertEqual(str(l_dev.EngineVersion), TESTING_INSTEON_ENGINE_VERSION_0)
-        self.assertEqual(l_dev.InsteonAddress, conversions.dotted_hex2int(TESTING_MOTION_SENSOR_ADDRESS_0))
+        self.assertEqual(l_dev.InsteonAddress, convert.dotted_hex2int(TESTING_MOTION_SENSOR_ADDRESS_0))
 
     def test_06_AllMotion(self):
         l_all = XML().read_all_MotionSensors_xml(self.m_pyhouse_obj)

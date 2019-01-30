@@ -10,9 +10,8 @@
 Passed all 26 tests - DBK - 2018-12-21
 
 """
-from Modules.Housing.Lighting.lighting_xml import LightingXML
 
-__updated__ = '2019-01-23'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,8 +21,9 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import LightingData
+from Modules.Core.Utilities import convert
 from Modules.Housing.Lighting.lighting_lights import XML as lightsXML
-from Modules.Core import conversions
+from Modules.Housing.Lighting.lighting_xml import LightingXML
 from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_ADDRESS_0, \
@@ -248,7 +248,7 @@ class B1_XmlRead(SetupMixin, unittest.TestCase):
         l_obj = LightingXML()._read_base_device(self.m_pyhouse_obj, l_xml)
         LightingXML()._read_family_data(self.m_pyhouse_obj, l_obj, self.m_xml.light)
         # print(PrettyFormatAny.form(l_obj, 'B1-05-A - Base'))
-        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_obj.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_06_FamilyData1(self):
         """ Read the family data info.
@@ -273,7 +273,7 @@ class B1_XmlRead(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Comment, TESTING_LIGHT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.RoomName, TESTING_LIGHT_ROOM_NAME_0)
-        self.assertEqual(l_obj.InsteonAddress, conversions.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_obj.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_08_OneLight1(self):
         """ Read everything about one light.

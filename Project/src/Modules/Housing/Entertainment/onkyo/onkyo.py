@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-29'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,14 +21,12 @@ from twisted.internet.error import ConnectionDone
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-try:
-    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
-except Exception:
-    pass
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
-from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 
@@ -67,12 +65,12 @@ class MqttActions:
         @param p_message: is the payload used to control
         """
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
-        l_family = get_mqtt_field(p_message, 'Family')
-        l_device = get_mqtt_field(p_message, 'Device')
-        l_input = get_mqtt_field(p_message, 'Input')
-        l_power = get_mqtt_field(p_message, 'Power')
-        l_volume = get_mqtt_field(p_message, 'Volume')
-        l_zone = get_mqtt_field(p_message, 'Zone')
+        l_family = extract_tools.get_mqtt_field(p_message, 'Family')
+        l_device = extract_tools.get_mqtt_field(p_message, 'Device')
+        l_input = extract_tools.get_mqtt_field(p_message, 'Input')
+        l_power = extract_tools.get_mqtt_field(p_message, 'Power')
+        l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
+        l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
         l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
         #
         if l_input != None:

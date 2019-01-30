@@ -11,7 +11,7 @@
 All 6 tests working - DBK - 2017-10-08
 """
 
-__updated__ = '2019-01-12'
+__updated__ = '2019-01-29'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -197,10 +197,5 @@ class C2_i2dh(unittest.TestCase):
     def test_05_GetFactor(self):
         self._test(self.inst.dotted_hex2int, 'A1.oB2.C3', 10551491)
         self._test(self.inst.dotted_hex2int, 'A1.0.C3', 10551491)
-
-    def test_06_Bool(self):
-        self.assertEqual(self.inst.getbool('True'), True)
-        self.assertEqual(self.inst.getbool('None'), False)
-        self.assertEqual(self.inst.getbool('False'), False)
 
 # ## END DBL

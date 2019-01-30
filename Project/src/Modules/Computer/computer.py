@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-29'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,19 +38,20 @@ import platform
 
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
+from Modules.Core.Utilities import extract_tools
+from Modules.Core.Utilities.xml_tools import XmlConfigTools
+from Modules.Core.Utilities import uuid_tools
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
 from Modules.Computer.Web.websocket_server import API as websocketAPI
-from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Core.Utilities import uuid_tools
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Computer       ')
 
@@ -85,7 +86,7 @@ class MqttActions(object):
             l_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         #  computer/ip
         elif p_topic[1] == 'ip':
-            l_ip = get_mqtt_field(p_message, 'ExternalIPv4Address')
+            l_ip = extract_tools.get_mqtt_field(p_message, 'ExternalIPv4Address')
             l_logmsg += '\tIPv4: {}'.format(l_ip)
         #  computer/startup
         elif p_topic[1] == 'startup':

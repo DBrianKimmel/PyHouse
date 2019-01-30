@@ -14,12 +14,12 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core import conversions
+from Modules.Core.Utilities import convert
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_constants import ACK
 from Modules.Families.Insteon import Insteon_utils
@@ -310,7 +310,7 @@ class InsteonAllLinks(object):
         """
         #  p_light_obj = LightData()
         p_light_obj = InsteonData()
-        p_light_obj.InsteonAddress = conversions.dotted_hex2int(p_address)
+        p_light_obj.InsteonAddress = convert.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         #  p_code = 0x00  # Find First
         p_code = 0x00  #  Delete First Found record

@@ -11,17 +11,17 @@ Passed all 8 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2018-12-04'
+__updated__ = '2019-01-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import ControllerData, HouseInformation
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import ControllerData, HouseInformation
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 ADR_16C9D0 = '16.C9.D0'
@@ -88,8 +88,8 @@ class C1_Utility(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_02_ExtractAddress(self):
-        # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), conversions.dotted_hex2int(ADR_16C9D0))
-        # self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), conversions.dotted_hex2int(ADR_17C272))
+        # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), convert.dotted_hex2int(ADR_16C9D0))
+        # self.assertEqual(self.m_api._get_addr_from_message(MSG_62, 2), convert.dotted_hex2int(ADR_17C272))
         pass
 
     def test_04_Obj(self):

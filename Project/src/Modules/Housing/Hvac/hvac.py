@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Hvac/hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
@@ -14,18 +14,14 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-29'
 
 #  Import system type stuff
 
 #  Import PyMh files
-try:
-    from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field
-except Exception:
-    pass
-# from Modules.Core.data_objects import ThermostatData
-from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac           ')
@@ -50,7 +46,7 @@ class MqttActions(object):
         """
         l_logmsg = '\tHVAC:\n'
         if p_topic[0] == 'Thermostat':
-            l_logmsg += '\tThermostat: {}\n'.format(get_mqtt_field(p_message, 'Name'))
+            l_logmsg += '\tThermostat: {}\n'.fextract_toolsormat(extract_tools.get_mqtt_field(p_message, 'Name'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg
@@ -59,7 +55,7 @@ class MqttActions(object):
         p_logmsg += '\tThermostat:\n'
         p_logmsg += '\tName: {}'.format(self.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-        p_logmsg += '\tTemp: {}'.format(get_mqtt_field(p_message, 'CurrentTemperature'))
+        p_logmsg += '\tTemp: {}'.format(extract_tools.get_mqtt_field(p_message, 'CurrentTemperature'))
         return p_logmsg
 
 

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-07'
+__updated__ = '2019-01-29'
 
 # Import system type stuff
 
@@ -28,5 +28,15 @@ def extract_quoted(p_string, p_delim=b'"'):
     l_string = p_string[l_1st + 1:l_2nd].decode('utf-8')
     l_rest = p_string[l_2nd + 1:]
     return l_string, l_rest
+
+
+def get_mqtt_field(p_message, p_field):
+    """ Get the given field from a JSON message.
+    """
+    try:
+        l_ret = p_message[p_field]
+    except (KeyError, TypeError):
+        l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
+    return l_ret
 
 # ## END DBK
