@@ -3,7 +3,7 @@
 @name:      PyHouse/src/Modules/Web/web_mainpage.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 27, 2013
 @Summary:
@@ -41,7 +41,7 @@ mainpage.py - this is the place where everything is happening, the user will nev
 
 """
 
-__updated__ = '2016-10-23'
+__updated__ = '2019-02-03'
 
 #  Import system type stuff
 import gc
@@ -93,6 +93,7 @@ from Modules.Computer.Web import web_users
 from Modules.Computer.Web import web_webs
 
 from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.WebMainpage    ')
 
 #  Handy helper for finding external resources nearby.
 modulepath = os.path.join(os.path.split(__file__)[0], '..')
@@ -101,8 +102,6 @@ csspath = os.path.join(webpath, 'css')
 imagepath = os.path.join(webpath, 'images')
 jspath = os.path.join(webpath, 'js')
 templatepath = os.path.join(webpath, 'template')
-
-LOG = Logger.getLogger('PyHouse.WebMainpage    ')
 
 
 class FileNoListDir(static.File):
@@ -142,6 +141,7 @@ class TheRoot(rend.Page):
 
 #==============================================================================
 
+
 class mainPageFactory:
     """
     """
@@ -178,15 +178,11 @@ class mainPageFactory:
         """
         return guard._sessionCookie()
 
+
 #  This instance is built once
 _mainPageFactory = mainPageFactory()
 
 #==============================================================================
-
-
-
-
-
 
 """
 mainpage.py - this is the place where everything is happening, the user will never
@@ -207,7 +203,6 @@ last edit: wth, 20.01.2011
 modhistory:
   20.01.2011 - wth, pruned for minimal demo app
 """
-
 
 COOKIEKEY = 'minimal'
 
@@ -308,12 +303,13 @@ class MainPage(athena.LivePage):
         """
         pass
 
-
 #==============================================================================
+
 
 REQ_404 = -1
 REQ_ROOT = 0
 REQ_WITHID = 2
+
 
 class Workspace(athena.LiveElement):
     """WARNING:
@@ -336,9 +332,9 @@ class Workspace(athena.LiveElement):
         #  clean up whatever needs cleaning...
         LOG.info('workspace object was detached cleanly')
 
-
 #-----------------
 #  Calls from browser JS to load an element (fragment)
+
     """
     #  NOTE!  Tne name of the def MUST be the same as the widget name as used in workspace.js attachWidget's first argument.
     """
@@ -498,6 +494,7 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def guiready(self):
+
         def cb_usermatch(p_user):  #  select usually returns a list, knowing that we have unique results
             reqtype = REQ_404  #  the result is unpacked already and a single item returned
             udata = {}
@@ -510,6 +507,7 @@ class Workspace(athena.LiveElement):
                     else:
                         udata[uc(k)] = p_user[k]
             return reqtype, udata
+
         def cb_rootmatch(_res):  #  select usually returns a list, knowing that we have unique results
             reqtype = REQ_ROOT  #  the result is unpacked already and a single item returned
             udata = {}
@@ -521,8 +519,10 @@ class Workspace(athena.LiveElement):
                 else:
                     udata[uc(k)] = user[k]
             return reqtype, udata
+
         def eb_nomatch():
             pass
+
         #  LOG.info('GuiReady called')
         if self.uid and len(self.uid) == 32:
             l_defer = self.page.userstore.getUserWithUID(self.uid)
@@ -534,8 +534,8 @@ class Workspace(athena.LiveElement):
             l_defer.addErrback(eb_nomatch)
         return l_defer
 
-
 #==============================================================================
+
 
 def factory(ctx, segments, p_pyhouse_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.Clients will be returned.
@@ -556,7 +556,6 @@ def factory(ctx, segments, p_pyhouse_obj):
         #
         return None, segments
 
-
 #==============================================================================
 
 """
@@ -568,11 +567,13 @@ modhistory:
   20.01.2011 - wth, pruned for minimal
 """
 
+
 def uc(msg):
     if type(msg) == type(''):
         return unicode(msg, 'iso-8859-1')
     else:
         return msg
+
 
 def dc(msg):
     if type(msg) == type(''):

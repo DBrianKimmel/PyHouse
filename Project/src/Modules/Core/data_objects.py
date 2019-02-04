@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-01-24'
+__updated__ = '2019-02-03'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -300,6 +300,7 @@ class TwistedInformation(object):
     def __init__(self):
         self.Application = None  # Application('PyHouse')
         self.Reactor = None  # reactor
+        self.Site = None
 
 
 class TwitterData(object):
@@ -375,8 +376,11 @@ class WebData(object):
 
     def __init__(self):
         self.WebPort = 8580
+        self.WebServer = None
         self.WebSocketPort = 8581
+        self.WebSocketServer = None
         self.SecurePort = 8588
+        self.secureServer = None
         self.Logins = {}  # LoginData()
 
 

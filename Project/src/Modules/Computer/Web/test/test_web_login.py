@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/Web/test/test_web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 29, 2014
 @Summary:
@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-02-03'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -38,8 +38,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_login')
 

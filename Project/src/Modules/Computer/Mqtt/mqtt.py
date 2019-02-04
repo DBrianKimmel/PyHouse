@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-01-31'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -134,7 +134,12 @@ class API(object):
         """
         l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
         l_message = p_message
-        l_logmsg = self.m_actions.mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_message)
+        try:
+            l_logmsg = self.m_actions.mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_message)
+        except AttributeError as e_err:
+            l_logmsg = 'm_actions not initialzed - {}'.format(e_err)
+            LOG.error(l_logmsg)
+            return
         LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

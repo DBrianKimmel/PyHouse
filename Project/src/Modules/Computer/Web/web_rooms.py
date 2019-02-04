@@ -11,12 +11,13 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-02-01'
 
 # Import system type stuff
 import os
-from nevow import loaders
-from nevow import athena
+# from nevow import loaders
+# from nevow import athena
+from twisted.web.template import Element, XMLString, renderer
 
 # Import PyMh files and modules.
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
@@ -30,30 +31,44 @@ templatepath = os.path.join(webpath, 'template')
 
 LOG = Logger.getLogger('PyHouse.webRooms       ')
 
+# class RoomsElement(athena.LiveElement):
+#    jsClass = u'rooms.RoomsWidget'
+#    docFactory = loaders.xmlfile(os.path.join(templatepath, 'roomsElement.html'))
 
-class RoomsElement(athena.LiveElement):
-    jsClass = u'rooms.RoomsWidget'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'roomsElement.html'))
+#    def __init__(self, p_workspace_obj, p_params):
+#        self.m_workspace_obj = p_workspace_obj
+#        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
+#        self.m_params = p_params
 
-    def __init__(self, p_workspace_obj, p_params):
-        self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
-        self.m_params = p_params
+#    @athena.expose
+#    def getServerData(self):
+#        """
+#        Get a lot of server JSON data and pass it to the client browser.
+#        """
+#        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
+#        # LOG.warn('Fetched {}'.format(l_json))
+#        return l_json
 
-    @athena.expose
-    def getServerData(self):
-        """
-        Get a lot of server JSON data and pass it to the client browser.
-        """
-        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-        # LOG.warn('Fetched {}'.format(l_json))
-        return l_json
+#    @athena.expose
+#    def saveRoomData(self, p_json):
+#        """A new/changed/deleted room is returned.  Process it and update the internal data.
+#        """
+#        l_json = json_tools.decode_json_unicode(p_json)
+#        roomMaint().from_web(self.m_pyhouse_obj, l_json)
 
-    @athena.expose
-    def saveRoomData(self, p_json):
-        """A new/changed/deleted room is returned.  Process it and update the internal data.
-        """
-        l_json = json_tools.decode_json_unicode(p_json)
-        roomMaint().from_web(self.m_pyhouse_obj, l_json)
+
+class RoomsElement(Element):
+
+    loader = XMLString((
+        '<h1 '
+        'xmlns:t="http://twistedmatrix.com/ns/twisted.web.template/0.1"'
+        '>Hello, <span t:render="name"></span>!</h1>'))
+
+    def __init__(self, name):
+        self.m_name = name
+
+    @renderer
+    def name(self, _request, _tag):
+        return self.m_name
 
 # ## END DBK

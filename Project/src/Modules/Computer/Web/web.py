@@ -2,11 +2,14 @@
 @name:      PyHouse/src/Modules/Web/web.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2015
 @Summary:
 
+Setup and run web services.
+    Webserver straight & TLS
+    Websocket Server
 
 PyHouse.Computer.Web
             Logins
@@ -14,20 +17,22 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2017-07-24'
+__updated__ = '2019-02-03'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import WebData, LoginData
-from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.web_server import API as WebAPI
 # from Modules.Computer.Web.websocket_server import API as WebSocketAPI
 
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Web            ')
 
+
 class WorkspaceData(object):
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
@@ -35,6 +40,7 @@ class WorkspaceData(object):
 class API(object):
     """
     """
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.')

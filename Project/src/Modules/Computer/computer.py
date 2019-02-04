@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on Jun 24, 2014
 @license:   MIT License
 @summary:   Handle the computer information.
@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-01-30'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,9 +38,8 @@ import platform
 
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
-from Modules.Core.Utilities import extract_tools
+from Modules.Core.Utilities import extract_tools, uuid_tools
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.Communication.communication import API as communicationAPI

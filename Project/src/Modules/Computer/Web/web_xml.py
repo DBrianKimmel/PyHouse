@@ -4,10 +4,12 @@
 @name:      PyHouse/src/Modules/Web/web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 17, 2014
 @Summary:
+
+This is used to load and save the XML definitions.
 
 PyHouse.Computer.Web
             Logins
@@ -15,7 +17,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2018-01-27'
+__updated__ = '2019-02-03'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -39,8 +41,8 @@ class Xml(object):
         @return: the Port Number
         """
         l_port = PutGetXML.get_int_from_xml(p_xml, 'WebPort', 8580)
-        l_secure = PutGetXML.get_int_from_xml(p_xml, 'SecurePort', 8580)
-        l_socket = PutGetXML.get_int_from_xml(p_xml, 'SocketPort', 8580)
+        l_secure = PutGetXML.get_int_from_xml(p_xml, 'SecurePort', 8588)
+        l_socket = PutGetXML.get_int_from_xml(p_xml, 'SocketPort', 8581)
         return l_port, l_secure, l_socket
 
     @staticmethod

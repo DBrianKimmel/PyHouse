@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle all of the information for a house.
@@ -28,7 +28,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2018-12-18'
+__updated__ = '2019-01-30'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

@@ -2,19 +2,20 @@
 @name:      PyHouse/src/Modules/Web/web_users.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 23, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-02-03'
 
 # Import system type stuff
 import os
-from nevow import loaders
-from nevow import athena
+# from nevow import loaders
+# from nevow import athena
+from twisted.web.template import Element
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData
@@ -34,15 +35,14 @@ VALID_USER_ROLES = ['Admin', 'Adult', 'Child', 'Service']
 # Service is limited to turn on/off servicable items such as pool, irrigation
 
 
-class UsersElement(athena.LiveElement):
-    jsClass = u'users.UsersWidget'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'usersElement.html'))
+class UsersElement(Element):
+    # jsClass = u'users.UsersWidget'
+    # docFactory = loaders.xmlfile(os.path.join(templatepath, 'usersElement.html'))
 
     def __init__(self, p_workspace_obj, _p_params):
         self.m_workspace_obj = p_workspace_obj
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
-    @athena.expose
     def getUsersData(self):
         """
         Get a lot of server JSON data and pass it to the client browser.
@@ -57,11 +57,10 @@ class UsersElement(athena.LiveElement):
             l_users[0].LoginRole = 1
             self.m_pyhouse_obj.Computer.Web.Logins = l_users
             # LOG.debug('Creating fake user since there was none')
-        l_json = unicode(json_tools.encode_json(l_users))
+        l_json = json_tools.encode_json(l_users)
         # LOG.info('Fetched {}'.format(l_json))
         return l_json
 
-    @athena.expose
     def putUsersData(self, p_json):
         """A new/changed/deleted user is returned.  Process it and update the internal data.
         """
@@ -85,6 +84,5 @@ class UsersElement(athena.LiveElement):
         l_obj.LoginPasswordCurrent = l_json['Password_1']
         l_obj.LoginRole = l_json['Role']
         self.m_pyhouse_obj.Computer.Web.Logins[l_ix] = l_obj
-
 
 # ## END DBK

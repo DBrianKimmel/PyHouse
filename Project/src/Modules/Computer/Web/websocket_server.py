@@ -4,17 +4,16 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Web/websocket_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Apr 17, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-12-27'
+__updated__ = '2019-02-03'
 
 #  Import system type stuff
-# import http.cookies  #
 import json
 # import urllib
 from twisted.internet import ssl

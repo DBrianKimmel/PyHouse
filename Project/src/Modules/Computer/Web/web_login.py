@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @note:      Created on Jul 27, 2013
 @license:   MIT License
 @summary:   Handle the web server login.
@@ -17,24 +17,24 @@ The user is required to login to allow further access to the PyHouse controls.
 After the user is authenticated, this element is converted to a "loged in as" entry near the
  top of the screen and has no further interactions with the user.
 
+Get all the VALID stuff to allow checking of browser entered data.
+
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-02-04'
 
 #  Import system type stuff
 import os
-from nevow import loaders
-from nevow import athena
-#  from passlib.hash import pbkdf2_sha256
-from zope.interface import implements
+from zope.interface import implementer
+
 from twisted.cred.portal import IRealm
 from twisted.cred.checkers import ICredentialsChecker
 from twisted.cred.credentials import IUsernamePassword
 from twisted.cred.error import UnauthorizedLogin
 from twisted.internet import defer
+from twisted.web.template import Element, XMLString, renderer
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import LoginData
 from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
 from Modules.Housing.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
 from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
@@ -46,6 +46,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Web.web_users import VALID_USER_ROLES
 from Modules.Core.Utilities import json_tools
 
+from Modules.Core.data_objects import LoginData
 LOG = Logger.getLogger('PyHouse.WebLogin       ')
 
 #  Handy helper for finding external resources nearby.
@@ -53,17 +54,74 @@ webpath = os.path.join(os.path.split(__file__)[0])
 templatepath = os.path.join(webpath, 'template')
 
 
-class LoginElement(athena.LiveElement):
-    """ a 'live' login element containing a username and password.
+class LoginElement(Element):
+    """ a login element containing a username and password.
     """
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'loginElement.html'))
-    jsClass = u'login.LoginWidget'
+    loader = XMLString((
+"""
+<!-- PyHouse/Project/src/Modules/Computer/Web/templates/mainpage.html -->
+<!DOCTYPE html>
+<html
+    xmlns='http://www.w3.org/1999/xhtml'
+    xmlns:t='http://pyhouse.org/ns/twisted.web.template/0.1'
+    lang='en'>
+    <head>
+        <!-- link rel="stylesheet" type="text/css" href="lcars.css" / -->
+
+        <style type="text/css">
+            .Workspace {
+                color: #9999CC;
+                background-color: black;
+                width: 100%;
+                height: 100%;
+                min-height: 100%;
+                position: absolute;
+                left: 0px;
+                top: 0px;
+            }
+            .Waitroller {
+                height: 3em;
+            }
+            .Clock {
+                color: #ffffff;
+                background-color: black;
+                margin-left:auto;
+                margin-right:auto;
+                font-size: 200%;
+                text-align: center;
+                width: 50%;
+                height: 1em;
+                top: 0em;
+            }
+        </style>
+    </head>
+        <body>
+            <p xmlns:t="http://pyhouse.org/ns/twisted.web.template/0.1" >
+                User: <span t:render="username"></span>!
+                password: <span t:render="password"></span>!
+            </p>
+        </body>
+</html>
+<!-- ### END DBK -->
+"""))
 
     def __init__(self, p_workspace_obj):
         self.m_workspace_obj = p_workspace_obj
-        self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
+        # self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
+        self.m_username = 'admin'
+        self.m_password = 'adminpassword'
 
-    @athena.expose
+    @renderer
+    def username(self, _request, _tag):
+        return self.m_username
+
+    @renderer
+    def password(self, _request, _tag):
+        return self.m_password
+
+
+class LoginHelper:
+
     def doLogin(self, p_json):
         """ This will receive json of username, password when the user clicks on the login button in the browser.
 
@@ -81,9 +139,8 @@ class LoginElement(athena.LiveElement):
         l_obj = json_tools.decode_json_unicode(p_json)
         l_login_obj = self.validate_user(l_obj)
         l_json = json_tools.encode_json(l_login_obj)
-        return unicode(l_json)
+        return l_json
 
-    @athena.expose
     def getValidLists(self):
         """ A JS request for various validating information has been received from the client.
 
@@ -113,7 +170,7 @@ class LoginElement(athena.LiveElement):
                      UserRoles=VALID_USER_ROLES
                      )
         l_json = json_tools.encode_json(l_obj)
-        return unicode(l_json)
+        return l_json
 
     def validate_user(self, p_obj):
         """
@@ -158,6 +215,7 @@ def verifyCryptedPassword(crypted, pw):
     return crypt.crypt(pw, l_salt) == crypted
 
 
+@implementer(ICredentialsChecker)
 class UnixChecker(object):
     """
     A credentials checker for a UNIX server. This will check that
@@ -168,7 +226,7 @@ class UnixChecker(object):
     Right now this supports Python's pwd and spwd modules, if they are
     installed. It does not support PAM.
     """
-    implements(ICredentialsChecker)
+    # implements(ICredentialsChecker)
     credentialInterfaces = (IUsernamePassword,)
 
     def checkPwd(self, pwd, username, password):
@@ -215,8 +273,8 @@ class UnixChecker(object):
         return defer.fail(UnauthorizedLogin())
 
 
+@implementer(ICredentialsChecker)
 class PasswordDictChecker:
-    implements(ICredentialsChecker)
     credentialInterfaces = (IUsernamePassword,)
 
     def __init__(self, passwords):
@@ -236,8 +294,9 @@ class PasswordDictChecker:
                 UnauthorizedLogin("No such user"))
 
 
+@implementer(IRealm)
 class PyHouseRealm(object):
-    implements(IRealm)
+    # implements(IRealm)
 
     def requestAvatar(self, avatarId, mind, *interfaces):
         #  if pb.IPerspective in interfaces:

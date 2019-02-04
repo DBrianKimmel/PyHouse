@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Web/test/test_web_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 27, 2015
 @Summary:
 
-Passed all 14 tests - DBK - 2018-01-27
+Passed all 13 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-02-03'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -93,7 +93,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_WEB_SERVER)
-        # print(l_xml)
+        print(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed XML'))
         self.assertEqual(l_xml.tag, TESTING_WEB_SECTION)
 
 

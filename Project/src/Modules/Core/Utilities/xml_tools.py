@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-19'
+__updated__ = '2019-01-30'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -398,7 +398,7 @@ class XmlConfigTools:
             p_base_obj.Comment = PutGetXML.get_text_from_xml(p_entry_element_xml, 'Comment', '')
             p_base_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_entry_element_xml, 'LastUpdate')
         except Exception as e_err:
-            LOG.error('Base Object - {}\n\t{}'.format(e_err, p_base_obj.Name))
+            LOG.error('Base Object - Err:{} - Name:{} - XML-Tag:{}'.format(e_err, p_base_obj.Name, p_entry_element_xml.tag))
         return p_base_obj
 
     @staticmethod
