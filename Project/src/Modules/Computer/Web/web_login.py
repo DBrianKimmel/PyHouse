@@ -97,8 +97,8 @@ class LoginElement(Element):
     </head>
         <body>
             <p xmlns:t="http://pyhouse.org/ns/twisted.web.template/0.1" >
-                User: <span t:render="username"></span>!
-                password: <span t:render="password"></span>!
+                User: <span t:render="username"></span>
+                password: <span t:render="password"></span>
             </p>
         </body>
 </html>

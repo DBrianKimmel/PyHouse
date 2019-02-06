@@ -15,8 +15,7 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2017-04-26'
-
+__updated__ = '2019-02-06'
 
 # Import system type stuff
 
@@ -77,8 +76,8 @@ class API(object):
         """
         return p_xml
 
-    def ControlLight(self, p_light_obj, p_source, p_level, _p_rate=0):
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         LOG.debug('Change light Name:{}, DeviceFamily:{}'.format(p_light_obj.Name, p_light_obj.DeviceFamily))
-        self.m_plm.ControlLight(p_light_obj, p_source, p_level)
+        self.m_plm.AbstractControlLight(p_light_obj, p_source, p_level)
 
 # ## END

@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2019-01-20'
+__updated__ = '2019-02-06'
 
 #  Import system type stuff
 import datetime
@@ -461,19 +461,6 @@ class API(Utility):
         self.m_protocol.driver_loop_stop()
         self.stop_controller_driver(p_controller_obj)
         LOG.info('Stopped.')
-
-    def ControlLight(self, p_device_obj, _p_source, p_level, p_rate=0):
-        """
-        Send a command to change a device (light's level)
-        """
-        LOG.info("Device Name:{}; to level:{}; at rate:{};".format(p_device_obj.Name, p_level, p_rate))
-        if int(p_level) == 0:
-            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  #  0x13
-        elif int(p_level) == 100:
-            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
-        else:
-            l_level = int(p_level * 255 / 100)
-            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
 
     def AbstractControlLight(self, p_device_obj, _p_controller_obj, p_control):
         """

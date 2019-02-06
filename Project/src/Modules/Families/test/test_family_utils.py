@@ -12,7 +12,7 @@ Passed all 30 tests.  DBK 2018-01-22
 """
 from Modules.Families.UPB.test.xml_upb import TESTING_UPB_ADDRESS
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-02-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -276,7 +276,7 @@ class B3_Utils_Family(SetupMixin, unittest.TestCase):
 
 class B4_Utils_Family(SetupMixin, unittest.TestCase):
     """ This section tests family API retrieval
-            Obj:ControlLight             <bound method API.ControlLight of <Modules.Families.UPB.UPB_device.API object at
+            Obj:AbstractControlLight             <bound method API.AbstractControlLight of <Modules.Families.UPB.UPB_device.API object at
             Obj:SaveXml                 <bound method API.SaveXml of <Modules.Families.UPB.UPB_device.API object at
             Obj:Start                   <bound method API.Start of <Modules.Families.UPB.UPB_device.API object at
             Obj:Stop                    <bound method API.Stop of <Modules.Families.UPB.UPB_device.API object at

@@ -11,8 +11,7 @@
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-02-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -78,7 +77,7 @@ class API(object):
     def SaveXml(self, p_xml):
         pass
 
-    def ControlLight(self, p_light_obj, p_source, p_level, p_rate=0):
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         pass
 
 # ## END

@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-02-06'
 
 # Import system type stuff
 try:
@@ -431,17 +431,16 @@ class API(UpbPimAPI):
     def Stop(self, p_controller_obj):
         pass
 
-    def ControlLight(self, p_light_obj, p_source, p_level, _p_rate=0):
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         for l_obj in self.m_house_obj.Lights.values():
             if l_obj.Active == False:
                 continue
-            l_name = p_light_obj.Name
+            l_name = p_device_obj.Name
             if l_obj.Name == l_name:
                 l_id = self._get_id_from_name(l_name)
                 LOG.info('Change light {} to Level {}'.format(l_name, p_level))
                 self._compose_command(self.m_controller_obj, pim_commands['goto'], l_id, p_level, 0x01)
                 return
-
 
 """
 Sent to PIM <17>70 03 8D <0D> <2005-09-24 20:58:55 75535.86>

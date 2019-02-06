@@ -29,8 +29,9 @@ On initial startup allow a house to be created
 
 Do not require reloads, auto change PyHouse on the fly.
 """
+from werkzeug.contrib.jsrouting import render_template
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-02-04'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -52,7 +53,8 @@ app = Klein()
 
 @app.route('/')
 def root(request):
-    return 'Root Request!'
+    # l_user = {'admin': 'admin'}
+    return render_template('mainpage.html')
 
 
 @app.route('/login')

@@ -5,7 +5,9 @@
 #created:	2018-09-28
 #updated:	2018-09-28
 #license:   MIT License
-#summary:   For pip ina virtualenv
+#summary:   For pip in a virtualenv
+#
+# pip3 install -r venv/PyHouse/Project/requirements.txt
 
 twisted >= 18.0.0
 service-identity >= 17.0.0                                                                                                                                                                                          
@@ -17,6 +19,8 @@ python-dateutil >= 2.7.3
 aniso8601 >= 3.0.2
 pyudev >= 0.21.0
 pyserial >= 3.4.0
+klein
+pyopenssl
 
 ### END DBK
                                                                                                                                                                                       

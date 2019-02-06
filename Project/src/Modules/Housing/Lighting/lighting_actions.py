@@ -40,7 +40,6 @@ class API:
         l_control.TransitionTime = p_schedule_obj.Rate
         LOG.debug("\n\tSchedName:{}; SchedLightName:{}; Level:{}; LightName:{}; LightKey:{}".format(
                 p_schedule_obj.Name, p_schedule_obj.LightName, p_schedule_obj.Level, l_light_obj.Name, l_light_obj.Key))
-        # API.ControlLight(p_pyhouse_obj, l_light_obj, 'schedule', p_schedule_obj.Level)
         self.AbstractControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_schedule_obj)
 
@@ -55,7 +54,7 @@ class API:
         try:
             LOG.info('Turn Light: "{}" to level: "{}", DeviceFamily: "{}"'.format(p_light_obj.Name, p_control.BrightnessPct, p_light_obj.DeviceFamily))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
-            l_family_api.ControlLight(p_light_obj, p_controller_obj, p_control)
+            l_family_api.AbstractControlLight(p_light_obj, p_controller_obj, p_control)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 

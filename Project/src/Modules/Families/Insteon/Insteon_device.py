@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2019-01-09'
+__updated__ = '2019-02-06'
 __version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -125,16 +125,6 @@ class API:
             Utility._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
-
-    def XXXControlLight(self, p_light_obj, p_source, p_level, p_rate=0):
-        """
-        Do the Insteon thing to change the level of an Insteon light
-        """
-        if self.m_plm == None:
-            LOG.info('No PLM was defined - Quitting.')
-            return
-        LOG.info('Device Name: "{}"; to level: "{}:; via PLM: "{}"'.format(p_light_obj.Name, p_level, self.m_plm.Name))
-        self.m_plm.ControlLight(p_light_obj, p_source, p_level, p_rate)
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         """
