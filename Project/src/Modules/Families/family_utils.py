@@ -15,7 +15,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-01-09'
+__updated__ = '2019-02-08'
 
 #  Import system type stuff.
 
@@ -27,14 +27,14 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 
 
-class FamUtil(object):
+def _get_device_name(p_device_obj):
+    """
+    Given some device object, extract the Family Name
+    """
+    return p_device_obj.Name
 
-    @staticmethod
-    def _get_device_name(p_device_obj):
-        """
-        Given some device object, extract the Family Name
-        """
-        return p_device_obj.Name
+
+class FamUtil(object):
 
     @staticmethod
     def _get_family_obj(p_pyhouse_obj, p_device_obj):
@@ -55,15 +55,11 @@ class FamUtil(object):
         return l_family_obj
 
     @staticmethod
-    def _get_device_family(p_device_obj):
-        return p_device_obj.DeviceFamily
-
-    @staticmethod
     def get_device_driver_API(p_pyhouse_obj, p_controller_obj):
         """
         Based on the InterfaceType of the controller, load the appropriate driver and get its API().
         """
-        l_dev_name = FamUtil._get_device_name(p_controller_obj)
+        l_dev_name = _get_device_name(p_controller_obj)
         if p_controller_obj.InterfaceType.lower() == 'serial':
             from Modules.Drivers.Serial import Serial_driver
             l_driver = Serial_driver.API(p_pyhouse_obj)
@@ -87,8 +83,7 @@ class FamUtil(object):
         @param p_device_obj: contains the info about the device we are working on.
         @return: the DeviceFamily which is the Name of the family (e.g. Insteon)
         """
-        l_dev_name = FamUtil._get_device_name(p_device_obj)
-        #  l_dev_family = FamUtil._get_device_family(p_device_obj)
+        l_dev_name = _get_device_name(p_device_obj)
         try:
             l_family = p_device_obj.DeviceFamily
         except AttributeError as e_err:
@@ -104,7 +99,7 @@ class FamUtil(object):
         @param p_device_obj: is the device to find the API for.
         @return: the pointer to the API class of the proper device family
         """
-        l_dev_name = FamUtil._get_device_name(p_device_obj)
+        l_dev_name = _get_device_name(p_device_obj)
         try:
             l_family = FamUtil.get_family(p_device_obj)
             l_family_obj = p_pyhouse_obj.House.FamilyData[l_family]
@@ -152,23 +147,6 @@ class FamUtil(object):
             l_ret = 'ERROR family_utils-149  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
             LOG.error('ERROR - Unable to load family information for a device.'
                       '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
-        return l_ret  # for testing
-
-    @staticmethod
-    def write_family_data(p_pyhouse_obj, p_out_xml, p_device_obj):
-        """
-        Write out the Family Specific XML for a given device
-        @param p_pyhouse_obj: The entire PyHouse Data
-        @param p_out_xml: is the XML data we are writing out.
-        @param p_device_obj: is the device we will be outputting info for.
-        """
-        l_dev_name = FamUtil._get_device_name(p_device_obj)
-        l_api = FamUtil._get_family_xml_api(p_pyhouse_obj, p_device_obj)
-        try:
-            l_ret = l_api.WriteXml(p_out_xml, p_device_obj)
-        except Exception as e_err:
-            l_ret = 'ERROR in family_utils.write_family_data.  Device:"{}"\n  Api:{}\n   Err:{}'.format(l_dev_name, l_api, e_err)
-            LOG.error(l_ret)
         return l_ret  # for testing
 
 #  ## END DBK

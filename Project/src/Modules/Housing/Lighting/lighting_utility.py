@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-30'
+__updated__ = '2019-02-07'
 
 #  Import system type stuff
 
@@ -60,12 +60,17 @@ class Utility:
         """ Gets a controller for a device.
 
         Check for this Node
+        @return: a list of controller objs that match the family
         """
+        l_ret = []
         for l_obj in p_objs.values():
             l_family = l_obj.DeviceFamily
             if l_family == p_family:
-                return l_obj
-        LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
-        return None
+                l_ret.append(l_obj)
+        if l_ret == []:
+            LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
+        else:
+            LOG.debug('Found {} controllers for family {}'.format(len(l_ret), p_family))
+        return l_ret
 
 # ## END DBK

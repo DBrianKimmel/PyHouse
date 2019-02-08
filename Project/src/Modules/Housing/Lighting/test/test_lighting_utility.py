@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-23'
+__updated__ = '2019-02-07'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -18,8 +18,11 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Housing.Lighting.lighting_controllers import XML as controllerXML
 from Modules.Housing.Lighting.lighting_lights import XML as lightXML
 from Modules.Housing.Lighting.lighting_utility import Utility
+from Modules.Housing.Lighting.test.xml_controllers import \
+    TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Lighting.test.xml_lights import \
     XML_LIGHT_SECTION, \
     TESTING_LIGHT_SECTION, TESTING_LIGHT_NAME_0, TESTING_LIGHT_UUID_0, TESTING_LIGHT_UUID_1, TESTING_LIGHT_NAME_1, TESTING_LIGHT_NAME_2, \
@@ -77,7 +80,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.tag, TESTING_LIGHT_SECTION)
 
 
-class B1_Object_by_id(SetupMixin, unittest.TestCase):
+class B1_Lights_by_id(SetupMixin, unittest.TestCase):
     """ This section tests lookup
     """
 
@@ -156,5 +159,23 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         l_ret = Utility()._get_object_by_id(l_objs, key=17)
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
         self.assertIsNone(l_ret)
+
+
+class C1_ByFamuly(SetupMixin, unittest.TestCase):
+    """ This section tests lookup
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_controllers = controllerXML().read_all_controllers_xml(self.m_pyhouse_obj)
+
+    def test_01_Name(self):
+        """ Write out the XML file for the Base controller
+        """
+        l_objs = self.m_controllers
+        print(PrettyFormatAny.form(l_objs, 'C1-01-A - Controllers'))
+        l_ret = Utility().get_controller_objs_by_family(l_objs, 'Insteon')
+        print(PrettyFormatAny.form(l_ret, 'C1-01-B - Controller'))
+        # self.assertEqual(l_ret.Name, TESTING_CONTROLLER_NAME_0)
 
 # ## END DBK

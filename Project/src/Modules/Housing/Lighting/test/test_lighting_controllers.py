@@ -10,7 +10,7 @@
 Passed all 24 tests - DBK - 2019-01-10
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-02-07'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -30,7 +30,10 @@ from Modules.Core.test.xml_device import \
     TESTING_DEVICE_SUBTYPE_0, \
     TESTING_DEVICE_ROOM_NAME_0, \
     TESTING_DEVICE_ROOM_UUID_0, \
-    TESTING_DEVICE_COMMENT_0, TESTING_DEVICE_UUID_0, TESTING_DEVICE_COMMENT_1, TESTING_DEVICE_FAMILY_UPB
+    TESTING_DEVICE_COMMENT_0, \
+    TESTING_DEVICE_UUID_0, \
+    TESTING_DEVICE_COMMENT_1, \
+    TESTING_DEVICE_FAMILY_UPB
 from Modules.Drivers.Serial.test.xml_serial import \
     TESTING_SERIAL_BAUD_RATE, \
     TESTING_SERIAL_BYTE_SIZE, \
@@ -67,7 +70,12 @@ from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER, \
     XML_CONTROLLER_SECTION, \
     TESTING_CONTROLLER_NAME_1, \
-    TESTING_CONTROLLER_ACTIVE_1, TESTING_CONTROLLER_KEY_1
+    TESTING_CONTROLLER_ACTIVE_1, \
+    TESTING_CONTROLLER_KEY_1, \
+    TESTING_CONTROLLER_TYPE, \
+    TESTING_CONTROLLER_SUBTYPE, \
+    TESTING_CONTROLLER_ROOM_NAME_0, \
+    TESTING_CONTROLLER_ROOM_UUID_0
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -153,11 +161,11 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.UUID, TESTING_CONTROLLER_UUID_0)
         # Plus Device Info
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(str(l_obj.DeviceType), TESTING_DEVICE_TYPE_0)
-        self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE_0)
+        self.assertEqual(str(l_obj.DeviceType), TESTING_CONTROLLER_TYPE)
+        self.assertEqual(str(l_obj.DeviceSubType), TESTING_CONTROLLER_SUBTYPE)
         # Plus Room Info
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
-        self.assertEqual(l_obj.RoomUUID, TESTING_DEVICE_ROOM_UUID_0)
+        self.assertEqual(l_obj.RoomName, TESTING_CONTROLLER_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_CONTROLLER_ROOM_UUID_0)
 
     def test_02_BaseDevice1(self):
         """Read Base Device
@@ -267,7 +275,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE_0))
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE_0))
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomName, TESTING_CONTROLLER_ROOM_NAME_0)
         self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
         self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
         self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
@@ -293,7 +301,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_obj.DeviceType, int(TESTING_DEVICE_TYPE_0))
         self.assertEqual(l_obj.DeviceSubType, int(TESTING_DEVICE_SUBTYPE_0))
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomName, TESTING_CONTROLLER_ROOM_NAME_0)
         self.assertEqual(l_obj.InterfaceType, TESTING_INTERFACE_TYPE_SERIAL)
         self.assertEqual(l_obj.Port, TESTING_INTERFACE_PORT_SERIAL)
         self.assertEqual(l_obj.BaudRate, int(TESTING_SERIAL_BAUD_RATE))
@@ -315,7 +323,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_objs, 'B1-06-A - AllControllers'))
         # print(PrettyFormatAny.form(l_objs[0], 'B1-06-B - AllControllers'))
         # print(PrettyFormatAny.form(l_objs[1], 'B1-06-C - AllControllers'))
-        self.assertEqual(len(l_objs), 2)
+        self.assertEqual(len(l_objs), 3)
         self.assertEqual(l_objs[0].BaudRate, int(TESTING_SERIAL_BAUD_RATE))
         self.assertEqual(l_objs[0].ByteSize, int(TESTING_SERIAL_BYTE_SIZE))
         self.assertEqual(l_objs[0].DsrDtr, (TESTING_SERIAL_DSR_DTR == 'True'))
@@ -345,8 +353,8 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.find('DeviceType').text, TESTING_DEVICE_TYPE_0)
         self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_DEVICE_SUBTYPE_0)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME_0)
-        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_DEVICE_ROOM_UUID_0)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_CONTROLLER_ROOM_NAME_0)
+        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_CONTROLLER_ROOM_UUID_0)
 
     def test_02_Controller(self):
         """ Write out the XML file for the Base + Controller
