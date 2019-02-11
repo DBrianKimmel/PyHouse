@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-02-10'
 __version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -86,11 +86,11 @@ class Utility(object):
         #  l_count = 0
         for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
             if Utility._is_valid_controller(l_controller_obj):
-                LOG.info('Insteon Controller: {} - will be started.'.format(l_controller_obj.Name))
+                LOG.debug('Insteon Controller: {} - will be started.'.format(l_controller_obj.Name))
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
                 return l_ret
             elif Utility._is_insteon(l_controller_obj):
-                LOG.warn('Insteon Controller {} is NOT started per config file.'.format(l_controller_obj.Name))
+                LOG.debug('Insteon Controller: {} - will NOT be started per config file.'.format(l_controller_obj.Name))
             else:
                 pass  #  Not interested in this controller. (Non-Insteon)
         return None
@@ -112,7 +112,7 @@ class API:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_plm = None
-        # LOG.info('Created an instance of Insteon_device.')
+        LOG.info('Created an instance of Insteon_device.')
 
     def Start(self):
         """ Note that the controller may not be available on this node.
@@ -135,9 +135,8 @@ class API:
         @param p_device_obj: the device being controlled
         @param p_control: the idealized light control params
         """
-        for l_controller in self.m_pyhouse_obj.House.Lighting.Controllers.values():
-            LOG.debug('Controlling Insteon device {} using '.format(p_device_obj.Name, p_controller_obj.Name))
-            l_plm = l_controller._HandlerAPI(self.m_pyhouse_obj)
-            self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
+        LOG.debug('Controlling Insteon device {} using '.format(p_device_obj.Name, p_controller_obj.Name))
+        l_plm = p_controller_obj._HandlerAPI(self.m_pyhouse_obj)
+        self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

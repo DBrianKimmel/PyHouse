@@ -1343,6 +1343,90 @@
 				<RoomName>Game Room</RoomName>
 				<RoomUUID>1f0b1bb0-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
+			<Schedule Active="True" Key="24" Name="Test-1">
+				<Comment />
+				<UUID>c8a9e5be-0001-11e6-8314-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>08:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="25" Name="Test-2">
+				<Comment />
+				<UUID>c8a48150-0002-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>09:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="26" Name="Test-3">
+				<Comment />
+				<UUID>c8a48150-0003-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>10:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="27" Name="Test-4">
+				<Comment />
+				<UUID>c8a48150-0004-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>11:02</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="28" Name="Test-5">
+				<Comment />
+				<UUID>c8a48150-0005-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>11:21</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="29" Name="Test-6">
+				<Comment />
+				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>13:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
 		</ScheduleSection>
 		<SecuritySection>
 			<GarageDoorSection>

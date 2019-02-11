@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-02-09'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,12 +28,9 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import UuidData, CoreLightingData
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logging
-# from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
-# from Modules.Housing.Lighting.lighting_utility import Utility as utilityUtility
 from Modules.Housing.Lighting.lighting_xml import LightingXML
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.state import State
 
 LOG = Logging.getLogger('PyHouse.LightingLights ')

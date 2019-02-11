@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-02-09'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -136,7 +136,7 @@ class API(XML):
         if self.m_plm == None:
             LOG.info('No PLM was defined - Quitting.')
             return
-        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
+        # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
         self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

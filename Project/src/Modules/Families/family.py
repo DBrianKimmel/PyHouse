@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Families/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:   This module is for *BUILDING/loading* device families.
@@ -33,7 +33,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-02-10'
 
 # Import system type stuff
 import importlib
