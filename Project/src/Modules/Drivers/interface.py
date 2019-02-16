@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Drivers/interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 21, 2013
 @summary:
@@ -22,6 +22,8 @@ This module reads and writes the XML for those controllers.
 Reading the interface stuffs the interface XML data into the controller object.
 """
 
+__updated__ = '2019-02-14'
+
 # Import system type stuff
 
 # Import PyMh files
@@ -30,11 +32,18 @@ from Modules.Drivers.Null.Null_xml import XML as nullXML
 from Modules.Drivers.Serial.Serial_xml import XML as serialXML
 from Modules.Drivers.USB.USB_xml import XML as usbXML
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
-from Modules.Computer import logging_pyh as Logging
-# from Modules.Drivers import VALID_INTERFACES
-# from Modules.Drivers import VALID_PROTOCOLS
 
+from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.Interface      ')
+
+
+class DriverStatus:
+    """
+    """
+
+    def __init__(self):
+        self.Node = None
+        self.Status = None  # Open, Died, Closed
 
 
 class Xml(object):

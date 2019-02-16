@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-02-10
-* Updated:   2010-02-10
+* Updated:   2019-02-14
 * License:   MIT License
 * Summary:   This is the design documentation for the Families Modules of PyHouse.
 
@@ -17,6 +17,22 @@ families are defined in the XML by <DeviceFamily> tags.
 A list of VALID_FAMILIES is 
 
 There is a 'Null' family which does nothing.
+
+
+## Current Families
+
+These are developed:
+	* Insteon
+
+These are in Progress:
+	* UPB
+	* Null
+	* X-10
+
+These are planned:
+	* Lutron
+	* Z_Wave
+	* Hue
 
 
 ## Adding a Family

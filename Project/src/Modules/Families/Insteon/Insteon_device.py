@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2019-02-10'
+__updated__ = '2019-02-11'
 __version_info__ = (18, 11, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -126,7 +126,7 @@ class API:
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
-    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+    def AbstractControlLight(self, p_pyhouse_obj, p_device_obj, p_controller_obj, p_control):
         """
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.

@@ -68,7 +68,7 @@ class API:
                     p_light_obj.Name, p_control.BrightnessPct, p_light_obj.DeviceFamily, p_controller_obj.Name))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
             print(PrettyFormatAny.form(l_family_api, 'Family API'))
-            l_family_api.AbstractControlLight(p_light_obj, p_controller_obj, p_control)
+            l_family_api.AbstractControlLight(p_pyhouse_obj, p_light_obj, p_controller_obj, p_control)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 

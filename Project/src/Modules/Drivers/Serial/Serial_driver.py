@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-01-05'
+__updated__ = '2019-02-14'
 
 #  Import system type stuff
 import pyudev
@@ -33,14 +33,16 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
+from Modules.Drivers.interface import DriverStatus
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 #  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
-class FindPort(object):
-    """
+class FindPort:
+    """ Check the localhost computer for a port that we will use for the device.
+    We will use the information to see ???
     """
 
     def __init__(self):
@@ -91,14 +93,14 @@ class SerialProtocol(Protocol):
 
         The controller got some data, Append it to the bytearray buffer.
         """
-        l_len = len(p_data)
+        _l_len = len(p_data)
         self.m_controller_obj._Data.extend(p_data)
         # LOG.info('Rxed {} bytes of data {}'.format(l_len, FormatBytes(p_data)))
 
 
-class SerialAPI(object):
+class SerialAPI:
     """
-    This is a stateful factory for the serial protocol.
+    This is a statefull factory for the serial protocol.
     """
     m_serial = None
 
@@ -115,14 +117,17 @@ class SerialAPI(object):
         l_port = p_controller_obj.Port
         LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
         try:
-            l_serial = \
-                SerialPort(
+            l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
                     l_port,
                     p_pyhouse_obj.Twisted.Reactor,
                     baudrate=l_baud)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
             p_controller_obj.Active = True
+            l_topic = 'driver/serial/status'
+            l_obj = DriverStatus()
+            l_obj.Status = 'Open'
+            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Port, e_err))
@@ -139,6 +144,9 @@ class SerialAPI(object):
         self.m_serial = None
 
     def try_restart(self, p_pyhouse_obj, p_controller_obj):
+        """ if the connection is somehow broken, try to get connected again.
+        Seems to disconnect on power surges.
+        """
         try:
             self.close_device(p_controller_obj)
             self.open_serial_driver(p_pyhouse_obj, p_controller_obj)
@@ -180,7 +188,6 @@ class API(SerialAPI):
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
-        #  print(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
         FindPort()

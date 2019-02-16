@@ -15,7 +15,9 @@ The initial execution is of PyHouse.py.
 It is a singleton so we don't end up with multiple running instances.
 
 Logging is setup and activated the very first thing so that the rest of the startup progress is logged.
-The log file is /var/log/pyhouse/debug
+The log file is /var/log/pyhouse/XXX where XXX is error, warn, debug, and info
+
+Now XML is read in.
 
 The next thing activated is MQTT so we can begin with messaging.
 

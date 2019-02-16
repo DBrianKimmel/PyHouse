@@ -1,17 +1,17 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers.Serial.test.test_Serial_xml -*-
+-*- test-case-name: PyHouse.Project.src.Modules.Drivers.Serial.test.test_Serial_xml -*-
 
-@name:      PyHouse/src/Modules/Drivers/Serial/serial_xml.py
+@name:      PyHouse/Project/src/Modules/Drivers/Serial/serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2014
-@summary:   Read and write USB xml
+@summary:   Read and write Serial xml
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

@@ -11,7 +11,7 @@ Passed all 6 tests - DBK - 2019-01-10
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-02-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -135,7 +135,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         l_interface = serialXML.read_interface_xml(self.m_xml.controller)
         stuff_new_attrs(self.m_controller_obj, l_interface)
         l_xml = serialXML.write_interface_xml(self.m_controller_obj)
-        print(PrettyFormatAny.form(l_xml, "Interface"))
+        # print(PrettyFormatAny.form(l_xml, "B2-01-A - Interface"))
         self.assertEqual(l_xml.find('BaudRate').text, TESTING_SERIAL_BAUD_RATE)
         self.assertEqual(l_xml.find('ByteSize').text, TESTING_SERIAL_BYTE_SIZE)
         self.assertEqual(l_xml.find('DsrDtr').text, TESTING_SERIAL_DSR_DTR)
