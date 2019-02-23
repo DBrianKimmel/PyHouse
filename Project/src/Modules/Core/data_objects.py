@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-02-03'
+__updated__ = '2019-02-21'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -417,10 +417,10 @@ class FamilyData(BaseObject):
 
     def __init__(self):
         super(FamilyData, self).__init__()
-        self.FamilyModuleAPI = None  # Insteon_device.API()
-        self.FamilyDeviceModuleName = None  # Insteon_device
-        self.FamilyXmlModuleName = None  # Insteon_xml
-        self.FamilyXmlModuleAPI = None  # Address of Insteon_xml
+        self.FamilyDevice_ModuleAPI = None  # Insteon_device.API()
+        self.FamilyDevice_ModuleName = None  # Insteon_device
+        self.FamilyXml_ModuleName = None  # Insteon_xml
+        self.FamilyXml_ModuleAPI = None  # Address of Insteon_xml
         self.FamilyPackageName = None  # Modules.Families.Insteon
 
 

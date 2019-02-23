@@ -92,7 +92,7 @@
 		</WebSection>
 	</ComputerDivision>
 	<HouseDivision Active="True" Key="0" Name="Pink Poppy">
-		<Comment />
+		<Comment>The Pink Poppy House</Comment>
 		<UUID>d88d3c38-d0ee-11e6-a40a-74da3859e09a</UUID>
 		<LocationSection>
 			<Street>5191 N Pink Poppy Dr</Street>
@@ -348,7 +348,7 @@
 			<PandoraSection Active="True">
 				<Type>Service</Type>
 				<Device Active="True" Key="0" Name="PandoraOnPi">
-					<Comment>Living Room</Comment>
+					<Comment>Running on pi-07-pp</Comment>
 					<Host>192.168.1.17</Host>
 					<ConnectionFamily>Onkyo</ConnectionFamily>
 					<ConnectionName>Tx-555</ConnectionName>
@@ -413,7 +413,6 @@
 				<Controller Active="False=" Key="0" Name="PLM_1">
 					<Comment>None</Comment>
 					<UUID>c1490758-092e-11e4-bffa-b827eb189eb4</UUID>
-					<Comment>None</Comment>
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>2</DeviceSubType>
@@ -1343,7 +1342,7 @@
 				<RoomName>Game Room</RoomName>
 				<RoomUUID>1f0b1bb0-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="24" Name="Test-1">
+			<Schedule Active="True" Key="24" Name="Test-08:01">
 				<Comment />
 				<UUID>c8a9e5be-0001-11e6-8314-74da3859e09a</UUID>
 				<DayOfWeek>127</DayOfWeek>
@@ -1357,7 +1356,7 @@
 				<RoomName>Living Room</RoomName>
 				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="25" Name="Test-2">
+			<Schedule Active="True" Key="25" Name="Test-09:01">
 				<Comment />
 				<UUID>c8a48150-0002-11e6-8a14-74da3859e09a</UUID>
 				<DayOfWeek>127</DayOfWeek>
@@ -1371,7 +1370,7 @@
 				<RoomName>Living Room</RoomName>
 				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="26" Name="Test-3">
+			<Schedule Active="True" Key="26" Name="Test-10:01">
 				<Comment />
 				<UUID>c8a48150-0003-11e6-8a14-74da3859e09a</UUID>
 				<DayOfWeek>127</DayOfWeek>
@@ -1385,7 +1384,7 @@
 				<RoomName>Living Room</RoomName>
 				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="27" Name="Test-4">
+			<Schedule Active="True" Key="27" Name="Test-11:02">
 				<Comment />
 				<UUID>c8a48150-0004-11e6-8a14-74da3859e09a</UUID>
 				<DayOfWeek>127</DayOfWeek>
@@ -1399,13 +1398,13 @@
 				<RoomName>Living Room</RoomName>
 				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="28" Name="Test-5">
+			<Schedule Active="True" Key="28" Name="Test-11:31">
 				<Comment />
 				<UUID>c8a48150-0005-11e6-8a14-74da3859e09a</UUID>
 				<DayOfWeek>127</DayOfWeek>
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
-				<Time>11:21</Time>
+				<Time>11:31</Time>
 				<Level>100</Level>
 				<LightName>Wet Bar</LightName>
 				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
@@ -1413,13 +1412,83 @@
 				<RoomName>Living Room</RoomName>
 				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="29" Name="Test-6">
+			<Schedule Active="True" Key="29" Name="Test-13:00">
 				<Comment />
 				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
 				<DayOfWeek>127</DayOfWeek>
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
-				<Time>13:01</Time>
+				<Time>13:51</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="30" Name="Test-14:00">
+				<Comment />
+				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>14:18</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="31" Name="Test-15:01">
+				<Comment />
+				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>15:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="32" Name="Test-16:01">
+				<Comment />
+				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>16:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="33" Name="Test-17:01">
+				<Comment />
+				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>17:01</Time>
+				<Level>100</Level>
+				<LightName>Wet Bar</LightName>
+				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
+				<Rate>0</Rate>
+				<RoomName>Living Room</RoomName>
+				<RoomUUID>1f004334-4618-11e6-89e7-74da3859e09a</RoomUUID>
+			</Schedule>
+			<Schedule Active="True" Key="34" Name="Test-18:01">
+				<Comment />
+				<UUID>c8a48150-0006-11e6-8a14-74da3859e09a</UUID>
+				<DayOfWeek>127</DayOfWeek>
+				<ScheduleMode>Home</ScheduleMode>
+				<ScheduleType>Lighting</ScheduleType>
+				<Time>18:01</Time>
 				<Level>100</Level>
 				<LightName>Wet Bar</LightName>
 				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>

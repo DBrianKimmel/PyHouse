@@ -39,11 +39,12 @@ These are planned:
 
 To add a family named 'NewFamily', do the following:
     * Add a package named 'New_Family'.
-    * Add the family name (Capitalized) to the list VALID_FAMILIES in __init__.
+    * Add the family name (Capitalized) to the list VALID_FAMILIES in __init__ of families.
     * Add a module named <NewFamily>_device.py
+    * Add a module named <NewFamily>_xml.py
     * Add any other modules needed by the Device module.
-        <Newfamily>_xml
         <NewFamily>_data
+        <NewFamily>_utils
         ...
     * A module to interface with the controller is recommended.
         <NewFamily>_pim
@@ -70,6 +71,16 @@ Each family consists of four or more major areas:
 
 Since these controllers also control things other than lights, there is also a device type defined.
 Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment etc.
+
+
+# Sequence of things
+
+## Init
+
+During the initialization phase pf PyHouse, the families are discovered using the VALID_FAMILIES of __init__
+
+When the 'house' is being initialized, one of the early initializations is of families.
+
 
 
 ### END DBK

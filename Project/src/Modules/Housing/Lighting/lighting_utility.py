@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-02-07'
+__updated__ = '2019-02-23'
 
 #  Import system type stuff
 
@@ -59,18 +59,21 @@ class Utility:
     def get_controller_objs_by_family(self, p_objs, p_family):
         """ Gets a controller for a device.
 
-        Check for this Node
+        @param p_objs: a dict f objects to search - such as p_pyhouse_obj.House.Lighting.Controllers{}
+        @param p_family: the family to search for - 'Insteon'
         @return: a list of controller objs that match the family
         """
         l_ret = []
         for l_obj in p_objs.values():
+            if l_obj.Active != True:  # Skip inactive devices.
+                continue
             l_family = l_obj.DeviceFamily
             if l_family == p_family:
                 l_ret.append(l_obj)
         if l_ret == []:
             LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
         else:
-            LOG.debug('Found {} controllers for family {}'.format(len(l_ret), p_family))
+            LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
         return l_ret
 
 # ## END DBK

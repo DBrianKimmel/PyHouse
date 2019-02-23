@@ -1,6 +1,6 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Lighting.test.test_lighting_actions -*-
-@name:      PyHouse/src/Modules/Lighting/lighting_actions.py
+@name:      PyHouse/Project/src/Modules/Lighting/lighting_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,9 +9,13 @@
 @Summary:   Handle lighting scheduled events.
 
 This module will handle all scheduled events for the Lighting system of a house.
+
 This is so other modules only need to dispatch to here for any lighting event - scene, theme or whatever.
 
 """
+
+__updated__ = '2019-02-23'
+
 #  Import system type stuff
 
 #  Import PyMh files
@@ -26,18 +30,14 @@ LOG = Logger.getLogger('PyHouse.LightingAction ')
 
 class API:
     """
-
-2019-02-06 18:12:35,686 [INFO] PyHouse.Schedule       : dispatch_one_schedule 242: - Execute_one_schedule type = Lighting
-2019-02-06 18:12:35,688 [DEBUG] PyHouse.LightingAction : DoSchedule 42: -
-        SchedName:Evening-00; SchedLightName:LR Rope; Level:100; LightName:LR Rope; LightKey:4
-2019-02-06 18:12:35,689 [INFO] PyHouse.LightingAction : AbstractControlLight 55: - Turn Light: "LR Rope" to level: "100", DeviceFamily: "Insteon"
-2019-02-06 18:12:35,691 [DEBUG] PyHouse.Insteon_Device : AbstractControlLight 139: - Controlling Insteon device LR Rope using
-2019-02-06 18:12:35,692 [ERROR] PyHouse.LightingAction : AbstractControlLight 59: - ERROR - 'API' object is not callable
-
     """
 
     def DoSchedule(self, p_pyhouse_obj, p_schedule_obj):
         """ A schedule action has been called for on a Light
+
+        @param p_pyhouse_obj: The entire data set.
+        @param p_schedule_obj: the schedule event being executed.
+
         """
         l_lighting_objs = p_pyhouse_obj.House.Lighting
 
@@ -67,7 +67,7 @@ class API:
             LOG.info('Turn Light: "{}" to level: "{}", Family: "{}"; Controller: {}'.format(
                     p_light_obj.Name, p_control.BrightnessPct, p_light_obj.DeviceFamily, p_controller_obj.Name))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
-            print(PrettyFormatAny.form(l_family_api, 'Family API'))
+            # print(PrettyFormatAny.form(l_family_api.AbstractControlLight, 'Family API'))
             l_family_api.AbstractControlLight(p_pyhouse_obj, p_light_obj, p_controller_obj, p_control)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))

@@ -15,7 +15,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-02-08'
+__updated__ = '2019-02-22'
 
 #  Import system type stuff.
 
@@ -103,12 +103,12 @@ class FamUtil(object):
         try:
             l_family = FamUtil.get_family(p_device_obj)
             l_family_obj = p_pyhouse_obj.House.FamilyData[l_family]
-            l_api = l_family_obj.FamilyModuleAPI
+            l_device_api = l_family_obj.FamilyDevice_ModuleAPI
         except:
             l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info '.format(l_dev_name, l_family)
             LOG.error(l_msg)
-            l_api = None
-        return l_api
+            l_device_api = None
+        return l_device_api
 
     @staticmethod
     def _get_family_xml_api(p_pyhouse_obj, p_device_obj):
@@ -121,7 +121,7 @@ class FamUtil(object):
         """
         l_family_obj = FamUtil._get_family_obj(p_pyhouse_obj, p_device_obj)
         try:
-            l_xmlAPI = l_family_obj.FamilyXmlModuleAPI
+            l_xmlAPI = l_family_obj.FamilyXml_ModuleAPI
         except:
             l_msg = 'ERROR FamUtil-95 - Device:"{}"; Family:"{}" Cannot find XmlAPI info '.format(p_device_obj.Name, l_family_obj.Name)
             LOG.error(l_msg)

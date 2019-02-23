@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-31'
+__updated__ = '2019-02-21'
 
 #  Import system type stuff
 import platform
@@ -153,7 +153,7 @@ class SetupPyHouseObj(object):
     def _build_house_data(p_pyhouse_obj):
         l_ret = HouseInformation()
         l_ret.Location = LocationData()
-        l_ret.FamilyData = familyUtil._init_component_apis(p_pyhouse_obj)
+        l_ret.FamilyData = familyUtil()._init_family_component_apis(p_pyhouse_obj)
         l_ret.Entertainment = SetupPyHouseObj._build_entertainment(p_pyhouse_obj)
         l_ret.Lighting = LightingData()
         l_ret.Hvac = HvacData()

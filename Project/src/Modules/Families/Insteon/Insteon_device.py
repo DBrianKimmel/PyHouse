@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_device -*-
 
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_device.py
+@name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -20,8 +20,9 @@ serial_port
 
 """
 
-__updated__ = '2019-02-11'
-__version_info__ = (18, 11, 0)
+__updated__ = '2019-02-23'
+
+__version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -136,7 +137,7 @@ class API:
         @param p_control: the idealized light control params
         """
         LOG.debug('Controlling Insteon device {} using '.format(p_device_obj.Name, p_controller_obj.Name))
-        l_plm = p_controller_obj._HandlerAPI(self.m_pyhouse_obj)
+        l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
         self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

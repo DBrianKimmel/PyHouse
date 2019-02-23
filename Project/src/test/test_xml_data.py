@@ -2,7 +2,7 @@
 @name:      PyHouse/src/test/test_xml_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 4, 2014
 @summary:   Test the XML data for integrity.
@@ -13,7 +13,7 @@ It will check the XML file for being fundamentally correct for all other tests t
 Passed all 12 tests - DBK - 2017-01-18
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-02-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,8 +26,10 @@ from Modules.Computer.Nodes.test.xml_nodes import TESTING_NODES_NODE_UUID_0
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_xml_data')
 
@@ -83,7 +85,6 @@ class A2_Parsed(unittest.TestCase):
         self.assertEqual(l_div.tag, 'HouseDivision')
 
 
-
 class C02_Schema(unittest.TestCase):
     """
     Test XML to comply with XSD.
@@ -91,5 +92,20 @@ class C02_Schema(unittest.TestCase):
 
     def setUp(self):
         pass
+
+
+class D1_Master(unittest.TestCase):
+    """
+    This section will verify the XML in the '/etc/pyhouse/master.xml' file.
+    """
+
+    def setUp(self):
+        self.m_tree = ET.parse('/etc/pyhouse/master.xml')
+        self.m_root_element = self.m_tree.getroot()
+
+    def test_01_All(self):
+        # print(PrettyFormatAny.form(self.m_tree, 'Tree', 160))
+        print(PrettyFormatAny.form(self.m_root_element, 'Root', 160))
+        self.assertEqual(self.m_root_element.tag, TESTING_PYHOUSE)
 
 # ## END DBK
