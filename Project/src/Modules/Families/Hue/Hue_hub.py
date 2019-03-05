@@ -19,8 +19,9 @@
 
 """
 from Modules.Core.Utilities.convert import long_to_str
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-02-10'
+__updated__ = '2019-02-27'
 
 # Import system type stuff
 import jsonpickle
@@ -441,6 +442,9 @@ class HueHub(object):
             LOG.info('Initialized')
 
     def _build_uri(self, p_command=b'/config'):
+        """
+        URI: b'http://192.168.1.131/api/MBFBC-agf6rq5bsWcxLngYZoClGr2pw2oKEMLZgs/config'
+        """
         l_uri = b'http://'
         try:
             l_uri += self.m_bridge_obj.IPv4Address
@@ -466,19 +470,37 @@ class HueHub(object):
         return l_command
 
     def _get_all_config(self):
+        """
+        /config
+        /lights
+        /groups
+        /schedules
+        /scenes
+        /sensors
+        /rules
+        """
         l_agent_d = self.HubGet('/config')
         l_agent_d = self.HubGet('/lights')
-        LOG.info('Got All config')
+        l_agent_d = self.HubGet('/groups')
+        l_agent_d = self.HubGet('/schedules')
+        l_agent_d = self.HubGet('/scenes')
+        l_agent_d = self.HubGet('/sensors')
+        l_agent_d = self.HubGet('/rules')
+        LOG.info('Scheduled All config')
 
     def HubGet(self, p_command):
         """ Issue a request for information
+        It will arrive later via a deferred.
         """
 
         def cb_Response(p_response):
             l_hdr = p_response.headers
-            l_json = jsonpickle.decode(l_hdr)
+            l_raw = p_response.headers._rawHeaders
+            LOG.debug('Debug: {}'.format(PrettyFormatAny.form(p_response, 'Response', 190)))
+            LOG.debug('Debug: {}'.format(PrettyFormatAny.form(l_raw, 'rawHeaders', 190)))
+            # l_json = jsonpickle.decode(l_hdr)
             LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
-            LOG.debug('Response Headers: {}'.format(l_json))
+            # LOG.debug('Response Headers: {}'.format(l_json))
             l_finished = Deferred()
             p_response.deliverBody(HueProtocol(l_finished))
             return l_finished
@@ -499,7 +521,7 @@ class HueHub(object):
             p_response.deliverBody(HueProtocol(l_finished))
             return l_finished
 
-        l_agent_d = self.m_hue_agent.request(b'GET', self.build_uri(p_command), self.m_headers, p_body)
+        l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, p_body)
         l_agent_d.addCallback(cb_Response)
         HueDecode().decode_post()
         return l_agent_d

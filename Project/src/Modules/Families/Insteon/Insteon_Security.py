@@ -12,7 +12,7 @@
 """
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-02-24'
 
 #  Import system type stuff
 

@@ -50,4 +50,16 @@ This happens next.
 
 This happens .
 
+# Scheme
+## Entity
+This is the top level.
+The self signing certificate for the entire organazation is at this level.
+For all purposes this is the family.
+Contains all lower levels down to houses
+
+## Levels
+
+## House
+
+
 ### END DBK

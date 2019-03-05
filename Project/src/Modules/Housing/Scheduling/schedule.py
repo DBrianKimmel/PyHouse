@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-02-25'
 
 #  Import system type stuff
 import datetime
@@ -78,17 +78,24 @@ class MqttActions(object):
         """
         --> pyhouse/housename/schedule/...
         """
-        l_logmsg = '\tSchedule:\n'
+        l_logmsg = ''
+        l_schedule_type = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
+        l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
+        l_light_level = extract_tools.get_mqtt_field(p_message, 'Level')
         if len(p_topic) > 0:
             if p_topic[0] == 'execute':
-                l_logmsg += '\tType: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'ScheduleType'))
+                l_logmsg += '\tExecute:\n'
+                l_logmsg += '\tType: {}\n'.format(l_schedule_type)
                 # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
-                l_logmsg += '\tLight: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'LightName'))
-                l_logmsg += '\tLevel: {}'.format(extract_tools.get_mqtt_field(p_message, 'Level'))
+                l_logmsg += '\tLight: {}\n'.format(l_light_name)
+                l_logmsg += '\tLevel: {}'.format(l_light_level)
             elif p_topic[0] == 'status':
-                pass
+                l_logmsg += '\tStatus:\n'
+                l_logmsg += '\tType: {}\n'.format(l_schedule_type)
+                l_logmsg += '\tLight: {}\n'.format(l_light_name)
+                l_logmsg += '\tLevel: {}'.format(l_light_level)
             elif p_topic[0] == 'control':
-                pass
+                l_logmsg += '\tControl:\n'
             else:
                 l_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
         return l_logmsg

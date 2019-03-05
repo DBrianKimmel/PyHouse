@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/Entertainment/onkyo/test/xml_onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @note:      Created on Mar 19, 2018
 @license:   MIT License
 @summary:
@@ -33,7 +33,7 @@
 
 """
 
-__updated__ = '2018-11-11'
+__updated__ = '2019-02-26'
 
 TESTING_ONKYO_SECTION = 'OnkyoSection'
 TESTING_DEVICE = 'Device'

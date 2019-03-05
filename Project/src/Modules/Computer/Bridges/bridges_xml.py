@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-02-25'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -46,7 +46,7 @@ class Xml(object):
         """
         l_obj = BridgeData()
         try:
-            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
+            XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active UUID Comment LastUpdate
             l_obj.Connection = PutGetXML.get_text_from_xml(p_xml, 'Connection')
             l_obj.Type = Xml._read_type(p_xml)
             l_obj.IPv4Address = PutGetXML.get_ip_from_xml(p_xml, 'IPv4Address')
@@ -89,10 +89,7 @@ class Xml(object):
         l_dict = {}
         l_count = 0
         try:
-            l_section = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-            if l_section == None:
-                return l_dict
-            l_section = l_section.find('BridgesSection')
+            l_section = XmlConfigTools.find_section(p_pyhouse_obj, 'ComputerDivision/BridgesSection')
             if l_section == None:
                 return l_dict
         except AttributeError as e_err:
@@ -105,6 +102,7 @@ class Xml(object):
                 l_bridge._ClientAPI = p_api
                 l_dict[l_count] = l_bridge
                 l_count += 1
+                LOG.debug('Read Bridge {}'.format(l_bridge.Name))
         except AttributeError as e_err:
             LOG.error('Bridge Errors: {}'.format(e_err))
         LOG.info('Read {} Bridges'.format(l_count))

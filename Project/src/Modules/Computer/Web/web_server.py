@@ -11,13 +11,12 @@
 
 This is a Main Module - always present.
 
-Open 2 web browsers.
-    open browser on port 8580.
-    Secure (TLS) browser on port 8588 (optional)
+Open 2 web servers.
+    open server on port 8580.
+    Secure (TLS) server on port 8588 (optional)
 
 Present a Login screen.  A successful login is required to get a main menu screen.
 Failure to log in will keep the user on a login screen.
-
 
 On initial startup allow a house to be created
     then rooms
@@ -29,20 +28,21 @@ On initial startup allow a house to be created
 
 Do not require reloads, auto change PyHouse on the fly.
 """
-from werkzeug.contrib.jsrouting import render_template
 
-__updated__ = '2019-02-04'
+__updated__ = '2019-03-02'
 
 #  Import system type stuff
 from twisted.internet import endpoints
 # from twisted.web.resource import Resource
 from twisted.web.server import Site
 # from twisted.web.template import Element, XMLString, renderer
+from werkzeug.contrib.jsrouting import render_template
 from klein import Klein, route
 
 #  Import PyMh files and modules.
 from Modules.Computer.Web import web_utils
 from Modules.Computer.Web.web_login import LoginElement
+from Modules.Computer.Web.web_mainpage import MainPage
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.WebServer      ')
 
@@ -53,13 +53,7 @@ app = Klein()
 
 @app.route('/')
 def root(request):
-    # l_user = {'admin': 'admin'}
-    return render_template('mainpage.html')
-
-
-@app.route('/login')
-def login(request, name='admin'):
-    return LoginElement(name)
+    return MainPage()
 
 
 class ClientConnections(object):

@@ -22,7 +22,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-02-24'
 
 #  Import system type stuff
 
@@ -91,6 +91,7 @@ class DecodeResponses(object):
     def decode_0x50(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
         """
         @param p_device_obj: is the Device (light, thermostat...) we are decoding.
+        @param p_controller_obj: The controller sending the response.
 
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
         See p 233(246) of 2009 developers guide.
@@ -104,15 +105,14 @@ class DecodeResponses(object):
         """
 
         l_message = p_controller_obj._Message
-
-        l_topic = 'hvac/{}'.format(p_device_obj.Name)
+        l_topic = 'hvac/thermostat/{}'.format(p_device_obj.Name)
         l_mqtt_message = "thermostat: "
 
         l_firmware = l_message[7]
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
-        l_mqtt_message += ' Cmd1:{:#02X}/{:#02X}({:d})'.format(l_cmd1, l_cmd2, l_cmd2)
+        l_mqtt_message += ' Cmd1:{:#02X}/{:#02X}({:d}) '.format(l_cmd1, l_cmd2, l_cmd2)
         l_debug_msg = 'Fm:"{}"; Flg:{}; C1:{:#x},{:#x}; '.format(p_device_obj.Name, l_flags, l_cmd1, l_cmd2)
 
         if l_cmd1 == MESSAGE_TYPES['assign_to_group']:  # 0x01
@@ -179,7 +179,7 @@ class DecodeResponses(object):
             l_topic += '/ThermostatHeatSetPointReport'
             l_mqtt_message += ' HeatSetPoint = {}; '.format(l_cmd2)
         else:
-            pass
+            l_mqtt_message += 'Unknown cmd1 '
 
         LOG.info('HVAC {}'.format(l_mqtt_message))
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /temperature

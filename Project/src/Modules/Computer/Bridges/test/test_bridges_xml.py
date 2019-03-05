@@ -11,7 +11,7 @@ Passed all 12 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-02-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -109,7 +109,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_BRIDGES)
-        # print('A2-02-A - Parsed', l_xml)
+        print('A2-02-A - Parsed', PrettyFormatAny.form(l_xml, 'A2-02-A Parsed'))
         self.assertEqual(l_xml.tag, TESTING_BRIDGES_SECTION)
 
 
@@ -241,7 +241,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.Computer.Bridges = l_obj
         # print(PrettyFormatAny.form(l_obj, 'C1-03-A - Bridges'))
         l_sect_xml = bridgesXML.write_bridges_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_sect_xml, 'C1-03-B - Bridges'))
+        print(PrettyFormatAny.form(l_sect_xml, 'C1-03-B - Bridges'))
         l_xml = l_sect_xml[0]
         self.assertEqual(l_xml.attrib['Name'], TESTING_BRIDGE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_BRIDGE_KEY_0)

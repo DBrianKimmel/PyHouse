@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-02-27'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -113,9 +113,15 @@ class OnkyoProtocol(Protocol):
     """
     """
 
+    def __init__(self, p_pyhouse_obj, p_onkyo_device_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_onkyo_device_obj = p_onkyo_device_obj
+        LOG.debug('Protocol init for {}'.format(PrettyFormatAny.form(self.m_onkyo_device_obj, 'OnkyoProtocol - init.')))
+        LOG.info('Protocol Init - Version:{}'.format(__version__))
+
     def dataReceived(self, p_data):
         Protocol.dataReceived(self, p_data)
-        # LOG.info('Data Received.\n\tData:{}'.format(p_data))
+        LOG.info('Data Received.\n\tData:{}'.format(p_data))
 
     def connectionMade(self):
         Protocol.connectionMade(self)
@@ -147,7 +153,7 @@ class OnkyoFactory(ReconnectingClientFactory):
         LOG.info('Started to connect. {}'.format(p_connector))
 
     def buildProtocol(self, p_addr):
-        _protocol = OnkyoProtocol()
+        self.protocol = OnkyoProtocol(self.m_pyhouse_obj, self.m_onkyo_device_obj)
         LOG.info('BuildProtocol - Addr = {}'.format(p_addr))
         l_client = OnkyoClient(self.m_pyhouse_obj, self.m_onkyo_obj)
         # l_ret = ReconnectingClientFactory.buildProtocol(self, p_addr)
@@ -199,16 +205,21 @@ class API(MqttActions):
         """ Start all the Onkyo factories if we have any Onkyo devices.
         """
         l_count = 0
-        l_mfg = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        LOG.info(PrettyFormatAny.form(l_mfg, 'onkyo.Start() Plugins'))
-        for l_onkyo_obj in l_mfg.Devices.values():
+        l_onkyo = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        LOG.info(PrettyFormatAny.form(l_onkyo, 'onkyo.Start() Plugins'))
+        for l_onkyo_obj in l_onkyo.Devices.values():
+            LOG.info(PrettyFormatAny.form(l_onkyo_obj, 'Device'))
             if not l_onkyo_obj.Active:
                 continue
             try:
                 l_host = l_onkyo_obj.IPv4
                 l_port = l_onkyo_obj.Port
-                l_onkyo_obj._Factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
-                _l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj._Factory)
+                l_factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
+                l_count += 1
+                l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj._Factory)
+                l_onkyo_obj._Factory = l_factory
+                l_onkyo_obj._Connector = l_connector
+                l_onkyo_obj._isRunning = True
                 LOG.info("Started Onkyo {} {}".format(l_host, l_port))
             except Exception as e_err:
                 LOG.error('Error found: {}'.format(e_err))

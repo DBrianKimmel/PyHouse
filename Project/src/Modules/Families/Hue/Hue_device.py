@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-01-01'
+__updated__ = '2019-02-27'
 
 # Import system type stuff
 
@@ -32,7 +32,7 @@ class API(object):
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
-        """ Reading the xml has alreadyhappened - handled by Bridges.
+        """ Reading the xml has already happened - handled by Bridges.
         Now we set up the rest client
         """
         LOG.info('Loading')

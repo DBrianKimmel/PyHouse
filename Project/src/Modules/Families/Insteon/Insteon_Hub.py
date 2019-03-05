@@ -9,8 +9,10 @@
 @license:   MIT License
 @summary:
 
+The XML for this is treated as a Bridge.
+
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-02-25'
 
 # ## END DBK

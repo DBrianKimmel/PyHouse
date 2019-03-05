@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-02-04'
+__updated__ = '2019-02-28'
 
 #  Import system type stuff
 import os
@@ -95,12 +95,13 @@ class LoginElement(Element):
             }
         </style>
     </head>
-        <body>
-            <p xmlns:t="http://pyhouse.org/ns/twisted.web.template/0.1" >
-                User: <span t:render="username"></span>
-                password: <span t:render="password"></span>
-            </p>
-        </body>
+    <body>
+        <h1>Login</h1>
+        <p xmlns:t="http://pyhouse.org/ns/twisted.web.template/0.1" >
+            User: <span t:render="username"></span>
+            password: <span t:render="password"></span>
+        </p>
+    </body>
 </html>
 <!-- ### END DBK -->
 """))
@@ -113,7 +114,8 @@ class LoginElement(Element):
 
     @renderer
     def username(self, _request, _tag):
-        return self.m_username
+        return tag('User Name')
+        # return self.m_username
 
     @renderer
     def password(self, _request, _tag):

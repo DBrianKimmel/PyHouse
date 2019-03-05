@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-02-25'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -85,7 +85,7 @@ class Actions:
         else:
             # Every other topic will have the following field(s).
             l_sender = get_mqtt_field(p_message, 'Sender')
-            l_logmsg += '\tSender: {}\n'.format(l_sender)
+            l_logmsg += '\n\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
         LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'computer':

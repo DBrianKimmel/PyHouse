@@ -10,41 +10,33 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2019-03-01'
 
 # Import system type stuff
-import os
-from nevow import loaders
-from nevow import athena
+from twisted.web._element import renderer, Element
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-
-# Handy helper for finding external resources nearby.
-webpath = os.path.join(os.path.split(__file__)[0])
-templatepath = os.path.join(webpath, 'template')
-
-g_debug = 0
 LOG = Logger.getLogger('PyHouse.webRootMenu    ')
 
 
-class RootMenuElement(athena.LiveElement):
+class RootMenuElement(Element):
     """
     """
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'rootMenuElement.html'))
+    # docFactory = loaders.xmlfile(os.path.join(templatepath, 'rootMenuElement.html'))
     jsClass = u'rootMenu.RootMenuWidget'
 
     def __init__(self, p_workspace_obj):
         self.m_pyhouse_obj = p_workspace_obj.m_pyhouse_obj
 
-    @athena.expose
+    @renderer
     def doRootMenuReload(self, p_json):
         """ Process a message for a XML save/reload from the browser/client.
         """
         LOG.info("Self: {}".format(self))
         self.m_pyhouse_obj.APIs.PyHouseMainAPI.SaveXml(self.m_pyhouse_obj)
 
-    @athena.expose
+    @renderer
     def doRootMenuQuit(self, p_json):
         """ Process a message for a browser logoff and quit that came from the browser/client.
         """

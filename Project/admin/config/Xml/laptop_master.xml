@@ -2,11 +2,34 @@
 <PyHouse Version="18.7.0"
 	xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2018-11-05 20:49:22.722036 -->
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+	<!-- Updated by PyHouse 2018-11-05 20:49:22.722036 -->
 	<ComputerDivision Active="False" Key="0" Name="Laptop-3">
 		<Comment />
 		<UUID>222ec0e9-d76e-11e6-b40f-74dfbfae5aed</UUID>
-		<BridgesSection />
+		<BridgesSection>
+			<Bridge Active="True" Key="0" Name="Insteon Hub">
+				<UUID>Bridge..-0001-0000-0000-0123456789ab</UUID>
+				<Comment>Insteon Hub</Comment>
+				<Connection>Ethernet</Connection>
+				<Type>Insteon</Type>
+				<IPv4Address>192.168.1.130</IPv4Address>
+				<Port>29105</Port>
+				<UserName>Farfelee</UserName>
+				<Password>ZgsI5smE</Password>
+			</Bridge>
+			<Bridge Active="True" Key="1" Name="Philips Hue Hub">
+				<UUID>Bridge..-0002-0000-0000-0123456789ab</UUID>
+				<Comment>Hue Hub</Comment>
+				<Connection>Ethernet</Connection>
+				<Type>Hue</Type>
+				<IPv4Address>192.168.1.131</IPv4Address>
+				<Port>12345</Port>
+				<UserName>Username-01</UserName>
+				<Password>Password-01</Password>
+				<ApiKey>MBFBC-agf6rq5bsWcxLngYZoClGr2pw2oKEMLZgs</ApiKey>
+			</Bridge>
+		</BridgesSection>
 		<CommunicationSection />
 		<InternetSection />
 		<MqttSection>
@@ -345,6 +368,22 @@
 					<Volume>42</Volume>
 				</Device>
 			</OnkyoSection>
+			<SamsungSection Active="True">
+				<Type>Component</Type>
+				<Device Active="True" Key="0" Name="TV-75">
+					<UUID>Smasung.-0001-0000-0000-0123456789ab</UUID>
+					<Comment>TV 75 inch</Comment>
+					<Host/>
+					<IPv4>192.168.1.222</IPv4>
+					<IPv6>2001:DB8::554</IPv6>
+					<Model>75</Model>
+					<Port>12345</Port>
+					<RoomName>Living Room</RoomName>
+					<RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
+					<Type>Tv</Type>
+					<Volume>26</Volume>
+				</Device>
+			</SamsungSection>
 			<PandoraSection Active="True">
 				<Type>Service</Type>
 				<Device Active="True" Key="0" Name="PandoraOnPi">
@@ -1013,7 +1052,7 @@
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset - 00:15</Time>
-				<Level>100</Level>
+				<Level>30</Level>
 				<LightName>LR Rope</LightName>
 				<LightUUID>1ef78898-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
@@ -1027,7 +1066,7 @@
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset - 00:15</Time>
-				<Level>35</Level>
+				<Level>30</Level>
 				<LightName>LR Ceiling</LightName>
 				<LightUUID>1ef875e6-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
@@ -1083,7 +1122,7 @@
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset + 00:15</Time>
-				<Level>50</Level>
+				<Level>10</Level>
 				<LightName>MBR Ceiling</LightName>
 				<LightUUID>1efbce9e-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>
