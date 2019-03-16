@@ -15,12 +15,15 @@ minimal
 doc/html
 
 ### Dirs
-admin/config/*.xml
+admin/config/Xml/
 build/
 dist/
 html/
 */Ideas/
 latex/
 .settings/
+
+### Private Info
+Laptop*
 
 ### END DBK

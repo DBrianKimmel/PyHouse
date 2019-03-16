@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Families/Hue/Hue_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 18, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-02-27'
+__updated__ = '2019-03-15'
 
 # Import system type stuff
 
@@ -258,7 +258,7 @@ class HueHubData(DeviceData):
 
 class HueAddInData(object):
     """ This is the Hue specific data.
-    It will be added into device objects that are Insteon.
+    It will be added into device objects that are Hue.
     """
 
     def __init__(self):

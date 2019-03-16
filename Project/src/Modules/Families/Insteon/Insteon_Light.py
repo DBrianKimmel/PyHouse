@@ -4,7 +4,7 @@
 @name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_Light.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @note:      Created on Dec 4, 2018
 @license:   MIT License
 @summary:
@@ -13,7 +13,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-03-07'
 
 #  Import system type stuff
 
@@ -22,6 +22,7 @@ from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Light  ')
 
@@ -46,6 +47,7 @@ class DecodeResponses:
         The other is a change of status from a light type device.
 
         @param p_controller_obj: is the controller that received the message
+        @param p_device_obj: is
 
         A Standard-length INSTEON message is received from either a Controller or Responder that you are ALL-Linked to.
         See p 233(246) of 2009 developers guide.
@@ -61,6 +63,8 @@ class DecodeResponses:
 
         l_mqtt_publish = False
         p_device_obj.BrightnessPct = '?'
+        p_device_obj.ControllerNode = p_pyhouse_obj.Computer.Name
+        p_device_obj.ControllerName = p_controller_obj.Name
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
@@ -115,7 +119,7 @@ class DecodeResponses:
         LOG.debug('Light Response {}'.format(l_debug_msg))
         LOG.info('Light: {}, Brightness: {}'.format(p_device_obj.Name, p_device_obj.BrightnessPct))
         if l_mqtt_publish:
-            l_topic = 'lighting/light/status/debug'
+            l_topic = 'lighting/light/status'
             p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)
             pass
         return l_debug_msg

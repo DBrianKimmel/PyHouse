@@ -17,7 +17,7 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2019-01-03'
+__updated__ = '2019-03-06'
 
 #  Import system type stuff
 import datetime

@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2017-01-14
 
 """
-__updated__ = "2018-03-23"
+__updated__ = "2019-03-06"
 
 # Import system type stuff
 import platform
@@ -96,12 +96,12 @@ class A3_Xml(SetupMixin, unittest.TestCase):
 
     def test_01_Raw(self):
         l_raw = XML_COMPUTER_DIVISION
-        print('A3-01-A - Raw', l_raw)
+        # print('A3-01-A - Raw', l_raw)
         self.assertEqual(l_raw[:17], '<ComputerDivision')
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_COMPUTER_DIVISION)
-        print('A3-02-A - Parsed', l_xml)
+        # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Parsed', 190))
         self.assertEqual(l_xml.tag, TESTING_COMPUTER_DIVISION)
 
 
@@ -110,20 +110,11 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Create(self):
-        """
-        """
-        l_xml = computerXML.create_computer_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C1-01-A - Computer Xml'))
-        self.assertEqual(l_xml.Name, platform.node())
-        self.assertEqual(l_xml.Key, 0)
-        # self.assertEqual(l_xml.Active, True)
-
-    def test_02_Xml(self):
+    def test_01_Xml(self):
         """ Read the config - it is minimal.
         """
         l_obj = computerXML.read_computer_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_obj, 'C1-02-A - Computer Xml'))
+        print(PrettyFormatAny.form(l_obj, 'C1-01-A - Computer Xml'))
         self.assertEqual(l_obj.Name, TESTING_COMPUTER_NAME_0)
 
 

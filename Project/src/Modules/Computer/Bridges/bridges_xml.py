@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Computer/Bridges/bridges_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 24, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-02-25'
+__updated__ = '2019-03-15'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET

@@ -17,12 +17,11 @@ This module creates a main page and a workspace.
 from twisted.web._element import renderer
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-03-02'
+__updated__ = '2019-03-06'
 
 #  Import system type stuff
 import gc
 from twisted.web.template import Element, XMLFile
-from twisted.web.resource.NOT_FOUND
 from twisted.python.filepath import FilePath
 
 #  Import PyMh files and modules.

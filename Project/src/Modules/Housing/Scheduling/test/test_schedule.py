@@ -14,7 +14,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 """
 from Modules.Core.Utilities import convert
 
-__updated__ = '2019-01-26'
+__updated__ = '2019-03-07'
 
 # Import system type stuff
 import datetime
@@ -252,7 +252,6 @@ class B2_Days(SetupMixin, unittest.TestCase):
     def test_01_0_Days(self):
         """ Date is within DOW value
         """
-        self.m_schedule_obj.DOW = 127  # All 7 days in a bit mask
         l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
         self.assertEqual(l_days, 0)
         self.m_schedule_obj.DOW = DOW_WEDNESDAY
@@ -320,7 +319,7 @@ class B2_Days(SetupMixin, unittest.TestCase):
         self.assertEqual(l_days, 10)
 
 
-class B2_Extract(SetupMixin, unittest.TestCase):
+class B3_Extract(SetupMixin, unittest.TestCase):
     """
     The number of minutes from midnight to the scheduled time.
     """
@@ -336,10 +335,11 @@ class B2_Extract(SetupMixin, unittest.TestCase):
 
     def test_01_Time(self):
         """ Extract Minutes from Midnight to schedule time
+        3720
         """
         self.m_schedule_obj.Time = '01:02'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('B2-01-A - Minutes {}\n'.format(l_seconds))
+        # print('\nB3-01-A - Minutes {}\n'.format(l_seconds))
         self.assertEqual(l_seconds, (1 * 60 + 2) * 60)
 
     def test_02_Dawn(self):
@@ -347,7 +347,7 @@ class B2_Extract(SetupMixin, unittest.TestCase):
         """
         self.m_schedule_obj.Time = 'dawn'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-02-A - Minutes {}\n'.format(l_seconds))
+        print('\nB3-02-A - Minutes {}\n'.format(l_seconds))
         self.assertEqual(l_seconds, (6 * 60 + 4) * 60 + 52)
 
     def test_03_DawnPlus(self):
@@ -355,23 +355,23 @@ class B2_Extract(SetupMixin, unittest.TestCase):
         """
         self.m_schedule_obj.Time = 'dawn + 0:10'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-03-A - Minutes {}\n'.format(l_seconds))
-        self.assertEqual(l_seconds, (6 * 60 + 4 + 10) * 60 + 52)
+        # print('\nB3-03-A - Minutes {}\n'.format(l_seconds))
+        self.assertEqual(l_seconds, (6 * 60 + 4) * 60 + 52) + (10 * 60)
 
     def test_04_DawnMinus(self):
         """ Extract Minutes from Midnight to schedule time
         """
         self.m_schedule_obj.Time = 'dawn - 0:10'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-04-A - Minutes {}\n'.format(l_seconds))
-        self.assertEqual(l_seconds, (6 * 60 + 4 - 10) * 60 + 52)
+        # print('\nB3-04-A - Minutes {}\n'.format(l_seconds))
+        self.assertEqual(l_seconds, (6 * 60 + 4) * 60 + 52) - (10 * 60)
 
     def test_05_Noon(self):
         """ Extract Minutes from Midnight to schedule time
         """
         self.m_schedule_obj.Time = 'noon'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-05-A - Minutes {}\n'.format(l_seconds))
+        # print('\nB3-05-A - Minutes {}\n'.format(l_seconds))
         self.assertEqual(l_seconds, (13 * 60 + 31) * 60 + 41)
 
     def test_06_Sunset(self):
@@ -379,7 +379,7 @@ class B2_Extract(SetupMixin, unittest.TestCase):
         """
         self.m_schedule_obj.Time = 'sunset'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-06-A - Minutes {}\n'.format(l_seconds))
+        print('\nB3-06-A - Minutes {}\n'.format(l_seconds))
         self.assertEqual(l_seconds, (20 * 60 + 31) * 60 + 25)
 
     def test_07_Dusk(self):
@@ -387,19 +387,20 @@ class B2_Extract(SetupMixin, unittest.TestCase):
         """
         self.m_schedule_obj.Time = 'dusk'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-07-A - Minutes {}\n'.format(l_seconds))
+        # print('\nB3-07-A - Minutes {}\n'.format(l_seconds))
         self.assertEqual(l_seconds, (20 * 60 + 58) * 60 + 30)
 
     def test_08_DawnPlus(self):
         """ Extract Minutes from Midnight to schedule time
+        22492
         """
         self.m_schedule_obj.Time = 'dawn + 0:10'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print('\nB2-08-A - Minutes {}\n'.format(l_seconds))
-        self.assertEqual(l_seconds, (6 * 60 + 4 + 10) * 60 + 52)
+        # print('\nB3-08-A - Minutes {}\n'.format(l_seconds))
+        self.assertEqual(l_seconds, (6 * 60 + 4) * 60 + 52) + (10 * 60)
 
 
-class B3_Time(SetupMixin, unittest.TestCase):
+class B4_Time(SetupMixin, unittest.TestCase):
     """
     Test the time from now to the schedule time
     """
@@ -416,30 +417,33 @@ class B3_Time(SetupMixin, unittest.TestCase):
     def test_01_ToGo(self):
         """ Time = 11:13
             Now  = 11:12:00
+        60
         """
         self.m_schedule_obj.Time = '11:13:00'
         l_seconds = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, self.m_now, self.m_riseset)
-        # print('\nB3-01-A - Seconds:{} {}'.format(l_seconds, to_dhms(l_seconds)))
+        # print('\nB4-01-A - Seconds:{} {}'.format(l_seconds, to_dhms(l_seconds)))
         self.assertEqual(l_seconds, 60)
 
     def test_02_Sunset(self):
         """ Sunset = 20:31:25
             Now    = 11:12:00
+        33565
         """
         self.m_schedule_obj.Time = 'Sunset'
         l_seconds = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, self.m_now, self.m_riseset)
-        # print('\nB3-02-A - Seconds:{}  {}'.format(l_seconds, to_dhms(l_seconds)))
+        print('\nB4-02-A - Seconds:{}  {}'.format(l_seconds, to_dhms(l_seconds)))
         self.assertEqual(l_seconds, (((20 - 11) * 60 + (31 - 12)) * 60) + 25)
 
     def test_03_SunsetPlus(self):
         """ Sunset = 20:31:25
             Now    = 11:12:00
             Plus   = 00:21
+        33565 + 1260 = 34825
         """
         self.m_schedule_obj.Time = 'sunset + 00:21'
         l_seconds = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, self.m_now, self.m_riseset)
-        # print('B3-03-A - Seconds:{}  {}'.format(l_seconds, to_dhms(l_seconds)))
-        self.assertEqual(l_seconds, (((20 - 11) * 60 + (31 - 12 + 21)) * 60) + 25)
+        print('B3-03-A - Seconds:{}  {}'.format(l_seconds, to_dhms(l_seconds)))
+        self.assertEqual(l_seconds, (((20 - 11) * 60 + (31 - 12)) * 60) + 25) + (21 * 60)
 
     def test_04_Tomorrow(self):
         """ Test for tomorrow morning
@@ -461,11 +465,11 @@ class B3_Time(SetupMixin, unittest.TestCase):
         """
         self.m_schedule_obj.Time = '11:10'
         l_seconds = SchedTime.extract_time_to_go(self.m_pyhouse_obj, self.m_schedule_obj, self.m_now, self.m_riseset)
-        # print('B3-05-A - Seconds{}  {}'.format(l_seconds, to_dhms(l_seconds)))
+        # print('B4-05-A - Seconds{}  {}'.format(l_seconds, to_dhms(l_seconds)))
         self.assertEqual(l_seconds, ((23 * 60 + 58) * 60))
 
 
-class B4_Dawn(SetupMixin, unittest.TestCase):
+class B5_Extract(SetupMixin, unittest.TestCase):
     """
     The number of minutes from midnight to the scheduled time.
     """
@@ -478,40 +482,58 @@ class B4_Dawn(SetupMixin, unittest.TestCase):
         self.m_schedule_obj.DOW = 1 + 2 + 4 + 8 + 16 + 32 + 64
         self.m_riseset = Mock.RiseSet()
 
-    def test_01_TillSched(self):
+    def test_01_Dusk(self):
         """ Extract Minutes from Midnight to schedule time
 
-        20:58:30
-
+        Dusk = 20:58:30
+        75510
         """
         self.m_schedule_obj.Time = 'Dusk'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print(PrettyFormatAny.form(l_seconds, 'B4-01-A - Minutes'))
+        # print('B5-01-A - Seconds {}'.format(l_seconds))
         self.assertEqual(l_seconds, (20 * 60 + 58) * 60 + 30)
 
-    def test_02_TillSched(self):
+    def test_02_dusk(self):
+        """
+        Dusk = 20:58:30
+        75510
+        """
         self.m_schedule_obj.Time = 'dusk'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print(PrettyFormatAny.form(l_seconds, 'B4-02-A - Minutes'))
+        print(PrettyFormatAny.form(l_seconds, 'B4-02-A - Minutes'))
         self.assertEqual(l_seconds, (TESTING_SCHEDULE_DUSK_0.hour * 60 + TESTING_SCHEDULE_DUSK_0.minute) * 60 + TESTING_SCHEDULE_DUSK_0.second)
 
-    def test_03_TillSched(self):
+    def test_03_Sunrise(self):
+        """
+        Sunrise = 06:31:56
+        23516
+        """
         self.m_schedule_obj.Time = 'sunrise'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print(PrettyFormatAny.form(l_seconds, 'B4-03-A - Minutes'))
-        self.assertEqual(l_seconds, (TESTING_SCHEDULE_SUNRISE_0.hour * 60 + TESTING_SCHEDULE_SUNRISE_0.minute) * 60 + TESTING_SCHEDULE_SUNRISE_0.second)
+        print(PrettyFormatAny.form(l_seconds, 'B4-03-A - Minutes'))
+        self.assertEqual(l_seconds, (6 * 60 + 31) * 60 + 56)
 
     def test_04_TillSched(self):
+        """
+        Sunset = 20:31:25 (73885)
+        Plus   = 00:10    (  600)
+        73885 + 600 = 74485
+        """
         self.m_schedule_obj.Time = 'sunset + 0:10'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print(PrettyFormatAny.form(l_seconds, 'B4-04-A - Minutes'))
-        self.assertEqual(l_seconds, (TESTING_SCHEDULE_SUNSET_0.hour * 60 + TESTING_SCHEDULE_SUNSET_0.minute + 10) * 60 + TESTING_SCHEDULE_SUNSET_0.second)
+        print(PrettyFormatAny.form(l_seconds, 'B4-04-A - Minutes'))
+        self.assertEqual(l_seconds, (20 * 60 + 31) * 60 + 25) + (10 * 60)
 
     def test_05_TillSched(self):
+        """
+        Sunset = 20:31:25 (73885)
+        Minus  = 00:17    ( 1020)
+        73885 - 1020 = 72865
+        """
         self.m_schedule_obj.Time = 'sunset - 0:17'
         l_seconds = SchedTime._extract_schedule_time(self.m_schedule_obj, self.m_riseset)
-        # print(PrettyFormatAny.form(l_seconds, 'B4-05-A - Minutes'))
-        self.assertEqual(l_seconds, (TESTING_SCHEDULE_SUNSET_0.hour * 60 + TESTING_SCHEDULE_SUNSET_0.minute - 17) * 60 + TESTING_SCHEDULE_SUNSET_0.second)
+        print(PrettyFormatAny.form(l_seconds, 'B4-05-A - Minutes'))
+        self.assertEqual(l_seconds, (20 * 60 + 31) * 60 + 25) - (17 * 60)
 
 
 class C1_Execute(SetupMixin, unittest.TestCase):

@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-02-21'
+__updated__ = '2019-03-07'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -684,7 +684,8 @@ class CoreLightingData(DeviceData):
     def __init__(self):
         super(CoreLightingData, self).__init__()
         # self. Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
-        pass
+        self.ControllerNode = None
+        self.ControllerName = None
 
 
 class ThermostatData(DeviceData):

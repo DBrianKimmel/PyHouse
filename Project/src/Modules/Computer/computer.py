@@ -29,11 +29,12 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-01-30'
+__updated__ = '2019-03-06'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+from datetime import datetime
 import platform
 
 #  Import PyHouse files
@@ -111,14 +112,10 @@ class MqttActions(object):
 class Xml(object):
 
     @staticmethod
-    def create_computer_xml(p_pyhouse_obj):
-        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
-        return l_xml
-
-    @staticmethod
     def read_computer_xml(p_pyhouse_obj):
+        l_obj = ComputerInformation()
         l_xml = XmlConfigTools.read_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
-        return l_xml
+        return l_obj
 
     @staticmethod
     def write_computer_xml(p_pyhouse_obj):
@@ -201,11 +198,15 @@ class API(Utility):
         """ Initialize the computer section of PyHouse.
         """
         LOG.info("Initializing - Version:{}".format(__version__))
+        # This overrides any xml saved so we can start Logging and MQTT messages early on.
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Key = 0
         p_pyhouse_obj.Active = True
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
+        p_pyhouse_obj.Comment = ''
+        p_pyhouse_obj.LastUpdate = datetime.now()
+        #
         Utility._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
@@ -214,6 +215,7 @@ class API(Utility):
         """
         """
         # LOG.info('Loading XML')
+        # Xml.read_computer_xml(p_pyhouse_obj)
         Utility._load_component_xml(p_pyhouse_obj)
         LOG.info('Loaded XML.')
 

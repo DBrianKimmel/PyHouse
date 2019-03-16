@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Computer/Bridges/bridges_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 23, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-03-15'
 
 #  Import system type stuff
 
@@ -36,8 +36,8 @@ class BridgeData(BaseUUIDObject):
     """
 
     def __init__(self):
-        Connection = 'Ethernet'
-        Type = 'Insteon'
+        Connection = None  # 'Ethernet, Serial, USB
+        Type = None  # Insteon, Hue
         IPv4Address = '9.8.7.6'
         Tcp_port = None
         UserName = None

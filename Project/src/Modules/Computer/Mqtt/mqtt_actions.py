@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-02-25'
+__updated__ = '2019-03-07'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -87,7 +87,7 @@ class Actions:
             l_sender = get_mqtt_field(p_message, 'Sender')
             l_logmsg += '\n\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
-        LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
+        # LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'computer':
             l_logmsg += p_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
@@ -110,6 +110,7 @@ class Actions:
             l_logmsg += '   OTHER: Unknown topic\n'
             l_logmsg += '\tTopic: {};\n'.format(p_topic[0])
             l_logmsg += '\tMessage: {};\n'.format(p_message)
-        LOG.info(l_logmsg)
+            LOG.warn(l_logmsg)
+        # LOG.info(l_logmsg)
 
 #  ## END DBK

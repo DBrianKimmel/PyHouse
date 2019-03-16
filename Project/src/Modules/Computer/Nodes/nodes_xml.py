@@ -10,7 +10,7 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2019-01-11'
+__updated__ = '2019-03-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -93,10 +93,6 @@ class Xml(object):
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')
         l_node_obj.NodeRole = PutGetXML.get_int_from_xml(p_node_xml, 'NodeRole')
-        # try:
-        #    l_node_obj.LastUpdate = PutGetXML.get_date_time_from_xml(p_node_xml, 'LastUpdate')
-        # except AttributeError:
-        #    l_node_obj.LastUpdate = datetime.datetime.now()
         try:
             l_node_obj.NodeInterfaces = Xml._read_interfaces_xml(p_node_xml.find('InterfaceSection'))
         except AttributeError as e_err:
@@ -109,7 +105,6 @@ class Xml(object):
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV4', p_node_obj.ConnectionAddr_IPv4)
         PutGetXML.put_text_element(l_entry, 'ConnectionAddressV6', p_node_obj.ConnectionAddr_IPv6)
         PutGetXML.put_int_element(l_entry, 'NodeRole', p_node_obj.NodeRole)
-        PutGetXML.put_date_time_element(l_entry, 'LastUpdate', p_node_obj.LastUpdate)
         l_entry.append(Xml._write_interfaces_xml(p_node_obj.NodeInterfaces))
         return l_entry
 

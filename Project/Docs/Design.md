@@ -10,7 +10,43 @@
 
 # PyHouse
 
-## Installation
+The PyHouse system requires several Raspberry Pi Computers called 'Nodes'.
+
+## House server
+The first of these nodes is the house server.
+It would be wise to have a backup house server if at all possible.
+
+The house server runs several critical services to enable PyHouse to be self sufficient.
+
+### Mqtt Broker
+The house server runs mosquitto Mqtt broker.
+
+### DNS
+The house server runs a dns service for the house.
+
+### DDNS Updater
+```bash
+sudo apt install ddclient
+```
+
+### IPV6 Tunnel
+
+### VPN
+
+### VNC
+
+
+
+## Lighting Controller
+
+## Pandora Controller
+
+## Node red servers
+
+
+
+
+# Installation
 
 ### Add user
 

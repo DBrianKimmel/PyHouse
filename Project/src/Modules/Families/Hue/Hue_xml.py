@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Families/Hue/Hue_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 18, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-01-04'
+__updated__ = '2019-03-15'
 
 # Import system type stuff
 

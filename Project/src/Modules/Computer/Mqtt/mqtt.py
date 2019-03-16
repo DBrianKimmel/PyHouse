@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-31'
+__updated__ = '2019-03-07'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -120,7 +120,7 @@ class API(object):
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                LOG.info('Mqtt published:\tTopic:{}'.format(p_topic))
+                # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
 
@@ -140,7 +140,7 @@ class API(object):
             l_logmsg = 'm_actions not initialzed - {}'.format(e_err)
             LOG.error(l_logmsg)
             return
-        LOG.info(l_logmsg)
+        # LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """Login to PyHouse via MQTT

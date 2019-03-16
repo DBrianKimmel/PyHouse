@@ -19,7 +19,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-02-09'
+__updated__ = '2019-03-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,12 +27,13 @@ import xml.etree.ElementTree as ET
 #  Import PyHouse files
 from Modules.Core.data_objects import UuidData, CoreLightingData
 from Modules.Families.family_utils import FamUtil
-from Modules.Computer import logging_pyh as Logging
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Housing.Lighting.lighting_xml import LightingXML
 from Modules.Core.state import State
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'
 
@@ -78,11 +79,15 @@ class MqttActions:
         l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
         LOG.debug('MqttLightingLightsDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'control':
-            pass
+            l_logmsg += 'Light Control: {}'.format(PrettyFormatAny.form(p_message, 'Light Control'))
+            LOG.debug(l_logmsg)
         elif p_topic[0] == 'status':
-            pass
+            # The status is contained in LightData() above.
+            l_logmsg += 'Light Status: {}'.format(PrettyFormatAny.form(p_message, 'Light Status'))
+            LOG.debug(l_logmsg)
         else:
-            l_logmsg += '\tUnknown Lighting/Light sub-topic:{} {}'.format(p_topic, p_message)
+            l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
+            LOG.debug(l_logmsg)
         return l_logmsg
 
 

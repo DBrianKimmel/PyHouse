@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-02-09'
+__updated__ = '2019-03-07'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -52,12 +52,20 @@ class MqttActions:
         elif p_topic[0] == 'controller':
             pass
         elif p_topic[0] == 'light':
-            pass
-        elif p_topic[0] == 'room':
-            l_logmsg += lightMqtt(self.m_pyhouse_obj)._decode_room(p_topic, p_message)
-        #  computer/***
+            l_logmsg += lightMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         else:
             l_logmsg += '\tUnknown Lighting sub-topic {}'.format(p_message)
+        return l_logmsg
+
+    def decode_light(self, p_topic, p_message):
+        """
+        --> pyhouse/housename/lighting/light/xxx
+        """
+        l_logmsg = '\tLight: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        if p_topic[0] == 'status':
+            pass
+        else:
+            l_logmsg += '\tUnknown Light sub-topic {}'.format(p_message)
         return l_logmsg
 
 

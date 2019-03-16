@@ -4,7 +4,7 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/Hue_hub.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 19, 2017
 @license:   MIT License
 @summary:
@@ -17,22 +17,35 @@
 /sensors
 /rules
 
-"""
-from Modules.Core.Utilities.convert import long_to_str
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+Read the hub info and populate parts of pyhouse_obj.
 
-__updated__ = '2019-02-27'
+Send hub commands to do things like turn on/off/dim of lights.
+
+The Hue Hub is a network device so we need to know which PyHouse instance is going to be in control.
+
+http://192.168.1.131/debug/clip.html
+
+"""
+
+__updated__ = '2019-03-16'
 
 # Import system type stuff
+from zope.interface import implementer
 import jsonpickle
 from queue import Queue
 import time
 from twisted.web.client import Agent
 from twisted.web.http_headers import Headers
-from twisted.internet.defer import Deferred
+from twisted.internet.defer import Deferred, succeed
 from twisted.internet.protocol import Protocol
+from twisted.web.iweb import IBodyProducer
 
 # Import PyMh files
+from Modules.Housing.Lighting.lighting_lights import LightData
+from Modules.Core.Utilities.convert import long_to_str
+from Modules.Core.Utilities.json_tools import encode_json
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
 
@@ -47,7 +60,7 @@ devicetype = "something"
 portalservices = False
 
 
-def gen_ts():
+def generate_timestamp():
     return time.strftime('%Y-%m-%dT%H:%M:%S')
 
 
@@ -230,11 +243,55 @@ def gen_description_xml(addr):
     return '\r\n'.join(reply)
 
 
+def generate_light_body_json(p_light_control):
+    """ Convert internal data to hue control data and format
+
+    @param p_light_control: ==> LightData() in Housing.Lighting.lighting_lights
+    @returns: json body to control lights
+                {
+                    "on": true,
+                    "bri": 254
+                }
+    """
+    if p_light_control.BrightnessPct == 0:
+        l_body = {
+            'on' : 'false'
+            }
+    else:
+        l_bright = int(p_light_control.BrightnessPct * 254 / 100)
+        l_body = {
+            'on'  : 'true',
+            'bri' : '{}'.format(l_bright)
+             }
+    return encode_json(l_body)
+
+
+@implementer(IBodyProducer)
+class BytesProducer(object):
+    """
+    Generate the messages to send in the web requests.
+    """
+
+    def __init__(self, body):
+        self.m_body = body
+        self.length = len(body)
+
+    def startProducing(self, consumer):
+        consumer.write(self.m_body)
+        return succeed(None)
+
+    def pauseProducing(self):
+        pass
+
+    def stopProducing(self):
+        pass
+
+
 # class server(BaseHTTPRequestHandler):
-class server(object):
+class Server(object):
 
     m_client_address = None
-    m_path = None
+    m_path = '/'
 
     def _set_headers(self, mime_type):
         self.send_response(200)
@@ -242,131 +299,132 @@ class server(object):
         self.end_headers()
 
     def do_GET(self):
-        print('GET', self.m_client_address, self.m_path)
+        LOG.debug('GET', self.m_client_address, self.m_path)
         parts = self.m_path.split('/')
 
-        if self.m_path == '/%s' % description_xml:
+        if self.m_path == '/{}'.format(description_xml):
             self._set_headers("text/xml")
-            print('get %s' % description_xml)
-            h = self.server.server_address[0]
+            LOG.debug('get {}'.format(description_xml))
+            h = self.Server.server_address[0]
             if 'Host' in self.headers:
                 h = self.headers['Host']
             self.wfile.write(gen_description_xml(h))
 
         elif self.m_path == '/%s' % icon:
             self._set_headers("image/png")
-            print('get %s' % parts[1])
+            LOG.debug('get %s' % parts[1])
             try:
                 fh = open(icon, 'r')
                 self.wfile.write(fh.read())
                 fh.close()
             except Exception as e:
-                print('Cannot access %s' % icon, e)
+                LOG.warn('Cannot access %s' % icon, e)
 
         elif self.m_path == '/api/' or self.m_path == '/api/%s' % username or self.m_path == '/api/%s/' % username:
             self._set_headers("application/json")
-            print('get all state')
+            LOG.debug('get all state')
             self.wfile.write(gen_dump_json())
 
         elif self.m_path == '/api/config' or self.m_path == '/api/config/':
             self._set_headers("application/json")
-            print('get basic configuration short (2)')
+            LOG.debug('get basic configuration short (2)')
             self.wfile.write(gen_config_json(False))
 
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'lights':
             self._set_headers("application/json")
-            print('enumerate list of lights')
+            LOG.debug('enumerate list of lights')
             if len(parts) == 4 or parts[4] == '':
-                print(' ...all')
+                LOG.debug(' ...all')
                 self.wfile.write(gen_light_json(None))
             else:
-                print(' ...single (%s)' % parts[4])
+                LOG.debug(' ...single (%s)' % parts[4])
                 self.wfile.write(gen_light_json(int(parts[4]) - 1))
 
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'groups':
             self._set_headers("application/json")
-            print('enumerate list of groups')
+            LOG.debug('enumerate list of groups')
             if len(parts) == 4 or parts[4] == '':
-                print(' ...all')
+                LOG.debug(' ...all')
                 self.wfile.write(gen_groups_json(None))
             else:
-                print(' ...single (%s)' % parts[4])
+                LOG.debug(' ...single (%s)' % parts[4])
                 self.wfile.write(gen_groups_json(int(parts[4]) - 1))
 
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'scenes':
             self._set_headers("application/json")
-            print('enumerate list of scenes')
+            LOG.debug('enumerate list of scenes')
             self.wfile.write(gen_scenes_json())
 
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'sensors':
             self._set_headers("application/json")
-            print('enumerate list of sensors')
+            LOG.debug('enumerate list of sensors')
             self.wfile.write(gen_sensors_json())
 
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'light':
             self._set_headers("application/json")
-            print('get individual light state')
+            LOG.debug('get individual light state')
             self.wfile.write(gen_ind_light_json(int(parts[4]) - 1))
 
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'config':
             self._set_headers("application/json")
             if parts[2] == username:
-                print('get basic configuration full')
+                LOG.debug('get basic configuration full')
                 self.wfile.write(gen_config_json(True))
             else:
-                print('get basic configuration short (1)')
+                LOG.debug('get basic configuration short (1)')
                 self.wfile.write(gen_config_json(False))
 
         else:
             self._set_headers("application/json")
-            print('[G] unknown get request', self.m_path, self.headers)
+            LOG.debug('[G] unknown get request', self.m_path, self.headers)
             self.wfile.write('unreg()')
             # self.wfile.write('[{"error":{"type":1,"address":"/","description":"unauthorized user"}}]')
 
     def do_HEAD(self):
+        LOG.debug('HEAD')
         self._set_headers("text/html")
 
     def do_POST(self):
-        print('POST', self.m_path)
+        LOG.debug('POST', self.m_path)
         parts = self.m_path.split('/')
         # simpler registration; always return the same key
         # should keep track in e.g. an sqlite3 database and then do whitelisting etc
         if len(parts) >= 2 and parts[1] == 'api':
             self._set_headers("application/json")
             data_len = int(self.headers['Content-Length'])
-            print(self.rfile.read(data_len))
+            LOG.debug(self.rfile.read(data_len))
             self.wfile.write('[{"success":{"username": "%s"}}]' % username)
         elif len(parts) >= 4 and parts[1] == 'api' and parts['3'] == 'groups':
             self._set_headers("application/json")
             self.wfile.write('[{"success":{"id": "1"}}]')
         else:
-            print('unknown post request', self.m_path)
+            LOG.debug('unknown post request', self.m_path)
 
     def do_PUT(self):
-        print('PUT', self.m_path)
+        LOG.debug('PUT', self.m_path)
         data_len = int(self.headers['Content-Length'])
         content = self.rfile.read(data_len)
         parts = self.m_path.split('/')
         if len(parts) >= 6 and parts[1] == 'api' and parts[3] == 'lights' and parts[5] == 'state':
             self._set_headers("application/json")
-            print('set individual light state')
+            LOG.debug('set individual light state')
             self.wfile.write(set_light_state(int(parts[4]) - 1, content))
         elif len(parts) >= 6 and parts[1] == 'api' and parts[3] == 'groups' and parts[5] == 'action':
             self._set_headers("application/json")
-            print('set individual group state')
+            LOG.debug('set individual group state')
             self.wfile.write(set_group_state(int(parts[4]) - 1, content))
         elif len(parts) >= 4 and parts[1] == 'api' and parts[3] == 'config':
             self._set_headers("application/json")
-            print('put config')
+            LOG.debug('put config')
             put_config_json(content)
             self.wfile.write('[{"success":"Updated."}]')
         elif len(parts) >= 3 and parts[1] == 'api' and parts[2] == 'config':
             self._set_headers("application/json")
-            print('put config (2)')
-            print(content)
+            LOG.debug('put config (2)')
+            LOG.debug(content)
         else:
             self._set_headers("text/html")
-            print('unknown put request', self.m_path, content)
+            LOG.debug('unknown put request', self.m_path, content)
 
 
 def add_light(name, id_, command, command_get):
@@ -429,12 +487,15 @@ class HueHub(object):
     """
 
     m_bridge_obj = None
-    m_agent_d = None
     m_hue_agent = None
     m_command = b'/config'
     m_headers = None
 
     def __init__(self, p_pyhouse_obj=None):
+        """
+        Agent is a very basic HTTP client.  It supports I{HTTP} and I{HTTPS} scheme URIs.
+
+        """
         self.m_headers = Headers({'User-Agent': ['Hue Hub Web Client']})
         if p_pyhouse_obj != None:
             self.m_pyhouse_obj = p_pyhouse_obj
@@ -479,13 +540,14 @@ class HueHub(object):
         /sensors
         /rules
         """
-        l_agent_d = self.HubGet('/config')
-        l_agent_d = self.HubGet('/lights')
-        l_agent_d = self.HubGet('/groups')
-        l_agent_d = self.HubGet('/schedules')
-        l_agent_d = self.HubGet('/scenes')
-        l_agent_d = self.HubGet('/sensors')
-        l_agent_d = self.HubGet('/rules')
+        _l_agent_d = self.HubGet('/config')
+        _l_agent_d = self.HubGet('/lights')
+        _l_agent_d = self.HubGet('/groups')
+        _l_agent_d = self.HubGet('/schedules')
+        _l_agent_d = self.HubGet('/scenes')
+        _l_agent_d = self.HubGet('/sensors')
+        _l_agent_d = self.HubGet('/rules')
+        # Server().do_GET()
         LOG.info('Scheduled All config')
 
     def HubGet(self, p_command):
@@ -493,20 +555,15 @@ class HueHub(object):
         It will arrive later via a deferred.
         """
 
-        def cb_Response(p_response):
-            l_hdr = p_response.headers
-            l_raw = p_response.headers._rawHeaders
-            LOG.debug('Debug: {}'.format(PrettyFormatAny.form(p_response, 'Response', 190)))
-            LOG.debug('Debug: {}'.format(PrettyFormatAny.form(l_raw, 'rawHeaders', 190)))
-            # l_json = jsonpickle.decode(l_hdr)
+        def cb_Response(p_response, p_command):
+            LOG.debug('Command: {}'.format(p_command))
             LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
-            # LOG.debug('Response Headers: {}'.format(l_json))
             l_finished = Deferred()
             p_response.deliverBody(HueProtocol(l_finished))
             return l_finished
 
         l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, None)
-        l_agent_d.addCallback(cb_Response)
+        l_agent_d.addCallback(cb_Response, p_command)
         HueDecode().decode_get()
         return l_agent_d
 
@@ -528,6 +585,9 @@ class HueHub(object):
 
     def HubStart(self, p_bridge_obj):
         """ Start the hub and then get the hub data
+
+        @param p_bridge_obj: is PyHouse_Obj.Computers.Bridges.xxx with xxx being a HueHub
+
         """
         p_bridge_obj._Queue = Queue(100)
         self.m_bridge_obj = p_bridge_obj
