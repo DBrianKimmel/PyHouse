@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-03-16'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -41,7 +41,7 @@ from twisted.internet.protocol import Protocol
 from twisted.web.iweb import IBodyProducer
 
 # Import PyMh files
-from Modules.Housing.Lighting.lighting_lights import LightData
+# from Modules.Housing.Lighting.lighting_lights import LightData
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -569,6 +569,8 @@ class HueHub(object):
 
     def HubPost(self, p_command, p_body):
         """
+        @param p_command: is the Hue command we will be using
+        @param p_body: is the body producer function.
         """
 
         def cb_Response(p_response):
@@ -580,6 +582,25 @@ class HueHub(object):
 
         l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, p_body)
         l_agent_d.addCallback(cb_Response)
+        HueDecode().decode_post()
+        return l_agent_d
+
+    def HubPostCommand(self, p_command, p_body):
+        """
+        """
+
+        def cb_response(p_response):
+            LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
+            LOG.debug('Response Headers: {}'.format(p_response.headers.decode("utf8")))
+            l_finished = Deferred()
+            p_response.deliverBody(HueProtocol(l_finished))
+            return l_finished
+
+        l_agent_d = self.m_hue_agent.request(b'POST',
+                                             self._build_uri(p_command),
+                                             self.m_headers,
+                                             p_body)
+        l_agent_d.addCallback(cb_response)
         HueDecode().decode_post()
         return l_agent_d
 

@@ -10,7 +10,7 @@
 Passed all 9 tests - DBK - 2019-01-10
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,7 +33,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         #
         lightingAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
 

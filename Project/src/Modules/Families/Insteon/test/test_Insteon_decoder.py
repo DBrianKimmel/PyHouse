@@ -13,7 +13,7 @@ This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2018-12-06'
+__updated__ = '2019-03-18'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -44,7 +44,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Security.GarageDoors = securityXML().read_all_GarageDoors_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Security.MotionSensors = securityXML().read_all_MotionSensors_xml(self.m_pyhouse_obj)

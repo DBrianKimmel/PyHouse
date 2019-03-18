@@ -15,7 +15,7 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-03-07'
+__updated__ = '2019-03-18'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,6 +39,7 @@ class PyHouseData(object):
     def __init__(self):
         self.APIs = None  # PyHouseAPIs()
         self.Computer = None  # ComputerInformation()
+        self.Families = None  # FamilyInformation()
         self.House = None  # HouseInformation()
         self.Twisted = None  # TwistedInformation()
         self.Uuids = None  # AllUuids()
@@ -411,12 +412,12 @@ BaseObject dependent.
 """
 
 
-class FamilyData(BaseObject):
+class FamilyInformation(BaseObject):
     """ A container for every family that has been defined in modules.
     """
 
     def __init__(self):
-        super(FamilyData, self).__init__()
+        super(FamilyInformation, self).__init__()
         self.FamilyDevice_ModuleAPI = None  # Insteon_device.API()
         self.FamilyDevice_ModuleName = None  # Insteon_device
         self.FamilyXml_ModuleName = None  # Insteon_xml
@@ -472,6 +473,7 @@ class ComputerInformation(BaseUUIDObject):
         self.Mqtt = {}  # MqttInformation()
         self.Nodes = {}  # NodeData()
         self.Primary = False
+        self.Priority = 99
         self.Weather = {}  # WeatherInformation()
         self.Web = {}  # WebData()
 
@@ -500,7 +502,6 @@ class HouseInformation(BaseUUIDObject):
 
     def __init__(self):
         super(HouseInformation, self).__init__()
-        self.FamilyData = {}  # FamilyData['FamilyName']
         self.HouseMode = 'Home'  # Home, Away, Vacation,
         self.Entertainment = {}  # EntertainmentData() in Entertainment/entertainment_data.py
         self.Hvac = {}  # HvacData()

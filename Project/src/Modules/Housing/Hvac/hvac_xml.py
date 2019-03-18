@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-02-21'
+__updated__ = '2019-03-18'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -105,7 +105,7 @@ class Utility(object):
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
-            l_api = p_pyhouse_obj.House.FamilyData[p_obj.DeviceFamily].FamilyXml_ModuleAPI
+            l_api = p_pyhouse_obj.FamilyInformation[p_obj.DeviceFamily].FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
             l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)

@@ -16,7 +16,7 @@ House.py knows everything about a single house.
 Rooms and lights and HVAC are associated with a particular house.
 
 PyHouse.House.
-              FamilyData
+              FamilyInformation
               Hvac
               Irrigation
               Lighting
@@ -28,7 +28,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-01-30'
+__updated__ = '2019-03-18'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -51,6 +51,7 @@ from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 

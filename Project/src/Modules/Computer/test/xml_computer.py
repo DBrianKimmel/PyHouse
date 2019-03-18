@@ -18,7 +18,7 @@ ComputerDivision - Name, Key, Active
 
 """
 
-__updated__ = '2018-03-23'
+__updated__ = '2019-03-16'
 
 # Import system type stuff
 
@@ -34,22 +34,28 @@ TESTING_COMPUTER_DIVISION = 'ComputerDivision'
 
 L_COMPUTER_DIVISION_END = '  </' + TESTING_COMPUTER_DIVISION + '>'
 
-TESTING_COMPUTER_NAME_0 = 'TestingComputer'
-TESTING_COMPUTER_KEY_0 = '0'
-TESTING_COMPUTER_ACTIVE_0 = 'True'
+TESTING_COMPUTER_NAME = 'TestingComputer'
+TESTING_COMPUTER_KEY = '0'
+TESTING_COMPUTER_ACTIVE = 'True'
+TESTING_COMPUTER_COMMENT = 'This is the testing computer'
+TESTING_COMPUTER_PRIORITY = '17'
 TESTING_COMPUTER_UUID = 'Computer-0000-0000-0000-123456789ABC'
 
 L_COMPUTER_DIV_START = \
     '<' + TESTING_COMPUTER_DIVISION + ' ' + \
-    'Name="' + TESTING_COMPUTER_NAME_0 + '" ' + \
-    'Key="' + TESTING_COMPUTER_KEY_0 + '" ' + \
-    'Active="' + TESTING_COMPUTER_ACTIVE_0 + '"' + \
+    'Name="' + TESTING_COMPUTER_NAME + '" ' + \
+    'Key="' + TESTING_COMPUTER_KEY + '" ' + \
+    'Active="' + TESTING_COMPUTER_ACTIVE + '"' + \
     '>'
 L_COMPUTER_UUID = '<UUID>' + TESTING_COMPUTER_UUID + '</UUID>'
+L_COMPUTER_COMMENT = '<Comment>' + TESTING_COMPUTER_COMMENT + '</Comment>'
+L_COMPUTER_PRIORITY = '<Priority>' + TESTING_COMPUTER_PRIORITY + '</Priority>'
 
 XML_COMPUTER_DIVISION = '\n'.join([
     L_COMPUTER_DIV_START,
     L_COMPUTER_UUID,
+    L_COMPUTER_COMMENT,
+    L_COMPUTER_PRIORITY,
     XML_BRIDGES,
     XML_COMMUNICATION,
     XML_INTERNET,

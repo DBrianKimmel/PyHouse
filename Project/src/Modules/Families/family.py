@@ -33,13 +33,13 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-02-22'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import importlib
 
 # Import PyHouse files
-from Modules.Core.data_objects import FamilyData
+from Modules.Core.data_objects import FamilyInformation
 from Modules.Families import VALID_FAMILIES
 from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.Family         ')
@@ -98,7 +98,7 @@ class Utility:
         return None
 
     def _build_one_family_data(self, p_pyhouse_obj, p_name):
-        """Build up the FamilyData names portion entry for a single family
+        """Build up the FamilyInformation names portion entry for a single family
 
         For the Instreon family:
             Insteon_device                   ==> FamilyDevice_ModuleName
@@ -109,7 +109,7 @@ class Utility:
         @param p_count: an indexing number
         """
         LOG.info('Building Family: {}'.format(p_name))
-        l_family_obj = FamilyData()
+        l_family_obj = FamilyInformation()
         l_family_obj.Name = p_name
         l_family_obj.Key = 0
         l_family_obj.Active = True
@@ -163,11 +163,11 @@ class API:
     def LoadXml(self, p_pyhouse_obj):
         """ The actual loading of the Families section of PyHouse_Obj os done in the constructor.
         """
-        p_pyhouse_obj.House.FamilyData = self.m_family
+        p_pyhouse_obj.FamilyInformation = self.m_family
 
     def Start(self):
         """
-        Build p_pyhouse_obj.House.FamilyData
+        Build p_pyhouse_obj.FamilyInformation
         """
         return self.m_family
 
@@ -190,7 +190,7 @@ class API:
         Runs Device_<family>.API.Start()
         """
         LOG.info("Starting lighting families.")
-        for l_family_obj in p_pyhouse_obj.House.FamilyData.values():
+        for l_family_obj in p_pyhouse_obj.FamilyInformation.values():
             LOG.info('Starting Family {}'.format(l_family_obj.Name))
             l_family_obj.FamilyDevice_ModuleAPI.Start()  # will run <family>_device.API().Start()
         LOG.info("Started all lighting families.")

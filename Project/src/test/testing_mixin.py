@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-02-21'
+__updated__ = '2019-03-18'
 
 #  Import system type stuff
 import platform
@@ -153,7 +153,6 @@ class SetupPyHouseObj(object):
     def _build_house_data(p_pyhouse_obj):
         l_ret = HouseInformation()
         l_ret.Location = LocationData()
-        l_ret.FamilyData = familyUtil()._init_family_component_apis(p_pyhouse_obj)
         l_ret.Entertainment = SetupPyHouseObj._build_entertainment(p_pyhouse_obj)
         l_ret.Lighting = LightingData()
         l_ret.Hvac = HvacData()
@@ -265,6 +264,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj.APIs = self._build_apis()
         l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
         l_pyhouse_obj.House = SetupPyHouseObj._build_house_data(l_pyhouse_obj)
+        l_pyhouse_obj.FamilyInformation = familyUtil()._init_family_component_apis(l_pyhouse_obj)
         l_pyhouse_obj.Twisted = self._build_twisted()
         l_pyhouse_obj.Uuids = AllUuids()
         l_pyhouse_obj.Uuids.All = {}
@@ -283,7 +283,7 @@ class SetupPyHouseObj(object):
         pass
 
     def LoadHouse(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.FamilyData = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
+        p_pyhouse_obj.FamilyInformation = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
         housingAPI(p_pyhouse_obj).LoadXml(p_pyhouse_obj)
         return
 

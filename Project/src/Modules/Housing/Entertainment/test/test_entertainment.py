@@ -11,7 +11,7 @@ Passed all 12 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2018-11-18'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -167,7 +167,7 @@ class C1_Load(SetupMixin, unittest.TestCase):
 
 
 class D1_Save(SetupMixin, unittest.TestCase):
-    """
+    """ Test writing of the entertainment XML.
     """
 
     def setUp(self):
@@ -176,25 +176,37 @@ class D1_Save(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'C1-01-A - Entertainment XML'))
-        self.assertEqual(self.m_xml.tag, TESTING_ENTERTAINMENT_SECTION)
+        l_xml = self.m_xml.entertainment_sect
+        # print(PrettyFormatAny.form(l_xml, 'C1-01-A - Entertainment XML'))
+        self.assertEqual(l_xml.tag, TESTING_ENTERTAINMENT_SECTION)
 
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C1-01-B - Entertainment'))
     def test_02_XML(self):
+        """ Test
+        """
+        l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
+        # print(PrettyFormatAny.form(l_ret, 'D1-02-A - Ret'))
+        l_xml = ET.Element('HouseDivision')
+        l_xml1 = entertainmentAPI(self.m_pyhouse_obj).SaveXml(l_xml)
+        l_ent = self.m_pyhouse_obj.House.Entertainment = l_ret
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'D1-02-B - HouseInformation()'))
+        # print(PrettyFormatAny.form(l_ent, 'D1-02-C - Entertainment'))
+        # print(PrettyFormatAny.form(l_ent.Plugins, 'D1-02-D- Plugins'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['onkyo'], 'D1-02-Onkyo - Plugins["onkyo"]'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['panasonic'], 'D1-02-Panasonic - Plugins["panasonic"]'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['pandora'], 'D1-02-Pandora - Plugins["pandora"]'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['pioneer'], 'D1-02-Pioneer - Plugins["pioneer"]'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['samsung'], 'D1-02-Samsung - Plugins["pioneer"]'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['pandora'].API, 'D1-02-H - Plugins["pandora"].API'))
+
+    def test_03_XML(self):
         """ Test
         """
         l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
         l_xml = ET.Element('HouseDivision')
         l_xml1 = entertainmentAPI(self.m_pyhouse_obj).SaveXml(l_xml)
-
-        l_ent = self.m_pyhouse_obj.House.Entertainment
-        print(PrettyFormatAny.form(l_ret, 'D1-01-A - Ret'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'B1-01-B - HouseInformation()'))
-        print(PrettyFormatAny.form(l_ent, 'B1-01-C - Entertainment'))
-        print(PrettyFormatAny.form(l_ent.Plugins, 'B1-01-D- Plugins'))
-        print(PrettyFormatAny.form(l_ent.Plugins['pandora'], 'B1-01-E - Plugins["pandora"]'))
-        print(PrettyFormatAny.form(l_ent.Plugins['pioneer'], 'B1-01-F - Plugins["pioneer"]'))
-        print(PrettyFormatAny.form(l_ent.Plugins['onkyo'], 'B1-01-G - Plugins["onkyo"]'))
-        print(PrettyFormatAny.form(l_ent.Plugins['pandora'].API, 'B1-01-H - Plugins["pandora"].API'))
+        l_ent = self.m_pyhouse_obj.House.Entertainment = l_ret
+        # print(PrettyFormatAny.form(l_ent.Plugins, 'D1-03-A- Plugins'))
+        print(PrettyFormatAny.form(l_ent.Plugins['pandora'], 'D1-03-Pandora - Plugins["pandora"]'))
+        print(PrettyFormatAny.form(l_ent.Plugins['pandora']._API, 'D1-02-H - Plugins["pandora"].API'))
 
 # ## END DBK

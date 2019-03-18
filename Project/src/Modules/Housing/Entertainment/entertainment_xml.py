@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-05'
+__updated__ = '2019-03-18'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -152,7 +152,7 @@ class XML:
         l_count = 0
         l_module_name = None
         if l_xml.find('Type') is None:
-            LOG.warn('Entertainment subsection {} must have a "Type" element'.format(l_name))
+            LOG.warn('Entertainment subsection "{}" must have a "Type" element'.format(l_name))
             return l_plugin
         l_type = PutGetXML.get_text_from_xml(l_xml, 'Type')
         if l_type is not None:

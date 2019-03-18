@@ -82,7 +82,7 @@ Idea Links:
 
 """
 
-__updated__ = '2019-01-05'
+__updated__ = '2019-03-16'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -99,11 +99,14 @@ from twisted.internet import reactor
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core import setup_pyhouse
 from Modules.Core.data_objects import \
-    PyHouseData, \
+    AllUuids, \
+    ComputerInformation, \
+    HouseInformation, \
     PyHouseAPIs, \
-    UuidData, \
+    PyHouseData, \
     TwistedInformation, \
-    XmlInformation, AllUuids
+    UuidData, \
+    XmlInformation
 
 #  Import PyMh files and modules.
 g_API = None
@@ -208,28 +211,6 @@ def SigKillHandler(signum, _stackframe):
     exit
 
 
-class Utilities(object):
-    """
-    """
-
-    @staticmethod
-    def _nor_create_pyhouse_obj():
-        """ This creates the master PyHouse_Obj from scratch.
-
-        Everything is initialized from the empty definitions.
-        Computer and house components are initialized later on.
-        The reactor is not yet running.
-        """
-        l_pyhouse_obj = PyHouseData()
-        l_pyhouse_obj.APIs = PyHouseAPIs()
-        l_pyhouse_obj.Twisted = TwistedInformation()
-        l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Uuids = AllUuids()
-        l_pyhouse_obj.Uuids.All = UuidData()
-        l_pyhouse_obj.Xml = XmlInformation()
-        return l_pyhouse_obj
-
-
 class API:
     """
     """
@@ -315,10 +296,12 @@ class NoReactorAPI(API):
         """ This creates the master PyHouse_Obj from scratch.
 
         Everything is initialized from the empty definitions.
-        Computer and house components are initialized later on.
+        Computer and house components are created but filled in later on.
         The reactor is not yet running.
         """
         l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj.Computer = ComputerInformation()
+        l_pyhouse_obj.House = HouseInformation()
         l_pyhouse_obj.APIs = PyHouseAPIs()
         l_pyhouse_obj.Twisted = TwistedInformation()
         l_pyhouse_obj.Twisted.Reactor = reactor

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-30'
+__updated__ = '2019-03-16'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -24,6 +24,7 @@ import dateutil.parser as dparser
 from Modules.Core.data_objects import CoordinateData
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities.uuid_tools import Uuid
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.XmlTools       ')
 

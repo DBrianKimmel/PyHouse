@@ -9,9 +9,8 @@
 
 Passed all 15 tests.  DBK 2019-02-21
 """
-from Modules.Core.data_objects import FamilyData
 
-__updated__ = '2019-02-21'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,6 +20,7 @@ import importlib
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import FamilyInformation
 from Modules.Families import family
 from Modules.Families.family import Utility, API as familyAPI
 from Modules.Families.test.xml_family import \
@@ -39,7 +39,7 @@ class SetupMixin(object):
         self.m_families = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
 
     def createFamilyObj(self):
-        l_family_obj = FamilyData()
+        l_family_obj = FamilyInformation()
         l_family_obj.Name = 'Insteon'
         l_family_obj.Key = 0
         l_family_obj.Active = True
@@ -196,8 +196,8 @@ class C1_Import(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        #self.m_family_obj = family.Utility()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
-        
+        # self.m_family_obj = family.Utility()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
+
     def test_01_Import(self):
         l_family_obj = self.createFamilyObj()
         l_mod = 'Insteon_device'
@@ -229,14 +229,14 @@ class D1_One(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        #self.m_family_obj = family.Utility()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
+        # self.m_family_obj = family.Utility()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Null(self):
         l_mod_name = 'Null'
         l_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, l_mod_name)
         print(PrettyFormatAny.form(l_family_obj, 'D1-01-A - Family'))
         self.assertEqual(l_family_obj.Name, l_mod_name)
-        #self.assertNotEqual(l_obj, None)
+        # self.assertNotEqual(l_obj, None)
 
     def test_02_Insteon(self):
         l_mod_name = 'Insteon'

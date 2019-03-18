@@ -1,7 +1,7 @@
 * Name:      PyHouse/Project/src/Modules/Computer/Docs/Design
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Copyright: (c) 2018-2019 by D. Brian Kimmel
 * Created:   2018-10-06
 * Updated:   2018-10-06
 * License:   MIT License
@@ -9,6 +9,17 @@
 
 
 # Computer
+
+```
+    ComputerDivision
+        BridgesSection
+        CommunicationSection
+        InternetSection
+        MqttSection
+        NodeSection
+        Weather
+        WebSection
+```
 
 
 ## Design

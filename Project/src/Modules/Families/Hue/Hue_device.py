@@ -4,14 +4,14 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/Hue_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 18, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-02-27'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 
@@ -36,7 +36,7 @@ class API(object):
         Now we set up the rest client
         """
         LOG.info('Loading')
-        HueHub(self.m_pyhouse_obj).Start(self.m_pyhouse_obj)
+        HueHub(self.m_pyhouse_obj).Start(p_pyhouse_obj)
 
     def Start(self):
         """
@@ -50,5 +50,10 @@ class API(object):
         """ Handled by Bridges
         """
         return p_xml
+
+    def ControlDevice(self, p_device_obj, p_controller_obj, p_control):
+        """
+        """
+        pass
 
 # ## END DBK

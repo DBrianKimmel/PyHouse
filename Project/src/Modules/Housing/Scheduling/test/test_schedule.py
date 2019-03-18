@@ -14,7 +14,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 """
 from Modules.Core.Utilities import convert
 
-__updated__ = '2019-03-07'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import datetime
@@ -114,7 +114,7 @@ class SetupMixin(object):
         # self.m_pyhouse_obj.House.Schedule = self.m_schedules
         # self.m_schedule_obj = self.m_schedules
         # twisted.internet.base.DelayedCall.debug = True
-        # self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        # self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         # self.m_now = datetime.datetime(2016, 8, 13, 11, 12, 0)
 
 
@@ -144,19 +144,19 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.schedule_sect.tag, TESTING_SCHEDULE_SECTION)
         self.assertEqual(self.m_xml.schedule.tag, TESTING_SCHEDULE)
 
-    def test_02_FamilyData(self):
+    def test_02_FamilyInformation(self):
         """ Just to be sure the family data is loaded properly.
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.FamilyData, 'A1-02-A - FamilyData'))
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Insteon'].Name, 'Insteon')
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Name, 'Null')
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['UPB'].Name, 'UPB')
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['X10'].Name, 'X10')
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Insteon'].Key, 1)
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Key, 0)
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['UPB'].Key, 2)
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['X10'].Key, 3)
-        self.assertEqual(self.m_pyhouse_obj.House.FamilyData['Null'].Active, True)
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.FamilyInformation, 'A1-02-A - FamilyInformation'))
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Insteon'].Name, 'Insteon')
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Null'].Name, 'Null')
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['UPB'].Name, 'UPB')
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['X10'].Name, 'X10')
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Insteon'].Key, 1)
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Null'].Key, 0)
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['UPB'].Key, 2)
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['X10'].Key, 3)
+        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Null'].Active, True)
 
     def test_03_Dawn(self):
         """ Test that dusk dawn loaded properly

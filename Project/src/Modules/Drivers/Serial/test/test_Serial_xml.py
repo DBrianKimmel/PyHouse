@@ -11,7 +11,7 @@ Passed all 6 tests - DBK - 2019-01-10
 
 """
 
-__updated__ = '2019-02-12'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -64,7 +64,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj.FamilyInformation = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_01_Tags(self):
         """ Be sure
@@ -83,7 +83,7 @@ class A2_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.FamilyData = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj.FamilyInformation = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_2_Controllers(self):
         """ Be sure that the XML contains the right stuff.

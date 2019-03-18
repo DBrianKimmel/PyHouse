@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2018-11-25'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -204,12 +204,13 @@ class B1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
         self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
 
-    def test_02_Type(self):
+    def badtest_02_Type(self):
         """ Test detecting bad type
+        causes a warning to print out from the logging system
         """
-        # l_xml = ET.fromstring(BAD_TYPE)
+        l_xml = ET.fromstring(BAD_TYPE)
         # print(PrettyFormatAny.form(l_xml, 'B1-02-A - Bad XML'))
-        # l_ret = entertainmentXML().read_entertainment_subsection(l_xml)
+        l_ret = entertainmentXML().read_entertainment_subsection(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Pandora Device'))
         self.assertEqual(l_ret.Type, 'Missing Type')
 
@@ -343,7 +344,7 @@ class C3_ReadSubSection(SetupMixin, unittest.TestCase):
         l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         # print(PrettyFormatAny.form(l_xml, 'C3-02-A - Onkyo XML'))
         l_ret = entertainmentXML().read_entertainment_subsection(self.m_pyhouse_obj, l_xml)
-        print(PrettyFormatAny.form(l_ret, 'C3-02-B - Onkyo Plugin'))
+        # print(PrettyFormatAny.form(l_ret, 'C3-02-B - Onkyo Plugin'))
         # print(PrettyFormatAny.form(l_ret.Devices, 'C3-02-C - Onkyo Devices'))
         self.assertEqual(l_ret.Active, TESTING_ONKYO_ACTIVE)
         self.assertEqual(l_ret.Name, 'onkyo')
@@ -497,7 +498,7 @@ class D3_WriteSubSection(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj.Devices, 'D3-01-B - Devices'))
         # print(PrettyFormatAny.form(l_obj.Devices[0], 'D3-01-C - Drvice-0'))
         l_xml = entertainmentXML().write_entertainment_subsection(l_obj)
-        print(PrettyFormatAny.form(l_xml, 'D3-01-F - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'D3-01-F - XML'))
         self.assertEqual(l_xml.attrib['Active'], TESTING_ONKYO_ACTIVE)
         self.assertEqual(l_xml.find('Type').text, TESTING_ONKYO_TYPE)
 

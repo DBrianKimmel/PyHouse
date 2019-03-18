@@ -11,7 +11,7 @@ Passed all 23 tests - DBK - 2017-04-29
 
 """
 
-__updated__ = '2017-04-29'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -75,14 +75,16 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_obj = ControllerData()
         self.inst = Util
-        self.m_pyhouse_obj.House.FamilyData = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_Insteon_utils')
 
@@ -334,6 +336,7 @@ class F1_Update(SetupMixin, unittest.TestCase):
         """
         _l_garage = self.m_pyhouse_obj.House.Lighting.Buttons[0]
         # print(PrettyFormatAny.form(l_garage, 'F1-05-A - Garage'))
+
 
 class J1_Json(SetupMixin, unittest.TestCase):
     """ Update the PyHouse store given an object with an insteon address.

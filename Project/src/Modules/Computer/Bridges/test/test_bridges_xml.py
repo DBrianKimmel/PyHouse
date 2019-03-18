@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Computer/Bridges/test/test_bridges_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 23, 2017
 @license:   MIT License
 @summary:
 
-Passed all 12 tests - DBK - 2018-02-12
+Passed all 12 tests - DBK - 2019-03-18
 
 """
 
-__updated__ = '2019-02-24'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -79,7 +79,7 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
-        print('Id: test_bridges')
+        print('Id: test_bridges_xml')
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
@@ -109,7 +109,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_BRIDGES)
-        print('A2-02-A - Parsed', PrettyFormatAny.form(l_xml, 'A2-02-A Parsed'))
+        # print('A2-02-A - Parsed', PrettyFormatAny.form(l_xml, 'A2-02-A Parsed'))
         self.assertEqual(l_xml.tag, TESTING_BRIDGES_SECTION)
 
 
@@ -181,7 +181,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """
         """
         l_xml = self.m_xml.bridges_sect[1]
-        l_xml.find('Type').text = 'Garbage'
+        l_xml.find('Type').text = 'Test B1-05 - Deliberate Garbage'
         l_type = bridgesXML()._read_type(l_xml)
         # print(PrettyFormatAny.form(l_type, 'B1-05-A - Type'))
         self.assertEqual(l_type, 'Null')
@@ -241,7 +241,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.Computer.Bridges = l_obj
         # print(PrettyFormatAny.form(l_obj, 'C1-03-A - Bridges'))
         l_sect_xml = bridgesXML.write_bridges_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_sect_xml, 'C1-03-B - Bridges'))
+        # print(PrettyFormatAny.form(l_sect_xml, 'C1-03-B - Bridges'))
         l_xml = l_sect_xml[0]
         self.assertEqual(l_xml.attrib['Name'], TESTING_BRIDGE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_BRIDGE_KEY_0)

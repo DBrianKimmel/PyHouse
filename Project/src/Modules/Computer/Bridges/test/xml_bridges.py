@@ -18,7 +18,7 @@ BridgesSection
 
 """
 
-__updated__ = '2019-02-24'
+__updated__ = '2019-03-18'
 
 TESTING_BRIDGES_SECTION = 'BridgesSection'
 TESTING_BRIDGE = 'Bridge'
@@ -45,14 +45,14 @@ L_BRIDGE_START_0 = '    ' + \
     'Key="' + TESTING_BRIDGE_KEY_0 + '" ' + \
     'Active="' + TESTING_BRIDGE_ACTIVE_0 + '"' + \
     '>'
-L_BRIDGE_UUID_0 = '      <UUID>' + TESTING_BRIDGE_UUID_0 + '</UUID>'
-L_BRIDGE_COMMENT_0 = '      <Comment>' + TESTING_BRIDGE_COMMENT_0 + '</Comment>'
-L_BRIDGE_CONNECTION_0 = '      <Connection>' + TESTING_BRIDGE_CONNECTION_0 + '</Connection>'
-L_BRIDGE_TYPE_0 = '      <Type>' + TESTING_BRIDGE_TYPE_0 + '</Type>'
-L_BRIDGE_IPV4_ADDRESS_0 = '      <IPv4Address>' + TESTING_BRIDGE_IPV4ADDRESS_0 + '</IPv4Address>'
-L_BRIDGE_PORT_0 = '      <Port>' + TESTING_BRIDGE_PORT_0 + '</Port>'
-L_BRIDGE_USERNAME_0 = '      <UserName>' + TESTING_BRIDGE_USERNAME_0 + '</UserName>'
-L_BRIDGE_PASSWORD_0 = '      <Password>' + TESTING_BRIDGE_PASSWORD_0 + '</Password>'
+L_BRIDGE_UUID_0 = '<UUID>' + TESTING_BRIDGE_UUID_0 + '</UUID>'
+L_BRIDGE_COMMENT_0 = '<Comment>' + TESTING_BRIDGE_COMMENT_0 + '</Comment>'
+L_BRIDGE_CONNECTION_0 = '<Connection>' + TESTING_BRIDGE_CONNECTION_0 + '</Connection>'
+L_BRIDGE_TYPE_0 = '<Type>' + TESTING_BRIDGE_TYPE_0 + '</Type>'
+L_BRIDGE_IPV4_ADDRESS_0 = '<IPv4Address>' + TESTING_BRIDGE_IPV4ADDRESS_0 + '</IPv4Address>'
+L_BRIDGE_PORT_0 = '<Port>' + TESTING_BRIDGE_PORT_0 + '</Port>'
+L_BRIDGE_USERNAME_0 = '<UserName>' + TESTING_BRIDGE_USERNAME_0 + '</UserName>'
+L_BRIDGE_PASSWORD_0 = '<Password>' + TESTING_BRIDGE_PASSWORD_0 + '</Password>'
 
 L_BRIDGE_0 = '\n'.join([
     L_BRIDGE_START_0,

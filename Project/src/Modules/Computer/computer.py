@@ -29,7 +29,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-03-06'
+__updated__ = '2019-03-16'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -40,7 +40,7 @@ import platform
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
 from Modules.Core.Utilities import extract_tools, uuid_tools
-from Modules.Core.Utilities.xml_tools import XmlConfigTools
+from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.Communication.communication import API as communicationAPI
@@ -109,17 +109,31 @@ class MqttActions(object):
         return l_logmsg
 
 
-class Xml(object):
+class Xml:
 
-    @staticmethod
-    def read_computer_xml(p_pyhouse_obj):
-        l_obj = ComputerInformation()
-        l_xml = XmlConfigTools.read_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
+    def _read_computer_specs(self, p_obj, p_xml):
+        """ Read the extra computer info
+        """
+        p_obj.Priority = PutGetXML.get_int_from_xml(p_xml, "Priority")
+        return p_obj
+
+    def _write_computer_specs(self, p_xml, p_obj):
+        """
+        """
+        PutGetXML().put_int_element(p_xml, 'Priority', p_obj.Priority)
+        return p_xml
+
+    def read_computer_xml(self, p_pyhouse_obj):
+        l_section = XmlConfigTools.find_section(p_pyhouse_obj, 'ComputerDivision')
+        l_obj = p_pyhouse_obj.Computer
+        XmlConfigTools.read_base_UUID_object_xml(l_obj, l_section)
+        self._read_computer_specs(l_obj, l_section)
         return l_obj
 
-    @staticmethod
-    def write_computer_xml(p_pyhouse_obj):
-        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
+    def write_computer_xml(self, p_pyhouse_obj):
+        l_obj = p_pyhouse_obj.Computer
+        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, l_obj)
+        l_extra_xml = self._write_computer_specs(l_xml, l_obj)
         return l_xml
 
 
@@ -215,7 +229,7 @@ class API(Utility):
         """
         """
         # LOG.info('Loading XML')
-        # Xml.read_computer_xml(p_pyhouse_obj)
+        Xml().read_computer_xml(p_pyhouse_obj)
         Utility._load_component_xml(p_pyhouse_obj)
         LOG.info('Loaded XML.')
 
@@ -231,7 +245,7 @@ class API(Utility):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        l_xml = Xml.write_computer_xml(self.m_pyhouse_obj)
+        l_xml = Xml().write_computer_xml(self.m_pyhouse_obj)
         Utility._save_component_apis(self.m_pyhouse_obj, l_xml)
         p_xml.append(l_xml)
         LOG.info("Saved Computer XML.")

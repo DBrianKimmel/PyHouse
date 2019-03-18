@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,9 +22,9 @@ from test.testing_mixin import SetupPyHouseObj
 
 
 class Workspace(object):
+
     def __init__(self):
         self.m_pyhouse_obj = None
-
 
 
 class SetupMixin(object):
@@ -36,10 +36,11 @@ class SetupMixin(object):
         self.m_workspace_obj.m_pyhouse_obj = self.m_pyhouse_obj
 
 
-
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_rooms')
 
@@ -50,7 +51,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.House.FamilyData = family.API().build_lighting_family_info()
+        # self.m_pyhouse_obj.FamilyInformation = family.API().build_lighting_family_info()
         # self.m_controller_obj = ControllerData()
 
     def test_01_FindXml(self):

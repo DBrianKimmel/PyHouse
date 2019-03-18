@@ -10,10 +10,10 @@
 This test should always be run as the very first test.
 It will check the XML file for being fundamentally correct for all other tests that use the XML data.
 
-Passed all 12 tests - DBK - 2017-01-18
+Passed all 11 tests - DBK - 2019-03-18
 """
 
-__updated__ = '2019-02-23'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,12 +43,14 @@ class A1_Raw(unittest.TestCase):
         pass
 
     def test_01_print(self):
-        print(XML_EMPTY)
-        print(PrettyFormatAny.form(XML_EMPTY, 'Root'))
+        # print(XML_EMPTY)
+        # print(PrettyFormatAny.form(XML_EMPTY, 'Root'))
+        pass
 
     def test_02_print(self):
-        print(XML_LONG)
-        print(PrettyFormatAny.form(XML_LONG, 'Root'))
+        # print(XML_LONG)
+        # print(PrettyFormatAny.form(XML_LONG, 'Root'))
+        pass
 
     def test_02_raw_1_4(self):
         l_str = XML_LONG.split('\n')
@@ -105,7 +107,7 @@ class D1_Master(unittest.TestCase):
 
     def test_01_All(self):
         # print(PrettyFormatAny.form(self.m_tree, 'Tree', 160))
-        print(PrettyFormatAny.form(self.m_root_element, 'Root', 160))
+        # print(PrettyFormatAny.form(self.m_root_element, 'Root', 160))
         self.assertEqual(self.m_root_element.tag, TESTING_PYHOUSE)
 
 # ## END DBK
