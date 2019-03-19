@@ -12,7 +12,7 @@ Passed all 9 tests - DBK - 2019-01-24
 http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2019-01-24'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import datetime
@@ -49,7 +49,7 @@ DEG2RAD = pi / 180.0
 #  http://www.esrl.noaa.gov/gmd/grad/solcalc/sunrise.html
 T_DATE_1 = datetime.date(2014, 4, 22)
 T_SUNRISE_1 = datetime.datetime(2014, 4, 22, 6, 57, 32)
-T_SUNSET_1 = datetime.datetime(2014, 4, 22, 19, 59, 50)
+T_SUNSET_1 = datetime.datetime(2014, 4, 22, 20, 0, 16)
 
 T_DATE_2 = datetime.date(2015, 7, 23)
 T_SUNRISE_2 = datetime.datetime(2015, 7, 23, 6, 46, 0)
@@ -184,7 +184,7 @@ class C1_Delay(SetupMixin, unittest.TestCase):
 
     def test_01_Loc(self):
         l_delay = astralUtil()._till_next()
-        print(PrettyFormatAny.form(l_delay, 'Next'))
+        # print(PrettyFormatAny.form(l_delay, 'Next'))
 
     def test_02(self):
         pass
@@ -201,6 +201,6 @@ class D1_Now(SetupMixin, unittest.TestCase):
 
     def test_01_Loc(self):
         l_now = astralUtil().get_seconds_to_recalc()
-        print(PrettyFormatAny.form(l_now, 'Next'))
+        # print(PrettyFormatAny.form(l_now, 'Next'))
 
 # ## END DBK

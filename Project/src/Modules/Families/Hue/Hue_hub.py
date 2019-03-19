@@ -26,8 +26,9 @@ The Hue Hub is a network device so we need to know which PyHouse instance is goi
 http://192.168.1.131/debug/clip.html
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-03-19'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -446,25 +447,45 @@ class HueProtocol(Protocol):
     m_finished = None
     m_remaining = 0
 
-    def __init__(self, p_finished):
+    def __init__(self, p_finished, p_command, p_response_code):
         """
         @param p_finished: is a deferred that ????
         """
         self.m_finished = p_finished
+        self.m_command = p_command
+        self.m_code = p_response_code
+        self.m_body = ''
         self.m_remaining = 1024 * 10  # Allow for 10kb response
+        # LOG.debug('Hue Protocol Init')
 
     def dataReceived(self, p_bytes):
         if self.m_remaining > 0:
             l_display = p_bytes[:self.m_remaining].decode("utf8")  # Get the string
             l_json = jsonpickle.decode(l_display)
-            LOG.debug('\n===== Body =====\n{}\n'.format(l_json))
+            # LOG.debug('\n\tCommand: {}\n===== Body =====\n{}\n'.format(self.m_command, l_json))
+            self.m_body = l_display
             self.m_remaining -= len(l_display)
 
     def connectionLost(self, p_reason):
+        """
+        """
+
+        def cb_log(self, p_command, p_code, p_body):
+            """
+            """
+            LOG.debug('\n\tCommand: {}\n\tCode: {}\n\tBody: {}'.format(p_command, p_code, p_body))
+
         l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)
-        LOG.debug('Finished receiving body: {}'.format(p_reason))
+        # LOG.debug('Finished receiving body: {}'.format(PrettyFormatAny.form(l_msg, 'Reason', 190)))
+        if l_msg == '':
+            self.m_finished.addCallback(cb_log, self.m_command, self.m_code, self.m_body)
+            # self.m_finished.callback(self.cb_log((self.m_command, self.m_code, self.m_body)))
+            self.m_finished.callback(None)
+            return
+        LOG.debug('Finished receiving body: {}'.format(PrettyFormatAny.form(l_msg, 'Reason', 190)))
         LOG.debug('Finished receiving body: {}'.format("\t".join(str(x) for x in l_msg)))
         self.m_finished.callback(None)
+        return
 
 
 class HueDecode(object):
@@ -556,16 +577,20 @@ class HueHub(object):
         """
 
         def cb_Response(p_response, p_command):
-            LOG.debug('Command: {}'.format(p_command))
-            LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
-            l_finished = Deferred()
-            p_response.deliverBody(HueProtocol(l_finished))
-            return l_finished
+            # LOG.debug('Command: {}'.format(p_command))
+            # LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
+            d_finished = Deferred()
+            p_response.deliverBody(HueProtocol(d_finished, p_command, p_response.code))
+            return d_finished
 
-        l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, None)
-        l_agent_d.addCallback(cb_Response, p_command)
+        d_agent = self.m_hue_agent.request(
+            b'GET',
+            self._build_uri(p_command),
+            self.m_headers,
+            None)
+        d_agent.addCallback(cb_Response, p_command)
         HueDecode().decode_get()
-        return l_agent_d
+        return d_agent
 
     def HubPost(self, p_command, p_body):
         """
@@ -577,7 +602,7 @@ class HueHub(object):
             LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
             # LOG.debug('Response Headers: {}'.format(p_response.headers.decode("utf8")))
             l_finished = Deferred()
-            p_response.deliverBody(HueProtocol(l_finished))
+            p_response.deliverBody(HueProtocol(l_finished, p_command))
             return l_finished
 
         l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, p_body)
@@ -605,7 +630,7 @@ class HueHub(object):
         return l_agent_d
 
     def HubStart(self, p_bridge_obj):
-        """ Start the hub and then get the hub data
+        """ Start the hub(bridge) and then get the hub data
 
         @param p_bridge_obj: is PyHouse_Obj.Computers.Bridges.xxx with xxx being a HueHub
 

@@ -2,12 +2,12 @@
 @name:      PyHouse/src/Modules/Entertainment/test/test_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 14, 2013
 @summary:   Test
 
-Passed all 12 tests - DBK - 2018-10-17
+Passed all 13 tests - DBK - 2019-03-18
 
 """
 
@@ -157,13 +157,13 @@ class C1_Load(SetupMixin, unittest.TestCase):
         """
         l_ret = self.m_api.LoadXml(self.m_pyhouse_obj)
         l_entertain = self.m_pyhouse_obj.House.Entertainment
-        print(PrettyFormatAny.form(l_entertain, 'C1-01-A - Entertainment'))
-        print(PrettyFormatAny.form(l_entertain.Plugins, 'C1-01-B- Plugins'))
-        print(PrettyFormatAny.form(l_entertain.Plugins['onkyo'], 'C1-01-C - Plugins["onkyo"]'))
-        print(PrettyFormatAny.form(l_entertain.Plugins['panasonic'], 'C1-01-D - Plugins["panasonic"]'))
-        print(PrettyFormatAny.form(l_entertain.Plugins['pandora'], 'C1-01-E - Plugins["pandora"]'))
-        print(PrettyFormatAny.form(l_entertain.Plugins['pioneer'], 'C1-01-F - Plugins["pioneer"]'))
-        print(PrettyFormatAny.form(l_entertain.Plugins['samsung'], 'C1-01-G - Plugins["samsung"]'))
+        # print(PrettyFormatAny.form(l_entertain, 'C1-01-A - Entertainment'))
+        # print(PrettyFormatAny.form(l_entertain.Plugins, 'C1-01-B- Plugins'))
+        # print(PrettyFormatAny.form(l_entertain.Plugins['onkyo'], 'C1-01-C - Plugins["onkyo"]'))
+        # print(PrettyFormatAny.form(l_entertain.Plugins['panasonic'], 'C1-01-D - Plugins["panasonic"]'))
+        # print(PrettyFormatAny.form(l_entertain.Plugins['pandora'], 'C1-01-E - Plugins["pandora"]'))
+        # print(PrettyFormatAny.form(l_entertain.Plugins['pioneer'], 'C1-01-F - Plugins["pioneer"]'))
+        # print(PrettyFormatAny.form(l_entertain.Plugins['samsung'], 'C1-01-G - Plugins["samsung"]'))
 
 
 class D1_Save(SetupMixin, unittest.TestCase):
@@ -206,7 +206,7 @@ class D1_Save(SetupMixin, unittest.TestCase):
         l_xml1 = entertainmentAPI(self.m_pyhouse_obj).SaveXml(l_xml)
         l_ent = self.m_pyhouse_obj.House.Entertainment = l_ret
         # print(PrettyFormatAny.form(l_ent.Plugins, 'D1-03-A- Plugins'))
-        print(PrettyFormatAny.form(l_ent.Plugins['pandora'], 'D1-03-Pandora - Plugins["pandora"]'))
-        print(PrettyFormatAny.form(l_ent.Plugins['pandora']._API, 'D1-02-H - Plugins["pandora"].API'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['pandora'], 'D1-03-Pandora - Plugins["pandora"]'))
+        # print(PrettyFormatAny.form(l_ent.Plugins['pandora']._API, 'D1-02-H - Plugins["pandora"].API'))
 
 # ## END DBK

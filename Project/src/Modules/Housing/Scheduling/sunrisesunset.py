@@ -19,7 +19,7 @@
 
 """
 
-__updated__ = '2019-01-25'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import datetime
@@ -74,9 +74,9 @@ class Utility(object):
         l_now = p_time
         l_ten = datetime.datetime(l_now.year, l_now.month, l_now.day, 10, 0, 0, tzinfo=self.m_tz)
         l_togo = (l_now - l_ten).total_seconds()
-        print('Now    ', l_now)
-        print('Recalc ', l_ten)
-        print('ToGo   ', l_togo)
+        # print('Now    ', l_now)
+        # print('Recalc ', l_ten)
+        # print('ToGo   ', l_togo)
         if l_togo < 0:
             l_togo += (24 * 60 * 60)
             pass

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-03-19'
 
 # Import system type stuff
 
@@ -51,8 +51,11 @@ class API(object):
         """
         return p_xml
 
-    def ControlDevice(self, p_device_obj, p_controller_obj, p_control):
-        """
+    def ControlDevice(self, p_device_obj, p_bridge_obj, p_control):
+        """ Control some device using the Philips Hue HUB.
+        @param p_device_obj: is the device being controlled.
+        @param p_bridge_obj: is the HUB
+        @param p_control: is the generic control actions to be performed on the device
         """
         pass
 

@@ -2,17 +2,17 @@
 @name:      PyHouse/src/Modules/Housing/Pool/test/test_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 27, 2015
 @Summary:
 
-Passed all 13 tests - DBK - 2017-01-12
+Passed all 15 tests - DBK - 2019-01-12
 
 """
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -180,7 +180,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         """ Write one entire pool XML
         """
         l_xml = poolXml._write_one_pool(self.m_pools[0])
-        print(PrettyFormatAny.form(l_xml, 'W1-02-A - Pool 0'))
+        # print(PrettyFormatAny.form(l_xml, 'W1-02-A - Pool 0'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_POOL_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_POOL_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_POOL_ACTIVE_0)
@@ -191,7 +191,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         """ Write one entire pool XML
         """
         l_xml = poolXml._write_one_pool(self.m_pools[1])
-        print(PrettyFormatAny.form(l_xml, 'W1-03-A - Pool 1'))
+        # print(PrettyFormatAny.form(l_xml, 'W1-03-A - Pool 1'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_POOL_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], TESTING_POOL_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_POOL_ACTIVE_1)
@@ -202,7 +202,7 @@ class W1_Write(SetupMixin, unittest.TestCase):
         """ Write Pool Section with all pools.
         """
         l_xml, l_count = poolXml.write_all_pools_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'W1-04-A - Pool'))
+        # print(PrettyFormatAny.form(l_xml, 'W1-04-A - Pool'))
         # l_xml1 = l_xml.find('Pool')
         l_xml2 = l_xml[0]
         self.assertEqual(l_xml2.attrib['Name'], TESTING_POOL_NAME_0)

@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Housing/Hvac/test/test_hvac_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
 
-Passed all 17 tests - DBK - 2016-11-08
+Passed all 17 tests - DBK - 2019-03-18
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-03-18'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -23,10 +23,11 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.Utilities import convert
 # from Modules.Housing.Hvac.hvac_xml import Utility, XML as hvacXML
 from Modules.Core.test.xml_device import \
-    TESTING_DEVICE_ROOM_NAME, \
+    TESTING_DEVICE_ROOM_NAME_0, \
     TESTING_DEVICE_FAMILY_INSTEON, \
-    TESTING_DEVICE_SUBTYPE, \
-    TESTING_DEVICE_ROOM_UUID, TESTING_DEVICE_COMMENT_0
+    TESTING_DEVICE_SUBTYPE_0, \
+    TESTING_DEVICE_ROOM_UUID_0, \
+    TESTING_DEVICE_COMMENT_0
 from Modules.Families.Insteon.test.xml_insteon import \
     TESTING_INSTEON_ADDRESS_0, \
     TESTING_INSTEON_DEVCAT_0, \
@@ -121,10 +122,10 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.UUID, TESTING_THERMOSTAT_UUID_0)
         self.assertEqual(l_obj.Comment, TESTING_HVAC_THERMOSTAT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE)
+        self.assertEqual(str(l_obj.DeviceSubType), TESTING_DEVICE_SUBTYPE_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY_0)
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
-        self.assertEqual(l_obj.RoomUUID, TESTING_DEVICE_ROOM_UUID)
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
+        self.assertEqual(l_obj.RoomUUID, TESTING_DEVICE_ROOM_UUID_0)
 
     def test_02_BaseDevice(self):
         """Read the base device XML
@@ -136,7 +137,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Key, int(TESTING_THERMOSTAT_KEY_0))
         self.assertEqual(l_obj.Comment, TESTING_HVAC_THERMOSTAT_COMMENT_0)
         self.assertEqual(l_obj.DeviceFamily, TESTING_THERMOSTAT_DEVICE_FAMILY_0)
-        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_obj.RoomName, TESTING_DEVICE_ROOM_NAME_0)
 
     def test_03_Thermostat(self):
         """Read the thermostat specific data.
@@ -198,7 +199,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], TESTING_HVAC_THERMOSTAT_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_HVAC_THERMOSTAT_COMMENT_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME_0)
 
     def test_02_BaseDevice(self):
         """Write the base device.
@@ -210,7 +211,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], TESTING_HVAC_THERMOSTAT_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_HVAC_THERMOSTAT_COMMENT_0)
         self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME)
+        self.assertEqual(l_xml.find('RoomName').text, TESTING_DEVICE_ROOM_NAME_0)
 
     def test_03_Thermostat(self):
         """ Write the thermostat specific data to XML

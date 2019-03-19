@@ -125,7 +125,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         """Utility.
         """
         l_xml = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
-        self.assertEqual(len(l_xml.Controllers), 2)
+        self.assertEqual(len(l_xml.Controllers), 3)
         self.assertEqual(l_xml.Controllers[0].Name, TESTING_CONTROLLER_NAME_0)
         self.assertEqual(l_xml.Controllers[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.Controllers[1].Name, TESTING_CONTROLLER_NAME_1)
@@ -146,7 +146,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         l_obj = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_obj, 'B1-4-A - Lighting'))
         self.assertEqual(len(l_obj.Buttons), 2)
-        self.assertEqual(len(l_obj.Controllers), 2)
+        self.assertEqual(len(l_obj.Controllers), 3)
         self.assertEqual(len(l_obj.Lights), 3)
         self.assertEqual(l_obj.Buttons[0].Name, TESTING_LIGHTING_BUTTON_NAME_0)
         self.assertEqual(l_obj.Buttons[1].Name, TESTING_LIGHTING_BUTTON_NAME_1)
@@ -174,7 +174,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'B2-1-A - XML'))
         self.assertEqual(len(l_xml), 3)
         self.assertEqual(len(l_xml[0]), 2)
-        self.assertEqual(len(l_xml[1]), 2)
+        self.assertEqual(len(l_xml[1]), 3)
         self.assertEqual(len(l_xml[2]), 3)
         self.assertEqual(l_xml.find(TESTING_LIGHT_SECTION).tag, TESTING_LIGHT_SECTION)
         self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')

@@ -13,7 +13,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2019-01-15'
+__updated__ = '2019-03-18'
 
 # strategy:
 #
@@ -22,14 +22,24 @@ __updated__ = '2019-01-15'
 #
 
 # Import system type stuff
-import os.path
-from twisted.web.client import getPage
-from lxml import etree
+import jsonpickle
+# from twisted.web.client import getPage
+from twisted.internet import ssl, task, protocol, endpoints
+from twisted.internet.defer import Deferred, inlineCallbacks  # , succeed
+from twisted.internet.protocol import ClientFactory, Factory, Protocol
+from twisted.protocols.basic import LineReceiver
+from twisted.python.filepath import FilePath
+from twisted.python.modules import getModule
+from twisted.web.client import Agent
+from twisted.web.http_headers import Headers
 
 # Import PyHouse files
 
-VERSION_PATH = '../../../../VERSION'
-REPOSITORY = b'https://github.com/DBrianKimmel/PyHouse/'
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.Auto_Update    ')
+
+VERSION_PATH = '../../../../../VERSION'
+REPOSITORY = b'https://raw.github.com/DBrianKimmel/PyHouse/Project/Version'
 REPOSITORY_PATH = 'Project/VERSION'
 
 
@@ -38,10 +48,8 @@ def _find_pyhouse_version_file():
     Find the normalized VERSION file name
     PyHouse/Project/src/VERSION
     """
-    l_dir = os.path.abspath(__file__)
-    l_filename = os.path.join(os.path.dirname(l_dir), VERSION_PATH)
-    l_filename = os.path.normpath(l_filename)
-    return l_filename
+    l_file = FilePath(VERSION_PATH)
+    return l_file
 
 
 class FindLocalVersion(object):
@@ -49,43 +57,96 @@ class FindLocalVersion(object):
     """
 
     def __init__(self):
-        self.m_version = 'latest'
-        self.m_source = 'latest'
-        self.m_filename = _find_pyhouse_version_file()
-        try:
-            with open(self.m_filename) as f:
-                self.m_version = f.read().strip()
-                self.m_source = 'Local file {}'.format(self.m_filename)
+        l_name = self.get_filename()
+        _l_version = self.get_version(l_name)
 
-        except IOError:
-            from subprocess import Popen, PIPE
-            import re
+    def get_filename(self):
+        return FilePath(VERSION_PATH)
 
-            VERSION_MATCH = re.compile(r'\d+\.\d+\.\d+(\w|-)*')
+    def get_version(self, p_name):
+        """
+        @return: a bytestream of the version
+        """
+        l_file = p_name.open()
+        l_version = l_file.read()
+        return l_version
 
-            try:
-                l_dir = os.path.dirname(os.path.abspath(__file__))
-                l_pipe = Popen(['git', 'describe', '--tags', '--always'], cwd=l_dir, stdout=PIPE, stderr=PIPE)
-                l_out = l_pipe.communicate()[0]
 
-                if (not l_pipe.returncode) and l_out:
-                    l_ver = VERSION_MATCH.search(l_out)
-                    if l_ver:
-                        self.m_version = l_ver.group()
-                        self.m_source = 'Git repository {}, {}'.format(l_out, l_ver)
-            except OSError:
-                pass
+class GithubProtocol(Protocol):
+    """ A minimal protocol for the Hue Hub.
+    """
 
-    def get_version(self):
-        return (self.m_version, self.m_source, self.m_filename)
+    m_finished = None
+    m_remaining = 0
+
+    def __init__(self, p_finished):
+        """
+        @param p_finished: is a deferred that ????
+        """
+        self.m_finished = p_finished
+        self.m_remaining = 1024 * 10  # Allow for 10kb response
+
+    def dataReceived(self, p_bytes):
+        if self.m_remaining > 0:
+            l_display = p_bytes[:self.m_remaining].decode("utf8")  # Get the string
+            l_json = jsonpickle.decode(l_display)
+            LOG.debug('\n===== Body =====\n{}\n'.format(l_json))
+            print('\n===== Body =====\n{}\n'.format(l_json))
+            self.m_remaining -= len(l_display)
+
+    def connectionLost(self, p_reason):
+        l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)
+        LOG.debug('Finished receiving body: {}'.format(p_reason))
+        print('Finished receiving body: {}'.format(p_reason))
+        LOG.debug('Finished receiving body: {}'.format("\t".join(str(x) for x in l_msg)))
+        print('Finished receiving body: {}'.format("\t".join(str(x) for x in l_msg)))
+        self.m_finished.callback(None)
 
 
 class FindRepositoryVersion(object):
     """ Check the version in the repository
     """
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
+        """
+        Agent is a very basic HTTP client.  It supports I{HTTP} and I{HTTPS} scheme URIs.
+
+        """
+        self.m_headers = Headers({'User-Agent': ['AutoUpdate Web Client']})
+        if p_pyhouse_obj != None:
+            self.m_pyhouse_obj = p_pyhouse_obj
+            self.m_hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+            LOG.info('Initialized')
+            print('Initialized')
         self.m_version = '0.0.0'
+
+    def get_uri(self):
+        return REPOSITORY
+
+    def get_repository(self):
+        """ Issue a request for information
+        It will arrive later via a deferred.
+        """
+
+        def cb_Response(p_response):
+            LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
+            print('Response Code: {} {}'.format(p_response.code, p_response.phrase))
+            d_finished = Deferred()
+            p_response.deliverBody(GithubProtocol(d_finished))
+            return d_finished
+
+        l_agent_d = self.m_hue_agent.request(
+            b'GET',
+            self.get_uri(),
+            self.m_headers,
+            None)
+        l_agent_d.addCallback(cb_Response)
+        # HueDecode().decode_get()
+        return l_agent_d
+
+    def get_file(self):
+        l_file = self.get_repository()
+        return l_file
 
     def print_page(self, p_html):
         """
@@ -96,16 +157,17 @@ class FindRepositoryVersion(object):
     def get_page(self):
         """
         """
-        l_defer = getPage(REPOSITORY)
+        l_defer = self.get_uri
         l_defer.addCallback(self.print_page)
 
     def get_version(self):
         return self.m_version
 
     def parseHtml(self, p_html):
-        l_parser = etree.HTMLParser(encoding='utf8')
+        # l_parser = etree.HTMLParser(encoding='utf8')
         # tree = etree.parse(StringIO.StringIO(html), parser)
         # return tree
+        pass
 
     def extractTitle(self, p_tree):
         # titleText = unicode(tree.xpath("//title/text()")[0])
@@ -122,13 +184,54 @@ class Utility(object):
     """
     """
 
-    def compare_versions(self, p_local_ver, p_repos_ver):
+    def compare_versions(self, _p_local_ver, _p_repos_ver):
         return True
+
+
+class EchoClient(LineReceiver):
+    end = b"Bye-bye!"
+
+    def connectionMade(self):
+        self.sendLine(b"Hello, world!")
+        self.sendLine(b"What a fine day it is.")
+        self.sendLine(self.end)
+
+    def lineReceived(self, line):
+        print("receive:", line)
+        if line == self.end:
+            self.transport.loseConnection()
+
+
+class EchoClientFactory(ClientFactory):
+    protocol = EchoClient
+
+    def __init__(self):
+        self.done = Deferred()
+
+    def clientConnectionFailed(self, connector, reason):
+        print('connection failed:', reason.getErrorMessage())
+        self.done.errback(reason)
+
+    def clientConnectionLost(self, connector, reason):
+        print('connection lost:', reason.getErrorMessage())
+        self.done.callback(None)
 
 
 class API(Utility):
     """
     """
+
+    @inlineCallbacks
+    def do_ssl(self, p_reactor):
+        l_factory = Factory.forProtocol(self.EchoClient)
+        l_certData = getModule(__name__).filePath.sibling('public.pem').getContent()
+        l_authority = ssl.Certificate.loadPEM(l_certData)
+        l_options = ssl.optionsForClientTLS(u'example.com', l_authority)
+        l_endpoint = endpoints.SSL4ClientEndpoint(p_reactor, 'localhost', 8000, l_options)
+        echoClient = yield l_endpoint.connect(l_factory)
+        d_done = Deferred()
+        echoClient.connectionLost = lambda reason: d_done.callback(None)
+        yield d_done
 
     def Start(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

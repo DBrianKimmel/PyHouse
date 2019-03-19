@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-02-07'
+__updated__ = '2019-03-18'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,7 +25,12 @@ from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Lighting.test.xml_lights import \
     XML_LIGHT_SECTION, \
-    TESTING_LIGHT_SECTION, TESTING_LIGHT_NAME_0, TESTING_LIGHT_UUID_0, TESTING_LIGHT_UUID_1, TESTING_LIGHT_NAME_1, TESTING_LIGHT_NAME_2, \
+    TESTING_LIGHT_SECTION, \
+    TESTING_LIGHT_NAME_0, \
+    TESTING_LIGHT_UUID_0, \
+    TESTING_LIGHT_UUID_1, \
+    TESTING_LIGHT_NAME_1, \
+    TESTING_LIGHT_NAME_2, \
     TESTING_LIGHT_UUID_2
 from Modules.Housing.Lighting.test.xml_lighting import \
     XML_LIGHTING
@@ -126,7 +131,7 @@ class B1_Lights_by_id(SetupMixin, unittest.TestCase):
 
 
 class B2_Object_by_id(SetupMixin, unittest.TestCase):
-    """ This section tests lookup
+    """ This section tests object lookup by some ID
     """
 
     def setUp(self):
@@ -134,7 +139,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         self.m_lights = lightXML().read_all_lights_xml(self.m_pyhouse_obj)
 
     def test_01_Name(self):
-        """ Write out the XML file for the Base controller
+        """ Lookup by name
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
@@ -143,7 +148,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret.UUID, TESTING_LIGHT_UUID_0)
 
     def test_02_UUID(self):
-        """ Write out the XML file for the Base controller
+        """ Lookup by UUID
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-02-A - Lights'))
@@ -152,11 +157,12 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_2)
 
     def test_03_None(self):
-        """ Write out the XML file for the Base controller
+        """ Lookup object by non-existant key (to test failure
+        Logs an error.
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = Utility()._get_object_by_id(l_objs, key=17)
+        l_ret = Utility()._get_object_by_id(l_objs, key=7777)
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
         self.assertIsNone(l_ret)
 
@@ -173,9 +179,9 @@ class C1_ByFamuly(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the Base controller
         """
         l_objs = self.m_controllers
-        print(PrettyFormatAny.form(l_objs, 'C1-01-A - Controllers'))
+        # print(PrettyFormatAny.form(l_objs, 'C1-01-A - Controllers'))
         l_ret = Utility().get_controller_objs_by_family(l_objs, 'Insteon')
-        print(PrettyFormatAny.form(l_ret, 'C1-01-B - Controller'))
+        # print(PrettyFormatAny.form(l_ret, 'C1-01-B - Controller'))
         # self.assertEqual(l_ret.Name, TESTING_CONTROLLER_NAME_0)
 
 # ## END DBK

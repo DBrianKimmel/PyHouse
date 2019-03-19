@@ -105,7 +105,7 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
-        print('Id: test_entertainment')
+        print('Id: test_entertainment_xml')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
