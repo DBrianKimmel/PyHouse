@@ -26,12 +26,12 @@ The Hue Hub is a network device so we need to know which PyHouse instance is goi
 http://192.168.1.131/debug/clip.html
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-03-19'
+__updated__ = '2019-03-20'
 
 # Import system type stuff
 from zope.interface import implementer
+import datetime
 import jsonpickle
 from queue import Queue
 import time
@@ -42,10 +42,10 @@ from twisted.internet.protocol import Protocol
 from twisted.web.iweb import IBodyProducer
 
 # Import PyMh files
-# from Modules.Housing.Lighting.lighting_lights import LightData
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Families.Hue.Hue_data import HueLightData
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
@@ -461,7 +461,7 @@ class HueProtocol(Protocol):
     def dataReceived(self, p_bytes):
         if self.m_remaining > 0:
             l_display = p_bytes[:self.m_remaining].decode("utf8")  # Get the string
-            l_json = jsonpickle.decode(l_display)
+            # l_json = jsonpickle.decode(l_display)
             # LOG.debug('\n\tCommand: {}\n===== Body =====\n{}\n'.format(self.m_command, l_json))
             self.m_body = l_display
             self.m_remaining -= len(l_display)
@@ -471,15 +471,25 @@ class HueProtocol(Protocol):
         """
 
         def cb_log(self, p_command, p_code, p_body):
-            """
+            """ Log the response to our command and dispatch the message
             """
             LOG.debug('\n\tCommand: {}\n\tCode: {}\n\tBody: {}'.format(p_command, p_code, p_body))
+            if p_command == '/config':
+                HueDispatch().get_config(p_body)
+            elif p_command == '/lights':
+                HueDispatch().get_lights(p_body)
+            elif p_command == '/rules':
+                HueDispatch().get_rules(p_body)
+            elif p_command == '/scenes':
+                HueDispatch().get_scenes(p_body)
+            elif p_command == '/schedules':
+                HueDispatch().get_schedules(p_body)
+            elif p_command == '/sensors':
+                HueDispatch().get_sensors(p_body)
 
         l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)
-        # LOG.debug('Finished receiving body: {}'.format(PrettyFormatAny.form(l_msg, 'Reason', 190)))
         if l_msg == '':
             self.m_finished.addCallback(cb_log, self.m_command, self.m_code, self.m_body)
-            # self.m_finished.callback(self.cb_log((self.m_command, self.m_code, self.m_body)))
             self.m_finished.callback(None)
             return
         LOG.debug('Finished receiving body: {}'.format(PrettyFormatAny.form(l_msg, 'Reason', 190)))
@@ -501,6 +511,75 @@ class HueDecode(object):
         """
         """
         LOG.info('Decode_Post')
+
+
+class HueDispatch:
+    """
+    """
+
+    def _add_light(self, p_light_obj):
+        pass
+
+    def get_config(self, p_body):
+        l_msg = jsonpickle.decode(p_body)
+        LOG.debug('Got Config {}'.format(PrettyFormatAny.form(l_msg, 'Config', 190)))
+
+    def get_lights(self, p_body):
+        """
+        See Docs/Design.md for the JSON returned.
+        """
+        l_json = jsonpickle.decode(p_body)
+        # LOG.debug('Got Lights {}'.format(PrettyFormatAny.form(l_json, 'Lights', 190)))
+        for l_light_obj in l_json.items():
+            l_light = HueLightData()
+            LOG.debug('Light: {}'.format(PrettyFormatAny.form(l_light_obj, 'Light', 190)))
+            for l_key, l_value in l_light_obj[1].items():
+                l_light.HueLightIndex = l_light_obj[0]
+                l_light.Key = l_light_obj[0]
+                l_light.Active = True
+                l_light.DeviceFamily = 'Hue'
+                l_light.DeviceType = 1  # Lighting
+                l_light.DeviceSubType = 2  # Light
+                l_light.ControllerName = 'Hue Hub'
+                l_light.LastUpdate = datetime.datetime.now()
+                l_light.IsDimmable = True
+                LOG.debug('Add Light: {} {}'.format(l_key, PrettyFormatAny.form(l_value, 'Light', 190)))
+                if l_key == 'name':
+                    l_light.Name = l_value
+                    # LOG.debug('Add Light {}'.format(PrettyFormatAny.form(l_light, 'Light', 190)))
+                if l_key == 'type':
+                    l_light.Comment = l_value
+                if l_key == 'uniqueid':
+                    l_light.HueUniqueId = l_value
+                if l_key == 'state':
+                    l_state = False
+                    for l_st_key, l_st_val in l_value.items():
+                        if l_st_key == 'on':
+                            l_state = l_st_val
+                        if l_st_key == 'bri':
+                            l_bri = l_st_val
+                    if l_state == True:
+                        l_light.BrightnessPct = int(l_bri / 2.54)
+                    else:
+                        l_light.BrightnessPct = 0
+            LOG.debug('Add Light {}'.format(PrettyFormatAny.form(l_light, 'Light', 190)))
+            self._add_light(l_light)
+
+    def get_rules(self, p_body):
+        l_msg = jsonpickle.decode(p_body)
+        LOG.debug('Got Rules {}'.format(PrettyFormatAny.form(l_msg, 'Rules', 190)))
+
+    def get_scenes(self, p_body):
+        l_msg = jsonpickle.decode(p_body)
+        LOG.debug('Got Scenes {}'.format(PrettyFormatAny.form(l_msg, 'Scenes', 190)))
+
+    def get_schedules(self, p_body):
+        l_msg = jsonpickle.decode(p_body)
+        LOG.debug('Got Schedules {}'.format(PrettyFormatAny.form(l_msg, 'Schedules', 190)))
+
+    def get_sensors(self, p_body):
+        l_msg = jsonpickle.decode(p_body)
+        LOG.debug('Got Sensors {}'.format(PrettyFormatAny.form(l_msg, 'Sensors', 190)))
 
 
 class HueHub(object):

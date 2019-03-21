@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-03-20'
 
 from datetime import datetime
 
@@ -67,7 +67,7 @@ L_SCHEDULE_ROOM_NAME_0 = '<RoomName>' + TESTING_SCHEDULE_ROOM_NAME_0 + '</RoomNa
 L_SCHEDULE_ROOM_UUID_0 = '<RoomUUID>' + TESTING_SCHEDULE_ROOM_UUID_0 + '</RoomUUID>'
 L_SCHEDULE_TIME_0 = '<Time>' + TESTING_SCHEDULE_TIME_0 + '</Time>'
 L_SCHEDULE_TYPE_0 = '<ScheduleType>' + TESTING_SCHEDULE_TYPE_0 + '</ScheduleType>'
-L_SCHEDULE_DOW_0 = '<DOW>' + TESTING_SCHEDULE_DOW_0 + '</DOW>'
+L_SCHEDULE_DOW_0 = '<DayOfWeek>' + TESTING_SCHEDULE_DOW_0 + '</DayOfWeek>'
 L_SCHEDULE_MODE_0 = '<ScheduleMode>' + TESTING_SCHEDULE_MODE_0 + '</ScheduleMode>'
 
 L_SCHEDULE_0 = '\n'.join([
@@ -113,7 +113,7 @@ L_SCHEDULE_ROOM_NAME_1 = '<RoomName>' + TESTING_SCHEDULE_ROOM_NAME_1 + '</RoomNa
 L_SCHEDULE_ROOM_UUID_1 = '<RoomUUID>' + TESTING_SCHEDULE_ROOM_UUID_0 + '</RoomUUID>'
 L_SCHEDULE_TIME_1 = '<Time>' + TESTING_SCHEDULE_TIME_1 + '</Time>'
 L_SCHEDULE_TYPE_1 = '<ScheduleType>' + TESTING_SCHEDULE_TYPE_1 + '</ScheduleType>'
-L_SCHEDULE_DOW_1 = '<DOW>' + TESTING_SCHEDULE_DOW_1 + '</DOW>'
+L_SCHEDULE_DOW_1 = '<DayOfWeek>' + TESTING_SCHEDULE_DOW_1 + '</DayOfWeek>'
 L_SCHEDULE_MODE_1 = '<ScheduleMode>' + TESTING_SCHEDULE_MODE_1 + '</ScheduleMode>'
 
 L_SCHEDULE_1 = '\n'.join([
@@ -159,7 +159,7 @@ L_SCHEDULE_ROOM_NAME_2 = '<RoomName>' + TESTING_SCHEDULE_ROOM_NAME_2 + '</RoomNa
 L_SCHEDULE_ROOM_UUID_2 = '<RoomUUID>' + TESTING_SCHEDULE_ROOM_UUID_0 + '</RoomUUID>'
 L_SCHEDULE_TIME_2 = '<Time>' + TESTING_SCHEDULE_TIME_2 + '</Time>'
 L_SCHEDULE_TYPE_2 = '<ScheduleType>' + TESTING_SCHEDULE_TYPE_2 + '</ScheduleType>'
-L_SCHEDULE_DOW_2 = '<DOW>' + TESTING_SCHEDULE_DOW_2 + '</DOW>'
+L_SCHEDULE_DOW_2 = '<DayOfWeek>' + TESTING_SCHEDULE_DOW_2 + '</DayOfWeek>'
 L_SCHEDULE_MODE_2 = '<ScheduleMode>' + TESTING_SCHEDULE_MODE_2 + '</ScheduleMode>'
 
 L_SCHEDULE_2 = '\n'.join([
@@ -207,7 +207,7 @@ L_SCHEDULE_ROOM_NAME_3 = '<RoomName>' + TESTING_SCHEDULE_ROOM_NAME_3 + '</RoomNa
 L_SCHEDULE_ROOM_UUID_3 = '<RoomUUID>' + TESTING_SCHEDULE_ROOM_UUID_0 + '</RoomUUID>'
 L_SCHEDULE_TIME_3 = '<Time>' + TESTING_SCHEDULE_TIME_3 + '</Time>'
 L_SCHEDULE_TYPE_3 = '<ScheduleType>' + TESTING_SCHEDULE_TYPE_3 + '</ScheduleType>'
-L_SCHEDULE_DOW_3 = '<DOW>' + TESTING_SCHEDULE_DOW_3 + '</DOW>'
+L_SCHEDULE_DOW_3 = '<DayOfWeek>' + TESTING_SCHEDULE_DOW_3 + '</DayOfWeek>'
 L_SCHEDULE_MODE_3 = '<ScheduleMode>' + TESTING_SCHEDULE_MODE_3 + '</ScheduleMode>'
 
 L_SCHEDULE_3 = '\n'.join([
@@ -244,7 +244,7 @@ L_SCHEDULE_START_4 = '  ' + \
         '" Active="' + TESTING_SCHEDULE_ACTIVE_4 + \
         '">'
 L_SCHEDULE_UUID_4 = '<UUID>' + TESTING_SCHEDULE_UUID_4 + '</UUID>'
-L_SCHEDULE_DOW_4 = '<DOW>' + TESTING_SCHEDULE_DOW_4 + '</DOW>'
+L_SCHEDULE_DOW_4 = '<DayOfWeek>' + TESTING_SCHEDULE_DOW_4 + '</DayOfWeek>'
 L_SCHEDULE_TIME_4 = '<Time>' + TESTING_SCHEDULE_TIME_4 + '</Time>'
 L_SCHEDULE_TYPE_4 = '<ScheduleType>' + TESTING_SCHEDULE_TYPE_4 + '</ScheduleType>'
 L_SCHEDULE_MODE_4 = '<ScheduleMode>' + TESTING_SCHEDULE_MODE_4 + '</ScheduleMode>'

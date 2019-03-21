@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-03-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -143,7 +143,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = Utility()._get_object_by_id(l_objs, name=TESTING_LIGHT_NAME_0)
+        l_ret = Utility().get_object_by_id(l_objs, name=TESTING_LIGHT_NAME_0)
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
         self.assertEqual(l_ret.UUID, TESTING_LIGHT_UUID_0)
 
@@ -152,7 +152,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-02-A - Lights'))
-        l_ret = Utility()._get_object_by_id(l_objs, UUID=TESTING_LIGHT_UUID_2)
+        l_ret = Utility().get_object_by_id(l_objs, UUID=TESTING_LIGHT_UUID_2)
         # print(PrettyFormatAny.form(l_ret, 'B2-02-B - Light'))
         self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_2)
 
@@ -162,7 +162,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = Utility()._get_object_by_id(l_objs, key=7777)
+        l_ret = Utility().get_object_by_id(l_objs, key=7777)
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
         self.assertIsNone(l_ret)
 

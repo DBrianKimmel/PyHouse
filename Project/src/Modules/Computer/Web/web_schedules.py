@@ -12,12 +12,12 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-03-20'
 
 #  Import system type stuff
 import os
-from nevow import athena
-from nevow import loaders
+# from nevow import athena
+# from nevow import loaders
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
@@ -71,7 +71,7 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
-        l_obj.DOW = l_json['DOW']
+        l_obj.DayOfWeek = l_json['DayOfWeek']
         l_obj.ScheduleMode = l_json['ScheduleMode']
         #
         if l_obj.ScheduleType == 'Lighting':

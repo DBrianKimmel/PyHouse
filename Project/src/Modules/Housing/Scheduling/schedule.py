@@ -40,19 +40,24 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-02-25'
+__updated__ = '2019-03-21'
 
 #  Import system type stuff
 import datetime
 import aniso8601
+# import jsonpickle
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert, extract_tools
+from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Housing.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.Housing.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI
+from Modules.Housing.Lighting.lighting_utility import Utility as lightingUtility
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Housing.Scheduling import sunrisesunset
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule       ')
@@ -67,16 +72,52 @@ PAUSE_DELAY = 5
 MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
 
 
-class MqttActions(object):
-    """
+class MqttActions:
+    """ Schedule will react to some mqtt messages.
+    Messages with the topic:
+        ==> pyhouse/<housename>/schedule/<action>
+    where <action> is:
+        execute:
     """
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _add_schedule(self, p_message):
+        """ A (remote) node has published a schedule - Add it to our schedules.
+        """
+        l_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
+        l_msg_obj = (p_message)
+        LOG.debug('Sched: {}\n{}'.format(p_message, PrettyFormatAny.form(l_msg_obj, 'Schedule', 190)))
+        if l_sender == self.m_pyhouse_obj.Computer.Name:
+            return
+        l_name = extract_tools.get_mqtt_field(p_message, 'Name')
+        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.Computer.Lighting.Lights, name=l_name)
+        if l_light_obj == None:
+            return
+        l_key = len(self.m_pyhouse_obj.House.Schedules)
+        l_sched = ScheduleBaseData()
+        l_sched.Name = l_name
+        l_sched.Key = l_key
+        l_sched.Active = True
+        l_sched.Comment = extract_tools.get_mqtt_field(p_message, 'Comment')
+        l_sched.LastUpdate = datetime.datetime.now()
+        l_sched.UUID = extract_tools.get_mqtt_field(p_message, 'UUID')
+        l_sched.DayOfWeek = extract_tools.get_mqtt_field(p_message, 'DayOfWeek')
+        l_sched.ScheduleMode = extract_tools.get_mqtt_field(p_message, 'ScheduleMode')
+        l_sched.ScheduleType = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
+        l_sched.Time = extract_tools.get_mqtt_field(p_message, 'Time')
+        l_sched.Level = extract_tools.get_mqtt_field(p_message, 'Level')
+        l_sched.LightName = extract_tools.get_mqtt_field(p_message, 'LightName')
+        l_sched.LightUUID = extract_tools.get_mqtt_field(p_message, 'LightUUID')
+        l_sched.Rate = extract_tools.get_mqtt_field(p_message, 'Rate')
+        l_sched.RoomName = extract_tools.get_mqtt_field(p_message, 'RoomName')
+        l_sched.RoomUUID = extract_tools.get_mqtt_field(p_message, 'RoomUUID')
+        LOG.debug('Schedule added locally: {}'.format(PrettyFormatAny.form(l_sched, 'Schedule', 190)))
+
     def decode(self, p_topic, p_message):
         """
-        --> pyhouse/housename/schedule/...
+        --> pyhouse/<housename>/schedule/...
         """
         l_logmsg = ''
         l_schedule_type = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
@@ -86,9 +127,9 @@ class MqttActions(object):
             if p_topic[0] == 'execute':
                 l_logmsg += '\tExecute:\n'
                 l_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                # l_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
                 l_logmsg += '\tLight: {}\n'.format(l_light_name)
                 l_logmsg += '\tLevel: {}'.format(l_light_level)
+                self._add_schedule(p_message)
             elif p_topic[0] == 'status':
                 l_logmsg += '\tStatus:\n'
                 l_logmsg += '\tType: {}\n'.format(l_schedule_type)
@@ -101,20 +142,105 @@ class MqttActions(object):
         return l_logmsg
 
 
-class RiseSet(object):
+class RiseSet:
 
     def __init__(self):
         self.SunRise = None
         self.SunSet = None
 
 
+class TimeField:
+    """ This class deals with the Time Field parsing.
+
+        Possible valid formats are:
+        hh
+        hh:mm
+        hh:mm:ss
+        sunrise
+        sunrise + hh
+        sunrise + hh:mm
+        sunrise + hh:mm:ss
+        sunrise - hh
+        sunrise - hh:mm
+        sunrise - hh:mm:ss
+    """
+
+    m_seconds = 0
+
+    def _rise_set(self, p_timefield, p_rise_set):
+        """
+        """
+        l_seconds = 0
+        l_timefield = p_timefield.lower().strip()
+        if 'dawn' in l_timefield:
+            l_seconds = convert.datetime_to_seconds(p_rise_set.Dawn)
+            l_timefield = l_timefield[4:].strip()
+        elif 'sunrise' in l_timefield:
+            l_seconds = convert.datetime_to_seconds(p_rise_set.SunRise)
+            l_timefield = l_timefield[7:].strip()
+        elif 'noon' in l_timefield:
+            # print('Noon - {}'.format(l_timefield))
+            l_seconds = convert.datetime_to_seconds(p_rise_set.Noon)
+            l_timefield = l_timefield[4:].strip()
+        elif 'sunset' in l_timefield:
+            # print('SunSet - {}'.format(l_timefield))
+            l_seconds = convert.datetime_to_seconds(p_rise_set.SunSet)
+            l_timefield = l_timefield[6:].strip()
+        elif 'dusk' in l_timefield:
+            # print('Dusk - {}'.format(l_timefield))
+            l_seconds = convert.datetime_to_seconds(p_rise_set.Dusk)
+            l_timefield = l_timefield[4:].strip()
+        else:
+            l_seconds = 0
+        self.m_seconds = l_seconds
+        return l_timefield, l_seconds
+
+    def _extract_sign(self, p_timefield):
+        """
+        """
+        l_timefield = p_timefield.strip()
+        l_subflag = False
+        if '-' in l_timefield:
+            l_subflag = True
+            l_timefield = l_timefield[1:]
+        elif '+' in l_timefield:
+            l_subflag = False
+            l_timefield = l_timefield[1:]
+        l_timefield = l_timefield.strip()
+        return l_timefield, l_subflag
+
+    def _extract_time_part(self, p_timefield):
+        """
+        """
+        try:
+            l_time = aniso8601.parse_time(p_timefield)
+        except Exception:
+            l_time = datetime.time(0)
+        return convert.datetime_to_seconds(l_time)
+
+    def parse_timefield(self, p_timefield, p_rise_set):
+        """
+        """
+        l_timefield, l_seconds = self._rise_set(p_timefield, p_rise_set)
+        l_timefield, l_subflag = self._extract_sign(l_timefield)
+        l_offset = self._extract_time_part(l_timefield)
+        if l_subflag:
+            l_seconds -= l_offset
+        else:
+            l_seconds += l_offset
+        return l_seconds
+
+    def get_timefield_seconds(self):
+        return self.m_seconds
+
+
 class SchedTime:
     """
     Get the when scheduled time.  It may be from about a minute to about 1 week.
     If the schedule is not active return a None
-    This class deals with extracting information from the time and DOW fields of a schedule.
+    This class deals with extracting information from the time and DayOfWeek fields of a schedule.
 
-    DOW        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
+    DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
     weekday    mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
     The time field may be:
@@ -124,16 +250,16 @@ class SchedTime:
 
     @staticmethod
     def _extract_days(p_schedule_obj, p_now):
-        """ Get the number of days until the next DOW in the schedule.
+        """ Get the number of days until the next DayOfWeek in the schedule.
 
-        DOW        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
+        DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
         weekday()  mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
         @param p_schedule_obj: is the schedule object we are working on
         @param p_now: is a datetime.datetime.now()
-        @return: the number of days till the next DOW - 0..6, 10 if never
+        @return: the number of days till the next DayOfWeek - 0..6, 10 if never
         """
-        l_dow = p_schedule_obj.DOW
+        l_dow = p_schedule_obj.DayOfWeek
         l_now_day = p_now.weekday()
         l_day = 2 ** l_now_day
         l_is_in_dow = (l_dow & l_day) != 0
@@ -150,71 +276,6 @@ class SchedTime:
         return 10
 
     @staticmethod
-    def _extract_time_part(p_timefield):
-        """
-        """
-        try:
-            l_time = aniso8601.parse_time(p_timefield)
-        except Exception:
-            l_time = datetime.time(0)
-        return convert.datetime_to_seconds(l_time)
-
-    @staticmethod
-    def _extract_schedule_time(p_schedule_obj, p_rise_set):
-        """ Find the number of minutes from midnight until the schedule time for action.
-
-        Possible valid formats are:
-            hh:mm:ss
-            hh:mm
-            sunrise
-            sunrise + hh:mm
-            sunrise - hh:mm
-        @return: the number of seconds
-        """
-        l_timefield = p_schedule_obj.Time.lower()
-        if 'dawn' in l_timefield:
-            # print('Dawn - {}'.format(l_timefield))
-            l_base = convert.datetime_to_seconds(p_rise_set.Dawn)
-            l_timefield = l_timefield[4:]
-        elif 'sunrise' in l_timefield:
-            # print('SunRise - {}'.format(l_timefield))
-            l_base = convert.datetime_to_seconds(p_rise_set.SunRise)
-            l_timefield = l_timefield[7:]
-        elif 'noon' in l_timefield:
-            # print('Noon - {}'.format(l_timefield))
-            l_base = convert.datetime_to_seconds(p_rise_set.Noon)
-            l_timefield = l_timefield[4:]
-        elif 'sunset' in l_timefield:
-            # print('SunSet - {}'.format(l_timefield))
-            l_base = convert.datetime_to_seconds(p_rise_set.SunSet)
-            l_timefield = l_timefield[6:]
-        elif 'dusk' in l_timefield:
-            # print('Dusk - {}'.format(l_timefield))
-            l_base = convert.datetime_to_seconds(p_rise_set.Dusk)
-            l_timefield = l_timefield[4:]
-        else:
-            l_base = 0
-        l_timefield = l_timefield.strip()
-        l_subflag = False
-        if '-' in l_timefield:
-            l_subflag = True
-            l_timefield = l_timefield[1:]
-        elif '+' in l_timefield:
-            l_subflag = False
-            l_timefield = l_timefield[1:]
-        # l_timefield = l_timefield.strip()
-
-        l_offset = SchedTime._extract_time_part(l_timefield)
-        #
-        #
-        if l_subflag:
-            l_seconds = l_base - l_offset
-        else:
-            l_seconds = l_base + l_offset
-        #
-        return l_seconds
-
-    @staticmethod
     def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
         """ Compute the seconds to go from now to the next scheduled time.
         May be from 30 seconds to a full week.
@@ -226,7 +287,7 @@ class SchedTime:
         @return: The number of seconds from now to the scheduled time.
         """
         l_dow_seconds = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
-        l_sched_seconds = SchedTime._extract_schedule_time(p_schedule_obj, p_rise_set)
+        l_sched_seconds = TimeField().parse_timefield(p_schedule_obj.Time, p_rise_set)
         l_sched_secs = l_dow_seconds + l_sched_seconds
         l_now_seconds = convert.datetime_to_seconds(p_now)
         l_seconds = l_sched_secs - l_now_seconds
@@ -254,7 +315,7 @@ class ScheduleExecution:
             hvacActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.ScheduleType == 'Irrigation':
-            LOG.info('Execute_one_schedule type = Hvac')
+            LOG.info('Execute_one_schedule type = Irrigation')
             irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.ScheduleType == 'TeStInG14159':  # To allow a path for unit tests

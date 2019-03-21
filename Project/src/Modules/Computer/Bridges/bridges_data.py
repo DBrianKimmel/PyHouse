@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-15'
+__updated__ = '2019-03-20'
 
 #  Import system type stuff
 
@@ -27,6 +27,7 @@ class BridgesData(object):
     """
 
     def __init__(self):
+        super(BridgesData, self).__init__()
         Bridges = {}
 
 
@@ -36,6 +37,7 @@ class BridgeData(BaseUUIDObject):
     """
 
     def __init__(self):
+        super(BridgeData, self).__init__()
         Connection = None  # 'Ethernet, Serial, USB
         Type = None  # Insteon, Hue
         IPv4Address = '9.8.7.6'

@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-02-28'
+__updated__ = '2019-03-20'
 
 #  Import system type stuff
 import os
@@ -113,7 +113,7 @@ class LoginElement(Element):
         self.m_password = 'adminpassword'
 
     @renderer
-    def username(self, _request, _tag):
+    def username(self, _request, tag):
         return tag('User Name')
         # return self.m_username
 

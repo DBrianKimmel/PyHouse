@@ -1472,7 +1472,7 @@
 				<DayOfWeek>127</DayOfWeek>
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
-				<Time>14:18</Time>
+				<Time>14:10</Time>
 				<Level>100</Level>
 				<LightName>Wet Bar</LightName>
 				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>
@@ -1528,7 +1528,7 @@
 				<DayOfWeek>127</DayOfWeek>
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
-				<Time>18:01</Time>
+				<Time>sunset - 00:01</Time>
 				<Level>100</Level>
 				<LightName>Wet Bar</LightName>
 				<LightUUID>1efffc12-4618-11e6-89e7-74da3859e09a</LightUUID>

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-02-23'
+__updated__ = '2019-03-20'
 
 #  Import system type stuff
 
@@ -39,12 +39,15 @@ class Utility:
             return p_obj
         elif UUID != None and p_obj.UUID == UUID:
             return p_obj
+        elif UUID != None and p_obj.UUID == UUID:
+            return p_obj
         return None
 
-    def _get_object_by_id(self, p_objs, name=None, key=None, UUID=None):
+    def get_object_by_id(self, p_objs, name=None, key=None, UUID=None):
         """
         Return the device object from a dict of objects using the given value.
-        Either a name or a key may be used to identify the light.
+        one of several things may be used for the lookup, a name,a key, or a UUID may be used to identify the object.
+        Only one object is returned.
 
         @param p_objs: is the tree of lighting objects such as lights, buttons or controllers
         @return: the object found or None.

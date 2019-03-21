@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2019-01-14
 
 """
 
-__updated__ = '2019-01-14'
+__updated__ = '2019-03-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -160,7 +160,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Active), TESTING_SCHEDULE_ACTIVE_0)
         self.assertEqual(l_obj.UUID, TESTING_SCHEDULE_UUID_0)
         #
-        self.assertEqual(str(l_obj.DOW), TESTING_SCHEDULE_DOW_0)
+        self.assertEqual(str(l_obj.DayOfWeek), TESTING_SCHEDULE_DOW_0)
         self.assertEqual(l_obj.ScheduleMode, TESTING_SCHEDULE_MODE_0)
         self.assertEqual(l_obj.ScheduleType, TESTING_SCHEDULE_TYPE_0)
         self.assertEqual(l_obj.Time, TESTING_SCHEDULE_TIME_0)

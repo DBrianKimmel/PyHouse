@@ -17,7 +17,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-03-07'
+__updated__ = '2019-03-20'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,7 +25,7 @@ import xml.etree.ElementTree as ET
 #  Import PyHouse files
 from Modules.Core.data_objects import LightingData
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Families.family_utils import FamUtil
+# from Modules.Families.family_utils import FamUtil
 # from Modules.Housing.Lighting.lighting_utility import Utility
 from Modules.Housing.Lighting.lighting_buttons import XML as buttonsXML
 from Modules.Housing.Lighting.lighting_controllers import XML as controllersXML
@@ -86,7 +86,7 @@ class XML:
         p_pyhouse_obj.House.Lighting.Lights = lightXML().read_all_lights_xml(p_pyhouse_obj)
         return p_pyhouse_obj.House.Lighting
 
-    def write_lighting_xml(self, p_pyhouse_obj, p_house_element):
+    def write_lighting_xml(self, p_pyhouse_obj, _p_house_element):
         """
         @param p_pyhouse_obj: is the whole PyHouse Object
         @param p_house_element: is the XML

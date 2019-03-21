@@ -15,14 +15,15 @@ self._Entry       This entry in NOT saved in XML but is created in memory when P
 Specific data may be loaded into some attributes for unit testing.
 
 """
-__updated__ = '2019-03-18'
+
+__updated__ = '2019-03-20'
 __version_info__ = (18, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.state import State
+# from Modules.Core.state import State
 
 
 class PyHouseData(object):
@@ -605,7 +606,7 @@ class ScheduleBaseData(BaseUUIDObject):
 
     See schedule.ScheduleExecution().dispatch_one_schedule() for all the valid types.
 
-    DOW is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
+    DayOfWeek is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
             0 is no days of the week
             1 is valid on Monday
             2 is valid on Tuesday
@@ -614,7 +615,7 @@ class ScheduleBaseData(BaseUUIDObject):
 
     def __init__(self):
         super(ScheduleBaseData, self).__init__()
-        self.DOW = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
+        self.DayOfWeek = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
         self.ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
         self.ScheduleType = ''  # Valid Schedule Type
         self.Time = None

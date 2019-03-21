@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-03-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,9 +29,8 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_UUID
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-
 JSON = '{ Active : false, \
-DOW : 127, \
+DayOfWeek : 127, \
 Key : 5, \
 Level : 50, \
 LightName : "MBR Rope", \
@@ -54,12 +53,13 @@ JSON2 = {"Add":"false",
          "Active":"true",
          "ScheduleType":"Lighting",
          "Time":"13:34",
-         "DOW":"127",
+         "DayOfWeek":"127",
          "ScheduleMode":"Home",
          "Level":"100",
          "Rate":"0",
          "RoomName":"Master Bath",
          "LightName":"Light, Insteon (xml_lights)"}
+
 
 class SetupMixin(object):
 
@@ -85,6 +85,7 @@ class SmartDummyRequest(DummyRequest):
 
 
 class DummySite(server.Site):
+
     def get(self, url, args=None, headers=None):
         return self._request("GET", url, args, headers)
 
@@ -112,8 +113,10 @@ class DummySite(server.Site):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_schedules')
 

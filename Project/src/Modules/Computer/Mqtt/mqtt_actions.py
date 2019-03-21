@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-07'
+__updated__ = '2019-03-20'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -101,7 +101,7 @@ class Actions:
         elif p_topic[0] == 'login':
             l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'schedule':
-            l_logmsg += scheduleMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
+                l_logmsg += scheduleMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'security':
             l_logmsg += securityMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'weather':

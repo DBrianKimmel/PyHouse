@@ -2,15 +2,16 @@
 @name:      PyHouse/src/Modules/Rules/rules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 27, 2015
 @Summary:
 
+If garage door opens and after sunset and before sunrise, turn on outside garage door lights.
+
 """
 
-__updated__ = '2017-02-01'
-
+__updated__ = '2019-03-20'
 
 # Import system type stuff
 
@@ -19,6 +20,7 @@ from Modules.Housing.Rules.rules_xml import Xml as rulesXML
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.RulesXml       ')
+
 
 class API (object):
 

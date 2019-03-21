@@ -11,21 +11,21 @@
 
 """
 
-__updated__ = '2019-02-27'
+__updated__ = '2019-03-20'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet.error import ConnectionDone
-import xml.etree.ElementTree as ET
+# import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import extract_tools
-from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+# from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
-from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+# from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+# from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
