@@ -82,8 +82,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-03-16'
-__version_info__ = (19, 1, 0)
+__updated__ = '2019-03-27'
+__version_info__ = (19, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

@@ -11,31 +11,24 @@
 
 """
 
-__updated__ = '2019-03-20'
-__version_info__ = (19, 1, 0)
+__updated__ = '2019-03-28'
+__version_info__ = (19, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from twisted.internet.protocol import Protocol, ReconnectingClientFactory
+from twisted.internet.protocol import Factory, Protocol
 from twisted.internet.error import ConnectionDone
-# import xml.etree.ElementTree as ET
+from twisted.internet.endpoints import clientFromString
+from twisted.application.internet import ClientService
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import extract_tools
-# from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+from Modules.Core.Utilities import extract_tools, convert
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-# from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
-# from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 
-DEFAULT_EISCP_IPV4 = '192.168.1.138'
-DEFAULT_EISCP_PORT = 60128
 SECTION = 'onkyo'
-
-DISCONNECT_TIMER = 30  # Seconds
-XML_PATH = 'HouseDivision/EntertainmentSection/OnkyoSection'
 
 # See https://tylerwatt12.com/vsx-822k-telnet-interface/
 CONTROL_COMMANDS = {
@@ -113,79 +106,90 @@ class OnkyoProtocol(Protocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_onkyo_device_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_onkyo_device_obj = p_onkyo_device_obj
-        LOG.debug('Protocol init for {}'.format(PrettyFormatAny.form(self.m_onkyo_device_obj, 'OnkyoProtocol - init.')))
-        LOG.info('Protocol Init - Version:{}'.format(__version__))
-
     def dataReceived(self, p_data):
         Protocol.dataReceived(self, p_data)
         LOG.info('Data Received.\n\tData:{}'.format(p_data))
 
     def connectionMade(self):
+        """
+        Called when a connection is made.
+
+        This may be considered the initializer of the protocol, because
+        it is called when the connection is completed.  For clients,
+        this is called once the connection to the server has been
+        established; for servers, this is called after an accept() call
+        stops blocking and a socket has been received.  If you need to
+        send any greeting or initial message, do it here.
+        """
         Protocol.connectionMade(self)
+        LOG.info('Connection Made')
+        # OnkyoClient().send_command(p_device_obj, '1PWRQSTN')
 
     def connectionLost(self, reason=ConnectionDone):
         Protocol.connectionLost(self, reason=reason)
         LOG.warn('Lost connection.\n\tReason:{}'.format(reason))
 
 
-class OnkyoClient(OnkyoProtocol):
+class OnkyoClient:
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_onkyo_obj, _p_clientID=None):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_onkyo_obj = p_onkyo_obj
+    def send_command(self, p_device_obj, p_command):
+        """
+        @param p_command: is the comaand "!1PWR01"
+        Gthis will add the rest of the ethernet framework
+        """
+        LOG.info('Send command {}'.format(p_command))
+        l_command = b'IPCS' + b'/00/00/00/10' + b'/00/00/00/08' + b'/01' + b'/00/00/00' + p_command + b'/0d'
+        try:
+            l_host = p_device_obj._Connector.host
+            p_device_obj._Transport.write(l_command)
+            LOG.info('Send TCP command:{} to {}'.format(p_command, l_host))
+        except AttributeError as e_err:
+            LOG.error("Tried to call send_command without a onkyp device configured.\n\tError:{}".format(e_err))
 
 
-class OnkyoFactory(ReconnectingClientFactory):
-    """
-    """
+class Connecting:
 
-    def __init__(self, p_pyhouse_obj, p_onkyo_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_onkyo_obj = p_onkyo_obj
+    def connect_onkyo(self, p_device_obj):
+        """
+        """
+        l_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        try:
+            # l_host = convert.long_to_str(p_device_obj.IPv4)
+            l_host = 'onkyo'
+            l_port = p_device_obj.Port
+            l_endpoint_str = 'tcp:{}:port={}'.format(l_host, l_port)
+            l_endpoint = clientFromString(l_reactor, l_endpoint_str)
+            l_factory = Factory.forProtocol(OnkyoProtocol)
+            l_ReconnectingService = ClientService(l_endpoint, l_factory)
+            l_ReconnectingService.setName('Onkyo ')
+            LOG.debug('Endpoint: {}'.format(l_endpoint_str))
+            # LOG.debug('{}'.format(PrettyFormatAny.form(l_endpoint, 'Endpoint', 190)))
+            # LOG.debug('{}'.format(PrettyFormatAny.form(l_factory, 'Factory', 190)))
+            # LOG.debug('{}'.format(PrettyFormatAny.form(l_ReconnectingService, 'ReconnectService', 190)))
 
-    def startedConnecting(self, p_connector):
-        # ReconnectingClientFactory.startedConnecting(self, p_connector)
-        LOG.info('Started to connect. {}'.format(p_connector))
+            waitForConnection = l_ReconnectingService.whenConnected(failAfterFailures=1)
 
-    def buildProtocol(self, p_addr):
-        self.protocol = OnkyoProtocol(self.m_pyhouse_obj, self.m_onkyo_device_obj)
-        LOG.info('BuildProtocol - Addr = {}'.format(p_addr))
-        l_client = OnkyoClient(self.m_pyhouse_obj, self.m_onkyo_obj)
-        # l_ret = ReconnectingClientFactory.buildProtocol(self, p_addr)
-        return l_client
+            def cb_connectedNow(OnkyoClient):
+                LOG.debug('Connected Now')
+                # OnkyoClient().send_command(p_device_obj, '1PWRQSTN')
 
-    def clientConnectionLost(self, p_connector, p_reason):
-        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
+            def eb_failed(fail_reason):
+                LOG.warn("initial Onkyo connection failed: {}".format(fail_reason))
+                # now you should stop the service and report the error upwards
 
-    def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.error('Connection failed.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
-
-    def connectionLost(self, p_reason):
-        """ This is required. """
-        LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
-
-    def makeConnection(self, p_transport):
-        """ This is required. """
-        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
-        self.m_onkyo_obj._Transport = p_transport
-
-
-class Utility(object):
-    """
-    """
-
-    def start_factory(self):
-        pass
+            waitForConnection.addCallbacks(cb_connectedNow, eb_failed)
+            l_ReconnectingService.startService()
+            p_device_obj._Endpoint = l_endpoint
+            p_device_obj._Factory = l_factory
+            p_device_obj._isRunning = True
+            LOG.info("Started Onkyo - Host:{}; Port:{}".format(l_host, l_port))
+        except Exception as e_err:
+            LOG.error('Error found: {}'.format(e_err))
 
 
-class API(MqttActions):
+class API(Connecting, MqttActions):
     """This interfaces to all of PyHouse.
     """
 
@@ -203,26 +207,23 @@ class API(MqttActions):
 
     def Start(self):
         """ Start all the Onkyo factories if we have any Onkyo devices.
+
+        We have one or more Onkyo devices in this house to use/control.
+        Connect to all of them.
+
+        EntertainmentDeviceData()
+
+        endpoint 'tcp:192.168.1.120:60128'
         """
         l_count = 0
         l_onkyo = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        LOG.info(PrettyFormatAny.form(l_onkyo, 'onkyo.Start() Plugins'))
+        # LOG.info(PrettyFormatAny.form(l_onkyo, 'onkyo.Start() Plugins'))
         for l_onkyo_obj in l_onkyo.Devices.values():
             LOG.info(PrettyFormatAny.form(l_onkyo_obj, 'Device'))
             if not l_onkyo_obj.Active:
                 continue
-            try:
-                l_host = l_onkyo_obj.IPv4
-                l_port = l_onkyo_obj.Port
-                l_factory = OnkyoFactory(self.m_pyhouse_obj, l_onkyo_obj)
-                l_count += 1
-                l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_onkyo_obj._Factory)
-                l_onkyo_obj._Factory = l_factory
-                l_onkyo_obj._Connector = l_connector
-                l_onkyo_obj._isRunning = True
-                LOG.info("Started Onkyo {} {}".format(l_host, l_port))
-            except Exception as e_err:
-                LOG.error('Error found: {}'.format(e_err))
+            self.connect_onkyo(l_onkyo_obj)
+            l_count += 1
         LOG.info("Started {} Onkyo devices".format(l_count))
 
     def SaveXml(self, p_xml):

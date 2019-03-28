@@ -43,29 +43,41 @@ while True:
   break
 
 
+
+
+    http://sc0ty.pl/2012/02/samsung-tv-network-remote-control-protocol/
+    https://gist.github.com/danielfaust/998441
+    https://github.com/Bntdumas/SamsungIPRemote
+    https://github.com/kyleaa/homebridge-samsungtv2016
+
 """
 
-__updated__ = '2019-03-06'
-__version_info__ = (18, 10, 0)
+__updated__ = '2019-03-28'
+__version_info__ = (19, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
+import base64
 import xml.etree.ElementTree as ET
-from twisted.internet.protocol import Protocol, ReconnectingClientFactory
+from twisted.internet.protocol import Protocol, Factory
+from twisted.internet.endpoints import clientFromString
+from twisted.application.internet import ClientService
 from twisted.internet import error
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+# from Modules.Core.Utilities.convert import long_to_str
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Samsung        ')
 
-SAMSUNG_ADDRESS = '192.168.1.103'
+SAMSUNG_ADDRESS = '192.168.1.100'
 SAMSUNG_PORT = 55000
+SAMSUNG_PORT2 = 8001
 SECTION = 'samsung'
 
 
@@ -190,12 +202,15 @@ class SamsungProtocol(Protocol):
     """
 
     def dataReceived(self, data):
+        LOG.debug('data rxed. {}'.format(data))
         Protocol.dataReceived(self, data)
 
-    def connectionMade(self):
+    def connectionMade(self, data):
+        LOG.debug('Connection Made. {}'.format(data))
         Protocol.connectionMade(self)
 
     def connectionLost(self, reason=error.ConnectionDone):
+        LOG.debug('Connection Lost. {}'.format(reason))
         Protocol.connectionLost(self, reason=reason)
 
 
@@ -203,50 +218,133 @@ class SamsungClient(SamsungProtocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, _p_samsung_obj, _p_clientID=None):
+    def __init__(self, p_pyhouse_obj, _p_device_obj, _p_clientID=None):
         """
         At this point all config has been read in and Set-up
         """
         self.m_pyhouse_obj = p_pyhouse_obj
 
 
-class SamsungFactory(ReconnectingClientFactory):
+class Commands:
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_samsung_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_samsung_obj = p_samsung_obj
+    def __init__(self, config):
+        if not config["port"]:
+            config["port"] = 55000
+        """Make a new connection."""
+        # self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if config["timeout"]:
+            self.connection.settimeout(config["timeout"])
+        self.connection.connect((config["host"], config["port"]))
+        payload = b"\x64\x00" \
+                  +self._serialize_string(config["description"]) \
+                  +self._serialize_string(config["id"]) \
+                  +self._serialize_string(config["name"])
+        packet = b"\x00\x00\x00" + self._serialize_string(payload, True)
+        LOG.info("Sending handshake.")
+        self.connection.send(packet)
+        self._read_response(True)
 
-    def startedConnecting(self, p_connector):
-        # ReconnectingClientFactory.startedConnecting(self, p_connector)
-        _l_msg = PrettyFormatAny.form(p_connector, 'Samsung Factory connector.')
-        LOG.info('Started to connect. {}'.format(p_connector))
+    def __enter__(self):
+        return self
 
-    def buildProtocol(self, p_addr):
-        LOG.info('BuildProtocol - Addr = {}'.format(p_addr))
-        _l_client = SamsungClient(self.m_pyhouse_obj, self.m_samsung_obj)
-        l_ret = ReconnectingClientFactory.buildProtocol(self, p_addr)
-        return l_ret
+    # def __exit__(self, type, value, traceback):
+    #    self.close()
 
-    def clientConnectionLost(self, p_connector, p_reason):
-        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
+    def close(self):
+        """Close the connection."""
+        if self.connection:
+            self.connection.close()
+            self.connection = None
+            LOG.debug("Connection closed.")
 
-    def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.error('Connection failed.\n\tReason:{}'.format(p_reason))
-        ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
+    def control(self, key):
+        """Send a control command."""
+        if not self.connection:
+            pass
+        payload = b"\x00\x00\x00" + self._serialize_string(key)
+        packet = b"\x00\x00\x00" + self._serialize_string(payload, True)
+        LOG.info("Sending control command: %s", key)
+        self.connection.send(packet)
+        self._read_response()
+        # time.sleep(self._key_interval)
 
-    def connectionLost(self, p_reason):
-        """ This is required. """
-        LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
+    _key_interval = 0.2
 
-    def makeConnection(self, p_transport):
-        """ This is required. """
-        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+    def _read_response(self, first_time=False):
+        header = self.connection.recv(3)
+        tv_name_len = int.from_bytes(header[1:3], byteorder="little")
+        tv_name = self.connection.recv(tv_name_len)
+        if first_time:
+            LOG.debug("Connected to '%s'.", tv_name.decode())
+        response_len = int.from_bytes(self.connection.recv(2), byteorder="little")
+        response = self.connection.recv(response_len)
+        if len(response) == 0:
+            self.close()
+        if response == b"\x64\x00\x01\x00":
+            LOG.debug("Access granted.")
+            return
+        elif response == b"\x64\x00\x00\x00":
+            pass
+        elif response[0:1] == b"\x0a":
+            if first_time:
+                LOG.warning("Waiting for authorization...")
+            return self._read_response()
+        elif response[0:1] == b"\x65":
+            LOG.warning("Authorization cancelled.")
+        elif response == b"\x00\x00\x00\x00":
+            LOG.debug("Control accepted.")
+            return
+
+    @staticmethod
+    def _serialize_string(p_string, raw=False):
+        if isinstance(p_string, str):
+            p_string = str.encode(p_string)
+        if not raw:
+            p_string = base64.b64encode(p_string)
+        return bytes([len(p_string)]) + b"\x00" + p_string
 
 
-class API(object):
+class Connecting:
+
+    def connect_samsung(self, p_device_obj):
+        l_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        try:
+            # l_host = convert.long_to_str(p_device_obj.IPv4)
+            l_host = 'samsung-tv'
+            l_port = p_device_obj.Port
+            l_endpoint_str = 'tcp:{}:port={}'.format(l_host, l_port)
+            l_endpoint = clientFromString(l_reactor, l_endpoint_str)
+            l_factory = Factory.forProtocol(SamsungProtocol)
+            l_ReconnectingService = ClientService(l_endpoint, l_factory)
+            l_ReconnectingService.setName('Samsung ')
+            waitForConnection = l_ReconnectingService.whenConnected(failAfterFailures=1)
+            LOG.debug('Endpoint: {}'.format(l_endpoint_str))
+            LOG.debug('{}'.format(PrettyFormatAny.form(l_endpoint, 'Endpoint', 190)))
+            LOG.debug('{}'.format(PrettyFormatAny.form(l_factory, 'Factory', 190)))
+            LOG.debug('{}'.format(PrettyFormatAny.form(l_ReconnectingService, 'ReconnectService', 190)))
+
+            def cb_connectedNow(OnkyoClient):
+                LOG.debug('Connected Now')
+                OnkyoClient.send_command('1PWRQSTN')
+
+            def eb_failed(fail_reason):
+                LOG.warn("initial Samsung connection failed: {}".format(fail_reason))
+                l_ReconnectingService.stopService()
+
+            waitForConnection.addCallbacks(cb_connectedNow, eb_failed)
+            l_ReconnectingService.startService()
+            p_device_obj._Endpoint = l_endpoint
+            p_device_obj._Factory = l_factory
+            p_device_obj._isRunning = True
+            LOG.info("Started Samsung - Host:{}; Port:{}".format(l_host, l_port))
+        except Exception as e_err:
+            LOG.error('Error found: {}'.format(e_err))
+        pass
+
+
+class API(Connecting):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -258,15 +356,17 @@ class API(object):
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = SamsungDeviceData()  # Clear before loading
         l_samsung_obj = XML.read_samsung_section_xml(p_pyhouse_obj)
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_samsung_obj
-        # l_host = SAMSUNG_ADDRESS
-        # l_port = SAMSUNG_PORT
-        # l_samsung_obj._Factory = SamsungFactory(p_pyhouse_obj, l_samsung_obj)
-        # _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_samsung_obj._Factory)
         LOG.info('Loaded XML')
 
     def Start(self):
         LOG.info("Starting.")
-        LOG.info("Started.")
+        l_count = 0
+        for l_samsung_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices.values():
+            l_count += 1
+            if not l_samsung_device_obj.Active:
+                continue
+            self.connect_samsung(l_samsung_device_obj)
+        LOG.info("Started {} Samsung Devices.".format(l_count))
 
     def SaveXml(self, p_xml):
         # LOG.info("Saving XML.")

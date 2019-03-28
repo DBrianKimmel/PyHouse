@@ -359,7 +359,7 @@
 					<UUID>Onkyo...-0001-0000-0000-0123456789ab</UUID>
 					<Comment>Tx-555 Receiver</Comment>
 					<Host/>
-					<IPv4>192.168.1.230</IPv4>
+					<IPv4>192.168.1.120</IPv4>
 					<IPv6>2001:DB8::1</IPv6>
 					<Model>Tx-555</Model>
 					<Port>60128</Port>
@@ -375,10 +375,10 @@
 					<UUID>Smasung.-0001-0000-0000-0123456789ab</UUID>
 					<Comment>TV 75 inch</Comment>
 					<Host/>
-					<IPv4>192.168.1.222</IPv4>
+					<IPv4>192.168.1.100</IPv4>
 					<IPv6>2001:DB8::554</IPv6>
 					<Model>75</Model>
-					<Port>12345</Port>
+					<Port>55000</Port>
 					<RoomName>Living Room</RoomName>
 					<RoomUUID>Room....-0000-0000-0000-0123456789ab</RoomUUID>
 					<Type>Tv</Type>

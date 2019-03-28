@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-03-02'
+__updated__ = '2019-03-24'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -112,13 +112,9 @@ class Utility(ClientConnections):
         All TCP arguments are supported, plus: certKey, privateKey, extraCertChain, sslmethod, and dhParameters.
 
         certKey (optional, defaults to the value of privateKey) gives a filesystem path to a certificate (PEM format).
-
         privateKey gives a filesystem path to a private key (PEM format).
-
         extraCertChain gives a filesystem path to a file with one or more concatenated certificates in PEM format that establish the chain from a root CA to the one that signed your certificate.
-
         sslmethod indicates which SSL/TLS version to use (a value like TLSv1_METHOD).
-
         dhParameters gives a filesystem path to a file in PEM format with parameters that are required for Diffie-Hellman key exchange.
 
         Since the this is required for the DHE-family of ciphers that offer perfect forward secrecy (PFS), it is recommended to specify one.

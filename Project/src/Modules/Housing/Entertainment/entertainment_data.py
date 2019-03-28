@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-11-16'
+__updated__ = '2019-03-24'
 
 # Import system type stuff
 
@@ -63,6 +63,7 @@ class EntertainmentDeviceData(BaseObject):
     def __init__(self):
         super(EntertainmentDeviceData, self).__init__()
         # self.DeviceCount = 0
+        self._Endpoint = None
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
         self._Connector = None
