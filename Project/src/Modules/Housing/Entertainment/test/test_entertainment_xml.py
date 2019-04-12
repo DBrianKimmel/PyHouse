@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-04-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -392,8 +392,8 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
         """
         """
         l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_ret, 'C4-02-B - Entertainment'))
-        # print(PrettyFormatAny.form(l_ret.Plugins, 'C4-02-C - Plugins'))
+        print(PrettyFormatAny.form(l_ret, 'C4-02-B - Entertainment'))
+        print(PrettyFormatAny.form(l_ret.Plugins, 'C4-02-C - Plugins'))
         self.assertEqual(l_ret.Active, True)
         self.assertGreater(l_ret.PluginCount, 0)
         self.assertEqual(l_ret.Plugins['pandora'].Services[0].Name, TESTING_PANDORA_DEVICE_NAME_0)

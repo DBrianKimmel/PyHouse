@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-04-01'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,25 +18,16 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
 # from Modules.Core.data_objects import NodeData, PyHouseData
+from Modules.Core.Utilities.extract_tools import get_mqtt_field, get_required_mqtt_field
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.Lighting.lighting import MqttActions as lightingMqtt
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightsMqtt
 from Modules.Housing.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.Housing.Scheduling.schedule import MqttActions as scheduleMqtt
-from Modules.Housing.Security.security import MqttActions as securityMqtt
+# from Modules.Housing.Security.security import MqttActions as securityMqtt
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Actions   ')
-
-
-def get_mqtt_field(p_message, p_field):
-    """ Get the given field from a JSON message.
-    """
-    try:
-        l_ret = p_message[p_field]
-    except (KeyError, TypeError):
-        l_ret = 'The "{}" field was missing in the MQTT Message.'.format(p_field)
-    return l_ret
 
 
 class Actions:
@@ -84,7 +75,7 @@ class Actions:
             LOG.info(l_logmsg)
         else:
             # Every other topic will have the following field(s).
-            l_sender = get_mqtt_field(p_message, 'Sender')
+            l_sender = get_required_mqtt_field(p_message, 'Sender')
             l_logmsg += '\n\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
         # LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
@@ -102,8 +93,8 @@ class Actions:
             l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'schedule':
                 l_logmsg += scheduleMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
-        elif p_topic[0] == 'security':
-            l_logmsg += securityMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
+        # elif p_topic[0] == 'security':
+        #    l_logmsg += securityMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'weather':
             l_logmsg += self._decode_weather(p_topic, p_message)
         else:

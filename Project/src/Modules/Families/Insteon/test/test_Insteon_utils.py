@@ -11,7 +11,7 @@ Passed all 23 tests - DBK - 2017-04-29
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-04-01'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData
-from Modules.Core import conversions
+from Modules.Core.Utilities import convert
 from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_utils import Util, Decode as utilDecode
@@ -282,7 +282,7 @@ class E1_Lookup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights[0], 'E1-01-A - Lighting'))
         l_addr = INSTEON_0_MSG
         l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_addr)
-        l_dotted = conversions.int2dotted_hex(l_ret.InsteonAddress, 3)
+        l_dotted = convert.int2dotted_hex(l_ret.InsteonAddress, 3)
         # print(PrettyFormatAny.form(l_ret, 'E1-01-B - Lighting'))
         self.assertEqual(l_dotted, TESTING_INSTEON_ADDRESS_0)
 

@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2018 by D. Brian Kimmel
 * Created:   2018-09-30
-* Updated:   2018-10-04
+* Updated:   2019-04-01
 * License:   MIT License
 * Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
@@ -21,15 +21,22 @@ This makes it sort of a plugin system.
 This lowers the memory footprint of the system, since there are a lot of different entertainment device modules,
 this will be a big savings of memory.
 
-This module is message driven.
+This module is MQTT message driven.
 A Mqtt message is sent to entertainment.py and it dispatches it to the appropriate module.
 These messages have topics that begin with:
-		pyhouse/house name/entertainment/<device or service>/
 
 The modules may return a status message, control other submodules or ...
 
 
+### Mqtt Messages
 
+Mqtt messages have the topic:
+
+```
+		pyhouse/<house name>/entertainment/<device-or-service>/<action>
+```
+
+where <device-or-service> is one of the active submodules.
 
 
 ```python

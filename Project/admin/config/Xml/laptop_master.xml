@@ -30,6 +30,17 @@
 				<Password>Password-01</Password>
 				<ApiKey>MBFBC-agf6rq5bsWcxLngYZoClGr2pw2oKEMLZgs</ApiKey>
 			</Bridge>
+			<Bridge Name="WeatherStation" Key="2" Active="True">
+				<UUID>Bridge..-0003-0000-0000-0123456789ab</UUID>
+				<Comment>AcuRite Weather Station</Comment>
+				<Connection>Ethernet</Connection>
+				<Type>Weather</Type>
+				<Host>weather-sta</Host>
+				<IPv4Address>192.168.1.132</IPv4Address>
+				<Port>80</Port>
+				<UserName>None</UserName>
+				<Password>None</Password>
+			</Bridge>
 		</BridgesSection>
 		<CommunicationSection />
 		<InternetSection />
@@ -355,10 +366,10 @@
 		<EntertainmentSection>
 			<OnkyoSection Active="True">
 				<Type>Component</Type>
-				<Device Active="True" Key="0" Name="TX-555">
+				<Device Active="True" Key="0" Name="Tx-555">
 					<UUID>Onkyo...-0001-0000-0000-0123456789ab</UUID>
 					<Comment>Tx-555 Receiver</Comment>
-					<Host/>
+					<Host>onkyo</Host>
 					<IPv4>192.168.1.120</IPv4>
 					<IPv6>2001:DB8::1</IPv6>
 					<Model>Tx-555</Model>
@@ -374,7 +385,7 @@
 				<Device Active="True" Key="0" Name="TV-75">
 					<UUID>Smasung.-0001-0000-0000-0123456789ab</UUID>
 					<Comment>TV 75 inch</Comment>
-					<Host/>
+					<Host>samsung-tv</Host>
 					<IPv4>192.168.1.100</IPv4>
 					<IPv6>2001:DB8::554</IPv6>
 					<Model>75</Model>
@@ -389,11 +400,11 @@
 				<Type>Service</Type>
 				<Device Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Running on pi-07-pp</Comment>
-					<Host>192.168.1.17</Host>
+					<Host>pandora</Host>
 					<ConnectionFamily>Onkyo</ConnectionFamily>
 					<ConnectionName>Tx-555</ConnectionName>
 					<InputName>Game</InputName>
-					<InputCode />
+					<InputCode>22</InputCode>
 					<MaxPlayTime>0</MaxPlayTime>
 					<Type>Receiver</Type>
 					<Volume>53</Volume>

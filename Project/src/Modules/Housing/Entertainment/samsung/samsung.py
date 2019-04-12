@@ -214,7 +214,7 @@ class SamsungProtocol(Protocol):
         Protocol.connectionLost(self, reason=reason)
 
 
-class SamsungClient(SamsungProtocol):
+class SamsungClient:
     """
     """
 
@@ -309,6 +309,15 @@ class Commands:
 class Connecting:
 
     def connect_samsung(self, p_device_obj):
+
+        def cb_connectedNow(SamsungClient):
+            LOG.debug('Connected Now')
+            SamsungClient.send_command('1PWRQSTN')
+
+        def eb_failed(fail_reason):
+            LOG.warn("initial Samsung connection failed: {}".format(fail_reason))
+            l_ReconnectingService.stopService()
+
         l_reactor = self.m_pyhouse_obj.Twisted.Reactor
         try:
             # l_host = convert.long_to_str(p_device_obj.IPv4)
@@ -324,14 +333,6 @@ class Connecting:
             LOG.debug('{}'.format(PrettyFormatAny.form(l_endpoint, 'Endpoint', 190)))
             LOG.debug('{}'.format(PrettyFormatAny.form(l_factory, 'Factory', 190)))
             LOG.debug('{}'.format(PrettyFormatAny.form(l_ReconnectingService, 'ReconnectService', 190)))
-
-            def cb_connectedNow(OnkyoClient):
-                LOG.debug('Connected Now')
-                OnkyoClient.send_command('1PWRQSTN')
-
-            def eb_failed(fail_reason):
-                LOG.warn("initial Samsung connection failed: {}".format(fail_reason))
-                l_ReconnectingService.stopService()
 
             waitForConnection.addCallbacks(cb_connectedNow, eb_failed)
             l_ReconnectingService.startService()

@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-04-11'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -212,9 +212,9 @@ class PioneerProtocol(StatefulTelnetProtocol):
     Each protocol instance is mapped to a Pioneer Device (and visa  versa)
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
+    def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_device_obj = p_pioneer_device_obj
+        self.m_pioneer_device_obj = p_device_obj
         # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
         LOG.info('Protocol Init - Version:{}'.format(__version__))
 
@@ -260,9 +260,9 @@ class PioneerClient(PioneerProtocol):
     """
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
+    def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_device_obj = p_pioneer_device_obj
+        self.m_pioneer_device_obj = p_device_obj
 
     def send_command(self, p_device_obj, p_command):
         LOG.info('Send command {}'.format(p_command))
@@ -280,9 +280,9 @@ class PioneerFactory(ClientFactory):
     By default, buildProtocol will create a protocol of the class given in self.protocol.
     """
 
-    def __init__(self, p_pyhouse_obj, p_pioneer_device_obj):
+    def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_pioneer_device_obj = p_pioneer_device_obj
+        self.m_pioneer_device_obj = p_device_obj
         LOG.info('Init - Version:{}'.format(__version__))
 
     def startedConnecting(self, p_connector):
@@ -388,30 +388,31 @@ class API(MqttActions, PioneerClient):
         """ Read the XML for all Pioneer devices.
         """
         self.m_started = False
-        l_pioneer_device_obj = XML.read_pioneer_section_xml(p_pyhouse_obj)
+        l_device_obj = XML.read_pioneer_section_xml(p_pyhouse_obj)
         LOG.info("Loaded Pioneer Device(s) - Version:{}".format(__version__))
-        return l_pioneer_device_obj
+        return l_device_obj
 
     def Start(self):
         """ Start all the Pioneer factories if we have any Pioneer devices.
         """
         LOG.info('Starting...')
         l_count = 0
-        for l_pioneer_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices.values():
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        for l_device_obj in l_devices.values():
             l_count += 1
-            if not l_pioneer_device_obj.Active:
+            if not l_device_obj.Active:
                 continue
-            if l_pioneer_device_obj._isRunning:
-                LOG.info('Pioneer device {} is already running.'.format(l_pioneer_device_obj.Name))
-            l_host = long_to_str(l_pioneer_device_obj.IPv4)
-            l_port = l_pioneer_device_obj.Port
-            l_factory = PioneerFactory(self.m_pyhouse_obj, l_pioneer_device_obj)
+            if l_device_obj._isRunning:
+                LOG.info('Pioneer device {} is already running.'.format(l_device_obj.Name))
+            l_host = long_to_str(l_device_obj.IPv4)
+            l_port = l_device_obj.Port
+            l_factory = PioneerFactory(self.m_pyhouse_obj, l_device_obj)
             l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-            l_pioneer_device_obj._Factory = l_factory
-            l_pioneer_device_obj._Connector = l_connector
-            l_pioneer_device_obj._isRunning = True
-            self.m_pioneer_device_obj = l_pioneer_device_obj
-            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_pioneer_device_obj.Name, l_host, l_port))
+            l_device_obj._Factory = l_factory
+            l_device_obj._Connector = l_connector
+            l_device_obj._isRunning = True
+            self.m_pioneer_device_obj = l_device_obj
+            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_device_obj.Name, l_host, l_port))
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveXml(self, _p_xml):

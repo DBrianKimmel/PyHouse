@@ -29,30 +29,30 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-03-24'
+__updated__ = '2019-04-08'
 
 #  Import system type stuff
 from twisted.internet import endpoints
 # from twisted.web.resource import Resource
 from twisted.web.server import Site
 # from twisted.web.template import Element, XMLString, renderer
-from werkzeug.contrib.jsrouting import render_template
-from klein import Klein, route
+# from werkzeug.contrib.jsrouting import render_template
+from klein import Klein  # , route
 
 #  Import PyMh files and modules.
 from Modules.Computer.Web import web_utils
-from Modules.Computer.Web.web_login import LoginElement
 from Modules.Computer.Web.web_mainpage import MainPage
-from Modules.Computer import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.WebServer      ')
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-app = Klein()
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.WebServer      ')
+
+klein_app = Klein()
 
 
-@app.route('/')
-def root(request):
+@klein_app.route('/')
+def root(_request):
     return MainPage()
 
 
@@ -91,17 +91,34 @@ class Utility(ClientConnections):
         For example:
         tcp:port=80:interface=192.168.1.1.
         """
+
+        def cb_listen(p_arg):
+            LOG.debug('{}'.format(PrettyFormatAny.form(p_arg, 'Arg', 190)))
+            pass
+
+        def eb_listen_error(p_reason):
+            LOG.error(p_reason)
+            pass
+
         l_reactor = p_pyhouse_obj.Twisted.Reactor
-        l_app = p_pyhouse_obj.Twisted.Application
+        _l_app = p_pyhouse_obj.Twisted.Application
         # l_app = Klein()
-        p_pyhouse_obj.Twisted.Application = app
+        p_pyhouse_obj.Twisted.Application = klein_app
+        LOG.debug('{}'.format(PrettyFormatAny.form(klein_app, 'KleinApp', 190)))
         l_endpoint_description = 'tcp'
         l_endpoint_description += ':port={}'.format(p_port)
         if p_interface != None:
             l_endpoint_description += ':interface={}'.format(p_interface)
         LOG.debug("TCP Endpoint: {}".format(l_endpoint_description))
+
         l_endpoint = endpoints.serverFromString(l_reactor, l_endpoint_description)
-        l_server = l_endpoint.listen(Site(app.resource()))
+        LOG.debug('{}'.format(PrettyFormatAny.form(l_endpoint, 'Endpoint', 190)))
+
+        l_server = l_endpoint.listen(Site(klein_app.resource()))
+        l_server.addCallback(cb_listen)
+        l_server.addErrback(eb_listen_error)
+        LOG.debug('{}'.format(PrettyFormatAny.form(l_server, 'Server', 190)))
+
         p_pyhouse_obj.Computer.Web.WebServer = l_server
         # print(PrettyFormatAny.form(l_server, 'WebServer'))
         LOG.info("Started TCP web server - {}".format(l_endpoint))
@@ -129,8 +146,8 @@ class Utility(ClientConnections):
          for example, if your DNS is not working, but you know that the IP address 7.6.5.4 points to awesome.site.example.com, you could specify:
             tls:awesome.site.example.com:443:endpoint=tcp\:7.6.5.4\:443.
         """
-        l_reactor = p_pyhouse_obj.Twisted.Reactor
-        l_app = p_pyhouse_obj.Twisted.Application
+        _l_reactor = p_pyhouse_obj.Twisted.Reactor
+        _l_app = p_pyhouse_obj.Twisted.Application
         l_endpoint_description = 'tls:'
         if p_host != None:
             l_endpoint_description += '{}:'.format(p_host)

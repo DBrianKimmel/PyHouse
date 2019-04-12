@@ -10,7 +10,7 @@
 Passed all 8 tests - DBK - 2019-02-27
 """
 
-__updated__ = '2019-01-28'
+__updated__ = '2019-04-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,8 +20,9 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.computer import API as computerAPI
+from Modules.Core.Utilities.extract_tools import get_mqtt_field, get_required_mqtt_field
 from Modules.Housing.house import API as houseAPI
-from Modules.Computer.Mqtt.mqtt_actions import get_mqtt_field, Actions
+from Modules.Computer.Mqtt.mqtt_actions import Actions
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import \
@@ -151,14 +152,14 @@ class B1_Field(SetupMixin, unittest.TestCase):
     def test_01_HVAC(self):
         l_topic = 'pyhouse/pink poppy/irrigation'
         l_payload = {"DateTime": DATE_TIME, "Sender": SENDER}
-        l_sender = get_mqtt_field(l_payload, 'Sender')
+        l_sender = get_required_mqtt_field(l_payload, 'Sender')
         print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
         self.assertEqual(l_sender, SENDER)
 
     def test_02_Msg(self):
         l_topic = 'pyhouse/pink poppy/irrigation'
         l_payload = LIGHTING_MSG
-        l_sender = get_mqtt_field(l_payload, 'Sender')
+        l_sender = get_required_mqtt_field(l_payload, 'Sender')
         print("\n\tTopic: {}\n\tPayload: {}".format(l_topic, l_payload))
         print(PrettyFormatAny.form(l_payload, 'B1-02-A - Json'))
         self.assertEqual(l_sender, SENDER)

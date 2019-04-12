@@ -3,12 +3,17 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2018 by D. Brian Kimmel
 * Created:   2018-10-01
-* Updated:   2018-10-01
+* Updated:   2019-04-04
 * License:   MIT License
 * Summary:   This is the design documentation for the Mqtt Module of PyHouse.
 
-
 # MQTT
+
+## Broker
+
+This module connects to a MQTT broker using the 3.1.1 protocol.
+The client name must start with 'Pyh-'.
+It uses straight TCP and will soon allow TLS.
 
 ## Design
 
@@ -16,7 +21,6 @@ This Mqtt module is accessed by every other module.
 
 The API is setup from the computer module.
 It initialized as the first thing in the computer setup so it can be called to post and decode messages early on.
-
 
 ### Topic
 
@@ -42,10 +46,12 @@ Categories:
 - schedule
 - security
 
-
 ### Payload
 
 The playload is structured to carry the information
 
+# References
+
+[Certificates](http://www.steves-internet-guide.com/mosquitto-tls/)
 
 ### END DBK

@@ -62,4 +62,18 @@ Contains all lower levels down to houses
 ## House
 
 
+# Structure
+
+```
+Application
+	Service
+		Sub-Service
+---	---	---
+PyHouse
+	Lighting
+	HVAC
+	Outside
+		Pool
+		Irrigation
+```
 ### END DBK

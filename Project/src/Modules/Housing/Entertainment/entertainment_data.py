@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-24'
+__updated__ = '2019-04-11'
 
 # Import system type stuff
 
@@ -67,6 +67,7 @@ class EntertainmentDeviceData(BaseObject):
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
         self._Connector = None
+        self._Protocol = None
         #
         self.CommandSet = None  # Command sets change over the years.
         self.IPv4 = None  # IPv4 if No  FQDN or IPv6

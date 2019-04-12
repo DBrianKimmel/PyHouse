@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-01-03'
+__updated__ = '2019-03-31'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -107,7 +107,7 @@ class MQTTProtocol(Protocol, Packets):
                 self.m_buffer = self.m_buffer[l_PacketLength:]
                 l_RemainingLength = None
             else:
-                LOG.debug('### exit without processing\n\t{}'.format(FormatBytes(self.m_buffer)))
+                # LOG.debug('### exit without processing\n\t{}'.format(FormatBytes(self.m_buffer)))
                 break
 
     def _processPacket(self, packet):

@@ -1,9 +1,8 @@
 """
-
 @name:      PyHouse/src/Modules/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Entertainment component access module.
@@ -25,18 +24,17 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-01-27'
+__updated__ = '2019-04-01'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
-import importlib
+# import importlib
 # import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData, \
-        EntertainmentPluginData, \
         EntertainmentDeviceControl
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools  # , PutGetXML
@@ -62,7 +60,7 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
-        ==> pyhouse/<house name>/entertainment/<device>/...
+        ==> pyhouse/<house name>/entertainment/<device-or-service>/...
 
         <device-or-service> = one of the VALID_ENTERTAINMENT_MFGRS
 
@@ -85,7 +83,10 @@ class MqttActions:
         try:
             l_logmsg += l_module.decode(p_topic[1:], p_message)
 
-            if l_topic == 'pandora':
+            if l_topic == 'onkyo':
+                l_logmsg += l_module.decode(p_topic[1:], p_message)
+            #
+            elif l_topic == 'pandora':
                 l_logmsg += l_module.decode(p_topic[1:], p_message)
             #
             elif l_topic == 'pioneer':
@@ -140,7 +141,7 @@ class API(Ent):
         @return: the Entertainment object of PyHouse_obj
         """
         LOG.info("XML Loading - Version:{}".format(__version__))
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        _l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
 
         """
         if l_xml == None:

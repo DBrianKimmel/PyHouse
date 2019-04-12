@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-02-14'
+__updated__ = '2019-03-31'
 
 #  Import system type stuff
 import pyudev
@@ -115,7 +115,7 @@ class SerialAPI:
         p_controller_obj._Data = bytearray()
         l_baud = p_controller_obj.BaudRate
         l_port = p_controller_obj.Port
-        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
+        # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory

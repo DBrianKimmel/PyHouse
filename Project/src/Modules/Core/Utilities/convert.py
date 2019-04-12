@@ -13,13 +13,11 @@
 Utility routines to convert external readable numbers to integers for ease in comparing.
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-04-01'
 
 # Import system type stuff
-import datetime
 import math
 import netaddr
-# import ipaddress
 
 # Import PyMh files and modules.
 
@@ -117,6 +115,29 @@ def int2dotted_hex(p_int, p_size):
             l_ix = int(l_ix / 256)
         return str('.'.join(l_hex))
     except (TypeError, ValueError) as e_err:
-        LOG.error('ERROR in converting int to dotted Hex {} {} - Type:{} - {}'.format(p_int, l_ix, type(p_int), e_err))
+        print('ERROR in converting int to dotted Hex {} {} - Type:{} - {}'.format(p_int, l_ix, type(p_int), e_err))
+
+
+def bigend_2_int(p_bytes):
+    """ Convert bigending bytestring to int
+    """
+    l_ix = 0
+    l_int = 0
+    while l_ix < len(p_bytes):
+        l_b = int(p_bytes[l_ix])
+        l_int = l_int * 256 + l_b
+        l_ix += 1
+    return l_int
+
+
+def int_2_bigend(p_int, p_len):
+    """ Convert an integer to bigendian byte string.
+    """
+    l_ret = p_int.to_bytes(p_len, byteorder='big')  # struct.pack('>', p_int)
+    # l_ret = bytearray(p_len)
+    # l_max = int((256 ** p_len) / 2)
+    # if l_max < p_int:
+    #    print('Too Big {} > {} {}'.format(l_max, p_int, l_ret))
+    return l_ret
 
 # ## END DBK

@@ -2,20 +2,21 @@
 @name:      PyHouse/src/Modules/Security/security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 29, 2015
 @Summary:
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-04-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import UuidData, GarageDoorData, MotionSensorData, SecurityData
+from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
@@ -30,7 +31,7 @@ LOG = Logger.getLogger('PyHouse.Security       ')
 # LOCATION = House.Security
 
 
-class MqttActions(object):
+class MqttActions:
     """
     """
 
@@ -44,9 +45,9 @@ class MqttActions(object):
         """
         l_logmsg = '\tSecurity:\n'
         if p_topic[0] == 'garage_door':
-            l_logmsg += '\tGarage Door: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+            l_logmsg += '\tGarage Door: {}\n'.format(get_mqtt_field(p_message, 'Name'))
         elif p_topic[0] == 'motion_sensor':
-            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(extract_tools.get_mqtt_field(p_message, 'Name'), extract_tools, get_mqtt_field(p_message, 'Status'))
+            l_logmsg += '\tMotion Sensor:{}\n\t{}'.format(get_mqtt_field(p_message, 'Name'), get_mqtt_field(p_message, 'Status'))
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg
@@ -55,7 +56,7 @@ class MqttActions(object):
 class Utility(object):
 
     @staticmethod
-    def _read_base_device(p_pyhouse_obj, p_xml):
+    def _read_base_device(_p_pyhouse_obj, p_xml):
         """
         @param p_xml: is the XML Element for the entire device
         @return: a Lighting device data object with the base info filled in
@@ -72,7 +73,7 @@ class Utility(object):
         return l_xml
 
     @staticmethod
-    def _read_base_motion_device(p_pyhouse_obj, p_xml):
+    def _read_base_motion_device(_p_pyhouse_obj, p_xml):
         """
         @param p_xml: is the XML Element for the entire device
         @return: a Lighting device data object with the base info filled in
@@ -99,11 +100,11 @@ class Utility(object):
         return p_xml
 
     @staticmethod
-    def _read_motion_data(_p_pyhouse_obj, p_obj, p_xml):
+    def _read_motion_data(_p_pyhouse_obj, p_obj, _p_xml):
         return p_obj  # for testing
 
     @staticmethod
-    def _write_motion_data(p_obj, p_xml):
+    def _write_motion_data(_p_obj, p_xml):
         return p_xml
 
     @staticmethod

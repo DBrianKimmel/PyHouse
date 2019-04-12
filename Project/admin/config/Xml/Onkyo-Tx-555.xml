@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='us-ascii'?>
+<Onkyi-Tx-555 Version="19.4.0"
+	xmlns:comp="http://PyHouse.Org/ComputerDiv"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
+	<!-- Updated by PyHouse 2019-04-12 11:22:33 -->
+	<InputSection Count="5">
+		<Input Name="BD" Key="0">
+			<Device>None</Device>
+		</Input>
+	</InputSection>
+	<OutputSection Count="2">
+		<Output Name="Zone-1" Key="0">
+			<Name>Living Room</Name>
+			<Index>1</Index>
+		</Output>
+		<Output Name="Zone-2" Key="1">
+			<Name>Lanai</Name>
+			<Index>2</Index>
+		</Output>
+	</OutputSection>
+</Onkyi-Tx-555>

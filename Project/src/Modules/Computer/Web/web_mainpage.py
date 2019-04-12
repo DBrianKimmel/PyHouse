@@ -14,15 +14,14 @@ the house select screen also allows for a house to be added so starting with no 
 
 This module creates a main page and a workspace.
 """
-from twisted.web._element import renderer
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-03-06'
+__updated__ = '2019-04-07'
 
 #  Import system type stuff
 import gc
 from twisted.web.template import Element, XMLFile
 from twisted.python.filepath import FilePath
+from twisted.web._element import renderer
 
 #  Import PyMh files and modules.
 # from Modules.Computer.Web import web_buttons
@@ -49,7 +48,7 @@ from Modules.Computer.Web import web_rootMenu
 # from Modules.Computer.Web import web_users
 # from Modules.Computer.Web import web_webs
 
-#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.WebMainpage    ')
@@ -153,7 +152,8 @@ REQ_WITHID = 2
 
 
 class Workspace(Element):
-    """WARNING:
+    """
+    WARNING:
         The names of the @athena.expose methods seem to have to match the js file name.
         They are called from browser when elements are attached to the workspace.
     """
@@ -168,9 +168,9 @@ class Workspace(Element):
 
     def inject_404(self):
         LOG.info("404 called from browser")
-        f = FourOfour()
-        f.setFragmentParent(self)
-        return f
+        # f = FourOfour()
+        # f.setFragmentParent(self)
+        # return f
 
     @renderer
     def login(self, _p_params):

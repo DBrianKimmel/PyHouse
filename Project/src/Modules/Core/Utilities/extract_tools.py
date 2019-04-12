@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-04-01'
 
 # Import system type stuff
 
@@ -31,6 +31,16 @@ def extract_quoted(p_string, p_delim=b'"'):
 
 
 def get_mqtt_field(p_message, p_field):
+    """ Get the given field from a JSON message.
+    """
+    try:
+        l_ret = p_message[p_field]
+    except (KeyError, TypeError):
+        l_ret = None
+    return l_ret
+
+
+def get_required_mqtt_field(p_message, p_field):
     """ Get the given field from a JSON message.
     """
     try:

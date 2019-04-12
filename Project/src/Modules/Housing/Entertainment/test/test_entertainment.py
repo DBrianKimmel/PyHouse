@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2019-03-18
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-04-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,8 +24,6 @@ from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData
-from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
-        TESTING_ONKYO_DEVICE_NAME_0
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \

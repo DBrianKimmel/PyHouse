@@ -3,13 +3,21 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-03-19
-* Updated:   2019-03-19
+* Updated:   2019-03-30
 * License:   MIT License
 * Summary:   This is the design for Hue Hub.
 
-#Hue
+# Hue
+There are several ways we can deal with Philips Hue devices in an automated home.
+* Alexa
+* PyHouse via Hue Hub
+* Hue Smartphone App
 
-##Config
+# Hue Hub
+
+This is the PyHouse controlled device we interact with.
+
+## Config
 
 ```json
 {

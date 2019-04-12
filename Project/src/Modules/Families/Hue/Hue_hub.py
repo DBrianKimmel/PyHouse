@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-03-30'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -456,7 +456,7 @@ class HueProtocol(Protocol):
         self.m_code = p_response_code
         self.m_body = ''
         self.m_remaining = 1024 * 10  # Allow for 10kb response
-        # LOG.debug('Hue Protocol Init')
+        LOG.debug('Hue Protocol Init')
 
     def dataReceived(self, p_bytes):
         if self.m_remaining > 0:
@@ -467,13 +467,17 @@ class HueProtocol(Protocol):
             self.m_remaining -= len(l_display)
 
     def connectionLost(self, p_reason):
-        """
+        """ This gets called when the web page has all been received in its entirety.
+        GET
+            Now we have the page (and the command we used to get the page) we can deal with the servers reply.
+        POST
+            ?
         """
 
-        def cb_log(self, p_command, p_code, p_body):
+        def cb_log(self, p_command, _p_code, p_body):
             """ Log the response to our command and dispatch the message
             """
-            LOG.debug('\n\tCommand: {}\n\tCode: {}\n\tBody: {}'.format(p_command, p_code, p_body))
+            # LOG.debug('\n\tCommand: {}\n\tCode: {}\n\tBody: {}'.format(p_command, p_code, p_body))
             if p_command == '/config':
                 HueDispatch().get_config(p_body)
             elif p_command == '/lights':
@@ -521,8 +525,9 @@ class HueDispatch:
         pass
 
     def get_config(self, p_body):
-        l_msg = jsonpickle.decode(p_body)
-        LOG.debug('Got Config {}'.format(PrettyFormatAny.form(l_msg, 'Config', 190)))
+        # l_msg = jsonpickle.decode(p_body)
+        # LOG.debug('Got Config {}'.format(PrettyFormatAny.form(l_msg, 'Config', 190)))
+        pass
 
     def get_lights(self, p_body):
         """
@@ -543,7 +548,7 @@ class HueDispatch:
                 l_light.ControllerName = 'Hue Hub'
                 l_light.LastUpdate = datetime.datetime.now()
                 l_light.IsDimmable = True
-                LOG.debug('Add Light: {} {}'.format(l_key, PrettyFormatAny.form(l_value, 'Light', 190)))
+                # LOG.debug('Add Light: {} {}'.format(l_key, PrettyFormatAny.form(l_value, 'Light', 190)))
                 if l_key == 'name':
                     l_light.Name = l_value
                     # LOG.debug('Add Light {}'.format(PrettyFormatAny.form(l_light, 'Light', 190)))
@@ -642,17 +647,16 @@ class HueHub(object):
         """
         _l_agent_d = self.HubGet('/config')
         _l_agent_d = self.HubGet('/lights')
-        _l_agent_d = self.HubGet('/groups')
-        _l_agent_d = self.HubGet('/schedules')
-        _l_agent_d = self.HubGet('/scenes')
-        _l_agent_d = self.HubGet('/sensors')
-        _l_agent_d = self.HubGet('/rules')
+        # _l_agent_d = self.HubGet('/groups')
+        # _l_agent_d = self.HubGet('/schedules')
+        # _l_agent_d = self.HubGet('/scenes')
+        # _l_agent_d = self.HubGet('/sensors')
+        # _l_agent_d = self.HubGet('/rules')
         # Server().do_GET()
         LOG.info('Scheduled All config')
 
     def HubGet(self, p_command):
-        """ Issue a request for information
-        It will arrive later via a deferred.
+        """ Issue a request for information.  It will arrive later via a deferred.
         """
 
         def cb_Response(p_response, p_command):

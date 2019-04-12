@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
 
-@name:      PyHouse/src/Modules/Web/web_login.py
+@name:      PyHouse/Project/src/Modules/Computer/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-04-08'
 
 #  Import system type stuff
 import os
@@ -270,8 +270,6 @@ class UnixChecker(object):
             checked = self.checkSpwd(spwd, username, password)
             if checked is not None:
                 return checked
-        #  TODO: check_pam?
-        #  TODO: check_shadow?
         return defer.fail(UnauthorizedLogin())
 
 
