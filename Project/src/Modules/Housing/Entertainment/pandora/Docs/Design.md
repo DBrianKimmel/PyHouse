@@ -10,6 +10,32 @@
 
 # Pandora
 
+This describes the setup for playing pandora through your entertinment system.
+
+A raspberry PI is used.
+It has the pianobar on the computer
+
+```
+sudo apt update
+sudo apt install pianobar python3-venv git python3-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev
+sudo cp /etc/sudoers.d/010_pi-nopasswd /etc/sudoers.d/010_pyhouse-nopasswd
+sudo vi /etc/sudoers.d/010_pyhouse-nopasswd
+		change "pi" to "pyhouse"
+sudo su pyhouse -l
+python3 -m venv venv
+cd venv
+source bin/activate
+git clone https://github.com/DBrianKimmel/PyHouse.git
+pip3  install wheel
+pip3  install -r PyHouse/Project/requirements.txt
+
+sudo mkdir /var/log/pyhouse /etc/pyhouse
+sudo chwon pyhouse /var/log/pyhouse /etc/pyhouse
+
+```
+
+Run pianobar once to get the config info.
+Fill in the appropriate information in the config file an place it in the proper place on the pandora computer.
 
 ## Design
 
@@ -81,6 +107,11 @@ This module issues status messages,
 * InputCode is the code that must be sent to the family-device to cause the device to select that input channel.
 * Volume is a precent of full volume to be selected when first connecting.
 
+The following line must be placed in /etc/hosts with that is the IP address of the pandora computer.
+
+```
+192.168.1.17	pandora
+```
 
 ## Now Playing
 

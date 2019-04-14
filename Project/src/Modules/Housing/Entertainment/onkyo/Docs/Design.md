@@ -3,11 +3,16 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-03-23
-* Updated:   2019-03-23
+* Updated:   2019-04-13
 * License:   MIT License
 * Summary:   This is the design documentation for the Onkyo Module of PyHouse.
 
 # Onkyo
+
+A house may have one or more Onkyo devices in it's entertainment systems
+
+It appears that at least some of the devices may not queue the commands we send them so we queue the commands
+until the device responds and then we send the next command if we have one.
 
 
 ## Configuration
@@ -32,6 +37,9 @@ The onkyo section of master.xml looks like the following:
 	</Device>
 </OnkyoSection>
 ```
+
+There is also a seperate XML document in /etc/pyhouse for each type of Onkyo device.
+This file defines the specifics for each different Onkyo device.
 
 The host name must be present in /etc/hosts and the IP address is obtained from there.
 The IP addresses in the xml file are for documentation only.
@@ -108,5 +116,143 @@ This module issues status messages,
 * SOURCE_DOWN: ISCP0;0;0;16;0;0;0;26;1;0;0;0;!1SLIDOWN<cr>
 * SOURCE_DVR: ISCP0;0;0;16;0;0;0;24;1;0;0;0;!1SLI00<cr>
 * SOURCE_FM: ISCP0;0;0;16;0;0;0;24;1;0;0;0;!1SLI24<cr>
+
+
+
+
+{"id":"a3b10e27.39bb88","type":"inject","z":"fb28734e.0daa5",
+	"name":"Play Pandora","topic":"Entertain","payload":"pandora","payloadType":"str",
+	"repeat":"","crontab":"","once":false,"onceDelay":0.1,
+	"x":130,"y":220,"wires":[["6aa0fe8a.6411f8"]]},
+
+{"id":"6aa0fe8a.6411f8","type":"function","z":"fb28734e.0daa5","name":"Compose",
+	"func":
+		"//\n//\nmsg.topic = 'pyhouse/cannon trail/entertainment/pandora/play';\n
+		msg.payload = {'Sender': 'Node-Red 04 CT'};\nreturn msg;","outputs":1,"noerr":0,
+		"x":320,"y":220,"wires":[["7e47594a.cccde","bec0b9c0.4a53f"]]},
+
+{"id":"7e47594a.cccde","type":"mqtt out","z":"fb28734e.0daa5",
+	"name":"Send Msg","topic":"","qos":"","retain":"","broker":"737d2428.a53fa4","x":620,"y":220,"wires":[]},
+
+{"id":"bec0b9c0.4a53f","type":"debug","z":"fb28734e.0daa5",
+	"name":"PlayPandoraDebug","active":true,"tosidebar":true,"console":false,"tostatus":false,"complete":"true","x":640,"y":300,"wires":[]},
+
+{"id":"6a7ba440.b296c4","type":"function","z":"3f0540b.1917ec",
+	"name":"Control Message",
+	"func":"
+		
+		// Out 1 = To MQTT.
+		// Out 2 = To Chart
+		// Out 3 = To Debug.
+		
+		var mqtt_msg,
+		    chart_msg,
+		    debug_msg;
+		var NAME   = \"Pandora Control\";
+		var l_date = new Date();\n
+		var l_house    = global.get('ms.house_name');
+		var l_ip       = global.get('ms.public_ipv4');
+		var l_node     = global.get('ms.node_name');
+		var l_pandora  = global.get('ms.pandora');
+		var PREFIX = 'pyhouse/' + l_house + '/entertainment/pandora/control';
+		
+		// .Sender
+		// .System
+		// .Zone
+		// .Control p_msg
+		//
+		function build_mqtt_message(p_msg) {
+		    var msg = {};
+		    msg.topic = PREFIX;
+		    msg.payload = {};
+		    msg.payload.Sender  = l_node;
+		    msg.payload.System  = 'Pandora';
+		    msg.payload.Zone    = '1';
+		    msg.payload.Control = p_msg;
+		    return msg;
+		}
+		function build_chart_message(p_msg) {
+		    var msg = {};\n
+		    msg.topic = 'Pandora';\n
+		    msg.payload = p_msg;\n
+		    return msg;\n
+		}
+		function build_debug_message(p_msg) {\n
+		    var msg = {};\n
+		    msg.topic = 'Debug Message - Pandora Control';\n
+		    msg.payload = p_msg;\n
+		    msg.status = \"Pandora: \";\n
+		    return msg;\n
+		}\n
+		// Turn Pandora on.\n
+		function turnPandoraOn(pType) {\n
+		    if (l_pandora !== 'On') {\n
+		        l_msg = 'now';\n
+		        debug_msg = build_debug_message('Turned ' + NAME + ' ON.');\n
+		    } else {\n
+		        l_msg = 'was';\n
+		        debug_msg = build_debug_message('Kept ' + NAME +' ON.');\n
+		    }\n
+		    node.status({fill:\"green\", shape:\"dot\",text:\"Pandora \" + l_msg + \" On\"});\n
+		    global.set('ms.pandora', 'On');\n
+		    mqtt_msg  = build_mqtt_message('PowerOn');\n
+		    chart_msg = null;\n
+		    node.send([mqtt_msg, chart_msg, debug_msg]);\n
+		}\n
+		// Turn Pandora off.\n
+		function turnPandoraOff(pType) {\n
+		    if (l_pandora !== 'Off') {  // Turning drip system off.\n
+		        l_msg = 'now';\n
+		        debug_msg = build_debug_message('Turned ' + NAME + ' OFF');\n
+		    } else {\n
+		        l_msg = 'was';\n
+		        debug_msg = build_debug_message('Kept ' + NAME +' OFF');\n
+		    }\n
+		    node.status({fill:\"yellow\", shape:\"dot\",text:\"Pandora \" + l_msg + \" Off\"});\n
+		    global.set('ms.pandora', 'Off');\n
+		    mqtt_msg  = build_mqtt_message('PowerOff');\n
+		    node.send([mqtt_msg, chart_msg, debug_msg]);\n
+		}\n
+		\n
+		// This node is triggered by any of several buttons:\n
+		//      Power\n
+		//      Volume\n
+		//      Like\n
+		//\n
+		switch (msg.topic) {\n
+		    case 'Power':\n
+		        if (msg.payload === 'PowerOn') {\n
+		            turnPandoraOn('PowerOn');\n
+		        } else {  // Turn off\n
+		            turnPandoraOff(\"PowerOff\");\n
+		        }\n
+		        break;\n
+		        \n
+		    case \"Volume\":\n
+		    case \"Like\":\n
+		    case \"Skip\":\n
+		        mqtt_msg  = build_mqtt_message(msg.payload);\n
+		        chart_msg = null;\n
+		        node.send([mqtt_msg, chart_msg, debug_msg]);\n
+		        break;  \n
+		        \n
+		    default:\n
+		        debug_msg = build_debug_message('Unknown Input: topic= ' + msg.topic + ',  Payload=' + msg.payload);\n
+		        node.warn(debug_msg);\n
+		        break;\n
+		    }\n
+		return null;\n
+		 \n
+		 // ### END DBK\n",
+	"outputs":3,"noerr":0,"x":590,"y":200,"wires":[["3325cd67.8db5e2","abfc7afd.4ac1b8"],[],["8ca77d9.839c68"]]},
+
+{"id":"c23c9538.576538",
+	"type":"ui_button","z":"3f0540b.1917ec",
+	"name":"On","group":"f9596f90.235b38","order":,"width":"6","height":"1","passthru":false,
+	"label":"On","color":"black","bgcolor":"lightgreen","icon":"fa-play",
+	"payload":"PowerOn","payloadType":"str","topic":"Power",
+	"x":130,"y":40,"wires":[["6a7ba440.b296c4"]]},
+
+
 
 ### END DBK

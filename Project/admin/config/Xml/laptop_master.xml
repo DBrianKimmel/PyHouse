@@ -404,7 +404,7 @@
 					<ConnectionFamily>Onkyo</ConnectionFamily>
 					<ConnectionName>Tx-555</ConnectionName>
 					<InputName>Game</InputName>
-					<InputCode>22</InputCode>
+					<InputCode>02</InputCode>
 					<MaxPlayTime>0</MaxPlayTime>
 					<Type>Receiver</Type>
 					<Volume>53</Volume>

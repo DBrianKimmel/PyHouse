@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# @name:      ~/bin/start-pyhouse
+# @author:    D. Brian Kimmel
+# @contact:   D.BrianKimmel@gmail.com
+# @copyright: (c) 2015-2019 by D. Brian Kimmel
+# @license:   MIT License
+# @note:      Created on Oct 19, 2015
+# @Summary:   This starts PyHouse
+
+HOME=/home/pyhouse/
+VENV=${HOME}venv/
+WORK=${VENV}PyHouse/
+
+echo "Starting the PyHouse system"
+source ${VENV}bin/activate
+cd ~
+> nohup.out
+nohup python3 ${WORK}/Project/src/PyHouse.py  1>/dev/null 2>&1 </dev/null &
+cd
+
+### END DBK

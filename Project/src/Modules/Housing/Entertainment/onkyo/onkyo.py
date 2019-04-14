@@ -11,19 +11,16 @@
 
 """
 
-__updated__ = '2019-04-12'
+__updated__ = '2019-04-13'
 __version_info__ = (19, 4, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from twisted.internet.protocol import ClientFactory, Factory, Protocol
+from twisted.internet.protocol import Factory
 from twisted.internet.error import ConnectionDone
-from twisted.internet.endpoints import clientFromString, connectProtocol, TCP4ClientEndpoint
-from twisted.application.internet import ClientService
+from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.protocols.basic import LineReceiver
-
-from twisted.internet.interfaces import IAddress
-from twisted.internet.address import HostnameAddress
+from queue import Queue
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
@@ -77,6 +74,7 @@ class OnkyoDeviceData(EntertainmentDeviceData):
 
     def __init__(self):
         super(OnkyoDeviceData, self).__init__()
+        self._Queue = None
 
 
 class OnkyoResponses:
@@ -92,25 +90,25 @@ class OnkyoResponses:
         LOG.info('Onkyo sent Zone:{} {} {}'.format(l_zone, l_cmd, l_args))
 
         if l_cmd == 'AEQ':
-            LOG.info('AEQ ??? : {}'.format(l_args))
+            LOG.info('AEQ ??? : {}'.format(l_args))  # Onkyo sent Zone:1 AEQ 01
         if l_cmd == 'AMT':
-            LOG.info('AMT Auto Mute : {}'.format(l_args))
+            LOG.info('AMT Auto Mute : {}'.format(l_args))  # Onkyo sent Zone:1 AMT 00
         if l_cmd == 'DIM':
-            LOG.info('DIM Dimmer Level : {}'.format(l_args))
+            LOG.info('DIM Dimmer Level : {}'.format(l_args))  # Onkyo sent Zone:1 DIM 02
         if l_cmd == 'IFA':
             LOG.info('IFA Info Audio : {}'.format(l_args))
         if l_cmd == 'ITV':
-            LOG.info('ITV ??? : {}'.format(l_args))
-        if l_cmd == 'MLV':
-            LOG.info('MLV Master Volume : {}'.format(l_args))
+            LOG.info('ITV ??? : {}'.format(l_args))  # Onkyo sent Zone:1 ITV 000
+        if l_cmd == 'MVL':
+            LOG.info('MVL Master Volume Level : {}'.format(l_args))  # Onkyo sent Zone:1 MVL 36
         if l_cmd == 'MOT':
-            LOG.info('MOT Music Optimizer : {}'.format(l_args))
+            LOG.info('MOT Music Optimizer : {}'.format(l_args))  # Onkyo sent Zone:1 MOT 00
         if l_cmd == 'NAL':
             LOG.info('NAL Song from Album : {}'.format(l_args))  # Onkyo sent Zone:1 NAL Forever Changing - The Golden Age Of Elektra Records 1963-1973
         if l_cmd == 'NAT':
             LOG.info('NAT Song Artist : {}'.format(l_args))  # Onkyo sent Zone:1 NAT Judy Collins
         if l_cmd == 'NDS':
-            LOG.info('NDS ??? : {}'.format(l_args))
+            LOG.info('NDS ??? : {}'.format(l_args))  # Onkyo sent Zone:1 NDS E-x
         if l_cmd == 'NJA':
             LOG.info('NJA Jacket-Art: {}'.format(l_args))  # Onkyo sent Zone:1 NJA 2-http://192.168.1.120/album_art.cgi
         if l_cmd == 'NLS':
@@ -126,13 +124,13 @@ class OnkyoResponses:
         if l_cmd == 'NTR':
             LOG.info('NTR Time?? : {}'.format(l_args))  # Onkyo sent Zone:1 NTR ----/----
         if l_cmd == 'PCT':
-            LOG.info('PCT Picture Control : {}'.format(l_args))
+            LOG.info('PCT Picture Control : {}'.format(l_args))  # Onkyo sent Zone:1 PCT 00
         if l_cmd == 'PWR':
-            LOG.info('PWR Power : {}'.format(l_args))
+            LOG.info('PWR Power : {}'.format(l_args))  # Onkyo sent Zone:1 PWR 01
         if l_cmd == 'RAS':
-            LOG.info('RAS Re-Eq : {}'.format(l_args))
+            LOG.info('RAS Re-Eq : {}'.format(l_args))  # Onkyo sent Zone:1 RAS 00
         if l_cmd == 'SLI':
-            LOG.info('SLI Input Selector : {}'.format(l_args))
+            LOG.info('SLI Input Selector : {}'.format(l_args))  # Onkyo sent Zone:1 SLI 12
 
     def _get_onkyo_message(self, p_msg):
         """
@@ -251,41 +249,6 @@ class OnkyoFactory(Factory):
         LOG.debug('MakeConnection {}'.format(PrettyFormatAny.form(transport, 'Transport', 180)))
 
 
-class OnkyoClientFactory(ClientFactory):
-    """
-    """
-    protocol = OnkyoProtocol
-    m_pyhouse_oj = None
-    m_device_obj = None
-
-    def __init__(self, p_pyhouse_obj, p_device_obj):
-        """ Set up the persistent Data.
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_device_obj = p_device_obj
-
-    def startedConnecting(self, p_connector):
-        LOG.debug('Started to connect.'.format(PrettyFormatAny.form(p_connector, 'Connector', 180)))
-
-    def buildProtocol(self, p_addr):
-        LOG.debug('Build Protocol.')
-        l_protocol = OnkyoProtocol(self.m_pyhouse_obj, self.m_device_obj)
-        return l_protocol
-
-    def clientConnectionLost(self, p_connector, p_reason):
-        LOG.debug('Lost connection. Reason: {}'.format(p_reason))
-
-    def clientConnectionFailed(self, p_connector, p_reason):
-        LOG.debug('Connection failed. Reason:', p_reason)
-
-    def makeConnection(self, transport):
-        """
-        Make a connection to a transport and a server.
-        """
-        # Protocol.makeConnection(self, transport)
-        LOG.debug('MakeConnection {}'.format(PrettyFormatAny.form(transport, 'Transport', 180)))
-
-
 class OnkyoClient(OnkyoProtocol):
     """
     """
@@ -309,20 +272,60 @@ class OnkyoClient(OnkyoProtocol):
         @param p_command: is the comaand b"!1PWR01"
         Gthis will add the rest of the ethernet framework
         """
-        LOG.info('OnkyoProtocol().Send command {}'.format(p_command))
-        # l_tsc = p_device_obj._Factory.protocol
-        LOG.debug('Log send command {}'.format(PrettyFormatAny.form(p_device_obj._Factory, 'Protocol', 190)))
+        if p_device_obj == None:
+            LOG.error('Sending a commant to None will never work!')
+            return
+        LOG.info('Send command {}'.format(p_command))
+        # LOG.debug('Log send command {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
         l_len = len(p_command) + 3
-        l_command = b'IPCS' + \
+        l_command = b'ISCP' + \
                 convert.int_2_bigend(16, 4) + \
                 convert.int_2_bigend(l_len, 4) + \
                 b'\x01' + b'\x00\x00\x00' + p_command + b'\x1a\n\r'
         try:
-            # l_host = p_device_obj._Connector.host
-            p_device_obj._Transport.write(l_command)
-            LOG.info('Send TCP command:{} to xxx'.format(l_command))
+            p_device_obj._Protocol.transport.write(l_command)
+            LOG.info('Send TCP command: {} to {}'.format(l_command, p_device_obj.Name))
         except AttributeError as e_err:
             LOG.error("Tried to call send_command without a onkyo device configured.\n\tError:{}".format(e_err))
+
+
+class OnkeoUtil:
+    """
+    """
+
+    def _list_devices(self, p_list):
+        """ List the devices we have opened.  Mostly for debugging and testing.
+        """
+        for l_dev in p_list:
+            LOG.debug('Onkyo Device {}'.format(PrettyFormatAny.form(l_dev, 'Device', 190)))
+
+    def onkyo_start(self, p_pyhouse_obj, p_device_obj):
+        """ Open connections to the various Onkyo devices we will communicate with.
+        """
+
+        def cb_got_protocol(p_protocol, p_device_obj):
+            p_device_obj._Protocol = p_protocol
+            # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_protocol, 'Proto', 190)))
+            # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
+            p_protocol.transport.write(CMD_01)
+
+        def eb_got_protocol(p_reason):
+            LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
+
+        l_reactor = p_pyhouse_obj.Twisted.Reactor
+        l_host = p_device_obj.Host
+        l_port = p_device_obj.Port
+        #
+        l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
+        d_connector = l_endpoint.connect(OnkyoFactory(p_pyhouse_obj, p_device_obj))
+        d_connector.addCallback(cb_got_protocol, p_device_obj)
+        d_connector.addErrback(eb_got_protocol)
+        #
+        p_device_obj._Endpoint = l_endpoint
+        p_device_obj._isRunning = True
+        p_device_obj._Queue = Queue(32)
+        self.m_device_lst.append(p_device_obj)
+        LOG.info("Started Onkyo Device: '{}'; IP:{}; Port:{};".format(p_device_obj.Name, l_host, l_port))
 
 
 class MqttActions:
@@ -337,7 +340,7 @@ class MqttActions:
 
         @param p_message: is the payload used to control
         """
-        LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
+        LOG.info('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
         l_device = extract_tools.get_mqtt_field(p_message, 'Device')
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
@@ -346,24 +349,37 @@ class MqttActions:
         l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
         if l_family == None:
             l_family = 'onkyo'
-        l_logmsg = '\tOnkyo Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
+        #
+        l_logmsg = '\tOnkyo Control:\n\tDevice:{}-{}\n\tPower:{}\n\tVolume:{}\n\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
+        LOG.debug(l_logmsg)
         #
         if l_input != None:
             l_logmsg += ' Turn input to {}.'.format(l_input)
             self._control_input(l_family, l_device, l_input)
-        #
-        if l_power != None:
-            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
-            self._control_power(l_family, l_device, l_power)
+        else:
+            LOG.warn('No Input')
         #
         if l_volume != None:
+            LOG.warn('Vol')
             l_logmsg += ' Change volume {}.'.format(l_volume)
             self._control_volume(l_family, l_device, l_volume)
+        else:
+            LOG.warn('No Vol')
+        #
+        if l_power != None:
+            LOG.warn('Power')
+            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
+            self._control_power(l_family, l_device, l_power)
+        else:
+            LOG.warn('No Power')
         #
         if l_zone != None:
             l_logmsg += ' Turn Zone to {}.'.format(l_zone)
             self._control_zone(l_family, l_device, l_zone)
+        else:
+            LOG.warn('No Zone')
         #
+        LOG.info('Decode-Control 2 called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
         return l_logmsg
 
     def decode(self, p_topic, p_message):
@@ -384,7 +400,7 @@ class MqttActions:
         return l_logmsg
 
 
-class API(MqttActions, OnkyoClient):
+class API(MqttActions, OnkyoClient, OnkeoUtil):
     """This interfaces to all of PyHouse.
     """
 
@@ -394,12 +410,12 @@ class API(MqttActions, OnkyoClient):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def _find_device(self, _p_family, p_device):
+    def _find_device(self, p_family, p_device):
         # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device in l_devices.values():
             if l_device.Name == p_device:
-                LOG.debug("found device - {}".format(p_device))
+                LOG.info("found device - {} {}".format(p_family, p_device))
                 return l_device
         LOG.error('No such device as {}'.format(p_device))
         return None
@@ -422,20 +438,9 @@ class API(MqttActions, OnkyoClient):
         EntertainmentDeviceData()
 
         """
-
-        def cb_got_protocol(p_protocol, p_device_obj):
-            p_device_obj._Protocol = p_protocol
-            # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_protocol, 'Proto', 190)))
-            # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
-            p_protocol.transport.write(CMD_01)
-
-        def eb_got_protocol(p_reason):
-            LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
-
         LOG.info('Start Onkyo.')
         l_count = 0
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
-        l_reactor = self.m_pyhouse_obj.Twisted.Reactor
         for l_device_obj in l_devices.values():
             if not l_device_obj.Active:
                 continue
@@ -443,27 +448,9 @@ class API(MqttActions, OnkyoClient):
                 LOG.info('Onkyo device {} is already running.'.format(l_device_obj.Name))
                 continue
             l_count += 1
-            l_host = l_device_obj.Host
-            l_port = l_device_obj.Port
-            l_ep_str = 'tcp:host={}:port={}'.format(l_host, l_port)
-            #
-            # l_factory = OnkyoClientFactory(self.m_pyhouse_obj, l_device_obj)
-            # l_connector = l_reactor.connectTCP(l_host, l_port, l_factory)
-            # l_device_obj._Factory = l_factory
-            # l_device_obj._Connector = l_connector
-            #
-            l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
-            d_connector = l_endpoint.connect(OnkyoFactory(self.m_pyhouse_obj, l_device_obj))
-            d_connector.addCallback(cb_got_protocol, l_device_obj)
-            d_connector.addErrback(eb_got_protocol)
-            #
-            l_device_obj._Endpoint = l_endpoint
-            l_device_obj._isRunning = True
+            self.onkyo_start(self.m_pyhouse_obj, l_device_obj)
             self.m_device_lst.append(l_device_obj)
-            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_device_obj.Name, l_host, l_port))
         LOG.info("Started {} Onkyo devices".format(l_count))
-        for l_dev in self.m_device_lst:
-            LOG.debug('Onkyo Device {}'.format(PrettyFormatAny.form(l_dev, 'Device', 190)))
 
     def SaveXml(self, p_xml):
         # LOG.info("Saved Onkyo XML.")
@@ -472,29 +459,31 @@ class API(MqttActions, OnkyoClient):
     def Stop(self):
         LOG.info("Stopped.")
 
-    def _change_input(self, p_family, p_device, p_input):
+    def _control_input(self, p_family, p_device, p_input):
         """
         !1SLIxx
         xx = 02 Game
         @param p_input: Channel Code
         """
+        LOG.inf0('xxx1')
         l_device_obj = self._find_device(p_family, p_device)
-        self.send_command(l_device_obj, b'01FN')
-        LOG.debug('Change input channel to {}'.format(p_input))
+        l_cmd = b'!1MVLQSTN'
+        self.send_command(l_device_obj, l_cmd)
+        LOG.info('Changed input channel to {}'.format(p_input))
 
-    def _change_power(self, p_family, p_device, p_power):
+    def _control_power(self, p_family, p_device, p_power):
         """
         !1PWR01 = On
         !1PWR00 = Standby (Off)
         @param p_power: 'On' or 'Off'
         """
-        # Get the device_obj to control
+        LOG.inf0('xxx2')
         l_device_obj = self._find_device(p_family, p_device)
-        if p_power != 'wxyz':
-            self.send_command(l_device_obj, CONTROL_COMMANDS['PowerQuery'])  # Query Power
-        else:
-            pass
-        LOG.debug('Change Power to {}'.format(p_power))
+        l_cmd = b'!1PWR01'
+        if p_power == 'Off':
+            l_cmd = b'!1PWR00'
+        self.send_command(l_device_obj, l_cmd)
+        LOG.info('Changed Power to {}'.format(p_power))
 
     def _control_volume(self, p_family, p_device, p_volume):
         """
@@ -503,21 +492,23 @@ class API(MqttActions, OnkyoClient):
         @param p_device: is the device we are going to change (Tx-555)
         @param p_volume: % 0-100
         """
-        LOG.debug('Volume:{}'.format(p_volume))
+        LOG.info('xxx3')
         l_device_obj = self._find_device(p_family, p_device)
-        LOG.debug('Vol device {}'.format(PrettyFormatAny.form(l_device_obj, 'Device', 190)))
-        # if p_volume != 'VolumeUp1':
-        self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeQuery'])
-        # else:
-        #    pass
-        LOG.debug('Change Volume to {}'.format(p_volume))
+        l_cmd = '!1MVL' + '{:02X}'.format(p_volume)
+        l_cmd = bytes(l_cmd, 'utf-8')
+        # l_cmd = b'!1MVL38'
+        LOG.debug('Vol command {}'.format(l_cmd))
+        self.send_command(l_device_obj, l_cmd)
+        LOG.info('Changed Volume to {} %'.format(p_volume))
 
-    def _change_zone(self, p_family, p_device, p_input):
+    def _control_zone(self, p_family, p_device, p_input):
         """
         @param p_input: Channel Code
         """
+        LOG.inf0('xxx4')
         l_device_obj = self._find_device(p_family, p_device)
-        self.send_command(l_device_obj, b'01FN')
-        LOG.debug('Change input channel to {}'.format(p_input))
+        l_cmd = b'!1MVLQSTN'
+        self.send_command(l_device_obj, l_cmd)
+        LOG.info('Change input channel to {}'.format(p_input))
 
 # ## END DBK

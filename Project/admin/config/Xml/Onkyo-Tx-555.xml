@@ -4,9 +4,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd">
 	<!-- Updated by PyHouse 2019-04-12 11:22:33 -->
-	<InputSection Count="5">
+	<Comment> This is for an Onkyo Tx-555 Receiver A/V unit.
+	</Comment>
+	<InputSection Count="2">
 		<Input Name="BD" Key="0">
 			<Device>None</Device>
+		</Input>
+		<Input Name="Game" Key="1">
+			<Device>pi-07-pp</Device>
+			<KeyCode>02</KeyCode>
 		</Input>
 	</InputSection>
 	<OutputSection Count="2">

@@ -24,15 +24,19 @@ It initialized as the first thing in the computer setup so it can be called to p
 
 ### Topic
 
-The topics all start out with pyhouse
+1. The topics all start out with pyhouse
+
 ==>pyhouse
 
-The next section is the house name.
+1. The next section is the house name.
 House names must be unique within the realm that the broker and backup brokers serve.
+House names may include spaces
+
 ==>pyhouse/housename
 
 The next section is the message category.
-==>pyhouse/housename/lighting
+
+==>pyhouse/housename/category
 
 Categories:
 - computer
@@ -45,6 +49,18 @@ Categories:
 - rule
 - schedule
 - security
+
+The next section is the action field.
+
+==>pyhouse/housename/lighting/action
+
+Actions:
+- status
+- control
+- delete
+- add
+- synchronize
+
 
 ### Payload
 
