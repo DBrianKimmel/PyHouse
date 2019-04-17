@@ -15,7 +15,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2018-01-05'
+__updated__ = '2019-04-15'
 
 #  Import system type stuff
 
@@ -65,7 +65,7 @@ class API(object):
         """
         l_xml = bridgesXML().write_bridges_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)  # Add the bridges branch to the tree,
-        LOG.info("Saved XML")
+        LOG.info("Saved Bridges XML")
         return l_xml
 
     def Stop(self):

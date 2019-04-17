@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/entertain/test/test_pandora.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 22, 2014
 @summary:   Test
@@ -11,7 +11,7 @@ Passed all 26 tests - DBK - 2018-10-25
 
 """
 
-__updated__ = '2018-12-27'
+__updated__ = '2019-04-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,42 +20,30 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.Utilities import convert
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Housing.Entertainment.pandora.pandora import \
-        XML as pandoraXml, \
-        API as pandoraAPI, \
-        SECTION, \
-        MqttActions, PianoBarProcessControl, PandoraStatusData
+    API as pandoraAPI, \
+    SECTION, \
+    MqttActions, \
+    PianoBarProcessControl, \
+    PandoraStatusData
 from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
-        XML_PANDORA_SECTION, \
-        TESTING_PANDORA_SECTION, \
-        L_PANDORA_SECTION_START, \
-        TESTING_PANDORA_DEVICE_NAME_0, \
-        TESTING_PANDORA_DEVICE_KEY_0, \
-        TESTING_PANDORA_DEVICE_ACTIVE_0, \
-        TESTING_PANDORA_DEVICE_HOST_0, \
-        TESTING_PANDORA_DEVICE_TYPE_0, \
-        TESTING_PANDORA_DEVICE_COMMENT_0, \
-        TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0, \
-        TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0, \
-        TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, \
-        TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0, \
-        TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0, \
-        TESTING_PANDORA_TYPE, \
-        TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0, \
-        TESTING_PANDORA_ACTIVE
+    XML_PANDORA_SECTION, \
+    TESTING_PANDORA_SECTION, \
+    L_PANDORA_SECTION_START, \
+    TESTING_PANDORA_DEVICE_NAME_0, \
+    TESTING_PANDORA_DEVICE_KEY_0, \
+    TESTING_PANDORA_DEVICE_ACTIVE_0
 from Modules.Housing.test.xml_housing import \
-        TESTING_HOUSE_DIVISION, \
-        TESTING_HOUSE_NAME, \
-        TESTING_HOUSE_ACTIVE, \
-        TESTING_HOUSE_KEY, \
-        TESTING_HOUSE_UUID
+    TESTING_HOUSE_DIVISION, \
+    TESTING_HOUSE_NAME, \
+    TESTING_HOUSE_ACTIVE, \
+    TESTING_HOUSE_KEY, \
+    TESTING_HOUSE_UUID
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData, \
-        EntertainmentPluginData
+    EntertainmentPluginData
 from Modules.Housing.Entertainment.test.xml_entertainment import \
-        TESTING_ENTERTAINMENT_SECTION
+    TESTING_ENTERTAINMENT_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 CTL = {
@@ -155,8 +143,8 @@ class A3_XML(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.pandora_sect
         # print(PrettyFormatAny.form(l_xml, 'A3-03-A - Pandora'))
-        self.assertEqual(len(l_xml), 2)
-        self.assertEqual(l_xml[1].attrib['Name'], TESTING_PANDORA_DEVICE_NAME_0)
+        self.assertEqual(len(l_xml), 3)
+        self.assertEqual(l_xml[2].attrib['Name'], TESTING_PANDORA_DEVICE_NAME_0)
 
     def test_04_Device0(self):
         """ Be sure that the XML contains everything in RoomData().
@@ -166,113 +154,6 @@ class A3_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Name'], TESTING_PANDORA_DEVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_DEVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_DEVICE_ACTIVE_0)
-
-
-class C1_Read(SetupMixin, unittest.TestCase):
-    """ Test that we read in the XML configuration properly.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
-        self.m_xml_pandora = self.m_xml.pandora_sect.find('Device')
-
-    def test_01_Build(self):
-        """ Read one entire device entry and set up the PandoraDeviceData_obj correctly.
-        """
-        l_obj = pandoraXml._read_device(self.m_xml_pandora)
-        # sprint(PrettyFormatAny.form(l_obj, 'C1-01-B - Base Pandora device.'))
-        # Base
-        self.assertEqual(str(l_obj.Name), TESTING_PANDORA_DEVICE_NAME_0)
-        self.assertEqual(str(l_obj.Key), TESTING_PANDORA_DEVICE_KEY_0)
-        self.assertEqual(str(l_obj.Active), TESTING_PANDORA_DEVICE_ACTIVE_0)
-        self.assertEqual(str(l_obj.Comment), TESTING_PANDORA_DEVICE_COMMENT_0)
-        # OnkyoDeviceData
-        self.assertEqual(convert.long_to_str(l_obj.Host), TESTING_PANDORA_DEVICE_HOST_0)
-        self.assertEqual(str(l_obj.ConnectionFamily), TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0)
-        self.assertEqual(str(l_obj.ConnectionName), TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
-        self.assertEqual(str(l_obj.InputName), TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
-        self.assertEqual(str(l_obj.InputCode), TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
-        self.assertEqual(str(l_obj.MaxPlayTime), TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0)
-        self.assertEqual(str(l_obj.Volume), TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0)
-
-    def test_02_OneDevice(self):
-        """  Read the first Pandora device.
-        """
-        l_obj = pandoraXml._read_device(self.m_xml_pandora)
-        # print(PrettyFormatAny.form(l_obj, 'C1-02-B - One Device'))
-        self.assertEqual(l_obj.Name, TESTING_PANDORA_DEVICE_NAME_0)
-        self.assertEqual(str(l_obj.Key), TESTING_PANDORA_DEVICE_KEY_0)
-        self.assertEqual(str(l_obj.Active), TESTING_PANDORA_DEVICE_ACTIVE_0)
-        # .
-        self.assertEqual(convert.long_to_str(l_obj.Host), TESTING_PANDORA_DEVICE_HOST_0)
-
-    def test_03_AllDevices(self):
-        """ Read all the pandora devices
-        """
-        l_obj = pandoraXml.read_pandora_section_xml(self.m_pyhouse_obj)
-        l_ent = self.m_pyhouse_obj.House.Entertainment
-        # print(PrettyFormatAny.form(_l_obj, 'C1-03-B - All Devices'))
-        # print(PrettyFormatAny.form(_l_obj.Devices, 'C1-03-C - All Devices'))
-        # print(PrettyFormatAny.form(_l_obj.Devices[0], 'C1-03-D - All Devices'))
-        # print(PrettyFormatAny.form(l_ent, 'C1-03-H - Entertainment'))
-        # print(PrettyFormatAny.form(l_ent.Plugins[SECTION], "B1-03-I - Plugins['pandora']"))
-        # print(PrettyFormatAny.form(l_ent.Plugins[SECTION].Devices, "B1-03-J - Plugins['pandora'],Devices"))
-        # print(PrettyFormatAny.form(l_ent.Plugins[SECTION].Devices[0], "B1-03-K - Plugins['pandora'],Devices[0]"))
-        self.assertEqual(l_ent.Plugins[SECTION].Devices[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
-        self.assertEqual(str(l_obj.Type), TESTING_PANDORA_DEVICE_TYPE_0)
-        self.assertEqual(str(l_obj.Active), TESTING_PANDORA_ACTIVE)
-
-
-class D1_Write(SetupMixin, unittest.TestCase):
-    """ Test that we write XML correctly
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
-        self.m_xml_pandora = self.m_xml.entertainment_sect.find('PandoraSection').find('Device')
-        self.m_pandora = pandoraXml.read_pandora_section_xml(self.m_pyhouse_obj)
-
-    def test_01_Data(self):
-        """ Test that the data structure is correct.
-        """
-        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'D1-01-A1 - PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'D1-01-A2 - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'D1-01-A3 - Entertainment'))
-        # print(PrettyFormatAny.form(l_base, 'C1-05-B1 - Base'))
-        self.assertEqual(l_base.Type, TESTING_PANDORA_TYPE)
-        self.assertEqual(l_base.Name, SECTION)
-        self.assertEqual(l_base.Devices[0].Name, TESTING_PANDORA_DEVICE_NAME_0)
-
-    def test_02_OneDevice(self):
-        """ TTest the write for proper XML elements.
-        """
-        l_xml = pandoraXml._write_device(self.m_pandora.Devices[0])
-        # print(PrettyFormatAny.form(l_xml, 'D1-02-A - XML'))
-        # Base
-        self.assertEqual(l_xml.attrib['Name'], TESTING_PANDORA_DEVICE_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_DEVICE_KEY_0)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_DEVICE_ACTIVE_0)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_PANDORA_DEVICE_COMMENT_0)
-        # EntertainmentServiceData
-        self.assertEqual(l_xml.find('Host').text, TESTING_PANDORA_DEVICE_HOST_0)
-        self.assertEqual(l_xml.find('MaxPlayTime').text, TESTING_PANDORA_DEVICE_MAX_PLAY_TIME_0)
-        self.assertEqual(l_xml.find('ConnectionName').text, TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
-        self.assertEqual(l_xml.find('InputName').text, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
-        self.assertEqual(l_xml.find('InputCode').text, TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
-        self.assertEqual(l_xml.find('Volume').text, TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0)
-
-    def test_03_AllDevices(self):
-        """ Write the entire PandoraSection XML
-        """
-        l_xml = pandoraXml.write_pandora_section_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'D1-03-A - All Devices'))
-        self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_ACTIVE)
-        self.assertEqual(l_xml.find('Type').text, TESTING_PANDORA_DEVICE_TYPE_0)
 
 
 class E1_API(SetupMixin, unittest.TestCase):

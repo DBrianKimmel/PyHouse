@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-03-30'
+__updated__ = '2019-04-15'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -533,7 +533,10 @@ class HueDispatch:
         """
         See Docs/Design.md for the JSON returned.
         """
-        l_json = jsonpickle.decode(p_body)
+        try:
+            l_json = jsonpickle.decode(p_body)
+        except Exception as e_err:
+            LOG.error('Error - {}\n{}'.format(e_err, PrettyFormatAny.form(l_json, "HUE ERROR", 190)))
         # LOG.debug('Got Lights {}'.format(PrettyFormatAny.form(l_json, 'Lights', 190)))
         for l_light_obj in l_json.items():
             l_light = HueLightData()

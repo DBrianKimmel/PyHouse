@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-04-01'
+__updated__ = '2019-04-15'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -75,10 +75,12 @@ class MqttActions:
         try:
             l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
             l_logmsg += l_module.decode(p_topic[1:], p_message)
+            # LOG.debug('{} {}'.format(l_module, l_logmsg))
         except (KeyError, AttributeError) as e_err:
             l_module = None
             l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
-        return l_logmsg
+            LOG.error('Error {}'.format(e_err))
+            return l_logmsg
         #
         try:
             l_logmsg += l_module.decode(p_topic[1:], p_message)

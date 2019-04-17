@@ -4,7 +4,7 @@
 @Name:      PyHouse/src/Modules/Computer/Internet/internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2017 by D. Brian Kimmel
+@copyright: (c) 2012-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 20, 2012
 @summary:   This module determines the IP address of the ISP connection.
@@ -21,7 +21,7 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2019-04-15'
 
 #  Import system type stuff
 
@@ -73,7 +73,7 @@ class API(object):
     def SaveXml(self, p_xml):
         l_xml = internetAPI().write_internet_xml(self.m_pyhouse_obj)
         p_xml.append(l_xml)
-        LOG.info('Saved XML')
+        LOG.info('Saved Internet XML')
         return p_xml
 
     def Stop(self):
@@ -87,6 +87,7 @@ class API(object):
         """
         Async find our external IP address
         """
+
         def cb_find_external_ip(p_ip):
             LOG.info('Found External IP - {}'.format(p_ip))
 
@@ -103,6 +104,7 @@ class API(object):
     def UpdateDynDnsSites(p_pyhouse_obj):
         """
         """
+
         def cb_done_updating(p_ip):
             LOG.info('Updated all to IP: {}'.format(p_ip))
 

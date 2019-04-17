@@ -82,7 +82,7 @@ Idea Links:
 
 """
 
-__updated__ = '2019-03-27'
+__updated__ = '2019-04-16'
 __version_info__ = (19, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -268,7 +268,7 @@ class API:
         self.m_pyhouse_obj.Twisted.Reactor.stop()
 
 
-class NoReactorAPI(API):
+class BeforeReactor(API):
     """ This class is for initialization before the reactor starts.
     """
 
@@ -277,8 +277,8 @@ class NoReactorAPI(API):
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        self.m_pyhouse_obj = self._nor_create_pyhouse_obj()
-        print('PyHouse.NoReactorAPI()')  # For development - so we can see when we get to this point...
+        self.m_pyhouse_obj = self._before_reactor_create_pyhouse_obj()
+        print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
         self.m_pyhouse_obj.APIs.PyHouseMainAPI = self
         self.m_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, self.m_pyhouse_obj)
@@ -292,7 +292,7 @@ class NoReactorAPI(API):
         print('PyHouse is exiting.')
         raise SystemExit("PyHouse says Bye Now.")
 
-    def _nor_create_pyhouse_obj(self):
+    def _before_reactor_create_pyhouse_obj(self):
         """ This creates the master PyHouse_Obj from scratch.
 
         Everything is initialized from the empty definitions.
@@ -316,7 +316,7 @@ if __name__ == "__main__":
     try:
         if si.is_running:
             sys.exit("This app is already running!")
-        NoReactorAPI()
+        BeforeReactor()
     finally:
         si.clean_up()
 

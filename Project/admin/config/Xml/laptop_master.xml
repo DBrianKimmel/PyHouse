@@ -398,6 +398,7 @@
 			</SamsungSection>
 			<PandoraSection Active="True">
 				<Type>Service</Type>
+				<MaxSessions>1</MaxSessions>
 				<Device Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Running on pi-07-pp</Comment>
 					<Host>pandora</Host>

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-13'
+__updated__ = '2019-04-16'
 __version_info__ = (19, 4, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,15 +35,10 @@ SECTION = 'onkyo'
 
 # See https://
 CONTROL_COMMANDS = {
-    'PowerQuery':       b'!1PWRQSTN',
-    'PowerOn':          b'!1PWR01',
-    'PowerOff':         b'!1PWR00',
-    'VolumeQuery':      b'!1MVLQSTN',
-    'VolumeUp':         b'',
-    'VolumeDown':       b'VD',
-    'MuteQuery':        b'?M',
-    'FunctionQuery':    b'?F',
-    'FunctionPandora':  b'01FN'
+    'Powe':             [b'PWR', b'PWZ'],
+    'VolumeQuery':      [b'MVL', b'ZVL'],
+    'Mute':             [b'AMT', b'ZMT'],
+    'InputSelect':      [b'SLI', b'SLZ']
     }
 
 CMD_01 = b'ISCP\x00\x00\x00\x10\x00\x00\x00\x0c\x01\x00\x00\x00!1PWRQSTN\x1a\n\r'
@@ -77,6 +72,16 @@ class OnkyoDeviceData(EntertainmentDeviceData):
         self._Queue = None
 
 
+class QueueData:
+    """
+    """
+
+    def __init__(self):
+        self.Command = b'aaa'
+        self.Args = b'01'
+        self.isDone = False
+
+
 class OnkyoResponses:
     """
     """
@@ -84,53 +89,61 @@ class OnkyoResponses:
     m_buffer = bytearray(0)
 
     def _decode_message(self, p_msg):
-        l_zone = p_msg[1:2]
+        l_eq_type = p_msg[1:2]
         l_cmd = p_msg[2:5]
         l_args = p_msg[5:]
-        LOG.info('Onkyo sent Zone:{} {} {}'.format(l_zone, l_cmd, l_args))
+        LOG.info('Onkyo sent Eq:{} {} {}'.format(l_eq_type, l_cmd, l_args))
 
         if l_cmd == 'AEQ':
-            LOG.info('AEQ ??? : {}'.format(l_args))  # Onkyo sent Zone:1 AEQ 01
+            LOG.info('AEQ ??? : {}'.format(l_args))  # Onkyo sent EqType:1 AEQ 01
         if l_cmd == 'AMT':
-            LOG.info('AMT Auto Mute : {}'.format(l_args))  # Onkyo sent Zone:1 AMT 00
+            LOG.info('AMT Auto Mute : {}'.format(l_args))  # Onkyo sent EqType:1 AMT 00
         if l_cmd == 'DIM':
-            LOG.info('DIM Dimmer Level : {}'.format(l_args))  # Onkyo sent Zone:1 DIM 02
+            LOG.info('DIM Dimmer Level : {}'.format(l_args))  # Onkyo sent EqType:1 DIM 02
         if l_cmd == 'IFA':
             LOG.info('IFA Info Audio : {}'.format(l_args))
         if l_cmd == 'ITV':
-            LOG.info('ITV ??? : {}'.format(l_args))  # Onkyo sent Zone:1 ITV 000
+            LOG.info('ITV ??? : {}'.format(l_args))  # Onkyo sent EqType:1 ITV 000
         if l_cmd == 'MVL':
-            LOG.info('MVL Master Volume Level : {}'.format(l_args))  # Onkyo sent Zone:1 MVL 36
+            LOG.info('MVL Master Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 MVL 36
         if l_cmd == 'MOT':
-            LOG.info('MOT Music Optimizer : {}'.format(l_args))  # Onkyo sent Zone:1 MOT 00
+            LOG.info('MOT Music Optimizer : {}'.format(l_args))  # Onkyo sent EqType:1 MOT 00
         if l_cmd == 'NAL':
-            LOG.info('NAL Song from Album : {}'.format(l_args))  # Onkyo sent Zone:1 NAL Forever Changing - The Golden Age Of Elektra Records 1963-1973
+            LOG.info('NAL Song from Album : {}'.format(l_args))  # Onkyo sent EqType:1 NAL Forever Changing - The Golden Age Of Elektra Records 1963-1973
         if l_cmd == 'NAT':
-            LOG.info('NAT Song Artist : {}'.format(l_args))  # Onkyo sent Zone:1 NAT Judy Collins
+            LOG.info('NAT Song Artist : {}'.format(l_args))  # Onkyo sent EqType:1 NAT Judy Collins
         if l_cmd == 'NDS':
-            LOG.info('NDS ??? : {}'.format(l_args))  # Onkyo sent Zone:1 NDS E-x
+            LOG.info('NDS ??? : {}'.format(l_args))  # Onkyo sent EqType:1 NDS E-x
         if l_cmd == 'NJA':
-            LOG.info('NJA Jacket-Art: {}'.format(l_args))  # Onkyo sent Zone:1 NJA 2-http://192.168.1.120/album_art.cgi
+            LOG.info('NJA Jacket-Art: {}'.format(l_args))  # Onkyo sent EqType:1 NJA 2-http://192.168.1.120/album_art.cgi
         if l_cmd == 'NLS':
-            LOG.info('NLS USB List Info : {}'.format(l_args))  # Onkyo sent Zone:1 NLS C-P
+            LOG.info('NLS USB List Info : {}'.format(l_args))  # Onkyo sent EqType:1 NLS C-P
         if l_cmd == 'NLT':
-            LOG.info('NLT ??? : {}'.format(l_args))  # Onkyo sent Zone:1 NLT 0422000000000001000400
+            LOG.info('NLT ??? : {}'.format(l_args))  # Onkyo sent EqType:1 NLT 0422000000000001000400
         if l_cmd == 'NMS':
-            LOG.info('NMS ??? : {}'.format(l_args))  # Onkyo sent Zone:1 NMS M0C02x104
+            LOG.info('NMS ??? : {}'.format(l_args))  # Onkyo sent EqType:1 NMS M0C02x104
         if l_cmd == 'NTI':
-            LOG.info('NTI Song Title : {}'.format(l_args))  # Onkyo sent Zone:1 NTI Tomorrow Is A Long Time
+            LOG.info('NTI Song Title : {}'.format(l_args))  # Onkyo sent EqType:1 NTI Tomorrow Is A Long Time
         if l_cmd == 'NTM':
-            LOG.info('NTM Stream time : {}'.format(l_args))  # Onkyo sent Zone:1 NTM 00:02:46/00:02:57
+            LOG.info('NTM Stream time : {}'.format(l_args))  # Onkyo sent EqType:1 NTM 00:02:46/00:02:57
         if l_cmd == 'NTR':
-            LOG.info('NTR Time?? : {}'.format(l_args))  # Onkyo sent Zone:1 NTR ----/----
+            LOG.info('NTR Time?? : {}'.format(l_args))  # Onkyo sent EqType:1 NTR ----/----
         if l_cmd == 'PCT':
-            LOG.info('PCT Picture Control : {}'.format(l_args))  # Onkyo sent Zone:1 PCT 00
+            LOG.info('PCT Picture Control : {}'.format(l_args))  # Onkyo sent EqType:1 PCT 00
         if l_cmd == 'PWR':
-            LOG.info('PWR Power : {}'.format(l_args))  # Onkyo sent Zone:1 PWR 01
+            LOG.info('PWR Power : {}'.format(l_args))  # Onkyo sent EqType:1 PWR 01
         if l_cmd == 'RAS':
-            LOG.info('RAS Re-Eq : {}'.format(l_args))  # Onkyo sent Zone:1 RAS 00
+            LOG.info('RAS Re-Eq : {}'.format(l_args))  # Onkyo sent EqType:1 RAS 00
         if l_cmd == 'SLI':
-            LOG.info('SLI Input Selector : {}'.format(l_args))  # Onkyo sent Zone:1 SLI 12
+            LOG.info('SLI Input Selector : {}'.format(l_args))  # Onkyo sent EqType:1 SLI 12
+        if l_cmd == 'SLZ':
+            LOG.info('SLZ Zone 2 Input Selector : {}'.format(l_args))  # Onkyo sent EqType:1 SLZ 2E
+        if l_cmd == 'ZMT':
+            LOG.info('ZMT Zone 2 Muting  : {}'.format(l_args))  # Onkyo sent EqType:1 ZMT 00
+        if l_cmd == 'ZPW':
+            LOG.info('ZPW Zone 2 Power : {}'.format(l_args))  # Onkyo sent EqType:1 ZPW 01
+        if l_cmd == 'ZVL':
+            LOG.info('ZVL Zone 2 Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 ZPW 01
 
     def _get_onkyo_message(self, p_msg):
         """
@@ -289,7 +302,7 @@ class OnkyoClient(OnkyoProtocol):
             LOG.error("Tried to call send_command without a onkyo device configured.\n\tError:{}".format(e_err))
 
 
-class OnkeoUtil:
+class OnkeoControl:
     """
     """
 
@@ -326,6 +339,52 @@ class OnkeoUtil:
         p_device_obj._Queue = Queue(32)
         self.m_device_lst.append(p_device_obj)
         LOG.info("Started Onkyo Device: '{}'; IP:{}; Port:{};".format(p_device_obj.Name, l_host, l_port))
+
+    def _control_input(self, p_family, p_device, _p_zone, p_input):
+        """
+        !1SLIxx
+        xx = 02 Game
+        @param p_input: Channel Code
+        """
+        LOG.inf0('controlInput')
+        l_device_obj = self._find_device(p_family, p_device)
+        l_cmd = b'!1MVLQSTN'
+        self.queue_command(l_device_obj, l_cmd)
+        LOG.info('Changed input channel to {}'.format(p_input))
+
+    def _control_power(self, p_family, p_device, _p_zone, p_power):
+        """
+        !1PWR01 = On
+        !1PWR00 = Standby (Off)
+        @param p_power: 'On' or 'Off'
+        """
+        LOG.inf0('xxx2')
+        l_device_obj = self._find_device(p_family, p_device)
+        l_cmd = b'!1PWR01'
+        if p_power == 'Off':
+            l_cmd = b'!1PWR00'
+        self.send_command(l_device_obj, l_cmd)
+        LOG.info('Changed Power to {}'.format(p_power))
+
+    def _control_volume(self, p_family, p_device, _p_zone, p_volume):
+        """
+        !1MLVxx where xx is in hex (00-64)
+        @param p_family: "onkyo"
+        @param p_device: is the device we are going to change (Tx-555)
+        @param p_volume: % 0-100
+        """
+        LOG.info('xxx3')
+        l_device_obj = self._find_device(p_family, p_device)
+        l_cmd = '!1MVL' + '{:02X}'.format(p_volume)
+        l_cmd = bytes(l_cmd, 'utf-8')
+        # l_cmd = b'!1MVL38'
+        LOG.debug('Vol command {}'.format(l_cmd))
+        self.send_command(l_device_obj, l_cmd)
+        LOG.info('Changed Volume to {} %'.format(p_volume))
+
+    def queue_comand(self, p_device_obj, p_command, p_zone):
+        """
+        """
 
 
 class MqttActions:
@@ -400,7 +459,7 @@ class MqttActions:
         return l_logmsg
 
 
-class API(MqttActions, OnkyoClient, OnkeoUtil):
+class API(MqttActions, OnkyoClient, OnkeoControl):
     """This interfaces to all of PyHouse.
     """
 
@@ -458,57 +517,5 @@ class API(MqttActions, OnkyoClient, OnkeoUtil):
 
     def Stop(self):
         LOG.info("Stopped.")
-
-    def _control_input(self, p_family, p_device, p_input):
-        """
-        !1SLIxx
-        xx = 02 Game
-        @param p_input: Channel Code
-        """
-        LOG.inf0('xxx1')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = b'!1MVLQSTN'
-        self.send_command(l_device_obj, l_cmd)
-        LOG.info('Changed input channel to {}'.format(p_input))
-
-    def _control_power(self, p_family, p_device, p_power):
-        """
-        !1PWR01 = On
-        !1PWR00 = Standby (Off)
-        @param p_power: 'On' or 'Off'
-        """
-        LOG.inf0('xxx2')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = b'!1PWR01'
-        if p_power == 'Off':
-            l_cmd = b'!1PWR00'
-        self.send_command(l_device_obj, l_cmd)
-        LOG.info('Changed Power to {}'.format(p_power))
-
-    def _control_volume(self, p_family, p_device, p_volume):
-        """
-        !1MLVxx where xx is in hex (00-64)
-        @param p_family: "onkyo"
-        @param p_device: is the device we are going to change (Tx-555)
-        @param p_volume: % 0-100
-        """
-        LOG.info('xxx3')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = '!1MVL' + '{:02X}'.format(p_volume)
-        l_cmd = bytes(l_cmd, 'utf-8')
-        # l_cmd = b'!1MVL38'
-        LOG.debug('Vol command {}'.format(l_cmd))
-        self.send_command(l_device_obj, l_cmd)
-        LOG.info('Changed Volume to {} %'.format(p_volume))
-
-    def _control_zone(self, p_family, p_device, p_input):
-        """
-        @param p_input: Channel Code
-        """
-        LOG.inf0('xxx4')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = b'!1MVLQSTN'
-        self.send_command(l_device_obj, l_cmd)
-        LOG.info('Change input channel to {}'.format(p_input))
 
 # ## END DBK

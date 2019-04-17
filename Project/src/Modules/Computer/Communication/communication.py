@@ -4,14 +4,14 @@
 @name:      Pyhouse/src/Modules/Communication/communication.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Jan 9, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2019-04-15'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -54,7 +54,7 @@ class API(object):
     def SaveXml(self, p_xml):
         l_xml = ET.Element('CommunicationSection')
         p_xml.append(l_xml)
-        LOG.info("Saved XML.")
+        LOG.info("Saved Communication XML.")
         return p_xml
 
 # ## END DBK

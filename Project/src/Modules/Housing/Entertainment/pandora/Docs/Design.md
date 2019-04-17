@@ -10,7 +10,10 @@
 
 # Pandora
 
-This describes the setup for playing pandora through your entertinment system.
+This describes the setup for playing pandora through your entertainment system.
+
+Pandora is started by one or more nodes receiving a pandora control Mqtt message.
+That message needs to contain a 'Power: On' section.
 
 A raspberry PI is used.
 It has the pianobar on the computer
@@ -85,27 +88,32 @@ This module issues status messages,
 ```xml
 <PandoraSection Active="True">
 	<Type>Service</Type>
-	<Device Active="True" Key="0" Name="on pi-06">
+	<Service Name="Pandora-Pro" Key="0" Active="True">
+		<MaxSessions>1</MaxSessions>
+	</Service>
+	<Device Active="True" Key="0" Name="PandoraOnPi">
 		<Comment>Living Room</Comment>
-		<Host>192.168.9.16</Host>
-		<ConnectionFamily>pioneer</ConnectionFamily>
-		<ConnectionName>822-k</ConnectionName>
-		<InputName>CD</InputName>
-		<InputCode>01FN</InputCode>
+		<LastUpdate>2019-01-11 16:38:20.780491</LastUpdate>
+		<Host>192.168.1.17</Host>
+		<ConnectionFamily>Onkyo</ConnectionFamily>
+		<ConnectionName>Tx-555</ConnectionName>
+		<InputName>Game</InputName>
+		<InputCode />
 		<MaxPlayTime>0</MaxPlayTime>
-		<Type>Service</Type>
-		<Volume>50</Volume>
+		<Type>Receiver</Type>
+		<Volume>53</Volume>
 	</Device>
 </PandoraSection>
 ```
 
 * Host is the IP address of the computer running PyHouse and PianoBar.
+* Max Sessions is the number of sessions you are allowed by your service agreement.
 * Type is always Service.
 * ConnectionFamily must match one of the Entertainment modules that are programmed and must be lower case.
 * ConnectionName must match one of the devices in the family and also must be lower case.
 * InputName is the name of the connection on the family device where the cable from the pandora computer is plugged in.
 * InputCode is the code that must be sent to the family-device to cause the device to select that input channel.
-* Volume is a precent of full volume to be selected when first connecting.
+* Volume is a percent of full volume to be selected when first connecting.
 
 The following line must be placed in /etc/hosts with that is the IP address of the pandora computer.
 

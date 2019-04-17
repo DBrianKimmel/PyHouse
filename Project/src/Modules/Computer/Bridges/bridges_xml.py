@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-15'
+__updated__ = '2019-04-15'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -102,10 +102,10 @@ class Xml(object):
                 l_bridge._ClientAPI = p_api
                 l_dict[l_count] = l_bridge
                 l_count += 1
-                LOG.debug('Read Bridge {}'.format(l_bridge.Name))
+                LOG.info('Loaded Bridge {}'.format(l_bridge.Name))
         except AttributeError as e_err:
             LOG.error('Bridge Errors: {}'.format(e_err))
-        LOG.info('Read {} Bridges'.format(l_count))
+        LOG.info('Loaded {} Bridges'.format(l_count))
         return l_dict
 
     @staticmethod
