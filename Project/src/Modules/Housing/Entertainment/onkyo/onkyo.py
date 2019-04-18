@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-16'
+__updated__ = '2019-04-17'
 __version_info__ = (19, 4, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,8 +35,8 @@ SECTION = 'onkyo'
 
 # See https://
 CONTROL_COMMANDS = {
-    'Powe':             [b'PWR', b'PWZ'],
-    'VolumeQuery':      [b'MVL', b'ZVL'],
+    'Power':            [b'PWR', b'PWZ'],
+    'Volume':           [b'MVL', b'ZVL'],
     'Mute':             [b'AMT', b'ZMT'],
     'InputSelect':      [b'SLI', b'SLZ']
     }

@@ -81,18 +81,17 @@ Used to control a device.
 All defaults are None - Only fill in what you need so inadvertent controls are not done.
 
 
-* Channel = None
-   The channel or frequency (TV, Radio)
-* Device - The name of the device within a family (822-k)
+* Channel   =  The channel or frequency (TV, Radio)
+* Device    = The name of the device within a family (822-k)
 * Direction = None  # F or R  - Foreward, Reverse (think Video play)
-* Family - The device family we are controlling (onkyo, pioneer, ...)
-* From - The node
-* HostName = None  # name of computer holding definitions
-* Input = None  # '01'  # Input ID
-* Power = None  # 'Off'  # On or Off which is standby
-* Skip - Skip the rest of this unit
-* Volume = None  # '0'  # 0-100 - Percent
-* Zone = None  # '1'  # For multi zone output
+* Family    = The device family we are controlling (onkyo, pioneer, ...)
+* From      = The node
+* HostName  = None  # name of computer holding definitions
+* Input     = None  # '01'  # Input ID
+* Power     = None  # 'Off'  # On or Off which is standby
+* Skip      = Skip the rest of this unit
+* Volume    = None  # '0'  # 0-100 - Percent
+* Zone      = None  # '1'  # For multi zone output
 
 ## XML
 

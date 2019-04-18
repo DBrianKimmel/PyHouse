@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Housing/Entertainment/entertainment_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @note:      Created on Mar 18, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-04-11'
+__updated__ = '2019-04-18'
 
 # Import system type stuff
 
@@ -118,11 +118,11 @@ class EntertainmentDeviceControl:
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
-        self.Input = None  # '01'  # Input ID
+        self.InputName = None  # '01'  # Input ID
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent
-        self.Zone = None  # '1'  # For multi zone output
+        self.Zone = None  # '1' or '2'  # For multi zone output
 
 
 class EntertainmentServiceControl:
@@ -137,7 +137,7 @@ class EntertainmentServiceControl:
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
-        self.Input = None  # '01'  # Input ID
+        self.InputName = None  # '01'  # Input ID
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent

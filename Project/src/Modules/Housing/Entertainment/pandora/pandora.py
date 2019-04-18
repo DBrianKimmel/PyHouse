@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-04-16'
+__updated__ = '2019-04-18'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,6 +29,7 @@ __version__ = '.'.join(map(str, __version_info__))
 # import xml.etree.ElementTree as ET
 from twisted.internet import protocol
 from _datetime import datetime
+from pathlib import Path
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.pandora.pandora_xml import XML as pandoraXML
@@ -38,9 +39,8 @@ from Modules.Core.Utilities.extract_tools import extract_quoted
 # from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
-        EntertainmentPluginData, \
-        EntertainmentServiceData
-from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
+        EntertainmentPluginData
+# from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pandora        ')
@@ -119,6 +119,7 @@ class MqttActions:
         # l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
         l_like = extract_tools.get_mqtt_field(p_message, 'Like')
         l_skip = extract_tools.get_mqtt_field(p_message, 'Skip')
+        LOG.debug('{} {}'.format(p_topic, p_message))
 
         if l_power == 'On':
             l_logmsg += ' Turn On '
@@ -163,7 +164,7 @@ class MqttActions:
             l_obj.Device = l_device.ConnectionName
             l_obj.Family = l_device.ConnectionFamily
             l_obj.From = SECTION
-            l_obj.Input = l_input
+            l_obj.InputName = l_input
             l_obj.Like = l_like
             l_obj.Power = l_power
             l_obj.Skip = l_skip
@@ -194,7 +195,7 @@ class MqttActions:
 
 
 class PianoBarProcessControl(protocol.ProcessProtocol):
-    """
+    """ This handles the information coming back from pianobar concerning the playing song.
     """
 
     m_buffer = bytes()
@@ -204,6 +205,8 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         self.m_buffer = bytes()
 
     def _extract_like(self, p_line):
+        """ The like info comes back as a '<' in the now-playing info.
+        """
         l_ix = p_line.find(b'<')
         if l_ix > 0:
             l_like = p_line[l_ix + 1:l_ix + 2].decode('utf-8')
@@ -214,6 +217,8 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         return l_like, l_remain
 
     def _extract_station(self, p_line):
+        """ Extract the station information from the now-playing message.
+        """
         l_ix = p_line.find(b'@')
         l_sta = p_line[l_ix + 1:].decode('utf-8').strip()
         l_remain = p_line[:l_ix]
@@ -331,6 +336,14 @@ class PandoraControl:
     """
     """
 
+    def _is_pianobar_installed(self):
+        """
+        """
+        l_file = Path(PIANOBAR_LOCATION)
+        if l_file.is_file():
+            return True
+        return False
+
     def _play_pandora(self):
         """ When we receive a proper Mqtt message to start (power on) the pandora player.
         We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
@@ -338,6 +351,11 @@ class PandoraControl:
         TO DO:
             Implement max play
         """
+        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        LOG.debug('Play {}'.format(PrettyFormatAny.form(l_service, 'Pandora', 190)))
+        if not self._is_pianobar_installed():
+            self.m_started = False
+            return
         self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
         self.m_processProtocol.deferred = PianoBarProcessControl(self.m_pyhouse_obj)
         l_executable = PIANOBAR_LOCATION
@@ -345,7 +363,6 @@ class PandoraControl:
         l_env = None  # this will pass <os.environ>
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         self.m_started = True
-        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         for l_device in l_service.Devices.values():
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
@@ -355,7 +372,7 @@ class PandoraControl:
             l_obj.Device = l_name
             l_obj.From = SECTION
             l_obj.Power = "On"
-            l_obj.Input = l_device.InputCode
+            l_obj.InputName = l_device.InputName
             l_obj.Volume = l_device.Volume
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
@@ -377,7 +394,7 @@ class PandoraControl:
             l_obj.Device = l_name
             l_obj.From = SECTION
             l_obj.Power = "Off"
-            l_obj.Input = l_device.InputCode
+            l_obj.InputName = l_device.InputName
             l_obj.Volume = l_device.Volume
             LOG.info('Sending power off')
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
@@ -408,6 +425,9 @@ class API(MqttActions, PandoraControl):
         LOG.info("Loading XML - Version:{}".format(__version__))
         l_obj = pandoraXML().read_pandora_section_xml(p_pyhouse_obj)
         LOG.info("Loaded Pandora XML - Version:{}".format(__version__))
+        if self._is_pianobar_installed():
+            self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Active = False
+            l_obj.Active = False
         return l_obj
 
     def Start(self):
@@ -418,8 +438,8 @@ class API(MqttActions, PandoraControl):
         l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_service = l_pandora_obj.Services[0]
         LOG.debug('{}'.format(PrettyFormatAny.form(l_service, 'Pandora', 190)))
-        l_device = l_service.ConnectionFamily.lower()
-        l_name = l_service.ConnectionName.lower()
+        # l_device = l_service.ConnectionFamily.lower()
+        # l_name = l_service.ConnectionName.lower()
 
     def SaveXml(self, _p_xml):
         """

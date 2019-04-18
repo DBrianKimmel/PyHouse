@@ -1,0 +1,13 @@
+# Name:      PyHouse/Project/admin/config/Yaml/Onkyo_Tx-555.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Apr 15, 2019
+# Updted:    Apr 18, 2019
+# License:   MIT License
+# Summary:   This is for an Onkyo Tx-555 Receiver A/V unit.
+---
+
+- Input
+
+### END DBK
