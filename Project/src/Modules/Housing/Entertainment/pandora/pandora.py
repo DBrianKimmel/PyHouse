@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-04-20'
+__updated__ = '2019-05-01'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -158,8 +158,8 @@ class MqttActions:
         else:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
 
-        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        for l_device in l_service.Devices.values():
+        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        for l_device in l_pandora_obj.Devices.values():
             l_obj = EntertainmentDeviceControl()
             l_obj.Device = l_device.ConnectionName
             l_obj.Family = l_device.ConnectionFamily
@@ -351,14 +351,16 @@ class PandoraControl:
         TO DO:
             Implement max play
         """
-        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        LOG.debug('Play {}'.format(PrettyFormatAny.form(l_service, 'Pandora', 190)))
+        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_obj, 'Pandora', 190)))
         if not self._is_pianobar_installed():
             self.m_started = False
+            LOG.warn('Pianobar is not installed')
             return
-        if l_service._OpenSessions > 0:
+        if l_pandora_obj._OpenSessions > 0:
+            LOG.warn('multiple pianobar start attempts')
             return
-        l_service._OpenSessions += 1
+        l_pandora_obj._OpenSessions += 1
         self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
         self.m_processProtocol.deferred = PianoBarProcessControl(self.m_pyhouse_obj)
         l_executable = PIANOBAR_LOCATION
@@ -366,7 +368,7 @@ class PandoraControl:
         l_env = None  # this will pass <os.environ>
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         self.m_started = True
-        for l_device in l_service.Devices.values():
+        for l_device in l_pandora_obj.Devices.values():
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
             l_family = l_device.ConnectionFamily
@@ -384,13 +386,13 @@ class PandoraControl:
         """ We have received a control message and therefore we stop the pandora player.
         This control message may come from a control screen or from a timer.
         """
-        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        l_service._OpenSessions -= 1
+        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_pandora_obj._OpenSessions -= 1
         self.m_started = False
         self.m_transport.write(b'q')
         # self.m_transport.closeStdin()
         LOG.info('Service Stopped')
-        for l_device in l_service.Devices.values():
+        for l_device in l_pandora_obj.Devices.values():
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName
             l_family = l_device.ConnectionFamily

@@ -89,13 +89,14 @@ This module issues status messages,
 <PandoraSection Active="True">
 	<Type>Service</Type>
 	<MaxSessions>1</MaxSessions>
-	<Service Active="True" Key="0" Name="Running on pi-06-ct">
+	<Service Active="True" Key="0" Name="Pianobar running on pi-07-pp">
 		<Comment>Living Room</Comment>
-		<Host>192.168.9.16</Host>
+		<Host>192.168.1.17</Host>
 		<MaxPlayTime>12345</MaxPlayTime>
 		<Type>Service</Type>
 		<ConnectionFamily>pioneer</ConnectionFamily>
 		<ConnectionName>822-k</ConnectionName>
+		<Output>Headphone</Output>
 		<InputName>CD</InputName>
 		<InputCode>01FN</InputCode>
 		<Volume>47</Volume>
