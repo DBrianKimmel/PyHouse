@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-04-15'
+__updated__ = '2019-04-29'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -46,6 +46,7 @@ from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Families.Hue.Hue_data import HueLightData
+from Modules.Housing.Lighting.lighting_utility import Utility as lightingUtility
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
@@ -65,16 +66,16 @@ def generate_timestamp():
     return time.strftime('%Y-%m-%dT%H:%M:%S')
 
 
-def put_config_json(j):
-    entry = jsonpickle.encode(j)
+def put_config_json(p_json):
+    l_entry = jsonpickle.encode(p_json)
 
-    if 'devicetype' in entry:
+    if 'devicetype' in l_entry:
         global devicetype
-        devicetype = entry['devicetype']
+        devicetype = l_entry['devicetype']
 
-    elif 'portalservices' in entry:
+    elif 'portalservices' in l_entry:
         global portalservices
-        portalservices = entry['portalservices']
+        portalservices = l_entry['portalservices']
 
 
 def json_dumps(what):
@@ -447,13 +448,14 @@ class HueProtocol(Protocol):
     m_finished = None
     m_remaining = 0
 
-    def __init__(self, p_finished, p_command, p_response_code):
+    def __init__(self, p_pyhouse_obj, p_finished, p_command, p_response_code):
         """
         @param p_finished: is a deferred that ????
         """
         self.m_finished = p_finished
         self.m_command = p_command
         self.m_code = p_response_code
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_body = ''
         self.m_remaining = 1024 * 10  # Allow for 10kb response
         LOG.debug('Hue Protocol Init')
@@ -522,6 +524,8 @@ class HueDispatch:
     """
 
     def _add_light(self, p_light_obj):
+        l_objs = self.m_pyhouse_obj.Housing.Lighting.Lights
+        l_light_obj = lightingUtility().get_object_by_id(l_objs, name=p_light_obj.Name)
         pass
 
     def get_config(self, p_body):
@@ -590,25 +594,25 @@ class HueDispatch:
         LOG.debug('Got Sensors {}'.format(PrettyFormatAny.form(l_msg, 'Sensors', 190)))
 
 
-class HueHub(object):
+class HueHub:
     """
     """
 
     m_bridge_obj = None
-    m_hue_agent = None
     m_command = b'/config'
     m_headers = None
+    m_hue_agent = None
+    m_pyhouse_obj = None
 
-    def __init__(self, p_pyhouse_obj=None):
+    def __init__(self, p_pyhouse_obj):
         """
         Agent is a very basic HTTP client.  It supports I{HTTP} and I{HTTPS} scheme URIs.
 
         """
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_headers = Headers({'User-Agent': ['Hue Hub Web Client']})
-        if p_pyhouse_obj != None:
-            self.m_pyhouse_obj = p_pyhouse_obj
-            self.m_hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
-            LOG.info('Initialized')
+        self.m_hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+        LOG.info('Initialized')
 
     def _build_uri(self, p_command=b'/config'):
         """
@@ -663,10 +667,12 @@ class HueHub(object):
         """
 
         def cb_Response(p_response, p_command):
+            """
+            """
             # LOG.debug('Command: {}'.format(p_command))
             # LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
             d_finished = Deferred()
-            p_response.deliverBody(HueProtocol(d_finished, p_command, p_response.code))
+            p_response.deliverBody(HueProtocol(self.m_pyhouse_obj, d_finished, p_command, p_response.code))
             return d_finished
 
         d_agent = self.m_hue_agent.request(
@@ -678,33 +684,17 @@ class HueHub(object):
         HueDecode().decode_get()
         return d_agent
 
-    def HubPost(self, p_command, p_body):
+    def HubPostCommand(self, p_command, p_body):
         """
         @param p_command: is the Hue command we will be using
         @param p_body: is the body producer function.
-        """
-
-        def cb_Response(p_response):
-            LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
-            # LOG.debug('Response Headers: {}'.format(p_response.headers.decode("utf8")))
-            l_finished = Deferred()
-            p_response.deliverBody(HueProtocol(l_finished, p_command))
-            return l_finished
-
-        l_agent_d = self.m_hue_agent.request(b'GET', self._build_uri(p_command), self.m_headers, p_body)
-        l_agent_d.addCallback(cb_Response)
-        HueDecode().decode_post()
-        return l_agent_d
-
-    def HubPostCommand(self, p_command, p_body):
-        """
         """
 
         def cb_response(p_response):
             LOG.debug('Response Code: {} {}'.format(p_response.code, p_response.phrase))
             LOG.debug('Response Headers: {}'.format(p_response.headers.decode("utf8")))
             l_finished = Deferred()
-            p_response.deliverBody(HueProtocol(l_finished))
+            p_response.deliverBody(HueProtocol(self.m_pyhouse_obj, l_finished))
             return l_finished
 
         l_agent_d = self.m_hue_agent.request(b'POST',
@@ -721,7 +711,7 @@ class HueHub(object):
         @param p_bridge_obj: is PyHouse_Obj.Computers.Bridges.xxx with xxx being a HueHub
 
         """
-        p_bridge_obj._Queue = Queue(100)
+        p_bridge_obj._Queue = Queue(32)
         self.m_bridge_obj = p_bridge_obj
         self._get_all_config()
         LOG.info('Started')

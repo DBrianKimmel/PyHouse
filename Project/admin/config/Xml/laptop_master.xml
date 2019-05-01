@@ -399,7 +399,7 @@
 			<PandoraSection Active="True">
 				<Type>Service</Type>
 				<MaxSessions>1</MaxSessions>
-				<Device Active="True" Key="0" Name="PandoraOnPi">
+				<Service Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Running on pi-07-pp</Comment>
 					<Host>pandora</Host>
 					<ConnectionFamily>Onkyo</ConnectionFamily>
@@ -409,7 +409,7 @@
 					<MaxPlayTime>0</MaxPlayTime>
 					<Type>Receiver</Type>
 					<Volume>53</Volume>
-				</Device>
+				</Service>
 			</PandoraSection>
 		</EntertainmentSection>
 		<HvacSection>

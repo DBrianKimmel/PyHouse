@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-04-24'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -70,7 +70,7 @@ class XML:
 
     def read_entertainment_service(self, p_entry_xml, p_service):
         """
-        @param p_entry_xml: Element <Device> within <PandoraSection>
+        @param p_entry_xml: Element <Service> within <PandoraSection>
         @return: a EntertainmentServiceData object
         """
         XmlConfigTools.read_base_object_xml(p_service, p_entry_xml)
@@ -90,7 +90,7 @@ class XML:
         @return: An XML element for <Device> to be appended to <PandoraSection> Element
         """
 
-        l_xml = XmlConfigTools.write_base_object_xml('Device', p_obj)
+        l_xml = XmlConfigTools.write_base_object_xml('Service', p_obj)
         PutGetXML.put_ip_element(l_xml, 'Host', p_obj.Host)
         PutGetXML.put_text_element(l_xml, 'ConnectionFamily', p_obj.ConnectionFamily)
         PutGetXML.put_text_element(l_xml, 'ConnectionName', p_obj.ConnectionName)
@@ -164,15 +164,16 @@ class XML:
                 l_ret = self.read_entertainment_device(l_xml, EntertainmentDeviceData())
                 l_plugin.Devices[l_count] = l_ret
                 l_count += 1
+            l_plugin.DeviceCount = l_count
         elif l_type == 'Service':
-            for l_xml in l_xml.findall('Device'):
+            for l_xml in l_xml.findall('Service'):
                 l_ret = self.read_entertainment_service(l_xml, EntertainmentServiceData())
                 l_plugin.Services[l_count] = l_ret
                 l_count += 1
+            l_plugin.ServiceCount = l_count
         else:
             # l_name = PutGetXML.get_text_from_xml(p_xml, 'Name')
             LOG.warn('Entertainment subsection {} type was illegal {}'.format(l_name, l_type))
-        l_plugin.DeviceCount = l_count
         if l_active:
             # Create the module plugin
             # l_module_name = 'Modules.Housing.Entertainment.' + l_name + '.' + l_name

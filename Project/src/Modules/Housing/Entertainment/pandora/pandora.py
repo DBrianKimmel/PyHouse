@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-04-18'
+__updated__ = '2019-04-20'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -188,7 +188,7 @@ class MqttActions:
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
-            pass
+            LOG.info('Status Msg: {} - {}'.format(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -356,6 +356,9 @@ class PandoraControl:
         if not self._is_pianobar_installed():
             self.m_started = False
             return
+        if l_service._OpenSessions > 0:
+            return
+        l_service._OpenSessions += 1
         self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
         self.m_processProtocol.deferred = PianoBarProcessControl(self.m_pyhouse_obj)
         l_executable = PIANOBAR_LOCATION
@@ -381,10 +384,12 @@ class PandoraControl:
         """ We have received a control message and therefore we stop the pandora player.
         This control message may come from a control screen or from a timer.
         """
+        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_service._OpenSessions -= 1
         self.m_started = False
         self.m_transport.write(b'q')
-        self.m_transport.closeStdin()
-        l_service = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        # self.m_transport.closeStdin()
+        LOG.info('Service Stopped')
         for l_device in l_service.Devices.values():
             l_obj = EntertainmentDeviceControl()
             l_name = l_device.ConnectionName

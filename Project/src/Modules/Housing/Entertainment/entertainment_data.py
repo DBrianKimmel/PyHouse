@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-18'
+__updated__ = '2019-04-20'
 
 # Import system type stuff
 
@@ -48,11 +48,13 @@ class EntertainmentPluginData:
         self.Active = False
         self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self.DeviceCount = 0
+        self.ServiceCount = 0
         self._Module = None
         self.Name = None
         self.Type = 'Missing Type'  # Service: Component (a device):
         self.Devices = {}  # EntertainmentDeviceData()
         self.Services = {}  # EntertainmentServiceData()
+        self._OpenSessions = 0
 
 
 class EntertainmentDeviceData(BaseObject):
@@ -62,7 +64,6 @@ class EntertainmentDeviceData(BaseObject):
 
     def __init__(self):
         super(EntertainmentDeviceData, self).__init__()
-        # self.DeviceCount = 0
         self._Endpoint = None
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
@@ -104,6 +105,8 @@ class EntertainmentServiceData(BaseObject):
         self.Type = 'service'
         self.Volume = 0  # Default volume
         self.MaxPlayTime = 12 * 60 * 60  # Seconds
+        self.MaxConnections = 1
+        self._isRunning = False
 
 
 class EntertainmentDeviceControl:

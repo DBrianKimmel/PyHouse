@@ -29,7 +29,7 @@ class XML:
     Write the object to an XML structure for safekeeping
     """
 
-    def _read_device(self, p_entry_xml):
+    def _read_pandora_base(self, p_entry_xml):
         """
         @param p_entry_xml: Element <Device> within <PandoraSection>
         @return: a EntertainmentServiceData object
@@ -38,7 +38,7 @@ class XML:
         l_obj = entertainmentXML().read_entertainment_service(p_entry_xml, l_service)
         return l_obj
 
-    def _write_device(self, p_obj):
+    def _write_service(self, p_obj):
         """
         @param p_obj: a filled in PandorDeviceData object
         @return: An XML element for <Device> to be appended to <PandoraSection> Element
@@ -64,17 +64,18 @@ class XML:
         try:
             l_plugin_obj.Active = PutGetXML.get_bool_from_xml(l_xml, 'Active')
             l_plugin_obj.Type = PutGetXML.get_text_from_xml(l_xml, 'Type')
-            for l_device_xml in l_xml.iterfind('Device'):
-                l_device_obj = self._read_device(l_device_xml)
+            l_plugin_obj.MaxSessions = PutGetXML.get_int_from_xml(l_xml, 'MaxSessions')
+            for l_device_xml in l_xml.iterfind('Service'):
+                l_device_obj = self._read_pandora_base(l_device_xml)
                 l_device_obj.Key = l_count
-                l_plugin_obj.Devices[l_count] = l_device_obj
-                LOG.info('Loaded {} Device {}'.format(SECTION, l_plugin_obj.Name))
+                l_plugin_obj.Services[l_count] = l_device_obj
+                LOG.info('Loaded {} Service(s) {}'.format(SECTION, l_plugin_obj.Name))
                 l_count += 1
-                l_plugin_obj.DeviceCount = l_count
+                l_plugin_obj.ServiceCount = l_count
         except AttributeError as e_err:
-            LOG.error('ERROR if getting {} Device Data - {}'.format(SECTION, e_err))
+            LOG.error('ERROR if getting {} Service Data - {}'.format(SECTION, e_err))
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_plugin_obj
-        LOG.info('Loaded {} {} Devices.'.format(l_count, SECTION))
+        LOG.info('Loaded {} {} Services.'.format(l_count, SECTION))
         return l_plugin_obj
 
     def write_pandora_section_xml(self, p_pyhouse_obj):
@@ -83,18 +84,18 @@ class XML:
         @param p_pyhouse_obj: containing an object with pandora data filled in.
         @return: An Element of the tree which can be appended to the EntertainmentSection
         """
-        l_entertain_obj = p_pyhouse_obj.House.Entertainment
-        l_plugin_obj = l_entertain_obj.Plugins[SECTION]
+        l_plugin_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_active = l_plugin_obj.Active
         l_xml = ET.Element('PandoraSection', attrib={'Active': str(l_active)})
         PutGetXML.put_text_element(l_xml, 'Type', l_plugin_obj.Type)
+        PutGetXML.put_int_element(l_xml, 'MaxSessions', l_plugin_obj.MaxSessions)
         l_count = 0
         for l_pandora_object in l_plugin_obj.Devices.values():
             l_pandora_object.Key = l_count
-            l_entry = self._write_device(l_pandora_object)
+            l_entry = self._write_service(l_pandora_object)
             l_xml.append(l_entry)
             l_count += 1
-        LOG.info('Saved {} Pandora device(s) XML'.format(l_count))
+        LOG.info('Saved {} Pandora Service(s) XML'.format(l_count))
         return l_xml
 
 # ## END DBK

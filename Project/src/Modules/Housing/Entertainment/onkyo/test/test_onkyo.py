@@ -14,7 +14,7 @@ Passed all 8 tests - DBK - 2018-11-03
 """
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 
-__updated__ = '2019-04-10'
+__updated__ = '2019-04-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -188,12 +188,6 @@ class D1_Protocol(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
-        l_factory = OnkyoFactory()
-        self.m_port = self.m_reactor.listenTCP(0, l_factory, interface='127.0.0.1')
-        self.m_client = None
-        self.m_protocol = l_factory.buildProtocol(('127.0.0.1', 0))
-        self.m_transport = proto_helpers.StringTransport()
-        self.m_protocol.makeConnection(self.m_transport)
 
     def tearDown(self):
         if self.m_client is not None:

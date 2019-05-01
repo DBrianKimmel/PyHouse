@@ -10,10 +10,14 @@
 
 # Entertainment
 
+The entertainment system covers TV, Music and other systems within a house.
+
+Devices may be controlled via WiFi, Ethernet and perehaps IR Rrmotes.
+
 
 ## Design
 
-In order to preserve the XML, the entire entertainment section is loaded.
+In order to preserve the XML, the entire entertainment section is loaded on each node.
 Only the active subsections have their modules loaded.
 
 In a running instance of PyHouse only the sub-modules that are defined as active in the config file are loaded.
@@ -27,6 +31,11 @@ These messages have topics that begin with:
 
 The modules may return a status message, control other submodules or ...
 
+
+### Loading XML
+
+The EntertainmentSection is always present.
+Each Device or Service subsection may be present and has an Active flag present
 
 ### Mqtt Messages
 

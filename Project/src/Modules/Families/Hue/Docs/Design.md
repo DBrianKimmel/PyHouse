@@ -17,6 +17,9 @@ There are several ways we can deal with Philips Hue devices in an automated home
 
 This is the PyHouse controlled device we interact with.
 
+The Hub responds to http requests by sending json responses.
+Each command to the hub is a seperate transaction, the connection closes after the response and the next command reestablishes communication.
+
 ## Config
 
 ```json

@@ -83,27 +83,25 @@ This module issues status messages,
 
 ## XML / Configuration
 
-** The pandora device should only be configured on computers where PianoBar is installed. **
+** The pandora service should only be configured on computers where PianoBar is installed. **
 
 ```xml
 <PandoraSection Active="True">
 	<Type>Service</Type>
-	<Service Name="Pandora-Pro" Key="0" Active="True">
-		<MaxSessions>1</MaxSessions>
-	</Service>
-	<Device Active="True" Key="0" Name="PandoraOnPi">
+	<MaxSessions>1</MaxSessions>
+	<Service Active="True" Key="0" Name="Running on pi-06-ct">
 		<Comment>Living Room</Comment>
-		<LastUpdate>2019-01-11 16:38:20.780491</LastUpdate>
-		<Host>192.168.1.17</Host>
-		<ConnectionFamily>Onkyo</ConnectionFamily>
-		<ConnectionName>Tx-555</ConnectionName>
-		<InputName>Game</InputName>
-		<InputCode />
-		<MaxPlayTime>0</MaxPlayTime>
-		<Type>Receiver</Type>
-		<Volume>53</Volume>
-	</Device>
+		<Host>192.168.9.16</Host>
+		<MaxPlayTime>12345</MaxPlayTime>
+		<Type>Service</Type>
+		<ConnectionFamily>pioneer</ConnectionFamily>
+		<ConnectionName>822-k</ConnectionName>
+		<InputName>CD</InputName>
+		<InputCode>01FN</InputCode>
+		<Volume>47</Volume>
+	</Service>
 </PandoraSection>
+
 ```
 
 * Host is the IP address of the computer running PyHouse and PianoBar.

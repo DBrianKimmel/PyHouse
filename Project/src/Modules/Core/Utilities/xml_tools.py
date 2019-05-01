@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_xml_tools -*-
 
-@name:      PyHouse/src/Modules.Core.Utilities.xml_tools.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-16'
+__updated__ = '2019-04-25'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET

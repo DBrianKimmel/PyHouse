@@ -7,11 +7,11 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 26 tests - DBK - 2018-10-25
+Passed all 20 tests - DBK - 2019-04-20
 
 """
 
-__updated__ = '2019-04-16'
+__updated__ = '2019-04-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,9 +31,9 @@ from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     XML_PANDORA_SECTION, \
     TESTING_PANDORA_SECTION, \
     L_PANDORA_SECTION_START, \
-    TESTING_PANDORA_DEVICE_NAME_0, \
-    TESTING_PANDORA_DEVICE_KEY_0, \
-    TESTING_PANDORA_DEVICE_ACTIVE_0
+    TESTING_PANDORA_SERVICE_NAME_0, \
+    TESTING_PANDORA_SERVICE_KEY_0, \
+    TESTING_PANDORA_SERVICE_ACTIVE_0
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_DIVISION, \
     TESTING_HOUSE_NAME, \
@@ -63,6 +63,8 @@ class SetupMixin:
 
 
 class A0(unittest.TestCase):
+    """ Prints the test ID
+    """
 
     def setUp(self):
         pass
@@ -72,7 +74,7 @@ class A0(unittest.TestCase):
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
-    """Test that we have set up properly for the rest of the testing classes.
+    """Test that we have set up pyhouse_obj and the XML tags that we will need
     """
 
     def setUp(self):
@@ -101,7 +103,6 @@ class A2_SetupXml(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
 
     def test_01_Raw(self):
         l_raw = XML_PANDORA_SECTION
@@ -110,7 +111,7 @@ class A2_SetupXml(SetupMixin, unittest.TestCase):
 
     def test_02_Parsed(self):
         l_xml = ET.fromstring(XML_PANDORA_SECTION)
-        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
         self.assertEqual(l_xml.tag, TESTING_PANDORA_SECTION)
 
 
@@ -144,16 +145,16 @@ class A3_XML(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.pandora_sect
         # print(PrettyFormatAny.form(l_xml, 'A3-03-A - Pandora'))
         self.assertEqual(len(l_xml), 3)
-        self.assertEqual(l_xml[2].attrib['Name'], TESTING_PANDORA_DEVICE_NAME_0)
+        self.assertEqual(l_xml[2].attrib['Name'], TESTING_PANDORA_SERVICE_NAME_0)
 
-    def test_04_Device0(self):
+    def test_04_Service0(self):
         """ Be sure that the XML contains everything in RoomData().
         """
-        l_xml = self.m_xml.pandora_sect.find('Device')
+        l_xml = self.m_xml.pandora_sect.find('Service')
         # print(PrettyFormatAny.form(l_xml, 'A3-04-A Device'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_PANDORA_DEVICE_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_DEVICE_KEY_0)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_DEVICE_ACTIVE_0)
+        self.assertEqual(l_xml.attrib['Name'], TESTING_PANDORA_SERVICE_NAME_0)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_SERVICE_KEY_0)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_SERVICE_ACTIVE_0)
 
 
 class E1_API(SetupMixin, unittest.TestCase):
@@ -173,7 +174,7 @@ class E1_API(SetupMixin, unittest.TestCase):
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         self.assertIsNone(l_base._API)
         self.assertEqual(l_base.Active, False)
-        self.assertEqual(l_base.DeviceCount, 0)
+        self.assertEqual(l_base.ServiceCount, 0)
 
 
 class E2_API(SetupMixin, unittest.TestCase):
@@ -195,10 +196,10 @@ class E2_API(SetupMixin, unittest.TestCase):
         self.m_api.LoadXml(self.m_pyhouse_obj)
         l_pandora_sect = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         # print(PrettyFormatAny.form(l_pandora_sect, 'E2-02-A - Section', 180))
-        # print(PrettyFormatAny.form(l_pandora_sect.Devices[0], 'E2-02-A - Section', 180))
+        # print(PrettyFormatAny.form(l_pandora_sect.Services, 'E2-02-A - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         self.assertEqual(l_base.Active, True)
-        self.assertEqual(l_base.DeviceCount, 1)
+        self.assertEqual(l_base.ServiceCount, 1)
 
 
 class E3_API(SetupMixin, unittest.TestCase):
