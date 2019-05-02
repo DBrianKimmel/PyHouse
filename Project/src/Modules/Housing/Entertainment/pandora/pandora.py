@@ -348,8 +348,6 @@ class PandoraControl:
         """ When we receive a proper Mqtt message to start (power on) the pandora player.
         We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
 
-        TO DO:
-            Implement max play
         """
         l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_obj, 'Pandora', 190)))
@@ -384,7 +382,7 @@ class PandoraControl:
 
     def _halt_pandora(self):
         """ We have received a control message and therefore we stop the pandora player.
-        This control message may come from a control screen or from a timer.
+        This control message may come from a MQTT message or from a timer.
         """
         l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_pandora_obj._OpenSessions -= 1

@@ -3,8 +3,7 @@
 	xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2019-01-11 16:39:31.037829 -->
-	<ComputerDivision Active="False" Key="0"
-		Name="pi-07-pp">
+	<ComputerDivision Active="False" Key="0" Name="pi-07-pp">
 		<Comment />
 		<LastUpdate>None</LastUpdate>
 		<UUID>222ec0e9-d76e-11e6-b40f-74dfbfae5aed</UUID>
@@ -24,27 +23,7 @@
 			</Broker>
 		</MqttSection>
 		<WebSection>
-			<Port>8580</Port>
-			<SecurePort>8580</SecurePort>
-			<SocketPort>8580</SocketPort>
-			<LoginSection>
-				<Login Active="True" Key="0" Name="admin">
-					<Comment />
-					<LastUpdate>2019-01-11 16:38:20.773566</LastUpdate>
-					<UUID>f4194720-4d0e-11e7-a9b0-74da3859e09a</UUID>
-					<FullName>Administrator</FullName>
-					<Password>admin</Password>
-					<Role>1</Role>
-				</Login>
-				<Login Active="True" Key="1" Name="briank">
-					<Comment />
-					<LastUpdate>2019-01-11 16:38:20.773800</LastUpdate>
-					<UUID>f4199d6a-4d0e-11e7-a9b0-74da3859e09a</UUID>
-					<FullName>None</FullName>
-					<Password>Coff33Nut</Password>
-					<Role>Admin</Role>
-				</Login>
-			</LoginSection>
+			<LoginSection />
 		</WebSection>
 	</ComputerDivision>
 	<HouseDivision Active="True" Key="0" Name="Pink Poppy">
@@ -73,7 +52,7 @@
 					<CommandSet />
 					<Host />
 					<Installed>2019-01-11 16:38:20.779271</Installed>
-					<IPv4>192.168.1.230</IPv4>
+					<IPv4>192.168.1.130</IPv4>
 					<IPv6>2001:db8::1</IPv6>
 					<Model>Tx-555</Model>
 					<Port>60128</Port>
@@ -85,7 +64,8 @@
 			</OnkyoSection>
 			<PandoraSection Active="True">
 				<Type>Service</Type>
-				<Device Active="True" Key="0" Name="PandoraOnPi">
+				<MaxSessions>1</MaxSessions>
+				<Service Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Living Room</Comment>
 					<LastUpdate>2019-01-11 16:38:20.780491</LastUpdate>
 					<Host>192.168.1.17</Host>
@@ -93,10 +73,11 @@
 					<ConnectionName>tx-555</ConnectionName>
 					<InputName>Game</InputName>
 					<InputCode />
+					<Output>Headset</Output>
 					<MaxPlayTime>0</MaxPlayTime>
 					<Type>Receiver</Type>
 					<Volume>53</Volume>
-				</Device>
+				</Service>
 			</PandoraSection>
 		</EntertainmentSection>
 	</HouseDivision>
