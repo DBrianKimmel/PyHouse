@@ -10,7 +10,6 @@
 @summary:
 
 """
-from builtins import False
 
 __updated__ = '2019-05-03'
 
