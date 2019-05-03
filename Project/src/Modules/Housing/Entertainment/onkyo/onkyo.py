@@ -444,9 +444,10 @@ class MqttActions:
             LOG.warn('No Vol')
         #
         if l_power != None:
+            l_zone = '1'
             LOG.warn('Power')
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
-            self._control_power(l_family, l_device, l_power)
+            self._control_power(l_family, l_device, l_zone, l_power)
         else:
             LOG.warn('No Power')
         #
@@ -491,7 +492,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device in l_devices.values():
-            if l_device.Name == p_device:
+            if l_device.Name.lower() == p_device.lower():
                 LOG.info("found device - {} {}".format(p_family, p_device))
                 return l_device
         LOG.error('No such device as {}'.format(p_device))
