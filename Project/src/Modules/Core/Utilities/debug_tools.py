@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-19'
+__updated__ = '2019-05-02'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -30,19 +30,21 @@ def _nuke_newlines(p_string):
     """
     Strip newlines and any trailing/following whitespace;
     rejoin with a single space where the newlines were.
+    Trailing newlines are converted to spaces.
 
     Bug: This routine will completely butcher any whitespace-formatted text.
+
+    @param p_string: A string with embedded newline chars.
     """
     if not p_string:
         return ''
     l_lines = p_string.splitlines()
-    return ' '.join([line.strip() for line in l_lines])
+    return ' '.join([l_line.strip() for l_line in l_lines])
 
 
 def _format_line(string, maxlen=175, split=' '):
     """
-    Pretty prints the given string to break at an occurrence of
-    split where necessary to avoid lines longer than maxlen.
+    Pretty prints the given string to break at an occurrence of split where necessary to avoid lines longer than maxlen.
 
     This will overflow the line if no convenient occurrence of split is found.
     @param string: is a string that will be broken up into several strings if needed.
@@ -62,33 +64,34 @@ def _format_line(string, maxlen=175, split=' '):
     return linelist
 
 
-def _format_cols(strings, widths, split=' '):
+def _format_cols(p_strings, p_widths, split=' '):
     """
     Pretty prints text in columns, with each string breaking at split according to _format_line.
     Margins gives the corresponding right breaking point.
 
     The first string is the title which is usually ''.
 
-    The number of strings must match the number of widths.
+    The number of p_strings must match the number of p_widths.
     Each width is the width of a column with the last number is the total width.
-    @param strings: is a tuple of strings
-    @param widths: is a tuple of integer column widths.  There must be the same number of widths as strings
+
+    @param p_strings: is a tuple of strings
+    @param p_widths: is a tuple of integer column p_widths.  There must be the same number of p_widths as p_strings
     @return: the line of output with the strings left justified in the column width specified
     """
-    assert len(strings) == len(widths)
-    stringlist = list(map(_nuke_newlines, strings))
-    #  pretty Print each column
-    cols = [''] * len(stringlist)
-    for i in range(len(stringlist)):
-        cols[i] = _format_line(stringlist[i], widths[i], split)
-    #  prepare a format line
-    l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
 
     def formatline(*cols):
         return l_format % tuple(map(lambda s: (s or ''), cols))
 
-    #  generate the formatted text
-    return '\n'.join(map(formatline, *cols))
+    assert len(p_strings) == len(p_widths)
+    stringlist = list(map(_nuke_newlines, p_strings))
+    #  pretty Print each column
+    cols = [''] * len(stringlist)
+    for i in range(len(stringlist)):
+        cols[i] = _format_line(stringlist[i], p_widths[i], split)
+    #  prepare a format line
+    l_format = ''.join(["%%-%ds" % width for width in p_widths[0:-1]]) + "%s"
+    l_ret = '\n'.join(map(formatline, *cols))
+    return l_ret.rstrip()
 
 
 def _formatObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):

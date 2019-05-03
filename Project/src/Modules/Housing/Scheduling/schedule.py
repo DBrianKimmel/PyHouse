@@ -40,7 +40,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-03-21'
+__updated__ = '2019-05-02'
 
 #  Import system type stuff
 import datetime
@@ -92,7 +92,7 @@ class MqttActions:
         if l_sender == self.m_pyhouse_obj.Computer.Name:
             return
         l_name = extract_tools.get_mqtt_field(p_message, 'Name')
-        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.Computer.Lighting.Lights, name=l_name)
+        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_name)
         if l_light_obj == None:
             return
         l_key = len(self.m_pyhouse_obj.House.Schedules)

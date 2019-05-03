@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-04-15'
+__updated__ = '2019-05-02'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -73,35 +73,14 @@ class MqttActions:
         l_logmsg = '\tEntertainment: '
         LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
         try:
-            l_module = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-            # LOG.debug('{} {}'.format(l_module, l_logmsg))
+            l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
+            l_logmsg += l_module_api.decode(p_topic[1:], p_message)
+            # LOG.debug('{} {}'.format(l_module_api, l_logmsg))
         except (KeyError, AttributeError) as e_err:
-            l_module = None
+            l_module_api = None
             l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
             LOG.error('Error {}'.format(e_err))
             return l_logmsg
-        #
-        try:
-            l_logmsg += l_module.decode(p_topic[1:], p_message)
-
-            if l_topic == 'onkyo':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            elif l_topic == 'pandora':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            elif l_topic == 'pioneer':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            elif l_topic == 'samsung':
-                l_logmsg += l_module.decode(p_topic[1:], p_message)
-            #
-            else:
-                l_logmsg += '\tUnknown entertainment sub-topic\n\t\tTopic:{}\n\t\tMessage:{}'.format(p_topic, p_message)
-        except Exception as e_err:
-            LOG.error('Error {}'.format(e_err))
-            l_logmsg += "(entertainment-102.decode) Error: {}\n\tTopic:{}\n\tMessage:{}".format(e_err, p_topic, p_message)
         return l_logmsg
 
 

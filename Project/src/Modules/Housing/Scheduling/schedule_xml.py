@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-02'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -109,7 +109,7 @@ class Xml(object):
         """
         """
         l_entry = XmlConfigTools.write_base_UUID_object_xml(SCHEDULE_ATTR, p_schedule_obj)
-        PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DyOfWeek))
+        PutGetXML.put_int_element(l_entry, 'DayOfWeek', int(p_schedule_obj.DayOfWeek))
         PutGetXML.put_text_element(l_entry, 'ScheduleMode', p_schedule_obj.ScheduleMode)
         PutGetXML.put_text_element(l_entry, 'ScheduleType', p_schedule_obj.ScheduleType)
         PutGetXML.put_text_element(l_entry, 'Time', p_schedule_obj.Time)

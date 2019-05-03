@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-17'
+__updated__ = '2019-05-02'
 __version_info__ = (19, 4, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -318,6 +318,10 @@ class OnkeoControl:
 
         def cb_got_protocol(p_protocol, p_device_obj):
             p_device_obj._Protocol = p_protocol
+            l_topic = 'entertainment/onkyo/status'
+            l_message = p_device_obj
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)
+
             # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_protocol, 'Proto', 190)))
             # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
             p_protocol.transport.write(CMD_01)

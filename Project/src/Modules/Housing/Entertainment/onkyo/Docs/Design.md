@@ -11,8 +11,23 @@
 
 A house may have one or more Onkyo devices in it's entertainment systems
 
+
+## Connecting
 It appears that at least some of the devices may not queue the commands we send them so we queue the commands
 until the device responds and then we send the next command if we have one.
+
+When PyHouse starts up we establish communication with the Onkyo device.
+If we don't connect we assume some other node connected before and we just mark the device "dead".
+
+We send out a status message when this happens - either connected or dead.
+
+
+## Controlling
+
+When we get a Mqtt control message to do something, we queue each of the commands called for in the message.
+Then we start a loop performing each of the commands to the device.
+When each command finishes we accumulate the response.
+When the queue is empty, we send a Mqtt status message with the accumulated results.
 
 
 ## Configuration
@@ -46,7 +61,7 @@ The IP addresses in the xml file are for documentation only.
 
 ## Design
 
-## Packet Format
+### Packet Format
 
 ```
 Bytes  1 -  4  'ISCP'

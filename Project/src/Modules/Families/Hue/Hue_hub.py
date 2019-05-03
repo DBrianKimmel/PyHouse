@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-04-29'
+__updated__ = '2019-05-02'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -519,7 +519,7 @@ class HueDecode(object):
         LOG.info('Decode_Post')
 
 
-class HueDispatch:
+class HueDispatch(HueProtocol):
     """
     """
 

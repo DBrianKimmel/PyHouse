@@ -12,7 +12,7 @@ Passed all 22 tests - DBK - 2018-08-02
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2018-08-02'
+__updated__ = '2019-05-02'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -96,6 +96,7 @@ class B2_Newlines(SetupMixin, unittest.TestCase):
         l_short = 'This\nis\nshort.'
         l_ret = debug_tools._nuke_newlines(l_short)
         # print('B2-01-A Short: ', l_ret)
+        # print('-----')
         self.assertLess(len(l_ret), l_max + 1)
 
     def test_02_Long(self):
@@ -104,6 +105,17 @@ class B2_Newlines(SetupMixin, unittest.TestCase):
         l_max = 50
         l_ret = debug_tools._nuke_newlines(LOTS_NLS)
         # print('B2-02-A Long: ', l_ret)
+        # print('-----')
+        self.assertLess(len(l_ret), l_max + 1)
+
+    def test_03_Empty_1(self):
+        """Testing _nuke_newlines().
+        """
+        l_max = 30
+        l_short = 'This\n\n\n\n'
+        l_ret = debug_tools._nuke_newlines(l_short)
+        print('B2-03-A Empty_1: ', l_ret, 'xxx')
+        # print('-----')
         self.assertLess(len(l_ret), l_max + 1)
 
 
@@ -143,6 +155,14 @@ class C1_Line(SetupMixin, unittest.TestCase):
         # print('\nC1-04-A Long 50: ', l_ret)
         self.assertEqual(len(l_ret), 9)
 
+    def test_05_xx(self):
+        l_str = 'Comment\n'
+        l_str = debug_tools._nuke_newlines(l_str)
+        l_maxlen = 50
+        l_ret = debug_tools._format_line(l_str, l_maxlen)
+        print('\nC1-0-A Long 50: ', l_ret)
+        self.assertEqual(len(l_ret), 1)
+
 
 class C2_Cols(SetupMixin, unittest.TestCase):
     """Test format_cols functionality.
@@ -173,11 +193,22 @@ class C2_Cols(SetupMixin, unittest.TestCase):
 
     def test_03_Object(self):
         l_ret = debug_tools._formatObject('PyHouse', self.m_pyhouse_obj, maxlen=90, lindent=20)
-        # print('\nC2-03-A - Object:', l_ret)
-        # print(PrettyFormatAny.form(l_ret, "C2-03-B - Object"))
+        print('\nC2-03-A - Object:', l_ret)
+        print(PrettyFormatAny.form(l_ret, "C2-03-B - Object"))
         l_ret = PrettyFormatAny.form(self.m_pyhouse_obj, 'XXX')
+
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, "C2-03-C - Object"))
         # self.assertEqual(len(l_ret), 984)
+
+    def test_04_Empty(self):
+        """ Test formatting of columns
+        """
+        l_strings = ['Comment', ' ']
+        l_widths = [10, 10]
+        l_ret = debug_tools._format_cols(l_strings, l_widths)
+        print('\nC2-04-A - Cols:', l_ret)
+        print(PrettyFormatAny.form(l_ret, "C2-04-B - Empty Cols"))
+        self.assertEqual(len(l_ret), 2 * 10 - (10 - 5))
 
 
 class C3_Objs(SetupMixin, unittest.TestCase):

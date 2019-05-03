@@ -33,7 +33,7 @@
 		<InternetSection />
 		<MqttSection>
 			<Broker Active="True" Key="0" Name="Mqtt">
-				<Comment />
+				<Comment>Main Broker on pi-05-pp</Comment>
 				<LastUpdate>2019-01-11 22:27:31.703413</LastUpdate>
 				<UUID>c87c8b96-b1e5-11e6-8a14-74da3859e09a</UUID>
 				<BrokerAddress>192.168.1.15</BrokerAddress>
@@ -943,7 +943,7 @@
 				<RoomName>Living Room</RoomName>
 				<RoomUUID>1f02c884-4618-11e6-89e7-74da3859e09a</RoomUUID>
 			</Schedule>
-			<Schedule Active="True" Key="1" Name="Evening-On-00">
+			<Schedule Active="True" Key="1" Name="Dusk-On-00">
 				<Comment />
 				<LastUpdate>2019-01-11 22:27:31.951610</LastUpdate>
 				<UUID>c8a02c54-b1e5-11e6-8a14-74da3859e09a</UUID>

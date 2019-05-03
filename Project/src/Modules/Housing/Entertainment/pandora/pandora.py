@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-01'
+__updated__ = '2019-05-02'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -112,24 +112,19 @@ class MqttActions:
         As a side effect, we need to control Pandora ( PianoBar ) via the control socket
         """
         l_logmsg = '\tPandora Control'
-        # l_status = extract_tools.get_mqtt_field(p_message, 'Status')
-        # l_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         l_power = extract_tools.get_mqtt_field(p_message, 'Power')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
-        # l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
         l_like = extract_tools.get_mqtt_field(p_message, 'Like')
         l_skip = extract_tools.get_mqtt_field(p_message, 'Skip')
         LOG.debug('{} {}'.format(p_topic, p_message))
 
         if l_power == 'On':
             l_logmsg += ' Turn On '
-            l_power = 'On'
-            l_input = extract_tools.get_mqtt_field(p_message, 'Input')
-            self._play_pandora()
-        elif l_power == 'PowerOff':
+            self._play_pandora(p_message)
+
+        elif l_power == 'Off':
             l_logmsg += ' Turn Off '
-            l_power = 'On'
-            self._halt_pandora()
+            self._halt_pandora(p_message)
 
         elif l_volume == 'VolumeUp1':
             l_logmsg += ' Volume Up 1 '
@@ -159,17 +154,18 @@ class MqttActions:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
 
         l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        for l_device in l_pandora_obj.Devices.values():
-            l_obj = EntertainmentDeviceControl()
-            l_obj.Device = l_device.ConnectionName
-            l_obj.Family = l_device.ConnectionFamily
-            l_obj.From = SECTION
-            l_obj.InputName = l_input
-            l_obj.Like = l_like
-            l_obj.Power = l_power
-            l_obj.Skip = l_skip
-            l_obj.Volume = l_volume
-            self._send_control(l_device, l_obj)
+        l_input = extract_tools.get_mqtt_field(p_message, 'Input')
+        for l_service in l_pandora_obj.Services.values():
+            l_device_control_obj = EntertainmentDeviceControl()
+            l_device_control_obj.Device = l_service.ConnectionName
+            l_device_control_obj.Family = l_service.ConnectionFamily
+            l_device_control_obj.From = SECTION
+            l_device_control_obj.InputName = l_input
+            l_device_control_obj.Like = l_like
+            l_device_control_obj.Power = l_power
+            l_device_control_obj.Skip = l_skip
+            l_device_control_obj.Volume = l_volume
+            self._send_control(l_service, l_device_control_obj)
         return l_logmsg
 
     def decode(self, p_topic, p_message):
@@ -344,7 +340,7 @@ class PandoraControl:
             return True
         return False
 
-    def _play_pandora(self):
+    def _play_pandora(self, _p_message):
         """ When we receive a proper Mqtt message to start (power on) the pandora player.
         We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
 
@@ -366,21 +362,20 @@ class PandoraControl:
         l_env = None  # this will pass <os.environ>
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         self.m_started = True
-        for l_device in l_pandora_obj.Devices.values():
-            l_obj = EntertainmentDeviceControl()
-            l_name = l_device.ConnectionName
-            l_family = l_device.ConnectionFamily
-            l_topic = 'entertainment/{}/control'.format(l_family)
-            l_obj.Family = l_family
-            l_obj.Device = l_name
-            l_obj.From = SECTION
-            l_obj.Power = "On"
-            l_obj.InputName = l_device.InputName
-            l_obj.Volume = l_device.Volume
+        for l_service in l_pandora_obj.Services.values():
+            l_device_control_obj = EntertainmentDeviceControl()
+            l_device_control_obj.Device = l_name = l_service.ConnectionName
+            l_device_control_obj.Family = l_family = l_service.ConnectionFamily
+            l_device_control_obj.From = SECTION
+            l_device_control_obj.Power = "On"
+            l_device_control_obj.InputName = l_service.InputName
+            l_device_control_obj.Volume = l_service.Volume
+            l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+            l_topic = 'entertainment/{}/control'.format(l_family)
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
-    def _halt_pandora(self):
+    def _halt_pandora(self, _p_message):
         """ We have received a control message and therefore we stop the pandora player.
         This control message may come from a MQTT message or from a timer.
         """
@@ -390,20 +385,18 @@ class PandoraControl:
         self.m_transport.write(b'q')
         # self.m_transport.closeStdin()
         LOG.info('Service Stopped')
-        for l_device in l_pandora_obj.Devices.values():
-            l_obj = EntertainmentDeviceControl()
-            l_name = l_device.ConnectionName
-            l_family = l_device.ConnectionFamily
+        for l_service in l_pandora_obj.Services.values():
+            l_device_control_obj = EntertainmentDeviceControl()
+            l_device_control_obj.Family = l_family = l_service.ConnectionFamily
+            l_device_control_obj.Device = l_name = l_service.ConnectionName
+            l_device_control_obj.From = SECTION
+            l_device_control_obj.Power = "Off"
+            l_device_control_obj.InputName = l_service.InputName
+            l_device_control_obj.Volume = l_service.Volume
+            l_device_control_obj.Zone = '1'
+            LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
             l_topic = 'entertainment/{}/control'.format(l_family)
-            l_obj.Family = l_family
-            l_obj.Device = l_name
-            l_obj.From = SECTION
-            l_obj.Power = "Off"
-            l_obj.InputName = l_device.InputName
-            l_obj.Volume = l_device.Volume
-            LOG.info('Sending power off')
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
-            LOG.info("Stopped Pandora.")
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
     def control_audio_device(self, p_audio_device, p_control):
         """

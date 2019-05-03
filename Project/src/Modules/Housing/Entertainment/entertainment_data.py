@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-20'
+__updated__ = '2019-05-02'
 
 # Import system type stuff
 
@@ -41,19 +41,20 @@ class EntertainmentPluginData:
 
     Valid Types:
         Service is a provided service such as Pandora, Netflix, Hulu, etc.
-        Component is a device such as a TV, DVD Player, Receiver, etc.
+        Device is a Component such as a TV, DVD Player, Receiver, etc.
     """
 
     def __init__(self):
         self.Active = False
-        self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self.DeviceCount = 0
+        self.Devices = {}  # EntertainmentDeviceData()
         self.ServiceCount = 0
-        self._Module = None
+        self.Services = {}  # EntertainmentServiceData()
         self.Name = None
         self.Type = 'Missing Type'  # Service: Component (a device):
-        self.Devices = {}  # EntertainmentDeviceData()
-        self.Services = {}  # EntertainmentServiceData()
+        #
+        self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
+        self._Module = None
         self._OpenSessions = 0
 
 

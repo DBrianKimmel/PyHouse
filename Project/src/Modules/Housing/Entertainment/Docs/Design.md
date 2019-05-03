@@ -12,8 +12,13 @@
 
 The entertainment system covers TV, Music and other systems within a house.
 
-Devices may be controlled via WiFi, Ethernet and perehaps IR Rrmotes.
+Devices may be controlled via WiFi, Ethernet and perhaps IR Remotes.
 
+At this time (2019) these devices and services are functional:
+  * Pandora
+  * Onkyo
+  * Pioneer
+  * Samsung - in progress
 
 ## Design
 
