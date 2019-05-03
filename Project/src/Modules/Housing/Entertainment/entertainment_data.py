@@ -10,8 +10,9 @@
 @summary:
 
 """
+from builtins import False
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-05-03'
 
 # Import system type stuff
 
@@ -70,6 +71,7 @@ class EntertainmentDeviceData(BaseObject):
         self._Transport = None
         self._Connector = None
         self._Protocol = None
+        self._Queue = None  # A queue to hold commands fro the device.
         #
         self.CommandSet = None  # Command sets change over the years.
         self.IPv4 = None  # IPv4 if No  FQDN or IPv6
@@ -146,5 +148,23 @@ class EntertainmentServiceControl:
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent
         self.Zone = None  # '1'  # For multi zone output
+
+
+class EntertainmentDeviceStatus:
+    """
+    """
+
+    def __init__(self):
+        self.Type = None
+        self.ControllingNode = None
+        self.Connected = False
+
+
+class EntertainmentServiceStatus:
+    """
+    """
+
+    def __init__(self):
+        self.Type = None
 
 # ## END DBK
