@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-05-03'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -289,6 +289,10 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
                 self._extract_playtime(self.m_now_playing, p_line[2:])
                 MqttActions(self.m_pyhouse_obj)._send_status(self.m_now_playing)
             return
+        if p_line.startswith(b'Network'):  # A network error has occurred, restart
+            PandoraControl()._halt_pandora('Network Error')
+            PandoraControl()._play_pandora('Restarting')
+            return
 
         LOG.debug("Data = {}".format(p_line))
         pass
@@ -340,13 +344,14 @@ class PandoraControl:
             return True
         return False
 
-    def _play_pandora(self, _p_message):
+    def _play_pandora(self, p_message):
         """ When we receive a proper Mqtt message to start (power on) the pandora player.
         We need to issue Mqtt messages to power on the sound system, set inputs, and a default volume.
 
         """
+        LOG.info('Play Pandora - {}'.format(p_message))
         l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_obj, 'Pandora', 190)))
+        # LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_obj, 'Pandora', 190)))
         if not self._is_pianobar_installed():
             self.m_started = False
             LOG.warn('Pianobar is not installed')
@@ -375,10 +380,11 @@ class PandoraControl:
             l_topic = 'entertainment/{}/control'.format(l_family)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
-    def _halt_pandora(self, _p_message):
+    def _halt_pandora(self, p_message):
         """ We have received a control message and therefore we stop the pandora player.
         This control message may come from a MQTT message or from a timer.
         """
+        LOG.info('Halt Pandora - {}'.format(p_message))
         l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_pandora_obj._OpenSessions -= 1
         self.m_started = False
