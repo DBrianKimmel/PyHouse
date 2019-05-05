@@ -14,7 +14,7 @@ Passed all 8 tests - DBK - 2018-11-03
 """
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 
-__updated__ = '2019-04-20'
+__updated__ = '2019-05-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,7 +30,7 @@ from Modules.Housing.Entertainment.entertainment_xml import XML as entertainment
 from Modules.Housing.Entertainment.onkyo.onkyo import \
         SECTION, \
         OnkyoClient, \
-        OnkyoFactory
+        OnkyoFactory, MqttActions
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
@@ -44,6 +44,15 @@ from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
         XML_ONKYO_SECTION
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+MSG_01 = """
+{
+    'Sender': 'pi-01-pp',
+    'DateTime': '2019-05-03 23:27:13.713069',
+    'Power': 'On',
+    'Zone': '1'
+}
+"""
 
 
 class SetupMixin(object):
@@ -177,6 +186,24 @@ class B1_Data(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Name, TESTING_ONKYO_DEVICE_NAME_1)
         self.assertEqual(str(l_obj.Active), TESTING_ONKYO_DEVICE_ACTIVE_1)
         self.assertEqual(str(l_obj.Key), TESTING_ONKYO_DEVICE_KEY_1)
+
+
+class B2_Message(SetupMixin, unittest.TestCase):
+    """
+    This section tests
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        # l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
+        # self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+
+    def test_01_Zone(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_msg = MqttActions(self.m_pyhouse_obj)._get_zone(MSG_01)
+        # print(PrettyFormatAny.form(l_msg, 'B2-01-A - Zone', 190))
+        self.assertEqual(l_msg, 1)
 
 
 class D1_Protocol(SetupMixin, unittest.TestCase):

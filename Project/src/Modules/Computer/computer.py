@@ -29,8 +29,8 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-03-16'
-__version_info__ = (18, 10, 0)
+__updated__ = '2019-05-05'
+__version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

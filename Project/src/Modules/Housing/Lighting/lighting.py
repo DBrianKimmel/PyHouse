@@ -17,7 +17,9 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-05'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -102,7 +104,7 @@ class API(XML):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized')
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Lighting xml info.

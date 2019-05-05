@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -23,8 +23,8 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-03-27'
-__version_info__ = (9, 3, 1)
+__updated__ = '2019-05-05'
+__version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

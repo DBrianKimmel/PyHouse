@@ -82,7 +82,7 @@ Idea Links:
 
 """
 
-__updated__ = '2019-04-16'
+__updated__ = '2019-05-05'
 __version_info__ = (19, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -233,7 +233,7 @@ class API:
 
          This is automatically invoked when the reactor starts from API().__init__{}.
         """
-        LOG.info('Loading XML - Reactor is now running!')
+        LOG.info('Loading XML - Reactor is now running!\n\n')
         p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj.Twisted.Reactor.callLater(10, self.Start)
         LOG.info('Loaded XML\n-----------------------------------------\n')

@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-05-05'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -476,26 +476,26 @@ class HueProtocol(Protocol):
             ?
         """
 
-        def cb_log(self, p_command, _p_code, p_body):
+        def cb_log(self, p_command, p_code, p_body, p_finished, p_pyhouse_obj):
             """ Log the response to our command and dispatch the message
             """
             # LOG.debug('\n\tCommand: {}\n\tCode: {}\n\tBody: {}'.format(p_command, p_code, p_body))
             if p_command == '/config':
-                HueDispatch().get_config(p_body)
+                HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_config(p_body)
             elif p_command == '/lights':
-                HueDispatch().get_lights(p_body)
+                HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_lights(p_body)
             elif p_command == '/rules':
-                HueDispatch().get_rules(p_body)
+                HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_rules(p_body)
             elif p_command == '/scenes':
-                HueDispatch().get_scenes(p_body)
+                HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_scenes(p_body)
             elif p_command == '/schedules':
-                HueDispatch().get_schedules(p_body)
+                HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_schedules(p_body)
             elif p_command == '/sensors':
-                HueDispatch().get_sensors(p_body)
+                HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_sensors(p_body)
 
         l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)
         if l_msg == '':
-            self.m_finished.addCallback(cb_log, self.m_command, self.m_code, self.m_body)
+            self.m_finished.addCallback(cb_log, self.m_command, self.m_code, self.m_body, self.m_finished, self.m_pyhouse_obj)
             self.m_finished.callback(None)
             return
         LOG.debug('Finished receiving body: {}'.format(PrettyFormatAny.form(l_msg, 'Reason', 190)))
@@ -524,7 +524,7 @@ class HueDispatch(HueProtocol):
     """
 
     def _add_light(self, p_light_obj):
-        l_objs = self.m_pyhouse_obj.Housing.Lighting.Lights
+        l_objs = self.m_pyhouse_obj.House.Lighting.Lights
         l_light_obj = lightingUtility().get_object_by_id(l_objs, name=p_light_obj.Name)
         pass
 
@@ -537,8 +537,12 @@ class HueDispatch(HueProtocol):
         """
         See Docs/Design.md for the JSON returned.
         """
+        LOG.debug('{}'.format(p_body))
+        return
+
         try:
-            l_json = jsonpickle.decode(p_body)
+            # l_json = jsonpickle.decode(p_body)
+            l_json = p_body
         except Exception as e_err:
             LOG.error('Error - {}\n{}'.format(e_err, PrettyFormatAny.form(l_json, "HUE ERROR", 190)))
         # LOG.debug('Got Lights {}'.format(PrettyFormatAny.form(l_json, 'Lights', 190)))

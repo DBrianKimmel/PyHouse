@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Computer/Bridges/bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Dec 21, 2017
 @license:   MIT License
 @summary:   The entry point for dealing with bridges.
@@ -15,7 +15,9 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-04-15'
+__updated__ = '2019-05-05'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -33,7 +35,7 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized.")
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the xml info.

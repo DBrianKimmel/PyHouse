@@ -1,23 +1,25 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/Project/src/Modules/Core/Utilities/extract_tools.py -*-
+-*- test-case-name: PyHouse/Project/src/Modules/Core/Utilities/extract_tools.py -*-
 
-@name:      /home/briank/workspace/PyHouse/Project/src/Modules/Core/Utilities/extract_tools.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/extract_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @note:      Created on Oct 3, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-04-01'
+__updated__ = '2019-05-04'
 
 # Import system type stuff
 
 
 def extract_quoted(p_string, p_delim=b'"'):
     """
+    Used by play list extracting in pandora module.
+
     Discard characters before first p_delim
     extract chars between p_delim chars
     return all chars after second p_delim
@@ -32,6 +34,9 @@ def extract_quoted(p_string, p_delim=b'"'):
 
 def get_mqtt_field(p_message, p_field):
     """ Get the given field from a JSON message.
+    @param p_message: The json message
+    @param p_field: the 'field_name' to extract
+    @return: the value of the field or None if missing.
     """
     try:
         l_ret = p_message[p_field]

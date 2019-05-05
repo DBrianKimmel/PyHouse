@@ -72,6 +72,12 @@ Bytes 14 - 16  3 bytes reserves (should be all zeroes)
                command/response data
                \x1a\r\n for eol stuff
 ```
+* Commands
+'!' is the start character
+'1' is the Unit Type - Unit Type is the model category ID. The Receiver is "1".
+'XXX' is the 3 letter command
+'ARGS' are the command arguments
+'!1PWRQSTN'
 
 
 ### Control Message
@@ -269,5 +275,8 @@ This module issues status messages,
 	"x":130,"y":40,"wires":[["6a7ba440.b296c4"]]},
 
 
+# References
+
+https://
 
 ### END DBK
