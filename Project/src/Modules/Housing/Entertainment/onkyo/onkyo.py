@@ -11,11 +11,13 @@
 
 """
 
-__updated__ = '2019-05-04'
+__updated__ = '2019-05-07'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+import os
+import yaml
 from twisted.internet.protocol import Factory
 from twisted.internet.error import ConnectionDone
 from twisted.internet.endpoints import TCP4ClientEndpoint
@@ -32,136 +34,6 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 
 SECTION = 'onkyo'
-
-# See https://
-CONTROL_COMMANDS = {
-    'Power':            [b'PWR', b'PWZ'],
-    'Volume':           [b'MVL', b'ZVL'],
-    'Mute':             [b'AMT', b'ZMT'],
-    'InputSelect':      [b'SLI', b'SLZ']
-    }
-INPUT_CODES = {
-    'Aux'       : 0X03,
-    'Bd/Dvd'    : 0X10,
-    'BlueTOOTH' : 0X2E,  #  Onkyo sent Eq:1 SLI 2E
-                        #  SLI Input Selector : 2E
-                        #  Onkyo sent Eq:1 LMD 0C
-                        #  Onkyo sent Eq:1 NLT F32200000000000100FF00
-                        #  NLT ??? : F32200000000000100FF00
-                        #  Onkyo sent Eq:1 NLS C-P
-                        #  NLS USB List Info : C-P
-                        #  Onkyo sent Eq:1 NLT F32200000000000100FF00
-                        # 2019-05-04 17:49:40,565 [INFO] PyHouse.Onkyo          : _decode_message 148: - NLT ??? : F32200000000000100FF00
-                        # 2019-05-04 17:49:40,586 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS C0P
-                        # 2019-05-04 17:49:40,587 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : C0P
-                        # 2019-05-04 17:49:41,358 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NMS xxxxxxxf4
-                        # 2019-05-04 17:49:41,358 [INFO] PyHouse.Onkyo          : _decode_message 150: - NMS ??? : xxxxxxxf4
-                        # 2019-05-04 17:49:41,378 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NJA n-
-                        # 2019-05-04 17:49:41,379 [INFO] PyHouse.Onkyo          : _decode_message 144: - NJA Jacket-Art: n-
-                        # 2019-05-04 17:49:41,758 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTI Now Pairing...
-                        # 2019-05-04 17:49:41,759 [INFO] PyHouse.Onkyo          : _decode_message 152: - NTI Song Title : Now Pairing...
-                        # 2019-05-04 17:49:41,760 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:49:41,760 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-                        # 2019-05-04 17:49:42,781 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTI Echo Dot-00V
-                        # 2019-05-04 17:49:42,782 [INFO] PyHouse.Onkyo          : _decode_message 152: - NTI Song Title : Echo Dot-00V
-                        # 2019-05-04 17:49:42,783 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:49:42,783 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-                        # 2019-05-04 17:49:43,390 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:49:43,391 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-                        # 2019-05-04 17:49:43,392 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTI Echo Dot-00V
-                        # 2019-05-04 17:49:43,392 [INFO] PyHouse.Onkyo          : _decode_message 152: - NTI Song Title : Echo Dot-00V
-                        # 2019-05-04 17:49:43,595 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:49:43,596 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-                        # 2019-05-04 17:49:43,599 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTI Echo Dot-00V
-                        # 2019-05-04 17:49:43,600 [INFO] PyHouse.Onkyo          : _decode_message 152: - NTI Song Title : Echo Dot-00V
-                        # 2019-05-04 17:49:46,879 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTI Echo Dot-00V
-                        # 2019-05-04 17:49:46,879 [INFO] PyHouse.Onkyo          : _decode_message 152: - NTI Song Title : Echo Dot-00V
-                        # 2019-05-04 17:49:46,880 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:49:46,880 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-                        # 2019-05-04 17:50:20,260 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:50:20,261 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-                        # 2019-05-04 17:50:20,665 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTI Status : Ready
-                        # 2019-05-04 17:50:20,666 [INFO] PyHouse.Onkyo          : _decode_message 152: - NTI Song Title : Status : Ready
-                        # 2019-05-04 17:50:20,668 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NTM --:--:--/--:--:--
-                        # 2019-05-04 17:50:20,669 [INFO] PyHouse.Onkyo          : _decode_message 154: - NTM Stream time : --:--:--/--:--:--
-    'Cbl/Sat'   : 1,
-    'Cd'        : 23,
-    'Game'      : 2,
-    'Net-1'     : 31,
-                        # 2019-05-04 17:47:16,771 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 SLI 2B
-                        # 2019-05-04 17:47:16,772 [INFO] PyHouse.Onkyo          : _decode_message 164: - SLI Input Selector : 2B
-                        # 2019-05-04 17:47:16,787 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 LMD 00
-                        # 2019-05-04 17:47:16,815 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 MOT 01
-                        # 2019-05-04 17:47:16,815 [INFO] PyHouse.Onkyo          : _decode_message 136: - MOT Music Optimizer : 01
-                        # 2019-05-04 17:47:16,817 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS C0P
-                        # 2019-05-04 17:47:16,818 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : C0P
-                        # 2019-05-04 17:47:16,818 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U0-TuneIn
-                        # 2019-05-04 17:47:16,818 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U0-TuneIn
-                        # 2019-05-04 17:47:16,818 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U1-Pandora
-                        # 2019-05-04 17:47:16,818 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U1-Pandora
-                        # 2019-05-04 17:47:16,819 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U2-Spotify
-                        # 2019-05-04 17:47:16,819 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U2-Spotify
-                        # 2019-05-04 17:47:16,835 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U3-AirPlay
-                        # 2019-05-04 17:47:16,835 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U3-AirPlay
-                        # 2019-05-04 17:47:16,837 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U4-Music Server
-                        # 2019-05-04 17:47:16,837 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U4-Music Server
-                        # 2019-05-04 17:47:16,837 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U5-USB
-                        # 2019-05-04 17:47:16,837 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U5-USB
-                        # 2019-05-04 17:47:17,161 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLT F300000000060000FFFF00NET
-                        # 2019-05-04 17:47:17,162 [INFO] PyHouse.Onkyo          : _decode_message 148: - NLT ??? : F300000000060000FFFF00NET
-                        # 2019-05-04 17:47:17,163 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS C0P
-                        # 2019-05-04 17:47:17,163 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : C0P
-                        # 2019-05-04 17:47:17,164 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U0-TuneIn
-                        # 2019-05-04 17:47:17,164 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U0-TuneIn
-                        # 2019-05-04 17:47:17,165 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U1-Pandora
-                        # 2019-05-04 17:47:17,165 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U1-Pandora
-                        # 2019-05-04 17:47:17,165 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U2-Spotify
-                        # 2019-05-04 17:47:17,166 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U2-Spotify
-                        # 2019-05-04 17:47:17,166 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U3-AirPlay
-                        # 2019-05-04 17:47:17,167 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U3-AirPlay
-                        # 2019-05-04 17:47:17,167 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U4-Music Server
-                        # 2019-05-04 17:47:17,167 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U4-Music Server
-                        # 2019-05-04 17:47:17,168 [INFO] PyHouse.Onkyo          : _decode_message 121: - Onkyo sent Eq:1 NLS U5-USB
-                        # 2019-05-04 17:47:17,168 [INFO] PyHouse.Onkyo          : _decode_message 146: - NLS USB List Info : U5-USB
-
-    'Net-2'     : 32,
-    'Net-3'     : 33,
-    'Net-4'     : 34,
-    'Net-5'     : 35,
-    'Net-6'     : 36,
-    'Pc'        : 5,
-    'Phono'     : 22,
-    'Strmbox'   : 11,
-    'Tuner-1'   : 24,  # FM (PRS *, PR3 *)  Freq 10339
-    'Tuner-2'   : 25,  # AM (
-                        # Onkyo sent Eq:1 PRS 00
-                        # Onkyo sent Eq:1 TUN 00830
-                        # Onkyo sent Eq:1 PR3 00
-                        # Onkyo sent Eq:1 TU3 00830
-    'TV'        : 12
-    }
-MAX_ZONE = 2
-
-CMD_01 = b'ISCP\x00\x00\x00\x10\x00\x00\x00\x0c\x01\x00\x00\x00!1PWRQSTN\x1a\n\r'
-
-#  ==Endpoints==
-# clientFromString
-# serverFromString
-# TCP4ServerEndpoint
-# TCP6ServerEndpoint
-# TCP4ClientEndpoint
-# TCP6ClientEndpoint
-# UNIXServerEndpoint
-# UNIXClientEndpoint
-# SSL4ServerEndpoint
-# SSL4ClientEndpoint
-# AdoptedStreamServerEndpoint
-# StandardIOEndpoint
-# ProcessEndpoint
-# HostnameEndpoint
-# StandardErrorBehavior
-# connectProtocol
-# wrapClientTLS
 
 
 class OnkyoDeviceData(EntertainmentDeviceData):
@@ -342,7 +214,7 @@ class OnkyoFactory(Factory):
         self.m_device_obj = p_device_obj
 
     def startedConnecting(self, p_connector):
-        LOG.debug('Started to connect.'.format(PrettyFormatAny.form(p_connector, 'Connector', 180)))
+        LOG.debug('Started to connect. {}'.format(PrettyFormatAny.form(p_connector, 'Connector', 180)))
 
     def buildProtocol(self, _p_addr):
         LOG.debug('Build Protocol.')
@@ -381,24 +253,45 @@ class OnkyoClient(OnkyoProtocol):
         self.m_device_obj = p_device_obj
         LOG.info("Started Onkyo Device: '{}'; Host:{}; Port:{};".format(p_device_obj.Name, l_host, l_port))
 
-    def send_command(self, p_device_obj, p_command):
+    def _build_header(self):
         """
-        @param p_command: is the comaand b"!1PWR01"
+        """
+
+    def _build_comand(self, p_queue_entry, p_device_obj):
+        """
+        Build '!1PWRQSTN' or similar command
+        """
+        l_yaml = p_device_obj._Yaml
+        l_unit = l_yaml['UnitType']
+        l_zone = p_queue_entry.Zone - 1
+        l_code = l_yaml['ControlCommands'][p_queue_entry.Command][l_zone]
+        l_arg = l_yaml['Arguments'][p_queue_entry.Command][p_queue_entry.Args]
+        l_ret = b'!'
+        l_ret += str(l_unit).encode('utf-8')
+        l_ret += l_code.encode('utf-8')
+        l_ret += l_arg.encode('utf-8')
+        return l_ret
+
+    def send_command(self, p_device_obj, p_queue_entry):
+        """
+        @param p_command: is the comand b"!1PWR01"
         Gthis will add the rest of the ethernet framework
         """
         if p_device_obj == None:
             LOG.error('Sending a commant to None will never work!')
             return
-        LOG.info('Send command {}'.format(p_command))
-        # LOG.debug('Log send command {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
-        l_len = len(p_command) + 3
-        l_command = b'ISCP' + \
+        l_cmd = self._build_comand(p_queue_entry, p_device_obj)
+        l_cmd += b'\x1a\n\r'
+        l_len = len(l_cmd)
+        l_ret = b'ISCP' + \
                 convert.int_2_bigend(16, 4) + \
                 convert.int_2_bigend(l_len, 4) + \
-                b'\x01' + b'\x00\x00\x00' + p_command + b'\x1a\n\r'
+                b'\x01' + \
+                b'\x00\x00\x00' + \
+                l_cmd
         try:
-            p_device_obj._Protocol.transport.write(l_command)
-            LOG.info('Send TCP command: {} to {}'.format(l_command, p_device_obj.Name))
+            p_device_obj._Protocol.transport.write(l_ret)
+            LOG.info('Send TCP command: {} to {}'.format(l_ret, p_device_obj.Name))
         except AttributeError as e_err:
             LOG.error("Tried to call send_command without a onkyo device configured.\n\tError:{}".format(e_err))
 
@@ -431,7 +324,6 @@ class OnkeoControl:
 
             # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_protocol, 'Proto', 190)))
             # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
-            # p_protocol.transport.write(CMD_01)
 
         def eb_got_protocol(p_reason, p_device_obj):
             p_device_obj._Protocol = None
@@ -471,36 +363,6 @@ class OnkeoControl:
         self.queue_command(l_device_obj, l_cmd)
         LOG.info('Changed input channel to {}'.format(p_input))
 
-    def _control_power(self, p_family, p_device, _p_zone, p_power):
-        """
-        !1PWR01 = On
-        !1PWR00 = Standby (Off)
-        @param p_power: 'On' or 'Off'
-        """
-        LOG.info('xxx2')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = b'!1PWR01'
-        if p_power == 'Off':
-            l_cmd = b'!1PWR00'
-        self.send_command(l_device_obj, l_cmd)
-        LOG.info('Changed Power to {}'.format(p_power))
-
-    def _control_volume(self, p_family, p_device, _p_zone, p_volume):
-        """
-        !1MLVxx where xx is in hex (00-64)
-        @param p_family: "onkyo"
-        @param p_device: is the device we are going to change (Tx-555)
-        @param p_volume: % 0-100
-        """
-        LOG.info('xxx3')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = '!1MVL' + '{:02X}'.format(p_volume)
-        l_cmd = bytes(l_cmd, 'utf-8')
-        # l_cmd = b'!1MVL38'
-        LOG.debug('Vol command {}'.format(l_cmd))
-        self.send_command(l_device_obj, l_cmd)
-        LOG.info('Changed Volume to {} %'.format(p_volume))
-
     def queue_comand(self, p_device_obj, p_command, p_zone):
         """
         """
@@ -512,17 +374,6 @@ class MqttActions():
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def _get_zone(self, p_message):
-        """
-        force zone to be an int 1-maxzone default to 1
-        """
-        l_ret = extract_tools.get_mqtt_field(p_message, 'Zone')
-        try:
-            l_ret = int(l_ret)
-        except:
-            l_ret = 1
-        return l_ret % MAX_ZONE
 
     def _get_power(self, p_message):
         """
@@ -547,29 +398,28 @@ class MqttActions():
         l_device = extract_tools.get_mqtt_field(p_message, 'Device')
         l_device_obj = self._find_device(l_family, l_device)
         l_power = self._get_power(p_message)
-        l_zone = self._get_zone(p_message)
         l_logmsg = 'Control: '
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
         if l_power != None:
             l_queue = OnkyoQueueData()
-            l_queue.Command = CONTROL_COMMANDS['Power'][l_zone - 1]
-            l_queue.Args = '01' if l_power == 'On' else '00'
-            l_queue.Zone = l_zone
+            l_queue.Command = 'Power'
+            l_queue.Args = l_power
+            l_queue.Zone = 1
             l_device_obj._Queue.put(l_queue)
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
         if l_input != None:
             l_queue = OnkyoQueueData()
-            l_queue.Command = CONTROL_COMMANDS['InputSelect'][l_zone - 1]
-            l_queue.Args = '01' if l_power == 'On' else '00'
-            l_queue.Zone = l_zone
+            l_queue.Command = 'InputSelect'
+            l_queue.Args = l_input
+            l_queue.Zone = 1
             l_device_obj._Queue.put(l_queue)
             l_logmsg += ' Turn input to {}.'.format(l_input)
         if l_volume != None:
             l_queue = OnkyoQueueData()
-            l_queue.Command = CONTROL_COMMANDS['Volume'][l_zone - 1]
-            l_queue.Args = '01' if l_power == 'On' else '00'
-            l_queue.Zone = l_zone
+            l_queue.Command = 'Volume'
+            l_queue.Args = l_volume
+            l_queue.Zone = 1
             l_device_obj._Queue.put(l_queue)
             l_logmsg += ' Turn input to {}.'.format(l_input)
         self.run_queue(l_device_obj)
@@ -605,6 +455,18 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
+    def _read_yaml(self, p_device):
+        """
+        This needs to be more generic and for all devices configs.
+        This is the start.
+        """
+        l_name = SECTION + '_' + p_device.Model + '.yaml'
+        l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
+        with open(l_filename) as l_file:
+            l_yaml = yaml.safe_load(l_file)
+            p_device._Yaml = l_yaml
+        return l_yaml
+
     def _find_device(self, p_family, p_device):
         # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
@@ -621,6 +483,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
 
         # l_device_obj = XML.read_onkyo_section_xml(p_pyhouse_obj)
         l_device_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        self._read_yaml(l_device_obj)
         LOG.info("Loaded Onkyo XML")
         return l_device_obj
 
@@ -657,8 +520,10 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
     def run_queue(self, p_device_obj):
         """
         """
-        while not p_device_obj._Queue.not_empty():
+        # LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 180)))
+        LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj._Queue, 'Queue', 180)))
+        while not p_device_obj._Queue.empty():
             l_queue = p_device_obj._Queue.get()
-            self.send_command(l_queue)
+            self.send_command(p_device_obj, l_queue)
 
 # ## END DBK

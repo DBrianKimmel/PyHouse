@@ -1,0 +1,86 @@
+# Name:      PyHouse/Project/admin/config/Yaml/Onkyo_Tx-555.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Apr 15, 2019
+# Updted:    Apr 18, 2019
+# License:   MIT License
+# Summary:   This is for an Onkyo Tx-555 Receiver A/V unit.
+---
+
+# The forst thing we need is the Unit type.
+# This is the code that is the second byte of the ISCP command
+# The Tx-555 id type reciever - code = '1'
+UnitType: 1
+
+# Now we have standardized commands.
+# The power on command gets translated to 'PWR'
+# There are entries for each Zone.
+ControlCommands:
+   Power:
+      - PWR
+      - PWZ
+   Volume:
+      - MVL
+      - ZVL
+   Mute:
+      - AMT
+      - ZMT
+   InputSelect:
+      - SLI
+      - SLZ
+
+# These are the arguments for the commands
+Arguments:
+   Power:
+      'Off': '00'
+      'On': '01'
+      '?': 'QSTN'
+   Volume:
+      'Up': 'UP'
+      'Down': 'DOWN'
+      '?': 'QSTN'
+
+
+InputSelect:
+   'Video1': '00'        # 'VIDEO1', 'VCR/DVR', 'STB/DVR'
+   'Cbl/Sat': '01'       # 'VIDEO2', 'CBL/SAT'
+   'Game': '02'          # 'VIDEO3', 'GAME/TV', 'GAME', 'GAME1'
+   'Aux': '03'           # 'VIDEO4', 'AUX1(AUX)'
+   #    : '04'           # 'VIDEO5', 'AUX2', 'GAME2'
+   'Pc': '05'            # 'VIDEO6', 'PC'
+   'Bd/Dvd': '10'        # 'DVD', 'BD/DVD'
+   'Strmbox': '11'       # 'STRM BOX'
+   'TV': '12'            # 'TV'
+   'Phono': '22'         # 'PHONO'
+   'Cd': '23'            # 'CD', 'TV/CD'
+   'Fm': '24'            # FM + PRS 00 + TUN 10330 + PR3 00 + TU3 10330
+   'Am': '25'            # AM + PRS 00 + TUN 00830 + PR3 00 + TU3 00830
+   'BlueTooth': '2E'     # + LMD 0C + NLT F32200000000000100FF00 + NLS C-P + NLT F32200000000000100FF00 +
+   #                     #   NLS C0P + NMS xxxxxxxf4 + NJA n- + NTI Now Pairing... + NTM --:--:--/--:--:--
+   #                     #   NTI Echo Dot-00V
+   #  Onkyo sent Eq:1 NTM --:--:--/--:--:--
+   #  Onkyo sent Eq:1 NTM --:--:--/--:--:--
+   #  Onkyo sent Eq:1 NTI Echo Dot-00V
+   #  Onkyo sent Eq:1 NTM --:--:--/--:--:--
+   #  Onkyo sent Eq:1 NTI Echo Dot-00V
+   #  Onkyo sent Eq:1 NTI Echo Dot-00V
+   #  Onkyo sent Eq:1 NTM --:--:--/--:--:--
+   #  Onkyo sent Eq:1 NTM --:--:--/--:--:--
+   #  Onkyo sent Eq:1 NTI Status : Ready
+   #  Onkyo sent Eq:1 NTM --:--:--/--:--:--
+   'Network': '2B'       # 'NET' + LMD 00 + MOT 01 + NLS C0P + NLS U0-TuneIn + NLS U1-Pandora
+                         # + NLS U2-Spotify + NLS U3-AirPlay + NLS U4-Music Server + NLS U5-USB
+                         # + NLT F300000000060000FFFF00NET + NLS C0P
+                         #  Onkyo sent Eq:1 NLS U0-TuneIn
+                         #  Onkyo sent Eq:1 NLS U1-Pandora
+                         #  Onkyo sent Eq:1 NLS U2-Spotify
+                         #  Onkyo sent Eq:1 NLS U3-AirPlay
+                         #  Onkyo sent Eq:1 NLS U4-Music Server
+                         #  Onkyo sent Eq:1 NLS U5-USB
+
+Zones:
+   0: Inside
+   1: Outside
+
+### END DBK

@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-03'
+__updated__ = '2019-05-06'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -282,13 +282,17 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
             LOG.info("Playing: {}".format(p_line[2:]))
             self._extract_nowplaying(self.m_now_playing, p_line[2:])
             return
+
         # get the time and then send the message of now-playing
+        #   -02:22/04:32
+
         if p_line.startswith(b'#'):
             if self.m_time == None:
                 self.m_time = p_line[2:]
                 self._extract_playtime(self.m_now_playing, p_line[2:])
                 MqttActions(self.m_pyhouse_obj)._send_status(self.m_now_playing)
             return
+
         if p_line.startswith(b'Network'):  # A network error has occurred, restart
             PandoraControl()._halt_pandora('Network Error')
             PandoraControl()._play_pandora('Restarting')

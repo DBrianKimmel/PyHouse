@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-03'
+__updated__ = '2019-05-05'
 
 # Import system type stuff
 
@@ -71,6 +71,7 @@ class EntertainmentDeviceData(BaseObject):
         self._Connector = None
         self._Protocol = None
         self._Queue = None  # A queue to hold commands fro the device.
+        self._Yaml = None
         #
         self.CommandSet = None  # Command sets change over the years.
         self.IPv4 = None  # IPv4 if No  FQDN or IPv6
