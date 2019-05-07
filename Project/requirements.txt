@@ -19,6 +19,7 @@ python-dateutil >= 2.8.0
 aniso8601 >= 6.0.0
 pyudev >= 0.21.0
 pyserial >= 3.4.0
+PyYAML >= 5.1
 klein >= 17.0.0
 pyopenssl >= 19.0.0
 

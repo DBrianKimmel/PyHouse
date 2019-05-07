@@ -10,7 +10,6 @@
 @summary:
 
 """
-from builtins import None
 
 __updated__ = '2019-05-07'
 
