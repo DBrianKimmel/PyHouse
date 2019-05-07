@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-06'
+__updated__ = '2019-05-07'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -376,6 +376,7 @@ class PandoraControl:
             l_device_control_obj.Device = l_name = l_service.ConnectionName
             l_device_control_obj.Family = l_family = l_service.ConnectionFamily
             l_device_control_obj.From = SECTION
+            l_device_control_obj.Model = l_service.ConnectionName
             l_device_control_obj.Power = "On"
             l_device_control_obj.InputName = l_service.InputName
             l_device_control_obj.Volume = l_service.Volume
@@ -400,6 +401,7 @@ class PandoraControl:
             l_device_control_obj.Family = l_family = l_service.ConnectionFamily
             l_device_control_obj.Device = l_name = l_service.ConnectionName
             l_device_control_obj.From = SECTION
+            l_device_control_obj.Model = l_service.ConnectionName
             l_device_control_obj.Power = "Off"
             l_device_control_obj.InputName = l_service.InputName
             l_device_control_obj.Volume = l_service.Volume

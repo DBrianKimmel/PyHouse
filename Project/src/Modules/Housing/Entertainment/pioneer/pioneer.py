@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-04-11'
+__updated__ = '2019-05-07'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -76,7 +76,7 @@ class PioneerDeviceData(EntertainmentDeviceData):
         self.RoomUUID = None
         self.Type = None
         self.Volume = None
-        self._isConnected = False
+        self._isControlling = False
         self._isRunning = False
 
 

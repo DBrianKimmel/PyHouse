@@ -10,8 +10,9 @@
 @summary:
 
 """
+from builtins import None
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-05-07'
 
 # Import system type stuff
 
@@ -31,24 +32,28 @@ class EntertainmentData:
     def __init__(self):
         self.Active = False
         self.PluginCount = 0
+        # Plugins are indexed bt the entertainment-family name (always lower cased).
         self.Plugins = {}  # EntertainmentPluginData()
 
 
 class EntertainmentPluginData:
     """ This is filled in for every xxxSection under the EntertainmentSection of the XML file
 
-    ==> PyHouse.House.Entertainment.Plugins[name].xxx
+    ==> PyHouse.House.Entertainment.Plugins[PluginName].xxx
+    The family is the PluginName - onkyo, pandora, etc. - Always lower case.
 
     Valid Types:
         Service is a provided service such as Pandora, Netflix, Hulu, etc.
-        Device is a Component such as a TV, DVD Player, Receiver, etc.
+        Device is a Component such as a TV, DVD Player, A/V Receiver, etc.
     """
 
     def __init__(self):
         self.Active = False
         self.DeviceCount = 0
+        # Devices are indxed by the device number 0..x
         self.Devices = {}  # EntertainmentDeviceData()
         self.ServiceCount = 0
+        # Services are indxed by the service number 0..x
         self.Services = {}  # EntertainmentServiceData()
         self.Name = None
         self.Type = 'Missing Type'  # Service: Component (a device):
@@ -84,7 +89,7 @@ class EntertainmentDeviceData(BaseObject):
         self.RoomUUID = None
         self.Type = None
         self.Volume = None
-        self._isConnected = False
+        self._isControlling = False
         self._isRunning = False
 
 
@@ -119,12 +124,13 @@ class EntertainmentDeviceControl:
 
     def __init__(self):
         self.Channel = None  # '01'
-        self.Device = None  #   The name and Key for the device
+        self.Device = None  #   Use model now
         self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
         self.InputName = None  # '01'  # Input ID
+        self.Model = None  # the model name
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent
@@ -144,6 +150,7 @@ class EntertainmentServiceControl:
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
         self.InputName = None  # '01'  # Input ID
+        self.Model = None
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent
@@ -152,12 +159,15 @@ class EntertainmentServiceControl:
 
 class EntertainmentDeviceStatus:
     """
+    The device family is part of the topic.
     """
 
     def __init__(self):
         self.Type = None
         self.ControllingNode = None
         self.Connected = False
+        self.Model = None
+        self.Node = None
 
 
 class EntertainmentServiceStatus:

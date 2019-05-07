@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2019-04-25'
+__updated__ = '2019-05-07'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -569,7 +569,7 @@ class E1_Device(SetupMixin, unittest.TestCase):
             # print(PrettyFormatAny.form(l_plug, 'E1-02-B - One Plugin'))
             # self.m_pyhouse_obj.House.Entertainment.Plugins[l_plug.Name] = l_plug
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'E1-02-C - Plugins'))
-        # self.assertEqual(self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Device[0].Name, TESTING_ONKYO_DEVICE_NAME_0)
+        # self.assertEqual(self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Devices[0].Name, TESTING_ONKYO_DEVICE_NAME_0)
         pass
 
 # ## END DBK

@@ -7,7 +7,7 @@
 @copyright: (c)2016-2019 by D. Brian Kimmel
 @note:      Created on Jul 9, 2016
 @license:   MIT License
-@summary:
+@summary:   Connects to and controls Onkyo devices.
 
 """
 
@@ -25,7 +25,10 @@ from twisted.protocols.basic import LineReceiver
 from queue import Queue
 
 #  Import PyMh files and modules.
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData, EntertainmentDeviceStatus
+from Modules.Housing.Entertainment.entertainment_data import \
+    EntertainmentDeviceData, \
+    EntertainmentDeviceStatus, \
+    EntertainmentDeviceControl
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -42,7 +45,27 @@ class OnkyoDeviceData(EntertainmentDeviceData):
 
     def __init__(self):
         super(OnkyoDeviceData, self).__init__()
-        # self._Queue = None
+        pass
+
+
+class OnkyoDeviceControl(EntertainmentDeviceControl):
+    """ Used to control a device.
+    All defaults are None - Only fill in what you need so inadvertent controls are not done.
+    """
+
+    def __init__(self):
+        super(OnkyoDeviceControl, self).__init__()
+        pass
+
+
+class OnkyoDeviceStatus(EntertainmentDeviceStatus):
+    """
+    The device family is part of the topic.
+    """
+
+    def __init__(self):
+        super(OnkyoDeviceStatus, self).__init__()
+        pass
 
 
 class OnkyoQueueData():
@@ -300,72 +323,49 @@ class OnkeoControl:
     """
     """
 
-    def _list_devices(self, p_list):
-        """ List the devices we have opened.  Mostly for debugging and testing.
+    def _get_endpoint(self, p_pyhouse_obj, p_device_obj):
         """
-        for l_dev in p_list:
-            LOG.debug('Onkyo Device {}'.format(PrettyFormatAny.form(l_dev, 'Device', 190)))
+        """
+        l_reactor = p_pyhouse_obj.Twisted.Reactor
+        l_host = p_device_obj.Host
+        l_port = p_device_obj.Port
+        l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
+        return l_endpoint
 
     def onkyo_start_connecting(self, p_pyhouse_obj, p_device_obj):
         """ Open connections to the various Onkyo devices we will communicate with.
+        This will also publish a status message with controller info.
 
         @param p_device_obj: OnkyoDeviceData()
         """
 
-        def cb_got_protocol(p_protocol, p_device_obj):
+        def cb_got_protocol(p_protocol, p_device_obj, p_status):
             p_device_obj._Protocol = p_protocol
             p_device_obj._isRunning = True
-            l_status = EntertainmentDeviceStatus()
-            l_status.Type = 'Connected'
-            l_status.Connected = True
-            l_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
+            p_status.Type = 'Connected'
+            p_status.Connected = True
+            p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
             l_topic = 'entertainment/onkyo/status'
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_status)
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
 
-            # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_protocol, 'Proto', 190)))
-            # LOG.debug('Connected to Onkyo device {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 190)))
-
-        def eb_got_protocol(p_reason, p_device_obj):
+        def eb_got_protocol(p_reason, p_device_obj, p_status):
             p_device_obj._Protocol = None
             p_device_obj._isRunning = False
-            l_status = EntertainmentDeviceStatus()
-            l_status.Type = 'UnConnected'
-            l_status.Connected = False
+            p_status.Type = 'UnConnected'
+            p_status.Connected = False
             l_topic = 'entertainment/onkyo/status'
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_status)
+            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
 
-        l_reactor = p_pyhouse_obj.Twisted.Reactor
-        l_host = p_device_obj.Host
-        l_port = p_device_obj.Port
-        #
-        l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
-        d_connector = l_endpoint.connect(OnkyoFactory(p_pyhouse_obj, p_device_obj))
-        d_connector.addCallback(cb_got_protocol, p_device_obj)
-        d_connector.addErrback(eb_got_protocol, p_device_obj)
-        #
-        p_device_obj._Endpoint = l_endpoint
-        p_device_obj._isRunning = True
-        p_device_obj._isRunning = False
         p_device_obj._Queue = Queue(32)
+        l_status = OnkyoDeviceStatus()
+        l_status.Model = p_device_obj.Model
+        l_status.Node = p_pyhouse_obj.Computer.Name
+        l_endpoint = self._get_endpoint(p_pyhouse_obj, p_device_obj)
+        d_connector = l_endpoint.connect(OnkyoFactory(p_pyhouse_obj, p_device_obj))
+        d_connector.addCallback(cb_got_protocol, p_device_obj, l_status)
+        d_connector.addErrback(eb_got_protocol, p_device_obj, l_status)
         self.m_device_lst.append(p_device_obj)
-        LOG.info("Started Onkyo Device: '{}'; IP:{}; Port:{};".format(p_device_obj.Name, l_host, l_port))
-
-    def _control_input(self, p_family, p_device, _p_zone, p_input):
-        """
-        !1SLIxx
-        xx = 02 Game
-        @param p_input: Channel Code
-        """
-        LOG.info('controlInput')
-        l_device_obj = self._find_device(p_family, p_device)
-        l_cmd = b'!1MVLQSTN'
-        self.queue_command(l_device_obj, l_cmd)
-        LOG.info('Changed input channel to {}'.format(p_input))
-
-    def queue_comand(self, p_device_obj, p_command, p_zone):
-        """
-        """
 
 
 class MqttActions():
@@ -374,6 +374,16 @@ class MqttActions():
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _find_device(self, p_family, p_device):
+        # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        for l_device in l_devices.values():
+            if l_device.Name.lower() == p_device.lower():
+                LOG.info("found device - {} {}".format(p_family, p_device))
+                return l_device
+        LOG.error('No such device as {}'.format(p_device))
+        return None
 
     def _get_power(self, p_message):
         """
@@ -386,12 +396,12 @@ class MqttActions():
             return 'On'
         return 'Off'
 
-    def _decode_control(self, _p_topic, p_message):
+    def _decode_control(self, p_topic, p_message):
         """ Decode the control message.
 
         @param p_message: is the payload used to control
         """
-        LOG.info('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
+        LOG.info('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
         if l_family == None:
             l_family = 'onkyo'
@@ -424,22 +434,39 @@ class MqttActions():
             l_logmsg += ' Turn input to {}.'.format(l_input)
         self.run_queue(l_device_obj)
         #
-        LOG.info('Decode-Control 2 called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
+        LOG.info('Decode-Control 2 called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         return l_logmsg
+
+    def _decode_status(self, p_topic, p_message):
+        """ Decode the control message.
+
+        @param p_message: is the payload used to control
+        """
+        LOG.info('Decode_status called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
+        l_node_name = self.m_pyhouse_obj.Computer.Name
+        if self.m_sender == l_node_name:
+            self.m_device._isControlling = True
+        else:
+            self.m_device._isControlling = False
 
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
-        ==> pyhouse/<house name>/entertainment/onkyo/<type>/<Name>/...
-        <type> = ?
+        ==> pyhouse/<house name>/entertainment/onkyo/<type>
+        <type> = control, status
 
         @param p_topic: is the topic with pyhouse/housename/entertainment/onkyo stripped off.
+        @param p_message: is the body of the json message string.
         """
         # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_logmsg = ' Onkyo-{}'.format(p_topic[0])
+        self.m_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
+        self.m_model = extract_tools.get_mqtt_field(p_message, 'Model')
+        self.m_device = self._find_device(SECTION, self.m_model)
+
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
-            l_logmsg += '\tStatus:'
+            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Onkyo sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -466,16 +493,6 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
             l_yaml = yaml.safe_load(l_file)
             p_device._Yaml = l_yaml
         return l_yaml
-
-    def _find_device(self, p_family, p_device):
-        # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
-        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
-        for l_device in l_devices.values():
-            if l_device.Name.lower() == p_device.lower():
-                LOG.info("found device - {} {}".format(p_family, p_device))
-                return l_device
-        LOG.error('No such device as {}'.format(p_device))
-        return None
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for all Onkyo devices.

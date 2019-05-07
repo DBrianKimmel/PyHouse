@@ -9,8 +9,18 @@
 
 # Onkyo
 
-A house may have one or more Onkyo devices in it's entertainment systems
+A house may have one or more Onkyo devices in it's entertainment systems.
 
+Many different nodes may, at various times, control the onkyo devices.
+Different nodes may control different devices.
+Any service thats wants to control onkyo devices must do so by sending Mqtt control messages.
+The node currently connected to an Onkyo device will send the actual eISCP commands to the device.
+
+As each Onkyo section of PyHouse establishes communication to an Onkyo device, it sends a Mqtt status message
+claiming control of the device.
+The controlling node has the _isControlling flag set, all other nodes have it reset.
+
+It seems (unconfirmed) that the last PyHouse instance to start is the one controlling all the Onkyo devices.
 
 ## Connecting
 It appears that at least some of the devices may not queue the commands we send them so we queue the commands
@@ -53,11 +63,56 @@ The onkyo section of master.xml looks like the following:
 </OnkyoSection>
 ```
 
-There is also a seperate XML document in /etc/pyhouse for each type of Onkyo device.
+There is also a seperate YAML document in /etc/pyhouse for each type of Onkyo device.
 This file defines the specifics for each different Onkyo device.
 
 The host name must be present in /etc/hosts and the IP address is obtained from there.
 The IP addresses in the xml file are for documentation only.
+
+
+```yaml
+UnitType: 1
+
+ControlCommands:
+   Power:
+      - PWR
+      - PWZ
+   Volume:
+      - MVL
+      - ZVL
+   Mute:
+      - AMT
+      - ZMT
+   InputSelect:
+      - SLI
+      - SLZ
+
+Arguments:
+   Power:
+      'Off': '00'
+      'On': '01'
+      '?': 'QSTN'
+   Volume:
+      'Up': 'UP'
+      'Down': 'DOWN'
+      '?': 'QSTN'
+
+InputSelect:
+   'Video1': '00'        # 'VIDEO1', 'VCR/DVR', 'STB/DVR'
+   'Cbl/Sat': '01'       # 'VIDEO2', 'CBL/SAT'
+   'Game': '02'          # 'VIDEO3', 'GAME/TV', 'GAME', 'GAME1'
+   'Aux': '03'           # 'VIDEO4', 'AUX1(AUX)'
+   'Pc': '05'            # 'VIDEO6', 'PC'
+   'Bd/Dvd': '10'        # 'DVD', 'BD/DVD'
+   'Strmbox': '11'       # 'STRM BOX'
+   'TV': '12'            # 'TV'
+   'Phono': '22'         # 'PHONO'
+   'Cd': '23'            # 'CD', 'TV/CD'
+
+Zones:
+   0: Inside
+   1: Outside
+```
 
 ## Design
 

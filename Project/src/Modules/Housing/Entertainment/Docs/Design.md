@@ -19,6 +19,10 @@ At this time (2019) these devices and services are functional:
   * Onkyo
   * Pioneer
   * Samsung - in progress
+  
+The entertainment family is the name of the manufacturer or the service provider.
+It is always lowercased.
+Examples are 'samsung', 'onkyo', 'pandora', etc.
 
 ## Design
 
