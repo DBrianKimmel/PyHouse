@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-07'
+__updated__ = '2019-05-08'
 
 # Import system type stuff
 
@@ -48,23 +48,25 @@ class EntertainmentPluginData:
 
     def __init__(self):
         self.Active = False
-        self.DeviceCount = 0
-        # Devices are indxed by the device number 0..x
-        self.Devices = {}  # EntertainmentDeviceData()
-        self.ServiceCount = 0
-        # Services are indxed by the service number 0..x
-        self.Services = {}  # EntertainmentServiceData()
         self.Name = None
         self.Type = 'Missing Type'  # Service: Component (a device):
         #
+        # Devices are indxed by the device number 0..x
+        self.DeviceCount = 0
+        self.Devices = {}  # EntertainmentDeviceData()
+        #
+        # Services are indxed by the service number 0..x
+        self.ServiceCount = 0
+        self.Services = {}  # EntertainmentServiceData()
+        #
         self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self._Module = None
-        self._OpenSessions = 0
 
 
 class EntertainmentDeviceData(BaseObject):
     """ This is a skeleton entry.
     Other device parameters are placed in here by the specific entertainment device.
+    This should be augmented by every device.
     """
 
     def __init__(self):
@@ -81,7 +83,6 @@ class EntertainmentDeviceData(BaseObject):
         self.IPv4 = None  # IPv4 if No  FQDN or IPv6
         self.IPv6 = None  # IPv6 addr of the device if no FQDN
         self.Host = None  # FQDN of the device
-        self.Model = None
         self.Model = None
         self.Port = None
         self.RoomName = None
@@ -106,7 +107,7 @@ class EntertainmentServiceData(BaseObject):
 
         self.Host = '1.2.3.4'
         self.ConnectionFamily = None  # pioneer, onkyo
-        self.ConnectionName = None  # Device Name
+        self.ConnectionName = None  # Model
         self.InputName = None
         self.InputCode = None
         self.Type = 'service'
@@ -122,14 +123,15 @@ class EntertainmentDeviceControl:
     """
 
     def __init__(self):
-        self.Channel = None  # '01'
-        self.Device = None  #   Use model now
-        self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
+        self.Model = None  # the model name
+        # self.Device = None  #   -Use model now-
+        #
+        self.Channel = None  # '01'
+        self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
         self.InputName = None  # '01'  # Input ID
-        self.Model = None  # the model name
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent
@@ -142,14 +144,15 @@ class EntertainmentServiceControl:
     """
 
     def __init__(self):
-        self.Channel = None  # '01'
-        self.Device = None  #   The name and Key for the device
-        self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
+        self.Model = None
+        # self.Device = None  #   The name and Key for the device
+        #
+        self.Channel = None  # '01'
+        self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
         self.InputName = None  # '01'  # Input ID
-        self.Model = None
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent

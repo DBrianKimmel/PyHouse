@@ -492,6 +492,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         with open(l_filename) as l_file:
             l_yaml = yaml.safe_load(l_file)
             p_device._Yaml = l_yaml
+        LOG.info('Loaded {} '.format(l_filename))
         return l_yaml
 
     def LoadXml(self, p_pyhouse_obj):
@@ -514,9 +515,10 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
 
         """
         LOG.info('Start Onkyo.')
-        l_count = 0
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        l_count = 0
         for l_device_obj in l_devices.values():
+            self._read_yaml(l_device_obj)
             if not l_device_obj.Active:
                 continue
             if l_device_obj._isRunning:

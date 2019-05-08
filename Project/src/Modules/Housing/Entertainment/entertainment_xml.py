@@ -4,15 +4,15 @@
 @name:      PyHouse/Project/src/Modules/Housing/Entertainment/entertainment_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @note:      Created on Oct 17, 2018
 @license:   MIT License
 @summary:   Load / Save all the entertainment XML
 
 """
 
-__updated__ = '2019-04-24'
-__version_info__ = (18, 10, 1)
+__updated__ = '2019-05-07'
+__version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff

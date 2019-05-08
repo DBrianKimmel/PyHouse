@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-05-08'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -105,7 +105,7 @@ class API(Ent):
         p_plugin._API.Start()
         l_topic = 'entertainment/{}/status'.format(l_name)
         l_obj = EntertainmentDeviceControl()
-        l_obj.Device = l_name
+        l_obj.Model = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name
         # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(
         #    l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))

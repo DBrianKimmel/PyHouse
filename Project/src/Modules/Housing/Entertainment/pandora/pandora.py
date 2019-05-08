@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-07'
+__updated__ = '2019-05-08'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,7 +39,10 @@ from Modules.Core.Utilities.extract_tools import extract_quoted
 # from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
-        EntertainmentPluginData
+        EntertainmentPluginData, \
+        EntertainmentServiceControl, \
+        EntertainmentServiceStatus, \
+        EntertainmentServiceData
 # from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
@@ -51,9 +54,27 @@ SECTION = 'pandora'
 #  (i) Control fifo at /home/briank/.config/pianobar/ctl opened
 
 
-class PandoraStatusData():
+class PandoraPluginData(EntertainmentPluginData):
+    """
+    """
 
     def __init__(self):
+        super(PandoraPluginData, self).__init__()
+        self._OpenSessions = 0
+
+
+class PandoraServiceData(EntertainmentServiceData):
+    """
+    """
+
+    def __init__(self):
+        super(PandoraServiceData, self).__init__()
+
+
+class PandoraServiceStatus(EntertainmentServiceStatus):
+
+    def __init__(self):
+        super(PandoraServiceStatus, self).__init__()
         self.Album = None
         self.Artist = None
         self.DateTimePlayed = None
@@ -68,17 +89,15 @@ class PandoraStatusData():
         self.Status = 'Idle'  # Device if service is in use.
 
 
-class PandoraControlData:
+class PandoraServiceControl(EntertainmentServiceControl):
     """ Node-red interface allows some control of Pandora and hence the playback.
     This is it.
     """
 
     def __init__(self):
-        self.Power = None
-        self.Volume = None
+        super(PandoraServiceControl, self).__init__()
         self.Like = None
         self.Dislike = None
-        self.Skip = None
 
 
 class MqttActions:
@@ -101,14 +120,32 @@ class MqttActions:
             l_topic = 'entertainment/{}/control'.format(p_device.ConnectionFamily)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
+    def _decode_status(self, _p_topic, _p_message):
+        l_logmsg = '\tPandora Status'
+        return l_logmsg
+
+    def _control_audio(self):
+        pass
+
     def _decode_control(self, p_topic, p_message):
-        """ Decode the message we just got.
+        """ Decode the Pandora Control message we just received.
          Someone (web page via node-red) wants to control pandora in some manner.
 
-        ==> pyhouse/<house name>/entertainment/pandora/control/<do-this>
-        <do-this> = On, Off, VolUp1, VolDown1, VolUp5, VolDown5, Like, Dislike
+        ==>
+            Topic: pyhouse/<house name>/entertainment/pandora/control
+            Msg:{
+                    'Time': '2019-05-07T22:19:19.536Z',
+                    'Power': 'On',
+                    'Skip': 'No',
+                    'Status': 'On',
+                    'Volume': 50,
+                    'Like': '',
+                    'Zone': 1,
+                    'Sender': 'pi-04-pp'
+                }
 
-        We need to issue a message to control all connected devices.
+
+        We may need to issue a message to control connected audio devices.
         As a side effect, we need to control Pandora ( PianoBar ) via the control socket
         """
         l_logmsg = '\tPandora Control'
@@ -118,14 +155,24 @@ class MqttActions:
         l_skip = extract_tools.get_mqtt_field(p_message, 'Skip')
         LOG.debug('{} {}'.format(p_topic, p_message))
 
+        # These directly control pianobar(pandora)
         if l_power == 'On':
             l_logmsg += ' Turn On '
             self._play_pandora(p_message)
-
         elif l_power == 'Off':
             l_logmsg += ' Turn Off '
             self._halt_pandora(p_message)
+        elif l_like == 'LikeYes':
+            l_logmsg += ' Like '
+            l_like = 'Yes'
+        elif l_like == 'LikeNo':
+            l_logmsg += ' Dislike '
+            l_like = 'No'
+        elif l_skip == 'SkipYes':
+            l_logmsg += ' Skip '
+            l_skip = 'Yes'
 
+        # These are passed on to some audio device
         elif l_volume == 'VolumeUp1':
             l_logmsg += ' Volume Up 1 '
             l_volume = 'VolumeUp1'
@@ -139,31 +186,21 @@ class MqttActions:
             l_logmsg += ' Volume Down 5 '
             l_volume = 'VolumeDown5'
 
-        elif l_like == 'LikeYes':
-            l_logmsg += ' Like '
-            l_like = 'Yes'
-        elif l_like == 'LikeNo':
-            l_logmsg += ' Dislike '
-            l_like = 'No'
-
-        elif l_skip == 'SkipYes':
-            l_logmsg += ' Skip '
-            l_skip = 'Yes'
-
         else:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
+            return l_logmsg
 
-        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
-        for l_service in l_pandora_obj.Services.values():
-            l_device_control_obj = EntertainmentDeviceControl()
-            l_device_control_obj.Device = l_service.ConnectionName
+        for l_service in l_pandora_plugin_obj.Services.values():
+            l_device_control_obj = EntertainmentDeviceControl()  # Use the base control structure
             l_device_control_obj.Family = l_service.ConnectionFamily
+            l_device_control_obj.Model = l_service.ConnectionName
             l_device_control_obj.From = SECTION
             l_device_control_obj.InputName = l_input
-            l_device_control_obj.Like = l_like
+            # l_device_control_obj.Like = l_like
             l_device_control_obj.Power = l_power
-            l_device_control_obj.Skip = l_skip
+            # l_device_control_obj.Skip = l_skip
             l_device_control_obj.Volume = l_volume
             self._send_control(l_service, l_device_control_obj)
         return l_logmsg
@@ -182,9 +219,9 @@ class MqttActions:
         """
         l_logmsg = ' Pandora '
         if p_topic[0].lower() == 'control':
-            l_logmsg += '\tPandora: {}\n'.format(self._decode_control(p_topic, p_message))
+            l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':
-            LOG.info('Status Msg: {} - {}'.format(p_topic, p_message))
+            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
         return l_logmsg
@@ -278,7 +315,7 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         # We will wait for the first time to arrive.
         if p_line.startswith(b'|>'):  # This is
             self.m_time = None
-            self.m_now_playing = PandoraStatusData()
+            self.m_now_playing = PandoraServiceStatus()
             LOG.info("Playing: {}".format(p_line[2:]))
             self._extract_nowplaying(self.m_now_playing, p_line[2:])
             return
@@ -354,16 +391,16 @@ class PandoraControl:
 
         """
         LOG.info('Play Pandora - {}'.format(p_message))
-        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        # LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_obj, 'Pandora', 190)))
+        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        # LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_plugin_obj, 'Pandora', 190)))
         if not self._is_pianobar_installed():
             self.m_started = False
             LOG.warn('Pianobar is not installed')
             return
-        if l_pandora_obj._OpenSessions > 0:
+        if l_pandora_plugin_obj._OpenSessions > 0:
             LOG.warn('multiple pianobar start attempts')
             return
-        l_pandora_obj._OpenSessions += 1
+        l_pandora_plugin_obj._OpenSessions += 1
         self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
         self.m_processProtocol.deferred = PianoBarProcessControl(self.m_pyhouse_obj)
         l_executable = PIANOBAR_LOCATION
@@ -371,7 +408,7 @@ class PandoraControl:
         l_env = None  # this will pass <os.environ>
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         self.m_started = True
-        for l_service in l_pandora_obj.Services.values():
+        for l_service in l_pandora_plugin_obj.Services.values():
             l_device_control_obj = EntertainmentDeviceControl()
             l_device_control_obj.Device = l_name = l_service.ConnectionName
             l_device_control_obj.Family = l_family = l_service.ConnectionFamily
@@ -390,13 +427,13 @@ class PandoraControl:
         This control message may come from a MQTT message or from a timer.
         """
         LOG.info('Halt Pandora - {}'.format(p_message))
-        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        l_pandora_obj._OpenSessions -= 1
+        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_pandora_plugin_obj._OpenSessions -= 1
         self.m_started = False
         self.m_transport.write(b'q')
         # self.m_transport.closeStdin()
         LOG.info('Service Stopped')
-        for l_service in l_pandora_obj.Services.values():
+        for l_service in l_pandora_plugin_obj.Services.values():
             l_device_control_obj = EntertainmentDeviceControl()
             l_device_control_obj.Family = l_family = l_service.ConnectionFamily
             l_device_control_obj.Device = l_name = l_service.ConnectionName
@@ -420,9 +457,9 @@ class API(MqttActions, PandoraControl):
     m_started = False
 
     def __init__(self, p_pyhouse_obj):
-        """ Do the housekeeping for the pandora plugin.
+        """ Do the housekeeping for the Pandora plugin.
         """
-        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = PandoraPluginData()
         p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Name = SECTION
         self.m_started = None
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -443,11 +480,12 @@ class API(MqttActions, PandoraControl):
     def Start(self):
         """ Start the Pandora plugin since we have it configured in the XML.
         This does not start playing pandora.  That takes a control message to play.
+        The control message usually comes from some external source (Alexa, WebPage, SmartPhone)
         """
         LOG.info("Started - Version:{}".format(__version__))
-        l_pandora_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        l_service = l_pandora_obj.Services[0]
-        LOG.debug('{}'.format(PrettyFormatAny.form(l_service, 'Pandora', 190)))
+        # l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        # l_service = l_pandora_plugin_obj.Services[0]
+        # LOG.debug('{}'.format(PrettyFormatAny.form(l_service, 'Pandora', 190)))
         # l_device = l_service.ConnectionFamily.lower()
         # l_name = l_service.ConnectionName.lower()
 

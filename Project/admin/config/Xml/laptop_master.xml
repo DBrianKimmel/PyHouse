@@ -46,7 +46,7 @@
 		<InternetSection />
 		<MqttSection>
 			<Broker Active="True" Key="0" Name="Mqtt-Pi-05">
-				<Comment />
+				<Comment>Main Broker</Comment>
 				<UUID>c87c8b96-b1e5-11e6-8a14-74da3859e09a</UUID>
 				<BrokerAddress>192.168.1.15</BrokerAddress>
 				<BrokerPort>1883</BrokerPort>
@@ -57,7 +57,7 @@
 		</MqttSection>
 		<NodeSection>
 			<Node Active="True" Key="0" Name="pi-04">
-				<Comment />
+				<Comment>Irrigation relay controller</Comment>
 				<UUID>7b6a4f46-0aaa-11e7-834a-801f029bd1e3</UUID>
 				<ConnectionAddressV4>[]</ConnectionAddressV4>
 				<ConnectionAddressV6>[[u'::1'], [u'fe80::d63e:cc04:7538:8dd1%eth0'],
@@ -68,7 +68,7 @@
 				<InterfaceSection />
 			</Node>
 			<Node Active="True" Key="1" Name="pi-01-pp">
-				<Comment />
+				<Comment>First Insteon Controller</Comment>
 				<UUID>d8ec093e-e4a8-11e6-b6ac-74da3859e09a</UUID>
 				<ConnectionAddressV4>[]</ConnectionAddressV4>
 				<ConnectionAddressV6>[['::1'], ['fe80::72b7:3dcc:f8c8:41ba%eth0'],
@@ -79,7 +79,7 @@
 				<InterfaceSection />
 			</Node>
 			<Node Active="True" Key="2" Name="pi-10">
-				<Comment />
+				<Comment>Second Insteon Controller</Comment>
 				<UUID>07721164-3124-11e7-83bb-b827ebe6133f</UUID>
 				<ConnectionAddressV4>[]</ConnectionAddressV4>
 				<ConnectionAddressV6>[[u'::1'], [u'fe80::57fb:aecf:c785:38db%eth0'],
@@ -90,7 +90,7 @@
 				<InterfaceSection />
 			</Node>
 			<Node Active="True" Key="3" Name="Laptop-3">
-				<Comment />
+				<Comment>Development Laptop</Comment>
 				<UUID>222ec0e9-d76e-11e6-b40f-74dfbfae5aed</UUID>
 				<ConnectionAddressV4>[['169.254.9.179']]</ConnectionAddressV4>
 				<ConnectionAddressV6>[['::1'],
@@ -110,14 +110,14 @@
 			<SocketPort>8580</SocketPort>
 			<LoginSection>
 				<Login Active="True" Key="0" Name="admin">
-					<Comment />
+					<Comment>Admin Login</Comment>
 					<UUID>f4194720-4d0e-11e7-a9b0-74da3859e09a</UUID>
 					<FullName>Administrator</FullName>
 					<Password>admin</Password>
 					<Role>1</Role>
 				</Login>
 				<Login Active="True" Key="1" Name="briank">
-					<Comment />
+					<Comment>Brian's Login</Comment>
 					<UUID>f4199d6a-4d0e-11e7-a9b0-74da3859e09a</UUID>
 					<FullName>None</FullName>
 					<Password>Coff33Nut</Password>
@@ -567,7 +567,6 @@
 				<Light Active="True" Key="0" Name="Outside Garage">
 					<Comment>None</Comment>
 					<UUID>5b6ea2e6-c826-4935-9a55-10a989aea5fa</UUID>
-					<Comment>None</Comment>
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
@@ -593,7 +592,6 @@
 				<Light Active="True" Key="1" Name="Outside Front">
 					<Comment>None</Comment>
 					<UUID>9699dcd3-5bc7-4a28-8c03-23a3b981bc81</UUID>
-					<Comment>None</Comment>
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
@@ -619,7 +617,6 @@
 				<Light Active="True" Key="2" Name="Wet Bar">
 					<Comment>None</Comment>
 					<UUID>f483c48c-6aa2-49cd-a327-2c5efcfbcbfa</UUID>
-					<Comment>None</Comment>
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
@@ -903,9 +900,8 @@
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
 				<Light Active="True" Key="13" Name="Curio">
-					<Comment />
+					<Comment>Curio Cabinet</Comment>
 					<UUID>b9cee00c-6100-41fb-962c-a8eb9d276328</UUID>
-					<Comment />
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
@@ -955,16 +951,14 @@
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
 				<Light Active="True" Key="15" Name="MBR Closet">
-					<Comment />
+					<Comment>Marcia's Closet</Comment>
 					<UUID>4be55901-dcc2-4698-b898-f465ab213554</UUID>
-					<Comment />
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
 					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
 					<RoomName>MBR Closet 1</RoomName>
 					<RoomUUID>df6427ae-2dda-11e6-953b-74da3859e09a</RoomUUID>
-					<Comment />
 					<Brightness>0</Brightness>
 					<IsDimmable>True</IsDimmable>
 					<DeviceType>1</DeviceType>
@@ -981,16 +975,14 @@
 					<ProductKey>00.00.00</ProductKey>
 				</Light>
 				<Light Active="True" Key="16" Name="MBR Hall">
-					<Comment />
+					<Comment>Betroom Hall light</Comment>
 					<UUID>234e4a49-9794-44d6-9b28-b445be2fa9e8</UUID>
-					<Comment />
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
 					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
 					<RoomName>Master Bed</RoomName>
 					<RoomUUID>df646e9e-2dda-11e6-953b-74da3859e09a</RoomUUID>
-					<Comment />
 					<Brightness>0</Brightness>
 					<IsDimmable>True</IsDimmable>
 					<DeviceType>1</DeviceType>
@@ -1009,7 +1001,6 @@
 				<Light Active="True" Key="17" Name="Coat Closet Hall">
 					<Comment />
 					<UUID>99fa229b-07f1-47ce-8746-6db3f84cf47f</UUID>
-					<Comment />
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>
@@ -1029,7 +1020,6 @@
 				<Light Active="True" Key="18" Name="Lani Hall">
 					<Comment />
 					<UUID>f1a632b9-c0b4-4861-a692-9744696c6530</UUID>
-					<Comment />
 					<DeviceFamily>Insteon</DeviceFamily>
 					<DeviceType>1</DeviceType>
 					<DeviceSubType>3</DeviceSubType>

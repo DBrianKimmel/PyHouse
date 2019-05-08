@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-05-07'
+__updated__ = '2019-05-08'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -168,23 +168,23 @@ class MqttActions:
         """
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
-        l_device = extract_tools.get_mqtt_field(p_message, 'Device')
+        l_model = extract_tools.get_mqtt_field(p_message, 'Model')
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
         l_power = extract_tools.get_mqtt_field(p_message, 'Power')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
-        l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_device, l_power, l_volume, l_input)
+        l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_model, l_power, l_volume, l_input)
         #
         if l_power != None:
-            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
-            self._pioneer_power(l_family, l_device, l_power)
+            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_model)
+            self._pioneer_power(l_family, l_model, l_power)
         #
         if l_input != None:
             l_logmsg += ' Turn input to {}.'.format(l_input)
-            self._pioneer_input(l_family, l_device, l_input)
+            self._pioneer_input(l_family, l_model, l_input)
         #
         if l_volume != None:
             l_logmsg += ' Change volume {}.'.format(l_volume)
-            self._pioneer_volume(l_family, l_device, l_volume)
+            self._pioneer_volume(l_family, l_model, l_volume)
         #
         return l_logmsg
 
