@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-08'
 
 #  Import system type stuff
 
@@ -76,7 +76,7 @@ class Utility:
         if l_ret == []:
             LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
         else:
-            LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
+            LOG.debug('Found {} active controller(s) {} for family {}'.format(len(l_ret), l_ret, p_family))
         return l_ret
 
 # ## END DBK

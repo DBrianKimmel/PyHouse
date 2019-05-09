@@ -14,7 +14,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-08'
 
 #  Import system type stuff
 
@@ -53,9 +53,9 @@ class API:
         for l_controller_obj in l_controller_objs:
             LOG.info("\n\tSchedLightName:{}; Level:{}; LightName:{}; Controller:{}".format(
                     l_light_name, l_control.BrightnessPct, l_light_obj.Name, l_controller_obj.Name))
-            self.AbstractControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)
+            self.ControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)
 
-    def AbstractControlLight(self, p_pyhouse_obj, p_light_obj, p_controller_obj, p_control):
+    def ControlLight(self, p_pyhouse_obj, p_light_obj, p_controller_obj, p_control):
         """
         @param p_pyhouse_obj: The entire data set.
         @param p_light_obj: the device being controlled

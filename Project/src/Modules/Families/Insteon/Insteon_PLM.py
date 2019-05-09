@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-05-08'
 
 #  Import system type stuff
 import datetime
@@ -462,7 +462,7 @@ class API(Utility):
         self.stop_controller_driver(p_controller_obj)
         LOG.info('Stopped.')
 
-    def AbstractControlLight(self, p_device_obj, _p_controller_obj, p_control):
+    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         """
         Insteon PLM specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
@@ -475,13 +475,13 @@ class API(Utility):
         """
         l_level = int(p_control.BrightnessPct)
         l_rate = 0  # The transition time is not implemented currently.
-        LOG.debug("Insteon Device Name:{}; to level:{}; at rate:{};".format(p_device_obj.Name, l_level, l_rate))
+        LOG.debug("Insteon Device Name:'{}'; to level:'{}'; at rate:'{}'; Using:'{}'".format(p_device_obj.Name, l_level, l_rate, p_controller_obj.Name))
         if l_level == 0:
-            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  #  0x13
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  #  0x13
         elif l_level > 95:
-            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
         else:
-            l_level = l_level * 255 / 100
-            Commands._queue_62_command(self.m_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
+            l_level = int(l_level * 255 / 100)
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
 
 #  ## END DBK
