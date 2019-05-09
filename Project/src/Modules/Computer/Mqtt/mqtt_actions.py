@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-04-01'
+__updated__ = '2019-05-09'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -86,6 +86,8 @@ class Actions:
         elif p_topic[0] == 'hvac':
             l_logmsg += hvacMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'house':
+            l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
+        elif p_topic[0] == 'irrigation':
             l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'lighting':
             l_logmsg += lightingMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)

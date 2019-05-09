@@ -983,7 +983,7 @@
 				<ScheduleMode>Home</ScheduleMode>
 				<ScheduleType>Lighting</ScheduleType>
 				<Time>sunset + 00:15</Time>
-				<Level>50</Level>
+				<Level>10</Level>
 				<LightName>MBR Ceiling</LightName>
 				<LightUUID>1efbce9e-4618-11e6-89e7-74da3859e09a</LightUUID>
 				<Rate>0</Rate>

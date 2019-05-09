@@ -1,15 +1,15 @@
 """
-@name:      PyHouse/src/Modules/Irrigation/test/xml_irrigation.py
+@name:      PyHouse/Project/src/Modules/Housing/Irrigation/test/xml_irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 30, 2015
 @Summary:
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-05-09'
 
 # The major XML sections
 TESTING_IRRIGATION_SECTION = 'IrrigationSection'

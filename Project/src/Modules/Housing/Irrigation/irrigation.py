@@ -4,14 +4,14 @@
 @name:      PyHouse/src/Modules/Irrigation/irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 4, 2014
 @Summary:
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-05-09'
 
 #  Import system type stuff
 
@@ -31,14 +31,26 @@ class MqttActions(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _decode_control(self, _p_topic, _p_message):
+        l_logmsg = '\tIrrigation Control'
+        return l_logmsg
+
+    def _decode_status(self, _p_topic, _p_message):
+        l_logmsg = '\tIrrigation Status'
+        return l_logmsg
+
     def decode(self, p_logmsg, p_topic, p_message):
-        """ pyhouse/<HouseName>/irrigation
+        """ pyhouse/<HouseName>/irrigation/<action>
+        where <action> is control, status
         """
-        p_logmsg += '\tIrrigation:\n'
-        p_logmsg += '\tSystem: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'System'))
-        p_logmsg += '\tZone: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Zone'))
-        p_logmsg += '\tStatus: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Status'))
-        return p_logmsg
+        l_logmsg = ' Irrigation '
+        if p_topic[0].lower() == 'control':
+            l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
+        elif p_topic[0].lower() == 'status':
+            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
+        else:
+            l_logmsg += '\tUnknown Pandora sub-topic {}'.format(p_message)
+        return l_logmsg
 
 
 class Utility(object):
