@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -316,11 +316,6 @@ class B3_Family(SetupMixin, unittest.TestCase):
 
 class B4_FamilyAPI(SetupMixin, unittest.TestCase):
     """ This section tests family API retrieval
-            Obj:AbstractControlLight    <bound method API.AbstractControlLight of <Modules.Families.UPB.UPB_device.API object at
-            Obj:SaveXml                 <bound method API.SaveXml of <Modules.Families.UPB.UPB_device.API object at
-            Obj:Start                   <bound method API.Start of <Modules.Families.UPB.UPB_device.API object at
-            Obj:Stop                    <bound method API.Stop of <Modules.Families.UPB.UPB_device.API object at
-            Obj:m_pyhouse_obj           <Modules.Core.data_objects.PyHouseData object at 0x7f6a02cc35c0>
     """
 
     def setUp(self):

@@ -13,7 +13,7 @@ Cannon Trail Blueray Player
 
 """
 
-__updated__ = '2018-10-25'
+__updated__ = '2019-05-15'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -141,7 +141,7 @@ class API:
         This will open the socket for control
         """
         # LOG.info("Starting")
-        l_topic = 'entertainment/panasonic/control'
+        l_topic = 'house/entertainment/panasonic/control'
         l_obj = EntertainmentDeviceControl()
         LOG.info("Started.")
 

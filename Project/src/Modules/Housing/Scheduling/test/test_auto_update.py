@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Scheduling/test/test_auto_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @note:      Created on Dec 31, 2013
 @license:   MIT License
 @summary:   Handle the automatic updating of PyHouse
@@ -12,7 +12,7 @@ Passed all 5 tests - DBK - 2015-11-21
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

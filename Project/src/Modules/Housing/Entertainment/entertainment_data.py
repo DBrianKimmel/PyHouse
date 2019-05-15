@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-08'
+__updated__ = '2019-05-12'
 
 # Import system type stuff
 
@@ -168,6 +168,7 @@ class EntertainmentDeviceStatus:
         self.Type = None
         self.ControllingNode = None
         self.Connected = False
+        self.Family = None
         self.Model = None
         self.Node = None
 

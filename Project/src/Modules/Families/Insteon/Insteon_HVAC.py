@@ -22,7 +22,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-02-24'
+__updated__ = '2019-05-15'
 
 #  Import system type stuff
 
@@ -105,7 +105,7 @@ class DecodeResponses(object):
         """
 
         l_message = p_controller_obj._Message
-        l_topic = 'hvac/thermostat/{}'.format(p_device_obj.Name)
+        l_topic = 'house/hvac/thermostat/{}'.format(p_device_obj.Name)
         l_mqtt_message = "thermostat: "
 
         l_firmware = l_message[7]

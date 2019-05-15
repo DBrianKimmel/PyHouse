@@ -11,7 +11,7 @@ Passed all 26 tests - DBK - 2018-12-21
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-11'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -91,9 +91,6 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
-
-    def setUp(self):
-        pass
 
     def test_00_Print(self):
         print('Id: test_lighting_lights')
@@ -374,7 +371,6 @@ class B2_XmlWrite(SetupMixin, unittest.TestCase):
     def test_06_LightFamily1(self):
         """ Write family info
         """
-        l_obj = self.m_obj[1]
         l_xml = LightingXML()._write_base_device('Light', self.m_obj[1])
         lightsXML()._write_light_data(self.m_obj[1], l_xml)
         LightingXML()._write_family_data(self.m_pyhouse_obj, self.m_obj[1], l_xml)
@@ -388,7 +384,7 @@ class B2_XmlWrite(SetupMixin, unittest.TestCase):
         """ Write out the XML file for the location secWriteXmltion
         """
         l_xml = lightsXML()._write_one_light_xml(self.m_pyhouse_obj, self.m_obj[0])
-        # print(PrettyFormatAny.form(l_xml, 'B2-07-A - XML'))
+        print(PrettyFormatAny.form(l_xml, 'B2-07-A - XML'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)

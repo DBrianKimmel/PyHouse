@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-09'
+__updated__ = '2019-05-15'
 __version_info__ = (19, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,8 +17,8 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Core.data_objects import NodeData, PyHouseData
 from Modules.Core.Utilities.extract_tools import get_mqtt_field, get_required_mqtt_field
+from Modules.Housing.house import MqttActions as houseMqtt
 from Modules.Housing.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.Housing.Lighting.lighting import MqttActions as lightingMqtt
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightsMqtt
@@ -63,7 +63,9 @@ class Actions:
             Creating a detail log for the message received.
         these are usually accomplished in the same module dispatch call.
 
-        @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped
+        Topic ==> pyhouse/<housename>/<module/...
+
+        @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped )
         @param p_message: is the payload that is JSON
         @return: a message to send to the log detailing the Mqtt message received.
         """
@@ -79,6 +81,8 @@ class Actions:
             l_logmsg += '\n\tSender: {}\n'.format(l_sender)
         # Now do all the rest of the topic-2 fields.
         # LOG.debug('MqttDispatch Topic:{}'.format(p_topic))
+        #
+        # Branch on the <module> portion of the topic
         if p_topic[0] == 'computer':
             l_logmsg += p_pyhouse_obj.APIs.Computer.ComputerAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
@@ -86,15 +90,15 @@ class Actions:
         elif p_topic[0] == 'hvac':
             l_logmsg += hvacMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'house':
-            l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
+            l_logmsg += houseMqtt(p_pyhouse_obj).decode(p_topic, p_message)
         elif p_topic[0] == 'irrigation':
             l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
         elif p_topic[0] == 'lighting':
             l_logmsg += lightingMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'login':
             l_logmsg += p_pyhouse_obj.APIs.House.HouseAPI.DecodeMqtt(p_topic, p_message)
-        elif p_topic[0] == 'schedule':
-                l_logmsg += scheduleMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
+        # elif p_topic[0] == 'schedule':
+                # l_logmsg += scheduleMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         # elif p_topic[0] == 'security':
         #    l_logmsg += securityMqtt(p_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'weather':

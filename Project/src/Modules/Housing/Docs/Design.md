@@ -13,10 +13,15 @@
 Under the PyHouse banner, a user has one or more houses to automate/control.
 
 Each house has one or more Mqtt brokers running.
-They usually operate as a controlling broker with redundant brokers for backup.
+They usually operate ()as a controlling broker with redundant brokers for backup.
 
 Mqtt came into the picture after PyHous was up and running, so not everything runs reom a message.
 
+## Mode
+The house has 3 modes: Home, Away and Vacation.
+* Home is the normal operation Where everything operates on a normal schedule.
+* Away is the operation where the house is unoccupied but wishes not to appear that way.
+* Vacation is for short term where the house is unoccupied but you still want services running.
 
 ## Design
 

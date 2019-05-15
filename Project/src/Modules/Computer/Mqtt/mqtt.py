@@ -4,15 +4,15 @@
 @name:      PyHouse/src/Modules/Computer/Mqtt/mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Apr 25, 2017
 @license:   MIT License
 @summary:   This is basically the MQTT API interface that is used by all of pyhouse.
 
 """
 
-__updated__ = '2019-03-07'
-__version_info__ = (18, 10, 0)
+__updated__ = '2019-05-15'
+__version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -108,7 +108,7 @@ class API(object):
         All publish commands point to here.
         This routine will run thru the list of brokers and publish to each broker.
 
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("schedule/execute", l_schedule)
+        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param message_json : is the JSON message we want to send
         @param message_obj: is an additional object that we will convert to JSON and merge it into the message.
@@ -129,10 +129,10 @@ class API(object):
 
         --> pyhouse/housename/topic02/topic03/topic04/...
 
-        @param p_topic: is a string of the topic 'pyhouse/housename/light/status/schedule/...
+        @param p_topic: is a string of the topic 'pyhouse/<housename>/entertainment/pandora/control/...
         @param p_message: is the JSON encoded string with all the data of the message
         """
-        l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/housename/ as that is all we subscribed to.
+        l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
         l_message = p_message
         try:
             l_logmsg = self.m_actions.mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_message)

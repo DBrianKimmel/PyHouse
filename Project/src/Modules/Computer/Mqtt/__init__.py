@@ -24,9 +24,7 @@ pyhouse/<HouseName>/***
     ***/lighting/controller/{}/start          Modules/Families/UPB/UPB_device.py (57)
     ***/lighting/web/{}/control               Modules/Web/web_control.py (64)
 
-    ***/schedule/execute                      Modules/Lighting/lighting_actions (80)
-
 """
-__updated__ = '2017-04-26'
+__updated__ = '2019-05-13'
 
 # ## END DBK

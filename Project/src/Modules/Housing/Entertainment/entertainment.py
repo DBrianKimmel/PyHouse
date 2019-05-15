@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-08'
+__updated__ = '2019-05-15'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -69,16 +69,19 @@ class MqttActions:
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        l_topic = p_topic[0].lower()
+        l_module = p_topic[0].lower()
         l_logmsg = '\tEntertainment: '
         LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
+        if not self.m_pyhouse_obj.House.Entertainment.Plugins[l_module].Active:
+            l_logmsg += ' Module: {} is not active - skipping'.format(l_module)
+            return l_logmsg
         try:
-            l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_topic]._API
+            l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]._API
             l_logmsg += l_module_api.decode(p_topic[1:], p_message)
             # LOG.debug('{} {}'.format(l_module_api, l_logmsg))
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
-            l_logmsg += 'Module {} not defined here -ignored.'.format(l_topic)
+            l_logmsg += 'Module {} not defined here -ignored.'.format(l_module)
             LOG.error('Error {}'.format(e_err))
             return l_logmsg
         return l_logmsg
@@ -103,7 +106,7 @@ class API(Ent):
         l_name = p_plugin.Name
         # Start Plugin
         p_plugin._API.Start()
-        l_topic = 'entertainment/{}/status'.format(l_name)
+        l_topic = 'house/entertainment/{}/status'.format(l_name)
         l_obj = EntertainmentDeviceControl()
         l_obj.Model = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name

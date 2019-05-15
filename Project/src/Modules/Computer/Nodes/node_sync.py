@@ -11,7 +11,9 @@
 
 """
 
-__updated__ = '2019-01-19'
+__updated__ = '2019-05-15'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
@@ -104,9 +106,9 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, _p_pyhouse_obj):
-        LOG.info("Initialized.")
         pass
 
     def Start(self):

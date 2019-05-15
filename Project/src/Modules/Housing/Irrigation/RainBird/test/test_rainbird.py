@@ -1,15 +1,15 @@
 """
-@name:      PyHouse/src/Modules/Housing/Irrigation/RainBird/test/test_rainbird.py
+@name:      PyHouse/Project/src/Modules/Housing/Irrigation/RainBird/test/test_rainbird.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-20178 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Feb 19, 2018
 @summary:   Test
 
 """
 
-__updated__ = '2018-02-23'
+__updated__ = '2019-05-10'
 
 # Import system type stuff
 from twisted.trial import unittest

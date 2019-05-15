@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2019-01-14
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-12'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,9 @@ from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_KEY_4, \
     TESTING_SCHEDULE_ACTIVE_4, \
     TESTING_SCHEDULE_DURATION_4, \
-    TESTING_SCHEDULE_SECTION
+    TESTING_SCHEDULE_SECTION, \
+    XML_SCHEDULE, \
+    L_SCHEDULE_SECTION_START
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_ACTIVE, \
@@ -71,9 +73,6 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
-
-    def setUp(self):
-        pass
 
     def test_00_Print(self):
         print('Id: test_schedule_xml')
@@ -103,7 +102,26 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.schedule.tag, 'Schedule')
 
 
-class A2_XML(SetupMixin, unittest.TestCase):
+class A2_SetupXml(SetupMixin, unittest.TestCase):
+    """ Test that the XML contains no syntax errors.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
+
+    def test_01_Raw(self):
+        l_raw = XML_SCHEDULE
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[:16], L_SCHEDULE_SECTION_START[:16])
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_SCHEDULE)
+        print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed')))
+        self.assertEqual(l_xml.tag, TESTING_SCHEDULE_SECTION)
+
+
+class A3_XML(SetupMixin, unittest.TestCase):
     """
     Be sure that we load the data properly as a whole test.
     Detailed test of xml is in the test_schedule_xml module.

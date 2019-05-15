@@ -1,20 +1,19 @@
 """
--*- test-case-name: PyHouse.src.Modules.Lighting.test.test_lighting_actions -*-
-@name:      PyHouse/Project/src/Modules/Lighting/lighting_actions.py
+-*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule -*-
+
+@name:      PyHouse/Project/src/Modules/Housing/Scheduling/schedule_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2019 by D. Brian Kimmel
 @license:   MIT License
-@note:      Created on Nov 11, 2014
-@Summary:   Handle lighting scheduled events.
-
-This module will handle all scheduled events for the Lighting system of a house.
-
-This is so other modules only need to dispatch to here for any lighting event - scene, theme or whatever.
+@note:      Created on May 13, 2019
+@summary:   Schedule events
 
 """
 
-__updated__ = '2019-05-12'
+__updated__ = '2019-05-13'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -22,15 +21,39 @@ __updated__ = '2019-05-12'
 from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Lighting.lighting_utility import Utility
 from Modules.Housing.Lighting.lighting_lights import LightData
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.LightingAction ')
+LOG = Logger.getLogger('PyHouse.Schedule_lightn')
 
 
-class API:
-    """
-    """
+class API():
+
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info("Initialized.")
+
+    def LoadXml(self, _p_pyhouse_obj):
+        """ Load the Schedule from the XML info.
+        """
+        LOG.info('Loaded Schedules XML')
+
+    def Start(self):
+        """
+        Extracts all from XML so an update will write correct info back out to the XML file.
+        """
+        LOG.info("Started.")
+
+    def Stop(self):
+        """Stop everything.
+        """
+        LOG.info("Stopped.")
+
+    def SaveXml(self, _p_xml):
+        """
+        """
+        LOG.info('Saved Schedules XML.')
 
     def DoSchedule(self, p_pyhouse_obj, p_schedule_obj):
         """ A schedule action has been called for on a Light
@@ -74,4 +97,4 @@ class API:
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 
-#  ## END DBK
+# ## END DBK

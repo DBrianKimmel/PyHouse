@@ -20,7 +20,7 @@ Comments should not need explaining.  They are just present and can contain just
 """
 from Modules.Housing.Rules.test.xml_rules import XML_RULES_SECTION
 
-__updated__ = '2018-08-13'
+__updated__ = '2019-05-11'
 
 # Import system type stuff
 
@@ -42,6 +42,8 @@ TESTING_HOUSE_KEY = '0'
 TESTING_HOUSE_ACTIVE = 'True'
 TESTING_HOUSE_UUID = 'House...-0000-0000-0000-333e5f8cdfd2'
 TESTING_HOUSE_COMMENT = 'House on Pink Poppy Drive'
+TESTING_HOUSE_MODE = 'Home'
+TESTING_HOUSE_PRIORITY = '5'
 
 L_HOUSE_DIV = '<' + TESTING_HOUSE_DIVISION + \
         " Name='" + TESTING_HOUSE_NAME + \
@@ -50,6 +52,8 @@ L_HOUSE_DIV = '<' + TESTING_HOUSE_DIVISION + \
         "'>"
 L_HOUSE_UUID = '<UUID>' + TESTING_HOUSE_UUID + '</UUID>'
 L_HOUSE_COMMENT = '<Comment>' + TESTING_HOUSE_COMMENT + '</Comment>'
+L_HOUSE_MODE = "<Mode>" + TESTING_HOUSE_MODE + "</Mode>"
+L_HOUSE_PRIORITY = '<Priority>' + TESTING_HOUSE_PRIORITY + '</Priority>'
 
 L_HOUSE_DIVISION_END = '</' + TESTING_HOUSE_DIVISION + '>'
 
@@ -57,6 +61,8 @@ XML_HOUSE_DIVISION = '\n'.join([
     L_HOUSE_DIV,
     L_HOUSE_UUID,
     L_HOUSE_COMMENT,
+    L_HOUSE_MODE,
+    L_HOUSE_PRIORITY,
     XML_LOCATION,
     XML_ROOMS,
     XML_LIGHTING,

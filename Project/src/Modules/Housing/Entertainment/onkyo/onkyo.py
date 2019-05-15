@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-07'
+__updated__ = '2019-05-15'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -207,10 +207,8 @@ class OnkyoProtocol(LineReceiver, OnkyoResponses):
         If you need to send any greeting or initial message, do it here.
         """
         LOG.info('ConnectionMade')
-        # Protocol.connectionMade(self)
         self.setLineMode()
         self.m_device_obj._Transport = self.transport
-        # self._get_status()
 
     def connectionLost(self, reason=ConnectionDone):
         """
@@ -345,7 +343,7 @@ class OnkeoControl:
             p_status.Type = 'Connected'
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
-            l_topic = 'entertainment/onkyo/status'
+            l_topic = 'house/entertainment/onkyo/status'
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
@@ -353,19 +351,20 @@ class OnkeoControl:
             p_device_obj._isRunning = False
             p_status.Type = 'UnConnected'
             p_status.Connected = False
-            l_topic = 'entertainment/onkyo/status'
+            l_topic = 'house/entertainment/onkyo/status'
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
 
         p_device_obj._Queue = Queue(32)
         l_status = OnkyoDeviceStatus()
+        l_status.Family = 'onkyo'
         l_status.Model = p_device_obj.Model
         l_status.Node = p_pyhouse_obj.Computer.Name
         l_endpoint = self._get_endpoint(p_pyhouse_obj, p_device_obj)
         d_connector = l_endpoint.connect(OnkyoFactory(p_pyhouse_obj, p_device_obj))
         d_connector.addCallback(cb_got_protocol, p_device_obj, l_status)
         d_connector.addErrback(eb_got_protocol, p_device_obj, l_status)
-        self.m_device_lst.append(p_device_obj)
+        # self.m_device_lst.append(p_device_obj)
 
 
 class MqttActions():
@@ -406,7 +405,8 @@ class MqttActions():
         if l_family == None:
             l_family = 'onkyo'
         l_device = extract_tools.get_mqtt_field(p_message, 'Device')
-        l_device_obj = self._find_device(l_family, l_device)
+        l_model = extract_tools.get_mqtt_field(p_message, 'Model')
+        l_device_obj = self._find_device(l_family, l_model)
         l_power = self._get_power(p_message)
         l_logmsg = 'Control: '
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')

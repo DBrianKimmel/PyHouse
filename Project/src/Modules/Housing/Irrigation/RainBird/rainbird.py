@@ -4,14 +4,16 @@
 @name:      PyHouse/src/Modules/Housing/Irrigation/RainBird/rainbird.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2019 by D. Brian Kimmel
 @note:      Created on Feb 19, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-02-23'
+__updated__ = '2019-05-10'
+__version_info__ = (19, 5, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import math
@@ -22,9 +24,10 @@ from Crypto.Cipher import AES
 from Crypto import Random
 
 #  Import PyMh files and modules.
+from Modules.Core.Utilities import json_tools
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Irrg_RainBird  ')
-from Modules.Core.Utilities import json_tools
 
 
 class RainbirdController:
@@ -255,7 +258,6 @@ class RainbirdEncryption:
         encrypteddata = eas_encryptor.encrypt(c)
         return b2 + iv + encrypteddata;
 
-
 """
 logging.basicConfig(filename='pypython.log',level=logging.DEBUG)
 
@@ -276,4 +278,31 @@ controller.stopIrrigation()
 
 controller.currentRainSensorState()
 """
+
+
+class Connect():
+    """
+    """
+
+
+class API():
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info("Initialized - Version:{}".format(__version__))
+
+    def LoadXml(self, p_pyhouse_obj):
+        LOG.info("Loading XML.")
+
+    def Start(self):
+        LOG.info("Starting.")
+
+    def SaveXml(self, p_xml):
+        LOG.info("Saving XML.")
+
+    def Stop(self):
+        LOG.info("Stopped.")
+
 # ## END DBK

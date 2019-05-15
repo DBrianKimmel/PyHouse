@@ -21,7 +21,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-08'
+__updated__ = '2019-05-15'
 __version_info__ = (19, 4, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -113,11 +113,11 @@ class MqttActions:
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _send_status(self, p_message):
-            l_topic = 'entertainment/pandora/status'
+            l_topic = 'house/entertainment/pandora/status'
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
     def _send_control(self, p_device, p_message):
-            l_topic = 'entertainment/{}/control'.format(p_device.ConnectionFamily)
+            l_topic = 'house/entertainment/{}/control'.format(p_device.ConnectionFamily)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
     def _decode_status(self, _p_topic, _p_message):
@@ -419,7 +419,7 @@ class PandoraControl:
             l_device_control_obj.Volume = l_service.Volume
             l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
-            l_topic = 'entertainment/{}/control'.format(l_family)
+            l_topic = 'house/entertainment/{}/control'.format(l_family)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
     def _halt_pandora(self, p_message):
@@ -444,7 +444,7 @@ class PandoraControl:
             l_device_control_obj.Volume = l_service.Volume
             l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
-            l_topic = 'entertainment/{}/control'.format(l_family)
+            l_topic = 'house/entertainment/{}/control'.format(l_family)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
     def control_audio_device(self, p_audio_device, p_control):

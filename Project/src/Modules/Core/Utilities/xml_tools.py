@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-25'
+__updated__ = '2019-05-09'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -305,10 +305,16 @@ class PutGetXML(object):
 # -----
     @staticmethod
     def get_date_time_from_xml(p_xml, p_name):
+        """
+        @return: a datetime.now() object
+        """
         l_field = XML.get_any_field(p_xml, p_name)
         if l_field is None:
             l_field = str(datetime.datetime.now())
-        l_ret = dparser.parse(l_field, fuzzy=True)
+        try:
+            l_ret = dparser.parse(l_field, fuzzy=True)
+        except ValueError:
+            l_ret = datetime.datetime.now()
         return l_ret
 
     @staticmethod

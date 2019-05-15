@@ -20,7 +20,7 @@ Active schedules are shared throughout the house.
 
 ## Sunrise / Sunset
 
-Originally I wrote a lot of cpmplicated code to compute sunrise and sunset but then I found Astral.
+Originally I wrote a lot of complicated code to compute sunrise and sunset but then I found Astral.
 I switched to astral and the code is now gone.  Hurrah!
 
 ## Time
@@ -41,6 +41,25 @@ If a node has not gotten a noon message by 12:01 PM it adds a random delay of a 
 The Mqtt message is the new way to execute a schedule.  Each node executes a schedule and sends a message ot all othefr nodes.
 If the node receiving the message has a controller capable of acting on the message it does so by sending the proper commands to the controller
 
+
+### XML
+
+```xml
+<Schedule Active="True" Key="0" Name="Schedule 0">
+	<UUID>Schedule-0000-0000-0000-0123456789ab</UUID>
+	<Comment>Description</Comment>
+	<ScheduleType>Lighting</ScheduleType>
+	<LightName>Light, Insteon (xml_lights) </LightName>
+	<LightUUID>Light...-0000-0000-0000-0123456789ab</LightUUID>
+	<Level>100</Level>
+	<Rate>0</Rate>
+	<RoomName>Master Bath (xml_lights)</RoomName>
+	<RoomUUID>Light...-Room-0000-0000-123458b6eb6f</RoomUUID>
+	<Time>13:34</Time>
+	<DayOfWeek>127</DayOfWeek>
+	<ScheduleMode>Home</ScheduleMode>
+</Schedule>
+```
 
 ### status
 

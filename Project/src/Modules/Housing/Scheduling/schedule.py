@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Scheduling.test.test_schedule -*-
-
-@name:      PyHouse/src/Modules/Scheduling/schedule.py
+@name:      PyHouse/Project/src/Modules/Housing/Scheduling/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -40,7 +38,9 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-05-15'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
@@ -55,7 +55,7 @@ from Modules.Housing.Irrigation.irrigation_action import API as irrigationAction
 from Modules.Housing.Lighting.lighting_actions import API as lightActionsAPI
 from Modules.Housing.Lighting.lighting_utility import Utility as lightingUtility
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
-from Modules.Housing.Scheduling import sunrisesunset
+from Modules.Housing.Scheduling import sunrisesunset  # , VALID_SCHEDULING_TYPES
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -75,9 +75,9 @@ MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds
 class MqttActions:
     """ Schedule will react to some mqtt messages.
     Messages with the topic:
-        ==> pyhouse/<housename>/schedule/<action>
+        ==> pyhouse/<housename>/house/schedule/<action>
     where <action> is:
-        execute:
+        control:
     """
 
     def __init__(self, p_pyhouse_obj):
@@ -91,7 +91,7 @@ class MqttActions:
         LOG.debug('Sched: {}\n{}'.format(p_message, PrettyFormatAny.form(l_msg_obj, 'Schedule', 190)))
         if l_sender == self.m_pyhouse_obj.Computer.Name:
             return
-        l_name = extract_tools.get_mqtt_field(p_message, 'Name')
+        l_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_name)
         if l_light_obj == None:
             return
@@ -117,14 +117,14 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """
-        --> pyhouse/<housename>/schedule/...
+        --> pyhouse/<housename>/house/schedule/...
         """
         l_logmsg = ''
         l_schedule_type = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_light_level = extract_tools.get_mqtt_field(p_message, 'Level')
         if len(p_topic) > 0:
-            if p_topic[0] == 'execute':
+            if p_topic[0] == 'control':
                 l_logmsg += '\tExecute:\n'
                 l_logmsg += '\tType: {}\n'.format(l_schedule_type)
                 l_logmsg += '\tLight: {}\n'.format(l_light_name)
@@ -137,6 +137,10 @@ class MqttActions:
                 l_logmsg += '\tLevel: {}'.format(l_light_level)
             elif p_topic[0] == 'control':
                 l_logmsg += '\tControl:\n'
+            elif p_topic[0] == 'delete':
+                pass
+            elif p_topic[0] == 'update':
+                pass
             else:
                 l_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
         return l_logmsg
@@ -302,7 +306,7 @@ class ScheduleExecution:
         """
         Send information to one device to execute a schedule.
         """
-        l_topic = 'schedule/execute/{}'.format(p_schedule_obj.ScheduleType)
+        l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
         #
@@ -344,7 +348,7 @@ class ScheduleExecution:
         Utility.schedule_next_event(p_pyhouse_obj)
 
 
-class Utility(object):
+class Utility():
     """
     """
 
@@ -355,7 +359,7 @@ class Utility(object):
 
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):
-        _l_topic = 'schedule/sunrise_set'
+        _l_topic = 'house/schedule/sunrise_set'
         l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_riseset)
@@ -419,6 +423,34 @@ class Utility(object):
             l_delay = p_delay
         Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
 
+    def find_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
+        """ Find all the schedule entry using any of several criteria.
+        Type (required)
+        Mode (required)
+
+        @return: a list schedule objects, None if error or no matches.
+        """
+        l_sched_list = []
+        l_scheds = p_pyhouse_obj.House.Schedules
+        for l_sched in  l_scheds.values():
+            # print('sched', l_sched.Name)
+            if l_sched.ScheduleType == p_type:
+                # print('sched', l_sched.Name)
+                l_sched_list.append(l_sched)
+        if len(l_sched_list) == 0:
+            return None
+        return l_sched_list
+
+    def find_schedule_entry(self, _p_pyhouse_obj, p_type=None):
+        """ Find the schedule entry using any of several criteria.
+        Type (required)
+        Mode (required)
+
+        @return: a schedule object, None if error
+        """
+        self.find_all_schedule_entries(p_type)
+        return None
+
 
 class Timers(object):
     """
@@ -437,7 +469,7 @@ class Timers(object):
         return l_runID
 
 
-class API:
+class API():
 
     m_pyhouse_obj = None
 

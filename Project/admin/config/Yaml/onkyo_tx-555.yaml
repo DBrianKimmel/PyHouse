@@ -1,4 +1,4 @@
-# Name:      PyHouse/Project/admin/config/Yaml/Onkyo_Tx-555.yaml
+# Name:      PyHouse/Project/admin/config/Yaml/onkyo_tx-555.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
@@ -8,7 +8,7 @@
 # Summary:   This is for an Onkyo Tx-555 Receiver A/V unit.
 ---
 
-# The forst thing we need is the Unit type.
+# The first thing we need is the Unit type.
 # This is the code that is the second byte of the ISCP command
 # The Tx-555 id type reciever - code = '1'
 UnitType: 1

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/housing/test/test_location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-05-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,13 +26,13 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.test.xml_location import \
         TESTING_LOCATION_STREET, \
         TESTING_LOCATION_CITY, \
+        TESTING_LOCATION_STATE, \
         TESTING_LOCATION_ZIP_CODE, \
         TESTING_LOCATION_PHONE, \
         TESTING_LOCATION_LATITUDE, \
         TESTING_LOCATION_LONGITUDE, \
-        TESTING_LOCATION_STATE, \
-        TESTING_LOCATION_TIME_ZONE_NAME, \
         TESTING_LOCATION_ELEVATION, \
+        TESTING_LOCATION_TIME_ZONE_NAME, \
         TESTING_LOCATION_REGION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

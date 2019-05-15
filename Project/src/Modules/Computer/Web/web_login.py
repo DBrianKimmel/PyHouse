@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-04-08'
+__updated__ = '2019-05-15'
 
 #  Import system type stuff
 import os
@@ -196,7 +196,7 @@ class LoginHelper:
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
-                    l_topic = 'comouter/browser/login'
+                    l_topic = 'computer/browser/login'
                     self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
                 return l_login_obj
         return l_login_obj

@@ -16,8 +16,8 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-03-20'
-__version_info__ = (18, 7, 0)
+__updated__ = '2019-05-14'
+__version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -211,11 +211,11 @@ class LocationData(object):
         self.City = ''
         self.State = ''  # 'FL'
         self.ZipCode = ''  # '12345'
-        self.Region = ''  # 'America'
+        self.Phone = ''
         self.Latitude = 0.0  # 28.938448
         self.Longitude = 0.0  # 82.517208
         self.Elevation = 0.0  # 30
-        self.Phone = ''
+        self.Region = ''  # 'America'
         self.TimeZoneName = 'America/New_York'  # 'America/New_York'
         #
         self._name = ''  # 'Greenwich'
@@ -546,12 +546,21 @@ class NodeData(BaseUUIDObject):
         super(NodeData, self).__init__()
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
-        self.ControllerTypes = []  # A list of controller types attached to this node
-        self.ControllerCount = 0  # Number of USB controllers attached
+        self.ControllerTypes = []  # A list of devce controller types attached to this node
+        self.ControllerCount = 0  # Number of USB devce controllers attached
+        self.Controllers = {}
         self.MasterNode = None
         self.NodeId = None
         self.NodeRole = None
         self.NodeInterfaces = {}  # NodeInterfaceData()
+
+
+class NodeControllerData(BaseUUIDObject):
+    """
+    """
+
+    def __init__(self):
+        super(NodeControllerData, self).__init__()
 
 
 class NodeInterfaceData(BaseUUIDObject):

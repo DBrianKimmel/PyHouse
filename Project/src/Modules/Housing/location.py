@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Housing/location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the location information for a house.
@@ -13,6 +13,10 @@ There is location information for the house.  This is for calculating the
 time of sunrise and sunset.  Additional calculations may be added such
 moon rise, tides, etc.
 """
+
+__updated__ = '2019-05-11'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET

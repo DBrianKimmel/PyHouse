@@ -1,15 +1,15 @@
 """
 -*- test-case-name: PyHouse.src.Modules.Computer.Nodes.test.XXtest_nodes -*-
 
-@name:      PyHouse/src/Modules/Computer/Nodes/nodes.py
+@name:      PyHouse/Project/src/Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 6, 2014
 @summary:   This module does everything for nodes.
 
-Nodes are read in form the config Xml file.
+Nodes are read in from the config Xml file.
 
 Then node local is run to update the local node
 
@@ -17,7 +17,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-05-13'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -27,6 +27,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Computer.Nodes.node_local import API as localAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Nodes          ')
 

@@ -28,8 +28,8 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-03-18'
-__version_info__ = (18, 8, 0)
+__updated__ = '2019-05-15'
+__version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -37,7 +37,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
 from Modules.Families.family import API as familyAPI
-from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
+from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI, MqttActions as entertainmentMqtt
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML, Mqtt as roomsMqtt
 from Modules.Housing.Hvac.hvac import API as hvacAPI
@@ -49,8 +49,8 @@ from Modules.Housing.Security.security import API as securityAPI
 from Modules.Housing.Sync.sync import API as syncAPI
 from Modules.Core.Utilities import uuid_tools
 from Modules.Core.Utilities.uuid_tools import Uuid
-from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
@@ -74,6 +74,8 @@ class MqttActions(object):
         LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'room':
             l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
+        elif p_topic[0] == 'entertainment':
+            l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'schedule':
             l_logmsg = scheduleAPI.DecodeMqtt(p_topic, p_message)
         else:
@@ -105,6 +107,8 @@ class Xml(object):
             return l_obj
         XmlConfigTools.read_base_UUID_object_xml(l_obj, l_xml)
         Xml._add_uuid(p_pyhouse_obj, l_obj)
+        l_obj.Mode = PutGetXML.get_text_from_xml(l_xml, 'Mode', 'Home')
+        l_obj.Priority = PutGetXML.get_int_from_xml(l_xml, 'Priority', 0)
         return l_obj
 
     @staticmethod
@@ -121,6 +125,8 @@ class Xml(object):
         """Replace the data in the 'Houses' section with the current data.
         """
         l_house_xml = XmlConfigTools.write_base_UUID_object_xml('HouseDivision', p_pyhouse_obj.House)
+        PutGetXML.put_text_element(l_house_xml, 'Mode', p_pyhouse_obj.House.Mode)
+        PutGetXML.put_text_element(l_house_xml, 'Priority', p_pyhouse_obj.House.Priority)
         l_house_xml.append(locationXML.write_location_xml(p_pyhouse_obj.House.Location))
         l_house_xml.append(roomsXML.write_rooms_xml(p_pyhouse_obj.House.Rooms))
         return l_house_xml

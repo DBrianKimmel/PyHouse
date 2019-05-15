@@ -15,7 +15,7 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-05-15'
 
 # Import system type stuff
 
@@ -50,7 +50,7 @@ class API(object):
         l_count = 0
         for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.values():
             if Utility._is_upb_active(l_controller_obj):
-                l_controller_prefix = 'lighting/controller/{}'.format(l_controller_obj.Name)
+                l_controller_prefix = 'house/lighting/controller/{}'.format(l_controller_obj.Name)
                 l_controller_obj._HandlerAPI = upbPimAPI(self.m_pyhouse_obj)
                 if l_controller_obj._HandlerAPI.Start(self.m_pyhouse_obj, l_controller_obj):
                     LOG.info('Controller {} Started.'.format(l_controller_obj.Name))

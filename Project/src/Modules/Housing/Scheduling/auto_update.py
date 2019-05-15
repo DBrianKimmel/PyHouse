@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Scheduling/auto_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @note:      Created on Dec 31, 2013
 @license:   MIT License
 @summary:   Handle the automatic updating of PyHouse
@@ -13,7 +13,9 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-12'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 # strategy:
 #

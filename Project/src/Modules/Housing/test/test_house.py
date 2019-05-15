@@ -2,16 +2,16 @@
 @name:      PyHouse/src/Modules/Housing/test/test_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
-Passed all 13 tests - DBK - 2018-02-23
+Passed all 16 tests - DBK - 2019-05-11
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-11'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,7 +34,7 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_ACTIVE, \
     TESTING_HOUSE_UUID, \
     XML_HOUSE_DIVISION, \
-    TESTING_HOUSE_DIVISION
+    TESTING_HOUSE_DIVISION, TESTING_HOUSE_MODE, TESTING_HOUSE_PRIORITY, TESTING_HOUSE_COMMENT
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -48,9 +48,6 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
-
-    def setUp(self):
-        pass
 
     def test_00_Print(self):
         print('Id: test_house')
@@ -126,6 +123,9 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Key), TESTING_HOUSE_KEY)
         self.assertEqual(str(l_obj.Active), TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_obj.UUID, TESTING_HOUSE_UUID)
+        self.assertEqual(l_obj.Comment, TESTING_HOUSE_COMMENT)
+        self.assertEqual(l_obj.Mode, TESTING_HOUSE_MODE)
+        self.assertEqual(str(l_obj.Priority), TESTING_HOUSE_PRIORITY)
 
     def test_03_House(self):
         l_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
@@ -161,7 +161,12 @@ class C3_Write(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
         self.assertEqual(l_xml.tag, 'HouseDivision')
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
+        self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
         self.assertEqual(l_xml.find('UUID').text, TESTING_HOUSE_UUID)
+        self.assertEqual(l_xml.find('Comment').text, TESTING_HOUSE_COMMENT)
+        self.assertEqual(l_xml.find('Mode').text, TESTING_HOUSE_MODE)
+        self.assertEqual(l_xml.find('Priority').text, TESTING_HOUSE_PRIORITY)
 
 
 class J1_JSON(SetupMixin, unittest.TestCase):

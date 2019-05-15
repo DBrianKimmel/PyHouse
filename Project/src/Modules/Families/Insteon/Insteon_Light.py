@@ -13,7 +13,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-03-07'
+__updated__ = '2019-05-15'
 
 #  Import system type stuff
 
@@ -119,7 +119,7 @@ class DecodeResponses:
         LOG.debug('Light Response {}'.format(l_debug_msg))
         LOG.info('Light: {}, Brightness: {}'.format(p_device_obj.Name, p_device_obj.BrightnessPct))
         if l_mqtt_publish:
-            l_topic = 'lighting/light/status'
+            l_topic = 'house/lighting/light/status'
             p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)
             pass
         return l_debug_msg

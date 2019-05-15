@@ -25,7 +25,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-03-31'
+__updated__ = '2019-05-15'
 
 #  Import system type stuff
 import pyudev
@@ -124,7 +124,7 @@ class SerialAPI:
                     baudrate=l_baud)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
             p_controller_obj.Active = True
-            l_topic = 'driver/serial/status'
+            l_topic = 'house/driver/serial/status'
             l_obj = DriverStatus()
             l_obj.Status = 'Open'
             p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)

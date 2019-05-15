@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Computer/test/test_logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on Apr 30, 2014
 @license:   MIT License
 @summary:
@@ -11,14 +11,13 @@ Passed all 2 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2019-05-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-# from Modules.Core.data_objects import ComputerInformation
 from Modules.Computer import logging_pyh as Logger
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
@@ -34,8 +33,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_logging_pyh')
 

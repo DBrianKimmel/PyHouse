@@ -7,14 +7,13 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the schedule information for a house.
 
-Passed all 48 tests - DBK - 2019-03-21
+Passed all 49 tests - DBK - 2019-05-12
 
 There are some tests (starting with 'X') that I do not know how to do in twisted.
 
 """
-from Modules.Core.Utilities import convert
 
-__updated__ = '2019-03-21'
+__updated__ = '2019-05-13'
 
 # Import system type stuff
 import datetime
@@ -26,6 +25,7 @@ import twisted
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import RiseSetData
+from Modules.Core.Utilities import convert
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 # from Modules.Housing.Scheduling import schedule
@@ -33,7 +33,8 @@ from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
 from Modules.Housing.Scheduling.schedule import \
         SchedTime, \
         API as scheduleAPI, \
-        Utility as scheduleUtility, TimeField
+        Utility as scheduleUtility, \
+        TimeField
 from Modules.Housing.Scheduling.test.xml_schedule import \
     TESTING_SCHEDULE_SUNRISE_0, \
     TESTING_SCHEDULE_SUNSET_0, \
@@ -182,7 +183,7 @@ class A3_Utility(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
 
     def test_02_Mock(self):
@@ -204,7 +205,7 @@ class B1_Global(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
 
     def test_01_Seconds(self):
@@ -235,7 +236,7 @@ class B2_DayOfWeek(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
 
     def test_01_0_Days(self):
@@ -315,15 +316,15 @@ class C1_Execute(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
         # self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_one(self):
         """ No way to test the dispatch routine
         """
-        self.m_pyhouse_obj.House.Schedule[0].ScheduleType = 'TeStInG14159'  # to set dispatch to testing
-        _l_schedule = self.m_pyhouse_obj.House.Schedule[0]
+        self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'  # to set dispatch to testing
+        _l_schedule = self.m_pyhouse_obj.House.Schedules[0]
         # print(PrettyFormatAny.form(l_schedule, 'C1-01-A - Sched'))
         # ScheduleExecution().dispatch_one_schedule(self.m_pyhouse_obj, l_schedule)
         # self.assertEqual(True, True)
@@ -426,7 +427,7 @@ class D1_Time_Sun(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
         self.m_schedule_obj.DayOfWeek = 1 + 2 + 4 + 8 + 16 + 32 + 64
         self.m_riseset = Mock.RiseSet()
@@ -505,7 +506,7 @@ class D2_Time_Sign(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
         self.m_schedule_obj.DayOfWeek = 1 + 2 + 4 + 8 + 16 + 32 + 64
         self.m_riseset = Mock.RiseSet()
@@ -568,7 +569,7 @@ class D3_Time_Offset(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
         self.m_schedule_obj.DayOfWeek = 1 + 2 + 4 + 8 + 16 + 32 + 64
         self.m_riseset = Mock.RiseSet()
@@ -630,7 +631,7 @@ class D4_Timefield(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Schedule = self.m_schedules
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
         self.m_schedule_obj.DayOfWeek = 1 + 2 + 4 + 8 + 16 + 32 + 64
         self.m_riseset = Mock.RiseSet()
@@ -682,5 +683,33 @@ class D4_Timefield(SetupMixin, unittest.TestCase):
         l_seconds = TimeField().parse_timefield(l_time, self.m_riseset)
         # print('D4-06-A - Seconds {}\n'.format(l_seconds))
         self.assertEqual(l_seconds, (6 * 60 + 31) * 60 + 56)
+
+
+class E1_Find(SetupMixin, unittest.TestCase):
+    """ Test finding a schedule if one exists.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Schedules = self.m_schedules
+        self.m_schedule_obj = self.m_schedules[0]
+        self.m_schedule_obj.DayOfWeek = 1 + 2 + 4 + 8 + 16 + 32 + 64
+        self.m_riseset = Mock.RiseSet()
+
+    def test_01_basic(self):
+        """
+        """
+        l_ret = scheduleUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Lighting')
+        # print(PrettyFormatAny.form(l_ret, 'Schedule list', 190))
+        self.assertEqual(len(l_ret), 4)
+        #
+        l_ret = scheduleUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Irrigation')
+        # print(PrettyFormatAny.form(l_ret, 'Schedule list', 190))
+        self.assertEqual(len(l_ret), 1)
+        #
+        l_ret = scheduleUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Hvac')
+        # print(PrettyFormatAny.form(l_ret, 'Schedule list', 190))
+        self.assertEqual(l_ret, None)
 
 # ## END

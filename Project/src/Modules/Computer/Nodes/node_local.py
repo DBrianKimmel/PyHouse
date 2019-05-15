@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Comouter.Nodes.test.test_node_local -*-
-
-@name:      PyHouse/src/Modules/Computer/Nodes/node_local.py
+@name:      PyHouse/Project/src/Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017  by D. Brian Kimmel
+@copyright: (c) 2014-2019  by D. Brian Kimmel
 @note:      Created on Apr 2, 2014
 @license:   MIT License
 @summary:   Gather this node's information.
@@ -21,7 +19,9 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-01-19'
+__updated__ = '2019-05-15'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 from datetime import datetime
@@ -40,25 +40,33 @@ from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
-__all__ = ['NODE_NOTHING', 'NODE_LIGHTS',
+__all__ = ['NODE_NOTHING', 'NODE_USB_CONTROLLER',
            'NODE_PANDORA', 'NODE_CAMERA',
            'NODE_PIFACECAD', 'NODE_V6ROUTER',
            'API'
            ]
 
 NODE_NOTHING = 0x0000  # a basic node with no special functions
-NODE_LIGHTS = 0x0001  # Node has an attached controller for Lights (optionally other stuff)
+NODE_USB_CONTROLLER = 0x0001  # Node has an attached controller for Lights (optionally other stuff)
 NODE_PANDORA = 0x0002  # Node can use pianobar to receive Pandora streams
 NODE_CAMERA = 0x0004  # Pi with attached camera (not USB camera)
 NODE_PIFACECAD = 0x0008  #
 NODE_V6ROUTER = 0x0010  # Iv6 Router node
-NODE_WINDOWS = 0x0020  # Windows - not Linux
+NODE_NOT_UNIX = 0x0020  # Windows - not Linux
 NODE_TUNNEL = 0x0040  # IPv6 Tunnel
 NODE_IR = 0x0080  # Infrared receiver and optional transmitter
 NODE_MQTT_BROKER = 0x0100
 
 
-class Devices(object):
+class InterfaceData():
+    """
+    """
+
+    def __init__(self):
+        self.InterfaceName = None
+
+
+class Devices():
     """ Identify the controller devices attached to this node.
 
     Here we want to find out what device type controllers (eg Insteon PLM) may be attached to this node.
@@ -73,32 +81,58 @@ class Devices(object):
 
     def _find_controllers(self):
         """ Find out what controllers are attached to this node.
+
+            DEVLINKS === /dev/serial/by-path/pci-0000:00:14.0-usb-0:3:1.0-port0 /dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A403KF9V-if00-port0
+            DEVNAME === /dev/ttyUSB0
+            DEVPATH === /devices/pci0000:00/0000:00:14.0/usb1/1-3/1-3:1.0/ttyUSB0/tty/ttyUSB0
+            ID_BUS === usb
+            ID_MM_CANDIDATE === 1
+            ID_MODEL === FT232R_USB_UART
+            ID_MODEL_ENC === FT232R\x20USB\x20UART
+            ID_MODEL_FROM_DATABASE === FT232 Serial (UART) IC
+            ID_MODEL_ID === 6001
+            ID_PATH === pci-0000:00:14.0-usb-0:3:1.0
+            ID_PATH_TAG === pci-0000_00_14_0-usb-0_3_1_0
+            ID_PCI_CLASS_FROM_DATABASE === Serial bus controller
+            ID_PCI_INTERFACE_FROM_DATABASE === XHCI
+            ID_PCI_SUBCLASS_FROM_DATABASE === USB controller
+            ID_REVISION === 0600
+            ID_SERIAL === FTDI_FT232R_USB_UART_A403KF9V
+            ID_SERIAL_SHORT === A403KF9V
+            ID_TYPE === generic
+            ID_USB_DRIVER === ftdi_sio
+            ID_USB_INTERFACES === :ffffff:
+            ID_USB_INTERFACE_NUM === 00
+            ID_VENDOR === FTDI
+            ID_VENDOR_ENC === FTDI
+            ID_VENDOR_FROM_DATABASE === Future Technology Devices International, Ltd
+            ID_VENDOR_ID === 0403
+            MAJOR === 188
+            MINOR === 0
+            SUBSYSTEM === tty
+            TAGS === :systemd:
+            USEC_INITIALIZED === 61213086823
         """
         l_ret = ''
         l_context = pyudev.Context()
         for l_dev in l_context.list_devices(subsystem='tty'):
-            if 'ID_VENDOR' not in l_dev:
+            if 'ID_VENDOR_ID' not in l_dev:
                 continue
-            # if l_dev.subsystem == None:
-            #    continue
             l_msg = '\nDevice found: {}\n'.format(l_dev.get('DEVNAME'))
-            # print(PrettyFormatAny.form(l_dev))
             for k, v in l_dev.items():
-                # print(k, v)
-                l_msg += '{} {}\n'.format(k, v)
-            # print(l_msg)
-            LOG.info(l_msg)
+                l_msg += '{} === {}\n'.format(k, v)
             l_id = '{}:{}'.format(l_dev.get('ID_VENDOR_ID'), l_dev.get('ID_MODEL_ID'))
             if l_id == '0403:6001':
                 l_ret = 'Insteon PLM (0403:6001)'
             elif l_id == '067b:2303':
                 l_ret = 'USB Serial port (067b:2303)'
+            LOG.info(l_msg)
         return l_ret
 
     def _add_controller(self, p_node, p_obj):
         """
         @param p_node: is the node obj for this node
-        @param p_obj: is the discovered controller type to be added to the list
+        @param p_obj: is the discovered DeviceController type to be added to the list
         """
         p_node.ControllerCount += 1
         p_node.ControllerType.append(p_obj)
@@ -107,37 +141,28 @@ class Devices(object):
     def find_devices(self, p_node_obj):
         """
         """
+        l_controllers = {}
+        self._find_controllers()
+        LOG.info('NodeControllers: {}'.format(l_controllers))
         return p_node_obj
 
 
-class Interfaces(object):
+class Interfaces():
     """
     Loop thru all the interfaces of this local node and extract the info.
     """
 
-    @staticmethod
-    def _find_all_interface_names():
-        """
-        Get the names of all the network interfaces on this computer.
-        Windows return an UUID as the name
+    def _find_all_interface_names(self):
+        """ Get the names of all the network interfaces on this computer.
         Linux before about 2015 returned something like eth0, wlan0, or lo0.
-        Later Linuxes return a descriptive id that contains a physical slot.
+        Later Linuxes return a descriptive id that contains a physical slot like enp3s0, wlp2s0.
 
-            Windows 7
-                Ix    Value
-                --    -----
-                0    "{EF4795CF-8D57-463B-B8C2-10CD2804396D}";
-                1    "{59F2EEE3-780E-4B30-80B2-EB8216CC63B6}";
-                2    "{5A910E84-B99A-43FF-A257-67149139B4AF}";
-                3    "{EA594141-246C-4537-B0CF-DA1DDCDD956C}";
-
-        @return: a list of interface names
+        @return: a list of interface names ['lo', 'enp3s0', 'wlp2s0', ...]
         """
         l_interface_names = netifaces.interfaces()
         return l_interface_names
 
-    @staticmethod
-    def _find_addr_family_name(p_ix):
+    def _find_addr_family_name(self, p_ix):
         """ Returns the string of the family name for a given index.
 
         Linux, Kubuntu (Laptop):
@@ -145,29 +170,28 @@ class Interfaces(object):
         10 = AF_INET6  - IPv6
         17 = AF_PACKET - Link layer
 
+        @param p_ix: The index of the AF Name (May be different on different computers).
+        @return: a strng of the AF Name 'AF_NET' or 'AF_INET6'
         """
         l_name = netifaces.address_families[p_ix]
         return l_name
 
-    @staticmethod
-    def _find_addr_lists(p_interface_name):
+    def _find_addr_lists(self, p_interface_name):
         """
-        @param p_interface_name: is the name of an interface like 'lo' or 'eth0' etc.
+        @param p_interface_name: is the name of an interface like 'lo' or 'etp3s0' etc.
         @return:  a dict with the key = interface type (-1000 = MAC Addr, 2 = INET, 23 = INET6)
                     The values are a list of dicts of addresses for that interface.
         """
         l_ret = netifaces.ifaddresses(p_interface_name)
         return l_ret
 
-    @staticmethod
-    def _get_address_list_INET(p_list):
+    def _get_address_list_INET(self, p_list):
         l_list = []
         for l_ent in p_list:
             l_list.append(l_ent['addr'])
         return l_list
 
-    @staticmethod
-    def _get_one_interface(p_interface_name):
+    def _get_one_interface(self, p_interface_name):
         """ Gather the information about a single interface given the interface name.
         Only UP interfaces return data, apparently,
         """
@@ -177,23 +201,22 @@ class Interfaces(object):
         l_interface.Key = 0
         l_interface.UUID = toolUuid.create_uuid()  # We need a way to persist the UUID instead of this
         l_interface.NodeInterfaceType = 'Other'
-        l_afList = Interfaces._find_addr_lists(p_interface_name)
+        l_afList = Interfaces()._find_addr_lists(p_interface_name)
         for l_afID in l_afList.keys():
             l_v4 = []
             l_v6 = []
-            l_afName = Interfaces._find_addr_family_name(l_afID)
+            l_afName = Interfaces()._find_addr_family_name(l_afID)
             if l_afName == 'AF_PACKET':
                 l_interface.MacAddress = l_afList[l_afID]
             if l_afName == 'AF_INET':
-                l_v4 = Interfaces._get_address_list_INET(l_afList[l_afID])
+                l_v4 = Interfaces()._get_address_list_INET(l_afList[l_afID])
                 l_interface.V4Address = l_v4
             if l_afName == 'AF_INET6':
-                l_v6 = Interfaces._get_address_list_INET(l_afList[l_afID])
+                l_v6 = Interfaces()._get_address_list_INET(l_afList[l_afID])
                 l_interface.V6Address = l_v6
         return l_interface, l_v4, l_v6
 
-    @staticmethod
-    def _get_all_interfaces():
+    def _get_all_interfaces(self):
         """
         @return: a dict of interfaces for this node.
         """
@@ -201,9 +224,9 @@ class Interfaces(object):
         l_dict = {}
         l_ipv4 = []
         l_ipv6 = []
-        for l_interface_name in Interfaces._find_all_interface_names():
+        for l_interface_name in Interfaces()._find_all_interface_names():
             #  print('\n160 All Interfaces: {}'.format(l_interface_name))
-            l_iface, l_v4, l_v6 = Interfaces._get_one_interface(l_interface_name)
+            l_iface, l_v4, l_v6 = Interfaces()._get_one_interface(l_interface_name)
             if l_v4 != []:
                 l_ipv4.append(l_v4)
             if l_v6 != []:
@@ -265,7 +288,9 @@ class Interfaces(object):
         return l_ret
 
     def add_interfaces(self, p_node_obj):
-        l_interface, l_v4, l_v6 = Interfaces._get_all_interfaces()
+        """ Add the interfaces with addressing to the node object
+        """
+        l_interface, l_v4, l_v6 = Interfaces()._get_all_interfaces()
         p_node_obj.NodeInterfaces = l_interface
         p_node_obj.ConnectionAddr_IPv4 = l_v4
         p_node_obj.ConnectionAddr_IPv6 = l_v6
@@ -307,14 +332,14 @@ class Util(object):
     @staticmethod
     def _is_controller_node():
         """
-        Test to see if this node has a controller attached
+        Test to see if this node has a USB/Serial controller attached
         """
         l_ret = NODE_NOTHING
         for l_file in os.listdir('/dev'):
             #  Test for lights
             if fnmatch.fnmatch(l_file, 'ttyUSB?'):
-                l_ret |= NODE_LIGHTS
-                LOG.info('Lighting Node')
+                l_ret |= NODE_USB_CONTROLLER
+                LOG.info('USB-Controller Node')
         return l_ret
 
     @staticmethod
@@ -367,15 +392,15 @@ class Util(object):
         try:
             Util._unix_node_test(l_role)
         except Exception:
-            l_role |= NODE_WINDOWS
-            LOG.info('Windows Node')
+            l_role |= NODE_NOT_UNIX
+        LOG.info('NodeRole: {}'.format(l_role))
         return l_role
 
     def init_node_type(self, p_pyhouse_obj):
         l_role = p_pyhouse_obj.Computer.Nodes[p_pyhouse_obj.Computer.UUID].NodeRole
         if l_role & NODE_PIFACECAD:
             self._init_ir_control(p_pyhouse_obj)
-        elif l_role & NODE_LIGHTS:
+        elif l_role & NODE_USB_CONTROLLER:
             pass
         elif l_role & NODE_CAMERA:
             pass
@@ -405,6 +430,8 @@ class Util(object):
         LOG.info('Nodes = {}'.format(p_pyhouse_obj.Compute.Nodes))
 
     def create_local_node(self):
+        """ Create the local node info structure
+        """
         l_node = NodeData()
         l_node.Name = self.m_pyhouse_obj.Computer.Name
         l_node.Key = 0
@@ -425,6 +452,7 @@ class API(Util):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Node xml info.
