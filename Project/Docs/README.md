@@ -7,5 +7,6 @@
 * License:   MIT License
 * Summary:   This is the top level documentation for the PyHouse Project.
 
-[venv] install
+[Installing](venv.md)
+
 ### END DBK

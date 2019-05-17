@@ -28,7 +28,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-05-17'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -104,6 +104,8 @@ class Xml(object):
             l_obj.Name = 'Default Name'
             l_obj.Key = 0
             l_obj.Active = True
+            l_obj.Mode = 'Home'
+            l_obj.Priority = 0
             return l_obj
         XmlConfigTools.read_base_UUID_object_xml(l_obj, l_xml)
         Xml._add_uuid(p_pyhouse_obj, l_obj)

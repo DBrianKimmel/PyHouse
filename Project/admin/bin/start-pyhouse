@@ -15,8 +15,9 @@ WORK=${VENV}PyHouse/
 echo "Starting the PyHouse system"
 source ${VENV}bin/activate
 cd ~
-> nohup.out
-nohup python3 ${WORK}/Project/src/PyHouse.py  1>/dev/null 2>&1 </dev/null &
-cd
+#> nohup.out
+#nohup python3 ${WORK}/Project/src/PyHouse.py  1>/dev/null 2>&1 </dev/null &
+
+${VENV}bin/python3 ${VENV}PyHouse/Project/src/PyHouse.py
 
 ### END DBK
