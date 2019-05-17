@@ -132,5 +132,14 @@ Now playing song message format. Available format characters are:
 * %s Real station name if quickmix
 * %u Song detail url
 
+## Audio on Raspberry Pi
+
+### Alsa
+
+If you see this:
+`ALSA lib pcm.c:2495:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.front`
+
+Edit the file: `/usr/share/alsa/alsa.conf`
+change the line “pcm.front cards.pcm.front” to “pcm.front cards.pcm.default”
 
 ### END DBK

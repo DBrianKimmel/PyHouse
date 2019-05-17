@@ -1,0 +1,51 @@
+# Name:      PyHouse/Project/admin/config/Yaml/pioneer_vsx-833-k.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   May 16, 2019
+# Updted:    May 16, 2019
+# License:   MIT License
+# Summary:   This is for a Pioneer VSX-833-K Receiver A/V unit.
+---
+
+
+# Now we have standardized commands.
+# The power on command gets translated to 'PWR'
+# There are entries for each Zone.
+ControlCommands:
+   Power:
+      - P
+   Volume:
+      - V
+    InputSelect:
+      - SLI
+ 
+# These are the arguments for the commands
+Arguments:
+   Power:
+      'Off': 'F'
+      'On': 'N'
+   Volume:
+      'Up': 'U'
+      'Down': 'D'
+ 
+
+InputSelect:
+#  Button       Code       Comment
+   'Network':   '33FN'     # 
+   'USB':       '33FN'     # 
+   'Adapter':   '33FN'     # 
+   'BD':        '33FN'     #
+   'DVD':       '33FN'     #
+   'DVR/BDR'    '33FN'     #
+   'SAT/CBL':   '33FN'     # 
+   'Game':      '33FN'     # 
+   'VIDEO':     '33FN'     # 
+   'CD':        '33FN'     #
+   'TV':        '33FN'     #
+   'TUNER':     '33FN'     #
+
+Zones:
+   0: Only
+
+### END DBK
