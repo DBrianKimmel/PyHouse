@@ -36,6 +36,30 @@ sudo mkdir /etc/pyhouse /var/log/pyhouse
 sudo chown pyhouse.pyhouse /etc/pyhouse /var/log/pyhouse
 ```
 
+## Autologin
+
+In order to run PyHouse automatically after a reboot, the user pyhouse must be automatically logged in.
+
+```bash
+cd /etc/systemd/system/
+
+As root edit the file:  autologin@.service
+Fix the exec start line so it looks like this:
+ExecStart=-/sbin/agetty --autologin pyhouse --noclear %I $TERM
+
+systemctl enable autologin@.service
+cd
+edit .bashrc and be sure the file ends like this:
+### AutoLogin PyHouse ###
+#
+# Start pyhouse if we autologin this user
+#
+if [ $(tty) == /dev/tty1 ]; then
+    bin/start-pyhouse
+fi
+### END DBK
+
+```
 
 
 

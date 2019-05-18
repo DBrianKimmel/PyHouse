@@ -146,6 +146,26 @@
 				<Size>[0.0,0.0,0.0]</Size>
 				<RoomType>Room</RoomType>
 			</Room>
+			<Room Active="True" Key="5" Name="Laundry">
+				<Comment>None</Comment>
+				<UUID></UUID>
+				<Comment>Laundry Room</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>1</Floor>
+				<LastUpdate>2019-05-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
+			<Room Active="True" Key="6" Name="Master Bed">
+				<Comment>None</Comment>
+				<UUID></UUID>
+				<Comment>Master Bed Room</Comment>
+				<Corner>[0.0,0.0,0.0]</Corner>
+				<Floor>1</Floor>
+				<LastUpdate>2019-05-15 00:00:00</LastUpdate>
+				<Size>[0.0,0.0,0.0]</Size>
+				<RoomType>Room</RoomType>
+			</Room>
 		</RoomSection>
 		<EntertainmentSection />
 		<HvacSection>
@@ -410,6 +430,111 @@
 					<GroupList>None</GroupList>
 					<GroupNumber>0</GroupNumber>
 					<InsteonAddress>40.07.37</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Light>
+				<Light Active="True" Key="8" Name="Laundry">
+					<UUID></UUID>
+					<Comment>Laundry Room</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Laundry</RoomName>
+					<RoomUUID></RoomUUID>
+					<Brightness>44</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<DevCat>02.38</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>4C.51.B4</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Light>
+				<Light Active="True" Key="9" Name="Marcia Bed">
+					<UUID></UUID>
+					<Comment>Marcia Bed Light</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Master Bed</RoomName>
+					<RoomUUID></RoomUUID>
+					<Brightness>44</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<DevCat>02.38</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>45.AD.1E</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Light>
+				<Light Active="True" Key="10" Name="Brian Bed">
+					<UUID></UUID>
+					<Comment>Marcia Bed Light</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Master Bed</RoomName>
+					<RoomUUID></RoomUUID>
+					<Brightness>44</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<DevCat>02.38</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>45.AD.55</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Light>
+				<Light Active="True" Key="11" Name="Bedroom TV Lights">
+					<UUID></UUID>
+					<Comment>Bedroom TV Light</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Master Bed</RoomName>
+					<RoomUUID></RoomUUID>
+					<Brightness>44</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<DevCat>02.38</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>01.0E.43</InsteonAddress>
+					<ProductKey>98.76.54</ProductKey>
+				</Light>
+				<Light Active="True" Key="12" Name="Kitchen Island">
+					<UUID></UUID>
+					<Comment>Kitchen Island Light</Comment>
+					<DeviceFamily>Insteon</DeviceFamily>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<RoomCoords>[0.0,0.0,0.0]</RoomCoords>
+					<RoomName>Kitchen</RoomName>
+					<RoomUUID></RoomUUID>
+					<Brightness>44</Brightness>
+					<IsDimmable>True</IsDimmable>
+					<DeviceType>1</DeviceType>
+					<DeviceSubType>3</DeviceSubType>
+					<DevCat>02.38</DevCat>
+					<EngineVersion>2</EngineVersion>
+					<FirmwareVersion>0</FirmwareVersion>
+					<GroupList>None</GroupList>
+					<GroupNumber>0</GroupNumber>
+					<InsteonAddress>4C.51.AD</InsteonAddress>
 					<ProductKey>98.76.54</ProductKey>
 				</Light>
 			</LightSection>
