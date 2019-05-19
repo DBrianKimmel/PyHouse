@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-05-14'
+__updated__ = '2019-05-18'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -514,6 +514,7 @@ class HouseInformation(BaseUUIDObject):
         self.Rules = {}  # RulesData()
         self.Schedules = {}  # ScheduleBaseData()
         self.Security = {}  # SecurityData()
+        self._Commands = {}  # Module dependent
 
 
 class LoginData(BaseUUIDObject):

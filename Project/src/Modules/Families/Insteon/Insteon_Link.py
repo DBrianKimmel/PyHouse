@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-05-18'
 
 #  Import system type stuff
 
@@ -28,7 +28,7 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Link   ')
 
 
-class LinkData(object):
+class LinkData():
     """
     """
 
@@ -41,7 +41,7 @@ class LinkData(object):
         self.IsController = False
 
 
-class Send(object):
+class Send():
     """
     """
 
@@ -320,7 +320,7 @@ class InsteonAllLinks(object):
         l_ret = Send.queue_0x6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
         return l_ret
 
-    def reset_plm(self, p_controller_obj):
+    def Xreset_plm(self, p_controller_obj):
         """This will clear out the All-Links database.
         """
         l_debug_msg = "Resetting PLM - Name:{}".format(p_controller_obj)

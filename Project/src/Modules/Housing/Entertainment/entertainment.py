@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-05-18'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,8 +72,12 @@ class MqttActions:
         l_module = p_topic[0].lower()
         l_logmsg = '\tEntertainment: '
         LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
-        if not self.m_pyhouse_obj.House.Entertainment.Plugins[l_module].Active:
-            l_logmsg += ' Module: {} is not active - skipping'.format(l_module)
+        try:
+            if not self.m_pyhouse_obj.House.Entertainment.Plugins[l_module].Active:
+                l_logmsg += ' Module: {} is not active - skipping'.format(l_module)
+                return l_logmsg
+        except KeyError:
+            l_logmsg += ' {} not defined here.'.format(l_module)
             return l_logmsg
         try:
             l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]._API

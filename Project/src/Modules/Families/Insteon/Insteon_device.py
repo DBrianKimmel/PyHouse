@@ -20,9 +20,8 @@ serial_port
 
 """
 
-__updated__ = '2019-05-08'
-
-__version_info__ = (19, 1, 0)
+__updated__ = '2019-05-19'
+__version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -31,6 +30,16 @@ __version__ = '.'.join(map(str, __version_info__))
 #  from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
+
+
+class InsteonCommandData():
+    """ This holds the outstanding Insteon commands.
+    """
+
+    def __init__(self):
+        """
+        """
+        self.Device = None  # InsteonID as a key
 
 
 class Utility(object):
@@ -111,6 +120,7 @@ class API:
     m_plm = None
 
     def __init__(self, p_pyhouse_obj):
+        p_pyhouse_obj.House._Commands['Insteon'] = {}
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_plm = None
         LOG.info('Created an instance of Insteon_device.')
@@ -127,7 +137,7 @@ class API:
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
-    def AbstractControlLight(self, p_pyhouse_obj, p_device_obj, p_controller_obj, p_control):
+    def AbstractControlLight(self, _p_pyhouse_obj, p_device_obj, p_controller_obj, p_control):
         """
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
@@ -137,7 +147,7 @@ class API:
         @param p_control: the idealized light control params
         """
         LOG.debug('Controlling Insteon device "{}" using "{}"'.format(p_device_obj.Name, p_controller_obj.Name))
-        l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
+        # l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
         self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

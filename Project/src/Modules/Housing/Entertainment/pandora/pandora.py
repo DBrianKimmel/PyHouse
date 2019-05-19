@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Housing.Entertainment.pandora.test.test_pandora -*-
-
 @name: PyHouse/Project/src/Modules/Housing/Entertainment/pandora/pandora.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
@@ -21,8 +19,8 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-15'
-__version_info__ = (19, 4, 1)
+__updated__ = '2019-05-19'
+__version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff

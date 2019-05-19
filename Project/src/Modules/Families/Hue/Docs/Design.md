@@ -20,6 +20,24 @@ This is the PyHouse controlled device we interact with.
 The Hub responds to http requests by sending json responses.
 Each command to the hub is a seperate transaction, the connection closes after the response and the next command reestablishes communication.
 
+## API
+
+Each Hue Hub has an API Key.
+To get it do the following.
+
+Browse to 'https://<HueHubIpAddress>/debug/clip.html'
+
+In the 'url' field enter '/api'
+
+In the 'message body' field enter '{ "devicetype": "my_hue_app#iphone peter" }'
+
+Then press the big round button on the hue hub.
+
+Then click on the 'post' button.
+
+Note the API key will change every time you do this, so beware.
+
+
 ## Config
 
 ```json
