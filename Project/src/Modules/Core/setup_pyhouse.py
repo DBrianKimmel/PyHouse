@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_setup_pyhouse -*-
-
-@name:      PyHouse/src/Modules/Core/setup_pyhouse.py
+@name:      PyHouse/Project/src/Modules/Core/setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -23,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,12 +31,13 @@ import os
 #  Import PyMh files and modules.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.computer import API as computerAPI
+LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
+
 from Modules.Core.Utilities.config_file import API as configAPI
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
-LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES

@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.Project.src.Modules.Housing.Lighting.test.test_lighting -*-
-
 @name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -17,7 +15,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -30,7 +28,7 @@ from Modules.Core.Utilities.xml_tools import XmlConfigTools
 # from Modules.Families.family_utils import FamUtil
 # from Modules.Housing.Lighting.lighting_utility import Utility
 from Modules.Housing.Lighting.lighting_buttons import XML as buttonsXML
-from Modules.Housing.Lighting.lighting_controllers import XML as controllersXML
+from Modules.Housing.Lighting.lighting_controllers import XML as controllersXML, MqttActions as controllerMqtt
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightMqtt, XML as lightXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
@@ -45,14 +43,14 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """
-        --> pyhouse/housename/lighting/xxx
+        --> pyhouse/<housename>/lighting/<category>/xxx
         """
         l_logmsg = '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
         LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'button':
             pass
         elif p_topic[0] == 'controller':
-            pass
+            l_logmsg += controllerMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'light':
             l_logmsg += lightMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         else:

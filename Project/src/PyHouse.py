@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 """
--*- test-case-name: PyHouse.src.test.test_PyHouse -*-
-
 @name:      PyHouse/Project/src/Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -82,7 +80,7 @@ Idea Links:
 
 """
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -93,9 +91,9 @@ import os
 import platform
 import signal
 import sys
-#  from twisted.application.service import Application
 from twisted.internet import reactor
 
+#  Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core import setup_pyhouse
 from Modules.Core.data_objects import \

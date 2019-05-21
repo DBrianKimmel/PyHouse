@@ -2,7 +2,7 @@
 @name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 26, 2017
 @summary:   Test
@@ -11,7 +11,7 @@ Passed all 9 tests - DBK - 2018-02-11
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-05-20'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,6 +29,68 @@ from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.debug_tools import FormatBytes
 
 DICT = {'one': 1, "Two": 'tew'}
+LIGHTING_MSG = \
+{
+    'Active': True,
+    'BaudRate': 19200,
+    'ByteSize': 8,
+    'Comment': 'Mobile Version',
+    'DateTime': '2019-01-27 17:23:57.988185',
+    'DevCat': 288,
+    'DeviceFamily': 'Insteon',
+    'DeviceSubType': 2,
+    'DeviceType': 1,
+    'DsrDtr': False,
+    'EngineVersion': 0,
+    'FirmwareVersion': 0,
+    'GroupList': None,
+    'GroupNumber': 0,
+    'InsteonAddress': 3757095,
+    'InterfaceType': 'Serial',
+    'Key': 3,
+    'LastUpdate': '2019-01-11 16:38:20.788302',
+    'LasuUsed': None,
+    'Links': {},
+    'Name': 'PLM_3',
+    'Node': None,
+    'Parity': 'N',
+    'Port': '/dev/ttyUSB0',
+    'ProductKey': 0,
+    'Ret': None,
+    'RoomCoords': {'X_Easting': 0.0, 'Y_Northing': 0.0, 'Z_Height': 0.0},
+    'RoomName': 'Mobile',
+    'RoomUUID': 'c894ef92-b1e5-11e6-8a14-74da3859e09a',
+    'RtsCts': False,
+    'Sender': 'Laptop-3',
+    'StopBits': 1.0,
+    'Timeout': 1.0,
+    'UUID': 'c1490758-092e-3333-bffa-b827eb189eb4',
+    'XonXoff': False
+}
+DATE_TIME = "2017-03-11 10:45:02.464763"
+SENDER = "Laptop-3"
+
+MSG = "{ \
+        'Active': True, \
+        'Comment': '', \
+        'ConnectionAddr_IPv4': [], \
+        'ConnectionAddr_IPv6': [\
+            ['::1'], \
+            ['fe80::72b7:3dcc:f8c8:41ba%eth0'], \
+            ['fe80::83cd:6fcd:6c62:638d%wlan0']\
+        ], \
+        'ControllerCount': 1, \
+        'ControllerTypes': ['Insteon'], \
+        'DateTime': '2019-01-27 14:07:50.633413', \
+        'Key': 2, \
+        'LastUpdate': '2019-01-27 12:18:28.041302', \
+        'Name': 'pi-01-pp', \
+        'NodeId': None, \
+        'NodeInterfaces': None, \
+        'NodeRole': 0, \
+        'Sender': 'pi-01-pp', \
+        'UUID': 'd8ec093e-e4a8-11e6-b6ac-74da3859e09a' \
+    }"
 
 
 class SetupMixin(object):

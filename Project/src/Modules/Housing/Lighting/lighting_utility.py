@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse/Project/src/Modules/Housing/Lighting/lighting_utility.py -*-
-
 @name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting_utility.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -11,12 +9,12 @@
 
 """
 
-__updated__ = '2019-05-08'
+__updated__ = '2019-05-21'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Families.family_utils import FamUtil
+# from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.LightUtility   ')

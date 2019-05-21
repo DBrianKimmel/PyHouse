@@ -132,15 +132,15 @@ class MqttActions:
         ==>
             Topic: pyhouse/<house name>/entertainment/pandora/control
             Msg:{
-                    'Time': '2019-05-07T22:19:19.536Z',
-                    'Power': 'On',
-                    'Skip': 'No',
+                    'Time':   '2019-05-07T22:19:19.536Z',
+                    'Sender': 'pi-04-pp',
+                    'Zone':   '1',
+                    'Power':  'On',
+                    'Volume':  50,
+                    'Skip':   'No',
                     'Status': 'On',
-                    'Volume': 50,
-                    'Like': '',
-                    'Zone': 1,
-                    'Sender': 'pi-04-pp'
-                }
+                    'Like':    ''
+                 }
 
 
         We may need to issue a message to control connected audio devices.

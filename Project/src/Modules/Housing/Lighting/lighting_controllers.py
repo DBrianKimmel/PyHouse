@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting_controllers -*-
-
-@name:      PyHouse/src/Modules/Lighting/lighting_controllers.py
+@name:      PyHouse/Project/src/Modules/Lighting/lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -19,22 +17,52 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-05-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData, UuidData
-from Modules.Families.family_utils import FamUtil
-from Modules.Computer import logging_pyh as Logger
+# from Modules.Families.family_utils import FamUtil
 from Modules.Drivers.interface import Xml as interfaceXML
-from Modules.Core.Utilities.device_tools import XML as deviceXML
+# from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Housing.Lighting.lighting_xml import LightingXML
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightController')
+
+
+class MqttActions:
+    """ Mqtt section
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_topic, p_message):
+        """ Decode Mqtt message
+        ==> pyhouse/<house name>/lighting/controller/<action>
+
+        @param p_topic: is the topic after 'controller'
+        @return: a message to be logged as a Mqtt message
+        """
+        l_logmsg = '\tLighting/Controllers: {}\n\t'.format(p_topic)
+        LOG.debug('MqttLightingControllersDispatch Topic:{}'.format(p_topic))
+        if p_topic[0] == 'control':
+            l_logmsg += 'Controller Control: {}'.format(PrettyFormatAny.form(p_message, 'Controller Control'))
+            LOG.debug(l_logmsg)
+        elif p_topic[0] == 'status':
+            # The status is contained in LightData() above.
+            l_logmsg += 'Controller Status: {}'.format(PrettyFormatAny.form(p_message, 'Controller Status'))
+            LOG.debug(l_logmsg)
+        else:
+            l_logmsg += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Controller Status'))
+            LOG.debug(l_logmsg)
+        return l_logmsg
 
 
 class XML:

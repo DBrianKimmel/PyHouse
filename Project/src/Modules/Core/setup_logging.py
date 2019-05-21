@@ -4,7 +4,7 @@
 @name:      PyHouse/src/Modules/Core/setup_logging.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on Aug 22, 2014
 @license:   MIT License
 @summary:   This module sets up logging.
@@ -17,7 +17,7 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2019-03-06'
+__updated__ = '2019-05-20'
 
 #  Import system type stuff
 import datetime

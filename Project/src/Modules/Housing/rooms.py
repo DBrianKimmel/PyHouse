@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Housing.test.test_rooms -*-
-
-@name:      PyHouse/src/Modules/Housing/rooms.py
+@name:      PyHouse/Project/src/Modules/Housing/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-06'
+__updated__ = '2019-05-21'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -171,7 +169,7 @@ class Maint(object):
         return
 
 
-class Mqtt(object):
+class Mqtt():
     """
     """
 

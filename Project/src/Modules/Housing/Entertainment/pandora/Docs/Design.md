@@ -62,7 +62,6 @@ The pandora module will recieve a control message and perform the action:
 The computer where 'PianoBar' is installed should be the one where the pandora service is configured.
 These messages have topics:
 		pyhouse/house name/entertainment/pandora/control
-The message payload will include "Control: xxx"
 where xxx is one of:
 * PowerOn
 * PowerOff

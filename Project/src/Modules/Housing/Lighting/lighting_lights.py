@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Housing.Lighting.test.test_lighting_lights -*-
-
-@name:      PyHouse/src/Modules/Housing/Lighting/lighting_lights.py
+@name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -19,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,8 +27,10 @@ import xml.etree.ElementTree as ET
 #  Import PyHouse files
 from Modules.Core.data_objects import UuidData, CoreLightingData
 from Modules.Families.family_utils import FamUtil
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Housing.Lighting.lighting_utility import Utility as lightingUtility
 from Modules.Housing.Lighting.lighting_xml import LightingXML
 from Modules.Core.state import State
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -67,20 +67,35 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _decode_control(self, p_message):
+        """
+        """
+        l_control = LightData()
+        l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
+        l_control.BrightnessPct = l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
+        LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
+        #
+        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
+        LOG.debug(PrettyFormatAny.form(l_light_obj, 'Light', 190))
+        #
+        l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'Insteon')
+        LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
+        #
+        if len(l_controller_obj) > 0:
+            l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
+            l_api.AbstractControlLight(self.m_pyhouse_obj, l_light_obj, l_controller_obj[0], l_control)
+
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
-        ==> pyhouse/<house name>/lighting/light/<action>
+        ==> pyhouse/<house name>/house/lighting/light/<action>
 
-        <device-or-service> = one of the VALID_ENTERTAINMENT_MFGRS
-
-        These messages probably come from some external source such as node-red or alexa.
-
-        @param p_topic: is the topic after 'entertainment'
+        @param p_topic: is the topic after 'lighting'
         @return: a message to be logged as a Mqtt message
         """
         l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
         LOG.debug('MqttLightingLightsDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'control':
+            self._decode_control(p_message)
             l_logmsg += 'Light Control: {}'.format(PrettyFormatAny.form(p_message, 'Light Control'))
             LOG.debug(l_logmsg)
         elif p_topic[0] == 'status':
@@ -177,7 +192,7 @@ class XML:
         return l_xml
 
 
-class API:
+class API(MqttActions):
     """
     """
 

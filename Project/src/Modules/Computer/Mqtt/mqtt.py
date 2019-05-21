@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Mqtt.test.test_mqtt -*-
-
-@name:      PyHouse/src/Modules/Computer/Mqtt/mqtt.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,15 +20,15 @@ import datetime
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Core.Utilities import json_tools, xml_tools
-try:
-    from Modules.Computer.Mqtt.mqtt_actions import Actions as MqttActions
-except Exception:
-    pass
+from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
+
+from Modules.Computer import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.Mqtt           ')
+
+from Modules.Housing.house import MqttActions as houseMqtt
 from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson
 from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from Modules.Computer import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
 
 def _make_topic(p_pyhouse_obj, p_topic):
@@ -57,14 +55,15 @@ def _make_message(p_pyhouse_obj, p_message=None):
     return l_json
 
 
-class API(object):
-    """This interfaces to all of PyHouse.
+class API:
+    """ This interfaces to all of PyHouse.
     """
 
     m_actions = None
 
-    def __init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj, p_parent):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_parent = p_parent
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
         p_pyhouse_obj.Computer.Mqtt.Brokers = {}
@@ -89,7 +88,7 @@ class API(object):
         """
         """
         LOG.info("Starting - Version:{}".format(__version__))
-        self.m_actions = MqttActions(self.m_pyhouse_obj)
+        # self.m_actions = actMqttActions(self.m_pyhouse_obj)
 
     def SaveXml(self, p_xml):
         l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)
@@ -124,26 +123,45 @@ class API(object):
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
 
+    def _decodeLWT(self, _p_topic_list, p_message):
+        l_logmsg = '\tLast Will:\n'
+        l_logmsg += p_message
+        return l_logmsg
+
     def MqttDispatch(self, p_topic, p_message):
-        """Dispatch a received MQTT message according to the topic.
+        """ Dispatch a received MQTT message according to the topic.
 
-        --> pyhouse/housename/topic02/topic03/topic04/...
+        --> pyhouse/<HouseName>/<Division>/topic03/topic04/...
 
-        @param p_topic: is a string of the topic 'pyhouse/<housename>/entertainment/pandora/control/...
+        @param p_topic: is a string of the topic 'pyhouse/<housename>/house/entertainment/pandora/control
         @param p_message: is the JSON encoded string with all the data of the message
+        @return: a message to send to the log detailing the Mqtt message received.
         """
-        l_topic = p_topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
-        l_message = p_message
-        try:
-            l_logmsg = self.m_actions.mqtt_dispatch(self.m_pyhouse_obj, l_topic, l_message)
-        except AttributeError as e_err:
-            l_logmsg = 'm_actions not initialzed - {}'.format(e_err)
-            LOG.error(l_logmsg)
-            return
+        l_topic_list = p_topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
+        # LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
+        l_logmsg = 'Dispatch\n\tTopic: {}'.format(l_topic_list)
+        # Lwt can be from any device
+        if l_topic_list[0] == 'lwt':
+            l_logmsg += self._decodeLWT(l_topic_list, p_message)
+            LOG.info(l_logmsg)
+        else:
+            # Every other topic will have the following field(s).
+            l_sender = get_required_mqtt_field(p_message, 'Sender')
+            l_logmsg += '\n\tSender: {}\n'.format(l_sender)
+        # Branch on the <division> portion of the topic
+        if l_topic_list[0] == 'computer':
+            l_logmsg += self.m_parent.DecodeMqtt(l_topic_list[1:], p_message)
+        elif l_topic_list[0] == 'house':
+            l_logmsg += houseMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
+        else:
+            l_logmsg += '   OTHER: Unknown topic\n'
+            l_logmsg += '\tTopic: {};\n'.format(l_topic_list[0])
+            l_logmsg += '\tMessage: {};\n'.format(p_message)
+            LOG.warn(l_logmsg)
         # LOG.info(l_logmsg)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
-        """Login to PyHouse via MQTT
+        """ Login to PyHouse via MQTT
         """
         self.m_client = p_client
         l_name = p_pyhouse_obj.Computer.Name

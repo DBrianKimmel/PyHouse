@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Housing.test.test_house -*-
-
-@name:      PyHouse/src/Modules/Housing/house.py
+@name:      PyHouse/Project/src/Modules/Housing/house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -28,7 +26,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-05-17'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -42,7 +40,7 @@ from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML, Mqtt as roomsMqtt
 from Modules.Housing.Hvac.hvac import API as hvacAPI
 from Modules.Housing.Irrigation.irrigation import API as irrigationAPI
-from Modules.Housing.Lighting.lighting import API as lightingAPI
+from Modules.Housing.Lighting.lighting import API as lightingAPI, MqttActions as lightingMqtt
 from Modules.Housing.Pool.pool import API as poolAPI
 from Modules.Housing.Scheduling.schedule import API as scheduleAPI
 from Modules.Housing.Security.security import API as securityAPI
@@ -59,7 +57,7 @@ UUID_FILE_NAME = 'House.uuid'
 MODULES = ['Entertainment', 'Hvac', 'Irrigation', 'Lighting', 'Pool', 'Rules', 'Scheduling', 'Security']
 
 
-class MqttActions(object):
+class MqttActions():
     """
     """
 
@@ -68,7 +66,7 @@ class MqttActions(object):
 
     def decode(self, p_topic, p_message):
         """
-        --> pyhouse/housename/house/topic03/topic04/...
+        --> pyhouse/<housename>/house/topic03...
         """
         l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
         LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
@@ -76,8 +74,10 @@ class MqttActions(object):
             l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
             l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+        elif p_topic[0] == 'lighting':
+            l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'schedule':
-            l_logmsg = scheduleAPI.DecodeMqtt(p_topic, p_message)
+            l_logmsg = scheduleAPI.DecodeMqtt(p_topic[1:], p_message)
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
         return l_logmsg
