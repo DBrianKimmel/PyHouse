@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-12'
+__updated__ = '2019-05-21'
 
 # Import system type stuff
 
@@ -61,6 +61,7 @@ class EntertainmentPluginData:
         #
         self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self._Module = None
+        self._OpenSessions = 0
 
 
 class EntertainmentDeviceData(BaseObject):

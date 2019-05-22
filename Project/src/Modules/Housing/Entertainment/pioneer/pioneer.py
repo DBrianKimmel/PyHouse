@@ -23,7 +23,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-05-16'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -329,21 +329,21 @@ class API(MqttActions, PioneerClient):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("API Initialized - Version:{}".format(__version__))
 
-    def _find_device(self, _p_family, p_device):
+    def _find_device(self, _p_family, p_model):
         l_pioneer = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device in l_pioneer.values():
-            if l_device.Name == p_device:
+            if l_device.Model.lower() == p_model.lower():
                 LOG.debug("found device")
                 return l_device
-        LOG.error('No such device')
+        LOG.error('No such device as "{}"'.format(p_model))
         return None
 
-    def _pioneer_power(self, p_family, p_device, p_power):
+    def _pioneer_power(self, p_family, p_model, p_power):
         """
         @param p_power: 'On' or 'Off'
         """
         # Get the device_obj to control
-        l_device_obj = self._find_device(p_family, p_device)
+        l_device_obj = self._find_device(p_family, p_model)
         if p_power == 'On':
             self.send_command(l_device_obj, CONTROL_COMMANDS['PowerOn'])  # Query Power
         else:

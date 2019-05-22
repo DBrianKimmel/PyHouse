@@ -73,13 +73,16 @@ class MqttActions:
         l_control = LightData()
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_control.BrightnessPct = l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
-        LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
+        # LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
         #
         l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
-        LOG.debug(PrettyFormatAny.form(l_light_obj, 'Light', 190))
+        if l_light_obj == None:
+            LOG.warn(' Light "{}" was not found.'.format(l_light_name))
+            return
+        # LOG.debug(PrettyFormatAny.form(l_light_obj, 'Light', 190))
         #
         l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'Insteon')
-        LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
+        # LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
         #
         if len(l_controller_obj) > 0:
             l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)

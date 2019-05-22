@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-18'
+__updated__ = '2019-05-21'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -169,7 +169,7 @@ class API(Ent):
     def Stop(self):
         LOG.info("Stopped.")
 
-    def DecodeMqtt(self, p_topic, p_message):
+    def XXXDecodeMqtt(self, p_topic, p_message):
         """ Decode messages sent to the house module.
         """
         l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)

@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -513,7 +513,7 @@ class API():
         """
         self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
 
-    def DecodeMqtt(self, p_topic, p_message):
+    def XXXDecodeMqtt(self, p_topic, p_message):
         """ Decode messages sent to the house module.
         """
         l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)

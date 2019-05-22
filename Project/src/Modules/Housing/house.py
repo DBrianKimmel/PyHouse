@@ -42,7 +42,7 @@ from Modules.Housing.Hvac.hvac import API as hvacAPI
 from Modules.Housing.Irrigation.irrigation import API as irrigationAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI, MqttActions as lightingMqtt
 from Modules.Housing.Pool.pool import API as poolAPI
-from Modules.Housing.Scheduling.schedule import API as scheduleAPI
+from Modules.Housing.Scheduling.schedule import API as scheduleAPI, MqttActions as scheduleMqtt
 from Modules.Housing.Security.security import API as securityAPI
 from Modules.Housing.Sync.sync import API as syncAPI
 from Modules.Core.Utilities import uuid_tools
@@ -77,7 +77,7 @@ class MqttActions():
         elif p_topic[0] == 'lighting':
             l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'schedule':
-            l_logmsg = scheduleAPI.DecodeMqtt(p_topic[1:], p_message)
+            l_logmsg = scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
         return l_logmsg
@@ -258,7 +258,7 @@ class API(Utility):
         self.stop_house_parts()
         LOG.info("Stopped.")
 
-    def DecodeMqtt(self, p_topic, p_message):
+    def XXXDecodeMqtt(self, p_topic, p_message):
         """ Decode messages sent to the house module.
         """
         l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
