@@ -9,22 +9,21 @@
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2019-05-23'
 
 
 class API(object):
 
-    def Start(self, p_pyhouse_obj):
+    def Start(self, _p_pyhouse_obj):
         assert('Must be defined')
 
     def Stop(self):
         assert('Must be defined')
 
-    def ReadXml(self, p_pyhouse_obj):
+    def ReadXml(self, _p_pyhouse_obj):
         assert('Must be defined')
 
-    def WriteXml(self, p_pyhouse_obj):
+    def WriteXml(self, _p_pyhouse_obj):
         assert('Must be defined')
-
 
 # ## END DBK

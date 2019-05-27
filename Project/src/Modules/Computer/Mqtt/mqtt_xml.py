@@ -2,14 +2,14 @@
 @name:      PyHouse/Project/src/Modules/Computer/Mqtt/mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2015
 @Summary:
 
 """
 
-__updated__ = '2018-10-02'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -55,12 +55,13 @@ class Xml(object):
     @staticmethod
     def _read_one_broker(p_xml):
         """
-        @param p_xml: XML information for one Broker.
-        @return: an IrrigationZone object filled in with data from the XML passed in
+        @param p_xml: XML information for one BrokerBroker
+        @return: a b object filled in with data from the XML passed in
         """
         l_obj = MqttBrokerData()
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
+            l_obj.BrokerHost = PutGetXML.get_text_from_xml(p_xml, 'BrokerHost')
             l_obj.BrokerAddress = PutGetXML.get_text_from_xml(p_xml, 'BrokerAddress')
             l_obj.BrokerPort = PutGetXML.get_int_from_xml(p_xml, 'BrokerPort')
             l_obj.UserName = PutGetXML.get_text_from_xml(p_xml, 'BrokerUser')
@@ -106,6 +107,7 @@ class Xml(object):
         """
         l_entry = XmlConfigTools.write_base_UUID_object_xml('Broker', p_mqtt)
         PutGetXML().put_int_element(l_entry, 'BrokerAddress', p_mqtt.BrokerAddress)
+        PutGetXML().put_int_element(l_entry, 'BrokerHost', p_mqtt.BrokerHost)
         PutGetXML().put_int_element(l_entry, 'BrokerPort', p_mqtt.BrokerPort)
         PutGetXML().put_text_element(l_entry, 'BrokerUser', p_mqtt.UserName)
         PutGetXML().put_text_element(l_entry, 'BrokerPassword', p_mqtt.Password)

@@ -1,6 +1,4 @@
 """
--*- test-case-name: src/Modules/Housing/Entertainment/pioneer/test/test_pioneer.py -*-
-
 @name:      PyHouse.src.Modules.Housing.Entertainment.pioneer.pioneer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -13,10 +11,10 @@ Control of pioneer home entertainment devices'.
 First is an A/V receiver VSX-822-K.
 
 Listen to Mqtt message to control device
-==> pyhouse/<house name>/entertain/<device>/<function>/<value>
+==> pyhouse/<house name>/house/entertain/<device>/<function>
 
     <device> = receiver, tv, etc...
-    <function> = power, zone, volume, input
+    <function> = control, status
     <value> = on, off, 0-100, zone#, input#
 
 See: pioneer/__init__.py for documentation.
@@ -28,6 +26,8 @@ __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+import os
+import yaml
 from twisted.internet.protocol import Protocol, ClientFactory
 from twisted.internet.error import ConnectionDone
 from twisted.conch.telnet import StatefulTelnetProtocol
@@ -160,6 +160,27 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _find_device(self, p_family, p_model):
+        # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        for l_device in l_devices.values():
+            if l_device.Name.lower() == p_model.lower():
+                LOG.info("found model - {} {}".format(p_family, p_model))
+                return l_device
+        LOG.error('No such model as {}'.format(p_model))
+        return None
+
+    def _get_power(self, p_message):
+        """
+        force power to be None, 'On' or 'Off'
+        """
+        l_ret = extract_tools.get_mqtt_field(p_message, 'Power')
+        if l_ret == None:
+            return l_ret
+        if l_ret == 'On':
+            return 'On'
+        return 'Off'
+
     def _decode_control(self, _p_topic, p_message):
         """ Decode the message.
         As a side effect - control pioneer.
@@ -168,9 +189,12 @@ class MqttActions:
         """
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
+        if l_family == None:
+            l_family = 'pioneer'
         l_model = extract_tools.get_mqtt_field(p_message, 'Model')
+        l_device_obj = self._find_device(l_family, l_model)
+        l_power = self._get_power(p_message)
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
-        l_power = extract_tools.get_mqtt_field(p_message, 'Power')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
         l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_model, l_power, l_volume, l_input)
         #
@@ -329,6 +353,19 @@ class API(MqttActions, PioneerClient):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("API Initialized - Version:{}".format(__version__))
 
+    def _read_yaml(self, p_device):
+        """
+        This needs to be more generic and for all devices configs.
+        This is the start.
+        """
+        l_name = SECTION + '_' + p_device.Model + '.yaml'
+        l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
+        with open(l_filename) as l_file:
+            l_yaml = yaml.safe_load(l_file)
+            p_device._Yaml = l_yaml
+        LOG.info('Loaded {} '.format(l_filename))
+        return l_yaml
+
     def _find_device(self, _p_family, p_model):
         l_pioneer = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device in l_pioneer.values():
@@ -350,12 +387,12 @@ class API(MqttActions, PioneerClient):
             pass
         LOG.debug('Change Power to {}'.format(p_power))
 
-    def _pioneer_volume(self, p_family, p_device, p_volume):
+    def _pioneer_volume(self, p_family, p_model, p_volume):
         """
         @param p_volume: 'VolumeUp1', 'VolumeUp5', 'VolumeDown1' or 'VolumeDown5'
         """
         LOG.debug('Volume:{}'.format(p_volume))
-        l_device_obj = self._find_device(p_family, p_device)
+        l_device_obj = self._find_device(p_family, p_model)
         if p_volume == 'VolumeUp1':
             self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
         elif p_volume == 'VolumeUp5':
@@ -376,11 +413,11 @@ class API(MqttActions, PioneerClient):
             pass
         LOG.debug('Change Volume to {}'.format(p_volume))
 
-    def _pioneer_input(self, p_family, p_device, p_input):
+    def _pioneer_input(self, p_family, p_model, p_input):
         """
         @param p_input: Channel Code
         """
-        l_device_obj = self._find_device(p_family, p_device)
+        l_device_obj = self._find_device(p_family, p_model)
         self.send_command(l_device_obj, b'01FN')
         LOG.debug('Change input channel to {}'.format(p_input))
 
@@ -388,7 +425,8 @@ class API(MqttActions, PioneerClient):
         """ Read the XML for all Pioneer devices.
         """
         self.m_started = False
-        l_device_obj = XML.read_pioneer_section_xml(p_pyhouse_obj)
+        l_device_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        self._read_yaml(l_device_obj)
         LOG.info("Loaded Pioneer Device(s) - Version:{}".format(__version__))
         return l_device_obj
 

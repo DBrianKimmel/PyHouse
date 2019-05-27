@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,7 +29,7 @@ LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 class Utility(object):
 
     @staticmethod
-    def _read_base(p_pyhouse_obj, p_xml):
+    def _read_base(_p_pyhouse_obj, p_xml):
         l_obj = ThermostatData()
         deviceXML.read_base_device_object_xml(l_obj, p_xml)
         return l_obj

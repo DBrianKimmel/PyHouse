@@ -6,17 +6,20 @@
 # @copyright: (c) 2015-2019 by D. Brian Kimmel
 # @license:   MIT License
 # @note:      Created on Oct 19, 2015
-# @Summary:   This starts PyHouse
+# @Summary:   This updates PyHouse
 
 HOME=/home/pyhouse/
 VENV=${HOME}venv/
 WORK=${VENV}PyHouse/
 
 cd
-if [ -d venv ] ; then
+#if [ -d venv ] ; then
 	
 
 source ${VENV}bin/activate
-cd venv
+cd ${WORK}
+${HOME}bin/stop-pyhouse
+git pull
+${HOME}bin/start-pyhouse
 
 ### END DBK

@@ -17,7 +17,7 @@ ControlCommands:
       - P
    Volume:
       - V
-    InputSelect:
+   InputSelect:
       - SLI
  
 # These are the arguments for the commands
@@ -37,7 +37,7 @@ InputSelect:
    'Adapter':   '33FN'     # 
    'BD':        '33FN'     #
    'DVD':       '33FN'     #
-   'DVR/BDR'    '33FN'     #
+   'DVR/BDR':   '33FN'     #
    'SAT/CBL':   '33FN'     # 
    'Game':      '33FN'     # 
    'VIDEO':     '33FN'     # 

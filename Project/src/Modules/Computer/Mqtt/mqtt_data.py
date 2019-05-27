@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 
@@ -40,6 +40,7 @@ class MqttBrokerData(BaseObject):
     def __init__(self):
         super(MqttBrokerData, self).__init__()
         self.BrokerAddress = None  # Host name or Address
+        self.BrokerHost = None  # Host name
         self.BrokerPort = None
         self.Class = 'Local'
         self.Keepalive = 60  # seconds
@@ -49,7 +50,7 @@ class MqttBrokerData(BaseObject):
         self.WillQoS = 0
         self.WillRetain = False
         self.WillTopic = ''
-        #
+
         self._ClientAPI = None
         self._ProtocolAPI = None
         self._isTLS = False

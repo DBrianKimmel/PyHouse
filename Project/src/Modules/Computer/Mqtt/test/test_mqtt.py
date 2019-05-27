@@ -11,7 +11,7 @@ Passed all 9 tests - DBK - 2018-02-11
 
 """
 
-__updated__ = '2019-05-20'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -98,7 +98,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = mqttAPI(self.m_pyhouse_obj)
+        self.m_api = mqttAPI(self.m_pyhouse_obj, self)
 
     def jsonPair(self, p_json, p_key):
         """ Extract key, value from json

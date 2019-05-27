@@ -80,8 +80,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-05-21'
-__version_info__ = (19, 3, 1)
+__updated__ = '2019-05-25'
+__version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -209,7 +209,7 @@ def SigKillHandler(signum, _stackframe):
     exit
 
 
-class API:
+class API():
     """
     """
 

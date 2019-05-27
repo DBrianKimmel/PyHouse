@@ -11,7 +11,7 @@ Passed all 18 tests - DBK 2018-02-13
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -71,7 +71,7 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID, \
     TESTING_HOUSE_DIVISION
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 JSON = {
         'Name': TESTING_ROOM_NAME_3,

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -159,7 +159,7 @@ class B01_JSON(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_xxx(self):
-        l_dev = 1
+        _l_dev = 1
 
 
 class C02_XML(SetupMixin, unittest.TestCase):
@@ -177,7 +177,7 @@ class C02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_web.WebPort, 8580)
 
     def test_21_WriteXML(self):
-        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
-        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
+        _l_web = webXml.read_web_xml(self.m_pyhouse_obj)
+        _l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
 
 # ## END DBK

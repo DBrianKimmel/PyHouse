@@ -1,0 +1,1882 @@
+[
+		{
+			"id" : "be02ee45.e6ff8",
+			"type" : "tab",
+			"label" : "Documentation"
+		},
+		{
+			"id" : "2e810cbd.99f734",
+			"type" : "tab",
+			"label" : "Front Drip",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "9b867ed1.945dc",
+			"type" : "tab",
+			"label" : "Lanai Drip",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "18d0f89b.7e071f",
+			"type" : "tab",
+			"label" : "Citrus Drip",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "68a1a940.9603e",
+			"type" : "tab",
+			"label" : "Pool Fill",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "b0583144.7bce",
+			"type" : "tab",
+			"label" : "Connectivity",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "1d1d0676.ccadea",
+			"type" : "tab",
+			"label" : "Weather",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "10a2011d.745bef",
+			"type" : "tab",
+			"label" : "Mqtt",
+			"disabled" : false,
+			"info" : ""
+		},
+		{
+			"id" : "19a3d9c8.eb693e",
+			"type" : "tab",
+			"label" : "Power",
+			"disabled" : true,
+			"info" : ""
+		},
+		{
+			"id" : "436cc0f2.26c4c",
+			"type" : "subflow",
+			"name" : "Email Subflow",
+			"info" : "",
+			"in" : [ {
+				"x" : 60,
+				"y" : 40,
+				"wires" : [ {
+					"id" : "8286ef47.c045"
+				} ]
+			} ],
+			"out" : []
+		},
+		{
+			"id" : "a61e1b4d.73c988",
+			"type" : "mqtt-broker",
+			"z" : "",
+			"name" : "House Mqtt",
+			"broker" : "192.168.1.15",
+			"port" : "1883",
+			"clientid" : "PyH-pi-04-pp",
+			"usetls" : false,
+			"compatmode" : false,
+			"keepalive" : "60",
+			"cleansession" : true,
+			"willTopic" : "",
+			"willQos" : "0",
+			"willPayload" : "",
+			"birthTopic" : "",
+			"birthQos" : "0",
+			"birthPayload" : ""
+		},
+		{
+			"id" : "b3bb3e54.e1efa",
+			"type" : "ui_tab",
+			"z" : "",
+			"name" : "Irrigation Tab",
+			"icon" : "dashboard"
+		},
+		{
+			"id" : "d923cc8b.33d2f",
+			"type" : "ui_group",
+			"z" : "",
+			"name" : "Irrigation Chart Group",
+			"tab" : "b3bb3e54.e1efa",
+			"order" : 1,
+			"disp" : true,
+			"width" : "24"
+		},
+		{
+			"id" : "a71c12d8.d34e",
+			"type" : "ui_base",
+			"theme" : {
+				"name" : "theme-light",
+				"lightTheme" : {
+					"default" : "#0094CE",
+					"baseColor" : "#0094CE",
+					"baseFont" : "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif",
+					"edited" : true,
+					"reset" : false
+				},
+				"darkTheme" : {
+					"default" : "#097479",
+					"baseColor" : "#097479",
+					"baseFont" : "Helvetica Neue",
+					"edited" : false
+				},
+				"customTheme" : {
+					"name" : "Untitled Theme 1",
+					"default" : "#4B7930",
+					"baseColor" : "#4B7930",
+					"baseFont" : "Helvetica Neue"
+				},
+				"themeState" : {
+					"base-color" : {
+						"default" : "#0094CE",
+						"value" : "#0094CE",
+						"edited" : false
+					},
+					"page-titlebar-backgroundColor" : {
+						"value" : "#0094CE",
+						"edited" : false
+					},
+					"page-backgroundColor" : {
+						"value" : "#fafafa",
+						"edited" : false
+					},
+					"page-sidebar-backgroundColor" : {
+						"value" : "#ffffff",
+						"edited" : false
+					},
+					"group-textColor" : {
+						"value" : "#1bbfff",
+						"edited" : false
+					},
+					"group-borderColor" : {
+						"value" : "#ffffff",
+						"edited" : false
+					},
+					"group-backgroundColor" : {
+						"value" : "#ffffff",
+						"edited" : false
+					},
+					"widget-textColor" : {
+						"value" : "#111111",
+						"edited" : false
+					},
+					"widget-backgroundColor" : {
+						"value" : "#0094ce",
+						"edited" : false
+					},
+					"widget-borderColor" : {
+						"value" : "#ffffff",
+						"edited" : false
+					},
+					"base-font" : {
+						"value" : "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif"
+					}
+				}
+			},
+			"site" : {
+				"name" : "Pink Poppy Dash",
+				"hideToolbar" : "false",
+				"allowSwipe" : "false",
+				"dateFormat" : "DD/MM/YYYY",
+				"sizes" : {
+					"sx" : 48,
+					"sy" : 48,
+					"gx" : 6,
+					"gy" : 6,
+					"cx" : 6,
+					"cy" : 6,
+					"px" : 0,
+					"py" : 0
+				}
+			}
+		},
+		{
+			"id" : "4bc82409.c2299c",
+			"type" : "ui_group",
+			"z" : "",
+			"name" : "Irrigation Switch Group",
+			"tab" : "b3bb3e54.e1efa",
+			"order" : 2,
+			"disp" : true,
+			"width" : "4"
+		},
+		{
+			"id" : "82cf73d3.31ee6",
+			"type" : "ui_tab",
+			"z" : "",
+			"name" : "Weather Tab",
+			"icon" : "dashboard",
+			"order" : 2
+		},
+		{
+			"id" : "bbcf377a.0f01e8",
+			"type" : "ui_group",
+			"z" : "",
+			"name" : "Weather Group",
+			"tab" : "82cf73d3.31ee6",
+			"order" : 1,
+			"disp" : true,
+			"width" : "24"
+		},
+		{
+			"id" : "1153019b.b328be",
+			"type" : "ui_group",
+			"z" : "",
+			"name" : "Pink Poppy Current",
+			"tab" : "82cf73d3.31ee6",
+			"order" : 2,
+			"disp" : true,
+			"width" : "8"
+		},
+		{
+			"id" : "1c451c1c.281704",
+			"type" : "ui_group",
+			"z" : "",
+			"name" : "Cannon Trail Current",
+			"tab" : "82cf73d3.31ee6",
+			"order" : 3,
+			"disp" : true,
+			"width" : "8"
+		},
+		{
+			"id" : "a55515f9.e41ee8",
+			"type" : "comment",
+			"z" : "be02ee45.e6ff8",
+			"name" : "Requirements",
+			"info" : "This is for the Pink Poppy front irrigation system.\n\nRequires:\n    Node Red - Duhhh\n    npm install i2c - as user \"pi\"\n    \nAdditional nodes:\n    npm install node-red-dashboard",
+			"x" : 199,
+			"y" : 102,
+			"wires" : []
+		},
+		{
+			"id" : "bc582b0b.ce9588",
+			"type" : "rpi-gpio out",
+			"z" : "2e810cbd.99f734",
+			"name" : "Pin 16",
+			"pin" : "16",
+			"set" : true,
+			"level" : "1",
+			"freq" : "",
+			"out" : "out",
+			"x" : 970,
+			"y" : 80,
+			"wires" : []
+		},
+		{
+			"id" : "ff412752.7ed1b8",
+			"type" : "function",
+			"z" : "2e810cbd.99f734",
+			"name" : "Front Drip Relay",
+			"func" : "// Control the relay that turns on the front drip relay.\n\n// Input A = \"Schedule\"\n// Input B = \"FontDripSwitch\"\n// Input C = A MQTT message to turn on/off drip relay\n\n// Output 1 = GPIO relay control pin.\n// Output 2 = Email\n// Output 3 = To MQTT.\n// Output 4 = Chart\n// Output 5 = Debug\n\nvar RELAY_ON  = 1;\nvar RELAY_OFF = 0;\nvar CHART_ON  = 0.95;\nvar CHART_OFF = 0.08;\nvar NAME = \" Front Drip irrigation \";\nvar M_TOPIC   = '/irrigation/frontdrip/';\n\nvar l_date   = new Date();\nvar l_hour   = l_date.getHours();\nvar l_minute = l_date.getMinutes();\n\nvar l_house  = global.get('ms.house_name');\nvar l_node   = global.get('ms.node_name');\nvar l_ip     = global.get('ms.public_ipv4');\nvar l_switch = global.get('ms.front_drip_switch') || 'Off';\nvar l_relay  = global.get('ms.front_drip_relay') || 'Off';\nvar PREFIX   = 'pyhouse/' + l_house + M_TOPIC;\n\nvar cntrl_msg,\n    email_msg,\n    mqtt_msg,\n    chart_msg,\n    debug_msg;\n\nfunction build_control_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Control Message';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_email_message(p_msg) {\n    var msg = {};\n    msg.topic = l_house + ' ' + NAME;\n    msg.from = l_house;\n    msg.payload = p_msg + '\\nIp: ' + l_ip;\n    return msg;\n}\nfunction build_mqtt_message(p_msg) {\n    var msg = {};\n    msg.topic = PREFIX + 'status';\n    msg.payload = {};\n    msg.payload.Status = p_msg;\n    msg.payload.Sender = l_node;\n    msg.payload.Location = NAME;\n    return msg;\n}\nfunction build_chart_message(p_msg) {\n    var msg = {};\n    msg.topic  = '1 Front Drip';\n    msg.series = \"1 Front Drip\"\n    msg.label  = \"1 Front Drip\"\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_debug_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Debug Message';\n    msg.payload = p_msg;\n    msg.status = \"FrontDripRelay:\" + global.get('ms.front_drip_relay');\n    return msg;\n}\n\n// Turn drip on\nfunction turnRelayOn(pType) {\n    if (l_relay !== 'On') {\n        cntrl_msg = build_control_message(RELAY_ON);\n        email_msg = build_email_message('Turned ' + NAME + ' ON: ' + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message(NAME + ' Start');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_OFF); \n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Turned ' + NAME + ' ON ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else {\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Kept ' + NAME +' ON ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.front_drip_relay', 'On');\n}\n// Turn drip off\nfunction turnRelayOff(pType) {\n    if (l_relay === 'On') {  // Turning drip system off.\n        cntrl_msg = build_control_message(RELAY_OFF);\n        email_msg = build_email_message(NAME + 'OFF: '  + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message(NAME + ' Stop');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_ON);\n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_OFF);\n        debug_msg = build_debug_message('Turned ' + NAME + ' OFF ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else {\n        global.set('ms.front_drip_relay', 'Off');\n        chart_msg = build_chart_message(CHART_OFF);\n        debug_msg = build_debug_message('Kept ' + NAME +' OFF ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.front_drip_relay', 'Off');\n}\n\n// Main \n\nif (msg.topic === \"Schedule\" ) {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Schedule\");\n    } else {\n        turnRelayOff(\"Schedule\");\n    }\n} else if (msg.topic === 'Front_Drip_Switch') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Manual\");\n    } else {\n        turnRelayOff(\"Manual\");\n    }\n} else if (msg.topic === PREFIX + 'control') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Mqtt\");\n    } else {\n        turnRelayOff(\"Mqtt\");\n    }\n} else {\n    debug_msg = build_debug_message('Unknown message:');\n    debug_msg.old_topic = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.prefix = PREFIX + 'control';\n    node.send([null, null, null, null, debug_msg]);\n}\n\n// ### END DBK\n",
+			"outputs" : "5",
+			"noerr" : 0,
+			"x" : 730,
+			"y" : 180,
+			"wires" : [ [ "bc582b0b.ce9588" ], [], [ "8241ae1d.0df0d" ],
+					[ "b2a49b3b.a0d2a" ], [ "523245d0.769dcc" ] ]
+		},
+		{
+			"id" : "523245d0.769dcc",
+			"type" : "debug",
+			"z" : "2e810cbd.99f734",
+			"name" : "Front Drip Debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 1010,
+			"y" : 300,
+			"wires" : []
+		},
+		{
+			"id" : "8286ef47.c045",
+			"type" : "e-mail",
+			"z" : "436cc0f2.26c4c",
+			"server" : "smtp.gmail.com",
+			"port" : "465",
+			"secure" : true,
+			"name" : "PinkPoppyMB@gmail.com",
+			"dname" : "Email",
+			"x" : 270,
+			"y" : 40,
+			"wires" : []
+		},
+		{
+			"id" : "8bdaf928.e73a08",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "2e810cbd.99f734",
+			"name" : "",
+			"x" : 1000,
+			"y" : 140,
+			"wires" : []
+		},
+		{
+			"id" : "8241ae1d.0df0d",
+			"type" : "mqtt out",
+			"z" : "2e810cbd.99f734",
+			"name" : "Mqtt",
+			"topic" : "pyhouse/pink poppy/irrigation/front drip",
+			"qos" : "",
+			"retain" : "",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 970,
+			"y" : 180,
+			"wires" : []
+		},
+		{
+			"id" : "58a1d7.1f3fde28",
+			"type" : "ui_switch",
+			"z" : "2e810cbd.99f734",
+			"name" : "Front Drip Switch",
+			"label" : "Front Drip",
+			"group" : "4bc82409.c2299c",
+			"order" : 0,
+			"width" : 0,
+			"height" : 0,
+			"passthru" : false,
+			"decouple" : "false",
+			"topic" : "Front_Drip_Switch",
+			"style" : "",
+			"onvalue" : "On",
+			"onvalueType" : "str",
+			"onicon" : "",
+			"oncolor" : "",
+			"offvalue" : "Off",
+			"offvalueType" : "str",
+			"officon" : "",
+			"offcolor" : "",
+			"x" : 130,
+			"y" : 240,
+			"wires" : [ [ "c206f086.e9589" ] ]
+		},
+		{
+			"id" : "c206f086.e9589",
+			"type" : "function",
+			"z" : "2e810cbd.99f734",
+			"name" : "Front Drip Sw",
+			"func" : "" +
+					"// " +
+					"var l_switch = global.get('ms.front_drip_switch') || \"Off\";" +
+					"if (msg.payload === 'On') {" +
+					"    l_switch = 'On';" +
+					"} else {" +
+					"    l_switch = 'Off';" +
+					"}" +
+					"global.set('ms.front_drip_switch', l_switch);" +
+					"" +
+					"msg.topic = 'Front_Drip_Switch';" +
+					"msg.payload = l_switch;" +
+					"" +
+					"return msg;" +
+					"" +
+					"// ### END DBK" +
+					"",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 400,
+			"y" : 240,
+			"wires" : [ [ "ff412752.7ed1b8" ] ]
+		},
+		{
+			"id" : "7f786236.8167ac",
+			"type" : "inject",
+			"z" : "b0583144.7bce",
+			"name" : "15 Min",
+			"topic" : "",
+			"payload" : "",
+			"payloadType" : "date",
+			"repeat" : "900",
+			"crontab" : "",
+			"once" : false,
+			"x" : 100,
+			"y" : 200,
+			"wires" : [ [ "b45cc2af.c1197" ] ]
+		},
+		{
+			"id" : "b45cc2af.c1197",
+			"type" : "exec",
+			"z" : "b0583144.7bce",
+			"command" : "wget -qO- http://ipv4bot.whatismyipaddress.com/ ; echo",
+			"addpay" : true,
+			"append" : "",
+			"useSpawn" : "true",
+			"timer" : "",
+			"oldrc" : false,
+			"name" : "Get IP address",
+			"x" : 320,
+			"y" : 200,
+			"wires" : [ [ "d3b2e1a7.401e" ], [ "4ee3fab.d9c3c04" ], [] ]
+		},
+		{
+			"id" : "d3b2e1a7.401e",
+			"type" : "switch",
+			"z" : "b0583144.7bce",
+			"name" : "Is IP valid?",
+			"property" : "payload",
+			"propertyType" : "msg",
+			"rules" : [
+					{
+						"t" : "regex",
+						"v" : "\\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\b",
+						"vt" : "str",
+						"case" : false
+					}, {
+						"t" : "else"
+					} ],
+			"checkall" : "true",
+			"outputs" : 2,
+			"x" : 550,
+			"y" : 180,
+			"wires" : [ [ "f5b5dd05.91deb" ], [] ]
+		},
+		{
+			"id" : "f5b5dd05.91deb",
+			"type" : "function",
+			"z" : "b0583144.7bce",
+			"name" : "Compare IP",
+			"func" : "// External IPv4 change\n\nvar current_ip = msg.payload;\nvar l_date = new Date();\nvar l_house  = global.get('ms.house_name');\nvar l_ip     = global.get('ms.public_ipv4');\n\nif (l_ip == '1.2.3.4') {\n    l_ip = current_ip;\n    global.set('ms.public_ipv4', l_ip);\n    msg.topic = \"Got ip for first time since restart.\";\n    msg.payload = \"Newly feched IP is \" + current_ip;\n} else if (l_ip != current_ip) {\n    msg.topic = l_house + \" IP Change Notice \" ;\n    msg.payload = \"My public IP changed from \" + l_ip + '\\n';\n    msg.payload += \"My public IP changed to \" + current_ip + '\\n';\n    msg.payload += \"Occurred: \" + l_date;\n    global.set('ms.public_ipv4', current_ip);\n    return msg;\n} else {\n    msg.topic = 'IP remained the same'\n}\n// END DBK\n",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 750,
+			"y" : 160,
+			"wires" : [ [ "7f55647.13f739c" ] ]
+		},
+		{
+			"id" : "e15d6424.19dac8",
+			"type" : "comment",
+			"z" : "be02ee45.e6ff8",
+			"name" : "Additional Node Red Modules",
+			"info" : "npm install  node-red-dashboard\nnpm install  node-red-contrib-timerswitch",
+			"x" : 240,
+			"y" : 160,
+			"wires" : []
+		},
+		{
+			"id" : "fbf3dd0c.f0672",
+			"type" : "comment",
+			"z" : "be02ee45.e6ff8",
+			"name" : "Settings for Node Red",
+			"info" : " edit the \"/home/nodered/.node-red/settings.js\" file.\n \n \n \nvar mySettings;\ntry {\n        mySettings = require(\"/home/pi/.node-red/redvars.js\");\n    } catch(err) {\n        mySettings = {};\n    }\n\n\n \n functionGlobalContext: {\n        // os:require('os'),\n        // octalbonescript:require('octalbonescript'),\n        // jfive:require(\"johnny-five\"),\n        // j5board:require(\"johnny-five\").Board({repl:false}),\n        mySettings:mySettings\n    },\n\n\nEdit the \"/home/nodered/.node-red/redvars.js\" file.\n\n/*\n *\n */\n\nmodule.exports = {\n    \"house_name\": \"pink poppy\",\n    \"public_ipv4\": \"1.2.3.4\",\n    \"front_drip_relay\": \"Unknown\"\n}\n\n// ### END DBK\n\n\n",
+			"x" : 230,
+			"y" : 240,
+			"wires" : []
+		},
+		{
+			"id" : "1ef62b4e.d5dfd5",
+			"type" : "comment",
+			"z" : "be02ee45.e6ff8",
+			"name" : "Raspberry PI pi-04 == The Irrigation Controller",
+			"info" : "# pi-04-pp\n\nUser: pi\nLocation: Pink Poppy garage\n",
+			"x" : 660,
+			"y" : 40,
+			"wires" : []
+		},
+		{
+			"id" : "e103eb35.8a0c68",
+			"type" : "timerswitch",
+			"z" : "2e810cbd.99f734",
+			"name" : "Front Drip Schedule",
+			"ontopic" : "Schedule",
+			"offtopic" : "Schedule",
+			"onpayload" : "On",
+			"offpayload" : "Off",
+			"disabled" : false,
+			"schedules" : [ {
+				"on_h" : "08",
+				"on_m" : "00",
+				"on_s" : "00",
+				"off_h" : "08",
+				"off_m" : "29",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "12",
+				"on_m" : "00",
+				"on_s" : "00",
+				"off_h" : "12",
+				"off_m" : "29",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "16",
+				"on_m" : "00",
+				"on_s" : "00",
+				"off_h" : "16",
+				"off_m" : "29",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "20",
+				"on_m" : "00",
+				"on_s" : "00",
+				"off_h" : "20",
+				"off_m" : "29",
+				"off_s" : "00",
+				"valid" : true
+			} ],
+			"x" : 140,
+			"y" : 180,
+			"wires" : [ [ "ff412752.7ed1b8" ] ]
+		},
+		{
+			"id" : "7f55647.13f739c",
+			"type" : "debug",
+			"z" : "b0583144.7bce",
+			"name" : "",
+			"active" : false,
+			"console" : "false",
+			"complete" : "true",
+			"x" : 990,
+			"y" : 440,
+			"wires" : []
+		},
+		{
+			"id" : "4ee3fab.d9c3c04",
+			"type" : "function",
+			"z" : "b0583144.7bce",
+			"name" : "Error in fetching IP",
+			"func" : "// Stderr output\n\nreturn msg;",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 620,
+			"y" : 340,
+			"wires" : [ [ "7f55647.13f739c" ] ]
+		},
+		{
+			"id" : "da59cbea.0bd6f8",
+			"type" : "ui_text",
+			"z" : "1d1d0676.ccadea",
+			"group" : "1153019b.b328be",
+			"order" : 6,
+			"width" : 0,
+			"height" : 0,
+			"name" : "",
+			"label" : "Time",
+			"format" : "{{msg.payload}}",
+			"layout" : "row-spread",
+			"x" : 890,
+			"y" : 100,
+			"wires" : []
+		},
+		{
+			"id" : "47679458.ad507c",
+			"type" : "ui_text",
+			"z" : "1d1d0676.ccadea",
+			"group" : "1153019b.b328be",
+			"order" : 4,
+			"width" : "4",
+			"height" : "1",
+			"name" : "Rain",
+			"label" : "Rain Today:",
+			"format" : "{{msg.payload}}",
+			"layout" : "row-center",
+			"x" : 1030,
+			"y" : 160,
+			"wires" : []
+		},
+		{
+			"id" : "de0d611d.7537b",
+			"type" : "ui_text",
+			"z" : "1d1d0676.ccadea",
+			"group" : "1153019b.b328be",
+			"order" : 3,
+			"width" : "4",
+			"height" : "1",
+			"name" : "Wind",
+			"label" : "Wind:",
+			"format" : "{{msg.payload}}",
+			"layout" : "row-center",
+			"x" : 890,
+			"y" : 140,
+			"wires" : []
+		},
+		{
+			"id" : "9a4ac3d2.81493",
+			"type" : "function",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Breakdown Forecast",
+			"func" : "// Out 1 = time\n// Out 2 = temp\n// Out 3 = wind string\n// Out 4 = wind velocity\n// Out 5 = Rainfall\n// Out 6 = Rainfall for chart (x 100)\n\n//var l_wx   = JSON.parse(msg.payload);\nvar l_time = new Date();\nvar l_wx   = msg.payload;\nvar l_co   = l_wx.current_observation;\nvar l_rain = parseFloat(l_co.precip_today_in);\nvar l_rc   = l_rain * 100.0;\n\nvar time_msg = {topic: 'Time PP',   payload: l_co.local_time_rfc822};\nvar temp_msg = {topic: '1 Temp PP', payload: l_co.temp_f, series: 'Temp PP', label: 'Temp PP'};\nvar wind_msg = {topic: 'Wind PP',   payload: l_co.wind_string};\nvar wndv_msg = {topic: '2 Wind PP', payload: l_co.wind_mph, series: 'Wind PP', label: 'Wind PP'};\nvar rain_msg = {topic: '3 Rain PP', payload: l_rain, series: 'Rain PP', label: 'Rain PP'};\nvar rc_msg   = {topic: '3 Rain PP', payload: l_rc, series: 'Rain PP', label: 'Rain PP'};\n \nnode.send([time_msg, temp_msg, wind_msg, wndv_msg, rain_msg, rc_msg]);\n\n// ### END DBK",
+			"outputs" : 6,
+			"noerr" : 0,
+			"x" : 540,
+			"y" : 120,
+			"wires" : [ [ "da59cbea.0bd6f8" ],
+					[ "4cc7167a.c9ce88", "745c0698.e93be8" ], [],
+					[ "de0d611d.7537b", "745c0698.e93be8" ],
+					[ "47679458.ad507c" ], [ "745c0698.e93be8" ] ],
+			"inputLabels" : [ "Wx Json" ],
+			"outputLabels" : [ "Local Time", "Temp", "Wind String",
+					"Wind Speed", "Precip", "" ]
+		},
+		{
+			"id" : "4cc7167a.c9ce88",
+			"type" : "ui_gauge",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Temp Gauge",
+			"group" : "1153019b.b328be",
+			"order" : 5,
+			"width" : 0,
+			"height" : 0,
+			"gtype" : "gage",
+			"title" : "Current Temp",
+			"label" : "units",
+			"format" : "{{value | number:1}}",
+			"min" : "0",
+			"max" : "100",
+			"colors" : [ "#fadd10", "#00e60c", "#ca3838" ],
+			"seg1" : "60",
+			"seg2" : "88",
+			"x" : 1050,
+			"y" : 120,
+			"wires" : []
+		},
+		{
+			"id" : "c86ed79c.a8e1e8",
+			"type" : "inject",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Test Email",
+			"topic" : "",
+			"payload" : "",
+			"payloadType" : "date",
+			"repeat" : "",
+			"crontab" : "",
+			"once" : false,
+			"x" : 120,
+			"y" : 580,
+			"wires" : [ [ "1c3f0389.42e21c" ] ]
+		},
+		{
+			"id" : "1c3f0389.42e21c",
+			"type" : "function",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Build Test Email",
+			"func" : "// Test that email is being sent properly\n\nvar l_house  = global.get('ms.house_name');\nvar l_ip     = global.get('ms.public_ipv4');\nvar l_node   = global.get('ms.node_name');\n\n//msg.to = \"D.BrianKimmel@gmail.com\";\nmsg.topic = \"Cannon Trail Test Notice\";\nmsg.payload  = \"Hello World.\" + \"\\n\";\nmsg.payload += \"House: \" + l_house + \"\\n\";\nmsg.payload += \"External IP: \" + l_ip + \"\\n\";\nmsg.payload += \"Node: \" + l_node + \"\\n\";\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 300,
+			"y" : 580,
+			"wires" : [ [ "84721f67.35b73" ] ]
+		},
+		{
+			"id" : "ed94ed2.78d881",
+			"type" : "function",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Create Table",
+			"func" : "// Create WX_History table\n\nmsg.topic = `\nCREATE TABLE IF NOT EXISTS 'Wx_History' (\n    'wxh_key' DATETIME PRIMARY KEY NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    'wxh_location'      TEXT,\n    'wxh_station'       TEXT,\n    'wxh_temp_c'        REAL,\n    'wxh_dewpoint_c'    REAL,\n    'wxh_rel_humid'     REAL,\n    'wxh_pressure'      REAL,\n    'wxh_wind_speed'    REAL,\n    'wxh_wind_dir'      REAL,\n    'wxh_summary'       TEXT,\n    'wxh_visibility_km' TEXT,\n    'wxh_precip'        REAL\n    );`;\nmsg.payload = [];\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 350,
+			"y" : 40,
+			"wires" : [ [] ],
+			"inputLabels" : [ "One time trigger" ],
+			"outputLabels" : [ "SQL Create table" ]
+		},
+		{
+			"id" : "90ad9eee.04238",
+			"type" : "inject",
+			"z" : "1d1d0676.ccadea",
+			"name" : "One time create",
+			"topic" : "",
+			"payload" : "",
+			"payloadType" : "date",
+			"repeat" : "",
+			"crontab" : "",
+			"once" : false,
+			"x" : 140,
+			"y" : 40,
+			"wires" : [ [ "ed94ed2.78d881" ] ],
+			"outputLabels" : [ "One time trigger" ]
+		},
+		{
+			"id" : "cd1f85a6.892d28",
+			"type" : "http request",
+			"z" : "1d1d0676.ccadea",
+			"name" : "get JSON PP",
+			"method" : "GET",
+			"ret" : "obj",
+			"url" : "http://api.wunderground.com/api/ef550a6fe6977b3d/conditions/astronomy/almanac/lang:EN/q/34465.json",
+			"tls" : "",
+			"x" : 310,
+			"y" : 120,
+			"wires" : [ [ "9a4ac3d2.81493", "49ed2116.6b17c" ] ],
+			"inputLabels" : [ "Trigger" ],
+			"outputLabels" : [ "WxUnderground JSON" ]
+		},
+		{
+			"id" : "2b4acc7b.c1fb94",
+			"type" : "inject",
+			"z" : "1d1d0676.ccadea",
+			"name" : "1/2 Hourly",
+			"topic" : "",
+			"payload" : "",
+			"payloadType" : "date",
+			"repeat" : "1800",
+			"crontab" : "",
+			"once" : true,
+			"x" : 130,
+			"y" : 120,
+			"wires" : [ [ "cd1f85a6.892d28", "2ebc6b64.5a3674" ] ]
+		},
+		{
+			"id" : "745c0698.e93be8",
+			"type" : "ui_chart",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Wx Chart",
+			"group" : "bbcf377a.0f01e8",
+			"order" : 2,
+			"width" : "0",
+			"height" : "0",
+			"label" : "Temps",
+			"chartType" : "line",
+			"legend" : "false",
+			"xformat" : "dd HH:mm",
+			"interpolate" : "linear",
+			"nodata" : "",
+			"dot" : false,
+			"ymin" : "0",
+			"ymax" : "100",
+			"removeOlder" : "48",
+			"removeOlderPoints" : "",
+			"removeOlderUnit" : "3600",
+			"cutout" : 0,
+			"useOneColor" : false,
+			"colors" : [ "#fb0505", "#f95f5f", "#fbd2d3", "#07ff04", "#79f960",
+					"#c6ffbf", "#0023f9", "#585cfb", "#c1c4fe" ],
+			"useOldStyle" : false,
+			"x" : 910,
+			"y" : 220,
+			"wires" : [ [], [] ]
+		},
+		{
+			"id" : "49ed2116.6b17c",
+			"type" : "debug",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Wx Debug PP",
+			"active" : false,
+			"console" : "false",
+			"complete" : "true",
+			"x" : 520,
+			"y" : 200,
+			"wires" : []
+		},
+		{
+			"id" : "2ebc6b64.5a3674",
+			"type" : "http request",
+			"z" : "1d1d0676.ccadea",
+			"name" : "get JSON CT",
+			"method" : "GET",
+			"ret" : "obj",
+			"url" : "http://api.wunderground.com/api/ef550a6fe6977b3d/conditions/astronomy/almanac/lang:EN/q/28734.json",
+			"tls" : "",
+			"x" : 310,
+			"y" : 280,
+			"wires" : [ [ "454cb134.1288f", "b1ecf539.5ee078" ] ],
+			"inputLabels" : [ "Trigger" ],
+			"outputLabels" : [ "WxUnderground JSON" ]
+		},
+		{
+			"id" : "454cb134.1288f",
+			"type" : "function",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Breakdown Forecast",
+			"func" : "// Out 1 = time\n// Out 2 = temp\n// Out 3 = wind string\n// Out 4 = wind velocity\n// Out 5 = Rainfall\n// Out 6 = Rainfall for chart (x 100)\n\nvar l_time = new Date();\nvar l_wx   = msg.payload;\nvar l_co   = l_wx.current_observation;\nvar l_rain = parseFloat(l_co.precip_today_in);\nvar l_rc   = l_rain * 100.0;\n\nvar time_msg = {topic: 'Time CT',   payload: l_co.local_time_rfc822};\nvar temp_msg = {topic: '4 Temp CT', payload: l_co.temp_f, series: 'Temp CT', label: 'Temp CT'};\nvar wind_msg = {topic: 'Wind CT',   payload: l_co.wind_string};\nvar wndv_msg = {topic: '5 Wind CT', payload: l_co.wind_mph, series: 'Wind CT', label: 'Wind CT'};\nvar rain_msg = {topic: '6 Rain CT', payload: l_rain, series: 'Rain CT', label: 'Rain CT'};\nvar rc_msg   = {topic: '6 Rain CT', payload: l_rc, series: 'Rain CT', label: 'Rain CT'};\n \nnode.send([time_msg, temp_msg, wind_msg, wndv_msg, rain_msg, rc_msg]);\n\n// ### END DBK",
+			"outputs" : 6,
+			"noerr" : 0,
+			"x" : 540,
+			"y" : 280,
+			"wires" : [ [ "1fcf6008.bbc8a" ],
+					[ "28b71b9.7fa0ae4", "745c0698.e93be8" ], [],
+					[ "cdd449f1.f5e568", "745c0698.e93be8" ],
+					[ "926c7662.69bd48" ], [ "745c0698.e93be8" ] ],
+			"inputLabels" : [ "Wx Json" ],
+			"outputLabels" : [ "Local Time", "Temp", "Wind String",
+					"Wind Speed", "Precip", "" ]
+		},
+		{
+			"id" : "1fcf6008.bbc8a",
+			"type" : "ui_text",
+			"z" : "1d1d0676.ccadea",
+			"group" : "1c451c1c.281704",
+			"order" : 6,
+			"width" : 0,
+			"height" : 0,
+			"name" : "",
+			"label" : "Time",
+			"format" : "{{msg.payload}}",
+			"layout" : "row-spread",
+			"x" : 890,
+			"y" : 340,
+			"wires" : []
+		},
+		{
+			"id" : "926c7662.69bd48",
+			"type" : "ui_text",
+			"z" : "1d1d0676.ccadea",
+			"group" : "1c451c1c.281704",
+			"order" : 4,
+			"width" : "4",
+			"height" : "1",
+			"name" : "Rain",
+			"label" : "Rain Today:",
+			"format" : "{{msg.payload}}",
+			"layout" : "row-center",
+			"x" : 1030,
+			"y" : 400,
+			"wires" : []
+		},
+		{
+			"id" : "cdd449f1.f5e568",
+			"type" : "ui_text",
+			"z" : "1d1d0676.ccadea",
+			"group" : "1c451c1c.281704",
+			"order" : 3,
+			"width" : "4",
+			"height" : "1",
+			"name" : "Wind",
+			"label" : "Wind:",
+			"format" : "{{msg.payload}}",
+			"layout" : "row-center",
+			"x" : 890,
+			"y" : 380,
+			"wires" : []
+		},
+		{
+			"id" : "28b71b9.7fa0ae4",
+			"type" : "ui_gauge",
+			"z" : "1d1d0676.ccadea",
+			"name" : "Temp Gauge",
+			"group" : "1c451c1c.281704",
+			"order" : 5,
+			"width" : 0,
+			"height" : 0,
+			"gtype" : "gage",
+			"title" : "Current Temp",
+			"label" : "units",
+			"format" : "{{value | number:1}}",
+			"min" : "0",
+			"max" : "100",
+			"colors" : [ "#fadd10", "#00e60c", "#ca3838" ],
+			"seg1" : "60",
+			"seg2" : "88",
+			"x" : 1050,
+			"y" : 360,
+			"wires" : []
+		},
+		{
+			"id" : "b1ecf539.5ee078",
+			"type" : "debug",
+			"z" : "1d1d0676.ccadea",
+			"name" : "WXDebug CT",
+			"active" : false,
+			"console" : "false",
+			"complete" : "true",
+			"x" : 520,
+			"y" : 400,
+			"wires" : []
+		},
+		{
+			"id" : "feea2c4f.26a7a",
+			"type" : "mqtt in",
+			"z" : "2e810cbd.99f734",
+			"name" : "Front Drip Control",
+			"topic" : "pyhouse/#",
+			"qos" : "0",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 130,
+			"y" : 300,
+			"wires" : [ [ "c40ec8af.4ffc2" ] ]
+		},
+		{
+			"id" : "c8fcb6af.eea8c8",
+			"type" : "mqtt in",
+			"z" : "10a2011d.745bef",
+			"name" : "Test Rx Mqtt",
+			"topic" : "#",
+			"qos" : "0",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 120,
+			"y" : 80,
+			"wires" : [ [ "caba9b9d.4fd4a8" ] ]
+		},
+		{
+			"id" : "caba9b9d.4fd4a8",
+			"type" : "debug",
+			"z" : "10a2011d.745bef",
+			"name" : "Debug Mqtt",
+			"active" : true,
+			"console" : "false",
+			"complete" : "true",
+			"x" : 310,
+			"y" : 80,
+			"wires" : []
+		},
+		{
+			"id" : "84721f67.35b73",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "1d1d0676.ccadea",
+			"x" : 540,
+			"y" : 580,
+			"wires" : []
+		},
+		{
+			"id" : "65a0c2b1.57b5d4",
+			"type" : "inject",
+			"z" : "be02ee45.e6ff8",
+			"name" : "Mail Test Timestamp",
+			"topic" : "",
+			"payload" : "",
+			"payloadType" : "date",
+			"repeat" : "",
+			"crontab" : "",
+			"once" : false,
+			"onceDelay" : 0.1,
+			"x" : 210,
+			"y" : 360,
+			"wires" : [ [ "31371863.15d8e8" ] ]
+		},
+		{
+			"id" : "aa7b887f.8321b",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "be02ee45.e6ff8",
+			"name" : "Email",
+			"x" : 610,
+			"y" : 360,
+			"wires" : []
+		},
+		{
+			"id" : "31371863.15d8e8",
+			"type" : "function",
+			"z" : "be02ee45.e6ff8",
+			"name" : "",
+			"func" : "\nreturn msg;",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 390,
+			"y" : 360,
+			"wires" : [ [ "aa7b887f.8321b" ] ]
+		},
+		{
+			"id" : "1698cd5b.d59d93",
+			"type" : "ui_chart",
+			"z" : "2e810cbd.99f734",
+			"name" : "Irrigation Chart",
+			"group" : "d923cc8b.33d2f",
+			"order" : 1,
+			"width" : 0,
+			"height" : 0,
+			"label" : "Irrigation / Pool",
+			"chartType" : "line",
+			"legend" : "false",
+			"xformat" : "HH:mm:ss",
+			"interpolate" : "linear",
+			"nodata" : "",
+			"dot" : false,
+			"ymin" : "0",
+			"ymax" : "1",
+			"removeOlder" : "48",
+			"removeOlderPoints" : "",
+			"removeOlderUnit" : "3600",
+			"cutout" : 0,
+			"useOneColor" : false,
+			"colors" : [ "#f11402", "#4bd72c", "#0e97f2", "#f4d413", "#c935be",
+					"#fc930d", "#b02522", "#9467bd", "#c5b0d5" ],
+			"useOldStyle" : false,
+			"x" : 720,
+			"y" : 480,
+			"wires" : [ [], [] ]
+		},
+		{
+			"id" : "da6fb497.de37a8",
+			"type" : "ui_switch",
+			"z" : "9b867ed1.945dc",
+			"name" : "Lanai Drip Switch",
+			"label" : "Lanai Drip",
+			"group" : "4bc82409.c2299c",
+			"order" : 0,
+			"width" : 0,
+			"height" : 0,
+			"passthru" : true,
+			"decouple" : "false",
+			"topic" : "LanaiDripSwitch",
+			"style" : "",
+			"onvalue" : "On",
+			"onvalueType" : "str",
+			"onicon" : "",
+			"oncolor" : "",
+			"offvalue" : "Off",
+			"offvalueType" : "str",
+			"officon" : "",
+			"offcolor" : "",
+			"x" : 130,
+			"y" : 240,
+			"wires" : [ [ "1e7364a3.e8209b" ] ]
+		},
+		{
+			"id" : "4031afea.4f108",
+			"type" : "function",
+			"z" : "9b867ed1.945dc",
+			"name" : "Lanai Drip Relay",
+			"func" : "// Control the relay that turns on the lanai drip relay.\n\n// Input A = \"Schedule\"\n// Input B = \"FontDripSe\"\n// Input C = \"PyHouseMsg\" - A MQTT message to turn on drip relay\n\n// Output 1 = GPIO relay control pin\n// Output 2 = Email\n// Output 3 = To MQTT.\n// Output 4 = Chart\n// Output 5 = Debug\n\nvar RELAY_ON  = 1;\nvar RELAY_OFF = 0;\nvar CHART_ON  = 0.90;\nvar CHART_OFF = 0.06;\nvar NAME      = \" Lanai Drip irrigation \";\n\nvar l_date   = new Date();\nvar l_hour   = l_date.getHours();\nvar l_minute = l_date.getMinutes();\n\nvar l_house  = global.get('ms.house_name');\nvar l_node   = global.get('ms.node_name');\nvar l_ip     = global.get('ms.public_ipv4');\nvar l_switch = global.get('ms.lanai_drip_switch') || \"Off\";\nvar l_relay  = global.get('ms.lanai_drip_relay')  || 'Off';\nvar PREFIX   = 'pyhouse/' + l_house + '/irrigation/lanaidrip/';\n\nvar cntrl_msg,\n    email_msg,\n    mqtt_msg,\n    chart_msg,\n    debug_msg;\n\nfunction build_control_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Control Message';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_email_message(p_msg) {\n    var msg = {};\n    msg.topic = l_house + ' ' + NAME;\n    msg.from = l_house;\n    msg.payload = p_msg + '\\nIp: ' + l_ip;\n    return msg;\n}\nfunction build_mqtt_message(p_msg) {\n    var msg = {};\n    msg.topic = PREFIX + 'status';\n    msg.payload = {};\n    msg.payload.Status = p_msg;\n    msg.payload.Sender = l_node;\n    msg.payload.Location = NAME;\n    return msg;\n}\nfunction build_chart_message(p_msg) {\n    var msg = {};\n    msg.topic  = '2 Lanai Drip';\n    msg.series = \"2 Lanai Drip\"\n    msg.label  = \"2 Lanai Drip\"\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_debug_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Debug Message';\n    msg.payload = p_msg;\n    msg.status = \"LanaiDripRelay:\" + l_relay;\n    return msg;\n}\n\n// Turn drip on\nfunction turnRelayOn(pType) {\n    if (l_relay !== 'On') {\n        global.set('ms.lanai_drip_relay', 'On');\n        cntrl_msg = build_control_message(RELAY_ON);\n        email_msg = build_email_message('Turned ' + NAME + ' ON: ' + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message('Lanai Drip Start');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_OFF); \n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Turned ' + NAME + ' ON ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else { // Continue Manual ON\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Kept ' + NAME +' ON ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n}\n// Turn drip off\nfunction turnRelayOff(pType) {\n    if (l_relay === 'On') {  // Turning drip system off.\n        cntrl_msg = build_control_message(RELAY_OFF);\n        email_msg = build_email_message(NAME + 'OFF: '  + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message('Lanai Drip Stop');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_ON);\n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_OFF);\n        debug_msg = build_debug_message('Turned ' + NAME + ' OFF ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else {\n        chart_msg = build_chart_message(CHART_OFF);\n        debug_msg = build_debug_message('Kept ' + NAME +' OFF ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.lanai_drip_relay', 'Off');\n}\n\n// Main \n\nif (msg.topic === \"Schedule\" ) {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Auto\");\n    } else {\n        turnRelayOff(\"Auto\");\n    }\n} else if (msg.topic === 'LanaiDripSwitch') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Manual\");\n    } else {\n        turnRelayOff(\"Manual\");\n    }\n} else if (msg.topic === PREFIX + 'control') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Mqtt\");\n    } else {\n        turnRelayOff(\"Mqtt\");\n    }\n} else {\n    debug_msg = build_debug_message('Unknown message:');\n    debug_msg.old_topic = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.prefix = PREFIX + 'control';\n    node.send([null, null, null, null, debug_msg]);\n}\n\n// ### END DBK\n",
+			"outputs" : 5,
+			"noerr" : 0,
+			"x" : 730,
+			"y" : 180,
+			"wires" : [ [ "53646ff8.c7fe68" ], [], [ "d6a40d88.760aa" ],
+					[ "a570d0bb.7bfe7" ], [ "bb1140ee.3979a" ] ]
+		},
+		{
+			"id" : "196da67c.593baa",
+			"type" : "timerswitch",
+			"z" : "9b867ed1.945dc",
+			"name" : "Lanai Drip Schedule",
+			"ontopic" : "Schedule",
+			"offtopic" : "Schedule",
+			"onpayload" : "On",
+			"offpayload" : "Off",
+			"disabled" : false,
+			"schedules" : [ {
+				"on_h" : "08",
+				"on_m" : "30",
+				"on_s" : "00",
+				"off_h" : "08",
+				"off_m" : "45",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "13",
+				"on_m" : "30",
+				"on_s" : "00",
+				"off_h" : "13",
+				"off_m" : "45",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "18",
+				"on_m" : "30",
+				"on_s" : "00",
+				"off_h" : "18",
+				"off_m" : "45",
+				"off_s" : "00",
+				"valid" : true
+			} ],
+			"x" : 140,
+			"y" : 180,
+			"wires" : [ [ "4031afea.4f108" ] ]
+		},
+		{
+			"id" : "a570d0bb.7bfe7",
+			"type" : "link out",
+			"z" : "9b867ed1.945dc",
+			"name" : "Chart Link Lanai",
+			"links" : [ "268e73a3.9c1b7c" ],
+			"x" : 935,
+			"y" : 240,
+			"wires" : []
+		},
+		{
+			"id" : "268e73a3.9c1b7c",
+			"type" : "link in",
+			"z" : "2e810cbd.99f734",
+			"name" : "Chart Link In",
+			"links" : [ "46506459.f552ec", "a570d0bb.7bfe7", "b2a49b3b.a0d2a",
+					"144bd243.95fbbe", "9000c3d9.0be748" ],
+			"x" : 175,
+			"y" : 480,
+			"wires" : [ [ "1698cd5b.d59d93" ] ]
+		},
+		{
+			"id" : "8dd41067.ed4af",
+			"type" : "mqtt in",
+			"z" : "9b867ed1.945dc",
+			"name" : "Lanai Drip Control",
+			"topic" : "pyhouse/#",
+			"qos" : "2",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 130,
+			"y" : 300,
+			"wires" : [ [ "840ff3bb.be9b18" ] ]
+		},
+		{
+			"id" : "53646ff8.c7fe68",
+			"type" : "rpi-gpio out",
+			"z" : "9b867ed1.945dc",
+			"name" : "",
+			"pin" : "22",
+			"set" : "",
+			"level" : "0",
+			"freq" : "",
+			"out" : "out",
+			"x" : 980,
+			"y" : 80,
+			"wires" : []
+		},
+		{
+			"id" : "d6a40d88.760aa",
+			"type" : "mqtt out",
+			"z" : "9b867ed1.945dc",
+			"name" : "",
+			"topic" : "",
+			"qos" : "",
+			"retain" : "",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 970,
+			"y" : 180,
+			"wires" : []
+		},
+		{
+			"id" : "bb1140ee.3979a",
+			"type" : "debug",
+			"z" : "9b867ed1.945dc",
+			"name" : "Lanai Drip Debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 1010,
+			"y" : 300,
+			"wires" : []
+		},
+		{
+			"id" : "51d6a7.74b23958",
+			"type" : "ui_switch",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Fill Switch",
+			"label" : "Pool Fill",
+			"group" : "4bc82409.c2299c",
+			"order" : 0,
+			"width" : 0,
+			"height" : 0,
+			"passthru" : true,
+			"decouple" : "false",
+			"topic" : "Pool_Fill_Switch",
+			"style" : "",
+			"onvalue" : "On",
+			"onvalueType" : "str",
+			"onicon" : "",
+			"oncolor" : "",
+			"offvalue" : "Off",
+			"offvalueType" : "str",
+			"officon" : "",
+			"offcolor" : "",
+			"x" : 120,
+			"y" : 240,
+			"wires" : [ [ "48ce8960.1f063" ] ]
+		},
+		{
+			"id" : "3d15ab82.8447dc",
+			"type" : "function",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Fill",
+			"func" : "" +
+					"// " +
+					"" +
+					"// Input A = \"PoolSchedule\"" +
+					"// Input B = \"PoolLevel\" Sensor" +
+					"// Input C = \"PoolFill\" Switch" +
+					"// Input D = \"PyHouse/*/pool/#\" - A MQTT message to turn on drip relay" +
+					"" +
+					"// Output 1 = GPIO pin to turn on relay xx" +
+					"// Output 2 = Email" +
+					"// Output 3 = To MQTT." +
+					"// Output 4 = Chart" +
+					"// Output 5 = Debug" +
+					"" +
+					"var RELAY_ON  = 1;" +
+					"var RELAY_OFF = 0;" +
+					"var CHART_ON  = 0.80;" +
+					"var CHART_OFF = 0.02;" +
+					"var NAME = \" Pool Fill System \";" +
+					"" +
+					"var l_date   = new Date();" +
+					"var l_hour   = l_date.getHours();" +
+					"var l_minute = l_date.getMinutes();" +
+					"" +
+					"var l_house  = global.get('ms.house_name');" +
+					"var l_node   = global.get('ms.node_name');" +
+					"var l_ip     = global.get('ms.public_ipv4');" +
+					"var l_switch = global.get('ms.pool_fill_switch');" +
+					"var l_relay  = global.get('ms.pool_fill_relay');" +
+					"var l_pool_level  = global.get('ms.pool_level') || \"Full\";  // Full / Low" +
+					"var PREFIX = 'pyhouse/' + l_house + '/pool/level/';" +
+					"" +
+					"var cntrl_msg," +
+					"    email_msg," +
+					"    mqtt_msg," +
+					"    chart_msg," +
+					"    debug_msg;" +
+					"" +
+					"function build_control_message(p_msg) {" +
+					"    var msg = {};" +
+					"    msg.topic = 'Control Message';" +
+					"    msg.payload = p_msg;" +
+					"    return msg;" +
+					"}" +
+					"function build_email_message(p_msg) {" +
+					"    var msg = {};" +
+					"    msg.topic = l_house + ' ' + NAME;\n    msg.from = l_house;\n    msg.payload = p_msg + '\\nIp: ' + l_ip;\n    return msg;\n}\nfunction build_mqtt_message(p_msg) {" +
+					"    var msg = {};\n    msg.topic = PREFIX + 'status';\n    msg.payload = {};\n    msg.payload.Status = p_msg;\n    msg.payload.Sender = l_node;" +
+					"    msg.payload.Location = NAME;\n    return msg;\n}\nfunction build_chart_message(p_msg) {\n    var msg = {};\n    msg.topic   = '4 Pool';\n    msg.series  = '4 Pool';" +
+					"    msg.label   = '4 Pool';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_debug_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Debug Message';" +
+					"    msg.payload = p_msg;\n    msg.status = \"PoolFillRelay:\" + l_relay;\n    return msg;\n}\n\n// Turn pool fill on\nfunction turnRelayOn(pType) {" +
+					"    if (l_relay !== 'On') {\n        cntrl_msg = build_control_message(RELAY_ON);" +
+					"        email_msg = build_email_message('Turned ' + NAME + ' ON: ' + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message('Pool Fill Start');" +
+					"        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_OFF); " +
+					"        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_ON);" +
+					"        debug_msg = build_debug_message('Turned ' + NAME + ' ON ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);" +
+					"    } else { // Continue Manual ON\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Kept ' + NAME +' ON ' + pType);" +
+					"        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.pool_fill_relay', 'On');\n}\n// Turn pool fill off" +
+					"function turnRelayOff(pType) {\n    if (l_relay === 'On') {  // Turning pool fill system off.\n        global.set('ms.pool_fill_relay', 'Off');" +
+					"        cntrl_msg = build_control_message(RELAY_OFF);\n        email_msg = build_email_message(NAME + 'OFF: '  + l_house + \"  \" + l_date);" +
+					"        mqtt_msg  = build_mqtt_message('Pool Fill Stop');\n        // Double the chart to provide square edge plots that reflect reality" +
+					"        chart_msg = build_chart_message(CHART_ON);\n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_OFF);" +
+					"        debug_msg = build_debug_message('Turned ' + NAME + ' OFF ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else {" +
+					"        global.set('ms.pool_fill_relay', 'Off');\n        chart_msg = build_chart_message(CHART_OFF);" +
+					"        debug_msg = build_debug_message('Kept ' + NAME +' OFF ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n}\n\n// Main " +
+					"if (msg.topic === \"PoolLevel\") {\n    if (msg.payload === \"Full\") {\n        turnRelayOff(\"Sensor\");\n    } else {  // Low\n        turnRelayOn(\"Sensor\");\n    }" +
+					"} else if (msg.topic === \"Schedule\" ) {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Auto\");\n    } else {\n        turnRelayOff(\"Auto\");\n    }" +
+					"} else if (msg.topic === 'Pool_Fill_Switch') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Manual\");\n    } else {\n        turnRelayOff(\"Manual\");\n    }" +
+					"} else if (msg.topic === PREFIX + 'control') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Mqtt\");\n    } else {\n        turnRelayOff(\"Mqtt\");\n    }" +
+					"} else {\n    debug_msg = build_debug_message('Unknown message:');\n    debug_msg.old_topic = msg.topic;\n    debug_msg.old_payload = msg.payload;" +
+					"    debug_msg.prefix = PREFIX + 'control';\n    node.send([null, null, null, null, debug_msg]);\n}" +
+					"" +
+					"// ### END DBK" +
+					"",
+			"outputs" : 5,
+			"noerr" : 0,
+			"x" : 700,
+			"y" : 180,
+			"wires" : [ [ "90e78196.4cd908" ], [], [ "2dd84827.62ceb" ],
+					[ "46506459.f552ec" ], [ "7273769a.be89d" ] ]
+		},
+		{
+			"id" : "efed0f5c.9685c8",
+			"type" : "rpi-gpio in",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Level Sensor (Pin 32)",
+			"pin" : "32",
+			"intype" : "down",
+			"debounce" : "4999",
+			"read" : true,
+			"x" : 150,
+			"y" : 420,
+			"wires" : [ [ "b8e64b44.12a698" ] ]
+		},
+		{
+			"id" : "7273769a.be89d",
+			"type" : "debug",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Fill debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 1000,
+			"y" : 300,
+			"wires" : []
+		},
+		{
+			"id" : "2dd84827.62ceb",
+			"type" : "mqtt out",
+			"z" : "68a1a940.9603e",
+			"name" : "",
+			"topic" : "",
+			"qos" : "",
+			"retain" : "",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 970,
+			"y" : 180,
+			"wires" : []
+		},
+		{
+			"id" : "90e78196.4cd908",
+			"type" : "rpi-gpio out",
+			"z" : "68a1a940.9603e",
+			"name" : "",
+			"pin" : "18",
+			"set" : true,
+			"level" : "1",
+			"freq" : "",
+			"out" : "out",
+			"x" : 980,
+			"y" : 80,
+			"wires" : []
+		},
+		{
+			"id" : "4e98c440.2db2bc",
+			"type" : "timerswitch",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Fill Schedule",
+			"ontopic" : "Schedule",
+			"offtopic" : "Schedule",
+			"onpayload" : "On",
+			"offpayload" : "Off",
+			"disabled" : false,
+			"schedules" : [ {
+				"on_h" : "07",
+				"on_m" : "40",
+				"on_s" : "00",
+				"off_h" : "07",
+				"off_m" : "45",
+				"off_s" : "00",
+				"valid" : true
+			} ],
+			"x" : 130,
+			"y" : 180,
+			"wires" : [ [ "3d15ab82.8447dc" ] ]
+		},
+		{
+			"id" : "e715d50f.2cb62",
+			"type" : "mqtt in",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Fill Control",
+			"topic" : "pyhouse/#",
+			"qos" : "2",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 120,
+			"y" : 300,
+			"wires" : [ [ "1fc1f163.f95a3f" ] ]
+		},
+		{
+			"id" : "b8e64b44.12a698",
+			"type" : "function",
+			"z" : "68a1a940.9603e",
+			"name" : "Level debounce",
+			"func" : "// Since waves in tghe pool can keep the water level oscillating for a while,\n// this will wait for the level to be low for a period of time before passing put a Low msg.\n\n// Output 1 = To Pool Fill Relay\n// Output 2 = Chart\n// Output 3 = Debug\n\nvar CHART_HIGH  = 0.60;\nvar CHART_LOW = 0.20;\nvar NAME = \" Pool Level Sensor \";\n\nvar stable_time = 30000;\nvar cntrl_msg,\n    chart_msg,\n    debug_msg;\n\nvar l_house  = global.get('ms.house_name');\nvar l_node   = global.get('ms.node_name');\nvar l_ip     = global.get('ms.public_ipv4');\nvar l_sensor = global.get('ms.pool_level_sensor' || 'Low');\n\nvar l_date   = new Date();\nvar l_change = global.get('ms.pool_sensor_change');\nif (l_change === undefined) {\n    l_change = new Date;\n    global.set('ms.pool_sensor_change', l_change);\n}\nvar l_hour   = l_date.getHours();\nvar l_minute = l_date.getMinutes();\nvar l_second = l_date.getSeconds();\n\nfunction build_control_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Control Message';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_chart_message(p_msg) {\n    var msg = {};\n    msg.topic   = '5 Level';\n    msg.series  = '5 Level';\n    msg.label   = '5 Level';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_debug_message(p_msg, p_delta) {\n    var msg = {};\n    msg.topic   = 'Debug Message';\n    msg.time    = l_hour + ':' + l_minute + ':' + l_second;\n    msg.delta   = p_delta / 1000;\n    msg.now     = l_date.getTime();\n    msg.change  = l_change.getTime();\n    msg.sender  = l_node + ' Node-Red ' + NAME;\n    msg.payload = p_msg;\n    return msg;\n}\n\n// This routine is called when the pool level is low.\n// Chart the low and use the control message to turn ON the pool fill relay.\nfunction LowLevel(pType) {\n    var l_delta = (l_date.getTime() - l_change.getTime());\n    if (l_delta < stable_time) {\n        global.set('ms.pool_sensor_change', l_date);\n        return;\n    } else {\n        global.set('ms.pool_sensor_change', l_date);\n    }\n    if (l_sensor !== 'Low') {\n        cntrl_msg = build_control_message('Low');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_HIGH); \n        node.send([null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_LOW);\n        debug_msg = build_debug_message('L Turned ' + NAME + pType, l_delta);\n        node.send([cntrl_msg, chart_msg, debug_msg]);\n    } else { // Continue Manual ON\n        chart_msg = build_chart_message(CHART_LOW);\n        debug_msg = build_debug_message('L Kept ' + NAME + pType, l_delta);\n        node.send([cntrl_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.pool_level_sensor', 'Low');\n}\nfunction HighLevel(pType) {\n    var l_delta = (l_date.getTime() - l_change.getTime());\n    if (l_delta < stable_time) {\n        global.set('ms.pool_sensor_change', l_date);\n        return;\n    } else {\n        global.set('ms.pool_sensor_change', l_date);\n    }\n    if (l_sensor === 'Low') {\n        cntrl_msg = build_control_message('Full');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_LOW); \n        node.send([null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_HIGH);\n        debug_msg = build_debug_message('H Turned ' + NAME + ' High ' + pType, l_delta);\n        node.send([cntrl_msg, chart_msg, debug_msg]);\n    } else { // Continue Manual ON\n        chart_msg = build_chart_message(CHART_HIGH);\n        debug_msg = build_debug_message('H Kept ' + NAME +' High ' + pType, l_delta);\n        node.send([cntrl_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.pool_level_sensor', 'High');\n}\n\n\n// Main\nif (msg.topic === 'pi/32') {\n    // The sensor outputs a '0' ??? when the float is low indicating that the pool\n    //  is low and needs water added.\n    if (msg.payload === 0) {\n        l_level = \"Low\";\n        LowLevel(l_level)\n    } else {\n        l_level = \"High\";\n        HighLevel(l_level)\n    }\n}\n\n// ### END DBK\n",
+			"outputs" : 3,
+			"noerr" : 0,
+			"x" : 400,
+			"y" : 420,
+			"wires" : [ [ "3d15ab82.8447dc" ], [ "46506459.f552ec" ],
+					[ "8bcf31ed.5d6df" ] ]
+		},
+		{
+			"id" : "48ce8960.1f063",
+			"type" : "function",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Switch",
+			"func" : "// \nvar l_switch = global.get('ms.pool_level_switch') || \"Low\";\n\nif (msg.payload === 'On') {\n    l_switch = 'On';\n} else {\n    l_switch = 'Off';\n}\nglobal.set('ms.pool_level_switch', l_switch);\n\nmsg.topic = 'Pool_Fill_Switch';\nmsg.payload = l_switch;\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 410,
+			"y" : 240,
+			"wires" : [ [ "3d15ab82.8447dc" ] ]
+		},
+		{
+			"id" : "46506459.f552ec",
+			"type" : "link out",
+			"z" : "68a1a940.9603e",
+			"name" : "Chart Pool Out",
+			"links" : [ "268e73a3.9c1b7c" ],
+			"x" : 935,
+			"y" : 240,
+			"wires" : []
+		},
+		{
+			"id" : "e2c1eb54.20619",
+			"type" : "ui_switch",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip Switch",
+			"label" : "Citrus Drip",
+			"group" : "4bc82409.c2299c",
+			"order" : 0,
+			"width" : 0,
+			"height" : 0,
+			"passthru" : true,
+			"decouple" : "false",
+			"topic" : "CitrusDripSwitch",
+			"style" : "",
+			"onvalue" : "On",
+			"onvalueType" : "str",
+			"onicon" : "",
+			"oncolor" : "",
+			"offvalue" : "Off",
+			"offvalueType" : "str",
+			"officon" : "",
+			"offcolor" : "",
+			"x" : 130,
+			"y" : 240,
+			"wires" : [ [ "704231db.f52468" ] ]
+		},
+		{
+			"id" : "a757142e.406ed8",
+			"type" : "function",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip Relay",
+			"func" : "// Control the relay that turns on the citrus drip relay.\n\n// Input A = \"Schedule\"\n// Input B = \"CitrusDripSe\"\n// Input C = \"PyHouseMsg\" - A MQTT message to turn on drip relay\n\n// Output 1 = GPIO pin to turn on relay pin\n// Output 2 = Email\n// Output 3 = To MQTT.\n// Output 4 = Chart\n// Output 5 = Debug\n\nvar RELAY_ON  = 1;\nvar RELAY_OFF = 0;\nvar CHART_ON  = 0.85;\nvar CHART_OFF = 0.04;\nvar NAME = \" Citrus Drip irrigation \";\n\nvar l_date   = new Date();\nvar l_hour   = l_date.getHours();\nvar l_minute = l_date.getMinutes();\n\nvar l_house  = global.get('ms.house_name');\nvar l_node   = global.get('ms.node_name');\nvar l_ip     = global.get('ms.public_ipv4');\nvar l_switch = global.get('ms.citrus_drip_switch');\nvar l_relay  = global.get('ms.citrus_drip_relay');\nvar PREFIX = 'pyhouse/' + l_house + '/irrigation/citrusdrip/';\n\nvar cntrl_msg,\n    email_msg,\n    mqtt_msg,\n    chart_msg,\n    debug_msg;\n\nfunction build_control_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Control Message';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_email_message(p_msg) {\n    var msg = {};\n    msg.topic = l_house + ' ' + NAME;\n    msg.from = l_house;\n    msg.payload = p_msg + '\\nIp: ' + l_ip;\n    return msg;\n}\nfunction build_mqtt_message(p_msg) {\n    var msg = {};\n    msg.topic = PREFIX + 'status';\n    msg.payload = {};\n    msg.payload.Status = p_msg;\n    msg.payload.Sender = l_node;\n    msg.payload.Location = NAME;\n    return msg;\n}\nfunction build_chart_message(p_msg) {\n    var msg = {};\n    msg.topic  = '3 Citrus Drip';\n    msg.series = \"3 Citrus Drip\"\n    msg.label  = \"3 Citrus Drip\"\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_debug_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Debug Message';\n    msg.payload = p_msg;\n    msg.status = \"CitrusDripRelay:\" + l_relay;\n    return msg;\n}\n\n// Turn drip on\nfunction turnRelayOn(pType) {\n    if (l_relay !== 'On') {\n        cntrl_msg = build_control_message(RELAY_ON);\n        email_msg = build_email_message('Turned ' + NAME + ' ON: ' + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message('Citrus Drip Start');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_OFF); \n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Turned ' + NAME + ' ON ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else { // Continue Manual ON\n        chart_msg = build_chart_message(CHART_ON);\n        debug_msg = build_debug_message('Kept ' + NAME +' ON ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.citrus_drip_relay', 'On');\n}\n// Turn drip off\nfunction turnRelayOff(pType) {\n    if (l_relay === 'On') {  // Turning drip system off.\n        cntrl_msg = build_control_message(RELAY_OFF);\n        email_msg = build_email_message(NAME + 'OFF: '  + l_house + \"  \" + l_date);\n        mqtt_msg  = build_mqtt_message('Citrus Drip Stop');\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_ON);\n        node.send([null, null, null, chart_msg, null]);\n        //\n        chart_msg = build_chart_message(CHART_OFF);\n        debug_msg = build_debug_message('Turned ' + NAME + ' OFF ' + pType);\n        node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n    } else {\n        chart_msg = build_chart_message(CHART_OFF);\n        debug_msg = build_debug_message('Kept ' + NAME +' OFF ' + pType);\n        node.send([null, null, mqtt_msg, chart_msg, debug_msg]);\n    }\n    global.set('ms.citrus_drip_relay', 'Off');\n}\n\n// Main \n\n// Note that reloading or deploying will resume in progress automatic schedules.\nif (msg.topic === \"Schedule\" ) {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Auto\");\n    } else {  // Off\n        turnRelayOff(\"Auto\");\n    }\n} else if (msg.topic === 'CitrusDripSwitch') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Manual\");\n    } else {  // Off\n        turnRelayOff(\"Manual\");\n    }\n} else if (msg.topic === PREFIX + 'control') {\n    if (msg.payload === 'On') {\n        turnRelayOn(\"Mqtt\");\n    } else {\n        turnRelayOff(\"Mqtt\");\n    }\n} else {\n    debug_msg = build_debug_message('Unknown message:');\n    debug_msg.old_topic = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.prefix = PREFIX + 'control';\n    node.send([null, null, null, null, debug_msg]);\n}\n\n// ### END DBK\n",
+			"outputs" : 5,
+			"noerr" : 0,
+			"x" : 730,
+			"y" : 180,
+			"wires" : [ [ "af1c4fa0.242638" ], [], [ "ff53f4d5.9497d8" ],
+					[ "144bd243.95fbbe" ], [ "4dfe48a5.dabf6" ] ]
+		},
+		{
+			"id" : "6d39f6ac.7d19e",
+			"type" : "timerswitch",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip Schedule",
+			"ontopic" : "Schedule",
+			"offtopic" : "Schedule",
+			"onpayload" : "On",
+			"offpayload" : "Off",
+			"disabled" : false,
+			"schedules" : [ {
+				"on_h" : "09",
+				"on_m" : "00",
+				"on_s" : "00",
+				"off_h" : "09",
+				"off_m" : "30",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "14",
+				"on_m" : "00",
+				"on_s" : "00",
+				"off_h" : "14",
+				"off_m" : "30",
+				"off_s" : "00",
+				"valid" : true
+			}, {
+				"on_h" : "20",
+				"on_m" : "15",
+				"on_s" : "00",
+				"off_h" : "20",
+				"off_m" : "45",
+				"off_s" : "00",
+				"valid" : true
+			} ],
+			"x" : 140,
+			"y" : 180,
+			"wires" : [ [ "a757142e.406ed8" ] ]
+		},
+		{
+			"id" : "b2a49b3b.a0d2a",
+			"type" : "link out",
+			"z" : "2e810cbd.99f734",
+			"name" : "Chart Front Out",
+			"links" : [ "268e73a3.9c1b7c" ],
+			"x" : 935,
+			"y" : 240,
+			"wires" : []
+		},
+		{
+			"id" : "af1c4fa0.242638",
+			"type" : "rpi-gpio out",
+			"z" : "18d0f89b.7e071f",
+			"name" : "",
+			"pin" : "36",
+			"set" : "",
+			"level" : "0",
+			"freq" : "",
+			"out" : "out",
+			"x" : 980,
+			"y" : 80,
+			"wires" : []
+		},
+		{
+			"id" : "4dfe48a5.dabf6",
+			"type" : "debug",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip Debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 1010,
+			"y" : 300,
+			"wires" : []
+		},
+		{
+			"id" : "144bd243.95fbbe",
+			"type" : "link out",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Chart Citrus Out",
+			"links" : [ "268e73a3.9c1b7c" ],
+			"x" : 935,
+			"y" : 240,
+			"wires" : []
+		},
+		{
+			"id" : "ff53f4d5.9497d8",
+			"type" : "mqtt out",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip",
+			"topic" : "",
+			"qos" : "",
+			"retain" : "",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 990,
+			"y" : 180,
+			"wires" : []
+		},
+		{
+			"id" : "1ab1b6fb.287e21",
+			"type" : "mqtt in",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip Control",
+			"topic" : "pyhouse/#",
+			"qos" : "2",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 130,
+			"y" : 300,
+			"wires" : [ [ "3c9ffb69.b3eb2c" ] ]
+		},
+		{
+			"id" : "dd507394.461548",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "18d0f89b.7e071f",
+			"x" : 1000,
+			"y" : 140,
+			"wires" : []
+		},
+		{
+			"id" : "b6efa8f9.9f1598",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "9b867ed1.945dc",
+			"x" : 1000,
+			"y" : 140,
+			"wires" : []
+		},
+		{
+			"id" : "30008e0a.0ab882",
+			"type" : "mqtt out",
+			"z" : "10a2011d.745bef",
+			"name" : "Send Test Message",
+			"topic" : "",
+			"qos" : "0",
+			"retain" : "false",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 780,
+			"y" : 240,
+			"wires" : []
+		},
+		{
+			"id" : "388dd4a0.a3608c",
+			"type" : "inject",
+			"z" : "10a2011d.745bef",
+			"name" : "Test On",
+			"topic" : "",
+			"payload" : "On",
+			"payloadType" : "str",
+			"repeat" : "",
+			"crontab" : "",
+			"once" : false,
+			"onceDelay" : 0.1,
+			"x" : 110,
+			"y" : 240,
+			"wires" : [ [ "b1195375.5f0b2" ] ]
+		},
+		{
+			"id" : "b1195375.5f0b2",
+			"type" : "function",
+			"z" : "10a2011d.745bef",
+			"name" : "Build test message",
+			"func" : "//\n\nvar l_house  = global.get('ms.house_name');\nvar l_node   = global.get('ms.node_name');\nvar PREFIX   = 'pyhouse/' + l_house + '/irrigation/frontdrip/';\n\nmsg.topic    = PREFIX + 'control';\nmsg.payload  = msg.payload;\nreturn msg;",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 360,
+			"y" : 240,
+			"wires" : [ [ "30008e0a.0ab882", "abfa9600.20a8f" ] ]
+		},
+		{
+			"id" : "abfa9600.20a8f",
+			"type" : "debug",
+			"z" : "10a2011d.745bef",
+			"name" : "Mqtt test message",
+			"active" : true,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 770,
+			"y" : 320,
+			"wires" : []
+		},
+		{
+			"id" : "da45a070.5d5608",
+			"type" : "inject",
+			"z" : "10a2011d.745bef",
+			"name" : "Test Off",
+			"topic" : "",
+			"payload" : "Off",
+			"payloadType" : "str",
+			"repeat" : "",
+			"crontab" : "",
+			"once" : false,
+			"onceDelay" : 0.1,
+			"x" : 110,
+			"y" : 300,
+			"wires" : [ [ "b1195375.5f0b2" ] ]
+		},
+		{
+			"id" : "c40ec8af.4ffc2",
+			"type" : "function",
+			"z" : "2e810cbd.99f734",
+			"name" : "Filter",
+			"func" : "// Filter out Mqtt messages that we don't want to see.\n\nvar M_TOPIC   = '/irrigation/frontdrip/';\nvar l_house  = global.get('ms.house_name');\nvar PREFIX   = 'pyhouse/' + l_house + M_TOPIC;\nvar mqtt_msg,\n    debug_msg;\n\nif (msg.topic === PREFIX + 'control') {\n    mqtt.topic   = msg.topic;\n    mqtt.payload = msg.payload;\n    node.send([mqtt_msg, null]);\n} else {\n    debug_msg = {};\n    debug_msg.topic       = 'Filter Mqtt message';\n    debug_msg.old_topic   = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.my_prefix   = PREFIX + 'control';\n    node.send([null, debug_msg]);\n}\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 2,
+			"noerr" : 0,
+			"x" : 430,
+			"y" : 300,
+			"wires" : [ [ "ff412752.7ed1b8" ], [ "5c683f4a.7b7328" ] ]
+		},
+		{
+			"id" : "5c683f4a.7b7328",
+			"type" : "debug",
+			"z" : "2e810cbd.99f734",
+			"name" : "Filter Debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 650,
+			"y" : 320,
+			"wires" : []
+		},
+		{
+			"id" : "1e7364a3.e8209b",
+			"type" : "function",
+			"z" : "9b867ed1.945dc",
+			"name" : "Lanai Drip Switch",
+			"func" : "// \nvar l_switch = global.get('ms.lanai_drip_switch') || \"Off\";\n\nif (msg.payload === 'On') {\n    l_switch = 'On';\n} else {\n    l_switch = 'Off';\n}\nglobal.set('ms.lanai_drip_switch', l_switch);\n\nmsg.topic = 'Lanai_Drip_Switch';\nmsg.payload = l_switch;\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 390,
+			"y" : 240,
+			"wires" : [ [ "4031afea.4f108" ] ]
+		},
+		{
+			"id" : "840ff3bb.be9b18",
+			"type" : "function",
+			"z" : "9b867ed1.945dc",
+			"name" : "Filter",
+			"func" : "// Filter out Mqtt messages that we don't want to see.\n\n\nvar M_TOPIC   = '/irrigation/lanaidrip/';\nvar l_house  = global.get('ms.house_name');\nvar PREFIX   = 'pyhouse/' + l_house + M_TOPIC;\nvar mqtt_msg,\n    debug_msg;\n\nif (msg.topic === PREFIX + 'control') {\n    mqtt.topic   = msg.topic;\n    mqtt.payload = msg.payload;\n    node.send([mqtt_msg, null]);\n} else {\n    debug_msg = {};\n    debug_msg.topic       = 'Filter Mqtt message';\n    debug_msg.old_topic   = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.my_prefix   = PREFIX + 'control';\n    node.send([null, debug_msg]);\n}\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 2,
+			"noerr" : 0,
+			"x" : 430,
+			"y" : 300,
+			"wires" : [ [ "4031afea.4f108" ], [ "c866e04d.47fbc" ] ]
+		},
+		{
+			"id" : "c866e04d.47fbc",
+			"type" : "debug",
+			"z" : "9b867ed1.945dc",
+			"name" : "Filter Debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 650,
+			"y" : 320,
+			"wires" : []
+		},
+		{
+			"id" : "704231db.f52468",
+			"type" : "function",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Citrus Drip Switch",
+			"func" : "// \nvar l_switch = global.get('ms.citrus_drip_switch') || \"Off\";\n\nif (msg.payload === 'On') {\n    l_switch = 'On';\n} else {\n    l_switch = 'Off';\n}\nglobal.set('ms.citrus_drip_switch', l_switch);\n\nmsg.topic = 'Citrus_Drip_Switch';\nmsg.payload = l_switch;\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 390,
+			"y" : 240,
+			"wires" : [ [ "a757142e.406ed8" ] ]
+		},
+		{
+			"id" : "3c9ffb69.b3eb2c",
+			"type" : "function",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Filter",
+			"func" : "// Filter out Mqtt messages that we don't want to see.\n\n\nvar M_TOPIC   = '/irrigation/citrusdrip/';\nvar l_house  = global.get('ms.house_name');\nvar PREFIX   = 'pyhouse/' + l_house + M_TOPIC;\nvar mqtt_msg,\n    debug_msg;\n\nif (msg.topic === PREFIX + 'control') {\n    mqtt.topic   = msg.topic;\n    mqtt.payload = msg.payload;\n    node.send([mqtt_msg, null]);\n} else {\n    debug_msg = {};\n    debug_msg.topic       = 'Filter Mqtt message';\n    debug_msg.old_topic   = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.my_prefix   = PREFIX + 'control';\n    node.send([null, debug_msg]);\n}\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 2,
+			"noerr" : 0,
+			"x" : 430,
+			"y" : 300,
+			"wires" : [ [ "a757142e.406ed8" ], [ "89104b4e.7a8d6" ] ]
+		},
+		{
+			"id" : "89104b4e.7a8d6",
+			"type" : "debug",
+			"z" : "18d0f89b.7e071f",
+			"name" : "Filter Debug",
+			"active" : false,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 650,
+			"y" : 320,
+			"wires" : []
+		},
+		{
+			"id" : "c8202111.3cda38",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "68a1a940.9603e",
+			"x" : 1000,
+			"y" : 140,
+			"wires" : []
+		},
+		{
+			"id" : "8bcf31ed.5d6df",
+			"type" : "debug",
+			"z" : "68a1a940.9603e",
+			"name" : "Pool Fill Filter Debug",
+			"active" : true,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "true",
+			"x" : 700,
+			"y" : 500,
+			"wires" : []
+		},
+		{
+			"id" : "1fc1f163.f95a3f",
+			"type" : "function",
+			"z" : "68a1a940.9603e",
+			"name" : "Filter",
+			"func" : "// Filter out Mqtt messages that we don't want to see.\n\n\nvar M_TOPIC   = '/irrigation/poolfill/';\nvar l_house  = global.get('ms.house_name');\nvar PREFIX   = 'pyhouse/' + l_house + M_TOPIC;\nvar mqtt_msg,\n    debug_msg;\n\nif (msg.topic === PREFIX + 'control') {\n    mqtt.topic   = msg.topic;\n    mqtt.payload = msg.payload;\n    node.send([mqtt_msg, null]);\n} else {\n    debug_msg = {};\n    debug_msg.topic       = 'Filter Mqtt message';\n    debug_msg.old_topic   = msg.topic;\n    debug_msg.old_payload = msg.payload;\n    debug_msg.my_prefix   = PREFIX + 'control';\n    node.send([null, debug_msg]);\n}\n\nreturn msg;\n\n// ### END DBK\n",
+			"outputs" : 2,
+			"noerr" : 0,
+			"x" : 430,
+			"y" : 300,
+			"wires" : [ [ "3d15ab82.8447dc" ], [ "8bcf31ed.5d6df" ] ]
+		},
+		{
+			"id" : "4d4cabfe.2a8c3c",
+			"type" : "function",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "Power Strip Relay",
+			"func" : "// Control the relay that turns OFF a power strip\n\n// The power strip is ON when the relay is OFF.\n// The relay is turned on for 10 seconds to interrupt the power and reboot the Frontier Router.\n// The router occationally hangs - hence the rebooting.\n\n// Output 1 = GPIO pin to turn on relay 4 for 10 seconds\n// Output 2 = Email\n// Output 3 = Mqtt\n// Output 4 = Chart\n// Output 5 = Debug\n\n// Input = Schedule (On or Off)\n// Input = control from power switch (UpdateChart, PowerSwitch)\n\n\nvar cntrl_msg,\n    email_msg,\n    mqtt_msg,\n    chart_msg,\n    debug_msg,\n    delay_msg;\n\nvar l_date   = new Date();\nvar l_house  = global.get('ms.house_name');\nvar l_node   = global.get('ms.node_name');\nvar l_ip     = global.get('ms.public_ipv4');\nvar l_relay  = global.get('ms.power_relay') || 'Off';\nvar PREFIX   = 'pyhouse/' + l_house + '/router/power/';\n\n// Turning the relay ON will turn the power strip OFF.\n// The delay node will turn it on after the delay time.\nvar POWER_RELAY_ON  = 0;\nvar POWER_RELAY_OFF = 1;\nvar CHART_POWER_ON  = 0.69;\nvar CHART_POWER_OFF = 0.08;\nvar NAME = \"Power Strip\";\n\nnode.status({fill:\"green\", shape:\"dot\",text:\"Power On\"});\n\nfunction build_control_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Control Message';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_email_message(p_msg) {\n    var msg     = {};\n    msg.topic   = l_house + ' ' + NAME;\n    msg.from    = l_house;\n    msg.payload = p_msg + '\\\\n';\n    msg.payload += 'Ip: ' + l_ip + '\\\\n';\n    msg.payload += 'Node: ' + l_node + '\\\\n';\n    return msg;\n}\nfunction build_mqtt_message(p_msg) {\n    var msg = {};\n    msg.topic = PREFIX + 'status';\n    msg.payload = {};\n    msg.payload.Status = p_msg;\n    msg.payload.Sender = l_node;\n    msg.payload.Location = NAME;\n    return msg;\n}\nfunction build_chart_message(p_msg) {\n    var msg = {};\n    msg.topic = 'PowerStrip';\n    msg.payload = p_msg;\n    return msg;\n}\nfunction build_debug_message(p_msg) {\n    var msg = {};\n    msg.topic = 'Debug Message - Power Strip.';\n    msg.payload = p_msg;\n    return msg;\n}\n\n// this will enetgize the power strip\nfunction turn_relay_off() {\n    if (l_relay !== 'Off') {\n        // Double the chart to provide square edge plots that reflect reality\n        chart_msg = build_chart_message(CHART_POWER_ON);\n        node.send([null, null, null, chart_msg, null]);\n        //\n        debug_msg = build_debug_message('Turned' + NAME + 'ON.');\n    } else { // Continue Manual ON\n        debug_msg = build_debug_message('Kept' + NAME +'ON.');\n    }\n    node.status({fill:\"green\", shape:\"dot\",text:\"Power Strip On, Relay Off\"});\n    global.set('ms.power_relay', 'Off');\n    cntrl_msg = build_control_message(POWER_RELAY_OFF);\n    email_msg = build_email_message('Power Strip On.');\n    mqtt_msg  = build_mqtt_message('Off');\n    chart_msg = build_chart_message(CHART_POWER_OFF);\n    debug_msg = build_debug_message('Turned' + NAME + 'ON.');\n    node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n}\n// this will de-enetgize the power strip\\n\nfunction turn_relay_on() {\n    // Double the chart to provide square edge plots that reflect reality\n    chart_msg = build_chart_message(CHART_POWER_OFF);\n    node.send([null, null, null, chart_msg, null]);\n    //\n    node.status({fill:\"red\", shape:\"dot\",text:\"Power Strip Off, Relay On\"});\n    global.set('ms.power_relay', 'On');\n    cntrl_msg = build_control_message(POWER_RELAY_ON);\n    email_msg = build_email_message('Power Strip off');\n    debug_msg = build_debug_message('Turned Power relay on = Power OFF.');\n    mqtt_msg  = build_mqtt_message('On');\n    chart_msg = build_chart_message(CHART_POWER_ON);\n    node.send([cntrl_msg, email_msg, mqtt_msg, chart_msg, debug_msg]);\n}\n\n\n//cntrl_msg = build_control_message(POWER_RELAY_ON);\n//email_msg = build_email_message('Turned Power ON.');\n//mqtt_msg  = build_mqtt_message('On');\n//chart_msg = build_chart_message(CHART_POWER_ON);\n//debug_msg = build_debug_message('Automatically toggled power strip.');\n//delay_msg = build_delay_message(POWER_RELAY_OFF);\n\nswitch (msg.topic) {\n    case 'UpdateChart':\n        chart_msg = build_chart_message(CHART_POWER_OFF);\n        node.send([null, null, null, chart_msg, null]);\n        break;\n    case 'Schedule':\n        if (msg.payload === 'On') {\n            turn_relay_on();\n        } else {\n            turn_relay_off();\n        }\n        break;\n    case 'PowerSwitch':\n        if (msg.payload === 'On') {\n            turn_relay_on();\n        } else {\n            turn_relay_off();\n        }\n        break;\n    default:\n        debug_msg = build_debug_message('Unknown Input: topic=' + msg.topic + ',  Payload=' + msg.payload);\n        node.warn(debug_msg);\n        return null;\n}\n\n// ### END DBK\n",
+			"outputs" : 5,
+			"noerr" : 0,
+			"x" : 550,
+			"y" : 220,
+			"wires" : [ [ "75082dae.9ff33c" ], [ "631c14cb.f1ea54" ],
+					[ "60152e34.64fad" ], [ "9000c3d9.0be748" ],
+					[ "f60d7504.1f9da8" ] ]
+		}, {
+			"id" : "f60d7504.1f9da8",
+			"type" : "debug",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "",
+			"active" : true,
+			"tosidebar" : true,
+			"console" : false,
+			"tostatus" : false,
+			"complete" : "false",
+			"x" : 1030,
+			"y" : 340,
+			"wires" : []
+		}, {
+			"id" : "60152e34.64fad",
+			"type" : "mqtt out",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "",
+			"topic" : "",
+			"qos" : "",
+			"retain" : "",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 1010,
+			"y" : 220,
+			"wires" : []
+		}, {
+			"id" : "631c14cb.f1ea54",
+			"type" : "subflow:436cc0f2.26c4c",
+			"z" : "19a3d9c8.eb693e",
+			"x" : 1040,
+			"y" : 160,
+			"wires" : []
+		}, {
+			"id" : "cb31e928.68792",
+			"type" : "timerswitch",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "",
+			"ontopic" : "",
+			"offtopic" : "",
+			"onpayload" : "",
+			"offpayload" : "",
+			"disabled" : true,
+			"schedules" : [],
+			"x" : 120,
+			"y" : 280,
+			"wires" : [ [ "4d4cabfe.2a8c3c" ] ]
+		}, {
+			"id" : "aa1d734a.c727a",
+			"type" : "inject",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "Toggle",
+			"topic" : "On",
+			"payload" : "Toggle",
+			"payloadType" : "str",
+			"repeat" : "",
+			"crontab" : "",
+			"once" : false,
+			"onceDelay" : 0.1,
+			"x" : 110,
+			"y" : 160,
+			"wires" : [ [ "4d4cabfe.2a8c3c" ] ]
+		}, {
+			"id" : "75082dae.9ff33c",
+			"type" : "delay",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "",
+			"pauseType" : "delay",
+			"timeout" : "5",
+			"timeoutUnits" : "seconds",
+			"rate" : "1",
+			"nbRateUnits" : "1",
+			"rateUnits" : "second",
+			"randomFirst" : "1",
+			"randomLast" : "5",
+			"randomUnits" : "seconds",
+			"drop" : false,
+			"x" : 780,
+			"y" : 140,
+			"wires" : [ [ "49554e37.cf0cb" ] ]
+		}, {
+			"id" : "9000c3d9.0be748",
+			"type" : "link out",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "",
+			"links" : [ "268e73a3.9c1b7c" ],
+			"x" : 975,
+			"y" : 280,
+			"wires" : []
+		}, {
+			"id" : "2b9935d8.06872a",
+			"type" : "mqtt in",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "Ctl Msg",
+			"topic" : "pyhouse/power/",
+			"qos" : "2",
+			"broker" : "a61e1b4d.73c988",
+			"x" : 110,
+			"y" : 220,
+			"wires" : [ [ "4d4cabfe.2a8c3c" ] ]
+		}, {
+			"id" : "49554e37.cf0cb",
+			"type" : "function",
+			"z" : "19a3d9c8.eb693e",
+			"name" : "",
+			"func" : "\nreturn msg;",
+			"outputs" : 1,
+			"noerr" : 0,
+			"x" : 650,
+			"y" : 60,
+			"wires" : [ [ "4d4cabfe.2a8c3c" ] ]
+		} ]

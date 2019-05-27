@@ -11,7 +11,7 @@ Passed all 26 tests - DBK - 2018-12-21
 
 """
 
-__updated__ = '2019-05-11'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -37,8 +37,7 @@ from Modules.Core.test.xml_device import \
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_DIVISION
 from Modules.Housing.Lighting.test.xml_lighting import \
-    TESTING_LIGHTING_SECTION, \
-    XML_LIGHTING
+    TESTING_LIGHTING_SECTION
 from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_CUR_LEVEL_0, \

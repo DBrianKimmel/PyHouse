@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-05-18'
+__updated__ = '2019-05-23'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -90,7 +90,7 @@ class CommunicationAPIs(object):
         self.TwitterAPI = None
 
 
-class ComputerAPIs(object):
+class ComputerAPIs():
     """
 
     ==> PyHouse.APIs.Computer.xxx as in the def below.

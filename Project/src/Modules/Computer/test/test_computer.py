@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2019-03-16
 
 """
-__updated__ = "2019-03-16"
+__updated__ = "2019-05-23"
 
 # Import system type stuff
 # import platform
@@ -32,7 +32,7 @@ from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_PRIORITY
 from Modules.Core.data_objects import ComputerInformation
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

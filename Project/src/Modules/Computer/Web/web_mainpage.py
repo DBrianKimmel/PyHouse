@@ -15,7 +15,7 @@ the house select screen also allows for a house to be added so starting with no 
 This module creates a main page and a workspace.
 """
 
-__updated__ = '2019-04-07'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 import gc
@@ -48,7 +48,7 @@ from Modules.Computer.Web import web_rootMenu
 # from Modules.Computer.Web import web_users
 # from Modules.Computer.Web import web_webs
 
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.WebMainpage    ')

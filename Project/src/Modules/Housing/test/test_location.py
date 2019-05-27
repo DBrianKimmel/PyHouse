@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2019-05-11'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,7 +34,7 @@ from Modules.Housing.test.xml_location import \
         TESTING_LOCATION_ELEVATION, \
         TESTING_LOCATION_TIME_ZONE_NAME, \
         TESTING_LOCATION_REGION
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

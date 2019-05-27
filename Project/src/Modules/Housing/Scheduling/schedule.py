@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-25'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -300,7 +300,7 @@ class SchedTime:
         return l_seconds
 
 
-class ScheduleExecution:
+class ScheduleExecution():
 
     def dispatch_one_schedule(self, p_pyhouse_obj, p_schedule_obj):
         """
@@ -362,7 +362,6 @@ class Utility():
         _l_topic = 'house/schedule/sunrise_set'
         l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
-        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_riseset)
         return l_riseset
 
     @staticmethod

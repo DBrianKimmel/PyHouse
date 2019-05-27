@@ -1,16 +1,16 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_xml.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/test/test_mqtt_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2015  --updated
 @Summary:   Test the read and write of MQTT sections of XML
 
-Passed all 10 tests - DBK - 2018-10-02
+Passed all 10 tests - DBK - 2019-05-23
 
 """
-__updated__ = '2018-10-02'
+__updated__ = '2019-05-25'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -42,7 +42,9 @@ from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_PASSWORD_1, \
     TESTING_BROKER_CLASS_0, \
     TESTING_BROKER_CLASS_1, \
-    TESTING_BROKER_UUID_1
+    TESTING_BROKER_UUID_1, \
+    TESTING_BROKER_HOST_0, \
+    TESTING_BROKER_HOST_1
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -111,6 +113,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Active), TESTING_BROKER_ACTIVE_0)
         self.assertEqual(l_obj.UUID, TESTING_BROKER_UUID_0)
         self.assertEqual(l_obj.BrokerAddress, TESTING_BROKER_ADDRESS_0)
+        self.assertEqual(l_obj.BrokerHost, TESTING_BROKER_HOST_0)
         self.assertEqual(l_obj.BrokerPort, int(TESTING_BROKER_PORT_0))
         self.assertEqual(l_obj.UserName, TESTING_BROKER_USERNAME_0)
         self.assertEqual(l_obj.Password, TESTING_BROKER_PASSWORD_0)
@@ -127,6 +130,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Active), TESTING_BROKER_ACTIVE_1)
         self.assertEqual(l_obj.UUID, TESTING_BROKER_UUID_1)
         self.assertEqual(l_obj.BrokerAddress, TESTING_BROKER_ADDRESS_1)
+        self.assertEqual(l_obj.BrokerHost, TESTING_BROKER_HOST_1)
         self.assertEqual(l_obj.BrokerPort, int(TESTING_BROKER_PORT_1))
         self.assertEqual(l_obj.UserName, TESTING_BROKER_USERNAME_1)
         self.assertEqual(l_obj.Password, TESTING_BROKER_PASSWORD_1)
@@ -166,6 +170,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_BROKER_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_BROKER_ACTIVE_0)
         self.assertEqual(l_xml.find('BrokerAddress').text, TESTING_BROKER_ADDRESS_0)
+        self.assertEqual(l_xml.find('BrokerHost').text, TESTING_BROKER_HOST_0)
         self.assertEqual(l_xml.find('BrokerPort').text, TESTING_BROKER_PORT_0)
         self.assertEqual(l_xml.find('BrokerUser').text, TESTING_BROKER_USERNAME_0)
         self.assertEqual(l_xml.find('BrokerPassword').text, TESTING_BROKER_PASSWORD_0)
@@ -182,6 +187,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_BROKER_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_BROKER_ACTIVE_1)
         self.assertEqual(l_xml.find('BrokerAddress').text, TESTING_BROKER_ADDRESS_1)
+        self.assertEqual(l_xml.find('BrokerHost').text, TESTING_BROKER_HOST_1)
         self.assertEqual(l_xml.find('BrokerPort').text, TESTING_BROKER_PORT_1)
         self.assertEqual(l_xml.find('BrokerUser').text, TESTING_BROKER_USERNAME_1)
         self.assertEqual(l_xml.find('BrokerPassword').text, TESTING_BROKER_PASSWORD_1)
@@ -198,6 +204,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml1.attrib['Key'], TESTING_BROKER_KEY_0)
         self.assertEqual(l_xml1.attrib['Active'], TESTING_BROKER_ACTIVE_0)
         self.assertEqual(l_xml1.find('BrokerAddress').text, TESTING_BROKER_ADDRESS_0)
+        self.assertEqual(l_xml1.find('BrokerHost').text, TESTING_BROKER_HOST_0)
         self.assertEqual(l_xml1.find('BrokerPort').text, TESTING_BROKER_PORT_0)
         self.assertEqual(l_xml1.find('BrokerUser').text, TESTING_BROKER_USERNAME_0)
         self.assertEqual(l_xml1.find('BrokerPassword').text, TESTING_BROKER_PASSWORD_0)
@@ -207,6 +214,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml2.attrib['Key'], TESTING_BROKER_KEY_1)
         self.assertEqual(l_xml2.attrib['Active'], TESTING_BROKER_ACTIVE_1)
         self.assertEqual(l_xml2.find('BrokerAddress').text, TESTING_BROKER_ADDRESS_1)
+        self.assertEqual(l_xml2.find('BrokerHost').text, TESTING_BROKER_HOST_1)
         self.assertEqual(l_xml2.find('BrokerPort').text, TESTING_BROKER_PORT_1)
         self.assertEqual(l_xml2.find('BrokerUser').text, TESTING_BROKER_USERNAME_1)
         self.assertEqual(l_xml2.find('BrokerPassword').text, TESTING_BROKER_PASSWORD_1)

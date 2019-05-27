@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='us-ascii'?>
-<PyHouse Version="19.5.0"
+<PyHouse Version="19.5.2"
 	xmlns:comp="http://PyHouse.Org/ComputerDiv"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://PyHouse.org schemas/PyHouse.xsd"><!-- Updated by PyHouse 2019-05-18 12:42:30.268979 -->
@@ -49,10 +49,20 @@
 		<InternetSection />
 		<MqttSection>
 			<Broker Active="True" Key="0" Name="CannonTrail">
-				<Comment />
+				<Comment>For Cannon Trail (if reachable)</Comment>
 				<LastUpdate>2019-05-18 12:41:20.061260</LastUpdate>
 				<UUID>392c6466-5852-11e7-8389-801f02b5e4e6</UUID>
-				<BrokerAddress>192.168.9.10</BrokerAddress>
+				<BrokerHost>mqtt-ct</BrokerHost>
+				<BrokerPort>1883</BrokerPort>
+				<BrokerUser>None</BrokerUser>
+				<BrokerPassword>None</BrokerPassword>
+				<Class>Local</Class>
+			</Broker>
+			<Broker Active="True" Key="1" Name="Local">
+				<Comment>For testing so we have a local broker</Comment>
+				<LastUpdate>2019-05-18 12:41:20.061260</LastUpdate>
+				<UUID>392c6466-5852-11e7-8389-801f02b5e4e6</UUID>
+				<BrokerHost>localhost</BrokerHost>
 				<BrokerPort>1883</BrokerPort>
 				<BrokerUser>None</BrokerUser>
 				<BrokerPassword>None</BrokerPassword>

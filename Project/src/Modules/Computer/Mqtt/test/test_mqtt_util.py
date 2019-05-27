@@ -1,16 +1,16 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_util.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/test/test_mqtt_util.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 31, 2017
 @summary:   Test
 
-Passed all 10 tests - DBK - 2018-02-12
+Passed all 10 tests - DBK - 2019-05-25
 
 """
-__updated__ = '2018-02-12'
+__updated__ = '2019-05-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,8 +20,11 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Mqtt import mqtt_util
-from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
-from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQTT_BROKER
+from Modules.Computer.test.xml_computer import \
+    TESTING_COMPUTER_DIVISION
+from Modules.Computer.Mqtt.test.xml_mqtt import \
+    TESTING_MQTT_SECTION, \
+    TESTING_MQTT_BROKER
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

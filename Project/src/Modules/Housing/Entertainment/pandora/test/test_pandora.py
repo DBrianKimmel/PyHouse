@@ -11,7 +11,7 @@ Passed all 20 tests - DBK - 2019-04-20
 
 """
 
-__updated__ = '2019-04-20'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,7 +26,7 @@ from Modules.Housing.Entertainment.pandora.pandora import \
     SECTION, \
     MqttActions, \
     PianoBarProcessControl, \
-    PandoraStatusData
+    PandoraServiceData
 from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     XML_PANDORA_SECTION, \
     TESTING_PANDORA_SECTION, \

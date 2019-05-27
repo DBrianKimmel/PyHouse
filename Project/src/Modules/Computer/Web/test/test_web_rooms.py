@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -63,6 +63,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def test_02_Json(self):
         l_api = web_rooms.RoomsElement(self.m_workspace_obj, None)
-        l_json = l_api.getServerData()
+        _l_json = l_api.getServerData()
 
 # ## END DBK

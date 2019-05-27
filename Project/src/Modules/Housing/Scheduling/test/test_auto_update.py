@@ -12,7 +12,7 @@ Passed all 5 tests - DBK - 2015-11-21
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-05-12'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -54,8 +54,9 @@ class B1_Setup(SetupMixin, unittest.TestCase):
         SetupPyHouseObj().BuildXml(self.m_xml.root)
 
     def test_01_PyHouse(self):
-        l_file = auto_update._find_pyhouse_version_file()
+        # l_file = auto_update._find_pyhouse_version_file()
         # print('B1-01-A - Local File = {}'.format(l_file))
+        pass
 
 
 class B2_Base(SetupMixin, unittest.TestCase):
@@ -122,7 +123,7 @@ class D1_Repository(SetupMixin, unittest.TestCase):
     def test_02_Repository(self):
         """ Test extraction of the repository version number
         """
-        l_repos = auto_update.FindRepositoryVersion(self.m_pyhouse_obj).get_repository()
+        # l_repos = auto_update.FindRepositoryVersion(self.m_pyhouse_obj).get_repository()
         # print(PrettyFormatAny.form(l_repos, 'D1-02-A -  repo', 190), '\n')
 
     def test_03_File(self):

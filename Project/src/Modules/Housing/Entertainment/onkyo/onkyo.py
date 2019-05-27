@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-05-21'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -404,7 +404,6 @@ class MqttActions():
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
         if l_family == None:
             l_family = 'onkyo'
-        l_device = extract_tools.get_mqtt_field(p_message, 'Device')
         l_model = extract_tools.get_mqtt_field(p_message, 'Model')
         l_device_obj = self._find_device(l_family, l_model)
         l_power = self._get_power(p_message)
@@ -417,7 +416,7 @@ class MqttActions():
             l_queue.Args = l_power
             l_queue.Zone = 1
             l_device_obj._Queue.put(l_queue)
-            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_device)
+            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_model)
         if l_input != None:
             l_queue = OnkyoQueueData()
             l_queue.Command = 'InputSelect'

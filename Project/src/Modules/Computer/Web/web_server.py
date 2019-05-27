@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-04-08'
+__updated__ = '2019-05-25'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -93,7 +93,7 @@ class Utility(ClientConnections):
         """
 
         def cb_listen(p_arg):
-            LOG.debug('{}'.format(PrettyFormatAny.form(p_arg, 'Arg', 190)))
+            # LOG.debug('{}'.format(PrettyFormatAny.form(p_arg, 'Arg', 190)))
             pass
 
         def eb_listen_error(p_reason):
@@ -104,7 +104,7 @@ class Utility(ClientConnections):
         _l_app = p_pyhouse_obj.Twisted.Application
         # l_app = Klein()
         p_pyhouse_obj.Twisted.Application = klein_app
-        LOG.debug('{}'.format(PrettyFormatAny.form(klein_app, 'KleinApp', 190)))
+        # LOG.debug('{}'.format(PrettyFormatAny.form(klein_app, 'KleinApp', 190)))
         l_endpoint_description = 'tcp'
         l_endpoint_description += ':port={}'.format(p_port)
         if p_interface != None:
@@ -112,12 +112,12 @@ class Utility(ClientConnections):
         LOG.debug("TCP Endpoint: {}".format(l_endpoint_description))
 
         l_endpoint = endpoints.serverFromString(l_reactor, l_endpoint_description)
-        LOG.debug('{}'.format(PrettyFormatAny.form(l_endpoint, 'Endpoint', 190)))
+        # LOG.debug('{}'.format(PrettyFormatAny.form(l_endpoint, 'Endpoint', 190)))
 
         l_server = l_endpoint.listen(Site(klein_app.resource()))
         l_server.addCallback(cb_listen)
         l_server.addErrback(eb_listen_error)
-        LOG.debug('{}'.format(PrettyFormatAny.form(l_server, 'Server', 190)))
+        # LOG.debug('{}'.format(PrettyFormatAny.form(l_server, 'Server', 190)))
 
         p_pyhouse_obj.Computer.Web.WebServer = l_server
         # print(PrettyFormatAny.form(l_server, 'WebServer'))

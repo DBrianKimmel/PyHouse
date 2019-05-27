@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-05-23'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -36,7 +36,7 @@ from Modules.Families.Insteon.Insteon_HVAC import DecodeResponses as DecodeHvac
 from Modules.Families.Insteon.Insteon_Light import DecodeResponses as DecodeLight
 from Modules.Families.Insteon.Insteon_Security import DecodeResponses as DecodeSecurity
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.Families.Insteon.Insteon_constants import ACK, MESSAGE_TYPES, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
+from Modules.Families.Insteon.Insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Computer import logging_pyh as Logger
@@ -138,7 +138,7 @@ class DecodeResponses(object):
         return l_ret
 
     def _publish(self, p_pyhouse_obj, p_device_obj):
-        l_topic = "house/lighting/{}/info".format(p_device_obj.Name)
+        l_topic = "house/lighting/light/{}/info".format(p_device_obj.Name)
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
     def _decode_0x50(self, p_controller_obj):

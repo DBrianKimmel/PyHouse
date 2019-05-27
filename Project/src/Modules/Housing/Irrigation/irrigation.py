@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2019-05-09'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.Utilities import extract_tools
+# from Modules.Core.Utilities import extract_tools
 from Modules.Housing.Irrigation.irrigation_data import IrrigationData
 from Modules.Housing.Irrigation.irrigation_xml import Xml as irrigationXml
 

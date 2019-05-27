@@ -1,16 +1,16 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt_client.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/test/test_mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 13 tests - DBK - 2018-02-12
+Passed all 13 tests - DBK - 2019-05-25
 
 """
-__updated__ = '2018-02-12'
+__updated__ = '2019-05-25'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,7 +27,7 @@ from Modules.Core.data_objects import LocationData, \
         ScheduleLightData, ControllerData, \
         ComputerInformation
 from Modules.Computer.Mqtt.mqtt import _make_message
-from Modules.Computer.Mqtt.mqtt_client import Util  # , API as mqttAPI
+# from Modules.Computer.Mqtt.mqtt_client import Util  # , API as mqttAPI
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
     TESTING_BROKER_ACTIVE_1

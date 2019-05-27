@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,8 +21,6 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.lighting_controllers import XML as controllerXML
 from Modules.Housing.Lighting.lighting_lights import XML as lightXML
 from Modules.Housing.Lighting.lighting_utility import Utility
-from Modules.Housing.Lighting.test.xml_controllers import \
-    TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Lighting.test.xml_lights import \
     XML_LIGHT_SECTION, \
     TESTING_LIGHT_SECTION, \
@@ -34,7 +32,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_UUID_2
 from Modules.Housing.Lighting.test.xml_lighting import \
     XML_LIGHTING
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):

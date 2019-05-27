@@ -10,7 +10,7 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -134,7 +134,7 @@ class B1_One(SetupMixin, unittest.TestCase):
 
     def test_01_Import(self):
         self.m_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
-        l_mod = Utility._do_import(self.m_family_obj, 'Insteon_xml')
+        _l_mod = Utility._do_import(self.m_family_obj, 'Insteon_xml')
         # print(PrettyFormatAny.form(l_mod, 'B1-01-A - Module'))
         self.assertEqual(self.m_family_obj.Name, 'Insteon')
         self.assertEqual(self.m_family_obj.Key, 0)
@@ -145,7 +145,7 @@ class B1_One(SetupMixin, unittest.TestCase):
 
     def test_02_Import(self):
         self.m_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, 'UPB')
-        l_mod = Utility._do_import(self.m_family_obj, 'UPB_xml')
+        _l_mod = Utility._do_import(self.m_family_obj, 'UPB_xml')
         # print(PrettyFormatAny.form(l_mod, 'B1-02-A - Module'))
         self.assertEqual(self.m_family_obj.Name, 'UPB')
         self.assertEqual(self.m_family_obj.Key, 0)
@@ -172,8 +172,9 @@ class B2_One(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_family_obj.FamilyXml_ModuleName, 'Insteon_xml')
 
     def test_02_ImportOneMod(self):
-        l_module = family.Utility()._init_family_component_apis(self.m_pyhouse_obj)
+        _l_module = family.Utility()._init_family_component_apis(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_module, 'Module'))
+        pass
 
 
 class B3_One(SetupMixin, unittest.TestCase):

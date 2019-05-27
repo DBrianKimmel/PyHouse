@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-23'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,7 +38,9 @@ from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools  # , PutGetXML
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
 
@@ -114,9 +116,9 @@ class API(Ent):
         l_obj = EntertainmentDeviceControl()
         l_obj.Model = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name
-        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(
-        #    l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(
+            l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))
+        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the entertainment section.
@@ -150,7 +152,7 @@ class API(Ent):
         return l_entertainment_obj
 
     def Start(self):
-        LOG.info("Starting.")
+        LOG.info("Starting - Version:{}".format(__version__))
         l_count = 0
         for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
             self._module_start_loop(self.m_pyhouse_obj, l_plugin)

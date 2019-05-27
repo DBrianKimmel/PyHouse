@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Housing.test import test_house
+# from Modules.Housing.test import test_house
 import PyHouse
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
@@ -32,8 +32,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_PyHouse')
 

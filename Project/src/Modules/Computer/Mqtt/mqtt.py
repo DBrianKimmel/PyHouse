@@ -8,8 +8,9 @@
 @summary:   This is basically the MQTT API interface that is used by all of pyhouse.
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-27'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -55,7 +56,7 @@ def _make_message(p_pyhouse_obj, p_message=None):
     return l_json
 
 
-class API:
+class API():
     """ This interfaces to all of PyHouse.
     """
 
@@ -108,9 +109,9 @@ class API:
         This routine will run thru the list of brokers and publish to each broker.
 
         # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
+
         @param p_topic: is the partial topic, the prefix will be prepended.
-        @param message_json : is the JSON message we want to send
-        @param message_obj: is an additional object that we will convert to JSON and merge it into the message.
+        @param p_message : is the message we want to send
         """
         l_topic = _make_topic(self.m_pyhouse_obj, p_topic)
         l_message = _make_message(self.m_pyhouse_obj, p_message)
@@ -119,9 +120,10 @@ class API:
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
+                LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
+                LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client', 190)))
 
     def _decodeLWT(self, _p_topic_list, p_message):
         l_logmsg = '\tLast Will:\n'
@@ -130,6 +132,13 @@ class API:
 
     def MqttDispatch(self, p_topic, p_message):
         """ Dispatch a received MQTT message according to the topic.
+
+        Handle:
+            computer
+            house
+            login
+            lwt
+        Everything else is an error!
 
         --> pyhouse/<HouseName>/<Division>/topic03/topic04/...
 
@@ -152,6 +161,8 @@ class API:
         if l_topic_list[0] == 'computer':
             l_logmsg += self.m_parent.DecodeMqtt(l_topic_list[1:], p_message)
         elif l_topic_list[0] == 'house':
+            l_logmsg += houseMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
+        elif l_topic_list[0] == 'login':
             l_logmsg += houseMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
         else:
             l_logmsg += '   OTHER: Unknown topic\n'

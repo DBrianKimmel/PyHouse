@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-10'
+__updated__ = '2019-05-23'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -293,13 +293,13 @@ class API():
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadXml(self, _p_pyhouse_obj):
         LOG.info("Loading XML.")
 
     def Start(self):
         LOG.info("Starting.")
 
-    def SaveXml(self, p_xml):
+    def SaveXml(self, _p_xml):
         LOG.info("Saving XML.")
 
     def Stop(self):

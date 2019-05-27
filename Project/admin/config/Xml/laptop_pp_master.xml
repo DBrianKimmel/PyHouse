@@ -52,7 +52,7 @@
 				<Comment>Main Broker</Comment>
 				<LastUpdate>2019-05-12 12:25:33.934761</LastUpdate>
 				<UUID>c87c8b96-b1e5-11e6-8a14-74da3859e09a</UUID>
-				<BrokerAddress>192.168.1.15</BrokerAddress>
+				<BrokerHost>mqtt-pp</BrokerHost>
 				<BrokerPort>1883</BrokerPort>
 				<BrokerUser>None</BrokerUser>
 				<BrokerPassword>None</BrokerPassword>
@@ -357,7 +357,7 @@
 					<LastUpdate>2019-05-12 12:25:34.010588</LastUpdate>
 					<UUID>Onkyo...-0001-0000-0000-0123456789ab</UUID>
 					<CommandSet />
-					<Host>onkyo</Host>
+					<Host>onkyo-pp</Host>
 					<Installed>2019-05-12 12:25:34.010760</Installed>
 					<IPv4>192.168.1.120</IPv4>
 					<IPv6>2001:db8::1</IPv6>
@@ -376,7 +376,7 @@
 					<LastUpdate>2019-05-12 12:25:34.155290</LastUpdate>
 					<UUID>Smasung.-0001-0000-0000-0123456789ab</UUID>
 					<CommandSet />
-					<Host>samsung-tv</Host>
+					<Host>samsung-tv-pp</Host>
 					<Installed>2019-05-12 12:25:34.155662</Installed>
 					<IPv4>192.168.1.100</IPv4>
 					<IPv6>2001:db8::554</IPv6>
@@ -393,7 +393,7 @@
 				<Service Active="True" Key="0" Name="PandoraOnPi">
 					<Comment>Running on pi-07-pp</Comment>
 					<LastUpdate>2019-05-12 12:25:34.228837</LastUpdate>
-					<Host>None</Host>
+					<Host>pandora-pp</Host>
 					<ConnectionFamily>Onkyo</ConnectionFamily>
 					<ConnectionName>tx-555</ConnectionName>
 					<InputName>Game</InputName>

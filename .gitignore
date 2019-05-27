@@ -16,6 +16,7 @@ doc/html
 
 ### Dirs
 admin/config/Xml/
+admin/config/Entity/
 build/
 dist/
 html/

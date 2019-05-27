@@ -27,7 +27,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-23'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -157,6 +157,7 @@ class Utility:
         p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
         p_pyhouse_obj.APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
+        # LOG.debug('{}'.format(PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer, 'Computer Api\'s', 190)))
 
     def _load_component_xml(self, p_pyhouse_obj):
         p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages.

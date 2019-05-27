@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 
@@ -28,7 +28,7 @@ class BridgesData(object):
 
     def __init__(self):
         super(BridgesData, self).__init__()
-        Bridges = {}
+        self.Bridges = {}
 
 
 class BridgeData(BaseUUIDObject):
@@ -38,12 +38,12 @@ class BridgeData(BaseUUIDObject):
 
     def __init__(self):
         super(BridgeData, self).__init__()
-        Connection = None  # 'Ethernet, Serial, USB
-        Type = None  # Insteon, Hue
-        IPv4Address = '9.8.7.6'
-        Tcp_port = None
-        UserName = None
-        Password = None
-        _Queue = None
+        self.Connection = None  # 'Ethernet, Serial, USB
+        self.Type = None  # Insteon, Hue
+        self.IPv4Address = '9.8.7.6'
+        self.Tcp_port = None
+        self.UserName = None
+        self.Password = None
+        self._Queue = None
 
 # ## END DBK
