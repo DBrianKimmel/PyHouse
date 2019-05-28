@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-28'
 
 # Import system type stuff
 
@@ -108,7 +108,7 @@ class EntertainmentServiceData(BaseObject):
 
         self.Host = '1.2.3.4'
         self.ConnectionFamily = None  # pioneer, onkyo
-        self.ConnectionName = None  # Model
+        self.ConnectionModel = None  # Model
         self.InputName = None
         self.InputCode = None
         self.Type = 'service'
@@ -126,8 +126,6 @@ class EntertainmentDeviceControl:
     def __init__(self):
         self.Family = None  # The device family we are controlling (onkyo, pioneer, ...)
         self.Model = None  # the model name
-        # self.Device = None  #   -Use model now-
-        #
         self.Channel = None  # '01'
         self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.From = None  # The sending module
@@ -153,7 +151,7 @@ class EntertainmentServiceControl:
         self.Direction = None  # F or R  - Forward, Reverse (think Video play)
         self.From = None  # The sending module
         self.HostName = None  # name of computer holding definitions
-        self.InputName = None  # '01'  # Input ID
+        self.InputName = None  # 'Game'  # Input Name
         self.Power = None  # 'Off'  # On or Off which is standby
         self.Skip = None  # skip tracks, skip ahead
         self.Volume = None  # '0'  # 0-100 - Percent

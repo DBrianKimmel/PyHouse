@@ -150,7 +150,7 @@ where xxx is one of:
 * VolumeDown1
 * VolumeDown5
 
-.../control msg=on will have side effects of turning on and setting the "ConnectionName" device.
+.../control msg=on will have side effects of turning on and setting the "ConnectionModel" device.
 
 ### Status Message
 

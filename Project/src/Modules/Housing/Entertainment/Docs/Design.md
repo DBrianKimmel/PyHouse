@@ -146,7 +146,6 @@ All defaults are None - Only fill in what you need so inadvertent controls are n
             <Type>Service</Type>
             <ConnectionName>Pioneer</ConnectionName>
             <InputName>CD</InputName>
-            <InputCode>01FN</InputCode>
             <Volume>47</Volume>
         </Device>
     </PandoraSection>

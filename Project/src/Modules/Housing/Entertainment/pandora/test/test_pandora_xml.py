@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2019-04-20
 
 """
 
-__updated__ = '2019-04-24'
+__updated__ = '2019-05-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,7 +34,7 @@ from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     TESTING_PANDORA_SERVICE_TYPE_0, \
     TESTING_PANDORA_ACTIVE, \
     TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, \
-    TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0, \
+    TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0, \
     TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0, \
     TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0, \
     TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0, \
@@ -177,7 +177,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         # OnkyoDeviceData
         self.assertEqual(convert.long_to_str(l_obj.Host), TESTING_PANDORA_SERVICE_HOST_0)
         self.assertEqual(str(l_obj.ConnectionFamily), TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0)
-        self.assertEqual(str(l_obj.ConnectionName), TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
+        self.assertEqual(str(l_obj.ConnectionModel), TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)
         self.assertEqual(str(l_obj.InputName), TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
         self.assertEqual(str(l_obj.InputCode), TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
         self.assertEqual(str(l_obj.MaxPlayTime), TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0)
@@ -249,7 +249,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         # EntertainmentServiceData
         self.assertEqual(l_xml.find('Host').text, TESTING_PANDORA_SERVICE_HOST_0)
         self.assertEqual(l_xml.find('MaxPlayTime').text, TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0)
-        self.assertEqual(l_xml.find('ConnectionName').text, TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
+        self.assertEqual(l_xml.find('ConnectionModel').text, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)
         self.assertEqual(l_xml.find('InputName').text, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
         self.assertEqual(l_xml.find('InputCode').text, TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
         self.assertEqual(l_xml.find('Volume').text, TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0)

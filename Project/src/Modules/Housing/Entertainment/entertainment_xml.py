@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-07'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -51,6 +51,7 @@ class XML:
         p_device.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
         p_device.Type = PutGetXML.get_text_from_xml(p_xml, 'Type')
         p_device.Volume = PutGetXML.get_int_from_xml(p_xml, 'Volume')
+        p_device.Zone = PutGetXML.get_int_from_xml(p_xml, 'Zone')
         return p_device
 
     def write_entertainment_device(self, p_obj):
@@ -66,6 +67,7 @@ class XML:
         PutGetXML.put_text_element(l_xml, 'RoomUUID', p_obj.RoomUUID)
         PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
         PutGetXML.put_text_element(l_xml, 'Volume', p_obj.Volume)
+        PutGetXML.put_text_element(l_xml, 'Zone', p_obj.Zone)
         return l_xml
 
     def read_entertainment_service(self, p_entry_xml, p_service):
@@ -75,13 +77,13 @@ class XML:
         """
         XmlConfigTools.read_base_object_xml(p_service, p_entry_xml)
         p_service.Host = PutGetXML.get_ip_from_xml(p_entry_xml, 'Host', 'None')
-        p_service.ConnectionFamily = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionFamily')
-        p_service.ConnectionName = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionName').lower()
+        p_service.ConnectionFamily = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionFamily').lower()
+        p_service.ConnectionModel = PutGetXML.get_text_from_xml(p_entry_xml, 'ConnectionModel').lower()
         p_service.InputName = PutGetXML.get_text_from_xml(p_entry_xml, 'InputName')
-        p_service.InputCode = PutGetXML.get_text_from_xml(p_entry_xml, 'InputCode')
         p_service.MaxPlayTime = PutGetXML.get_int_from_xml(p_entry_xml, 'MaxPlayTime')
         p_service.Type = PutGetXML.get_text_from_xml(p_entry_xml, 'Type')
         p_service.Volume = PutGetXML.get_int_from_xml(p_entry_xml, 'Volume')
+        p_service.Zone = PutGetXML.get_int_from_xml(p_entry_xml, 'Zone')
         return p_service
 
     def write_entertainment_service(self, p_obj):
@@ -93,12 +95,12 @@ class XML:
         l_xml = XmlConfigTools.write_base_object_xml('Service', p_obj)
         PutGetXML.put_ip_element(l_xml, 'Host', p_obj.Host)
         PutGetXML.put_text_element(l_xml, 'ConnectionFamily', p_obj.ConnectionFamily)
-        PutGetXML.put_text_element(l_xml, 'ConnectionName', p_obj.ConnectionName)
+        PutGetXML.put_text_element(l_xml, 'ConnectionModel', p_obj.ConnectionModel)
         PutGetXML.put_text_element(l_xml, 'InputName', p_obj.InputName)
-        PutGetXML.put_text_element(l_xml, 'InputCode', p_obj.InputCode)
         PutGetXML.put_text_element(l_xml, 'MaxPlayTime', p_obj.MaxPlayTime)
         PutGetXML.put_text_element(l_xml, 'Type', p_obj.Type)
         PutGetXML.put_int_element(l_xml, 'Volume', p_obj.Volume)
+        PutGetXML.put_int_element(l_xml, 'Xone', p_obj.Zone)
         return l_xml
 
     def XXX_active_section(self, p_plugin_data, p_pyhouse_obj):

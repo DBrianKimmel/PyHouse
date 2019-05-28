@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2019-05-07'
+__updated__ = '2019-05-28'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -68,7 +68,7 @@ from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
         TESTING_PANDORA_SERVICE_KEY_0, \
         TESTING_PANDORA_SERVICE_COMMENT_0, \
         TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, \
-        TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0, \
+        TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0, \
         TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0, \
         TESTING_PANDORA_SERVICE_TYPE_0, \
         TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0, \
@@ -474,8 +474,7 @@ class D2_WriteService(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_SERVICE_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_PANDORA_SERVICE_COMMENT_0)
         self.assertEqual(l_xml.find('ConnectionFamily').text, TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0)
-        self.assertEqual(l_xml.find('ConnectionName').text, TESTING_PANDORA_CONNECTION_DEVICE_NAME_0_0)
-        self.assertEqual(l_xml.find('InputCode').text, TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
+        self.assertEqual(l_xml.find('ConnectionModel').text, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)
         self.assertEqual(l_xml.find('InputName').text, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
         self.assertEqual(l_xml.find('MaxPlayTime').text, TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0)
         self.assertEqual(l_xml.find('Type').text, TESTING_PANDORA_SERVICE_TYPE_0)

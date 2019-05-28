@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -374,14 +374,14 @@ class MqttActions():
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _find_device(self, p_family, p_device):
+    def _find_model(self, p_family, p_model):
         # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device in l_devices.values():
-            if l_device.Name.lower() == p_device.lower():
-                LOG.info("found device - {} {}".format(p_family, p_device))
+            if l_device.Name.lower() == p_model.lower():
+                LOG.info("found device - {} {}".format(p_family, p_model))
                 return l_device
-        LOG.error('No such device as {}'.format(p_device))
+        LOG.error('No such device as {}'.format(p_model))
         return None
 
     def _get_power(self, p_message):
@@ -400,12 +400,12 @@ class MqttActions():
 
         @param p_message: is the payload used to control
         """
-        LOG.info('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
+        LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
         if l_family == None:
             l_family = 'onkyo'
         l_model = extract_tools.get_mqtt_field(p_message, 'Model')
-        l_device_obj = self._find_device(l_family, l_model)
+        l_device_obj = self._find_model(l_family, l_model)
         l_power = self._get_power(p_message)
         l_logmsg = 'Control: '
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
@@ -450,17 +450,17 @@ class MqttActions():
 
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
-        ==> pyhouse/<house name>/entertainment/onkyo/<type>
+        ==> pyhouse/<house name>/house/entertainment/onkyo/<type>
         <type> = control, status
 
         @param p_topic: is the topic with pyhouse/housename/entertainment/onkyo stripped off.
         @param p_message: is the body of the json message string.
         """
-        # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
+        LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_logmsg = ' Onkyo-{}'.format(p_topic[0])
         self.m_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         self.m_model = extract_tools.get_mqtt_field(p_message, 'Model')
-        self.m_device = self._find_device(SECTION, self.m_model)
+        self.m_device = self._find_model(SECTION, self.m_model)
 
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
@@ -468,6 +468,7 @@ class MqttActions():
             l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Onkyo sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 
