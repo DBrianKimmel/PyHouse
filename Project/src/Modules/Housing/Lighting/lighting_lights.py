@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -69,10 +69,11 @@ class MqttActions:
 
     def _decode_control(self, p_message):
         """
+        pyhouse/<housename>/house/lighting/light/xxx
         """
         l_control = LightData()
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        l_control.BrightnessPct = l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
+        l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
         # LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
         #
         l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
@@ -107,7 +108,7 @@ class MqttActions:
             LOG.debug(l_logmsg)
         else:
             l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
-            LOG.debug(l_logmsg)
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

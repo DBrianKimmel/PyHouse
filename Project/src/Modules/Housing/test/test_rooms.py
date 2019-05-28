@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Housing/test/test_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
@@ -10,8 +10,9 @@
 Passed all 18 tests - DBK 2018-02-13
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-05-27'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +21,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.rooms import RoomCls as roomsApi, Maint as roomsMaint
+from Modules.Housing.rooms import Api as roomsApi, Maint as roomsMaint
 from Modules.Core.Utilities import json_tools
 from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_0, \
@@ -383,5 +384,21 @@ class F1_Match(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'F1-02-A - Room - {}'.format(l_search)))
         self.assertEqual(l_obj.Name, TESTING_ROOM_NAME_2)
         self.assertEqual(l_obj.UUID, TESTING_ROOM_UUID_2)
+
+
+class Y1_Yaml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_ByName(self):
+        """ Create a JSON object for Rooms.
+        """
+        l_yaml = self.m_api(self.m_pyhouse_obj)._read_yaml()
+        print(PrettyFormatAny.form(l_yaml, 'Y1-01-A'))
+        print(PrettyFormatAny.form(l_yaml['Floors'], 'Y1-01-B'))
+        print(PrettyFormatAny.form(l_yaml['Rooms'], 'Y1-01-C'))
+        self.assertEqual(l_yaml['Rooms'][0]['Name'], 'Outside')
+        # self.assertEqual(l_yaml.UUID, TESTING_ROOM_UUID_1)
 
 # ## END DBK

@@ -17,6 +17,7 @@ There are several general and nearly universal topic endings that are in use.
 * /control
 * /delete
 * /update
+* /trigger
 
 ```xml
 <?xml version="1.0" ?>

@@ -1,0 +1,103 @@
+# Name:      PyHouse/Project/admin/config/Yaml/rooms.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   May 27, 2019
+# Updted:    May 27, 2019
+# License:   MIT License
+# Summary:   This is for all the rooms in a house.
+#   Rooms are consistant on all nodes within a house.
+---
+
+# Floors are defined first.
+# Outside is always present and must be first.
+Floors:
+   - Name: Outide
+     Active: 'True'
+     Comment: Outside
+
+   - Name: 1
+     Active: 'True'
+     Comment: The first floor
+
+Rooms:
+   - Name: Outside
+     Active: 'True'
+     Comment: Things outside the house
+     LastUpdate: 2016-07-09 00:00:00
+     UUID: 'df694bf8-2dda-11e6-953b-74da3859e09a'
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 0
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Outside
+     Trigger: None
+
+   - Name: Pool
+     Active: 'True'
+     Comment: The swimming pool
+
+   - Name: Lanai
+     Active: 'True'
+     Comment: The area around the pool inside the cage.
+
+   - Name: Garage
+     Active: 'True'
+
+   - Name: Laundry
+     Active: 'True'
+
+   - Name: Game Room
+     Active: 'True'
+
+   - Name: Foyer
+     Active: 'True'
+
+   - Name: Misic Room
+     Active: 'True'
+
+   - Name: Master Bath Room
+     Active: 'True'
+
+   - Name: Dining Room
+     Active: 'True'
+
+   - Name: Front Hall
+     Active: 'True'
+
+   - Name: MBR Closet
+     Active: 'True'
+
+   - Name: Master Bed Room
+     Active: 'True'
+
+   - Name: Living Room
+     Active: 'True'
+
+   - Name: MBR Sitting
+     Active: 'True'
+
+   - Name: Kitchen
+     Active: 'True'
+
+   - Name: Breakfast Nook
+     Active: 'True'
+
+   - Name: Front Guest Room
+     Active: 'True'
+
+   - Name: Guest Bath Room
+     Active: 'True'
+
+   - Name: Rear Guest Room
+     Active: 'True'
+
+   - Name: Back Hall
+     Active: 'True'
+
+   - Name: Office
+     Active: 'True'
+
+   - Name: Back Bath Room
+     Active: 'True'
+
+### END DBK

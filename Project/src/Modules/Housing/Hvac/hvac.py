@@ -14,7 +14,9 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-05-28'
+__version_info__ = (19, 5, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -32,24 +34,31 @@ class Utility(object):
     """
 
 
-class MqttActions(object):
+class MqttActions():
     """
     """
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def _decode_thermostat(self, p_topic, p_message, p_logmsg):
+        """
+        """
+        p_logmsg += '\tThermostat: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        return p_logmsg
+
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode the Mqtt message
-        ==> pyhouse/<house name>/hvac/<type>/<Name>/...
+        ==> pyhouse/<house name>/house/hvac/<type>/<Name>/...
         <type> = thermostat, ...
         """
-        l_logmsg = '\tHVAC:\n'
-        if p_topic[0] == 'Thermostat':
-            l_logmsg += '\tThermostat: {}\n'.fextract_toolsormat(extract_tools.get_mqtt_field(p_message, 'Name'))
+        p_logmsg += '\tHVAC:\n'
+        if p_topic[0] == 'thermostat':
+            p_logmsg += self._decode_thermostat(p_topic[1:], p_message, p_logmsg)
         else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
-        return l_logmsg
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Message', 160))
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+        return p_logmsg
 
     def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'

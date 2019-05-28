@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-05-25'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -115,35 +115,36 @@ class MqttActions:
         l_sched.RoomUUID = extract_tools.get_mqtt_field(p_message, 'RoomUUID')
         LOG.debug('Schedule added locally: {}'.format(PrettyFormatAny.form(l_sched, 'Schedule', 190)))
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """
         --> pyhouse/<housename>/house/schedule/...
         """
-        l_logmsg = ''
+        p_logmsg += ''
         l_schedule_type = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_light_level = extract_tools.get_mqtt_field(p_message, 'Level')
         if len(p_topic) > 0:
             if p_topic[0] == 'control':
-                l_logmsg += '\tExecute:\n'
-                l_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                l_logmsg += '\tLight: {}\n'.format(l_light_name)
-                l_logmsg += '\tLevel: {}'.format(l_light_level)
+                p_logmsg += '\tExecute:\n'
+                p_logmsg += '\tType: {}\n'.format(l_schedule_type)
+                p_logmsg += '\tLight: {}\n'.format(l_light_name)
+                p_logmsg += '\tLevel: {}'.format(l_light_level)
                 self._add_schedule(p_message)
             elif p_topic[0] == 'status':
-                l_logmsg += '\tStatus:\n'
-                l_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                l_logmsg += '\tLight: {}\n'.format(l_light_name)
-                l_logmsg += '\tLevel: {}'.format(l_light_level)
+                p_logmsg += '\tStatus:\n'
+                p_logmsg += '\tType: {}\n'.format(l_schedule_type)
+                p_logmsg += '\tLight: {}\n'.format(l_light_name)
+                p_logmsg += '\tLevel: {}'.format(l_light_level)
             elif p_topic[0] == 'control':
-                l_logmsg += '\tControl:\n'
+                p_logmsg += '\tControl:\n'
             elif p_topic[0] == 'delete':
                 pass
             elif p_topic[0] == 'update':
                 pass
             else:
-                l_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
-        return l_logmsg
+                p_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
+                LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+        return p_logmsg
 
 
 class RiseSet:

@@ -20,7 +20,7 @@ serial_port
 
 """
 
-__updated__ = '2019-05-19'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -147,6 +147,8 @@ class API:
         @param p_control: the idealized light control params
         """
         LOG.debug('Controlling Insteon device "{}" using "{}"'.format(p_device_obj.Name, p_controller_obj.Name))
+        if not p_controller_obj._isFunctional:
+            return
         # l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
         self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 

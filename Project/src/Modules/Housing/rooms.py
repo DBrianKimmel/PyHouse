@@ -9,9 +9,13 @@
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-27'
+__version_info__ = (19, 5, 2)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+import os
+import yaml
 import xml.etree.ElementTree as ET
 import datetime
 
@@ -27,7 +31,7 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 
 
-class Xml(object):
+class Xml():
     """ Class to read and write the XML config file for PyHouse.
     """
 
@@ -149,7 +153,7 @@ class Maint(object):
                 return l_rooms
 
         LOG.info('Adding room {}'.format(p_room_obj.Name))
-        if RoomCls(p_pyhouse_obj).find_room_uuid(p_pyhouse_obj, p_room_obj.UUID) is None and p_room_obj._DeleteFlag:
+        if Api(p_pyhouse_obj).find_room_uuid(p_pyhouse_obj, p_room_obj.UUID) is None and p_room_obj._DeleteFlag:
             pass
         p_room_obj.Key = l_len
         p_room_obj.LastUpdate = datetime.datetime.now()
@@ -226,19 +230,25 @@ class Sync(object):
         return None
 
 
-class RoomCls(Sync, Xml, Maint):
+class Api(Sync, Xml, Maint):
     """
     """
 
     def __init__(self, p_pyHouse_obj):
         self.m_pyhouse_obj = p_pyHouse_obj
 
-
-def all_rooms_getter(p_pyhouse_obj):
-    return p_pyhouse_obj.House.Rooms
-
-
-def all_rooms_setter(p_pyhouse, p_rooms):
-    p_pyhouse.House.Rooms = p_rooms
+    def _read_yaml(self, p_parent=None):
+        """
+        This needs to be more generic and for all devices configs.
+        This is the start.
+        """
+        l_name = 'rooms.yaml'
+        l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
+        with open(l_filename) as l_file:
+            l_yaml = yaml.safe_load(l_file)
+            if p_parent != None:
+                p_parent._Yaml = l_yaml
+        LOG.info('Loaded {} '.format(l_filename))
+        return l_yaml
 
 #  ## END DBK

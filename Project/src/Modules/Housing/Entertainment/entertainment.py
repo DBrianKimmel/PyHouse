@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-05-28'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -60,7 +60,7 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/entertainment/<device-or-service>/...
 
@@ -72,25 +72,25 @@ class MqttActions:
         @return: a message to be logged as a Mqtt message
         """
         l_module = p_topic[0].lower()
-        l_logmsg = '\tEntertainment: '
+        p_logmsg = '\tEntertainment: '
         LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
         try:
             if not self.m_pyhouse_obj.House.Entertainment.Plugins[l_module].Active:
-                l_logmsg += ' Module: {} is not active - skipping'.format(l_module)
-                return l_logmsg
+                p_logmsg += ' Module: {} is not active - skipping'.format(l_module)
+                return p_logmsg
         except KeyError:
-            l_logmsg += ' {} not defined here.'.format(l_module)
-            return l_logmsg
+            p_logmsg += ' {} not defined here.'.format(l_module)
+            return p_logmsg
         try:
             l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]._API
-            l_logmsg += l_module_api.decode(p_topic[1:], p_message)
-            # LOG.debug('{} {}'.format(l_module_api, l_logmsg))
+            p_logmsg += l_module_api.decode(p_topic[1:], p_message)
+            # LOG.debug('{} {}'.format(l_module_api, p_logmsg))
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
-            l_logmsg += 'Module {} not defined here -ignored.'.format(l_module)
+            p_logmsg += 'Module {} not defined here -ignored.'.format(l_module)
             LOG.error('Error {}'.format(e_err))
-            return l_logmsg
-        return l_logmsg
+            return p_logmsg
+        return p_logmsg
 
 
 class API(Ent):

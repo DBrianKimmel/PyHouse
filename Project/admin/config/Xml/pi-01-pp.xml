@@ -36,7 +36,7 @@
 				<Comment>Main Broker on pi-05-pp</Comment>
 				<LastUpdate>2019-01-11 22:27:31.703413</LastUpdate>
 				<UUID>c87c8b96-b1e5-11e6-8a14-74da3859e09a</UUID>
-				<BrokerAddress>192.168.1.15</BrokerAddress>
+				<BrokerHost>mqtt-pp</BrokerHost>
 				<BrokerPort>1883</BrokerPort>
 				<BrokerUser>None</BrokerUser>
 				<BrokerPassword>None</BrokerPassword>

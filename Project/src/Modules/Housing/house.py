@@ -26,7 +26,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,8 +38,8 @@ from Modules.Families.family import API as familyAPI
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI, MqttActions as entertainmentMqtt
 from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Xml as roomsXML, Mqtt as roomsMqtt
-from Modules.Housing.Hvac.hvac import API as hvacAPI
-from Modules.Housing.Irrigation.irrigation import API as irrigationAPI
+from Modules.Housing.Hvac.hvac import API as hvacAPI, MqttActions as hvacMqtt
+from Modules.Housing.Irrigation.irrigation import API as irrigationAPI, MqttActions as irrigationMqtt
 from Modules.Housing.Lighting.lighting import API as lightingAPI, MqttActions as lightingMqtt
 from Modules.Housing.Pool.pool import API as poolAPI
 from Modules.Housing.Scheduling.schedule import API as scheduleAPI, MqttActions as scheduleMqtt
@@ -73,13 +73,18 @@ class MqttActions():
         if p_topic[0] == 'room':
             l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
         elif p_topic[0] == 'entertainment':
-            l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+        elif p_topic[0] == 'hvac':
+            l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+        elif p_topic[0] == 'irrigation':
+            l_logmsg += irrigationMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         elif p_topic[0] == 'lighting':
-            l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         elif p_topic[0] == 'schedule':
-            l_logmsg = scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            l_logmsg = scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

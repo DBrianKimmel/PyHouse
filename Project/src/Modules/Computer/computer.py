@@ -27,7 +27,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -44,7 +44,7 @@ from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
-from Modules.Computer.Nodes.nodes import API as nodesAPI
+from Modules.Computer.Nodes.nodes import API as nodesAPI, MqttActions as nodesMqtt
 from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
@@ -78,10 +78,10 @@ class MqttActions:
         @param p_message: is the payload that is JSON
         """
         l_logmsg = '\tComputer:\n'
-        #  computer/browser/***
-        if p_topic[1] == 'browser':
-            _l_name = 'unknown'
+        if p_topic[0] == 'browser':
             l_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        elif p_topic[0] == 'node':
+            l_logmsg += nodesMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         #  computer/ip
         elif p_topic[1] == 'ip':
             l_ip = extract_tools.get_mqtt_field(p_message, 'ExternalIPv4Address')
@@ -98,9 +98,6 @@ class MqttActions:
         elif p_topic[1] == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             l_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        #  computer/node/???
-        elif p_topic[1] == 'node':
-            l_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
         #  computer/***
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))

@@ -11,7 +11,9 @@
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-05-28'
+__version_info__ = (19, 5, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
@@ -24,7 +26,7 @@ from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.Irrigation     ')
 
 
-class MqttActions(object):
+class MqttActions():
     """
     """
 
@@ -39,7 +41,7 @@ class MqttActions(object):
         l_logmsg = '\tIrrigation Status'
         return l_logmsg
 
-    def decode(self, p_logmsg, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ pyhouse/<HouseName>/irrigation/<action>
         where <action> is control, status
         """
@@ -49,7 +51,8 @@ class MqttActions(object):
         elif p_topic[0].lower() == 'status':
             l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
-            l_logmsg += '\tUnknown Pandora sub-topic {}'.format(p_message)
+            l_logmsg += '\tUnknown irrigation sub-topic {}'.format(p_message)
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

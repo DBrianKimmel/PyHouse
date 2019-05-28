@@ -15,7 +15,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,23 +41,24 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """
         --> pyhouse/<housename>/lighting/<category>/xxx
         """
-        l_logmsg = '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        p_logmsg += '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
         LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'button':
             pass
         elif p_topic[0] == 'controller':
-            l_logmsg += controllerMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            p_logmsg += controllerMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'light':
-            l_logmsg += lightMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+            p_logmsg += lightMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         else:
-            l_logmsg += '\tUnknown Lighting sub-topic {}'.format(p_message)
-        return l_logmsg
+            p_logmsg += '\tUnknown Lighting sub-topic {}'.format(p_message)
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+        return p_logmsg
 
-    def decode_light(self, p_topic, p_message):
+    def XXdecode_light(self, p_topic, p_message):
         """
         --> pyhouse/housename/lighting/light/xxx
         """
