@@ -17,8 +17,8 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-05-28'
-__version_info__ = (19, 5, 1)
+__updated__ = '2019-05-30'
+__version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -58,6 +58,7 @@ class LightData(CoreLightingData):
         self.State = State.UNKNOWN
         self.IsDimmable = False
         self.IsColorChanging = False
+        self.Trigger = False
 
 
 class MqttActions:
@@ -97,15 +98,15 @@ class MqttActions:
         @return: a message to be logged as a Mqtt message
         """
         l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
-        LOG.debug('MqttLightingLightsDispatch Topic:{}'.format(p_topic))
+        # LOG.debug('MqttLightingLightsDispatch Topic:{}\n\t{}'.format(p_topic, p_message))
         if p_topic[0] == 'control':
             self._decode_control(p_message)
             l_logmsg += 'Light Control: {}'.format(PrettyFormatAny.form(p_message, 'Light Control'))
-            LOG.debug(l_logmsg)
+            LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_topic, p_message))
         elif p_topic[0] == 'status':
             # The status is contained in LightData() above.
             l_logmsg += 'Light Status: {}'.format(PrettyFormatAny.form(p_message, 'Light Status'))
-            LOG.debug(l_logmsg)
+            LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
             LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
@@ -126,11 +127,16 @@ class XML:
         p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
         p_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
         p_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_xml, 'RoomCoords')
+        try:
+            p_obj.Trigger = PutGetXML.get_bool_from_xml(p_xml, 'Trigger')
+        except AttributeError:
+            p_obj.Trigger = False
         return p_obj  # for testing
 
     def _write_light_data(self, p_obj, p_xml):
         PutGetXML.put_text_element(p_xml, 'Brightness', p_obj.BrightnessPct)
         PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
+        PutGetXML.put_bool_element(p_xml, 'Trigger', p_obj.Trigger)
         return p_xml
 
     def _read_one_light_xml(self, p_pyhouse_obj, p_xml):

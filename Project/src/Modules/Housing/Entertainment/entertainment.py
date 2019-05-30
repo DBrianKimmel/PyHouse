@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-05-29'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -77,19 +77,23 @@ class MqttActions:
         try:
             if not self.m_pyhouse_obj.House.Entertainment.Plugins[l_module].Active:
                 p_logmsg += ' Module: {} is not active - skipping'.format(l_module)
+                LOG.debug('Return {}'.format(p_logmsg))
                 return p_logmsg
+            LOG.debug('Plugin Active')
         except KeyError:
             p_logmsg += ' {} not defined here.'.format(l_module)
+            LOG.debug('Error {}'.format(p_logmsg))
             return p_logmsg
         try:
             l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]._API
             p_logmsg += l_module_api.decode(p_topic[1:], p_message)
-            # LOG.debug('{} {}'.format(l_module_api, p_logmsg))
+            LOG.debug('{}'.format(p_logmsg))
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
             p_logmsg += 'Module {} not defined here -ignored.'.format(l_module)
-            LOG.error('Error {}'.format(e_err))
+            LOG.error('Error - API {}\n\t{}'.format(e_err, PrettyFormatAny.form(l_module_api, 'Api', 190)))
             return p_logmsg
+        LOG.debug('Normal Exit: {}'.format(p_logmsg))
         return p_logmsg
 
 
@@ -116,8 +120,7 @@ class API(Ent):
         l_obj = EntertainmentDeviceControl()
         l_obj.Model = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name
-        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}\n\tAPI:{}'.format(
-            l_topic, l_obj, PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer.MqttAPI, 'API', 180)))
+        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
         # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def LoadXml(self, p_pyhouse_obj):

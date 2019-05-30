@@ -10,8 +10,9 @@
 Passed all 20 tests - DBK - 2019-04-20
 
 """
+from Modules.Housing.Entertainment.panasonic.test.xml_panasonic import TESTING_PANASONIC_ACTIVE
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-05-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,19 +22,21 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
+from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Housing.Entertainment.pandora.pandora import \
     API as pandoraAPI, \
     SECTION, \
     MqttActions, \
     PianoBarProcessControl, \
-    PandoraServiceData
+    PandoraServiceData, PandoraServiceStatusData
 from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     XML_PANDORA_SECTION, \
     TESTING_PANDORA_SECTION, \
     L_PANDORA_SECTION_START, \
     TESTING_PANDORA_SERVICE_NAME_0, \
     TESTING_PANDORA_SERVICE_KEY_0, \
-    TESTING_PANDORA_SERVICE_ACTIVE_0
+    TESTING_PANDORA_SERVICE_ACTIVE_0, TESTING_PANDORA_ACTIVE, TESTING_PANDORA_TYPE, TESTING_PANDORA_SERVICE_COMMENT_0, \
+    TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_DIVISION, \
     TESTING_HOUSE_NAME, \
@@ -66,9 +69,6 @@ class A0(unittest.TestCase):
     """ Prints the test ID
     """
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
         print('Id: test_pandora')
 
@@ -99,6 +99,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
 class A2_SetupXml(SetupMixin, unittest.TestCase):
     """ Test that the XML contains no syntax errors.
+    If somehow the xml_pandora.py file or its parents is corrupt, this will detect it
+     because the XML will not parse properly.
     """
 
     def setUp(self):
@@ -123,7 +125,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_HouseDivXml(self):
-        """ Test
+        """ Test that the House info is correct.
         """
         l_xml = self.m_xml.house_div
         # print(PrettyFormatAny.form(l_xml, 'A3-01-A - House'))
@@ -138,23 +140,58 @@ class A3_XML(SetupMixin, unittest.TestCase):
         l_xml = self.m_xml.entertainment_sect
         # print(PrettyFormatAny.form(l_xml, 'A3-02-A - Entertainment'))
         self.assertGreater(len(l_xml), 0)
+        self.assertEqual(l_xml.find('PandoraSection').text, '\n')
 
     def test_03_PandoraXml(self):
-        """ Test
+        """ Test that the Pandora section of the XML is intact.
         """
         l_xml = self.m_xml.pandora_sect
         # print(PrettyFormatAny.form(l_xml, 'A3-03-A - Pandora'))
         self.assertEqual(len(l_xml), 3)
+        self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_ACTIVE)
         self.assertEqual(l_xml[2].attrib['Name'], TESTING_PANDORA_SERVICE_NAME_0)
 
     def test_04_Service0(self):
-        """ Be sure that the XML contains everything in RoomData().
+        """ Be sure that the XML for pandora contains a service section.
         """
         l_xml = self.m_xml.pandora_sect.find('Service')
         # print(PrettyFormatAny.form(l_xml, 'A3-04-A Device'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_PANDORA_SERVICE_NAME_0)
         self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_SERVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_SERVICE_ACTIVE_0)
+
+
+class B1_Xml(SetupMixin, unittest.TestCase):
+    """ Test that we have read the xml in properly and that essential items have loaded into the pyhouse_obj properly.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
+        # self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
+        # self.m_api = pandoraAPI(self.m_pyhouse_obj)
+
+    def test_01_Init(self):
+        """ Test that the data structure is correct.
+        """
+        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        # print(PrettyFormatAny.form(l_base, 'B1-01-A - Pandora', 180))
+        self.assertEqual(str(l_base.Active), TESTING_PANDORA_ACTIVE)
+        self.assertEqual(l_base.ServiceCount, 1)
+        self.assertEqual(l_base.DeviceCount, 0)
+        self.assertEqual(l_base.Type, TESTING_PANDORA_TYPE)
+
+    def test_02_Service0(self):
+        """ Test that the data structure is correct.
+        """
+        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Services[0]
+        # print(PrettyFormatAny.form(l_base, 'B1-02-A - Section', 180))
+        self.assertEqual(l_base.Name, TESTING_PANDORA_SERVICE_NAME_0)
+        self.assertEqual(str(l_base.Active), TESTING_PANDORA_SERVICE_ACTIVE_0)
+        self.assertEqual(l_base.Comment, TESTING_PANDORA_SERVICE_COMMENT_0)
+        self.assertEqual(l_base.ConnectionFamily, TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0)
+        self.assertEqual(l_base.ConnectionModel, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)
+        self.assertEqual(l_base.InputName, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
 
 
 class E1_API(SetupMixin, unittest.TestCase):
@@ -271,7 +308,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
     def test_01_Time(self):
         """ Test that the data structure is correct.
         """
-        l_obj = PandoraStatusData()
+        l_obj = PandoraServiceData()
         l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_playtime(l_obj, TIME_LN)
         # print(PrettyFormatAny.form(l_obj, 'F2-01-A - Status', 180))
         self.assertEqual(l_res.PlayingTime, '03:00')
@@ -279,7 +316,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
     def test_02_Line(self):
         """ Test that the data structure is correct.
         """
-        l_obj = PandoraStatusData()
+        l_obj = PandoraServiceStatusData()
         l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_nowplaying(l_obj, PLAY_LN)
         # print(PrettyFormatAny.form(l_obj, 'F2-02-A - Status', 180))
         self.assertEqual(l_res.Album, 'Greatest Hits')

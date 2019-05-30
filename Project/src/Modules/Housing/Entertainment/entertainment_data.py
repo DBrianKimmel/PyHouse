@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-05-29'
 
 # Import system type stuff
 
@@ -101,7 +101,6 @@ class EntertainmentServiceData(BaseObject):
 
     def __init__(self):
         super(EntertainmentServiceData, self).__init__()
-        self.ServiceCount = 0
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
         self._Connector = None
@@ -110,7 +109,6 @@ class EntertainmentServiceData(BaseObject):
         self.ConnectionFamily = None  # pioneer, onkyo
         self.ConnectionModel = None  # Model
         self.InputName = None
-        self.InputCode = None
         self.Type = 'service'
         self.Volume = 0  # Default volume
         self.MaxPlayTime = 12 * 60 * 60  # Seconds

@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-05-29'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,6 +34,7 @@ from Modules.Housing.Entertainment.pandora.pandora_xml import XML as pandoraXML
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
+from Modules.Core.Utilities.json_tools import encode_json
 # from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
@@ -117,7 +118,7 @@ class MqttActions:
 
     def _send_control(self, p_device, p_message):
         l_topic = 'house/entertainment/{}/control'.format(p_device.ConnectionFamily.lower())
-        LOG.debug('Sending control message to A/V Device\n\t{}\n\t{}'.format(l_topic, PrettyFormatAny.form(p_message, 'Message', 190)))
+        LOG.debug('Sending control message to A/V Device\n\t{}\n\t{}'.format(l_topic, p_message))
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
     def _decode_status(self, _p_topic, _p_message):
@@ -175,7 +176,7 @@ class MqttActions:
         # These are passed on to some audio device
         l_pandora_plugin = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]  # PandoraPluginData()
         for l_service in l_pandora_plugin.Services.values():
-            LOG.debug(PrettyFormatAny.form(l_service, 'Service', 190))
+            # LOG.debug(PrettyFormatAny.form(l_service, 'Service', 190))
             l_service_control_obj = EntertainmentDeviceControl()  # Use the base control structure
             l_service_control_obj.Family = l_service.ConnectionFamily
             l_service_control_obj.Model = l_service.ConnectionModel
@@ -206,6 +207,7 @@ class MqttActions:
             l_service_control_obj.Power = l_power
             # l_service_control_obj.Skip = l_skip
             l_service_control_obj.Volume = l_volume
+            l_json = encode_json(l_service_control_obj)
             self._send_control(l_service, l_service_control_obj)
         return l_logmsg
 
@@ -403,7 +405,7 @@ class PandoraControl:
             LOG.warn('Pianobar is not installed')
             return
         l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_plugin_obj, 'Pandora', 190)))
+        # LOG.debug('Play {}'.format(PrettyFormatAny.form(l_pandora_plugin_obj, 'Pandora', 190)))
         if l_pandora_plugin_obj._OpenSessions > 0:
             LOG.warn('multiple pianobar start attempts')
             return
@@ -465,11 +467,11 @@ class API(MqttActions, PandoraControl):
     def __init__(self, p_pyhouse_obj):
         """ Do the housekeeping for the Pandora plugin.
         """
-        p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = PandoraPluginData()
-        p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Name = SECTION
-        self.m_started = None
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_API = self
+        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = PandoraPluginData()
+        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Name = SECTION
+        self.m_started = None
         LOG.info("API Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):

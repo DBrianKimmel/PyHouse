@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-05-27'
+__updated__ = '2019-05-29'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -660,8 +660,8 @@ class MQTTClient(MQTTProtocol):
     def mqttConnected(self):
         """ Now that we have a net connection to the broker, Subscribe.
         """
-        LOG.debug("Subscribing to MQTT Feed")
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
+        LOG.debug("Subscribing to MQTT Feed: {}".format(l_topic))
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)
             self.m_state = MQTT_FACTORY_CONNECTED
@@ -737,7 +737,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
         self.resetDelay()
-        LOG.debug('Building MQTT Protocol - Client:{}'.format(PrettyFormatAny.form(l_client, 'Client', 190)))
+        LOG.debug('Building MQTT Protocol - Client:{}')
         return l_client
 
     def startedConnecting(self, p_connector):

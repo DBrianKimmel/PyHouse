@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-05-29'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -278,15 +278,36 @@ class OnkyoClient(OnkyoProtocol):
         """
         """
 
+    def _build_volume(self, p_yaml, p_queue_entry):
+        """
+        """
+        l_zone = p_queue_entry.Zone - 1
+        l_command = p_queue_entry.Command
+        l_arg = p_queue_entry.Args
+        l_unit = p_yaml['UnitType']
+        l_code = p_yaml['ControlCommands'][l_command][l_zone]
+        l_ret = b'!' + str(l_unit).encode('utf-8') + l_code.encode('utf-8') + str(l_arg).encode('utf-8')
+        return l_ret
+
     def _build_comand(self, p_queue_entry, p_device_obj):
         """
         Build '!1PWRQSTN' or similar command
         """
+        # LOG.debug('Building:\n\t{}\n\t{}'.format(PrettyFormatAny.form(p_queue_entry, 'QueueEntry', 190), PrettyFormatAny.form(p_device_obj, 'Device', 190)))
+        l_zone = p_queue_entry.Zone - 1
+        l_command = p_queue_entry.Command
+        l_args = p_queue_entry.Args
         l_yaml = p_device_obj._Yaml
         l_unit = l_yaml['UnitType']
-        l_zone = p_queue_entry.Zone - 1
-        l_code = l_yaml['ControlCommands'][p_queue_entry.Command][l_zone]
-        l_arg = l_yaml['Arguments'][p_queue_entry.Command][p_queue_entry.Args]
+        #
+        if l_command == 'Volume':
+            l_ret = self._build_volume(l_yaml, p_queue_entry)
+            return l_ret
+        # LOG.debug('Unit:{}'.format(l_unit))
+        l_code = l_yaml['ControlCommands'][l_command][l_zone]
+        # LOG.debug('Code:{}'.format(l_code))
+        l_arg = l_yaml['Arguments'][l_command][l_args]
+        # LOG.debug('Arg:{}'.format(l_arg))
         l_ret = b'!'
         l_ret += str(l_unit).encode('utf-8')
         l_ret += l_code.encode('utf-8')
@@ -299,8 +320,9 @@ class OnkyoClient(OnkyoProtocol):
         Gthis will add the rest of the ethernet framework
         """
         if p_device_obj == None:
-            LOG.error('Sending a commant to None will never work!')
+            LOG.error('Sending a command to None will never work!')
             return
+        # LOG.debug(PrettyFormatAny.form(p_device_obj, 'Device', 190))
         l_cmd = self._build_comand(p_queue_entry, p_device_obj)
         l_cmd += b'\x1a\n\r'
         l_len = len(l_cmd)
@@ -310,6 +332,7 @@ class OnkyoClient(OnkyoProtocol):
                 b'\x01' + \
                 b'\x00\x00\x00' + \
                 l_cmd
+        # LOG.debug('Command {}'.format(l_ret))
         try:
             p_device_obj._Protocol.transport.write(l_ret)
             LOG.info('Send TCP command: {} to {}'.format(l_ret, p_device_obj.Name))
@@ -401,13 +424,14 @@ class MqttActions():
         @param p_message: is the payload used to control
         """
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
+        l_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
         if l_family == None:
             l_family = 'onkyo'
         l_model = extract_tools.get_mqtt_field(p_message, 'Model')
         l_device_obj = self._find_model(l_family, l_model)
         l_power = self._get_power(p_message)
-        l_logmsg = 'Control: '
+        l_logmsg = 'Control from: {}; '.format(l_sender)
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
         if l_power != None:
@@ -430,7 +454,7 @@ class MqttActions():
             l_queue.Args = l_volume
             l_queue.Zone = 1
             l_device_obj._Queue.put(l_queue)
-            l_logmsg += ' Turn input to {}.'.format(l_input)
+            l_logmsg += ' Turn volume to {}.'.format(l_volume)
         self.run_queue(l_device_obj)
         #
         LOG.info('Decode-Control 2 called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
@@ -444,9 +468,10 @@ class MqttActions():
         LOG.info('Decode_status called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_node_name = self.m_pyhouse_obj.Computer.Name
         if self.m_sender == l_node_name:
-            self.m_device._isControlling = True
-        else:
-            self.m_device._isControlling = False
+            return ''
+        #    self.m_device._isControlling = True
+        # else:
+        #    self.m_device._isControlling = False
 
     def decode(self, p_topic, p_message):
         """ Decode the Mqtt message
@@ -460,7 +485,7 @@ class MqttActions():
         l_logmsg = ' Onkyo-{}'.format(p_topic[0])
         self.m_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         self.m_model = extract_tools.get_mqtt_field(p_message, 'Model')
-        self.m_device = self._find_model(SECTION, self.m_model)
+        # self.m_device = self._find_model(SECTION, self.m_model)
 
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
@@ -487,7 +512,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         This needs to be more generic and for all devices configs.
         This is the start.
         """
-        l_name = SECTION + '_' + p_device.Model + '.yaml'
+        l_name = SECTION + '_' + p_device.Model.lower() + '.yaml'
         l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
         with open(l_filename) as l_file:
             l_yaml = yaml.safe_load(l_file)
@@ -501,7 +526,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
 
         # l_device_obj = XML.read_onkyo_section_xml(p_pyhouse_obj)
         l_device_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        self._read_yaml(l_device_obj)
+        # self._read_yaml(l_device_obj)
         LOG.info("Loaded Onkyo XML")
         return l_device_obj
 
@@ -540,9 +565,14 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         """
         """
         # LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 180)))
-        LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj._Queue, 'Queue', 180)))
-        while not p_device_obj._Queue.empty():
+        # LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj._Queue, 'Queue', 180)))
+        if p_device_obj._Queue.empty():
+            LOG.debug('Queue is empty')
+            _l_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(60.0, self.run_queue, p_device_obj)
+        else:
             l_queue = p_device_obj._Queue.get()
+            LOG.debug(PrettyFormatAny.form(l_queue, 'Queue', 190))
             self.send_command(p_device_obj, l_queue)
+            _l_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(0.5, self.run_queue, p_device_obj)
 
 # ## END DBK

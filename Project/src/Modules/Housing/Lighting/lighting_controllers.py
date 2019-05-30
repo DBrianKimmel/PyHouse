@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
 
-Reading and writing XML to save controller information is fairly comples.
+Reading and writing XML to save controller information is fairly complete.
 First we have the basic information about the controller.
 Then we have the Lighting system information.
 Then we have the information specific to the family of the controller (Insteon, USB, Zigbee, etc.).
@@ -17,16 +17,16 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-05-30'
+__version_info__ = (19, 5, 2)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerData, UuidData
-# from Modules.Families.family_utils import FamUtil
 from Modules.Drivers.interface import Xml as interfaceXML
-# from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Housing.Lighting.lighting_xml import LightingXML
@@ -45,23 +45,22 @@ class MqttActions:
 
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
-        ==> pyhouse/<house name>/lighting/controller/<action>
+        ==> pyhouse/<house name>/house/lighting/controller/<action>
 
         @param p_topic: is the topic after 'controller'
         @return: a message to be logged as a Mqtt message
         """
         l_logmsg = '\tLighting/Controllers: {}\n\t'.format(p_topic)
-        LOG.debug('MqttLightingControllersDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'control':
             l_logmsg += 'Controller Control: {}'.format(PrettyFormatAny.form(p_message, 'Controller Control'))
-            LOG.debug(l_logmsg)
+            LOG.debug('MqttLightingControllersDispatch Control Topic:{}\n\tMsg: {}'.format(p_topic, p_message))
         elif p_topic[0] == 'status':
             # The status is contained in LightData() above.
             l_logmsg += 'Controller Status: {}'.format(PrettyFormatAny.form(p_message, 'Controller Status'))
-            LOG.debug(l_logmsg)
+            LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Controller Status'))
-            LOG.debug(l_logmsg)
+            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

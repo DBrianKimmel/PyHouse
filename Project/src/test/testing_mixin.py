@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-05-29'
 
 #  Import system type stuff
 import platform
@@ -144,7 +144,7 @@ class SetupPyHouseObj(object):
         return l_ret
 
     @staticmethod
-    def _build_entertainment(p_pyhouse_obj):
+    def _build_entertainment(_p_pyhouse_obj):
         l_ret = EntertainmentData()
         l_ret.Plugins = EntertainmentPluginData()
         return l_ret

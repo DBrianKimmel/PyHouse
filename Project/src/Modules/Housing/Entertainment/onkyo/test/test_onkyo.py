@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2019-05-06'
+__updated__ = '2019-05-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,7 +31,8 @@ from Modules.Housing.Entertainment.onkyo.onkyo import \
         OnkyoClient, \
         MqttActions, \
         OnkyoQueueData, \
-        API as onkyoAPI
+        API as onkyoAPI, \
+        OnkyoDeviceData
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \
@@ -142,6 +143,25 @@ class A3_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Name'], TESTING_ONKYO_DEVICE_NAME_1)
         self.assertEqual(l_xml.attrib['Key'], TESTING_ONKYO_DEVICE_KEY_1)
         self.assertEqual(l_xml.attrib['Active'], TESTING_ONKYO_DEVICE_ACTIVE_1)
+
+
+class A4_YAML(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by Onkyo.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
+
+    def test_01_Read(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
+        # print('A4-01-A - Device\n{}'.format(PrettyFormatAny.form(l_device, 'Device')))
+        l_yaml = onkyoAPI(self.m_pyhouse_obj)._read_yaml(l_device)
+        # print('A4-01-A - Yaml\n{}'.format(PrettyFormatAny.form(l_yaml, 'Yaml')))
+        self.assertEqual(l_yaml['UnitType'], 1)
 
 
 class B1_Data(SetupMixin, unittest.TestCase):
@@ -469,19 +489,40 @@ class F3_Yaml(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
-        # self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
+        self.m_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
+        self.m_yaml = onkyoAPI(self.m_pyhouse_obj)._read_yaml(self.m_device)
+        self.m_queue = OnkyoQueueData()
+        self.m_queue.Zone = 1
+        self.m_queue.Command = 'Power'
+        self.m_queue.Args = 'On'
 
-    def test_01_Zone(self):
+    def test_01_Power(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_queue = OnkyoQueueData()
-        l_queue.Zone = 1
-        l_queue.Command = 'Power'
-        l_queue.Args = 'On'
-        print(PrettyFormatAny.form(l_queue, 'F3-01-A - ZonQueuee', 190))
-        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_comand(l_queue)
-        # print(PrettyFormatAny.form(l_msg, 'F3-01-B - Zone', 190))
-        self.assertEqual(l_msg, b'!1PWR01')
+        # print(PrettyFormatAny.form(self.m_queue, 'F3-01-A - ZoneQueue', 190))
+        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_comand(self.m_queue, self.m_device)
+        # print('F3-01-B - {}'.format(l_msg))
+        # self.assertEqual(l_msg, b'!1PWR01')
+        #
+        self.m_queue.Args = '?'
+        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_comand(self.m_queue, self.m_device)
+        # print('F3-01-C - {}'.format(l_msg))
+        self.assertEqual(l_msg, b'!1PWRQSTN')
+
+    def test_02_Vol(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.m_queue.Command = 'Volume'
+        self.m_queue.Args = 27
+        # print(PrettyFormatAny.form(self.m_queue, 'F3-01-A - ZoneQueue', 190))
+        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_volume(self.m_yaml, self.m_queue)
+        # print('F3-01-B - {}'.format(l_msg))
+        self.assertEqual(l_msg, b'!1MVL27')
+        #
+        self.m_queue.Args = 65
+        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_volume(self.m_yaml, self.m_queue)
+        # print('F3-01-C - {}'.format(l_msg))
+        self.assertEqual(l_msg, b'!1MVL65')
 
 # ## END DBK

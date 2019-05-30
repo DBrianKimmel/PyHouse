@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2019-04-20
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-05-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -179,7 +179,6 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.ConnectionFamily), TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0)
         self.assertEqual(str(l_obj.ConnectionModel), TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)
         self.assertEqual(str(l_obj.InputName), TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
-        self.assertEqual(str(l_obj.InputCode), TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
         self.assertEqual(str(l_obj.MaxPlayTime), TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0)
         self.assertEqual(str(l_obj.Volume), TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0)
 
@@ -251,7 +250,6 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('MaxPlayTime').text, TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0)
         self.assertEqual(l_xml.find('ConnectionModel').text, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)
         self.assertEqual(l_xml.find('InputName').text, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
-        self.assertEqual(l_xml.find('InputCode').text, TESTING_PANDORA_CONNECTION_INPUT_CODE_0_0)
         self.assertEqual(l_xml.find('Volume').text, TESTING_PANDORA_CONNECTION_DEFAULT_VOLUME_0_0)
 
     def test_03_Base(self):
