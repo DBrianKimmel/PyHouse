@@ -484,7 +484,7 @@ class PandoraControl(A_V_Control):
         """
 
 
-class API(MqttActions, PandoraControl):
+class API(PandoraControl):
 
     m_started = False
 
