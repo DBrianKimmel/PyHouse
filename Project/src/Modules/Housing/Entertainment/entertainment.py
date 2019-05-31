@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-05-31'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -71,11 +71,27 @@ class MqttActions:
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        l_module = p_topic[0].lower()
-        p_logmsg = '\tEntertainment: '
         LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
+        l_module = p_topic[0].lower()
+        # Test entertainment exists and that plugins exist.
         try:
-            if not self.m_pyhouse_obj.House.Entertainment.Plugins[l_module].Active:
+            if self.m_pyhouse_obj.House.Entertainment.PluginCount == 0:
+                l_msg = 'This node contains no Entertainment Plugins, skipping.'
+                LOG.info(l_msg)
+                return l_msg
+        except:
+            pass
+        # Does the called for plugin exist?
+        try:
+            l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
+        except:
+            l_msg = 'The entertainment module {} does not exist, skipping'.format(l_module)
+            LOG.info(l_msg)
+            return l_msg
+        # Ok
+        p_logmsg = '\tEntertainment: '
+        try:
+            if not l_module_obj.Active:
                 p_logmsg += ' Module: {} is not active - skipping'.format(l_module)
                 LOG.debug('Return {}'.format(p_logmsg))
                 return p_logmsg
@@ -85,15 +101,12 @@ class MqttActions:
             LOG.debug('Error {}'.format(p_logmsg))
             return p_logmsg
         try:
-            l_module_api = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]._API
+            l_module_api = l_module_obj._API
             p_logmsg += l_module_api.decode(p_topic[1:], p_message)
             LOG.debug('{}'.format(p_logmsg))
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
-            p_logmsg += 'Module {} not defined here -ignored.'.format(l_module)
-            LOG.error('Error - API {}\n\t{}'.format(e_err, PrettyFormatAny.form(l_module_api, 'Api', 190)))
-            return p_logmsg
-        LOG.debug('Normal Exit: {}'.format(p_logmsg))
+            p_logmsg += 'Module {} not defined {}'.format(l_module, e_err)
         return p_logmsg
 
 
