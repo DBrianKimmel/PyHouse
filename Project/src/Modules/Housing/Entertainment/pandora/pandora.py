@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-05-31'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -100,7 +100,7 @@ class PandoraServiceControlData(EntertainmentServiceControl):
         self.Skip = None
 
 
-class MqttActions:
+class MqttActions():
     """ Process messages to and from this module.
     Output Control messages use Mqtt to send messages to control the amplifier type device attached to the raspberry pi computer.
     Input Control messages come from a node red computer and are the listener (user) commands for their listening experience.
@@ -160,10 +160,13 @@ class MqttActions:
         if l_power == 'On':
             l_logmsg += ' Turn On '
             self._play_pandora(p_message)
+            return
         elif l_power == 'Off':
             l_logmsg += ' Turn Off '
             self._halt_pandora(p_message)
-        elif l_like == 'LikeYes':
+            return
+
+        if l_like == 'LikeYes':
             l_logmsg += ' Like '
             l_like = 'Yes'
         elif l_like == 'LikeNo':
@@ -208,7 +211,7 @@ class MqttActions:
             # l_service_control_obj.Skip = l_skip
             l_service_control_obj.Volume = l_volume
             l_json = encode_json(l_service_control_obj)
-            self._send_control(l_service, l_service_control_obj)
+            self._send_control(l_service, l_json)
         return l_logmsg
 
     def decode(self, p_topic, p_message):
@@ -380,8 +383,29 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         LOG.warning("StdErr received - {}".format(p_data))
 
 
-class PandoraControl:
+class A_V_Control(MqttActions):
     """
+    """
+
+    def ChangeDevice(self, p_service, p_zone, p_power, p_input, p_volume):
+        """ Build the control message for the A/V device.
+        Fill in only what is necessary
+        """
+        l_service_control_obj = EntertainmentDeviceControl()  # Use the base control structure
+        l_service_control_obj.Family = p_service.ConnectionFamily
+        l_service_control_obj.Model = p_service.ConnectionModel
+        l_service_control_obj.From = SECTION
+        l_service_control_obj.InputName = p_input
+        l_service_control_obj.Power = p_power
+        l_service_control_obj.Volume = p_volume
+        l_service_control_obj.Zone = p_zone
+        l_json = encode_json(l_service_control_obj)
+        self._send_control(p_service, l_json)
+
+
+class PandoraControl(A_V_Control):
+    """ This section starts and stops pandora.
+    It also sends control messages to the connected A/V device
     """
 
     def _is_pianobar_installed(self):
@@ -424,7 +448,7 @@ class PandoraControl:
             l_device_control_obj.From = SECTION
             l_device_control_obj.Power = "On"
             l_device_control_obj.InputName = l_service.InputName
-            l_device_control_obj.Volume = l_service.Volume
+            # l_device_control_obj.Volume = l_service.Volume
             l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_model))
             l_topic = 'house/entertainment/{}/control'.format(l_family)
