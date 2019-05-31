@@ -100,6 +100,19 @@ class PandoraServiceControlData(EntertainmentServiceControl):
         self.Skip = None
 
 
+class PandoraDeviceControlData(EntertainmentDeviceControl):
+    """ Pandora needs to control A/V devices.
+    This is it.
+    """
+
+    def __init__(self):
+        super(PandoraDeviceControlData, self).__init__()
+        self.Power = None
+        self.Input = None
+        self.Volume = None
+        self.Zone = None
+
+
 class MqttActions():
     """ Process messages to and from this module.
     Output Control messages use Mqtt to send messages to control the amplifier type device attached to the raspberry pi computer.
@@ -116,8 +129,8 @@ class MqttActions():
         l_topic = 'house/entertainment/pandora/status'
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
-    def _send_control(self, p_device, p_message):
-        l_topic = 'house/entertainment/{}/control'.format(p_device.ConnectionFamily.lower())
+    def _send_control(self, p_family, p_message):
+        l_topic = 'house/entertainment/{}/control'.format(p_family)
         LOG.debug('Sending control message to A/V Device\n\t{}\n\t{}'.format(l_topic, p_message))
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
@@ -125,34 +138,36 @@ class MqttActions():
         l_logmsg = '\tPandora Status'
         return l_logmsg
 
-    def _control_audio(self):
-        pass
-
     def _decode_control(self, p_topic, p_message):
         """ Decode the Pandora Control message we just received.
          Someone (web page via node-red) wants to control pandora in some manner.
 
         ==>
-            Topic: pyhouse/<house name>/entertainment/pandora/control
-            Msg:{
-                    'Time':   '2019-05-07T22:19:19.536Z',
+            Topic: pyhouse/<house name>/house/entertainment/pandora/control
+            Msg:{   'Time':   '2019-05-07T22:19:19.536Z',
                     'Sender': 'pi-04-pp',
-                    'Zone':   '1',
-                    'Power':  'On',
-                    'Volume':  50,
-                    'Skip':   'No',
-                    'Status': 'On',
-                    'Like':    ''
-                 }
+                    'Status': 'On'}
 
 
         We may need to issue a message to control connected audio devices.
+                    Zone:  0,1 ...
+                    Power: On, Off
+                    Input: Tv, Game
+                    Volume: 0..100
         As a side effect, we need to control Pandora ( PianoBar ) via the control socket
+                    Like:
+                    Dislike:
+                    Skip:
         """
         l_logmsg = '\tPandora Control'
+        l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
+        if l_zone == None:
+            l_zone = 0
+        l_input = extract_tools.get_mqtt_field(p_message, 'Input')
         l_power = extract_tools.get_mqtt_field(p_message, 'Power')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
         l_like = extract_tools.get_mqtt_field(p_message, 'Like')
+        # l_dislike = extract_tools.get_mqtt_field(p_message, 'Dislike')
         l_skip = extract_tools.get_mqtt_field(p_message, 'Skip')
         LOG.debug('{} {}'.format(p_topic, p_message))
 
@@ -160,13 +175,18 @@ class MqttActions():
         if l_power == 'On':
             l_logmsg += ' Turn On '
             self._play_pandora(p_message)
+            self.ChangeAVDevice(l_zone, l_power, l_input, l_volume)
             return
         elif l_power == 'Off':
             l_logmsg += ' Turn Off '
             self._halt_pandora(p_message)
+            self.ChangeAVDevice(l_zone, l_power, l_input, l_volume)
             return
-
-        if l_like == 'LikeYes':
+        elif l_volume != None:
+            l_logmsg += ' Volume to: {}'.format(l_volume)
+            self.ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            return
+        elif l_like == 'LikeYes':
             l_logmsg += ' Like '
             l_like = 'Yes'
         elif l_like == 'LikeNo':
@@ -175,43 +195,8 @@ class MqttActions():
         elif l_skip == 'SkipYes':
             l_logmsg += ' Skip '
             l_skip = 'Yes'
-
-        # These are passed on to some audio device
-        l_pandora_plugin = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]  # PandoraPluginData()
-        for l_service in l_pandora_plugin.Services.values():
-            # LOG.debug(PrettyFormatAny.form(l_service, 'Service', 190))
-            l_service_control_obj = EntertainmentDeviceControl()  # Use the base control structure
-            l_service_control_obj.Family = l_service.ConnectionFamily
-            l_service_control_obj.Model = l_service.ConnectionModel
-            l_service_control_obj.From = SECTION
-            l_service_control_obj.HostName = None
-            l_service_control_obj.InputName = None
-            l_service_control_obj.Power = l_power
-            l_service_control_obj.Volume = l_volume
-            l_service_control_obj.Zone = None
-            self._send_control(l_service, l_service_control_obj)
-
-        if l_volume != None:
-            l_logmsg += ' Volume to: {}'.format(l_volume)
-            # self._send_control(l_device, p_message)
-
         else:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
-            return l_logmsg
-
-        l_input = extract_tools.get_mqtt_field(p_message, 'Input')
-        for l_service in l_pandora_plugin.Services.values():
-            l_service_control_obj = EntertainmentDeviceControl()  # Use the base control structure
-            l_service_control_obj.Family = l_service.ConnectionFamily
-            l_service_control_obj.Model = l_service.ConnectionModel
-            l_service_control_obj.From = SECTION
-            l_service_control_obj.InputName = l_input
-            # l_service_control_obj.Like = l_like
-            l_service_control_obj.Power = l_power
-            # l_service_control_obj.Skip = l_skip
-            l_service_control_obj.Volume = l_volume
-            l_json = encode_json(l_service_control_obj)
-            self._send_control(l_service, l_json)
         return l_logmsg
 
     def decode(self, p_topic, p_message):
@@ -387,20 +372,24 @@ class A_V_Control(MqttActions):
     """
     """
 
-    def ChangeDevice(self, p_service, p_zone, p_power, p_input, p_volume):
+    def ChangeAVDevice(self, p_zone, p_power, p_input, p_volume):
         """ Build the control message for the A/V device.
         Fill in only what is necessary
         """
-        l_service_control_obj = EntertainmentDeviceControl()  # Use the base control structure
-        l_service_control_obj.Family = p_service.ConnectionFamily
-        l_service_control_obj.Model = p_service.ConnectionModel
-        l_service_control_obj.From = SECTION
-        l_service_control_obj.InputName = p_input
-        l_service_control_obj.Power = p_power
-        l_service_control_obj.Volume = p_volume
-        l_service_control_obj.Zone = p_zone
-        l_json = encode_json(l_service_control_obj)
-        self._send_control(p_service, l_json)
+        l_pandora_plugin = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]  # PandoraPluginData()
+        for l_service in l_pandora_plugin.Services.values():
+            l_service_control_obj = PandoraDeviceControlData()  # Use the base control structure
+            l_service_control_obj.Family = l_family = l_service.ConnectionFamily
+            l_service_control_obj.Model = l_service.ConnectionModel
+            l_service_control_obj.From = SECTION
+            l_service_control_obj.InputName = p_input
+            l_service_control_obj.Power = p_power
+            l_service_control_obj.Volume = p_volume
+            l_service_control_obj.Zone = p_zone
+            # LOG.debug(PrettyFormatAny.form(l_service_control_obj, 'Obj', 190))
+            # l_json = encode_json(l_service_control_obj)
+            # LOG.debug(PrettyFormatAny.form(l_json, 'Json', 190))
+            self._send_control(l_family, l_service_control_obj)
 
 
 class PandoraControl(A_V_Control):

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-05-31'
 
 # Import system type stuff
 
@@ -151,7 +151,7 @@ class EntertainmentServiceControl:
         self.HostName = None  # name of computer holding definitions
         self.InputName = None  # 'Game'  # Input Name
         self.Power = None  # 'Off'  # On or Off which is standby
-        self.Skip = None  # skip tracks, skip ahead
+        self.Skip = None  # skip the rest of this song.
         self.Volume = None  # '0'  # 0-100 - Percent
         self.Zone = None  # '1'  # For multi zone output
 

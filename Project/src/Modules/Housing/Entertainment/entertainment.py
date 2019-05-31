@@ -33,13 +33,14 @@ __version__ = '.'.join(map(str, __version_info__))
 # import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
+from Modules.Core.Utilities import extract_tools
+from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentData, \
         EntertainmentDeviceControl
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
-from Modules.Core.Utilities.xml_tools import XmlConfigTools  # , PutGetXML
 
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
@@ -71,7 +72,8 @@ class MqttActions:
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        LOG.debug('MqttEntertainmentDispatch Topic:{}'.format(p_topic))
+        l_sender = extract_tools.get_mqtt_field(p_message, 'Input')
+        LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
         l_module = p_topic[0].lower()
         # Test entertainment exists and that plugins exist.
         try:

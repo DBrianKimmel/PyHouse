@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-05-31'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -89,6 +89,15 @@ class OnkyoResponses():
         l_cmd = p_msg[2:5]
         l_args = p_msg[5:]
         LOG.info('Onkyo sent Eq:{} {} {}'.format(l_eq_type, l_cmd, l_args))
+        # Volume - Send feedback to service controlling this device.
+        if l_cmd == 'MVL':
+            l_zone = 0
+            l_volume = l_args
+            LOG.info('MVL Master Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 MVL 36
+        elif l_cmd == 'ZVL':
+            l_zone = 1
+            l_volume = l_args
+            LOG.info('ZVL Zone 2 Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 ZPW 01
 
         if l_cmd == 'AEQ':
             LOG.info('AEQ ??? : {}'.format(l_args))  # Onkyo sent EqType:1 AEQ 01
@@ -100,8 +109,6 @@ class OnkyoResponses():
             LOG.info('IFA Info Audio : {}'.format(l_args))
         if l_cmd == 'ITV':
             LOG.info('ITV ??? : {}'.format(l_args))  # Onkyo sent EqType:1 ITV 000
-        if l_cmd == 'MVL':
-            LOG.info('MVL Master Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 MVL 36
         if l_cmd == 'MOT':
             LOG.info('MOT Music Optimizer : {}'.format(l_args))  # Onkyo sent EqType:1 MOT 00
         if l_cmd == 'NAL':
@@ -138,8 +145,6 @@ class OnkyoResponses():
             LOG.info('ZMT Zone 2 Muting  : {}'.format(l_args))  # Onkyo sent EqType:1 ZMT 00
         if l_cmd == 'ZPW':
             LOG.info('ZPW Zone 2 Power : {}'.format(l_args))  # Onkyo sent EqType:1 ZPW 01
-        if l_cmd == 'ZVL':
-            LOG.info('ZVL Zone 2 Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 ZPW 01
 
     def _get_onkyo_message(self, p_msg):
         """
@@ -426,14 +431,16 @@ class MqttActions():
         LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
         l_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         l_family = extract_tools.get_mqtt_field(p_message, 'Family')
+        l_model = extract_tools.get_mqtt_field(p_message, 'Model')
         if l_family == None:
             l_family = 'onkyo'
-        l_model = extract_tools.get_mqtt_field(p_message, 'Model')
         l_device_obj = self._find_model(l_family, l_model)
+        #
+        l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
         l_power = self._get_power(p_message)
-        l_logmsg = 'Control from: {}; '.format(l_sender)
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
+        l_logmsg = 'Control from: {}; '.format(l_sender)
         if l_power != None:
             l_queue = OnkyoQueueData()
             l_queue.Command = 'Power'

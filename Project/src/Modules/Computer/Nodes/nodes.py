@@ -17,7 +17,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-05-31'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -48,14 +48,15 @@ class MqttActions:
         @param p_message: is the payload that is JSON
         """
         p_logmsg += '\tNodes:\n'
-        if p_topic[0] == 'browser':
+        l_topic = p_topic[0].lower()
+        if l_topic == 'browser':
             p_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         #  computer/ip
-        elif p_topic[0] == 'ip':
+        elif l_topic == 'ip':
             l_ip = extract_tools.get_mqtt_field(p_message, 'ExternalIPv4Address')
             p_logmsg += '\tIPv4: {}'.format(l_ip)
         #  computer/startup
-        elif p_topic[0] == 'startup':
+        elif l_topic == 'startup':
             self._extract_node(p_message)
             p_logmsg += '\tStartup {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
             if self.m_myname == self.m_sender:
@@ -63,16 +64,16 @@ class MqttActions:
             else:
                 p_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
         #  computer/shutdown
-        elif p_topic[0] == 'shutdown':
+        elif l_topic == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         #  computer/node/???
-        elif p_topic[0] == 'node':
-            p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
+        elif l_topic == 'node':
+            p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic[1:], p_message)
         #  computer/***
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+            LOG.warn('Unknown Topic: {}'.format(l_topic))
         return p_logmsg
 
 
