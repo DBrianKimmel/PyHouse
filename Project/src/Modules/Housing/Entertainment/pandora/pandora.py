@@ -222,15 +222,10 @@ class MqttActions():
         return l_logmsg
 
 
-class PianoBarProcessControl(protocol.ProcessProtocol):
-    """ This handles the information coming back from pianobar concerning the playing song.
+class ExtractPianobar():
     """
-
-    m_buffer = bytes()
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_buffer = bytes()
+    This handles the information coming back from pianobar concerning the playing song.
+    """
 
     def _extract_like(self, p_line):
         """ The like info comes back as a '<' in the now-playing info.
@@ -255,7 +250,7 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
     def _extract_nowplaying(self, p_obj, p_playline):
         """
         """
-        p_obj.From = self.m_pyhouse_obj.Computer.Name
+        # p_obj.From = self.m_pyhouse_obj.Computer.Name
         p_obj.DateTimePlayed = datetime.now()
         l_playline = p_playline
         p_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
@@ -281,7 +276,7 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         # l_title = extract_quoted(p_playline, b'\"')
         pass
 
-    def _extract_line(self, p_line):
+    def extract_line(self, p_line):
         """
         b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
         b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
@@ -333,6 +328,17 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         LOG.debug("Data = {}".format(p_line))
         pass
 
+
+class PianoBarProcessControl(protocol.ProcessProtocol):
+    """
+    """
+
+    m_buffer = bytes()
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_buffer = bytes()
+
     def connectionMade(self):
         """Write to stdin.
         We do not have to do any initialization here.
@@ -348,18 +354,17 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         (i)      This is an information message - Login, new playlist, etc.
         """
         self.m_buffer += p_data
-        while self.m_buffer[0] == b'\n' or self.m_buffer[0] == b'\r':  # Strip off all leading newlines
-            self.m_buffer = self.m_buffer[1:]
+        self.m_buffer.lstrip()
         while len(self.m_buffer) > 0:
             l_ix = self.m_buffer.find(b'\n')
             if l_ix > 0:
                 l_line = self.m_buffer[:l_ix]
                 self.m_buffer = self.m_buffer[l_ix + 1:]
-                self._extract_line(l_line)
+                ExtractPianobar().extract_line(l_line)
                 continue
             else:
                 l_line = self.m_buffer
-                self._extract_line(l_line)
+                ExtractPianobar().extract_line(l_line)
                 self.m_buffer = bytes()
 
     def errReceived(self, p_data):
@@ -406,12 +411,37 @@ class PandoraControl(A_V_Control):
             return True
         return False
 
-    def _pandora_stopped(self):
+    def _clear_status_fields(self):
         """
+        Send message to Node-Red to update the status.
+        All the fields used in node-red must be defined.
         """
         l_msg = PandoraServiceStatusData()
+        l_msg.Status = ''
+        l_msg.Album = ''
+        l_msg.Artist = ''
+        l_msg.Song = ''
+        l_msg.Station = ''
+        l_msg.Likability = ''
+        l_msg.PlayingTime = ''
+        l_date_time = datetime.now()
+        l_msg.DateTimePlayed = '{}:{}:{}'.format(l_date_time.hours(), l_date_time.Minutes(), l_date_time.seconds(),)
+        return l_msg
+
+    def _pandora_stopped(self):
+        """
+        Send message to Node-Red to update the status.
+        """
+        l_msg = self._clear_status_fields()
         l_msg.Status = 'Stopped'
-        l_msg.DateTimePlayed = datetime.now()
+        self._send_status(l_msg)
+
+    def _pandora_starting(self):
+        """
+        Send message to Node-Red to update the status.
+        """
+        l_msg = self._clear_status_fields()
+        l_msg.Status = 'Starting'
         self._send_status(l_msg)
 
     def _play_pandora(self, p_message):
@@ -429,6 +459,7 @@ class PandoraControl(A_V_Control):
         if l_pandora_plugin_obj._OpenSessions > 0:
             LOG.warn('multiple pianobar start attempts')
             return
+        self._pandora_starting()
         l_pandora_plugin_obj._OpenSessions += 1
         self.m_processProtocol = PianoBarProcessControl(self.m_pyhouse_obj)
         self.m_processProtocol.deferred = PianoBarProcessControl(self.m_pyhouse_obj)

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-31'
+__updated__ = '2019-06-01'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -287,7 +287,7 @@ class OnkyoClient(OnkyoProtocol):
         """ Internally, volume is a percent 0 to 100
         My onkyo receiver uses hex 00 to 64 foor the value.
         """
-        l_zone = p_queue_entry.Zone
+        l_zone = int(p_queue_entry.Zone)
         l_command = p_queue_entry.Command
         l_arg = '{:02X}'.format(int(p_queue_entry.Args))
         l_unit = p_yaml['UnitType']

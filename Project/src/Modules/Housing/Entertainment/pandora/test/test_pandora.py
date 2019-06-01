@@ -12,7 +12,7 @@ Passed all 20 tests - DBK - 2019-04-20
 """
 from Modules.Housing.Entertainment.panasonic.test.xml_panasonic import TESTING_PANASONIC_ACTIVE
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-06-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -28,7 +28,7 @@ from Modules.Housing.Entertainment.pandora.pandora import \
     SECTION, \
     MqttActions, \
     PianoBarProcessControl, \
-    PandoraServiceData, PandoraServiceStatusData
+    PandoraServiceData, PandoraServiceStatusData, ExtractPianobar
 from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     XML_PANDORA_SECTION, \
     TESTING_PANDORA_SECTION, \
@@ -309,7 +309,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         l_obj = PandoraServiceData()
-        l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_playtime(l_obj, TIME_LN)
+        l_res = ExtractPianobar()._extract_playtime(l_obj, TIME_LN)
         # print(PrettyFormatAny.form(l_obj, 'F2-01-A - Status', 180))
         self.assertEqual(l_res.PlayingTime, '03:00')
 
@@ -317,7 +317,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         l_obj = PandoraServiceStatusData()
-        l_res = PianoBarProcessControl(self.m_pyhouse_obj)._extract_nowplaying(l_obj, PLAY_LN)
+        l_res = ExtractPianobar()._extract_nowplaying(l_obj, PLAY_LN)
         # print(PrettyFormatAny.form(l_obj, 'F2-02-A - Status', 180))
         self.assertEqual(l_res.Album, 'Greatest Hits')
         self.assertEqual(l_res.Artist, 'Dave Koz')
