@@ -284,11 +284,12 @@ class OnkyoClient(OnkyoProtocol):
         """
 
     def _build_volume(self, p_yaml, p_queue_entry):
+        """ Internally, volume is a percent 0 to 100
+        My onkyo receiver uses hex 00 to 64 foor the value.
         """
-        """
-        l_zone = p_queue_entry.Zone - 1
+        l_zone = p_queue_entry.Zone
         l_command = p_queue_entry.Command
-        l_arg = p_queue_entry.Args
+        l_arg = '{:02X}'.format(int(p_queue_entry.Args))
         l_unit = p_yaml['UnitType']
         l_code = p_yaml['ControlCommands'][l_command][l_zone]
         l_ret = b'!' + str(l_unit).encode('utf-8') + l_code.encode('utf-8') + str(l_arg).encode('utf-8')
@@ -299,7 +300,7 @@ class OnkyoClient(OnkyoProtocol):
         Build '!1PWRQSTN' or similar command
         """
         # LOG.debug('Building:\n\t{}\n\t{}'.format(PrettyFormatAny.form(p_queue_entry, 'QueueEntry', 190), PrettyFormatAny.form(p_device_obj, 'Device', 190)))
-        l_zone = p_queue_entry.Zone - 1
+        l_zone = int(p_queue_entry.Zone)
         l_command = p_queue_entry.Command
         l_args = p_queue_entry.Args
         l_yaml = p_device_obj._Yaml
@@ -445,21 +446,21 @@ class MqttActions():
             l_queue = OnkyoQueueData()
             l_queue.Command = 'Power'
             l_queue.Args = l_power
-            l_queue.Zone = 1
+            l_queue.Zone = l_zone
             l_device_obj._Queue.put(l_queue)
             l_logmsg += ' Turn power {} to {}.'.format(l_power, l_model)
         if l_input != None:
             l_queue = OnkyoQueueData()
             l_queue.Command = 'InputSelect'
             l_queue.Args = l_input
-            l_queue.Zone = 1
+            l_queue.Zone = l_zone
             l_device_obj._Queue.put(l_queue)
             l_logmsg += ' Turn input to {}.'.format(l_input)
         if l_volume != None:
             l_queue = OnkyoQueueData()
             l_queue.Command = 'Volume'
             l_queue.Args = l_volume
-            l_queue.Zone = 1
+            l_queue.Zone = l_zone
             l_device_obj._Queue.put(l_queue)
             l_logmsg += ' Turn volume to {}.'.format(l_volume)
         self.run_queue(l_device_obj)
@@ -574,7 +575,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         # LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj, 'Device', 180)))
         # LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj._Queue, 'Queue', 180)))
         if p_device_obj._Queue.empty():
-            LOG.debug('Queue is empty')
+            # LOG.debug('Queue is empty')
             _l_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(60.0, self.run_queue, p_device_obj)
         else:
             l_queue = p_device_obj._Queue.get()

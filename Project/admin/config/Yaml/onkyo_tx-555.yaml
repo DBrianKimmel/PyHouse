@@ -80,7 +80,7 @@ InputSelect:
                          #  Onkyo sent Eq:1 NLS U5-USB
 
 Zones:
-   0: Inside
-   1: Outside
+   0: Main
+   1: Lanai
 
 ### END DBK

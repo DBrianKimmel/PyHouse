@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-05-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -297,7 +297,7 @@ class C3_Command(SetupMixin, unittest.TestCase):
         l_device_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
         # print(PrettyFormatAny.form(l_device_obj, 'C3-01-A - Device', 190))
         l_queue = OnkyoQueueData()
-        l_queue.Zone = 1
+        l_queue.Zone = 0
         l_queue.Command = 'Power'
         l_queue.Args = 'On'
         # print(PrettyFormatAny.form(l_queue, 'C3-01-B - Queue', 190))
@@ -311,7 +311,7 @@ class C3_Command(SetupMixin, unittest.TestCase):
         l_device_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
         # print(PrettyFormatAny.form(l_device_obj, 'C3-02-A - Device', 190))
         l_queue = OnkyoQueueData()
-        l_queue.Zone = 2
+        l_queue.Zone = 1
         l_queue.Command = 'Power'
         l_queue.Args = 'Off'
         # print(PrettyFormatAny.form(l_queue, 'C3-02-B - Queue', 190))
@@ -325,13 +325,13 @@ class C3_Command(SetupMixin, unittest.TestCase):
         l_device_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
         # print(PrettyFormatAny.form(l_device_obj, 'C3-03-A - Device', 190))
         l_queue = OnkyoQueueData()
-        l_queue.Zone = 1
+        l_queue.Zone = 0
         l_queue.Command = 'Volume'
-        l_queue.Args = 'Up'
+        l_queue.Args = 2
         # print(PrettyFormatAny.form(l_queue, 'C3-03-B - Queue', 190))
         l_msg = OnkyoClient(self.m_pyhouse_obj)._build_comand(l_queue, l_device_obj)
         # print(PrettyFormatAny.form(l_msg, 'C3-03-C - Zone', 190))
-        self.assertEqual(l_msg, b'!1MVLUP')
+        self.assertEqual(l_msg, b'!1MVL02')
 
     def test_04_VolZ2(self):
         """ Be sure that the XML contains the right stuff.
@@ -339,13 +339,13 @@ class C3_Command(SetupMixin, unittest.TestCase):
         l_device_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
         # print(PrettyFormatAny.form(l_device_obj, 'C3-04-A - Device', 190))
         l_queue = OnkyoQueueData()
-        l_queue.Zone = 2
+        l_queue.Zone = 1
         l_queue.Command = 'Volume'
-        l_queue.Args = 'Down'
+        l_queue.Args = 44
         # print(PrettyFormatAny.form(l_queue, 'C3-04-B - Queue', 190))
         l_msg = OnkyoClient(self.m_pyhouse_obj)._build_comand(l_queue, l_device_obj)
         # print(PrettyFormatAny.form(l_msg, 'C3-04-C - Zone', 190))
-        self.assertEqual(l_msg, b'!1ZVLDOWN')
+        self.assertEqual(l_msg, b'!1ZVL2C')
 
 
 class D1_Protocol(SetupMixin, unittest.TestCase):
@@ -520,9 +520,20 @@ class F3_Yaml(SetupMixin, unittest.TestCase):
         # print('F3-01-B - {}'.format(l_msg))
         self.assertEqual(l_msg, b'!1MVL27')
         #
-        self.m_queue.Args = 65
+        self.m_queue.Args = 61
         l_msg = OnkyoClient(self.m_pyhouse_obj)._build_volume(self.m_yaml, self.m_queue)
         # print('F3-01-C - {}'.format(l_msg))
-        self.assertEqual(l_msg, b'!1MVL65')
+        self.assertEqual(l_msg, b'!1MVL61')
+        #
+        self.m_queue.Args = 3
+        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_volume(self.m_yaml, self.m_queue)
+        # print('F3-01-C - {}'.format(l_msg))
+        self.assertEqual(l_msg, b'!1MVL03')
+        #
+        self.m_queue.Zone = 0
+        self.m_queue.Args = 3
+        l_msg = OnkyoClient(self.m_pyhouse_obj)._build_volume(self.m_yaml, self.m_queue)
+        # print('F3-01-C - {}'.format(l_msg))
+        self.assertEqual(l_msg, b'!1MVL03')
 
 # ## END DBK
