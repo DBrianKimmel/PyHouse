@@ -293,17 +293,21 @@ class ExtractPianobar():
             LOG.info(p_line)
             return
         if p_line.startswith(b'Press ? for'):
+            LOG.info(p_line)
             return
         if p_line.startswith(b'Ok.'):
+            LOG.info(p_line)
             return
 
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
+            LOG.info(p_line)
             return
 
         # We gather the play data here but we do not send the message yet
         # We will wait for the first time to arrive.
         if p_line.startswith(b'|>'):  # This is
+            LOG.info(p_line)
             self.m_time = None
             self.m_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line[2:]))
@@ -321,8 +325,9 @@ class ExtractPianobar():
             return
 
         if p_line.startswith(b'Network'):  # A network error has occurred, restart
-            PandoraControl()._halt_pandora('Network Error')
-            PandoraControl()._play_pandora('Restarting')
+            LOG.info(p_line)
+            PandoraControl(self.m_pyhouse_obj)._halt_pandora('Network Error')
+            PandoraControl(self.m_pyhouse_obj)._play_pandora('Restarting')
             return
 
         LOG.debug("Data = {}".format(p_line))
