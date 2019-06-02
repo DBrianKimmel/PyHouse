@@ -425,7 +425,7 @@ class PandoraControl(A_V_Control):
         l_msg.Likability = ''
         l_msg.PlayingTime = ''
         l_date_time = datetime.now()
-        l_msg.DateTimePlayed = '{}:{}:{}'.format(l_date_time.hours(), l_date_time.Minutes(), l_date_time.seconds(),)
+        l_msg.DateTimePlayed = '{:%H:%M:%S}'.format(l_date_time)
         return l_msg
 
     def _pandora_stopped(self):
