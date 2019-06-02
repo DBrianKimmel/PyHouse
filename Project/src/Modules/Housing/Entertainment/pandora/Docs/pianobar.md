@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-05-17
-* Updated:   2019-05-17
+* Updated:   2019-06-02
 * License:   MIT License
 * Summary:   This is the design documentation for the Pianobar host
 
@@ -11,6 +11,8 @@
 # Pianobar
 
 ## Installation
+
+Install PyHouse.
 
 ```
 sudo apt install pianobar

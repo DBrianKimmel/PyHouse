@@ -16,8 +16,24 @@ This keeps the Python needed for PyHouse separate from the system Python and hel
 
 Install the necessary software.
 
+
 ```bash
-sudo apt install python3-venv
+sudo apt update
+sudo apt install python3-venv git python3-dev libffi-dev libssl-dev libxml2-dev libxslt1-dev libjpeg8-dev
+sudo cp /etc/sudoers.d/010_pi-nopasswd /etc/sudoers.d/010_pyhouse-nopasswd
+sudo vi /etc/sudoers.d/010_pyhouse-nopasswd
+		change "pi" to "pyhouse"
+sudo su pyhouse -l
+python3 -m venv venv
+cd venv
+source bin/activate
+git clone https://github.com/DBrianKimmel/PyHouse.git
+pip3  install wheel
+pip3  install -r PyHouse/Project/requirements.txt
+
+sudo mkdir /var/log/pyhouse /etc/pyhouse
+sudo chown pyhouse /var/log/pyhouse /etc/pyhouse
+
 ```
 
 Login as user pyhouse.

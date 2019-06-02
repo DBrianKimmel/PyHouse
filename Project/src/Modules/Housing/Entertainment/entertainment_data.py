@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-31'
+__updated__ = '2019-06-02'
 
 # Import system type stuff
 
@@ -19,7 +19,7 @@ __updated__ = '2019-05-31'
 from Modules.Core.data_objects import BaseObject
 
 
-class EntertainmentData:
+class EntertainmentData():
     """ This is the PyHouse.House.Entertainment node of the master object.
     It is a dynamic structure for the various entertainment devices in a house.
 
@@ -35,7 +35,7 @@ class EntertainmentData:
         self.Plugins = {}  # EntertainmentPluginData()
 
 
-class EntertainmentPluginData:
+class EntertainmentPluginData():
     """ This is filled in for every xxxSection under the EntertainmentSection of the XML file
 
     ==> PyHouse.House.Entertainment.Plugins[PluginName].xxx
@@ -116,7 +116,7 @@ class EntertainmentServiceData(BaseObject):
         self._isRunning = False
 
 
-class EntertainmentDeviceControl:
+class EntertainmentDeviceControl():
     """ Used to control a device.
     All defaults are None - Only fill in what you need so inadvertent controls are not done.
     """
@@ -135,7 +135,7 @@ class EntertainmentDeviceControl:
         self.Zone = None  # '1' or '2'  # For multi zone output
 
 
-class EntertainmentServiceControl:
+class EntertainmentServiceControl():
     """ Used to control a device.
     All defaults are None - Only fill in what you need so inadvertent controls are not done.
     """
@@ -156,7 +156,7 @@ class EntertainmentServiceControl:
         self.Zone = None  # '1'  # For multi zone output
 
 
-class EntertainmentDeviceStatus:
+class EntertainmentDeviceStatus():
     """
     The device family is part of the topic.
     """
@@ -170,11 +170,12 @@ class EntertainmentDeviceStatus:
         self.Node = None
 
 
-class EntertainmentServiceStatus:
-    """
+class EntertainmentServiceStatus():
+    """ This is the base class for Service Status messages.
     """
 
     def __init__(self):
         self.Type = None
+        self.Name = None
 
 # ## END DBK

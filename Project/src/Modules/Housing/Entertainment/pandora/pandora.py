@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-06-01'
+__updated__ = '2019-06-02'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -402,7 +402,7 @@ class PandoraControl(A_V_Control):
     It also sends control messages to the connected A/V device
     """
 
-    def _is_pianobar_installed(self):
+    def is_pianobar_installed(self):
         """ Check this node to see if pianobar is installed.
         If it is, assume we are the player and connect to the A/V equipment to play
         """
@@ -452,7 +452,7 @@ class PandoraControl(A_V_Control):
         """
         LOG.info('Play Pandora - {}'.format(p_message))
         self.m_started = False
-        if not self._is_pianobar_installed():
+        if not self.is_pianobar_installed():
             LOG.warn('Pianobar is not installed')
             return
         l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
@@ -533,7 +533,7 @@ class API(PandoraControl):
         LOG.info("Loading XML - Version:{}".format(__version__))
         l_obj = pandoraXML().read_pandora_section_xml(p_pyhouse_obj)
         LOG.info("Loaded Pandora XML - Version:{}".format(__version__))
-        if self._is_pianobar_installed():
+        if self.is_pianobar_installed():
             self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Active = False
             l_obj.Active = False
         return l_obj
@@ -543,6 +543,7 @@ class API(PandoraControl):
         This does not start playing pandora.  That takes a control message to play.
         The control message usually comes from some external source (Alexa, WebPage, SmartPhone)
         """
+        self._pandora_stopped()
         LOG.info("Started - Version:{}".format(__version__))
 
     def SaveXml(self, _p_xml):
