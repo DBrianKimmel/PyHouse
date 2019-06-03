@@ -283,6 +283,8 @@ class ExtractPianobar():
         b'\x1b[2K|>  "Mississippi Blues" by "Tim Sparks" on "Sidewalk Blues" <3 @ Acoustic Blues Radio\n'
         b'\x1b[2K#   -02:29/03:09\r'
         """
+        if len(p_line) < 5:
+            return
         # <ESC>[2K  Ansi esc sequence needs stripped off first.
         if p_line[0] == 0x1B:
             p_line = p_line[4:]
