@@ -27,7 +27,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -80,7 +80,7 @@ class MqttActions:
         l_logmsg = '\tComputer:\n'
         if p_topic[0] == 'browser':
             l_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        elif p_topic[0] == 'node':
+        elif p_topic[0] == 'node' or p_topic[0] == 'nodes':
             l_logmsg += nodesMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         #  computer/ip
         elif p_topic[1] == 'ip':

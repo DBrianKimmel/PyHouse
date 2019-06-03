@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,7 +52,7 @@ class MqttActions():
             l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown irrigation sub-topic {}'.format(p_message)
-            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+            LOG.warn('Unknown Irrigation Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

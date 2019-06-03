@@ -17,7 +17,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-05-31'
+__updated__ = '2019-06-03'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -67,13 +67,13 @@ class MqttActions:
         elif l_topic == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        #  computer/node/???
+        #
         elif l_topic == 'node':
             p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic[1:], p_message)
         #  computer/***
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-            LOG.warn('Unknown Topic: {}'.format(l_topic))
+            LOG.warn('Unknown Nodes Topic: {}'.format(l_topic))
         return p_logmsg
 
 

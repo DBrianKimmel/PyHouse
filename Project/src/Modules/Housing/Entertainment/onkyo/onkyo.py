@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-06-01'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -66,6 +66,17 @@ class OnkyoDeviceStatus(EntertainmentDeviceStatus):
     def __init__(self):
         super(OnkyoDeviceStatus, self).__init__()
         pass
+
+
+class OnkyoZoneStatus():
+    """ The status of each zone.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Power = None
+        self.Input = None
+        self.Volume = 0
 
 
 class OnkyoQueueData():
@@ -346,7 +357,7 @@ class OnkyoClient(OnkyoProtocol):
             LOG.error("Tried to call send_command without a onkyo device configured.\n\tError:{}".format(e_err))
 
 
-class OnkeoControl:
+class OnkeoControl():
     """
     """
 
@@ -501,7 +512,7 @@ class MqttActions():
             l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Onkyo sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
-            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+            LOG.warn('Unknown Onkyo Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

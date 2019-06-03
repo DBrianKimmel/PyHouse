@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,7 +52,7 @@ class Util(object):
         l_node.NodeInterfaces = None
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/whoisthere
 
-        l_topic = 'login/initial'
+        l_topic = 'computer/login/initial'
         l_message = {}
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)  # /login/initial
 

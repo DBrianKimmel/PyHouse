@@ -17,7 +17,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-05-30'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -60,7 +60,7 @@ class MqttActions:
             LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Controller Status'))
-            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+            LOG.warn('Unknown Controllers Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

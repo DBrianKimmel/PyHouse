@@ -218,7 +218,7 @@ class MqttActions():
             l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
-            LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+            LOG.warn('Unknown Pandora Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 
@@ -370,15 +370,9 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         self.m_buffer += p_data
         self.m_buffer.lstrip()
         while self.m_buffer:
-            l_ix = self.m_buffer.find(b'\n')
-            if l_ix > 0:
-                self.m_buffer, l_line = self._get_line(self.m_buffer, l_ix)
-                ExtractPianobar().extract_line(l_line)
-                continue
-            else:
-                l_line = self.m_buffer
-                ExtractPianobar().extract_line(l_line)
-                self.m_buffer = bytes()
+            self.m_buffer, l_line = self._get_line(self.m_buffer)
+            ExtractPianobar().extract_line(l_line)
+            continue
 
     def errReceived(self, p_data):
         """ Data received from StdErr.

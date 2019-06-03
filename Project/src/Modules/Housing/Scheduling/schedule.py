@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -143,7 +143,7 @@ class MqttActions:
                 pass
             else:
                 p_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
-                LOG.warn('Unknown Topic: {}'.format(p_topic[0]))
+                LOG.warn('Unknown Schedule Topic: {}'.format(p_topic[0]))
         return p_logmsg
 
 
