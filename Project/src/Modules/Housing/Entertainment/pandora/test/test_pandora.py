@@ -7,12 +7,11 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 20 tests - DBK - 2019-04-20
+Passed all 24 tests - DBK - 2019-06-02
 
 """
-from Modules.Housing.Entertainment.panasonic.test.xml_panasonic import TESTING_PANASONIC_ACTIVE
 
-__updated__ = '2019-06-01'
+__updated__ = '2019-06-03'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -27,16 +26,23 @@ from Modules.Housing.Entertainment.pandora.pandora import \
     API as pandoraAPI, \
     SECTION, \
     MqttActions, \
-    PianoBarProcessControl, \
-    PandoraServiceData, PandoraServiceStatusData, ExtractPianobar
+    PandoraServiceData, \
+    PandoraServiceStatusData, \
+    ExtractPianobar, \
+    PianoBarProcessControl
 from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     XML_PANDORA_SECTION, \
     TESTING_PANDORA_SECTION, \
     L_PANDORA_SECTION_START, \
     TESTING_PANDORA_SERVICE_NAME_0, \
     TESTING_PANDORA_SERVICE_KEY_0, \
-    TESTING_PANDORA_SERVICE_ACTIVE_0, TESTING_PANDORA_ACTIVE, TESTING_PANDORA_TYPE, TESTING_PANDORA_SERVICE_COMMENT_0, \
-    TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0
+    TESTING_PANDORA_SERVICE_ACTIVE_0, \
+    TESTING_PANDORA_ACTIVE, \
+    TESTING_PANDORA_TYPE, \
+    TESTING_PANDORA_SERVICE_COMMENT_0, \
+    TESTING_PANDORA_CONNECTION_DEVICE_FAMILY_0_0, \
+    TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0, \
+    TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_DIVISION, \
     TESTING_HOUSE_NAME, \
@@ -56,6 +62,19 @@ CTL = {
 
 TIME_LN = b'#   -03:00/03:00\r'
 PLAY_LN = b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
+
+BUFFER_01 = \
+b'Welcome to pianobar (2016.06.02)! Press ? for a list of commands.\r\n' \
+b'(i) Login... \r\n' \
+b'Ok.\r\n' \
+b'(i) Get stations... \r\n' \
+b'Ok.\r\n' \
+b'|>  Station "QuickMix" (1608513919875785623)\r\n' \
+b'  Station "QuickMix" (1608513919875785623)\r\n' \
+b'(i) Receiving new playlist... \r\n' \
+b'Ok.\r\n' \
+b'|>  "Go For It" by "Bernie Williams" on "Moving Forward" @ Smooth Jazz Radio\r\n'  \
+b'  "Go For It" by "Bernie Williams" on "Moving Forward" @ Smooth Jazz Radio\r\n'
 
 
 class SetupMixin:
@@ -194,6 +213,49 @@ class B1_Xml(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.InputName, TESTING_PANDORA_CONNECTION_INPUT_NAME_0_0)
 
 
+class C1_PianoBarRxed(SetupMixin, unittest.TestCase):
+    """ Test that we have read the xml in properly and that essential items have loaded into the pyhouse_obj properly.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
+
+    def test_01_Like(self):
+        """ Test that the data structure is correct.
+        """
+        l_line = PLAY_LN
+        l_like, _l_rest = ExtractPianobar()._extract_like(l_line)
+        # print(l_like, l_rest)
+        self.assertEqual(l_like, '3')
+
+    def test_02_Station(self):
+        """ Test that the data structure is correct.
+        """
+        l_line = PLAY_LN
+        l_like, _l_rest = ExtractPianobar()._extract_station(l_line)
+        # print(l_like, l_rest)
+        self.assertEqual(l_like, 'Smooth Jazz Radio')
+
+
+class C2_PianoBarRxed(SetupMixin, unittest.TestCase):
+    """ Test that we have read the xml in properly and that essential items have loaded into the pyhouse_obj properly.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
+
+    def test_01_Like(self):
+        """ Test that the data structure is correct.
+        """
+        l_buffer = BUFFER_01
+        # print(l_buffer)
+        while l_buffer:
+            l_buffer, l_line = PianoBarProcessControl(self.m_pyhouse_obj)._get_line(l_buffer)
+            print(l_line)
+
+
 class E1_API(SetupMixin, unittest.TestCase):
     """ Test that we are initializing properly
     """
@@ -231,7 +293,7 @@ class E2_API(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         self.m_api.LoadXml(self.m_pyhouse_obj)
-        l_pandora_sect = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_pandora_sect = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         # print(PrettyFormatAny.form(l_pandora_sect, 'E2-02-A - Section', 180))
         # print(PrettyFormatAny.form(l_pandora_sect.Services, 'E2-02-A - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
@@ -253,19 +315,19 @@ class E3_API(SetupMixin, unittest.TestCase):
     def test_03_Start(self):
         """ Test that the data structure is correct.
         """
-        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
 
     def test_04_Save(self):
         """ Test that the data structure is correct.
         """
         l_xml = ET.Element('EntertainmentSection')
-        l_section = self.m_api.SaveXml(l_xml)
+        _l_section = self.m_api.SaveXml(l_xml)
         # print(PrettyFormatAny.form(l_section, 'E3-04-A - Section'))
 
     def test_05_Stop(self):
         """ Test that the data structure is correct.
         """
-        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
 
 
 class F1_Mqtt(SetupMixin, unittest.TestCase):
@@ -283,15 +345,15 @@ class F1_Mqtt(SetupMixin, unittest.TestCase):
     def test_01_Decode(self):
         """ Test that the data structure is correct.
         """
-        l_topic = ['control']
-        l_message = 'X'
+        _l_topic = ['control']
+        _l_message = 'X'
         # l_log = self.m_api.decode(l_topic, CTL)
         # print(l_log)
 
     def test_02_Control(self):
         """ Test that the data structure is correct.
         """
-        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
 
 
 class F2_Extract(SetupMixin, unittest.TestCase):

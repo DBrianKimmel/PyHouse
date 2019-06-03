@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-06-02'
+__updated__ = '2019-06-03'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -289,16 +289,10 @@ class ExtractPianobar():
         if p_line[0] == b'q':
             LOG.info('Quitting Pandora')
             return
-        if p_line.startswith(b'Welcome'):
-            LOG.info(p_line)
-            return
-        if p_line.startswith(b'Press ? for'):
-            LOG.info(p_line)
-            return
-        if p_line.startswith(b'Ok.'):
-            LOG.info(p_line)
-            return
 
+        if p_line.startswith(b'Welcome') or p_line.startswith(b'Press ? for') or p_line.startswith(b'Ok.'):
+            LOG.info(p_line)
+            return
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
         if p_line.startswith(b'(i)'):
             LOG.info(p_line)
@@ -308,7 +302,6 @@ class ExtractPianobar():
         # We will wait for the first time to arrive.
         if p_line.startswith(b'|>'):  # This is
             LOG.info(p_line)
-            self.m_time = None
             self.m_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line[2:]))
             self._extract_nowplaying(self.m_now_playing, p_line[2:])
@@ -318,7 +311,8 @@ class ExtractPianobar():
         #   -02:22/04:32
 
         if p_line.startswith(b'#'):
-            if self.m_time == None:
+            LOG.info(p_line)
+            if self.m_now_playing.PlayingTime == None:
                 self.m_time = p_line[2:]
                 self._extract_playtime(self.m_now_playing, p_line[2:])
                 MqttActions(self.m_pyhouse_obj)._send_status(self.m_now_playing)
@@ -336,6 +330,10 @@ class ExtractPianobar():
 
 class PianoBarProcessControl(protocol.ProcessProtocol):
     """
+    OutReceived - Some data was received from stdout.
+    ErrReceived - Some data was received from stderr.
+    ProcessExited - This will be called when the subprocess exits.
+    ProcessEnded - Called when the child process exits and all file descriptors associated with it have been closed.
     """
 
     m_buffer = bytes()
@@ -343,6 +341,17 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
+
+    def _get_line(self, p_buffer):
+        """ Get a single line from the buffer.
+        Remove the first line from the buffer.
+
+        """
+        p_buffer = p_buffer.lstrip()
+        l_ix = p_buffer.find(b'\r')
+        l_line = p_buffer[:l_ix]
+        p_buffer = p_buffer[l_ix:]
+        return p_buffer, l_line
 
     def connectionMade(self):
         """Write to stdin.
@@ -360,11 +369,10 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         """
         self.m_buffer += p_data
         self.m_buffer.lstrip()
-        while len(self.m_buffer) > 0:
+        while self.m_buffer:
             l_ix = self.m_buffer.find(b'\n')
             if l_ix > 0:
-                l_line = self.m_buffer[:l_ix]
-                self.m_buffer = self.m_buffer[l_ix + 1:]
+                self.m_buffer, l_line = self._get_line(self.m_buffer, l_ix)
                 ExtractPianobar().extract_line(l_line)
                 continue
             else:
@@ -376,6 +384,11 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         """ Data received from StdErr.
         """
         LOG.warning("StdErr received - {}".format(p_data))
+
+    def ProcessEnded(self, p_reason):
+        """
+        """
+        pass
 
 
 class A_V_Control(MqttActions):

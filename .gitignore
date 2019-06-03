@@ -23,7 +23,8 @@ html/
 */Ideas/
 latex/
 .settings/
-_trial_temp
+_trial_temp/
+.mypy_cache/
 
 ### Private Info
 Laptop*

@@ -31,5 +31,24 @@ tls_fingerprint = FC2E6AF49FC63AEDAD1078DC22D1185B809E7534
 volume = 5
 ```
 
+This indicates a bad ttls_fingerprint in the config file:
+
+```
+b'(i) Unrecognized key tls_fingerprint at /home/pyhouse//.config/pianobar/config:5'
+```
+
+```
+b'Welcome to pianobar (2016.06.02)! Press ? for a list of commands.'
+b'(i) Login... '
+b'Ok.'
+b'(i) Get stations... '
+b'Ok.'
+b'|>  Station "QuickMix" (1608513919875785623)'
+b'  Station "QuickMix" (1608513919875785623)'
+b'(i) Receiving new playlist... '
+b'Ok.'
+b'|>  "Go For It" by "Bernie Williams" on "Moving Forward" @ Smooth Jazz Radio'
+b'  "Go For It" by "Bernie Williams" on "Moving Forward" @ Smooth Jazz Radio'
+```
 
 ### END DBK
