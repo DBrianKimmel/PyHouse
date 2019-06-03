@@ -40,6 +40,36 @@ These messages have topics that begin with:
 
 The modules may return a status message, control other submodules or ...
 
+## Data Structure
+
+The entire entertainment data structure lies here:
+
+  PyHouse.House.Entertainment
+	
+```python
+class EntertainmentData():
+	Active = False
+    PluginCount = 0
+    # Plugins are indexed by the entertainment-family name (always lower cased).
+    Plugins = {}  # EntertainmentPluginData()
+```
+
+### Plugins
+
+The plugin structure is as follows
+
+    PyHouse.House.Entertainment.Plugins[PluginName]
+
+```python
+EntertainmentPluginData():
+    Active = False
+    Name = None
+    Type = 'Missing Type'  # Service: Component (a device):
+    DeviceCount = 0
+    Devices = {}  # EntertainmentDeviceData()
+    ServiceCount = 0
+    Services = {}  # EntertainmentServiceData()
+```
 
 ### Loading XML
 

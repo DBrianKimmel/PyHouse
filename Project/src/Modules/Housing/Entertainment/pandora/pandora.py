@@ -227,6 +227,10 @@ class ExtractPianobar():
     This handles the information coming back from pianobar concerning the playing song.
     """
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_buffer = bytes()
+
     def _extract_like(self, p_line):
         """ The like info comes back as a '<' in the now-playing info.
         """
@@ -373,7 +377,7 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         self.m_buffer.lstrip()
         while self.m_buffer:
             self.m_buffer, l_line = self._get_line(self.m_buffer)
-            ExtractPianobar().extract_line(l_line)
+            ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line)
             continue
 
     def errReceived(self, p_data):
