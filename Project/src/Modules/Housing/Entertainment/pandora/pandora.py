@@ -18,7 +18,6 @@ this module goes back to its initial state ready for another session.
 
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
-from Modules.Families.Insteon.test.xml_insteon import L_INSTEON_GROUP_LIST_0
 
 __updated__ = '2019-06-04'
 __version_info__ = (19, 5, 1)
@@ -271,10 +270,13 @@ class ExtractPianobar():
     def _extract_playtime(self, p_obj, p_line):
         """
         b'#   -03:00/03:00\r'
+        b'#   -02:29/03:21'
         """
         p_line = p_line[1:]
         l_line = p_line.strip()
         l_ix = l_line.find(b'/')
+        p_obj.TimeLeft = l_line[l_ix - 5:l_ix].decode('utf-8')
+        p_obj.TimeTotal = l_line[l_ix + 1:].decode('utf-8')
         p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
         return p_obj
 
@@ -323,7 +325,8 @@ class ExtractPianobar():
             LOG.info(p_line)
             l_now_playing = PandoraServiceStatusData()
             self._extract_playtime(l_now_playing, p_line)
-            MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
+            if l_now_playing.TimeTotal == l_now_playing.TimeLeft:
+                MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
             return l_now_playing
 
         if p_line.startswith(b'Network'):  # A network error has occurred, restart
