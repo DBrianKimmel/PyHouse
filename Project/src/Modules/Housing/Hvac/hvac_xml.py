@@ -17,11 +17,12 @@ __version__ = '.'.join(map(str, __version_info__))
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Core.data_objects import HvacData, ThermostatData, UuidData
+from Modules.Core.data_objects import  UuidData
 from Modules.Families.family_utils import FamUtil
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML
+from Modules.Housing.Hvac.hvac_data import HvacData, ThermostatData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 

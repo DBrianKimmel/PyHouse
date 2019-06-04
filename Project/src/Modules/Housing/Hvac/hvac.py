@@ -30,47 +30,6 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac           ')
 
 
-class HvacData():
-    """
-    DeviceType = 2
-
-    ==> PyHouse.House.Hvac.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.Thermostats = {}  # ThermostatData()  Sub = 1
-
-
-class ThermostatData(DeviceData):
-    """
-
-    ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(ThermostatData, self).__init__()
-        self.CoolSetPoint = 0
-        self.CurrentTemperature = 0
-        self.HeatSetPoint = 0
-        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
-        self.ThermostatScale = 'F'  # F | C
-        self.ThermostatStatus = 'Off'  # On
-        self.UUID = None
-
-
-class ThermostatStatus():
-    """
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Status = None
-        self.Fan = None
-        self.Mode = None
-        self.Family = 'Insteon'
-        self.BrightnessPct = None
-
-
 class Utility(object):
     """
     """
@@ -83,7 +42,7 @@ class MqttActions():
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _decode_thermostat(self, p_topic, p_message, p_logmsg):
+    def _decode_thermostat(self, _p_topic, p_message, p_logmsg):
         """
         """
         p_logmsg += '\tThermostat: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
@@ -99,8 +58,6 @@ class MqttActions():
             p_logmsg += self._decode_thermostat(p_topic[1:], p_message, p_logmsg)
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Message', 160))
-            LOG.warn('Unknown HVAC Topic: {}'.format(p_topic[0]))
-        return p_logmsg
 
     def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'
