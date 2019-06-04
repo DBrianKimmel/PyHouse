@@ -18,15 +18,16 @@ this module goes back to its initial state ready for another session.
 
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
+from Modules.Families.Insteon.test.xml_insteon import L_INSTEON_GROUP_LIST_0
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-04'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 # import xml.etree.ElementTree as ET
 from twisted.internet import protocol
-from _datetime import datetime
+from _datetime import datetime, time
 from pathlib import Path
 
 #  Import PyMh files and modules.
@@ -86,6 +87,8 @@ class PandoraServiceStatusData(EntertainmentServiceStatus):
         self.Song = None
         self.Station = None
         self.Status = 'Idle'  # Device if service is in use.
+        self.TimeTotal = None
+        self.TimeLeft = None
 
 
 class PandoraServiceControlData(EntertainmentServiceControl):
@@ -125,7 +128,7 @@ class MqttActions():
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _send_status(self, p_message):
+    def send_mqtt_status_msg(self, p_message):
         l_topic = 'house/entertainment/pandora/status'
         self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
@@ -251,25 +254,26 @@ class ExtractPianobar():
         l_remain = p_line[:l_ix]
         return l_sta, l_remain
 
-    def _extract_nowplaying(self, p_obj, p_playline):
+    def _extract_nowplaying(self, p_obj, p_line):
         """
         """
-        # p_obj.From = self.m_pyhouse_obj.Computer.Name
+        p_line = p_line[2:]
+        p_obj.From = self.m_pyhouse_obj.Computer.Name
         p_obj.DateTimePlayed = datetime.now()
-        l_playline = p_playline
-        p_obj.Song, l_playline = extract_quoted(l_playline, b'\"')
-        p_obj.Artist, l_playline = extract_quoted(l_playline)
-        p_obj.Album, l_playline = extract_quoted(l_playline)
-        p_obj.Likability, l_playline = self._extract_like(l_playline)
-        p_obj.Station, l_playline = self._extract_station(l_playline)
+        p_obj.Song, p_line = extract_quoted(p_line, b'\"')
+        p_obj.Artist, p_line = extract_quoted(p_line)
+        p_obj.Album, p_line = extract_quoted(p_line)
+        p_obj.Likability, p_line = self._extract_like(p_line)
+        p_obj.Station, p_line = self._extract_station(p_line)
         p_obj.Status = 'Playing'
-        return p_obj  # for debugging
+        return p_obj
 
-    def _extract_playtime(self, p_obj, p_playline):
+    def _extract_playtime(self, p_obj, p_line):
         """
         b'#   -03:00/03:00\r'
         """
-        l_line = p_playline.strip()
+        p_line = p_line[1:]
+        l_line = p_line.strip()
         l_ix = l_line.find(b'/')
         p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
         return p_obj
@@ -288,50 +292,48 @@ class ExtractPianobar():
         b'\x1b[2K#   -02:29/03:09\r'
         """
         if len(p_line) < 5:
-            return
+            return None
         # <ESC>[2K  Ansi esc sequence needs stripped off first.
         if p_line[0] == 0x1B:
             p_line = p_line[4:]
-        if p_line[0] == b'q':
-            LOG.info('Quitting Pandora')
-            return
-
+        #
         if p_line.startswith(b'Welcome') or p_line.startswith(b'Press ? for') or p_line.startswith(b'Ok.'):
             LOG.info(p_line)
-            return
+            return None
         # Housekeeping messages Login, Rx Stations, Rx playlists, ...
-        if p_line.startswith(b'(i)'):
+        elif p_line.startswith(b'(i)'):
             LOG.info(p_line)
-            return
+            return None
+        #
+        if p_line[0] == b'q':
+            LOG.info('Quitting Pandora')
+            return 'Quit'
 
-        # We gather the play data here but we do not send the message yet
-        # We will wait for the first time to arrive.
+        # We gather the play data here
+        # We do not send the message yet but will wait for the first time to arrive. ???
         if p_line.startswith(b'|>'):  # This is
             LOG.info(p_line)
-            self.m_now_playing = PandoraServiceStatusData()
-            LOG.info("Playing: {}".format(p_line[2:]))
-            self._extract_nowplaying(self.m_now_playing, p_line[2:])
-            return
-
+            l_now_playing = PandoraServiceStatusData()
+            LOG.info("Playing: {}".format(p_line))
+            self._extract_nowplaying(l_now_playing, p_line)
+            MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
+            return l_now_playing
         # get the time and then send the message of now-playing
-        #   -02:22/04:32
-
         if p_line.startswith(b'#'):
             LOG.info(p_line)
-            if self.m_now_playing.PlayingTime == None:
-                self.m_time = p_line[2:]
-                self._extract_playtime(self.m_now_playing, p_line[2:])
-                MqttActions(self.m_pyhouse_obj)._send_status(self.m_now_playing)
-            return
+            l_now_playing = PandoraServiceStatusData()
+            self._extract_playtime(l_now_playing, p_line)
+            MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
+            return l_now_playing
 
         if p_line.startswith(b'Network'):  # A network error has occurred, restart
             LOG.info(p_line)
             PandoraControl(self.m_pyhouse_obj)._halt_pandora('Network Error')
             PandoraControl(self.m_pyhouse_obj)._play_pandora('Restarting')
-            return
+            return 'Restarted'
 
         LOG.debug("Data = {}".format(p_line))
-        pass
+        return None
 
 
 class PianoBarProcessControl(protocol.ProcessProtocol):
@@ -377,7 +379,11 @@ class PianoBarProcessControl(protocol.ProcessProtocol):
         self.m_buffer.lstrip()
         while self.m_buffer:
             self.m_buffer, l_line = self._get_line(self.m_buffer)
-            ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line)
+            l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line)
+            if l_ret == 'Quit':
+                return
+            elif l_ret == None:
+                continue
             continue
 
     def errReceived(self, p_data):
@@ -442,17 +448,19 @@ class PandoraControl(A_V_Control):
         l_msg.Station = ''
         l_msg.Likability = ''
         l_msg.PlayingTime = ''
+        l_msg.TimeLeft = ''
+        l_msg.TimeTotal = ''
         l_date_time = datetime.now()
         l_msg.DateTimePlayed = '{:%H:%M:%S}'.format(l_date_time)
         return l_msg
 
-    def _pandora_stopped(self):
+    def issue_pandora_stopped_status(self):
         """
         Send message to Node-Red to update the status.
         """
         l_msg = self._clear_status_fields()
         l_msg.Status = 'Stopped'
-        self._send_status(l_msg)
+        self.send_mqtt_status_msg(l_msg)
 
     def _pandora_starting(self):
         """
@@ -460,7 +468,7 @@ class PandoraControl(A_V_Control):
         """
         l_msg = self._clear_status_fields()
         l_msg.Status = 'Starting'
-        self._send_status(l_msg)
+        self.send_mqtt_status_msg(l_msg)
 
     def _play_pandora(self, p_message):
         """ Start playing pandora.
@@ -500,6 +508,22 @@ class PandoraControl(A_V_Control):
             l_topic = 'house/entertainment/{}/control'.format(l_family)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
+    def build_av_control_msg(self, p_service):
+        """
+        """
+        l_service_control_obj = PandoraServiceControlData()
+        l_service_control_obj.Family = l_family = p_service.ConnectionFamily
+        l_service_control_obj.Device = l_name = p_service.ConnectionModel
+        l_service_control_obj.From = SECTION
+        l_service_control_obj.Model = p_service.ConnectionModel
+        l_service_control_obj.Power = "Off"
+        l_service_control_obj.InputName = p_service.InputName
+        l_service_control_obj.Volume = p_service.Volume
+        l_service_control_obj.Zone = '0'
+        LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
+        l_topic = 'house/entertainment/{}/control'.format(l_family)
+        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_service_control_obj)
+
     def _halt_pandora(self, p_message):
         """ We have received a control message and therefore we stop the pandora player.
         This control message may come from a MQTT message or from a timer.
@@ -524,7 +548,7 @@ class PandoraControl(A_V_Control):
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
             l_topic = 'house/entertainment/{}/control'.format(l_family)
             self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_service_control_obj)
-        self._pandora_stopped()
+        self.issue_pandora_stopped_status()
 
     def control_audio_device(self, p_audio_device, p_control):
         """
@@ -561,7 +585,7 @@ class API(PandoraControl):
         This does not start playing pandora.  That takes a control message to play.
         The control message usually comes from some external source (Alexa, WebPage, SmartPhone)
         """
-        self._pandora_stopped()
+        self.issue_pandora_stopped_status()
         LOG.info("Started - Version:{}".format(__version__))
 
     def SaveXml(self, _p_xml):
