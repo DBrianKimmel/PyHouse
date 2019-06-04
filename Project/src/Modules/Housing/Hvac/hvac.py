@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Hvac/hvac.py
+@name:      PyHouse/Project/src/Modules/Housing/Hvac/hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -14,8 +14,8 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-06-03'
-__version_info__ = (19, 5, 0)
+__updated__ = '2019-06-04'
+__version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -23,10 +23,52 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.data_objects import DeviceData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac           ')
+
+
+class HvacData():
+    """
+    DeviceType = 2
+
+    ==> PyHouse.House.Hvac.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.Thermostats = {}  # ThermostatData()  Sub = 1
+
+
+class ThermostatData(DeviceData):
+    """
+
+    ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
+    """
+
+    def __init__(self):
+        super(ThermostatData, self).__init__()
+        self.CoolSetPoint = 0
+        self.CurrentTemperature = 0
+        self.HeatSetPoint = 0
+        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
+        self.ThermostatScale = 'F'  # F | C
+        self.ThermostatStatus = 'Off'  # On
+        self.UUID = None
+
+
+class ThermostatStatus():
+    """
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Status = None
+        self.Fan = None
+        self.Mode = None
+        self.Family = 'Insteon'
+        self.BrightnessPct = None
 
 
 class Utility(object):

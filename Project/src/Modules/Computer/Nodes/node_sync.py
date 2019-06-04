@@ -1,7 +1,5 @@
 """
--*- test-case-name:  PyHouse.src.Modules.Computer.Nodes.test_node_sync  -*-
-
-@name:       PyHouse/src/Modules/Computer/Nodes/node_sync.py
+@name:       PyHouse/Project/src/Modules/Computer/Nodes/node_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
 @copyright:  2016-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-04'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -42,7 +40,7 @@ class Util(object):
 
     @staticmethod
     def send_who_is_there(p_pyhouse_obj):
-        l_topic = "computer/node/whoisthere"
+        l_topic = "computer/node/sync/whoisthere"
         l_uuid = p_pyhouse_obj.Computer.UUID
         try:
             l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
@@ -50,17 +48,17 @@ class Util(object):
             LOG.error('No such node {}'.format(e_err))
             l_node = NodeData()
         l_node.NodeInterfaces = None
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/whoisthere
+        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)
 
-        l_topic = 'computer/login/initial'
-        l_message = {}
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)  # /login/initial
+        # l_topic = 'computer/login/initial'
+        # l_message = {}
+        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)
 
-        _l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_who_is_there, p_pyhouse_obj)
+        p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_who_is_there, p_pyhouse_obj)
 
     @staticmethod
     def send_i_am(p_pyhouse_obj):
-        l_topic = "computer/node/iam"
+        l_topic = "computer/node/sync/iam"
         l_uuid = p_pyhouse_obj.Computer.UUID
         l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
         p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/iam
@@ -126,11 +124,11 @@ class API(object):
         """ decode the /computer/node/ Mqtt message
         """
         l_msg = '\tNodeSync\n'
-        if p_topic[2] == 'whoisthere':
+        if p_topic[0] == 'whoisthere':
             l_msg += '\tName: {}  who is there'.format(p_message['Name'])
             l_msg += '\t {}\n'.format(p_message)
             Util.send_i_am(self.m_pyhouse_obj)
-        elif p_topic[2] == 'iam':
+        elif p_topic[0] == 'iam':
             l_msg += '\tName {}  i am'.format(p_message['Name'])
             l_msg += '\t {}\n'.format(p_message)
             Util.add_node(self.m_pyhouse_obj, p_message)

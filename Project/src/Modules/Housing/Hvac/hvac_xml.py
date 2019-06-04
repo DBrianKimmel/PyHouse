@@ -1,17 +1,17 @@
 """
--*- test-case-name: PyHouse.src.Modules.Hvac.test.test_hvac_xml -*-
-
-@name:      PyHouse/src/Modules/Hvac/hvac_xml.py
+@name:      PyHouse/Project/src/Modules/Housing/Hvac/hvac_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 12, 2015
 @Summary:
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-04'
+__version_info__ = (19, 5, 0)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET

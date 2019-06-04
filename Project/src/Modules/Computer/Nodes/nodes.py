@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Nodes.test.XXtest_nodes -*-
-
 @name:      PyHouse/Project/src/Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -17,7 +15,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-04'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -68,12 +66,11 @@ class MqttActions:
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         #
-        elif l_topic == 'node':
+        elif l_topic == 'sync':
             p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic[1:], p_message)
-        #  computer/***
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-            LOG.warn('Unknown Nodes Topic: {}'.format(l_topic))
+            LOG.warn('Unknown Node(s0 Topic: {}'.format(l_topic))
         return p_logmsg
 
 

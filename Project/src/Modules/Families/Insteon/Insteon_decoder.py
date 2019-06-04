@@ -24,7 +24,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-04'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -132,7 +132,7 @@ class DecodeResponses(object):
         elif l_cmd == 0x6F: l_ret = self._decode_0x6F_record(p_controller_obj)
         elif l_cmd == 0x73: l_ret = self._decode_0x73_record(p_controller_obj)
         else:
-            LOG.error("Unknown message {}, Cmd:{}".format(FormatBytes(p_controller_obj._Message), l_cmd))
+            LOG.error("Unknown Insteon message {}, Cmd:{}".format(FormatBytes(p_controller_obj._Message), l_cmd))
             # self.check_for_more_decoding(p_controller_obj, l_ret)
         self.check_for_more_decoding(p_controller_obj, l_ret)
         return l_ret

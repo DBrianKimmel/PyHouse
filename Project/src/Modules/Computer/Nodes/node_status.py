@@ -1,7 +1,5 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Computer/Nodes/node_status.py -*-
-
-@name:      src.Modules.Computer.Nodes.node_status
+@name:      PyHouse/Project/src/Modules/Computer/Nodes/node_status.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2019 by D. Brian Kimmel
@@ -13,6 +11,6 @@
 
 """
 
-__updated__ = '2019-05-14'
+__updated__ = '2019-06-04'
 
 # ## END DBK

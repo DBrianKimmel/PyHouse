@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-04'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -176,16 +176,16 @@ class HouseAPIs(object):
         self.SunRiseSetAPI = None
         self.SyncAPI = None
 
+# class HvacData():
 
-class HvacData(object):
     """
     DeviceType = 2
 
     ==> PyHouse.House.Hvac.xxx as in the def below
     """
 
-    def __init__(self):
-        self.Thermostats = {}  # ThermostatData()  Sub = 1
+#    def __init__(self):
+#        self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
 class LightingData(object):
@@ -699,22 +699,22 @@ class CoreLightingData(DeviceData):
         self.ControllerNode = None
         self.ControllerName = None
 
+# class ThermostatData(DeviceData):
 
-class ThermostatData(DeviceData):
     """
 
     ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
     """
 
-    def __init__(self):
-        super(ThermostatData, self).__init__()
-        self.CoolSetPoint = 0
-        self.CurrentTemperature = 0
-        self.HeatSetPoint = 0
-        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
-        self.ThermostatScale = 'F'  # F | C
-        self.ThermostatStatus = 'Off'  # On
-        self.UUID = None
+#    def __init__(self):
+#        super(ThermostatData, self).__init__()
+#        self.CoolSetPoint = 0
+#        self.CurrentTemperature = 0
+#        self.HeatSetPoint = 0
+#        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
+#        self.ThermostatScale = 'F'  # F | C
+#        self.ThermostatStatus = 'Off'  # On
+#        self.UUID = None
 
 """
 CoreLightingData dependent.

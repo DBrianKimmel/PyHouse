@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_HVAC -*-
-
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_HVAC.py
+@name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_HVAC.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010  Split into separate file Jul 9, 2014
 @license:   MIT License
 @summary:   This module decodes Insteon PLM response messages
@@ -22,7 +20,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-06-04'
 
 #  Import system type stuff
 
@@ -71,10 +69,12 @@ class InsteonThermostatStatus:
     def __init__(self):
         self.Name = None
         self.Family = 'Insteon'
-        self.Type = 2  # 2 = HVAC
-        self.SubType = 1  # 1 =
-        self.BrightnessPct = None
-        self.RoomName = None
+        self.Temperature = None
+        self.Humidity = None
+        self.CoolSetpoint = None
+        self.HeatSetPoint = None
+        self.Fan = None  # On, Off, Auto
+        self.Mode = None  # Off, Heat, Cool, ManualAuto, Auto
 
 
 class Util(object):
@@ -107,11 +107,15 @@ class DecodeResponses(object):
         l_message = p_controller_obj._Message
         l_topic = 'house/hvac/thermostat/{}'.format(p_device_obj.Name)
         l_mqtt_message = "thermostat: "
+        l_status = InsteonThermostatStatus()
+        l_status.Family = 'Insteon'
+        l_status.Name = p_device_obj.Name
 
         l_firmware = l_message[7]
         l_flags = utilDecode._decode_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
+
         l_mqtt_message += ' Cmd1:{:#02X}/{:#02X}({:d}) '.format(l_cmd1, l_cmd2, l_cmd2)
         l_debug_msg = 'Fm:"{}"; Flg:{}; C1:{:#x},{:#x}; '.format(p_device_obj.Name, l_flags, l_cmd1, l_cmd2)
 
@@ -160,7 +164,7 @@ class DecodeResponses(object):
             #  p_device_obj.CurrentTemperature = l_cmd2 * HALF
             l_topic += '/ThermostatSetHeatSetpointCommand'
             l_mqtt_message += ' Heat set point = {}; '.format(l_cmd2)
-        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_temperature']:  # 0x6e:  #  Status report Temperature
+        elif l_cmd1 == MESSAGE_TYPES['thermostat_report_temperature']:  # 0x6E:  #  Status report Temperature
             p_device_obj.CurrentTemperature = l_cmd2 * FACTOR
             l_topic += '/ThermostatTemperatureReport'
             l_mqtt_message += ' Temperature = {}; '.format(l_cmd2)
@@ -177,7 +181,8 @@ class DecodeResponses(object):
         elif l_cmd1 == MESSAGE_TYPES['thermostat_report_heat_setpoint']:  # 0x72:  #  Status Report Heat Set Point
             p_device_obj.HeatSetPoint = l_cmd2 * FACTOR
             l_topic += '/ThermostatHeatSetPointReport'
-            l_mqtt_message += ' HeatSetPoint = {}; '.format(l_cmd2)
+            # l_mqtt_message += ' HeatSetPoint = {}; '.format(l_cmd2)
+            l_status.HeatSetPoint = l_cmd2
         else:
             l_mqtt_message += 'Unknown cmd1 '
 
