@@ -9,6 +9,8 @@
 #   Rooms are consistant on all nodes within a house.
 ---
 
+!RoomInformation
+
 # Floors are defined first.
 # Outside is always present and must be first.
 Floors:
@@ -24,7 +26,7 @@ Rooms:
    - Name: Outside
      Active: 'True'
      Comment: Things outside the house
-     LastUpdate: 2016-07-09 00:00:00
+     LastUpdate: 2010-01-01 01:02:03
      UUID: 'df694bf8-2dda-11e6-953b-74da3859e09a'
      Corner: [0.0, 0.0, 0.0]
      Floor: 0

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-06'
 __version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 import datetime
 
 #  Import PyMh files
-from Modules.Core.data_objects import RoomData
+from Modules.Core.data_objects import RoomInformation
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.coordinate_tools import Coords
 from Modules.Core.Utilities.json_tools import encode_json
@@ -36,8 +36,8 @@ class Xml():
     """
 
     @staticmethod
-    def read_one_room(p_room_element):
-        l_room_obj = RoomData()
+    def _read_one_room(p_room_element):
+        l_room_obj = RoomInformation
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_room_obj, p_room_element)
             # l_room_obj.Comment = PutGetXML.get_text_from_xml(p_room_element, 'Comment')
@@ -67,17 +67,13 @@ class Xml():
         self.m_pyhouse_obj = p_pyhouse_obj
         l_ret = {}
         l_count = 0
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        l_xml = l_xml.find('HouseDivision')
-        if l_xml is None:
-            return l_ret
-        l_xml = l_xml.find('RoomSection')
+        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/RoomSection')
         if l_xml is None:
             return l_ret
         try:
             for l_room_xml in l_xml.iterfind('Room'):
                 # print(PrettyFormatAny.form(l_room_xml, 'room xml'))
-                l_room_obj = Xml.read_one_room(l_room_xml)
+                l_room_obj = Xml._read_one_room(l_room_xml)
                 l_room_obj.Key = l_count
                 l_ret[l_count] = l_room_obj
                 LOG.info('Loaded room {}'.format(l_room_obj.Name))
@@ -107,7 +103,7 @@ class Maint(object):
 
     @staticmethod
     def _json_2_obj(p_json):
-        l_obj = RoomData()
+        l_obj = RoomInformation
         l_obj.Name = p_json['Name']
         l_obj.Active = p_json['Active']
         l_obj.Key = 0

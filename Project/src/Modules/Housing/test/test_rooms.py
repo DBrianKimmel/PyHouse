@@ -12,7 +12,7 @@ Passed all 18 tests - DBK 2018-02-13
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-05-27'
+__updated__ = '2019-06-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -159,7 +159,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[3].attrib['Name'], TESTING_ROOM_NAME_3)
 
     def test_03_Room0(self):
-        """ Be sure that the XML contains everything in RoomData().
+        """ Be sure that the XML contains everything in RoomInformation().
         """
         l_xml = self.m_xml.room
         # print(PrettyFormatAny.form(self.m_xml.room, 'Room'))
@@ -175,7 +175,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('RoomType').text, TESTING_ROOM_TYPE_0)
 
     def test_04_Room1(self):
-        """ Be sure that the XML contains everything in RoomData().
+        """ Be sure that the XML contains everything in RoomInformation().
         """
         l_xml = self.m_xml.room_sect[1]
         # print(PrettyFormatAny.form(l_xml, 'A2-04-A - Room'))
@@ -191,7 +191,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('RoomType').text, TESTING_ROOM_TYPE_1)
 
     def test_05_Room2(self):
-        """ Be sure that the XML contains everything in RoomData().
+        """ Be sure that the XML contains everything in RoomInformation().
         """
         l_xml = self.m_xml.room_sect[2]
         # print(PrettyFormatAny.form(l_xml, 'A2-04-A - Room'))
@@ -207,7 +207,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('RoomType').text, TESTING_ROOM_TYPE_2)
 
     def test_06_Room3(self):
-        """ Be sure that the XML contains everything in RoomData().
+        """ Be sure that the XML contains everything in RoomInformation().
         """
         l_xml = self.m_xml.room_sect[3]
         # print(PrettyFormatAny.form(l_xml, 'A2-04-A - Room'))
@@ -233,7 +233,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_OneRoom(self):
         """ Read the xml and fill in the first room's dict
         """
-        l_room = self.m_api.read_one_room(self.m_xml.room)
+        l_room = self.m_api._read_one_room(self.m_xml.room)
         # print(PrettyFormatAny.form(l_room, 'B1-1-A - One Room'))
         self.assertEqual(l_room.Name, TESTING_ROOM_NAME_0)
         self.assertEqual(l_room.Key, int(TESTING_ROOM_KEY_0))
@@ -246,16 +246,17 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_room.LastUpdate, TESTING_ROOM_LAST_UPDATE_0)
         self.assertEqual(l_room.Size.X_Easting, float(TESTING_ROOM_SIZE_X_0))
         self.assertEqual(l_room.RoomType, TESTING_ROOM_TYPE_0)
-        self.assertEqual(l_room._AddFlag, False)
-        self.assertEqual(l_room._DeleteFlag, False)
 
     def test_2_AllRooms(self):
         """ Read in the xml file and fill in the rooms dict
         """
         l_rooms = self.m_api(self.m_pyhouse_obj).read_rooms_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_rooms, 'B1-2-A - All Rooms'))
+        print(json_tools.encode_json(l_rooms[0]))
+        print(PrettyFormatAny.form(l_rooms, 'B1-2-A - All Rooms'))
+        # print(PrettyFormatAny.form(l_rooms[0], 'B1-2-A - All Rooms'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-2-b - PyHouse_Obj'))
         self.assertEqual(len(l_rooms), 4)
+        print(l_rooms[0].Name)
         self.assertEqual(l_rooms[0].Name, TESTING_ROOM_NAME_0)
         self.assertEqual(l_rooms[1].Name, TESTING_ROOM_NAME_1)
         self.assertEqual(l_rooms[2].Name, TESTING_ROOM_NAME_2)
@@ -274,7 +275,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         """
         l_xml = self.m_xml.room
         # print(PrettyFormatAny.form(l_xml, 'B2-01-A - Room Xml'))
-        l_room = self.m_api.read_one_room(l_xml)
+        l_room = self.m_api._read_one_room(l_xml)
         # print(PrettyFormatAny.form(l_room, 'B2-01-B - One Room'))
         l_xml = self.m_api.write_one_room(l_room)
         # print(PrettyFormatAny.form(l_xml, 'B2-01-C - One Room'))

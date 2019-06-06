@@ -40,7 +40,7 @@ class BaseObject(object):
         self.LastUpdate = None
 class BaseUUIDObject(BaseObject):
         self.UUID = None
-class RoomData(BaseUUIDObject):
+class RoomInformation(BaseUUIDObject):
         self.Corner = ''  # CoordinateData()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.Size = ''  # CoordinateData()

@@ -18,9 +18,8 @@ this module goes back to its initial state ready for another session.
 
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
-from _ast import Or
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 

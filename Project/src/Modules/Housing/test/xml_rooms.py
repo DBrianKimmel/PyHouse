@@ -1,24 +1,23 @@
 """
-@name:      PyHouse/src/Modules/Housing/test/xml_rooms.py
+@name:      PyHouse/Project/src/Modules/Housing/test/xml_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 22, 2014
 @Summary:
 
 """
 
-__updated__ = "2017-01-12"
+__updated__ = "2019-06-06"
 
 import datetime
-
 
 L_ROOM_SECTION_START = '  <RoomSection>'
 L_ROOM_SECTION_END = '  </RoomSection>'
 L_ROOM_END = '  </Room>'
 
-TESTING_ROOM_NAME_0 = 'Master Bath'
+TESTING_ROOM_NAME_0 = 'Room_0'
 TESTING_ROOM_KEY_0 = '0'
 TESTING_ROOM_ACTIVE_0 = 'True'
 TESTING_ROOM_UUID_0 = 'Room....-0000-0000-0000-0123456789ab'
@@ -66,9 +65,8 @@ L_ROOM_0 = '\n'.join([
     L_ROOM_END
 ])
 
-
-TESTING_ROOM_NAME_1 = 'Master Bed Closet'
-TESTING_ROOM_KEY_1 = '0'
+TESTING_ROOM_NAME_1 = 'Room-1'
+TESTING_ROOM_KEY_1 = '1'
 TESTING_ROOM_ACTIVE_1 = 'True'
 TESTING_ROOM_UUID_1 = 'Room....-0001-0001-0001-0123456789ab'
 TESTING_ROOM_COMMENT_1 = 'Room comment # 1'
@@ -103,9 +101,8 @@ L_ROOM_1 = '\n'.join([
     L_ROOM_END
 ])
 
-
-TESTING_ROOM_NAME_2 = 'Sitting Room'
-TESTING_ROOM_KEY_2 = '0'
+TESTING_ROOM_NAME_2 = 'Room-2'
+TESTING_ROOM_KEY_2 = '2'
 TESTING_ROOM_ACTIVE_2 = 'True'
 TESTING_ROOM_UUID_2 = 'Room....-0002-0002-0002-0123456789ab'
 TESTING_ROOM_COMMENT_2 = 'Room comment # 2'
@@ -140,8 +137,8 @@ L_ROOM_2 = '\n'.join([
     L_ROOM_END
 ])
 
-TESTING_ROOM_NAME_3 = 'Foyer'
-TESTING_ROOM_KEY_3 = '0'
+TESTING_ROOM_NAME_3 = 'Room-3'
+TESTING_ROOM_KEY_3 = '3'
 TESTING_ROOM_ACTIVE_3 = 'True'
 TESTING_ROOM_UUID_3 = 'Room....-0003-0003-0003-0123456789ab'
 TESTING_ROOM_COMMENT_3 = 'Room comment # 3'

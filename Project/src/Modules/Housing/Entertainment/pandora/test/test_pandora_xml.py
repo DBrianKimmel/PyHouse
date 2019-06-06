@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2019-04-20
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-06-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -145,7 +145,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml[2].attrib['Name'], TESTING_PANDORA_SERVICE_NAME_0)
 
     def test_04_Device0(self):
-        """ Be sure that the XML contains everything in RoomData().
+        """ Be sure that the XML contains everything in RoomInformation().
         """
         l_xml = self.m_xml.pandora_sect.find('Service')
         # print(PrettyFormatAny.form(l_xml, 'A3-04-A Device'))

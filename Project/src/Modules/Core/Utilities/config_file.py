@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-06-06'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -27,6 +27,7 @@ from Modules.Core.Utilities.xml_tools import PutGetXML
 
 LOG = Logger.getLogger('PyHouse.ConfigFile     ')
 XML_FILE_NAME = '/etc/pyhouse/master.xml'
+YAML_FILE_NAME = '/etc/pyhouse/master.yaml'
 
 
 class Util(object):
