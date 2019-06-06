@@ -326,7 +326,7 @@ class ExtractPianobar():
             l_now_playing = PandoraServiceStatusData()
             self._extract_playtime(l_now_playing, p_line)
             if l_now_playing.TimeTotal == l_now_playing.TimeLeft or \
-                l_now_playing.TimeLeft.endswith(b'00'):
+                l_now_playing.TimeLeft.endswith('00'):
                 LOG.info(p_line)
                 MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
             return l_now_playing
