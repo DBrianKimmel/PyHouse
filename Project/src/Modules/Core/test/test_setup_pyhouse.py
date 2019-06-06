@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Core/test/test_setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on Mar 2, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -10,7 +10,7 @@
 Passed all 17 tests - DBK - 2018-01-22                                                                                                                   tests - DBK - 2018-01-10
 """
 
-__updated__ = '2019-01-03'
+__updated__ = '2019-06-05'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -65,6 +65,12 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_02_Tags(self):
         # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
+        self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
+
+    def test_03_Tags(self):
+        # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
+        self.assertEqual(self.m_yaml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
         self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
 

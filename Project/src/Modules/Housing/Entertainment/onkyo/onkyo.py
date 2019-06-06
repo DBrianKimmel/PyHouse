@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-05'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -532,6 +532,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         This is the start.
         """
         l_name = SECTION + '_' + p_device.Model.lower() + '.yaml'
+        # l_filename = os.path.join(self.m_pyhouse_obj.Yaml.YamlConfigDir, l_name)
         l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
         with open(l_filename) as l_file:
             l_yaml = yaml.safe_load(l_file)

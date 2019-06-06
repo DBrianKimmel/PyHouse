@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-27'
+__updated__ = '2019-06-05'
 __version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -177,22 +177,22 @@ class Mqtt():
     """
     """
 
-    def XX__init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj - p_pyhouse_obj
 
-    def _decode_room(self, p_topic, p_message):
-        l_logmsg = '\tRooms:\n'
+    def _decode_room(self, p_topic, p_message, p_logmsg):
+        p_logmsg += '\tRooms:\n'
         if p_topic[1] == 'add':
-            l_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'delete':
-            l_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'sync':
-            l_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'update':
-            l_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
         else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
-        return l_logmsg
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
+        return p_logmsg
 
     def dispatch(self, p_topic, p_message):
         pass
@@ -243,11 +243,11 @@ class Api(Sync, Xml, Maint):
         This is the start.
         """
         l_name = 'rooms.yaml'
-        l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
+        l_filename = os.path.join(self.m_pyhouse_obj.Yaml.YamlConfigDir, l_name)
         with open(l_filename) as l_file:
             l_yaml = yaml.safe_load(l_file)
             if p_parent != None:
-                p_parent._Yaml = l_yaml
+                p_parent.Yaml = l_yaml
         LOG.info('Loaded {} '.format(l_filename))
         return l_yaml
 

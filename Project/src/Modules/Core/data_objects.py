@@ -16,7 +16,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-05'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -36,6 +36,7 @@ class PyHouseData(object):
 
     The APIs are kept separate as they should not be a part of the data sent to the browser.
     """
+    YAMLTag = '!PyHouseData'
 
     def __init__(self):
         self.APIs = None  # PyHouseAPIs()
@@ -45,6 +46,7 @@ class PyHouseData(object):
         self.Twisted = None  # TwistedInformation()
         self.Uuids = None  # AllUuids()
         self.Xml = None  # XmlInformation()
+        self.Yaml = None  # YamlInformation()
 
 
 class PyHouseAPIs(object):
@@ -398,6 +400,16 @@ class XmlInformation(object):
         self.XmlRoot = None
         self.XmlVersion = __version__  # Version from this module.
         self.XmlOldVersion = None  # Version of the file read in at program start.
+
+
+class YamlInformation(object):
+    """ A collection of Yaml data used for Configuration
+
+    ==> PyHouse.Yaml.xxx
+    """
+
+    def __init__(self):
+        self.YamlConfigDir = '/etc/pyhouse/'
 
 
 class BaseUUIDObject(BaseObject):

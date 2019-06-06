@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2019-05-11
 
 """
 
-__updated__ = '2019-05-11'
+__updated__ = '2019-06-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -67,7 +67,23 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
+class A2_XML(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+
+    def test_01_Raw(self):
+        l_raw = XML_HOUSE_DIVISION
+        # print('A2-01-A - Raw\n{}'.format(l_raw))
+        self.assertEqual(l_raw[1:len(TESTING_HOUSE_DIVISION) + 1], TESTING_HOUSE_DIVISION)
+
+    def test_02_Parsed(self):
+        l_xml = ET.fromstring(XML_HOUSE_DIVISION)
+        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
+        self.assertEqual(l_xml.tag, TESTING_HOUSE_DIVISION)
+
+
+class A3_Xml(SetupMixin, unittest.TestCase):
     """
     This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local
         module can read/write.
@@ -101,6 +117,28 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         l_xml = ET.fromstring(XML_HOUSE_DIVISION)
         # print('A2-02-A - Parsed', l_xml)
         self.assertEqual(l_xml.tag, TESTING_HOUSE_DIVISION)
+
+
+class A4_YAML(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of XML used by Onkyo.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Read(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        l_yaml = houseAPI(self.m_pyhouse_obj)._read_yaml()
+        # print('A4-01-A - Yaml\n{}'.format(PrettyFormatAny.form(l_yaml, 'Yaml')))
+        # print('A4-01-B - Yaml\n{}'.format(PrettyFormatAny.form(l_yaml['Location'], 'Yaml')))
+        self.assertEqual(l_yaml['Name'], 'pink poppy')
+        l_obj = self.m_pyhouse_obj
+        print('A4-01-H - Yaml\n{}'.format(PrettyFormatAny.form(l_obj, 'PyHouse')))
+        print('A4-01-I - Yaml\n{}'.format(PrettyFormatAny.form(l_obj.Yaml, 'Yaml')))
+        print('A4-01-J - Yaml\n{}'.format(PrettyFormatAny.form(l_obj['Location'], 'Yaml')))
+        self.assertEqual(self.m_pyhouse_obj.Yaml, 'pink poppy')
 
 
 class B1_Read(SetupMixin, unittest.TestCase):
@@ -158,7 +196,7 @@ class C3_Write(SetupMixin, unittest.TestCase):
         l_house_obj = houseXml.read_house_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House = l_house_obj
         l_xml = houseXml.write_house_xml(self.m_pyhouse_obj)
-        print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
+        # print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
         self.assertEqual(l_xml.tag, 'HouseDivision')
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)

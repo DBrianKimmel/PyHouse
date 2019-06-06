@@ -26,11 +26,13 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-05'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+import os
+import yaml
 
 #  Import PyMh files
 from Modules.Core.data_objects import HouseAPIs, HouseInformation, UuidData
@@ -71,7 +73,7 @@ class MqttActions():
         l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
         LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'room':
-            l_logmsg += roomsMqtt()._decode_room(p_topic, p_message)
+            l_logmsg += roomsMqtt(self.m_pyhouse_obj)._decode_room(p_topic, p_message, l_logmsg)
         elif p_topic[0] == 'entertainment':
             l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         elif p_topic[0] == 'hvac':
@@ -227,6 +229,19 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
+    def _read_yaml(self):
+        """
+        This needs to be more generic and for all devices configs.
+        This is the start.
+        """
+        l_name = 'house.yaml'
+        l_filename = os.path.join(self.m_pyhouse_obj.Yaml.YamlConfigDir, l_name)
+        with open(l_filename) as l_file:
+            l_yaml = yaml.safe_load(l_file)
+            self.m_pyhouse_obj.Yaml = l_yaml
+        LOG.info('Loaded {} '.format(l_filename))
+        return l_yaml
+
     def LoadXml(self, p_pyhouse_obj):
         """
         Read in the HouseDivision portion XML file and update the internal data.
@@ -262,11 +277,5 @@ class API(Utility):
         LOG.info("Stopping House.")
         self.stop_house_parts()
         LOG.info("Stopped.")
-
-    def XXXDecodeMqtt(self, p_topic, p_message):
-        """ Decode messages sent to the house module.
-        """
-        l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
-        return l_logmsg
 
 #  ##  END DBK

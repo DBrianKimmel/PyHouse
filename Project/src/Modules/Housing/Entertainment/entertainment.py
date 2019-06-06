@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-05-31'
+__updated__ = '2019-06-04'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -61,7 +61,7 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_topic, p_message, _p_logmsg):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/entertainment/<device-or-service>/...
 
@@ -73,7 +73,7 @@ class MqttActions:
         @return: a message to be logged as a Mqtt message
         """
         l_sender = extract_tools.get_mqtt_field(p_message, 'Input')
-        LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
+        # LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
         l_module = p_topic[0].lower()
         # Test entertainment exists and that plugins exist.
         try:
@@ -97,7 +97,7 @@ class MqttActions:
                 p_logmsg += ' Module: {} is not active - skipping'.format(l_module)
                 LOG.debug('Return {}'.format(p_logmsg))
                 return p_logmsg
-            LOG.debug('Plugin Active')
+            # LOG.debug('Plugin Active')
         except KeyError:
             p_logmsg += ' {} not defined here.'.format(l_module)
             LOG.debug('Error {}'.format(p_logmsg))

@@ -1,17 +1,15 @@
 """
--*- test-case-name: PyHouse.src.test.test_testing_mixin -*-
-
 @name:      PyHouse/src/test/testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
-@note:      Created on Jun 40, 2013
+@note:      Created on Jun 4, 2013
 @summary:   Test handling the information for a house.
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-06-05'
 
 #  Import system type stuff
 import platform
@@ -31,12 +29,12 @@ from Modules.Core.data_objects import \
     TwistedInformation, \
     XmlInformation, \
     LightingData, \
-    HvacData, \
     SecurityData, \
-    AllUuids
+    AllUuids, YamlInformation
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
 from Modules.Families.family import Utility as familyUtil, API as familyAPI
 from Modules.Housing.house import API as housingAPI
+from Modules.Housing.Hvac.hvac_data import HvacData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_data import MqttInformation
 #
@@ -113,6 +111,12 @@ class XmlData(object):
         self.interface = None
 
 
+class YamlData():
+
+    def __init__(self):
+        self.root = None
+
+
 class LoadPyHouse(object):
     """
     """
@@ -125,7 +129,6 @@ class LoadPyHouse(object):
 
     def load_house(self, p_pyhouse_obj):
         housingAPI.LoadXml(p_pyhouse_obj)
-        return
 
 
 class SetupPyHouseObj(object):
@@ -136,6 +139,11 @@ class SetupPyHouseObj(object):
         l_ret = XmlInformation()
         l_ret.XmlRoot = p_root
         l_ret.XmlFileName = '/etc/pyhouse/master.xml'
+        return l_ret
+
+    def _build_yaml(self, p_root):
+        l_ret = YamlInformation()
+        l_ret.YamlRoot = p_root
         return l_ret
 
     def _build_twisted(self):
@@ -269,6 +277,7 @@ class SetupPyHouseObj(object):
         l_pyhouse_obj.Uuids = AllUuids()
         l_pyhouse_obj.Uuids.All = {}
         l_pyhouse_obj.Xml = self._build_xml(p_root)
+        l_pyhouse_obj.Yaml = self._build_yaml(p_root)
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj
 

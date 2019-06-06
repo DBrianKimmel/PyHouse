@@ -18,6 +18,7 @@ this module goes back to its initial state ready for another session.
 
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
+from _ast import Or
 
 __updated__ = '2019-06-04'
 __version_info__ = (19, 5, 1)
@@ -258,7 +259,8 @@ class ExtractPianobar():
         """
         p_line = p_line[2:]
         p_obj.From = self.m_pyhouse_obj.Computer.Name
-        p_obj.DateTimePlayed = datetime.now()
+        p_obj.DateTimePlayed = '{:%H:%M:%S}'.format(datetime.now())
+
         p_obj.Song, p_line = extract_quoted(p_line, b'\"')
         p_obj.Artist, p_line = extract_quoted(p_line)
         p_obj.Album, p_line = extract_quoted(p_line)
@@ -322,10 +324,11 @@ class ExtractPianobar():
             return l_now_playing
         # get the time and then send the message of now-playing
         if p_line.startswith(b'#'):
-            LOG.info(p_line)
             l_now_playing = PandoraServiceStatusData()
             self._extract_playtime(l_now_playing, p_line)
-            if l_now_playing.TimeTotal == l_now_playing.TimeLeft:
+            if l_now_playing.TimeTotal == l_now_playing.TimeLeft or \
+                l_now_playing.TimeLeft.endswith(b'00'):
+                LOG.info(p_line)
                 MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
             return l_now_playing
 

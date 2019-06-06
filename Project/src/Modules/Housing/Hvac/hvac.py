@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-05'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -58,6 +58,7 @@ class MqttActions():
             p_logmsg += self._decode_thermostat(p_topic[1:], p_message, p_logmsg)
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Message', 160))
+        return p_logmsg
 
     def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'

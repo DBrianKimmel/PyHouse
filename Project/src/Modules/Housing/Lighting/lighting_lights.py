@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-04'
 __version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -98,14 +98,15 @@ class MqttActions:
         @return: a message to be logged as a Mqtt message
         """
         l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
-        # LOG.debug('MqttLightingLightsDispatch Topic:{}\n\t{}'.format(p_topic, p_message))
+        # LOG.debug('LightingLightsDispatch Topic:{}\n\t{}'.format(p_topic, p_message))
         if p_topic[0] == 'control':
             self._decode_control(p_message)
             l_logmsg += 'Light Control: {}'.format(PrettyFormatAny.form(p_message, 'Light Control'))
             LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_topic, p_message))
         elif p_topic[0] == 'status':
             # The status is contained in LightData() above.
-            l_logmsg += 'Light Status: {}'.format(PrettyFormatAny.form(p_message, 'Light Status'))
+            # l_logmsg += 'Light Status: {}'.format(PrettyFormatAny.form(p_message, 'Light Status'))
+            l_logmsg += 'Light Status: {}'.format(p_message)
             LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
