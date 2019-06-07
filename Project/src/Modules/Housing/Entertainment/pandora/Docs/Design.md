@@ -57,16 +57,16 @@ The pandora module will recieve a control message and perform the action:
 The computer where 'PianoBar' is installed should be the one where the pandora service is configured.
 These messages have topics:
 		pyhouse/house name/house/entertainment/pandora/control
-where xxx is one of:
-* PowerOn
-* PowerOff
-* VolumeUp1
-* VolumeUp5
-* VolumeDown1
-* VolumeDown5
-* LikeYes
-* LikeNo
-* SkipYes
+with a payload of:
+* 'Time':   '2019-05-07 22:19:19Z'
+* 'Sender': 'pi-04-pp',
+* Name - the service name
+* Zone - the zone to be controlled
+* Power - On will start pandora playing, off will stop playing.
+* Volume - Passed on
+* Like
+* DisLike
+* Skip
 
 .../control msg=on will have side effects of turning on and setting the "ConnectionModel" device.
 

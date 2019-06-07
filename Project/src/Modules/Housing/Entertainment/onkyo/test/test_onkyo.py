@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2019-05-31'
+__updated__ = '2019-06-07'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -32,7 +32,7 @@ from Modules.Housing.Entertainment.onkyo.onkyo import \
         MqttActions, \
         OnkyoQueueData, \
         API as onkyoAPI, \
-        OnkyoDeviceData
+        OnkyoDeviceInformation
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.Entertainment.onkyo.test.xml_onkyo import \

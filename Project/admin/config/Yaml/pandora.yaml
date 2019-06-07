@@ -1,0 +1,25 @@
+# Name:      PyHouse/Project/admin/config/Yaml/pandora.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun  7, 2019
+# Updated:   Jun  7, 2019
+# License:   MIT License
+# Summary:   This is for pandora.
+
+# This is experimental at present.
+
+---
+
+MaxSessions: 1
+# All the services in this file are for this one node and one instance of pianobar.
+NodeName: pi-07-pp
+
+Service:
+   - Name: Service 1
+      Comment: This service is for the main living room
+   
+   - Name: Service 2
+      Comment: This service is for the Lanai
+
+### END DBK

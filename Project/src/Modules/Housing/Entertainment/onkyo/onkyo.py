@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse/Project/src/Modules/Entertainment/test_onkyo.py -*-
-
 @name:      PyHouse/Project/src/Modules/Housing/Entertainment/onkyo/onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-07'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,12 +37,12 @@ LOG = Logger.getLogger('PyHouse.Onkyo          ')
 SECTION = 'onkyo'
 
 
-class OnkyoDeviceData(EntertainmentDeviceData):
+class OnkyoDeviceInformation(EntertainmentDeviceData):
     """ A superet that contains some onkyo specific fields
     """
 
     def __init__(self):
-        super(OnkyoDeviceData, self).__init__()
+        super(OnkyoDeviceInformation, self).__init__()
         pass
 
 
@@ -191,6 +189,8 @@ class OnkyoProtocol(LineReceiver, OnkyoResponses):
     """
     Each onkyo device can have only one connection.
     This may cause the tcp connection to fail.
+
+    Other nodes may silently steal the connection.
     """
 
     def __init__(self, p_pyhouse_obj, p_device_obj):
@@ -374,7 +374,7 @@ class OnkeoControl():
         """ Open connections to the various Onkyo devices we will communicate with.
         This will also publish a status message with controller info.
 
-        @param p_device_obj: OnkyoDeviceData()
+        @param p_device_obj: OnkyoDeviceInformation()
         """
 
         def cb_got_protocol(p_protocol, p_device_obj, p_status):
@@ -556,7 +556,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         We have one or more Onkyo devices in this house to use/control.
         Connect to all of them.
 
-        OnkyoDeviceData()
+        OnkyoDeviceInformation()
 
         """
         LOG.info('Start Onkyo.')
