@@ -630,7 +630,7 @@ class API():
         This does not start playing pandora.  That takes a control message to play.
         The control message comes from some external source (Alexa, WebPage, SmartPhone) etc.
         """
-        self.issue_pandora_stopped_status()
+        self.m_pandora_control_api.issue_pandora_stopped_status()
         LOG.info("Started - Version:{}".format(__version__))
 
     def SaveXml(self, _p_xml):
