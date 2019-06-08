@@ -81,8 +81,8 @@ class MqttActions():
                 l_msg = 'This node contains no Entertainment Plugins, skipping.'
                 LOG.info(l_msg)
                 return l_msg
-        except:
-            pass
+        except Exception as e_err:
+            LOG.error('Should not happen. {}'.format(e_err))
         # Does the called for plugin exist?
         try:
             l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
@@ -97,7 +97,7 @@ class MqttActions():
                 p_logmsg += ' Module: {} is not active - skipping'.format(l_module)
                 LOG.debug('Return {}'.format(p_logmsg))
                 return p_logmsg
-            # LOG.debug('Plugin Active')
+            LOG.debug('Plugin Active')
         except KeyError:
             p_logmsg += ' {} not defined here.'.format(l_module)
             LOG.debug('Error {}'.format(p_logmsg))
@@ -109,6 +109,7 @@ class MqttActions():
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
             p_logmsg += 'Module {} not defined {}'.format(l_module, e_err)
+            LOG.error('Error in calling decode {}'.format(e_err))
         return p_logmsg
 
 
