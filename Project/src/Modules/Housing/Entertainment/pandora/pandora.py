@@ -409,7 +409,7 @@ class PianobarProtocol(protocol.ProcessProtocol):
         LOG.info("PianoBar closed. {}".format(p_reason))
 
 
-class A_V_Control(MqttActions):
+class A_V_Control():
     """ Control the A/V device that pandora plays thru.
     """
 
@@ -430,7 +430,7 @@ class A_V_Control(MqttActions):
             # LOG.debug(PrettyFormatAny.form(l_service_control_obj, 'Obj', 190))
             # l_json = encode_json(l_service_control_obj)
             # LOG.debug(PrettyFormatAny.form(l_json, 'Json', 190))
-            self._send_control(l_family, l_service_control_obj)
+            MqttActions(self.m_pyhouse_obj)._send_control(l_family, l_service_control_obj)
 
 
 class PandoraControl(A_V_Control):
@@ -440,7 +440,10 @@ class PandoraControl(A_V_Control):
     m_session_count = 0
     m_transport = None
 
-    def __init__(self):
+    def __init__(self, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.m_session_count = 0
 
     def _start_pianobar(self):
@@ -504,7 +507,7 @@ class PandoraControl(A_V_Control):
         """
         l_msg = self._clear_status_fields()
         l_msg.Status = 'Stopped'
-        self.send_mqtt_status_msg(l_msg)
+        MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_msg)
 
     def _pandora_starting(self):
         """
@@ -512,7 +515,7 @@ class PandoraControl(A_V_Control):
         """
         l_msg = self._clear_status_fields()
         l_msg.Status = 'Starting'
-        self.send_mqtt_status_msg(l_msg)
+        MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_msg)
 
     def _start_pandora(self, p_message):
         """ Start playing pandora.
@@ -611,7 +614,7 @@ class API():
         self.m_API = self
         self.m_started = None
         LOG.info("API Initialized - Version:{}".format(__version__))
-        self.m_pandora_control_api = PandoraControl()
+        self.m_pandora_control_api = PandoraControl(p_pyhouse_obj)
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for pandora.
