@@ -325,8 +325,8 @@ class ExtractPianobar():
 
         # We gather the play data here
         # We do not send the message yet but will wait for the first time to arrive. ???
+        l_now_playing = PandoraServiceStatusData()
         if p_line.startswith(b'|>'):  # This is
-            l_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line))
             self._extract_nowplaying(l_now_playing, p_line)
             MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
@@ -383,6 +383,7 @@ class PianobarProtocol(protocol.ProcessProtocol):
         self.m_buffer = self.m_buffer.lstrip()
 
         while self.m_buffer:
+            self.m_hold = PandoraServiceStatusData()
             self.m_buffer, l_line = self._get_line(self.m_buffer)
             l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line, self.m_hold)
             if l_ret == 'Quit':
@@ -390,7 +391,8 @@ class PianobarProtocol(protocol.ProcessProtocol):
             elif l_ret == None:
                 continue
             else:
-                self.m_hold = l_ret
+                # self.m_hold = l_ret
+                pass
             continue
 
     def connectionMade(self):
