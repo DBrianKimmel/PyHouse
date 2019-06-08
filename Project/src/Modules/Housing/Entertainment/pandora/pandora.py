@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-06-07'
+__updated__ = '2019-06-08'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -216,6 +216,7 @@ class MqttActions():
 
         """
         l_logmsg = ' Pandora '
+        LOG.debug('{} {}'.format(p_topic, p_message))
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':

@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-08'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -54,7 +54,7 @@ class Ent:
         self.m_pyhouse_obj = p_pyhouse_obj
 
 
-class MqttActions:
+class MqttActions():
     """ Mqtt section
     """
 
@@ -73,7 +73,7 @@ class MqttActions:
         @return: a message to be logged as a Mqtt message
         """
         l_sender = extract_tools.get_mqtt_field(p_message, 'Input')
-        # LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
+        LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
         l_module = p_topic[0].lower()
         # Test entertainment exists and that plugins exist.
         try:

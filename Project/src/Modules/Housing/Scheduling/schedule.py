@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-08'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -88,7 +88,8 @@ class MqttActions:
         """
         l_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         l_msg_obj = (p_message)
-        LOG.debug('Sched: {}\n{}'.format(p_message, PrettyFormatAny.form(l_msg_obj, 'Schedule', 190)))
+        # LOG.debug('Sched: {}\n{}'.format(p_message, PrettyFormatAny.form(l_msg_obj, 'Schedule', 190)))
+        LOG.debug('Sched: {}\n{}'.format(p_message, l_msg_obj))
         if l_sender == self.m_pyhouse_obj.Computer.Name:
             return
         l_name = extract_tools.get_mqtt_field(p_message, 'LightName')
