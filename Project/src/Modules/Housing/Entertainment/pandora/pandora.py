@@ -260,15 +260,17 @@ class ExtractPianobar():
         """
         """
         p_line = p_line[2:]
-        p_obj.From = self.m_pyhouse_obj.Computer.Name
-        p_obj.DateTimePlayed = '{:%H:%M:%S}'.format(datetime.now())
-
-        p_obj.Song, p_line = extract_quoted(p_line, b'\"')
-        p_obj.Artist, p_line = extract_quoted(p_line)
-        p_obj.Album, p_line = extract_quoted(p_line)
-        p_obj.Likability, p_line = self._extract_like(p_line)
-        p_obj.Station, p_line = self._extract_station(p_line)
-        p_obj.Status = 'Playing'
+        try:
+            p_obj.From = self.m_pyhouse_obj.Computer.Name
+            p_obj.DateTimePlayed = '{:%H:%M:%S}'.format(datetime.now())
+            p_obj.Song, p_line = extract_quoted(p_line, b'\"')
+            p_obj.Artist, p_line = extract_quoted(p_line)
+            p_obj.Album, p_line = extract_quoted(p_line)
+            p_obj.Likability, p_line = self._extract_like(p_line)
+            p_obj.Station, p_line = self._extract_station(p_line)
+            p_obj.Status = 'Playing'
+        except:
+            pass
         return p_obj
 
     def _extract_playtime(self, p_obj, p_line):
@@ -279,9 +281,12 @@ class ExtractPianobar():
         p_line = p_line[1:]
         l_line = p_line.strip()
         l_ix = l_line.find(b'/')
-        p_obj.TimeLeft = l_line[l_ix - 5:l_ix].decode('utf-8')
-        p_obj.TimeTotal = l_line[l_ix + 1:].decode('utf-8')
-        p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
+        try:
+            p_obj.TimeLeft = l_line[l_ix - 5:l_ix].decode('utf-8')
+            p_obj.TimeTotal = l_line[l_ix + 1:].decode('utf-8')
+            p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
+        except:
+            pass
         return p_obj
 
     def _extract_errors(self, p_playline):
@@ -292,10 +297,13 @@ class ExtractPianobar():
 
     def extract_line(self, p_line, p_hold):
         """
+        b'\x1b[2K|>  Station "QuickMix" (1608513919875785623)\n\x1b[2K(i) Receiving new playlist...'
+        strippping off the esc sequence ...
+        b'|>  Station "QuickMix" (1608513919875785623)\n\x1b[2K(i) Receiving new playlist...'
+        b'|>  "Mississippi Blues" by "Tim Sparks" on "Sidewalk Blues" <3 @ Acoustic Blues Radio\n'
+        b'#   -02:29/03:09\r'
         b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
-        b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
-        b'\x1b[2K|>  "Mississippi Blues" by "Tim Sparks" on "Sidewalk Blues" <3 @ Acoustic Blues Radio\n'
-        b'\x1b[2K#   -02:29/03:09\r'
+        b'  "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
         """
         if len(p_line) < 5:
             return None
@@ -533,7 +541,6 @@ class PandoraControl(A_V_Control):
             send a control message to entertainment device pandora is hooked to to start that device
         """
         LOG.info('Play Pandora - {}'.format(p_message))
-        self.m_started = False
         if not self.is_pianobar_installed(self.m_pyhouse_obj):
             LOG.warn('Pianobar is not installed yet pandora is configured.')
             return
@@ -549,9 +556,7 @@ class PandoraControl(A_V_Control):
         l_args = ('pianobar',)
         l_env = None  # this will pass <os.environ>
         self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
-        self.m_started = True
         #
-
         for l_service in l_pandora_plugin_obj.Services.values():
             l_device_control_obj = EntertainmentDeviceControl()
             l_device_control_obj.Family = l_family = l_service.ConnectionFamily
@@ -588,9 +593,11 @@ class PandoraControl(A_V_Control):
         LOG.info('Halt Pandora - {}'.format(p_message))
         l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_pandora_plugin_obj._OpenSessions -= 1
-        self.m_started = False
-        self.m_transport.write(b'q')
-        # self.m_transport.closeStdin()
+        try:
+            self.m_transport.write(b'q')
+            self.m_transport.closeStdin()
+        except:
+            pass
         LOG.info('Service Stopped')
         for l_service in l_pandora_plugin_obj.Services.values():
             l_service_control_obj = PandoraServiceControlData()
@@ -614,14 +621,11 @@ class PandoraControl(A_V_Control):
 
 class API(MqttActions):
 
-    m_started = False
-
     def __init__(self, p_pyhouse_obj):
         """ Do the housekeeping for the Pandora plugin.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_API = self
-        self.m_started = None
         LOG.info("API Initialized - Version:{}".format(__version__))
         self.m_pandora_control_api = PandoraControl(p_pyhouse_obj)
 
@@ -655,7 +659,6 @@ class API(MqttActions):
     def Stop(self):
         """ Stop the Pandora player when we receive a signal to play some other thing.
         """
-        self.m_started = False
         self.m_transport.write(b'q')
         self.m_transport.closeStdin()
         LOG.info("Stopped.")
