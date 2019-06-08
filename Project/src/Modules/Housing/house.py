@@ -26,7 +26,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-08'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -71,7 +71,7 @@ class MqttActions():
         --> pyhouse/<housename>/house/topic03...
         """
         l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
+        # LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'room':
             l_logmsg += roomsMqtt(self.m_pyhouse_obj)._decode_room(p_topic, p_message, l_logmsg)
         elif p_topic[0] == 'entertainment':

@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-05-27'
+__updated__ = '2019-06-08'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -120,7 +120,7 @@ class API():
                 continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
-                LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
+                # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
                 LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client', 190)))

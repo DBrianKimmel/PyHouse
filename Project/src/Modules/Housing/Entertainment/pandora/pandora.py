@@ -290,7 +290,7 @@ class ExtractPianobar():
         # l_title = extract_quoted(p_playline, b'\"')
         pass
 
-    def extract_line(self, p_line):
+    def extract_line(self, p_line, p_hold):
         """
         b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
         b'   "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
@@ -318,7 +318,6 @@ class ExtractPianobar():
         # We gather the play data here
         # We do not send the message yet but will wait for the first time to arrive. ???
         if p_line.startswith(b'|>'):  # This is
-            LOG.info(p_line)
             l_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line))
             self._extract_nowplaying(l_now_playing, p_line)
@@ -326,7 +325,7 @@ class ExtractPianobar():
             return l_now_playing
         # get the time and then send the message of now-playing
         if p_line.startswith(b'#'):
-            l_now_playing = PandoraServiceStatusData()
+            l_now_playing = p_hold
             self._extract_playtime(l_now_playing, p_line)
             if l_now_playing.TimeTotal == l_now_playing.TimeLeft or \
                 l_now_playing.TimeLeft.endswith('00'):
@@ -353,6 +352,7 @@ class PianobarProtocol(protocol.ProcessProtocol):
     """
 
     m_buffer = bytes()
+    m_hold = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -373,13 +373,16 @@ class PianobarProtocol(protocol.ProcessProtocol):
         """
         """
         self.m_buffer = self.m_buffer.lstrip()
+
         while self.m_buffer:
             self.m_buffer, l_line = self._get_line(self.m_buffer)
-            l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line)
+            l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line, self.m_hold)
             if l_ret == 'Quit':
                 return
             elif l_ret == None:
                 continue
+            else:
+                self.m_hold = l_ret
             continue
 
     def connectionMade(self):

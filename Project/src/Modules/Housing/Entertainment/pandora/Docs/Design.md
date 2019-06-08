@@ -158,4 +158,7 @@ change the line “pcm.front cards.pcm.front” to “pcm.front cards.pcm.defaul
 
 <https://www.raspberrypi.org/documentation/configuration/audio-config.md>
 
+<http://cagewebdev.com/raspberry-pi-getting-audio-working/>
+
+
 ### END DBK
