@@ -134,12 +134,28 @@ Now playing song message format. Available format characters are:
 
 ## Audio on Raspberry Pi
 
-### Alsa
+### config
+
+sudo raspi-config
+
+select: Advanced Options --> Audio --> 1
+
+This will force output thru the 3.5mm audio jack.
+
+reboot
+
 
 If you see this:
 `ALSA lib pcm.c:2495:(snd_pcm_open_noupdate) Unknown PCM cards.pcm.front`
 
 Edit the file: `/usr/share/alsa/alsa.conf`
 change the line “pcm.front cards.pcm.front” to “pcm.front cards.pcm.default”
+
+
+[Check out: http://blog.scphillips.com/posts/2013/01/sound-configuration-on-raspberry-pi-with-alsa/](http://blog.scphillips.com/posts/2013/01/sound-configuration-on-raspberry-pi-with-alsa/)
+
+<http://karuppuswamy.com/wordpress/2015/08/15/configuring-alsa-audio-output-on-analog-and-hdmi-of-raspberry-pi/>
+
+<https://www.raspberrypi.org/documentation/configuration/audio-config.md>
 
 ### END DBK
