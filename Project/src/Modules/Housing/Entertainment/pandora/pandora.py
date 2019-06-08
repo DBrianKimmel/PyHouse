@@ -178,17 +178,17 @@ class MqttActions():
         # These directly control pianobar(pandora)
         if l_power == 'On':
             l_logmsg += ' Turn On '
-            self._start_pandora(p_message)
-            self.ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            PandoraControl(self.m_pyhouse_obj)._start_pandora(p_message)
+            A_V_Control(self.m_pyhouse_obj).ChangeAVDevice(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_power == 'Off':
             l_logmsg += ' Turn Off '
             self._halt_pandora(p_message)
-            self.ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).ChangeAVDevice(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_volume != None:
             l_logmsg += ' Volume to: {}'.format(l_volume)
-            self.ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).ChangeAVDevice(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_like == 'LikeYes':
             l_logmsg += ' Like '
@@ -414,6 +414,11 @@ class A_V_Control():
     """ Control the A/V device that pandora plays thru.
     """
 
+    def __init__(self, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+
     def ChangeAVDevice(self, p_zone, p_power, p_input, p_volume):
         """ Build the control message for the A/V device.
         Fill in only what is necessary
@@ -527,7 +532,7 @@ class PandoraControl(A_V_Control):
         LOG.info('Play Pandora - {}'.format(p_message))
         self.m_started = False
         if not self.is_pianobar_installed(self.m_pyhouse_obj):
-            LOG.warn('Pianobar is not installed')
+            LOG.warn('Pianobar is not installed yet pandora is configured.')
             return
         l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         if l_pandora_plugin_obj._OpenSessions > 0:
