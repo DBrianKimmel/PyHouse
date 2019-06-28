@@ -15,7 +15,7 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 
@@ -56,7 +56,7 @@ class API(object):
                     LOG.info('Controller {} Started.'.format(l_controller_obj.Name))
                     l_count += 1
                     l_topic = 'house/lighting/controller/' + l_controller_prefix + '/start'
-                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
+                    self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
                 else:
                     LOG.error('Controller {} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False

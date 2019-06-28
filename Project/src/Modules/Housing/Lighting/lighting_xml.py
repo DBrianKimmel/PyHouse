@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff
 # import xml.etree.ElementTree as ET
@@ -55,7 +55,7 @@ class LightingXML:
     def _write_family_data(self, p_pyhouse_obj, p_controller_obj, p_xml):
         try:
             l_family = p_controller_obj.DeviceFamily
-            l_family_obj = p_pyhouse_obj.FamilyInformation[l_family]
+            l_family_obj = p_pyhouse_obj._Families[l_family]
             l_api = l_family_obj.FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_controller_obj)
         except Exception as e_err:

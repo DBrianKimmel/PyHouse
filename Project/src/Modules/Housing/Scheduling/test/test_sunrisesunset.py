@@ -12,7 +12,7 @@ Passed all 9 tests - DBK - 2019-01-24
 http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-13'
 
 # Import system type stuff
 import datetime
@@ -21,7 +21,7 @@ from twisted.trial import unittest
 from math import pi
 
 # Import PyMh files
-from Modules.Core.data_objects import LocationData
+from Modules.Housing.location import LocationInformation
 from Modules.Housing.Scheduling import sunrisesunset
 from Modules.Housing.Scheduling.sunrisesunset import Utility as astralUtil
 from test.testing_mixin import SetupPyHouseObj
@@ -74,8 +74,8 @@ class SetupMixin(object):
 
     @staticmethod
     def load_earth(p_pyhouse_obj):
-        l_loc = LocationData()
-        l_loc.Region = TESTING_LOCATION_REGION
+        l_loc = LocationInformation()
+        # l_loc.Region = TESTING_LOCATION_REGION
         l_loc.Latitude = float(TESTING_LOCATION_LATITUDE)
         l_loc.Longitude = float(TESTING_LOCATION_LONGITUDE)
         l_loc.TimeZoneName = TESTING_LOCATION_TIME_ZONE_NAME

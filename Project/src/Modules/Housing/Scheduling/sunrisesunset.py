@@ -19,7 +19,7 @@
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import datetime
@@ -102,7 +102,7 @@ class Utility(object):
         """
         l_a = astral.Location(info=(
                 p_pyhouse_obj.House.Name,
-                p_pyhouse_obj.House.Location.Region,
+                p_pyhouse_obj.House.Location.Country,
                 p_pyhouse_obj.House.Location.Latitude,
                 p_pyhouse_obj.House.Location.Longitude,
                 p_pyhouse_obj.House.Location.TimeZoneName,
@@ -121,7 +121,7 @@ class Utility(object):
         l_ret.Noon = l_sun['noon']
         l_ret.SunSet = l_sun['sunset']
         l_ret.Dusk = l_sun['dusk']
-        p_pyhouse_obj.House.Location.RiseSet = l_ret
+        p_pyhouse_obj.House.Location._RiseSet = l_ret
         LOG.info('Sunrise/Sunset Calculation')
         return l_ret
 
@@ -141,6 +141,6 @@ class API(Utility):
 
     def _loop(self):
         l_delay = self._till_next()
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(l_delay, self.calc_solar_times, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(l_delay, self.calc_solar_times, self.m_pyhouse_obj)
 
 # ## END

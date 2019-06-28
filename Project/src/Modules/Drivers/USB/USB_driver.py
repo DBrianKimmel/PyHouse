@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import usb
@@ -60,7 +60,7 @@ class UsbDriverAPI(object):
         """Routine that reads the USB device.
         Calls either HID or Non-HID routines to fetch tha actual data.
         """
-        p_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.read_usb, p_pyhouse_obj)
+        p_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.read_usb, p_pyhouse_obj)
         if self.m_USB_obj.hid_device:
             l_msg = self.read_hid_report(self.m_USB_obj)
         else:

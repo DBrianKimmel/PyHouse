@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-05-13'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import datetime
@@ -105,7 +105,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
-        self.m_pyhouse_obj.House.Location.RiseSet = Mock.RiseSet()
+        self.m_pyhouse_obj.House.Location._RiseSet = Mock.RiseSet()
         self.m_api = scheduleAPI(self.m_pyhouse_obj)
 
 
@@ -138,22 +138,22 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_02_FamilyInformation(self):
         """ Just to be sure the family data is loaded properly.
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.FamilyInformation, 'A1-02-A - FamilyInformation'))
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Insteon'].Name, 'Insteon')
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Null'].Name, 'Null')
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['UPB'].Name, 'UPB')
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['X10'].Name, 'X10')
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Insteon'].Key, 1)
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Null'].Key, 0)
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['UPB'].Key, 2)
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['X10'].Key, 3)
-        self.assertEqual(self.m_pyhouse_obj.FamilyInformation['Null'].Active, True)
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Families, 'A1-02-A - _Families'))
+        self.assertEqual(self.m_pyhouse_obj._Families['Insteon'].Name, 'Insteon')
+        self.assertEqual(self.m_pyhouse_obj._Families['Null'].Name, 'Null')
+        self.assertEqual(self.m_pyhouse_obj._Families['UPB'].Name, 'UPB')
+        self.assertEqual(self.m_pyhouse_obj._Families['X10'].Name, 'X10')
+        self.assertEqual(self.m_pyhouse_obj._Families['Insteon'].Key, 1)
+        self.assertEqual(self.m_pyhouse_obj._Families['Null'].Key, 0)
+        self.assertEqual(self.m_pyhouse_obj._Families['UPB'].Key, 2)
+        self.assertEqual(self.m_pyhouse_obj._Families['X10'].Key, 3)
+        self.assertEqual(self.m_pyhouse_obj._Families['Null'].Active, True)
 
     def test_03_Dawn(self):
         """ Test that dusk dawn loaded properly
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location.RiseSet, 'A1-03-A - Dusk Dawn'))
-        self.assertEqual(self.m_pyhouse_obj.House.Location.RiseSet.Dawn, TESTING_SCHEDULE_DAWN_0)
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location._RiseSet, 'A1-03-A - Dusk Dawn'))
+        self.assertEqual(self.m_pyhouse_obj.House.Location._RiseSet.Dawn, TESTING_SCHEDULE_DAWN_0)
 
 
 class A2_SetupXml(SetupMixin, unittest.TestCase):
@@ -318,7 +318,7 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj._APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_one(self):
         """ No way to test the dispatch routine
@@ -339,7 +339,7 @@ class C2_List(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.Schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
         twisted.internet.base.DelayedCall.debug = True
 
     def test_01_BuildSched(self):

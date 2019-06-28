@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_xml -*-
-
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_xml.py
+@name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2018 by D. Brian Kimmel
+@copyright: (c) 2011-2019 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -13,20 +11,20 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerData.
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities import convert
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Core.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_xml ')
 
 
-class Xml(object):
+class Xml:
     """
     These routines are called from read_family_data in various modules.
     This is done so Lights, Thermostats, Irrigation and Pool devices can use the XML data for Insteon devices.

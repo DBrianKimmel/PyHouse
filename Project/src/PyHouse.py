@@ -28,7 +28,7 @@
 
 
 PyHouse.
-        APIs            Internal
+        _APIs           Internal
         Computer        Configuration File
         House           Configuration File
         Services        Internal
@@ -55,9 +55,6 @@ See those modules to find out what each does.
 @TODO:
         Find proper ports for controllers
         set proper permissions on controller devices
-        Add interfaces, move interface code out of controllers
-        Setup to allow house add rooms lights etc
-        Save house info for 'new' house.
 
 Idea Links:
   https://github.com/TheThingSystem/home-controller forked from automategreen/home-controller
@@ -79,9 +76,10 @@ Idea Links:
 
 
 """
+from Modules.Core.Utilities.config_tools import ConfigInformation
 
-__updated__ = '2019-05-25'
-__version_info__ = (19, 5, 2)
+__updated__ = '2019-06-25'
+__version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -94,25 +92,28 @@ import sys
 from twisted.internet import reactor
 
 #  Import PyHouse files and modules.
-from Modules.Computer import logging_pyh as Logger
 from Modules.Core import setup_pyhouse
 from Modules.Core.data_objects import \
     AllUuids, \
     ComputerInformation, \
     HouseInformation, \
     PyHouseAPIs, \
-    PyHouseData, \
+    PyHouseInformation, \
     TwistedInformation, \
-    UuidData, \
-    XmlInformation
+    UuidData
 
-#  Import PyMh files and modules.
-g_API = None
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse                ')
+
 LOCK_PATH = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "lock")
+g_API = None
 
 
 class Singleton:
+    """ Set up the singleton pattern.
+    This prevents more than one instance of PyHouse running on this computer.
+    It is the very first action taken when starting PyHouse to run.
+    """
 
     def __init__(self):
         self.fh = None
@@ -130,7 +131,6 @@ class Singleton:
                 raise
 
     def clean_up(self):
-        # this is not really needed
         try:
             if self.fh is not None:
                 fcntl.lockf(self.fh, fcntl.LOCK_UN)
@@ -209,7 +209,7 @@ def SigKillHandler(signum, _stackframe):
     exit
 
 
-class API():
+class API:
     """
     """
 
@@ -225,37 +225,36 @@ class API():
         """
         global g_API
         g_API = self
+        LOG.info('Initialized.\n==================================================================\n')
 
-    def LoadXml(self, p_pyhouse_obj):
-        """LoadXml loads all the XML configuration.
-
-         This is automatically invoked when the reactor starts from API().__init__{}.
+    def LoadConfig(self, p_pyhouse_obj: object):
+        """ This loads all the configuration.
         """
-        LOG.info('Loading XML - Reactor is now running!\n\n')
-        p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callLater(10, self.Start)
-        LOG.info('Loaded XML\n-----------------------------------------\n')
+        p_pyhouse_obj._APIs.CoreSetupAPI.LoadConfig(p_pyhouse_obj)
+        p_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
+        LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
+        pass
 
     def Start(self):
         """ This is automatically invoked when the reactor starts from API().
         """
         print('Reactor is now running.')
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
+        self.m_pyhouse_obj._APIs.CoreSetupAPI.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
 
-    def SaveXml(self, _p_pyhouse_obj):
+    def SaveConfig(self, p_pyhouse_obj):
         """Update XML file with current info.
         Keep on running after the snapshot.
         """
-        LOG.info("Saving XML")
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.SaveXml()
-        LOG.info("Saved XML.\n")
+        LOG.info("Saving Config")
+        self.m_pyhouse_obj._APIs.CoreSetupAPI.SaveConfig(p_pyhouse_obj)
+        LOG.info("Saved Config.\n")
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
+        self.m_pyhouse_obj._APIs.CoreSetupAPI.Stop()
         LOG.info("Stopped.\n")
 
     def Quit(self):
@@ -263,11 +262,12 @@ class API():
         """
         LOG.debug('Running Quit now.')
         self.Stop()
-        self.m_pyhouse_obj.Twisted.Reactor.stop()
+        self.m_pyhouse_obj._Twisted.Reactor.stop()
 
 
 class BeforeReactor(API):
     """ This class is for initialization before the reactor starts.
+    It is run right after Singleton protection is invoked.
     """
 
     def __init__(self):
@@ -277,12 +277,12 @@ class BeforeReactor(API):
         """
         self.m_pyhouse_obj = self._before_reactor_create_pyhouse_obj()
         print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
-        self.m_pyhouse_obj.APIs.PyHouseMainAPI = self
-        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, self.m_pyhouse_obj)
-        LOG.info("Initialized - Version:{}".format(__version__))
+        self.m_pyhouse_obj._APIs.PyHouseMainAPI = self
+        self.m_pyhouse_obj._APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig, self.m_pyhouse_obj)
+        LOG.info("Initialized - Version:{}\n======================== Initialized ========================\n".format(__version__))
         LOG.info('Starting Reactor...')
-        self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        self.m_pyhouse_obj._Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #
         #  When the reactor stops we continue here
         #
@@ -297,15 +297,16 @@ class BeforeReactor(API):
         Computer and house components are created but filled in later on.
         The reactor is not yet running.
         """
-        l_pyhouse_obj = PyHouseData()
+        l_pyhouse_obj = PyHouseInformation()
         l_pyhouse_obj.Computer = ComputerInformation()
         l_pyhouse_obj.House = HouseInformation()
-        l_pyhouse_obj.APIs = PyHouseAPIs()
-        l_pyhouse_obj.Twisted = TwistedInformation()
-        l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Uuids = AllUuids()
-        l_pyhouse_obj.Uuids.All = UuidData()
-        l_pyhouse_obj.Xml = XmlInformation()
+        #
+        l_pyhouse_obj._APIs = PyHouseAPIs()
+        l_pyhouse_obj.Config = ConfigInformation()
+        l_pyhouse_obj._Twisted = TwistedInformation()
+        l_pyhouse_obj._Twisted.Reactor = reactor
+        l_pyhouse_obj._Uuids = AllUuids()
+        l_pyhouse_obj._Uuids.All = UuidData()
         return l_pyhouse_obj
 
 

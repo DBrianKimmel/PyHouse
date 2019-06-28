@@ -10,7 +10,7 @@
 Passed all 9 tests - DBK - 2019-01-10
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,7 +33,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
         #
         lightingAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
 
@@ -72,7 +72,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
 
     def test_04_Twisted(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Twisted, 'Twisted'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Twisted, 'Twisted'))
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
 
 

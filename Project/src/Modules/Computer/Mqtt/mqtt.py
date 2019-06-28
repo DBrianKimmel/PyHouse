@@ -8,28 +8,31 @@
 @summary:   This is basically the MQTT API interface that is used by all of pyhouse.
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-06-08'
+__updated__ = '2019-06-26'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import copy
 import datetime
+import platform
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeData
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
+from Modules.Core.Utilities import config_tools
+from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
+from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson, MqttBrokerInformation
+from Modules.Housing.house import MqttActions as houseMqtt
+
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
-from Modules.Housing.house import MqttActions as houseMqtt
-from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
-from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson
-from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
+CONFIG_FILE_NAME = 'mqtt.yaml'
 
 
 def _make_topic(p_pyhouse_obj, p_topic):
@@ -56,7 +59,74 @@ def _make_message(p_pyhouse_obj, p_message=None):
     return l_json
 
 
-class API():
+class Yaml:
+    """ Extract the config info from the config file "mqtt.yaml"
+    """
+
+    def _extract_broker(self, p_broker, p_api):
+        """ Extract one broker information
+        @return: MqttBrokerInformation if defined, else None
+        """
+        l_obj = MqttBrokerInformation()
+        l_obj._ClientAPI = p_api
+        try:
+            l_broker = p_broker['Broker']
+        except:
+            LOG.warn('No Broker: in mqtt.yaml')
+            return None
+        for l_key, l_val in l_broker.items():
+            setattr(l_obj, l_key, l_val)
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker', 190))
+        LOG.info('Loaded broker: {}'.format(l_obj.Name))
+        return l_obj
+
+    def _extract_brokers(self, p_node, p_api):
+        """
+        """
+        # LOG.info('Loading Config, Extract Broker info - Version:{}'.format(__version__))
+        l_brokers = {}
+        l_count = 0
+        if p_node.YamlPath == None:
+            LOG.error('No Mqtt Yaml file found.')
+            return
+        try:
+            l_config = p_node.Yaml['Mqtt']
+        except:
+            LOG.error('No Mqtt: in "mqtt.yaml" file!')
+            return None
+        for l_item in l_config:
+            l_broker = self._extract_broker(l_item, p_api)
+            if l_broker != None:
+                l_brokers[l_count] = l_broker
+                l_count += 1
+        # LOG.debug(PrettyFormatAny.form(l_brokers, 'Brokers', 190))
+        LOG.info('Loaded {} Mqtt Brokers.'.format(l_count))
+        return l_brokers
+
+    def LoadYamlConfig(self, p_pyhouse_obj, p_api):
+        """ Read the Mqtt.Yaml file.
+        """
+        LOG.info('Reading config file "{}".'.format(CONFIG_FILE_NAME))
+        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        p_pyhouse_obj.Computer.Mqtt.Brokers = self._extract_brokers(l_yaml, p_api)
+
+        l_computer = platform.node()
+
+        p_pyhouse_obj.Computer.Mqtt.ClientID = 'PyH-Comp-' + l_computer
+        p_pyhouse_obj.Computer.Mqtt.Prefix = 'pyhouse/' + p_pyhouse_obj._Parameters.Name  # we have not configured house at this point
+
+        # p_pyhouse_obj._Config.YamlTree.Mqtt = l_yaml
+
+        return p_pyhouse_obj.Computer  # for testing purposes
+
+    def SaveYamlConfig(self, p_pyhouse_obj):
+        """
+        There is nothing in the config that can be altered during runtime
+        so there is no need to write out the Yaml file to back it up.
+        """
+
+
+class API:
     """ This interfaces to all of PyHouse.
     """
 
@@ -67,35 +137,33 @@ class API():
         self.m_parent = p_parent
         p_pyhouse_obj.Computer.Mqtt = MqttInformation()
         p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
-        p_pyhouse_obj.Computer.Mqtt.Brokers = {}
+        # p_pyhouse_obj.Computer.Mqtt.Brokers = []
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
-        """ Load the Mqtt xml info.
+    def LoadConfig(self):
+        """ Load the Mqtt Config info.
         """
-        LOG.info("Loading XML - Version:{}".format(__version__))
-        l_mqtt = mqttXML.read_mqtt_xml(p_pyhouse_obj, self)
-        p_pyhouse_obj.Computer.Mqtt = l_mqtt
-        LOG.info("Loaded {} Brokers".format(len(l_mqtt.Brokers)))
-        if p_pyhouse_obj.Computer.Mqtt.Brokers != {}:
-            l_count = mqttUtil().connect_to_all_brokers(p_pyhouse_obj)
-            LOG.info("Mqtt {} broker Connection(s) Started.".format(l_count))
-        else:
-            LOG.info('No Mqtt brokers are configured.')
-        LOG.info("Loaded XML - Version:{}".format(__version__))
-        return l_mqtt
+        LOG.info("Loading Config - Version:{}".format(__version__))
+        Yaml().LoadYamlConfig(self.m_pyhouse_obj, self)
 
     def Start(self):
         """
         """
         LOG.info("Starting - Version:{}".format(__version__))
-        # self.m_actions = actMqttActions(self.m_pyhouse_obj)
+
+        if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
+            l_count = mqttUtil().connect_to_all_brokers(self.m_pyhouse_obj)
+            LOG.info("Mqtt {} broker Connection(s) Started.".format(l_count))
+        else:
+            LOG.info('No Mqtt brokers are started.')
+        return
 
     def SaveXml(self, p_xml):
-        l_xml = mqttXML().write_mqtt_xml(self.m_pyhouse_obj.Computer.Mqtt)
-        p_xml.append(l_xml)
-        LOG.info("Saved Mqtt XML.")
-        return p_xml
+        """
+        There is nothing in the config that can be altered during runtime
+        so there is no need to write out the Yaml file to back it up.
+        """
+        return None
 
     def Stop(self):
         LOG.info("Stopped.")
@@ -108,7 +176,7 @@ class API():
         All publish commands point to here.
         This routine will run thru the list of brokers and publish to each broker.
 
-        # self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
+        # self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
 
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param p_message : is the message we want to send
@@ -122,15 +190,16 @@ class API():
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
                 # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
-                LOG.error("Mqtt NOT published.\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(e_err, l_topic, l_message))
-                LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client', 190)))
+                LOG.error("Mqtt NOT published.\n\tFor Broker: {}\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(
+                    l_broker.Name, e_err, l_topic, l_message))
+                # LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client', 190)))
 
     def _decodeLWT(self, _p_topic_list, p_message):
         l_logmsg = '\tLast Will:\n'
         l_logmsg += p_message
         return l_logmsg
 
-    def MqttDispatch(self, p_topic, p_message):
+    def MqttDispatch(self, p_topic: str, p_message: object):
         """ Dispatch a received MQTT message according to the topic.
 
         Handle:

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-07'
+__updated__ = '2019-06-25'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -283,7 +283,7 @@ class OnkyoClient(OnkyoProtocol):
         l_host = p_device_obj.Host
         l_port = p_device_obj.Port
         l_factory = OnkyoFactory(self.m_pyhouse_obj, p_device_obj)
-        l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+        l_connector = self.m_pyhouse_obj._Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
         p_device_obj._Factory = l_factory
         p_device_obj._Connector = l_connector
         p_device_obj._isRunning = True
@@ -364,7 +364,7 @@ class OnkeoControl():
     def _get_endpoint(self, p_pyhouse_obj, p_device_obj):
         """
         """
-        l_reactor = p_pyhouse_obj.Twisted.Reactor
+        l_reactor = p_pyhouse_obj._Twisted.Reactor
         l_host = p_device_obj.Host
         l_port = p_device_obj.Port
         l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
@@ -384,7 +384,7 @@ class OnkeoControl():
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
             l_topic = 'house/entertainment/onkyo/status'
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
             p_device_obj._Protocol = None
@@ -392,7 +392,7 @@ class OnkeoControl():
             p_status.Type = 'UnConnected'
             p_status.Connected = False
             l_topic = 'house/entertainment/onkyo/status'
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
 
         p_device_obj._Queue = Queue(32)
@@ -533,7 +533,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         """
         l_name = SECTION + '_' + p_device.Model.lower() + '.yaml'
         # l_filename = os.path.join(self.m_pyhouse_obj.Yaml.YamlConfigDir, l_name)
-        l_filename = os.path.join(self.m_pyhouse_obj.Xml.XmlConfigDir, l_name)
+        l_filename = os.path.join(self.m_pyhouse_obj._Config.ConfigDir, l_name)
         with open(l_filename) as l_file:
             l_yaml = yaml.safe_load(l_file)
             p_device._Yaml = l_yaml
@@ -588,11 +588,11 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         # LOG.debug('Started to run_queue. {}'.format(PrettyFormatAny.form(p_device_obj._Queue, 'Queue', 180)))
         if p_device_obj._Queue.empty():
             # LOG.debug('Queue is empty')
-            _l_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(60.0, self.run_queue, p_device_obj)
+            _l_runID = self.m_pyhouse_obj._Twisted.Reactor.callLater(60.0, self.run_queue, p_device_obj)
         else:
             l_queue = p_device_obj._Queue.get()
             LOG.debug(PrettyFormatAny.form(l_queue, 'Queue', 190))
             self.send_command(p_device_obj, l_queue)
-            _l_runID = self.m_pyhouse_obj.Twisted.Reactor.callLater(0.5, self.run_queue, p_device_obj)
+            _l_runID = self.m_pyhouse_obj._Twisted.Reactor.callLater(0.5, self.run_queue, p_device_obj)
 
 # ## END DBK

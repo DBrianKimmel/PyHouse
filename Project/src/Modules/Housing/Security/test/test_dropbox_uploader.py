@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-06-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -37,7 +37,7 @@ class Test_02_ReadXML(unittest.TestCase):
     """
 
     def setUp(self):
-        self.m_pyhouse_obj.Xml.XmlRoot = ET.fromstring(XML_LONG)
+        self.m_pyhouse_obj._Config.XmlRoot = ET.fromstring(XML_LONG)
         self.m_pyhouse_obj.Services = CoreServicesInformation()
         self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = NodeData()
         self.m_api = node_local.API()
@@ -55,7 +55,7 @@ class Test_03_Connect(unittest.TestCase):
 class Test_06_DropboxConnect(unittest.TestCase):
 
     def SetUp(self):
-        self.m_pyhouse_obj.Xml.XmlRoot = ET.fromstring(XML_LONG)
+        self.m_pyhouse_obj._Config.XmlRoot = ET.fromstring(XML_LONG)
 
     def test_0601_connect(self):
         pass

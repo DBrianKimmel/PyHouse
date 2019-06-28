@@ -8,35 +8,38 @@
 @summary:   Handle the rooms information for a house.
 
 """
+from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
 
-__updated__ = '2019-06-06'
-__version_info__ = (19, 5, 2)
+__updated__ = '2019-06-26'
+__version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import os
-import yaml
 import xml.etree.ElementTree as ET
 import datetime
 
 #  Import PyMh files
-from Modules.Core.data_objects import RoomInformation
-from Modules.Core.Utilities import extract_tools
+from Modules.Core.Utilities import extract_tools, config_tools
 from Modules.Core.Utilities.coordinate_tools import Coords
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
+from Modules.Housing.house_data import \
+    RoomInformation, \
+    RoomsInformationPrivate
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 
+CONFIG_FILE_NAME = 'rooms.yaml'
 
-class Xml():
+
+class Xml:
     """ Class to read and write the XML config file for PyHouse.
     """
 
-    @staticmethod
-    def _read_one_room(p_room_element):
+    def _read_one_room(self, p_room_element):
         l_room_obj = RoomInformation
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_room_obj, p_room_element)
@@ -49,55 +52,142 @@ class Xml():
             LOG.warn('Incomplete data for room {}'.format(l_room_obj.Name))
         return l_room_obj
 
-    @staticmethod
-    def write_one_room(p_room_object):
+    def write_one_room(self, p_room_object):
         l_entry = XmlConfigTools.write_base_UUID_object_xml('Room', p_room_object)
-        # PutGetXML.put_text_element(l_entry, 'Comment', p_room_object.Comment)
         PutGetXML.put_coords_element(l_entry, 'Corner', p_room_object.Corner)
         PutGetXML.put_text_element(l_entry, 'Floor', p_room_object.Floor)
         PutGetXML.put_coords_element(l_entry, 'Size', p_room_object.Size)
         PutGetXML.put_text_element(l_entry, 'RoomType', p_room_object.RoomType)
         return l_entry
 
-    def read_rooms_xml(self, p_pyhouse_obj):
+    def LoadXmlConfig(self, p_pyhouse_obj):
         """
         @param p_house_obj: is
         @param p_house_xml: is
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
+        # self.m_pyhouse_obj = p_pyhouse_obj
         l_ret = {}
         l_count = 0
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/RoomSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/RoomSection')
         if l_xml is None:
+            LOG.warn('No rooms found!')
             return l_ret
         try:
             for l_room_xml in l_xml.iterfind('Room'):
-                # print(PrettyFormatAny.form(l_room_xml, 'room xml'))
-                l_room_obj = Xml._read_one_room(l_room_xml)
+                l_room_obj = Xml()._read_one_room(l_room_xml)
                 l_room_obj.Key = l_count
-                l_ret[l_count] = l_room_obj
+                l_ret.update({l_count: l_room_obj})
                 LOG.info('Loaded room {}'.format(l_room_obj.Name))
-                # Mqtt().send_message(p_pyhouse_obj, "sync", l_room_obj)
                 l_count += 1
         except AttributeError as e_err:
             LOG.error('ERROR if getting rooms Data - {}'.format(e_err))
         LOG.info('Loaded {} rooms.'.format(l_count))
-        return l_ret
+        p_pyhouse_obj.House.Rooms = l_ret
+        return l_ret  # for debugging
 
-    @staticmethod
-    def write_rooms_xml(p_rooms_obj):
+    def SaveXmlConfig(self, p_pyhouse_obj):
         l_rooms_xml = ET.Element('RoomSection')
         l_count = 0
-        for l_room_object in p_rooms_obj.values():
+        for l_room_object in p_pyhouse_obj.House.Rooms.values():
             l_room_object.Key = l_count
-            l_entry = Xml.write_one_room(l_room_object)
+            l_entry = Xml().write_one_room(l_room_object)
             l_rooms_xml.append(l_entry)
             l_count += 1
         LOG.info('Saved {} Rooms XML'.format(l_count))
         return l_rooms_xml
 
 
-class Maint(object):
+class Yaml:
+    """ Update the Yaml config files.
+    This will handle the rooms.yaml file
+    ==> PyHouseObj._Config.YamlTree{'rooms.yaml'}.xxx
+    --> xxx = {Yaml, YamlPath, Filename}
+    """
+
+    def _extract_room_config(self, p_yaml) -> dict:
+        """ Extract the config info for one room.
+        Warn if there are extra attributes in the config.
+        Warn if there are missing attributes in the config.
+
+        @param p_yaml: is the config fragment containing one room's information.
+        @return: a RoomInformation() obj filled in.
+        """
+        l_obj = RoomInformation()
+        for l_key, l_val in p_yaml.items():
+            # Check for extra attributes in the config file.
+            try:
+                _l_x = getattr(l_obj, l_key)
+            except AttributeError:
+                LOG.warn('rooms.yaml contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_val))
+                continue
+            setattr(l_obj, l_key, l_val)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None:
+                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+    def _update_rooms_from_yaml(self, p_pyhouse_obj, p_node_yaml):
+        """ Copies the data from the yaml config file to the Rooms part of the PyHouse obj.
+        Check for duplicate room names!
+        @param p_pyhouse_obj: is the entire house object
+        @param p_node_yaml: is ConfigYamlNodeInformation filled with room data.
+            {'Rooms': [{'Name': 'Outside', 'Active': 'True', 'Comment': 'Things outsi...
+        """
+        l_rooms = {}
+        try:
+            l_yaml = p_node_yaml['Rooms']  # Get the rooms info list.
+        except:
+            LOG.error('The "Rooms" tag is missing in the "rooms.yaml" file!')
+            return None
+        l_loc = p_pyhouse_obj.House.Rooms
+        for l_ix, l_room_yaml in enumerate(l_yaml):
+            l_room_obj = self._extract_room_config(l_room_yaml)
+            l_rooms.update({l_ix:l_room_obj})
+        p_pyhouse_obj.House.Rooms = l_rooms
+        return l_rooms  # For testing.
+
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """ Read the Rooms.Yaml file.
+        It contains Rooms data for all rooms in the house.
+        """
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
+        l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_rooms = self._update_rooms_from_yaml(p_pyhouse_obj, l_node.Yaml)
+        p_pyhouse_obj.House.Rooms = l_rooms
+        return l_rooms  # for testing purposes
+
+    def _copy_to_yaml(self, p_pyhouse_obj):
+        """ Update the yaml information.
+        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
+
+        The running info is a dict and the yaml is a list!
+
+        @return: the updated yaml ready information.
+        """
+        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_config = l_node.Yaml['Rooms']
+        # LOG.debug(PrettyFormatAny.form(l_config, 'Rooms', 190))
+        l_working = p_pyhouse_obj.House.Rooms
+        # LOG.debug(PrettyFormatAny.form(l_working, 'House', 190))
+        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
+            l_val = getattr(l_working, l_key)
+            l_config[l_key] = l_val
+        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
+        # LOG.debug(PrettyFormatAny.form(l_node, 'Updated', 190))
+        l_ret = {'Rooms': l_config}
+        return l_ret
+
+    def SaveYamlConfig(self, p_pyhouse_obj):
+        """
+        """
+        LOG.info('Saving Config - Version:{}'.format(__version__))
+        l_config = self._copy_to_yaml(p_pyhouse_obj)
+        config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        return l_config
+
+
+class Maint:
     """ Maintain the room internal database.
     """
 
@@ -169,7 +259,7 @@ class Maint(object):
         return
 
 
-class Mqtt():
+class Mqtt:
     """
     """
 
@@ -202,10 +292,10 @@ class Mqtt():
         """
         l_json = encode_json(p_room_obj)
         l_topic = 'house/room/' + p_topic
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_json)
+        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_json)
 
 
-class Sync(object):
+class Sync:
     """ Used to sync the rooms between all the nodes.
     """
 
@@ -226,25 +316,27 @@ class Sync(object):
         return None
 
 
-class Api(Sync, Xml, Maint):
+class Api:
     """
     """
 
-    def __init__(self, p_pyHouse_obj):
-        self.m_pyhouse_obj = p_pyHouse_obj
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.House.Rooms = RoomsInformationPrivate()
+        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME] = ConfigYamlNodeInformation()
 
-    def _read_yaml(self, p_parent=None):
+    def LoadConfig(self):
         """
-        This needs to be more generic and for all devices configs.
-        This is the start.
         """
-        l_name = 'rooms.yaml'
-        l_filename = os.path.join(self.m_pyhouse_obj.Yaml.YamlConfigDir, l_name)
-        with open(l_filename) as l_file:
-            l_yaml = yaml.safe_load(l_file)
-            if p_parent != None:
-                p_parent.Yaml = l_yaml
-        LOG.info('Loaded {} '.format(l_filename))
-        return l_yaml
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        Yaml().LoadYamlConfig(self.m_pyhouse_obj)
+        # Xml().LoadXmlConfig(self.m_pyhouse_obj)
+
+    def SaveConfig(self):
+        """
+        """
+        LOG.info('Saving Config - Version:{}'.format(__version__))
+        Yaml().SaveYamlConfig(self.m_pyhouse_obj)
+        # Xml().SaveXmlConfig(self.m_pyhouse_obj)
 
 #  ## END DBK

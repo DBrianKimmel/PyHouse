@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-06-08'
+__updated__ = '2019-06-24'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,7 +72,7 @@ class MqttActions():
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        l_sender = extract_tools.get_mqtt_field(p_message, 'Input')
+        _l_sender = extract_tools.get_mqtt_field(p_message, 'Input')
         # LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
         l_module = p_topic[0].lower()
         # Test entertainment exists and that plugins exist.
@@ -137,7 +137,7 @@ class API(Ent):
         l_obj.Model = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def LoadXml(self, p_pyhouse_obj):
         """ Read the entertainment section.
@@ -150,7 +150,7 @@ class API(Ent):
         @return: the Entertainment object of PyHouse_obj
         """
         LOG.info("XML Loading - Version:{}".format(__version__))
-        _l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        _l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
 
         """
         if l_xml == None:

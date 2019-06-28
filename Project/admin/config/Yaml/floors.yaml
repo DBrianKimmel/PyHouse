@@ -1,0 +1,26 @@
+# Name:      PyHouse/Project/admin/config/Yaml/rooms.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 21, 2019
+# Updated:   Jun 21, 2019
+# License:   MIT License
+# Summary:   This is for all the rooms in a house.
+#   Rooms are consistant on all nodes within a house.
+---
+
+# Floors are defined first.
+# Outside is always present and must be first.
+
+Floors:
+   - Name: Outide
+     Active: 'True'
+     Comment: Outside
+     LastUpdate: 2010-01-01 01:02:03
+
+   - Name: 1st Floor
+     Active: 'True'
+     Comment: The first floor
+     LastUpdate: 2010-01-01 01:02:03
+
+### END DBK

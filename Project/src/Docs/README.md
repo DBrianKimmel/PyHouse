@@ -1,9 +1,9 @@
 * Name:      PyHouse/Project/src/Docs/README.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Copyright: (c) 2018-2019 by D. Brian Kimmel
 * Created:   2018-09-30
-* Updated:   2018-10-01
+* Updated:   2019-06-19
 * License:   MIT License
 * Summary:   This is the design documentation for PyHouse.
 
@@ -17,7 +17,11 @@ It is a singleton so we don't end up with multiple running instances.
 Logging is setup and activated the very first thing so that the rest of the startup progress is logged.
 The log file is /var/log/pyhouse/XXX where XXX is error, warn, debug, and info
 
-Now XML is read in.
+Now the configuration is read in.
+Initially is was XML.
+Due, in part, to the difficulty of correctly hand editing the XML file to add services, we are switching to Yaml.
+The yaml file is a bit more forgiving of structual flaws.
+yamllint is a good way of checking the yaml fragments.
 
 The next thing activated is MQTT so we can begin with messaging.
 
@@ -31,11 +35,10 @@ Stop is not used and may be removed in the near future.
 ### Initialization
 Initialization is called first.
 The reactor is not running during initialization.
-Only major modules are initialized.
+Only major modules are initialized, plugins are initialized during the load config phase if they are defined.
 Logging is set up and started at the beginning of initialization.
-Plugins are initialized later, during XML loading.
 
-### Load XML
+### Load Config
 
 This happens next.
 The reactor is started  first.
@@ -49,6 +52,33 @@ This happens next.
 ### Operational
 
 This happens .
+
+# Data Structure
+
+There is an internal data structure that is built mostly from the config files.
+It gets added to during the operation of PyHouse.
+The pyhouse_obj construct has 2 major sections.
+Data read in from and saved to the configuration file has the form of DataName.
+Privte information that will not be saved to config files has the form of _DataName.
+Entries with a leading underscore are never saved to a file.
+
+## pyhouse_obj
+
+pyhouse.{}
+	Yaml.{}
+		YamlConfigDir
+        YamlFileName
+        YamlTree.{}
+        	Root.{}
+        		Computer.{}
+        		Core.{}
+        		Driver.{}
+        		Family.{}
+        		House.{}
+Root.{}
+	Path
+	
+  
 
 # Scheme
 ## Entity

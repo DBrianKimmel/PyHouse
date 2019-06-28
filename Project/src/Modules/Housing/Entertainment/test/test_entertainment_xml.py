@@ -200,7 +200,7 @@ class B1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(BAD_TYPE))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
 
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
@@ -225,7 +225,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentData()
         self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
         self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginData()
@@ -244,7 +244,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
     def test_02_OneDevice0(self):
         """ Test that _create_module_refs is functional
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         l_xml = l_xml.findall('Device')[0]
         l_device = EntertainmentDeviceData()
         # print(PrettyFormatAny.form(l_xml, 'C1-02-A - Onkyo XML'))
@@ -269,7 +269,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
     def test_03_OneDevice1(self):
         """ Test
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         l_xml = l_xml.findall('Device')[1]
         l_device = EntertainmentDeviceData()
         # print(PrettyFormatAny.form(l_xml, 'C1-03-A - Onkyo XML'))
@@ -295,7 +295,7 @@ class C2_RdService(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
+        l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         # print(PrettyFormatAny.form(l_xml, 'C2-01-A - Entertainment XML'))
         self.assertEqual(l_xml.tag, TESTING_PANDORA_SECTION)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'C2-01-B - Entertainment'))
@@ -306,7 +306,7 @@ class C2_RdService(SetupMixin, unittest.TestCase):
     def test_02_OneDevice0(self):
         """ Test that _create_module_refs is functional
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
+        l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         l_service_xml = l_xml.findall('Service')
         # print(PrettyFormatAny.form(l_service_xml[0], 'C2-02-A - Pandora XML'))
         l_service = EntertainmentServiceData()
@@ -326,7 +326,7 @@ class C3_RdSubSect(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentData()
         self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
 
@@ -343,7 +343,7 @@ class C3_RdSubSect(SetupMixin, unittest.TestCase):
     def test_02_Onkyo(self):
         """ Test All of onkyo loads
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         # print(PrettyFormatAny.form(l_xml, 'C3-02-A - Onkyo XML'))
         l_ret = entertainmentXML().read_entertainment_subsection(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_ret, 'C3-02-B - Onkyo Plugin'))
@@ -358,7 +358,7 @@ class C3_RdSubSect(SetupMixin, unittest.TestCase):
     def test_03_Pandora(self):
         """
         """
-        l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
+        l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         # print(PrettyFormatAny.form(l_xml, 'C3-03-A - Pandora XML'))
         l_ret = entertainmentXML().read_entertainment_subsection(self.m_pyhouse_obj, l_xml)
         # print(PrettyFormatAny.form(l_ret, 'C3-03-B - Pandora Plugin'))
@@ -376,7 +376,7 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentData()
         self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
 
@@ -410,7 +410,7 @@ class D1_WriteDevice(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
@@ -459,7 +459,7 @@ class D2_WriteService(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
@@ -487,7 +487,7 @@ class D3_WriteSubSection(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
@@ -518,7 +518,7 @@ class D4_WriteAll(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertain = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment = self.m_entertain
 
@@ -542,7 +542,7 @@ class E1_Device(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentData()
         self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
         self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginData()
@@ -560,7 +560,7 @@ class E1_Device(SetupMixin, unittest.TestCase):
     def test_02_CreateModuleRefs(self):
         """ Test that _create_module_refs is functional
         """
-        # l_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        # l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         # print(PrettyFormatAny.form(l_xml, 'E1-02-A - Onkyo XML'))
         # for l_section in self.m_xml:
             # print(PrettyFormatAny.form(l_section, 'E1-02-B - Section'))

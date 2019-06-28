@@ -1,0 +1,4 @@
+%YAML 1.2
+---
+Location: {City: null, Country: null, Elevation: null, Latitude: null, Longitude: null,
+  Phone: null, State: null, Street: null, TimeZoneName: null, ZipCode: null}

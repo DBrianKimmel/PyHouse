@@ -1,25 +1,22 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_internet_xml -*-
-
-@name:      PyHouse/src/Modules/Computer/Internet/internet_xml.py
+@name:      PyHouse/Project/src/Modules/Computer/Internet/internet_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 29, 2014
 @Summary:
 
 """
 
-__updated__ = '2017-03-26'
-
+__updated__ = '2019-06-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionData
-from Modules.Core.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Internet_xml   ')
@@ -60,7 +57,6 @@ class Util(object):
         PutGetXML.put_text_element(l_xml, 'UpdateInterval', p_obj.UpdateInterval)
         return l_xml
 
-
     @staticmethod
     def _read_locates_xml(p_xml):
         l_list = []
@@ -82,7 +78,6 @@ class Util(object):
             PutGetXML.put_text_element(l_xml, 'LocateUrl', l_url)
         return l_xml
 
-
     @staticmethod
     def _read_updates_xml(p_xml):
         l_list = []
@@ -103,7 +98,6 @@ class Util(object):
         for l_url in l_urls:
             PutGetXML.put_text_element(l_xml, 'UpdateUrl', l_url)
         return l_xml
-
 
     @staticmethod
     def _read_one_internet(p_xml):
@@ -127,11 +121,7 @@ class API(object):
         @param p_internet_section_xml: is the <InternetSection> element
         """
         l_dict = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        l_xml = l_xml.find('ComputerDivision')
-        if l_xml == None:
-            return l_dict
-        l_xml = l_xml.find('InternetSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision/InternetSection')
         if l_xml == None:
             return l_dict
         l_count = 0

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-06-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -53,7 +53,7 @@ class Xml(object):
     def read_all_pools_xml(p_pyhouse_obj):
         l_dict = {}
         l_count = 0
-        l_pools_sect = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision/PoolSection')
+        l_pools_sect = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/PoolSection')
         if l_pools_sect != None:
             for l_pool in l_pools_sect.iterfind('Pool'):
                 l_one = Xml._read_one_pool(l_pool)

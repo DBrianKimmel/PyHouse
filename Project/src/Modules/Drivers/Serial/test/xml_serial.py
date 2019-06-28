@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Drivers/Serial/test/xml_serial.py
+@name:      PyHouse/Project/src/Modules/Drivers/Serial/test/xml_serial.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-06-09'
 
 TESTING_SERIAL_BAUD_RATE = '19200'
 TESTING_SERIAL_BYTE_SIZE = '8'
@@ -41,35 +41,5 @@ XML_SERIAL = '\n'.join([
     L_XON_XOFF,
     "</Serial>"
 ])
-
-SERIAL_XSD = """
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    targetNamespace="http://PyHouse.org"
-    xmlns="http://PyHouse.org"
-    elementFormDefault="qualified"
-    attributeFormDefault="unqualified">
-
-    <xs:sequence name="SerialInterface">
-        <xs:element type="xs:short" name="BaudRate"/>
-        <xs:element type="xs:byte" name="ByteSize"/>
-            <xs:simpleType>
-                <xs:restriction base="xs:integer">
-                    <xs:enumeration value="6"/>
-                    <xs:enumeration value="7"/>
-                    <xs:enumeration value="8"/>
-                </xs:restriction>
-            </xs:simpleType>
-        <xs:element type="xs:string" name="Parity"/>
-        <xs:element type="xs:float" name="StopBits"/>
-        <xs:element type="xs:float" name="Timeout"/>
-        <xs:element type="xs:boolean" name="DsrDtr"/>
-        <xs:element type="xs:boolean" name="RtsCts">
-        <xs:element type="xs:boolean" name="XonXoff"/>
-    </xs:sequence>
-
-</xs:schema>
-"""
 
 # ## END DBK

@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -45,7 +45,7 @@ class Test(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        self.m_reactor = self.m_pyhouse_obj._Twisted.Reactor
 
     def testName(self):
         pass

@@ -10,7 +10,7 @@
 Passed all 5 tests - DBK- 2018-10-02
 """
 
-__updated__ = '2018-10-02'
+__updated__ = '2019-06-19'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -19,15 +19,14 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData, MqttInformation
+from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttBrokerInformation
 from Modules.Computer.Mqtt.mqtt_protocol import MQTTProtocol
 from Modules.Computer.test.xml_computer import \
     TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import \
     TESTING_MQTT_SECTION, \
     TESTING_MQTT_BROKER
-# from Modules.Core.Utilities.tools import PrintBytes
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
 
 class SetupMixin(object):
@@ -83,7 +82,7 @@ class B2_Packet(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring('<x />'))
         self.m_mqtt = MqttInformation()
         self.m_mqtt.ClientID = "TestClient"
-        self.m_broker = MqttBrokerData()
+        self.m_broker = MqttBrokerInformation()
         self.m_broker.BrokerName = "Test BrokerS"
         self.m_broker.Keepalive = 30000
         self.m_broker.WillTopic = None

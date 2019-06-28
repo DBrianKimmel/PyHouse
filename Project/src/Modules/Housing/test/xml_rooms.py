@@ -9,12 +9,14 @@
 
 """
 
-__updated__ = "2019-06-06"
+__updated__ = "2019-06-18"
 
 import datetime
 
-L_ROOM_SECTION_START = '  <RoomSection>'
-L_ROOM_SECTION_END = '  </RoomSection>'
+TESTING_ROOM_SECTION = 'RoomSection'
+
+L_ROOM_SECTION_START = '<' + TESTING_ROOM_SECTION + '>'
+L_ROOM_SECTION_END = '  </' + TESTING_ROOM_SECTION + '>'
 L_ROOM_END = '  </Room>'
 
 TESTING_ROOM_NAME_0 = 'Room_0'

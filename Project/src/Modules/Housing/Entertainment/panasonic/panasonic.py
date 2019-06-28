@@ -78,7 +78,7 @@ class XML:
         """ Get the entire PanasonicDeviceData object from the xml.
         """
         # Clear out the data sections
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PanasonicSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PanasonicSection')
         l_entry_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_entry_obj.Name = SECTION
         l_device_obj = PanasonicDeviceData()

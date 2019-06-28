@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2019-05-11
 
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -62,9 +62,13 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Tags(self):
+    def test_01_XmlTags(self):
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
+
+    def test_02_YamlTags(self):
+        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
 
 
 class A2_XML(SetupMixin, unittest.TestCase):
@@ -152,7 +156,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_API(self):
         houseUtil._init_component_apis(self.m_pyhouse_obj, self)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-1-A - XML'))
-        self.assertEqual(self.m_pyhouse_obj.Uuids.All, {})
+        self.assertEqual(self.m_pyhouse_obj._Uuids.All, {})
 
     def test_02_Base(self):
         l_obj = houseXml._read_house_base(self.m_pyhouse_obj)
@@ -197,7 +201,7 @@ class C3_Write(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House = l_house_obj
         l_xml = houseXml.write_house_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_xml, 'C3-01-A - XML'))
-        self.assertEqual(l_xml.tag, 'HouseDivision')
+        self.assertEqual(l_xml.tag, TESTING_HOUSE_DIVISION)
         self.assertEqual(l_xml.attrib['Name'], TESTING_HOUSE_NAME)
         self.assertEqual(l_xml.attrib['Active'], TESTING_HOUSE_ACTIVE)
         self.assertEqual(l_xml.attrib['Key'], TESTING_HOUSE_KEY)
@@ -252,7 +256,7 @@ class P1_API(SetupMixin, unittest.TestCase):
     def test_04_SaveXml(self):
         self.m_api.LoadXml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'P1-04-A - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.FamilyInformation, 'P1-04-B - House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Families, 'P1-04-B - House'))
         l_xml = ET.Element('House')
         l_xml = self.m_api.SaveXml(l_xml)
         # print(PrettyFormatAny.form(l_xml, 'P1-04-D - API'))

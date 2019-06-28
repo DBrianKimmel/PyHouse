@@ -1,0 +1,25 @@
+# Name:      PyHouse/Project/src/Module/Computer/Bridges/test/Yaml/insteon.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 26, 2019
+# Updated:   Jun 26, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+---
+
+Insteon:
+  Name: Insteon Hub
+  FamilyName: Insteon
+  Connection:
+    Type: Ethernet
+    HostName: insteon-hub-ct
+    Port: None
+    Protocol: TCP
+  Login:
+    ApiKey: None
+    UserName: None
+    Password: None
+
+### END DBK

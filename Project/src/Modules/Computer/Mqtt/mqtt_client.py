@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-25'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -47,13 +47,13 @@ class Util(object):
         @param p_broker_obj: Designates which broker to connect.
         """
         p_pyhouse_obj.Computer.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
-        LOG.info('Connecting via TCP...')
+        LOG.info('Start Connecting via TCP to broker: {}'.format(p_broker_obj.Name))
         if p_broker_obj.BrokerHost is None or p_broker_obj.BrokerPort is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker_obj.BrokerHost, p_broker_obj.BrokerPort))
             p_broker_obj._ProtocolAPI = None
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
-            _l_connector = p_pyhouse_obj.Twisted.Reactor.connectTCP(p_broker_obj.BrokerHost, p_broker_obj.BrokerPort, l_factory)
+            _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.BrokerHost, p_broker_obj.BrokerPort, l_factory)
             LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker_obj.Name, p_broker_obj.BrokerHost))
             LOG.info('Prefix: {}'.format(p_pyhouse_obj.Computer.Mqtt.Prefix))
 
@@ -68,7 +68,7 @@ class Util(object):
         # l_certData = PEM_FILE.getContent()
         # l_authority = Certificate.loadPEM(l_certData)
         # l_options = optionsForClientTLS(l_host.decode('utf-8'), l_authority)
-        # l_endpoint = SSL4ClientEndpoint(p_pyhouse_obj.Twisted.Reactor, l_host, l_port, l_options)
+        # l_endpoint = SSL4ClientEndpoint(p_pyhouse_obj._Twisted.Reactor, l_host, l_port, l_options)
         # l_client = yield l_endpoint.connect(l_factory)
         l_done = defer.Deferred()
         # l_client.connectionLost = lambda reason: l_done.callback(None)

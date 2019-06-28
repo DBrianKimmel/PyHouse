@@ -15,7 +15,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff.
 
@@ -43,15 +43,15 @@ class FamUtil(object):
         """
         l_family_name = p_device_obj.DeviceFamily
         try:
-            l_family_obj = p_pyhouse_obj.FamilyInformation[l_family_name]
+            l_family_obj = p_pyhouse_obj._Families[l_family_name]
         except KeyError as e_err:
             l_msg = PrettyFormatAny.form(p_pyhouse_obj.House, ' House Information', 40)
             LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'
                       .format(p_device_obj.Name, l_family_name, e_err, l_msg))
             if l_family_name == 'Null':
-                p_pyhouse_obj.FamilyInformation['Null'] = FamilyInformation()
-                p_pyhouse_obj.FamilyInformation['Null'].Name = 'Null'
-            l_family_obj = p_pyhouse_obj.FamilyInformation['Null']
+                p_pyhouse_obj._Families['Null'] = FamilyInformation()
+                p_pyhouse_obj._Families['Null'].Name = 'Null'
+            l_family_obj = p_pyhouse_obj._Families['Null']
         return l_family_obj
 
     @staticmethod
@@ -102,7 +102,7 @@ class FamUtil(object):
         l_dev_name = _get_device_name(p_device_obj)
         try:
             l_family = FamUtil.get_family(p_device_obj)
-            l_family_obj = p_pyhouse_obj.FamilyInformation[l_family]
+            l_family_obj = p_pyhouse_obj._Families[l_family]
             l_device_api = l_family_obj.FamilyDevice_ModuleAPI
         except:
             l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info '.format(l_dev_name, l_family)

@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-05-29'
+__updated__ = '2019-06-26'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -448,7 +448,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
-        LOG.warn('Sending connect ack packet')
+        # LOG.warn('Sending connect ack packet')
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_payload.append(status)
@@ -456,7 +456,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
-        LOG.info("Sending publish packet\n\tTopic: {};\n\tHost: {};".format(p_topic, self.m_broker.BrokerHost))
+        # LOG.info("Sending publish packet\n\tTopic: {};\n\tHost: {};".format(p_topic, self.m_broker.BrokerHost))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = publish
@@ -472,7 +472,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def puback(self, messageId):
-        LOG.warn('Sending puback packet')
+        # LOG.warn('Sending puback packet')
         header = bytearray()
         varHeader = bytearray()
         header.append(0x04 << 4)
@@ -646,7 +646,7 @@ class MQTTClient(MQTTProtocol):
         LOG.debug("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.BrokerHost))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_broker, self.m_pyhouse_obj.Computer.Mqtt)
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
         """ Override
@@ -661,7 +661,7 @@ class MQTTClient(MQTTProtocol):
         """ Now that we have a net connection to the broker, Subscribe.
         """
         l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
-        LOG.debug("Subscribing to MQTT Feed: {}".format(l_topic))
+        LOG.info("Subscribing to MQTT Feed: {}".format(l_topic))
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)
             self.m_state = MQTT_FACTORY_CONNECTED
@@ -682,12 +682,12 @@ class MQTTClient(MQTTProtocol):
         """ Override
         Subscribe Ack message
         """
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         """ Override
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def publishReceived(self, p_topic, p_message, _qos=0, _dup=False, _retain=False, _messageId=None):
         """ Override
@@ -712,7 +712,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_client_id: is the ID of this computer that will be supplied to the broker
-        @param p_broker: is the PyHouse object for this broker:  mqtt_data.py - MqttBrokerData(BaseObject)
+        @param p_broker: is the PyHouse object for this broker:  mqtt_data.py - MqttBrokerInformation(BaseObject)
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker

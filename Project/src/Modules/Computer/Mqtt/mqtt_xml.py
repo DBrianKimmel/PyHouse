@@ -9,13 +9,13 @@
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Computer.Mqtt.mqtt_data import MqttBrokerData, MqttInformation
+from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttBrokerInformation
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.data_objects import HouseInformation, ComputerInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
@@ -31,7 +31,7 @@ class Xml(object):
     @staticmethod
     def _read_computer_name(p_pyhouse_obj):
         l_obj = ComputerInformation()
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision')
         if l_xml is None:
             l_obj.Name = 'Default Name'
             l_obj.Key = 0
@@ -43,7 +43,7 @@ class Xml(object):
     @staticmethod
     def _read_house_name(p_pyhouse_obj):
         l_obj = HouseInformation()
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision')
         if l_xml is None:
             l_obj.Name = 'Default Name'
             l_obj.Key = 0
@@ -58,7 +58,7 @@ class Xml(object):
         @param p_xml: XML information for one BrokerBroker
         @return: a b object filled in with data from the XML passed in
         """
-        l_obj = MqttBrokerData()
+        l_obj = MqttBrokerInformation()
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_obj, p_xml)  # Name Key Active
             l_obj.BrokerHost = PutGetXML.get_text_from_xml(p_xml, 'BrokerHost')
@@ -85,7 +85,7 @@ class Xml(object):
         l_count = 0
         l_house = Xml._read_house_name(p_pyhouse_obj).Name
         l_computer = Xml._read_computer_name(p_pyhouse_obj).Name
-        l_section = XmlConfigTools.find_section(p_pyhouse_obj, 'ComputerDivision/MqttSection')
+        l_section = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision/MqttSection')
         try:
             l_mqtt.ClientID = 'PyH-Comp-' + l_computer
             l_mqtt.Prefix = 'pyhouse/' + l_house

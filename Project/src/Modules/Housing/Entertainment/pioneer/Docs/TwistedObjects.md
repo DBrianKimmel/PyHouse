@@ -61,7 +61,7 @@ Obj:initialDelay            1.0 .
 Obj:jitter                  0.11962656472 .
 Obj:logPrefix               <bound method Factory.logPrefix of <Modules.Housing.Entertainment.pioneer.pioneer.PioneerFactory object at 0x7f19681056d8>> .
 Obj:m_pioneer_device_obj    <Modules.Housing.Entertainment.pioneer.pioneer.PioneerDeviceData object at 0x7f1963b444a8> .
-Obj:m_pyhouse_obj           <Modules.Core.data_objects.PyHouseData object at 0x7f19639fd400> .
+Obj:m_pyhouse_obj           <Modules.Core.data_objects.PyHouseInformation object at 0x7f19639fd400> .
 Obj:makeConnection          <bound method PioneerFactory.makeConnection of <Modules.Housing.Entertainment.pioneer.pioneer.PioneerFactory object at 0x7f19681056d8>> .
 Obj:maxDelay                3600 .
 Obj:maxRetries              None .

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import os
@@ -63,7 +63,7 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {} device to Brightness {}'.format(l_light_obj.Name, l_light_obj.BrightnessPct))
         l_topic = 'house/lighting/web/{}/control'.format(l_light_obj.Name)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
-        self.m_pyhouse_obj.APIs.House.LightingAPI.AbstractControlLight(l_light_obj, 'web', l_brightness)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
+        self.m_pyhouse_obj._APIs.House.LightingAPI.AbstractControlLight(l_light_obj, 'web', l_brightness)
 
 # ## END DBK

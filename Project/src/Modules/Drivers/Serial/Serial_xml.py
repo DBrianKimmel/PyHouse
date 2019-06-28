@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.Project.src.Modules.Drivers.Serial.test.test_Serial_xml -*-
-
 @name:      PyHouse/Project/src/Modules/Drivers/Serial/serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-02-12'
+__updated__ = '2019-06-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,6 +19,22 @@ from Modules.Core.data_objects import SerialControllerData
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialXml      ')
+
+
+class SerialInformation():
+    """
+    """
+
+    def __init__(self):
+        self.InterfaceType = 'Serial'
+        self.BaudRate = 0
+        self.ByteSize = 8
+        self.DsrDtr = False
+        self.Parity = 'N'
+        self.RtsCts = False
+        self.StopBits = 1.0
+        self.Timeout = 1.0
+        self.XonXoff = False
 
 
 class XML(object):

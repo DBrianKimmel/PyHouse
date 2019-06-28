@@ -1,17 +1,17 @@
 """
-@name:      PyHouse/src/test/test_testing_mixin.py
+@name:      PyHouse/Projectsrc/test/test_testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Oct 6, 2014
 @Summary:
 
-Passed all 16 tests - DBK - 2017-01-11
+Passed all 16 tests - DBK - 2019-06-23
 
 """
 
-__updated__ = '2017-01-11'
+__updated__ = '2019-06-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,8 +19,9 @@ from twisted.trial import unittest
 
 # Import PyMh files
 from test.xml_data import XML_LONG, XML_EMPTY
-from test.testing_mixin import SetupPyHouseObj
+from test.testing_mixin import SetupPyHouseObj, TEST_PATH
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.data_objects import PyHouseInformation, ComputerInformation, HouseInformation
 
 
 class SetupMixin(object):
@@ -35,10 +36,12 @@ class SetupMixin(object):
     def setUpXml(self, p_root):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
+    def setUpYaml(self, p_root):
+        self.m_yaml = SetupPyHouseObj().BuildYaml(p_root)
+
 
 class A0(unittest.TestCase):
-    def setUp(self):
-        pass
+
     def test_00_Print(self):
         print('Id: test_testing_mixin')
 
@@ -50,17 +53,28 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         pass
 
-    def test_01_RawXML(self):
-        """ Be sure that the XML contains the right stuff.
+    def test_01_BuildObjs(self):
+        """ Be sure that the PyHouse obj is built correctly
         """
-        # print(XML_LONG)
-        pass
+        l_root = None
+        l_obj = SetupPyHouseObj().BuildPyHouseObj(l_root)
+        print(PrettyFormatAny.form(l_obj, 'A1-02-A - PyHouseObj', 90))
+        self.assertIsInstance(l_obj, PyHouseInformation)
+        self.assertIsInstance(l_obj.Computer, ComputerInformation)
+        self.assertIsInstance(l_obj.House, HouseInformation)
 
     def test_02_XML(self):
         """ Be sure that the XML contains the right stuff.
         """
-        # print(PrettyFormatAny.form(XML_LONG, 'A1-02-A - XML', 90))
         pass
+
+    def test_03_YAML(self):
+        """ Be sure that the YAML contains the right stuff.
+        """
+        l_root = None
+        l_obj = SetupPyHouseObj().BuildPyHouseObj(l_root)
+        # print(PrettyFormatAny.form(l_obj, 'A1-03-A - PyHouseObj', 90))
+        print(PrettyFormatAny.form(l_obj._Config, 'A1-03-B - _Config', 90))
 
 
 class B1_Empty(SetupMixin, unittest.TestCase):

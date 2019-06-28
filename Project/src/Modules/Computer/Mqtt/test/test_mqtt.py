@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Mqtt/test/test_mqtt.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/test/test_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -7,11 +7,11 @@
 @note:      Created on Apr 26, 2017
 @summary:   Test
 
-Passed all 9 tests - DBK - 2018-02-11
+Passed all 11 tests - DBK - 2019-06-26
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,11 +22,14 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ScheduleLightData, ControllerData
 from Modules.Computer.Mqtt import mqtt
-from Modules.Computer.Mqtt.mqtt import API as mqttAPI
+from Modules.Computer.Mqtt.mqtt import \
+    API as mqttAPI, \
+    Yaml as mqttYaml
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQTT_BROKER
-from Modules.Core.Utilities import json_tools
-from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities import json_tools, config_tools
+
+from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 DICT = {'one': 1, "Two": 'tew'}
 LIGHTING_MSG = \
@@ -99,6 +102,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = mqttAPI(self.m_pyhouse_obj, self)
+        self.m_filename = 'mqtt.yaml'
 
     def jsonPair(self, p_json, p_key):
         """ Extract key, value from json
@@ -114,11 +118,10 @@ class SetupMixin(object):
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
         print('Id: test_mqtt_util')
+        _w = FormatBytes('123')
+        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
 
 
 class A1_XML(SetupMixin, unittest.TestCase):
@@ -137,7 +140,38 @@ class A1_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.broker.tag, TESTING_MQTT_BROKER)
 
 
-class B1_Form(SetupMixin, unittest.TestCase):
+class C1_YamlRead(SetupMixin, unittest.TestCase):
+    """ Read the YAML config files.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_yaml = mqttYaml()
+        self.m_working_rooms = self.m_pyhouse_obj.Computer.Mqtt
+
+    def test_01_Build(self):
+        """ The basic read info as set up
+        """
+        # print(PrettyFormatAny.form(self.m_working_rooms, 'C1-01-A - WorkingRooms'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-05-A - Computer'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'C1-05-B - Mqtt'))
+        pass
+
+    def test_02_ReadFile(self):
+        """ Read the rooms.yaml config file
+        """
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_yaml = l_node.Yaml
+        l_yaml_top = l_yaml['Mqtt']
+        print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
+        print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
+        print(PrettyFormatAny.form(l_yaml_top, 'C1-02-C - Yaml_top'))
+        print(PrettyFormatAny.form(l_yaml_top[0], 'C1-02-D - Yaml_top[0]'))
+        self.assertEqual(l_yaml_top[0]['Broker']['Name'], 'Test Broker 1')
+        self.assertEqual(len(l_yaml_top), 2)
+
+
+class F1_Form(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
@@ -146,19 +180,19 @@ class B1_Form(SetupMixin, unittest.TestCase):
     def test_01_Topic(self):
         """ Test topic.
         """
-        l_topic = mqtt._make_topic(self.m_pyhouse_obj, 'Test')
-        self.assertEqual(l_topic, "pyhouse/test_house/Test")
+        _l_topic = mqtt._make_topic(self.m_pyhouse_obj, 'Test')
+        self.assertEqual(_l_topic, "pyhouse/test_house/Test")
 
     def test_02_Topic(self):
-        l_topic = mqtt._make_topic(self.m_pyhouse_obj, 'abc/def/ghi')
+        _l_topic = mqtt._make_topic(self.m_pyhouse_obj, 'abc/def/ghi')
         # print('B1-02-A - {} {}'.format(FormatBytes(l_topic), l_topic))
 
     def test_03_Msg(self):
-        l_msg = mqtt._make_message(self.m_pyhouse_obj, self.m_pyhouse_obj.House)
+        _l_msg = mqtt._make_message(self.m_pyhouse_obj, self.m_pyhouse_obj.House)
         # print('B1-03-A - {}; {}'.format(FormatBytes(l_msg)[:300], l_msg))
 
     def test_04_Msg(self):
-        l_msg = mqtt._make_message(self.m_pyhouse_obj, DICT)
+        _l_msg = mqtt._make_message(self.m_pyhouse_obj, DICT)
         # print('B1-04-A - {}; {}'.format(FormatBytes(l_msg)[:30], l_msg))
 
     def test_05_Message(self):

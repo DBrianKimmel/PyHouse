@@ -11,7 +11,7 @@ Passed all 3 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -53,7 +53,7 @@ class C1_Find(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = GetPyhouse(self.m_pyhouse_obj)
         self.m_light_api = lightsAPI()
-        self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).m_family
+        self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).m_family
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj)
 
     def test_01_Setup(self):

@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-06-08'
+__updated__ = '2019-06-25'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -128,12 +128,12 @@ class MqttActions():
 
     def send_mqtt_status_msg(self, p_message):
         l_topic = 'house/entertainment/pandora/status'
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
     def _send_control(self, p_family, p_message):
         l_topic = 'house/entertainment/{}/control'.format(p_family)
         LOG.debug('Sending control message to A/V Device\n\t{}\n\t{}'.format(l_topic, p_message))
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_message)
 
     def _decode_status(self, _p_topic, _p_message):
         l_logmsg = '\tPandora Status'
@@ -480,7 +480,7 @@ class PandoraControl(A_V_Control):
         l_executable = PIANOBAR_LOCATION
         l_args = ('pianobar',)
         l_env = None  # this will pass <os.environ>
-        self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+        self.m_transport = self.m_pyhouse_obj._Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
 
     def _stop_pianobar(self):
         """ Stop the pianobar process
@@ -557,7 +557,7 @@ class PandoraControl(A_V_Control):
         l_executable = PIANOBAR_LOCATION
         l_args = ('pianobar',)
         l_env = None  # this will pass <os.environ>
-        self.m_transport = self.m_pyhouse_obj.Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
+        self.m_transport = self.m_pyhouse_obj._Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         #
         for l_service in l_pandora_plugin_obj.Services.values():
             l_device_control_obj = EntertainmentDeviceControl()
@@ -570,7 +570,7 @@ class PandoraControl(A_V_Control):
             l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_model))
             l_topic = 'house/entertainment/{}/control'.format(l_family)
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
+            self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_device_control_obj)
 
     def build_av_control_msg(self, p_service):
         """
@@ -586,7 +586,7 @@ class PandoraControl(A_V_Control):
         l_service_control_obj.Zone = '0'
         LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
         l_topic = 'house/entertainment/{}/control'.format(l_family)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_service_control_obj)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_service_control_obj)
 
     def _halt_pandora(self, p_message):
         """ We have received a control message and therefore we stop the pandora player.
@@ -613,7 +613,7 @@ class PandoraControl(A_V_Control):
             l_service_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
             l_topic = 'house/entertainment/{}/control'.format(l_family)
-            self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_service_control_obj)
+            self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_service_control_obj)
         self.issue_pandora_stopped_status()
 
     def control_audio_device(self, p_audio_device, p_control):

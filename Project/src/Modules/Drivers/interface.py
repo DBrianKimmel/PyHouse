@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers.test.test_interface -*-
-
-@name:      PyHouse/src/Modules/Drivers/interface.py
+@name:      PyHouse/Project/src/Modules/Drivers/interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -22,7 +20,7 @@ This module reads and writes the XML for those controllers.
 Reading the interface stuffs the interface XML data into the controller object.
 """
 
-__updated__ = '2019-02-14'
+__updated__ = '2019-06-09'
 
 # Import system type stuff
 
@@ -37,7 +35,17 @@ from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.Interface      ')
 
 
-class DriverStatus:
+class DriverInterfaceInformation():
+    """
+    ...Interface.xxxx
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Type = None  # Null, Ethernet, Serial, USB, HTML, Websockets,  ...
+
+
+class DriverStatus():
     """
     """
 

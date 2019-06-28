@@ -10,7 +10,7 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -116,7 +116,7 @@ class Xml(object):
         """
         l_count = 0
         l_ret = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision')
         if l_xml is None:
             return l_ret
         l_xml = l_xml.find(NODE_SECTION)

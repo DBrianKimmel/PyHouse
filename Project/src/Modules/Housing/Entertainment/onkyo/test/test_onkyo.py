@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2019-06-07'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -172,7 +172,7 @@ class B1_Data(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
-        self.m_xml_onkyo_sect = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        self.m_xml_onkyo_sect = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
 
     def test_00_setup(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-00-A - PyHouse'))
@@ -356,7 +356,7 @@ class D1_Protocol(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
-        self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        self.m_reactor = self.m_pyhouse_obj._Twisted.Reactor
 
     def tearDown(self):
         if self.m_client is not None:
@@ -431,7 +431,7 @@ class E1_Data(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
-        self.m_xml_onkyo_sect = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
+        self.m_xml_onkyo_sect = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
 
     def test_00_setup(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'E1-00-A - PyHouse'))
@@ -472,7 +472,7 @@ class E2_Message(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # l_ret = entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
-        # self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        # self.m_reactor = self.m_pyhouse_obj._Twisted.Reactor
 
     def test_01_Zone(self):
         """ Be sure that the XML contains the right stuff.

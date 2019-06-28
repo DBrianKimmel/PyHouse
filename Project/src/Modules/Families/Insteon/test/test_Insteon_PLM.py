@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -104,7 +104,7 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.FamilyInformation = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj._Families = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     # def test_01_get_message_length(self):
     #    self.assertEqual(utilUtil._get_message_length(MSG_50), 11)

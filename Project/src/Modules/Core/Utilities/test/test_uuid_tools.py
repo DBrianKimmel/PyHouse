@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -80,8 +80,8 @@ class A2_XML(SetupMixin, unittest.TestCase):
         pass
 
     def test_02_Uuids(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'UUIDS'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids.All, 'All'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj._Uuids, 'UUIDS'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj._Uuids.All, 'All'))
 
 
 class B1_Defs(SetupMixin, unittest.TestCase):
@@ -139,15 +139,15 @@ class B2_UUID(SetupMixin, unittest.TestCase):
         l_obj_0.UUID = '12345678-dead-beef-dead-fedcba987654'
         l_obj_0.UuidType = 'House'
         Uuid.add_uuid(self.m_pyhouse_obj, l_obj_0)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids, 'B2-04-A - one'))
-        self.assertEqual(self.m_pyhouse_obj.Uuids.All[l_obj_0.UUID].UuidType, l_obj_0.UuidType)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj._Uuids, 'B2-04-A - one'))
+        self.assertEqual(self.m_pyhouse_obj._Uuids.All[l_obj_0.UUID].UuidType, l_obj_0.UuidType)
         #
         l_obj_1 = UuidData()
         l_obj_1.UUID = '01234567-dead-beef-dead-fedcba987654'
         l_obj_1.UuidType = 'Room'
         Uuid.add_uuid(self.m_pyhouse_obj, l_obj_1)
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Uuids.All, 'B2-04-B - two'))
-        self.assertEqual(self.m_pyhouse_obj.Uuids.All[l_obj_1.UUID].UuidType, l_obj_1.UuidType)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj._Uuids.All, 'B2-04-B - two'))
+        self.assertEqual(self.m_pyhouse_obj._Uuids.All[l_obj_1.UUID].UuidType, l_obj_1.UuidType)
 
 
 class B3_File(SetupMixin, unittest.TestCase):

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Families/test/test_family.py
+@name:      PyHouse/Projrct/src/Modules/Families/test/test_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -10,12 +10,13 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 import importlib
+import os
 
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
@@ -50,11 +51,9 @@ class SetupMixin(object):
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
         print('Id: test_family')
+        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
 
 
 class A1_Valid(SetupMixin, unittest.TestCase):
@@ -125,6 +124,30 @@ class A1_Valid(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.FamilyXml_ModuleName, 'X10_xml')
 
 
+class A4_ValidFamily(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Defined(self):
+        """ Run thru the directories in the Family section of the source code.
+        """
+        for dirname, dirnames, filenames in os.walk('..'):
+            # print path to all subdirectories first.
+            for subdirname in dirnames:
+                # print('Dirs: ', os.path.join(dirname, subdirname))
+                pass
+
+            # print path to all filenames.
+            # for filename in filenames:
+            #    print('Files: ', os.path.join(dirname, filename))
+
+            # Advanced usage:
+            # editing the 'dirnames' list will stop os.walk() from recursing into there.
+
+
 class B1_One(SetupMixin, unittest.TestCase):
     """ This section tests the "Utility" class
     """
@@ -133,8 +156,10 @@ class B1_One(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Import(self):
+        """
+        """
         self.m_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
-        _l_mod = Utility._do_import(self.m_family_obj, 'Insteon_xml')
+        _l_mod = Utility()._do_import(self.m_family_obj, 'Insteon_xml')
         # print(PrettyFormatAny.form(l_mod, 'B1-01-A - Module'))
         self.assertEqual(self.m_family_obj.Name, 'Insteon')
         self.assertEqual(self.m_family_obj.Key, 0)
@@ -145,7 +170,7 @@ class B1_One(SetupMixin, unittest.TestCase):
 
     def test_02_Import(self):
         self.m_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, 'UPB')
-        _l_mod = Utility._do_import(self.m_family_obj, 'UPB_xml')
+        _l_mod = Utility()._do_import(self.m_family_obj, 'UPB_xml')
         # print(PrettyFormatAny.form(l_mod, 'B1-02-A - Module'))
         self.assertEqual(self.m_family_obj.Name, 'UPB')
         self.assertEqual(self.m_family_obj.Key, 0)
@@ -173,7 +198,7 @@ class B2_One(SetupMixin, unittest.TestCase):
 
     def test_02_ImportOneMod(self):
         _l_module = family.Utility()._init_family_component_apis(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_module, 'Module'))
+        # print(PrettyFormatAny.form(_l_module, 'B2-02-A - Module'))
         pass
 
 
@@ -202,9 +227,9 @@ class C1_Import(SetupMixin, unittest.TestCase):
     def test_01_Import(self):
         l_family_obj = self.createFamilyObj()
         l_mod = 'Insteon_device'
-        print(PrettyFormatAny.form(l_family_obj, 'C1-01-A - Module'))
-        l_obj = family.Utility._do_import(l_family_obj, l_mod)
-        print(PrettyFormatAny.form(l_obj, 'C1-01-B - Module'))
+        # print(PrettyFormatAny.form(l_family_obj, 'C1-01-A - Module'))
+        l_obj = family.Utility()._do_import(l_family_obj, l_mod)
+        # print(PrettyFormatAny.form(l_obj, 'C1-01-B - Module'))
         self.assertNotEqual(l_obj, None)
 
 
@@ -235,14 +260,14 @@ class D1_One(SetupMixin, unittest.TestCase):
     def test_01_Null(self):
         l_mod_name = 'Null'
         l_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, l_mod_name)
-        print(PrettyFormatAny.form(l_family_obj, 'D1-01-A - Family'))
+        # print(PrettyFormatAny.form(l_family_obj, 'D1-01-A - Family'))
         self.assertEqual(l_family_obj.Name, l_mod_name)
         # self.assertNotEqual(l_obj, None)
 
     def test_02_Insteon(self):
         l_mod_name = 'Insteon'
         l_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, l_mod_name)
-        print(PrettyFormatAny.form(l_family_obj, 'D1-02-A - Family'))
+        # print(PrettyFormatAny.form(l_family_obj, 'D1-02-A - Family'))
         self.assertEqual(l_family_obj.Name, l_mod_name)
 
 # ## END DBK

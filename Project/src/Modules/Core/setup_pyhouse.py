@@ -21,29 +21,39 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-05-21'
-__version_info__ = (19, 5, 1)
+__updated__ = '2019-06-26'
+__version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
+import datetime
+from xml.etree import ElementTree as ET
 
 #  Import PyMh files and modules.
+# These 3 must be the first so logging is runninf as the rest of PyHouse starts up.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
+from Modules.Core.Utilities import config_tools
+from Modules.Core.data_objects import ParameterInformation
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
 
-from Modules.Core.Utilities.config_file import API as configAPI
+from Modules.Core.Utilities.config_tools import API as configAPI, ConfigInformation
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 
 from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
+from Modules.Core.Utilities.xml_tools import PutGetXML
+
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
 INITIAL_DELAY = 1 * MINUTES
 XML_SAVE_DELAY = 3 * HOURS  # 2 hours
 CONFIG_DIR = '/etc/pyhouse'
+XML_FILE_NAME = '/etc/pyhouse/master.xml'
+CONFIG_FILE_NAME = 'pyhouse.yaml'
 
 
 def _build_file(p_pyhouse_obj, p_filename):
@@ -71,7 +81,7 @@ def _write_file(p_pyhouse_obj, p_filename, p_uuid):
     return l_ret
 
 
-class PyHouseObj(object):
+class PyHouseObj():
 
     m_pyhouse_obj = None
 
@@ -89,8 +99,8 @@ class Utility(object):
     """
 
     def _xml_save_loop(self, p_pyhouse_obj):
-        p_pyhouse_obj.Twisted.Reactor.callLater(XML_SAVE_DELAY, self._xml_save_loop, p_pyhouse_obj)
-        self.SaveXml()
+        p_pyhouse_obj._Twisted.Reactor.callLater(XML_SAVE_DELAY, self._xml_save_loop, p_pyhouse_obj)
+        self.SaveConfig(p_pyhouse_obj)
 
     @staticmethod
     def init_uuids(p_pyhouse_obj):
@@ -99,7 +109,7 @@ class Utility(object):
         House.uuid
         Domain.uuid
         """
-        p_pyhouse_obj.Uuids.All = {}
+        p_pyhouse_obj._Uuids.All = {}
         l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
         try:
             l_file = open(l_path, mode='r')
@@ -114,7 +124,7 @@ class Utility(object):
         House.uuid
         Domain.uuid
         """
-        _l_uuids = p_pyhouse_obj.Uuids.All
+        _l_uuids = p_pyhouse_obj._Uuids.All
 
     @staticmethod
     def _sync_startup_logging(p_pyhouse_obj):
@@ -125,6 +135,25 @@ class Utility(object):
         l_log = setup_logging.API(p_pyhouse_obj)  # To eliminate Eclipse warning
         l_log.Start()
         LOG.info("Starting.")
+
+    def initialize_pyhouse_obj(self, p_pyhouse_obj):
+        """
+        """
+        l_filename = 'pyhouse.yaml'
+        p_pyhouse_obj._Config = ConfigInformation()
+        p_pyhouse_obj._Parameters = ParameterInformation()
+        self._setup_config(p_pyhouse_obj)
+        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(l_filename)
+        try:
+            l_dict = l_yaml.Yaml['PyHouse']
+            p_pyhouse_obj._Parameters.UnitSystem = l_dict['UnitSystem']
+            p_pyhouse_obj._Parameters.Name = l_dict['Name']
+            p_pyhouse_obj._Parameters.ConfigVersion = l_dict['ConfigVersion']
+        except:
+            LOG.error('Invalid "pyhouse.yaml" file!')
+            p_pyhouse_obj._Parameters.UnitSystem = 'Metric'
+            p_pyhouse_obj._Parameters.Name = 'nameless wonder'
+            p_pyhouse_obj._Parameters.ConfigVersion = 1.0
 
 
 class API(Utility):
@@ -139,20 +168,36 @@ class API(Utility):
         Also note that the reactor is *NOT* yet running.
         """
         LOG.info('Initializing - Version:{}'.format(__version__))
-        Utility.init_uuids(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         PyHouseObj.SetObj(p_pyhouse_obj)
+        self.initialize_pyhouse_obj(p_pyhouse_obj)
+        Utility.init_uuids(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
         Utility._sync_startup_logging(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialized.\n==================================================================\n')
+        LOG.info('Initialized.')
 
-    def LoadXml(self, p_pyhouse_obj):
-        LOG.info("Loading XML - Version:{}".format(__version__))
-        p_pyhouse_obj = configAPI(p_pyhouse_obj).read_xml_config_file(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.ComputerAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.House.HouseAPI.LoadXml(p_pyhouse_obj)
-        LOG.info('Loaded XML.\n==========\n')
+    def _setup_config(self, p_pyhouse_obj):
+        """
+        """
+        if p_pyhouse_obj._Config.ConfigDir is None:
+            p_pyhouse_obj._Config.ConfigDir = '/etc/pyhouse/'
+        try:
+            l_xmltree = ET.parse(p_pyhouse_obj._Config.ConfigDir + 'master.xml')
+        except (SyntaxError, IOError):
+            l_xml = ET.Element("PyHouse")
+            l_xmltree = ET.ElementTree(element=l_xml)
+        p_pyhouse_obj._Config.XmlRoot = l_xmltree.getroot()
+
+    def LoadConfig(self, p_pyhouse_obj):
+        """ Load in the entire configuration for PyHouse.
+        This will fill in pyhouse_obj for all defined features of PyHouse.
+        """
+        LOG.info("Loading Config - Version:{}\n======================== Loading Config Files ========================\n".format(__version__))
+        # p_pyhouse_obj = configAPI(p_pyhouse_obj).LoadConfig(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.House.HouseAPI.LoadConfig(p_pyhouse_obj)
+        LOG.info("Loaded Config - Version:{}".format(__version__))
 
     def Start(self):
         """
@@ -160,32 +205,34 @@ class API(Utility):
 
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
-        #  First we start up the logging system - no need for XML yes as it is at a fixrd location
-        #  next Starting the computer and House will load the respective divisions of the config file.
-        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Start()
-        self.m_pyhouse_obj.APIs.House.HouseAPI.Start()
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
+        #  First we start up the logging system - no need for Config yet as it is at a fixed location
+        #  next Starting the computer and House will load the respective divisions of the config files.
+        self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Start()
+        self.m_pyhouse_obj._APIs.House.HouseAPI.Start()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
         #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
         LOG.info("Started.\n==========\n")
         #  print('Everything Started setup_pyhouse-117')
 
-    def SaveXml(self):
+    def SaveConfig(self, p_pyhouse_obj):
         """
-        Take a snapshot of the current Configuration/Status and write out an XML file.
+        Take a snapshot of the current Configuration/Status and write out into config files.
+        The XML file is a single large file containing everything.
+        The Yaml config is broken down into many smaller files and written by each component.
         """
-        LOG.info('\n\tSaving All XML info:')
-        l_xml = configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.SaveXml(l_xml)
-        self.m_pyhouse_obj.APIs.House.HouseAPI.SaveXml(l_xml)
-        configAPI(self.m_pyhouse_obj).write_xml_config_file(self.m_pyhouse_obj, l_xml)
-        LOG.info("Saved all XML sections to config file.\n----------\n")
+        LOG.info('\n======================== Saving Config Files ========================\n')
+        configAPI(p_pyhouse_obj).create_xml_config_foundation(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.ComputerAPI.SaveConfig(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.House.HouseAPI.SaveConfig(p_pyhouse_obj)
+        configAPI(p_pyhouse_obj).write_xml_config_file(p_pyhouse_obj)
+        LOG.info("Saved all Config sections.\n======================== Saved Config Files ========================\n")
 
     def Stop(self):
         l_topic = 'computer/shutdown'
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
-        self.SaveXml()
-        self.m_pyhouse_obj.APIs.Computer.ComputerAPI.Stop()
-        self.m_pyhouse_obj.APIs.House.HouseAPI.Stop()
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.SaveConfig()
+        self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Stop()
+        self.m_pyhouse_obj._APIs.House.HouseAPI.Stop()
         LOG.info("Stopped.\n==========\n")
 
 # ## END DBK

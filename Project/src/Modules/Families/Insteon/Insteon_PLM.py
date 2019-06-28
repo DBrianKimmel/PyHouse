@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 import datetime
@@ -208,7 +208,7 @@ class PlmDriverProtocol(Commands):
 
         Uses twisted to get a callback when the timer expires.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
         try:
             l_command = p_controller_obj._Queue.get(False)
         except Queue.Empty:
@@ -237,7 +237,7 @@ class PlmDriverProtocol(Commands):
 
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             self._append_message(p_controller_obj)
             l_cur_len = len(p_controller_obj._Message)
@@ -406,7 +406,7 @@ class Utility(LightHandlerAPI):
         else:
             LOG.error('Insteon Controller start failed')
         l_topic = 'house/lighting/controller/status'
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_controller_obj)
+        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 
     def get_plm_info(self, p_pyhouse_obj, p_controller_obj):
@@ -452,7 +452,7 @@ class API(Utility):
 
         l_topic = 'house/lighting/controller/status'
         l_msg = p_controller_obj
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
 
         LOG.info('Started.')
         return l_ret

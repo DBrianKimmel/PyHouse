@@ -11,7 +11,7 @@ Passed all 10 tests.  DBK 2019-01-22
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -50,7 +50,7 @@ class SetupMixin(object):
         self.m_light_obj = LightData()
         self.m_api = lightingAPI(self.m_pyhouse_obj)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.FamilyInformation = self.m_family
+        self.m_pyhouse_obj._Families = self.m_family
 
 
 class A0(unittest.TestCase):
@@ -70,7 +70,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_Version(self):
-        self.assertGreater(self.m_pyhouse_obj.Xml.XmlVersion, '1.4.0')
+        self.assertGreater(self.m_pyhouse_obj._Config.XmlVersion, '1.4.0')
 
     def test_02_XmlTags(self):
         """ Be sure that the XML contains the right stuff.

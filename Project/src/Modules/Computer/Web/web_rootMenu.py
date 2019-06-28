@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-04-08'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 from twisted.web._element import renderer, Element
@@ -33,7 +33,7 @@ class RootMenuElement(Element):
         """ Process a message for a XML save/reload from the browser/client.
         """
         LOG.info("Self: {}".format(self))
-        self.m_pyhouse_obj.APIs.PyHouseMainAPI.SaveXml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.PyHouseMainAPI.SaveXml(self.m_pyhouse_obj)
 
     @renderer
     def doRootMenuQuit(self, p_json):

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/test/testing_mixin.py
+@name:      PyHouse/Project/src/test/testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -9,31 +9,38 @@
 
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
+import os
 import platform
 import logging
 import sys
 from twisted.internet import reactor
 
 #  Import PyMh files and modules.
+from Modules.Housing.house_data import LocationInformationPrivate
 from Modules.Core.data_objects import \
-    PyHouseData, \
+    PyHouseInformation, \
     PyHouseAPIs, \
     ComputerInformation, \
     ComputerAPIs, \
     HouseInformation, \
     HouseAPIs, \
-    LocationData, \
     TwistedInformation, \
-    XmlInformation, \
     LightingData, \
     SecurityData, \
-    AllUuids, YamlInformation
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
-from Modules.Families.family import Utility as familyUtil, API as familyAPI
+    AllUuids
+from Modules.Core.Utilities.config_tools import \
+    ConfigInformation
+from Modules.Housing.Entertainment.entertainment_data import \
+    EntertainmentData, \
+    EntertainmentPluginData
+from Modules.Families.family import \
+    Utility as familyUtil, \
+    API as familyAPI
 from Modules.Housing.house import API as housingAPI
+# from Modules.Housing.location import LocationInformation
 from Modules.Housing.Hvac.hvac_data import HvacData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Computer.Mqtt.mqtt_data import MqttInformation
@@ -46,6 +53,8 @@ l_handler = logging.StreamHandler(stream=sys.stderr)
 l_handler.setFormatter(l_formatter)
 LOG = Logger.getLogger('PyHouse')
 LOG.addHandler(l_handler)
+
+TEST_PATH = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
 
 
 class XmlData(object):
@@ -128,22 +137,28 @@ class LoadPyHouse(object):
         pass
 
     def load_house(self, p_pyhouse_obj):
-        housingAPI.LoadXml(p_pyhouse_obj)
+        # housingAPI.LoadXml(p_pyhouse_obj)
+        pass
 
 
-class SetupPyHouseObj(object):
+class SetupPyHouseObj():
     """
     """
 
-    def _build_xml(self, p_root):
-        l_ret = XmlInformation()
+    def _build_config(self, p_root):
+        """
+        Change the path for finding yaml config files to the PySource src package.
+        """
+        l_ret = ConfigInformation()
+        l_ret.ConfigDir = TEST_PATH
         l_ret.XmlRoot = p_root
         l_ret.XmlFileName = '/etc/pyhouse/master.xml'
         return l_ret
 
     def _build_yaml(self, p_root):
-        l_ret = YamlInformation()
+        l_ret = YamlData()
         l_ret.YamlRoot = p_root
+        l_ret.YamlFileName = '/etc/pyhouse/master.yaml'
         return l_ret
 
     def _build_twisted(self):
@@ -160,7 +175,7 @@ class SetupPyHouseObj(object):
     @staticmethod
     def _build_house_data(p_pyhouse_obj):
         l_ret = HouseInformation()
-        l_ret.Location = LocationData()
+        l_ret.Location = LocationInformationPrivate()
         l_ret.Entertainment = SetupPyHouseObj._build_entertainment(p_pyhouse_obj)
         l_ret.Lighting = LightingData()
         l_ret.Hvac = HvacData()
@@ -208,6 +223,9 @@ class SetupPyHouseObj(object):
 
         p_xml.web_sect = p_xml.computer_div.find('WebSection')
         p_xml.login_sect = p_xml.web_sect.find('LoginSection')
+
+    def _computer_yaml(self, p_yaml):
+        pass
 
     def _house_xml(self, p_xml):
         p_xml.house_div = p_xml.root.find('HouseDivision')
@@ -267,17 +285,22 @@ class SetupPyHouseObj(object):
 
         p_xml.location_sect = p_xml.house_div.find('LocationSection')
 
+    def _house_yaml(self, p_yaml):
+        pass
+
     def BuildPyHouseObj(self, p_root):
-        l_pyhouse_obj = PyHouseData()
-        l_pyhouse_obj.APIs = self._build_apis()
+        """ This will create the pyhpuse_obj structure.
+        """
+        l_pyhouse_obj = PyHouseInformation()
         l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
         l_pyhouse_obj.House = SetupPyHouseObj._build_house_data(l_pyhouse_obj)
-        l_pyhouse_obj.FamilyInformation = familyUtil()._init_family_component_apis(l_pyhouse_obj)
-        l_pyhouse_obj.Twisted = self._build_twisted()
-        l_pyhouse_obj.Uuids = AllUuids()
-        l_pyhouse_obj.Uuids.All = {}
-        l_pyhouse_obj.Xml = self._build_xml(p_root)
-        l_pyhouse_obj.Yaml = self._build_yaml(p_root)
+        #
+        l_pyhouse_obj._APIs = self._build_apis()
+        l_pyhouse_obj._Config = self._build_config(p_root)
+        l_pyhouse_obj._Families = familyUtil()._init_family_component_apis(l_pyhouse_obj)
+        l_pyhouse_obj._Twisted = self._build_twisted()
+        l_pyhouse_obj._Uuids = AllUuids()
+        l_pyhouse_obj._Uuids.All = {}
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj
 
@@ -288,11 +311,18 @@ class SetupPyHouseObj(object):
         self._house_xml(l_xml)
         return l_xml
 
+    def BuildYaml(self, p_root_yaml):
+        l_yaml = YamlData()
+        l_yaml.root = p_root_yaml
+        self._computer_yaml(l_yaml)
+        self._house_yaml(l_yaml)
+        return l_yaml
+
     def LoadComputer(self, p_pyhouse_obj):
         pass
 
     def LoadHouse(self, p_pyhouse_obj):
-        p_pyhouse_obj.FamilyInformation = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
+        p_pyhouse_obj._Families = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
         housingAPI(p_pyhouse_obj).LoadXml(p_pyhouse_obj)
         return
 

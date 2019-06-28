@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_xml_tools -*-
-
 @name:      PyHouse/Project/src/Modules/Core/Utilities/xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-09'
+__updated__ = '2019-06-23'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -21,7 +19,7 @@ import dateutil.parser as dparser
 # import uuid
 
 #  Import PyMh files
-from Modules.Core.data_objects import CoordinateData
+from Modules.Housing.house_data import CoordinateData
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities.uuid_tools import Uuid
 
@@ -234,7 +232,7 @@ class PutGetXML(object):
         if l_xml is None or len(l_xml) != 36:
             l_xml_bad = l_xml
             l_xml = Uuid.create_uuid()
-            LOG.error("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
+            LOG.warn("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
         return l_xml
 
     @staticmethod
@@ -291,7 +289,7 @@ class PutGetXML(object):
             # print('aaa ', str(l_str_time))
             l_ret = datetime.time(l_str_time.tm_hour, l_str_time.tm_min, l_str_time.tm_sec)
             # print('bbb ', l_str_time, l_ret)
-        except Exception as e_err:
+        except Exception as _e_err:
             # print('parse failed: ', str(l_field), ' -- ', e_err)
             l_ret = datetime.time(0, 0, 0)
         return l_ret
@@ -371,7 +369,7 @@ class XmlConfigTools:
         return l_name
 
     @staticmethod
-    def find_section(p_pyhouse_obj, p_name):
+    def find_xml_section(p_pyhouse_obj, p_name):
         """ Find the element within the path.
 
         @param p_name: 'HouseDivision/EntertainmentSection/OnkyoSection' will find the section
@@ -379,8 +377,9 @@ class XmlConfigTools:
         """
         # Be sure something was passed in
         if len(p_name) == 0:
+            LOG.warning('Trying to find an XML section with no name given.')
             return None
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        l_xml = p_pyhouse_obj._Config.XmlRoot
         l_name = p_name.split('/')
         if len(l_name) == 1:
             l_xml = l_xml.find(l_name[0])
@@ -388,6 +387,7 @@ class XmlConfigTools:
         for l_part in l_name:
             l_xml = l_xml.find(l_part)
             if l_xml == None:
+                LOG.warning('No section "{}" found in looking for "{}".'.format(l_part, p_name))
                 return l_xml
         return l_xml
 

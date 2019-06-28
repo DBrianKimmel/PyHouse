@@ -14,7 +14,7 @@ This is a skeleton until we start the use of the data.  Things are just a placeh
 """
 from opcode import cmp_op
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-06-23'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -119,7 +119,7 @@ class Xml(object):
         l_obj = {}
         l_count = 0
         try:
-            l_section = p_pyhouse_obj.Xml.XmlRoot.find(DIVISION)
+            l_section = p_pyhouse_obj._Config.XmlRoot.find(DIVISION)
             if l_section == None:
                 return l_obj
             l_section = l_section.find(SECTION)

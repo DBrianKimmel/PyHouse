@@ -1,25 +1,25 @@
 """
--*- test-case-name:  PyHouse/src/Modules.Core.Utilities.coordinate_tools.py  -*-
-
 @name:       PyHouse/src/Modules.Core.Utilities.coordinate_tools.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2016-2017 by D. Brian Kimmel
+@copyright:  2016-2019 by D. Brian Kimmel
 @date:       Created on Jun 21, 2016
 @licencse:   MIT License
 @summary:    Handle X,Y,Z coordinates
 
 """
 
+__updated__ = '2019-06-16'
+
 #  Import system type stuff
-import xml.etree.ElementTree as ET
-import datetime
+# import xml.etree.ElementTree as ET
+# import datetime
 
 #  Import PyMh files
-from Modules.Core.data_objects import CoordinateData
+from Modules.Housing.house_data import CoordinateData
 
 
-class Coords(object):
+class Coords:
     """
     """
 

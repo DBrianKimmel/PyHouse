@@ -12,7 +12,7 @@ Passed all 5 tests - DBK - 2017-01-20
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny, PrettyFormatObject
 
-__updated__ = '2017-04-23'
+__updated__ = '2019-06-13'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -43,9 +43,7 @@ MSG_DICT = {
     "TimeZoneName": "America/New_York",
     "Elevation": 0.0,
     "_name": "",
-    "Region": "",
     "Phone": ""}
-
 
 
 class SetupMixin(object):
@@ -56,8 +54,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_json_tools')
 

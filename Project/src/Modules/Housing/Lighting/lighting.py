@@ -15,7 +15,7 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-24'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -79,7 +79,7 @@ class XML:
         Get all the lighting components for a house
         Config file version 1.4 moved the lighting information into a separate LightingSection
         """
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/LightingSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/LightingSection')
         if l_xml is None:
             return p_pyhouse_obj.House.Lighting
         p_pyhouse_obj.House.Lighting.Buttons = buttonsXML().read_all_buttons_xml(p_pyhouse_obj)
@@ -123,14 +123,14 @@ class API(XML):
     def Start(self):
         """ Allow loading of sub modules and drivers.
         """
-        self.m_pyhouse_obj.APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.House.FamilyAPI.start_lighting_families(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
         """ Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        #  self.m_pyhouse_obj.APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
+        #  self.m_pyhouse_obj._APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):

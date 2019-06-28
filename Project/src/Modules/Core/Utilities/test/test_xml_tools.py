@@ -10,7 +10,7 @@
 Passed all 64 tests - DBK 2018-08-07
 """
 
-__updated__ = '2018-08-08'
+__updated__ = '2019-06-12'
 
 # Import system type stuff
 import datetime
@@ -19,7 +19,8 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import CoreLightingData, LocationData
+from Modules.Core.data_objects import CoreLightingData
+from Modules.Housing.location import LocationInformation
 from Modules.Core.Utilities import convert
 from test.xml_data import \
     XML_LONG, \
@@ -619,19 +620,19 @@ class J3_Sections(SetupMixin, unittest.TestCase):
         self.m_fields = ET.fromstring(XML_TEST)
 
     def test_01_HouseDiv(self):
-        l_xml = self.m_apix.find_section(self.m_pyhouse_obj, 'HouseDivision')
+        l_xml = self.m_apix.find_xml_section(self.m_pyhouse_obj, 'HouseDivision')
         print(PrettyFormatAny.form(l_xml, 'J3-01-A Base'))
         # self.assertEqual(l_xml.Name, '')
         pass
 
     def test_02_Lighting(self):
-        l_xml = self.m_apix.find_section(self.m_pyhouse_obj, 'HouseDivision/LightingSection')
+        l_xml = self.m_apix.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/LightingSection')
         print(PrettyFormatAny.form(l_xml, 'J3-02-A Base'))
         # self.assertEqual(l_xml.Name, '')
         pass
 
     def test_03_Lights(self):
-        l_xml = self.m_apix.find_section(self.m_pyhouse_obj, 'HouseDivision/LightingSection/LightSection')
+        l_xml = self.m_apix.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/LightingSection/LightSection')
         print(PrettyFormatAny.form(l_xml, 'J3-03-A Base'))
         print(PrettyFormatAny.form(l_xml[0], 'J3-03-B Base'))
         # self.assertEqual(l_xml.Name, '')
@@ -685,7 +686,7 @@ class Z1_NoClass(SetupMixin, unittest.TestCase):
         l_objA = CoreLightingData()
         l_objA.Name = 'Test 1A'
         # print(PrettyFormatAny.form(l_objA, 'Obj A'))
-        l_objB = LocationData()
+        l_objB = LocationInformation()
         l_objB.Street = 'Some road'
         # print(PrettyFormatAny.form(l_objB, 'Obj B', 120))
         #

@@ -10,8 +10,9 @@
 passed all 6 tests - DBK - 2018-02-13
 
 """
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-06-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -56,7 +57,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         l_onkyo_xml = self.m_xml.entertainment_sect.find('OnkyoSection')
         # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
+        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
         self.assertEqual(l_onkyo_xml.tag, 'OnkyoSection')
 
 

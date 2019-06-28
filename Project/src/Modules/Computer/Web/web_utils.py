@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-06-16'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import JsonHouseData, LightingData, CoordinateData
+from Modules.Core.data_objects import JsonHouseData, LightingData
 from Modules.Core.Utilities import json_tools
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webUtils       ')
@@ -39,7 +39,6 @@ WS_INTERNET = 204
 WS_BUTTONS = 501
 WS_CONTROLLERS = 502
 WS_LIGHTS = 503
-
 
 
 class UtilJson(object):
@@ -92,6 +91,7 @@ def GetJSONComputerInfo(p_pyhouse_obj):
 class State(object):
     """Used by various web_ modules to keep the state of the web server.
     """
+
     def __init__(self):
         self.State = WS_IDLE
 
@@ -103,12 +103,13 @@ def get_base_info(p_obj, p_json_decoded):
         p_obj.UUID = p_json_decoded['UUID']
         return p_obj
 
+
 def get_room_info(p_obj, p_json_decoded):
-        l_coords = CoordinateData()
-        l_coords.X_Easting = p_json_decoded['RoomCoords'][0]
-        l_coords.Y_Northing = p_json_decoded['RoomCoords'][1]
-        l_coords.Z_Height = p_json_decoded['RoomCoords'][2]
-        p_obj.RoomCoords = l_coords
+        # l_coords = CoordinateData()
+        # l_coords.X_Easting = p_json_decoded['RoomCoords'][0]
+        # l_coords.Y_Northing = p_json_decoded['RoomCoords'][1]
+        # l_coords.Z_Height = p_json_decoded['RoomCoords'][2]
+        # p_obj.RoomCoords = l_coords
         p_obj.RoomName = p_json_decoded['RoomName']
         p_obj.RoomUUID = p_json_decoded['RoomUUID']
         return p_obj

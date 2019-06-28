@@ -57,7 +57,7 @@ class XML:
         """
         l_plugin_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_plugin_obj.Name = SECTION
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         if l_xml is None:
             return l_plugin_obj
         l_count = 0

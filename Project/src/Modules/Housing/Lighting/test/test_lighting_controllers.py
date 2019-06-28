@@ -10,7 +10,7 @@
 Passed all 24 tests - DBK - 2019-01-10
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -86,7 +86,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.FamilyInformation = self.m_family
+        self.m_pyhouse_obj._Families = self.m_family
         self.m_controller_obj = ControllerData()
 
 

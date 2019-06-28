@@ -1,0 +1,18 @@
+# Name:      PyHouse/Project/src/Modules/Housing/test/house.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 23, 2019
+# Updated:   Jun 23, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+---
+
+House:
+   Name: TestHouse
+
+#   Location: !include location.yaml
+#   Floors: !include floors.yaml
+#   Rooms: !include rooms.yaml
+
+### END DBK

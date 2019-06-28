@@ -18,6 +18,7 @@ This takes care of starting all the computer modules (In Order).
     Web Server(s)
 
 PyHouse.Computer.
+            Bridges
             Communication
             Internet
             Mqtt
@@ -27,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-26'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -45,7 +46,7 @@ from Modules.Computer.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI, MqttActions as nodesMqtt
-from Modules.Computer.Nodes.node_sync import API as syncAPI
+# from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
 from Modules.Computer.Web.websocket_server import API as websocketAPI
@@ -104,7 +105,7 @@ class MqttActions:
         return l_logmsg
 
 
-class Xml:
+class Xml():
 
     def _read_computer_specs(self, p_obj, p_xml):
         """ Read the extra computer info
@@ -118,8 +119,8 @@ class Xml:
         PutGetXML().put_int_element(p_xml, 'Priority', p_obj.Priority)
         return p_xml
 
-    def read_computer_xml(self, p_pyhouse_obj):
-        l_section = XmlConfigTools.find_section(p_pyhouse_obj, 'ComputerDivision')
+    def read_computer_config(self, p_pyhouse_obj):
+        l_section = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision')
         l_obj = p_pyhouse_obj.Computer
         XmlConfigTools.read_base_UUID_object_xml(l_obj, l_section)
         self._read_computer_specs(l_obj, l_section)
@@ -129,6 +130,7 @@ class Xml:
         l_obj = p_pyhouse_obj.Computer
         l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, l_obj)
         _l_extra_xml = self._write_computer_specs(l_xml, l_obj)
+        p_pyhouse_obj._Config.XmlTree.append(l_xml)
         return l_xml
 
 
@@ -143,61 +145,62 @@ class Utility:
         """
         Initialize all the computer division APIs
         """
-        p_pyhouse_obj.APIs.Computer = ComputerAPIs()
-        p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
+        p_pyhouse_obj._APIs.Computer = ComputerAPIs()
+        p_pyhouse_obj._APIs.Computer.ComputerAPI = p_api
+        p_pyhouse_obj._APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj, p_api)
         #
-        p_pyhouse_obj.APIs.Computer.BridgesAPI = bridgesAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj, p_api)
-        p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
-        # LOG.debug('{}'.format(PrettyFormatAny.form(p_pyhouse_obj.APIs.Computer, 'Computer Api\'s', 190)))
+        p_pyhouse_obj._APIs.Computer.BridgesAPI = bridgesAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
+        # LOG.debug('{}'.format(PrettyFormatAny.form(p_pyhouse_obj._APIs.Computer, 'Computer Api\'s', 190)))
 
-    def _load_component_xml(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages.
-        p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
+    def _load_component_config(self, p_pyhouse_obj):
+        # p_pyhouse_obj._APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages.
+        p_pyhouse_obj._APIs.Computer.MqttAPI.LoadConfig()  # Start this first so we can send messages.
+        p_pyhouse_obj._APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         #
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.BridgesAPI.LoadConfig(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.WebSocketAPI.LoadXml(p_pyhouse_obj)
 
     def _start_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.Start()
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
-        p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
-        p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
-        p_pyhouse_obj.APIs.Computer.WebAPI.Start()
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Start()
+        p_pyhouse_obj._APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
+        p_pyhouse_obj._APIs.Computer.BridgesAPI.Start()
+        p_pyhouse_obj._APIs.Computer.CommunicationsAPI.Start()
+        p_pyhouse_obj._APIs.Computer.InternetAPI.Start()
+        p_pyhouse_obj._APIs.Computer.NodesAPI.Start()
+        p_pyhouse_obj._APIs.Computer.WeatherAPI.Start()
+        p_pyhouse_obj._APIs.Computer.WebAPI.Start()
+        p_pyhouse_obj._APIs.Computer.WebSocketAPI.Start()
 
     def _stop_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WebAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.BridgesAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.CommunicationsAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.InternetAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.MqttAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.NodesAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.WeatherAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.WebAPI.Stop()
+        p_pyhouse_obj._APIs.Computer.WebSocketAPI.Stop()
 
     def _save_component_apis(self, p_pyhouse_obj, p_xml):
         """ Save the XML for each of the components of the Computer
         """
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.SaveXml(p_xml)
+        # No need to save Mqtt as it cannot change during runtime
+        p_pyhouse_obj._APIs.Computer.BridgesAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.InternetAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.NodesAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.WeatherAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.WebAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.WebSocketAPI.SaveXml(p_xml)
         return p_xml
 
 
@@ -210,23 +213,23 @@ class API(Utility):
         # This overrides any xml saved so we can start Logging and MQTT messages early on.
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
-        p_pyhouse_obj.Key = 0
-        p_pyhouse_obj.Active = True
+        p_pyhouse_obj.Computer.Key = 0
+        p_pyhouse_obj.Computer.Active = True
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
-        p_pyhouse_obj.Comment = ''
-        p_pyhouse_obj.LastUpdate = datetime.now()
+        p_pyhouse_obj.Computer.Comment = ''
+        p_pyhouse_obj.Computer.LastUpdate = datetime.now()
         #
         self._init_component_apis(p_pyhouse_obj, self)
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self, p_pyhouse_obj):
         """
         """
-        # LOG.info('Loading XML')
-        Xml().read_computer_xml(p_pyhouse_obj)
-        self._load_component_xml(p_pyhouse_obj)
-        LOG.info('Loaded XML.')
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # Xml().read_computer_config(p_pyhouse_obj)
+        self._load_component_config(p_pyhouse_obj)
+        LOG.info('Loaded Config.')
 
     def Start(self):
         """
@@ -236,15 +239,15 @@ class API(Utility):
         self._start_component_apis(self.m_pyhouse_obj)
         LOG.info('Started.')
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self, p_pyhouse_obj):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         l_xml = Xml().write_computer_xml(self.m_pyhouse_obj)
         self._save_component_apis(self.m_pyhouse_obj, l_xml)
-        p_xml.append(l_xml)
-        LOG.info("Saved Computer XML.")
-        return p_xml
+        p_pyhouse_obj._Config.XmlTree.append(l_xml)
+        LOG.info("Saved Computer XML Config.")
+        return
 
     def Stop(self):
         """

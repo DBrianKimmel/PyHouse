@@ -171,7 +171,7 @@ class XML:
         """
         l_count = 0
         l_dict = {}
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/LightingSection/LightSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/LightingSection/LightSection')
         if l_xml is None:
             return l_dict
         try:

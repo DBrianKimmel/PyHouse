@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 from twisted.web.client import getPage
@@ -94,7 +94,7 @@ class API(DynDnsAPI):
 
     def Start(self, p_pyhouse_obj, p_ix):
         self.m_internet_obj = p_pyhouse_obj.Computer.InternetConnection[p_ix]
-        self.m_reactor = p_pyhouse_obj.Twisted.Reactor
+        self.m_reactor = p_pyhouse_obj._Twisted.Reactor
         self.m_dyn_loop = DynDnsAPI(self.m_internet_obj, self.m_reactor)
 
     def Stop(self, _ignore1, _ignore2):

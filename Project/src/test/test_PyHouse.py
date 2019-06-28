@@ -2,14 +2,14 @@
 @name:      PyHouse/src/test/test_PyHouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 29, 2014
 @Summary:
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-10'
 
 # Import system type stuff
 from twisted.trial import unittest

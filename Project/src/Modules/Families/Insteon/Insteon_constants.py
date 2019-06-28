@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_constants -*-
-
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_constants.py
+@name:      PyHouse/Projects/src/Modules/Families/Insteon/Insteon_constants.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 19, 2013
 @summary:   This module is for communicating with Insteon controllers.
@@ -13,7 +11,7 @@ Note! This is designed for: 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2017-01-31'
+__updated__ = '2019-06-24'
 
 STX = 0x02
 ACK = 0x06

@@ -3,15 +3,15 @@
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
-@license:   MIT License
+@license:   MIT License6
 @note:      Created on Aug 5, 2014
 @Summary:
 
-Passed all 6 tests - DBK - 2019-01-10
+Passed all 6 tests - DBK - 2019-0-10
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -64,7 +64,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.FamilyInformation = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj._Families = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_01_Tags(self):
         """ Be sure
@@ -83,7 +83,7 @@ class A2_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_pyhouse_obj.FamilyInformation = family.API(self.m_pyhouse_obj).build_lighting_family_info()
+        # self.m_pyhouse_obj._Families = family.API(self.m_pyhouse_obj).build_lighting_family_info()
 
     def test_2_Controllers(self):
         """ Be sure that the XML contains the right stuff.

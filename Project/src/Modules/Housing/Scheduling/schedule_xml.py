@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-06-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -88,7 +88,7 @@ class Xml(object):
         """
         l_count = 0
         l_dict = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision')
         if l_xml is None:
             return l_dict
         l_xml = l_xml.find(SCHEDULE_SECTION)

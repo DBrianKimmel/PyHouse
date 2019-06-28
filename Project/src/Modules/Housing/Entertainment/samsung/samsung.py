@@ -52,7 +52,7 @@ while True:
 
 """
 
-__updated__ = '2019-03-28'
+__updated__ = '2019-06-25'
 __version_info__ = (19, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -111,7 +111,7 @@ class XML:
 
     @staticmethod
     def read_samsung_section_xml(p_pyhouse_obj):
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/SamsungSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/SamsungSection')
         l_entertain_obj = p_pyhouse_obj.House.Entertainment
         l_plugin_obj = l_entertain_obj.Plugins[SECTION]
         l_plugin_obj.Name = SECTION
@@ -318,7 +318,7 @@ class Connecting:
             LOG.warn("initial Samsung connection failed: {}".format(fail_reason))
             l_ReconnectingService.stopService()
 
-        l_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        l_reactor = self.m_pyhouse_obj._Twisted.Reactor
         try:
             # l_host = convert.long_to_str(p_device_obj.IPv4)
             l_host = 'samsung-tv'

@@ -1,0 +1,36 @@
+# Name:      PyHouse/Project/src/Module/Computer/Mqtt/test/Yaml/mqtt.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jun 26, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+---
+
+Mqtt:
+   - Broker:
+      Name: Test Broker 1
+      Active: 'true'
+      Comment: For CT (if reachable)
+      LastUpdate: 2019-05-18 12:41:20.061260
+      UUID: 92c6466-5852-11e7-8389-801f02b5e4e6
+      BrokerHost: mqtt-ct
+      BrokerPort: 1883
+      BrokerUser: None
+      BrokerPassword: None
+      Class: Local
+
+   - Broker:
+      Name: Developer
+      Active: 'true'
+      Comment: On the local development computer
+      LastUpdate: 2019-05-18 12:41:20.061260
+      UUID: 392c6466-5852-11e7-8389-801f02b5e4e6
+      BrokerHost: localhost
+      BrokerPort: 1883
+      BrokerUser: None
+      BrokerPassword: None
+      Class: Local
+
+### END DBK

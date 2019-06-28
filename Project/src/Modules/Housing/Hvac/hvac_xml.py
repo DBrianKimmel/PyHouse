@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-24'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -106,7 +106,7 @@ class Utility(object):
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
-            l_api = p_pyhouse_obj.FamilyInformation[p_obj.DeviceFamily].FamilyXml_ModuleAPI
+            l_api = p_pyhouse_obj._Families[p_obj.DeviceFamily].FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
             l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)
@@ -143,7 +143,7 @@ class XML(object):
     def read_hvac_xml(p_pyhouse_obj):
         l_obj = HvacData()
         try:
-            l_xml = p_pyhouse_obj.Xml.XmlRoot.find('HouseDivision')
+            l_xml = p_pyhouse_obj._Config.XmlRoot.find('HouseDivision')
             l_xml = l_xml.find('HvacSection')
             l_xml = l_xml.find('ThermostatSection')
             l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_xml)

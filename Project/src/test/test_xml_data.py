@@ -12,8 +12,9 @@ It will check the XML file for being fundamentally correct for all other tests t
 
 Passed all 11 tests - DBK - 2019-03-18
 """
+from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-06-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -84,7 +85,7 @@ class A2_Parsed(unittest.TestCase):
 
     def test_06_HouseDivision(self):
         l_div = self.m_root_element.find('HouseDivision')
-        self.assertEqual(l_div.tag, 'HouseDivision')
+        self.assertEqual(l_div.tag, TESTING_HOUSE_DIVISION)
 
 
 class C02_Schema(unittest.TestCase):

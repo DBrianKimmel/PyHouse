@@ -1,25 +1,16 @@
-# Name:      PyHouse/Project/admin/config/Yaml/house.yaml
+# Name:      PyHouse/Project/admin/config/Yaml/house/house.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
-# Created:   Jun  5, 2019
-# Updated:   Jun  5, 2019
+# Created:   Jun 10, 2019
+# Updated:   Jun 10, 2019
 # License:   MIT License
-# Summary:   This is for the house.
+# Summary:   This is for PyHouse
 ---
 
-!PyHouseData
-Name: pink poppy
-Location:
-   Street: 5191 N Pink Poppy Dr
-   City: Beverly Hills
-   State: Fl
-   ZipCode: 34465
-   Phone: (352) 270-8096
-   Region: America
-   TimeZone: America/New York
-   Latitude: 28.938448
-   Longitude: 82.517208
-   Elevation: 33.0
+House:
+   Name: cannon trail
+   Location: !include house/location.yaml
+   Rooms: !include house/rooms.yaml
 
 ### END DBK

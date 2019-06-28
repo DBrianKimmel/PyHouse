@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.test.test_family -*-
-
 @name:      PyHouse/src/Modules/Families/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -32,8 +30,10 @@ An Insteon_device module is used to read and write information to an Insteon con
     FamilyXml_ModuleAPI       will point to Insteon_xml.API() where ReadXml
 
 """
+from _datetime import datetime
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import importlib
@@ -49,6 +49,8 @@ class Utility:
     """
     This will go thru every valid family and build a family entry for each one.
     It also imports the _device and _xml for each family and stores their API reference in the family object.
+
+    This should operate more as a plug-in loader rather than loading everything.
     """
 
     def _do_import(self, p_family_obj, p_module_name):
@@ -81,7 +83,8 @@ class Utility:
         try:
             l_api = p_module_ref.API(p_pyhouse_obj)
         except Exception as e_err:
-            LOG.error('ERROR - Module{}\n\t{}'.format(p_module_name, e_err))
+            LOG.error('ERROR - Module: {}\n\t{}'.format(p_module_name, e_err))
+            LOG.error('Ref: {}'.format(PrettyFormatAny.form(p_module_ref, 'ModuleRef', 190)))
             l_api = None
         return l_api
 
@@ -100,13 +103,12 @@ class Utility:
     def _build_one_family_data(self, p_pyhouse_obj, p_name):
         """Build up the FamilyInformation names portion entry for a single family
 
-        For the Instreon family:
+        For the Insteon family:
             Insteon_device                   ==> FamilyDevice_ModuleName
             Insteon_xml                      ==> FamilyXml_ModuleName
             Modules.Families.Insteon         ==> FamilyPackageName
 
         @param p_name: a Valid Name such as "Insteon"
-        @param p_count: an indexing number
         """
         LOG.info('Building Family: {}'.format(p_name))
         l_family_obj = FamilyInformation()
@@ -114,13 +116,16 @@ class Utility:
         l_family_obj.Key = 0
         l_family_obj.Active = True
         l_family_obj.Comment = 'Family ' + p_name
+        l_family_obj.LastUpdate = datetime.now()
         l_family_obj.FamilyPackageName = 'Modules.Families.' + p_name
         l_family_obj.FamilyDevice_ModuleName = p_name + '_device'
         l_family_obj.FamilyXml_ModuleName = p_name + '_xml'
+        l_family_obj.FamilyYaml_ModuleName = p_name + '_yaml'
+        # Now import the family python package
         importlib.import_module(l_family_obj.FamilyPackageName)
 
-        l_devive_ref = Utility()._do_import(l_family_obj, l_family_obj.FamilyDevice_ModuleName)
-        l_family_obj.FamilyDevice_ModuleAPI = Utility()._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyDevice_ModuleName, l_devive_ref)
+        l_device_ref = Utility()._do_import(l_family_obj, l_family_obj.FamilyDevice_ModuleName)
+        l_family_obj.FamilyDevice_ModuleAPI = Utility()._create_api_instance(p_pyhouse_obj, l_family_obj.FamilyDevice_ModuleName, l_device_ref)
 
         l_xml_ref = Utility()._do_import(l_family_obj, l_family_obj.FamilyXml_ModuleName)
         l_family_obj.FamilyXml_ModuleAPI = Utility()._create_xml_instance(p_pyhouse_obj, l_family_obj.FamilyXml_ModuleName, l_xml_ref)
@@ -161,13 +166,13 @@ class API:
         LOG.info('Initialized')
 
     def LoadXml(self, p_pyhouse_obj):
-        """ The actual loading of the Families section of PyHouse_Obj os done in the constructor.
+        """ The actual loading of the Families section of PyHouse_Obj is done in the constructor.
         """
-        p_pyhouse_obj.FamilyInformation = self.m_family
+        p_pyhouse_obj._Families = self.m_family
 
     def Start(self):
         """
-        Build p_pyhouse_obj.FamilyInformation
+        Build p_pyhouse_obj._Families
         """
         return self.m_family
 
@@ -190,7 +195,7 @@ class API:
         Runs Device_<family>.API.Start()
         """
         LOG.info("Starting lighting families.")
-        for l_family_obj in p_pyhouse_obj.FamilyInformation.values():
+        for l_family_obj in p_pyhouse_obj._Families.values():
             LOG.info('Starting Family {}'.format(l_family_obj.Name))
             l_family_obj.FamilyDevice_ModuleAPI.Start()  # will run <family>_device.API().Start()
         LOG.info("Started all lighting families.")

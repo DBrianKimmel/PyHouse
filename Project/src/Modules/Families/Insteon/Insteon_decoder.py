@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_decoder -*-
-
 @name:      PyHouse/src/Modules/Families/Insteon/Insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -24,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-24'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -139,7 +137,7 @@ class DecodeResponses(object):
 
     def _publish(self, p_pyhouse_obj, p_device_obj):
         l_topic = "house/lighting/light/{}/info".format(p_device_obj.Name)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
+        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
     def _decode_0x50(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)

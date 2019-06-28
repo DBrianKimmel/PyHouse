@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-06-08'
+__updated__ = '2019-06-25'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -310,7 +310,7 @@ class ScheduleExecution():
         """
         l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
-        p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
         #
         if p_schedule_obj.ScheduleType == 'Lighting':
             LOG.info('Execute_one_schedule type = Lighting')
@@ -362,7 +362,7 @@ class Utility():
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):
         _l_topic = 'house/schedule/sunrise_set'
-        l_riseset = p_pyhouse_obj.House.Location.RiseSet  # RiseSetData()
+        l_riseset = p_pyhouse_obj.House.Location._RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
 
@@ -398,7 +398,7 @@ class Utility():
     def run_after_delay(p_pyhouse_obj, p_delay, p_list):
         """
         """
-        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
+        l_runID = p_pyhouse_obj._Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
         l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
         LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
         return l_runID
@@ -464,7 +464,7 @@ class Timers(object):
 
     def set_one(self, p_pyhouse_obj, p_delay, p_list):
         l_callback = ScheduleExecution.execute_schedules_list
-        l_runID = p_pyhouse_obj.Twisted.Reactor.callLater(p_delay, l_callback, p_pyhouse_obj, p_list)
+        l_runID = p_pyhouse_obj._Twisted.Reactor.callLater(p_delay, l_callback, p_pyhouse_obj, p_list)
         l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
         LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
         return l_runID
@@ -512,7 +512,7 @@ class API():
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
 
     def XXXDecodeMqtt(self, p_topic, p_message):
         """ Decode messages sent to the house module.

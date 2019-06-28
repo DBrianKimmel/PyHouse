@@ -1,17 +1,15 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_device_tools -*-
-
-@name:      PyHouse/src/Modules.Core.Utilities.device_tools.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/device_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 26, 2015
 @Summary:   Routines to load and save basic Device Data
 
 """
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-06-09'
 
 #  Import system type stuff
 

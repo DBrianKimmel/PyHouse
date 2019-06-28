@@ -13,7 +13,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2019-05-12'
+__updated__ = '2019-06-25'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -117,7 +117,7 @@ class FindRepositoryVersion(object):
         self.m_headers = Headers({'User-Agent': ['AutoUpdate Web Client']})
         if p_pyhouse_obj != None:
             self.m_pyhouse_obj = p_pyhouse_obj
-            self.m_hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+            self.m_hue_agent = Agent(p_pyhouse_obj._Twisted.Reactor)
             LOG.info('Initialized')
             print('Initialized')
         self.m_version = '0.0.0'

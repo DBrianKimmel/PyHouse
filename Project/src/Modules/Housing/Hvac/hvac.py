@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-09'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -23,7 +23,6 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.data_objects import DeviceData
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
 
 from Modules.Computer import logging_pyh as Logger

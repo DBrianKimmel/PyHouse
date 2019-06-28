@@ -213,7 +213,7 @@ class XML:
         """
         l_plugins = EntertainmentData()
         l_count = 0
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         if l_xml != None:
             for l_sect in l_xml:
                 l_sub = self.read_entertainment_subsection(p_pyhouse_obj, l_sect)

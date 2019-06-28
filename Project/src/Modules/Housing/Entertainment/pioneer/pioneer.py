@@ -21,7 +21,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-06-05'
+__updated__ = '2019-06-25'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -110,7 +110,7 @@ class XML:
     def read_pioneer_section_xml(p_pyhouse_obj):
         """ Get the entire PioneerDeviceData object from the xml.
         """
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PioneerSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection/PioneerSection')
         l_entertain_obj = p_pyhouse_obj.House.Entertainment
         l_plugin_obj = l_entertain_obj.Plugins[SECTION]
         l_plugin_obj.Name = SECTION
@@ -445,7 +445,7 @@ class API(MqttActions, PioneerClient):
             l_host = long_to_str(l_device_obj.IPv4)
             l_port = l_device_obj.Port
             l_factory = PioneerFactory(self.m_pyhouse_obj, l_device_obj)
-            l_connector = self.m_pyhouse_obj.Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+            l_connector = self.m_pyhouse_obj._Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
             l_device_obj._Factory = l_factory
             l_device_obj._Connector = l_connector
             l_device_obj._isRunning = True

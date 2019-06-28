@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2019-03-18'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -61,7 +61,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.FamilyInformation = self.m_family
+        self.m_pyhouse_obj._Families = self.m_family
         self.m_api = securityAPI
         self.m_garage_door_obj = GarageDoorData()
 
@@ -94,7 +94,7 @@ class A1(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.motiondetector.tag, 'Motion')
 
     def test_02_Xml(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml.XmlRoot))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Config.XmlRoot))
         pass
 
     def test_03_Family(self):

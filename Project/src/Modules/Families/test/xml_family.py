@@ -1,17 +1,15 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Families/test/xml_family.py -*-
-
-@name:      /home/briank/PyHouse/src/Modules/Families/test/xml_family.py
+@name:      PyHouse/Project/src/Modules/Families/test/xml_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2019 by D. Brian Kimmel
 @note:      Created on Nov 6, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2017-12-18'
+__updated__ = '2019-06-24'
 
 TESTING_FAMILY_NAME_0 = 'Null'
 TESTING_FAMILY_NAME_1 = 'Insteon'

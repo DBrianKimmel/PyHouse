@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_device -*-
-
 @name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -20,7 +18,7 @@ serial_port
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-09'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

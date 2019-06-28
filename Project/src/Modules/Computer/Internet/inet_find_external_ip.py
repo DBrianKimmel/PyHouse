@@ -16,14 +16,13 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2017-03-29'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import re
 from twisted.internet.defer import Deferred
 from twisted.web.client import Agent, readBody
 from twisted.web.http_headers import Headers
-
 
 # Import PyMh files and modules.
 from Modules.Computer import logging_pyh
@@ -84,7 +83,6 @@ class Utility(FindExternalIpAddress):
         l_body_defer.addCallback(cb_body)
         return l_body_defer
 
-
     def get_public_ip(self, p_pyhouse_obj, p_key):
         """
         Loop thru the given external sites until one of them gets an external IPv4 address.
@@ -92,13 +90,16 @@ class Utility(FindExternalIpAddress):
 
         @return: a deferred
         """
+
         def cb_response(p_response):
             self.m_headers = p_response
             l_body_defer = self._get_body(p_response)
             return l_body_defer
+
         def eb_response(p_reason):
             LOG.warn(' failed to fetch Url - {}'.format(p_reason))
-        l_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+
+        l_agent = Agent(p_pyhouse_obj._Twisted.Reactor)
         l_url = self._get_url(p_key)
         l_defer = l_agent.request(
             'GET',
@@ -108,7 +109,6 @@ class Utility(FindExternalIpAddress):
         l_defer.addCallback(cb_response)
         l_defer.addErrback(eb_response)
         return l_defer
-
 
 
 class API(Utility):

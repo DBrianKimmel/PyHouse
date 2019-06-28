@@ -17,7 +17,7 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-06-19'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -153,10 +153,7 @@ class Xml(object):
         l_obj.WebPort = 8580
         l_obj.SecurePort = 8588
         l_obj.WebSocketPort = 8581
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        if l_xml == None:
-            return l_obj
-        l_xml = l_xml.find('WebSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision/WebSection')
         if l_xml == None:
             return l_obj
         l_obj.Logins, l_count = Xml._read_all_logins(l_xml)

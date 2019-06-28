@@ -1,17 +1,15 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_data -*-
-
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_data.py
+@name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 6, 2014
 @summary:   This module contains data definition for Insteon devices.
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff
 

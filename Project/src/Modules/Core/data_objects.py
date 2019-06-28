@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
-
-@Name:      PyHouse/src/Modules/Core/data_objects.py
+@Name:      PyHouse/Project/src/Modules/Core/data_objects.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -16,17 +14,16 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-06-06'
-__version_info__ = (19, 5, 0)
+__updated__ = '2019-06-25'
+__version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-# from Modules.Core.state import State
 
 
-class PyHouseData(object):
+class PyHouseInformation:
     """
     ==> PyHouse.xxx as in the def below.
 
@@ -36,23 +33,35 @@ class PyHouseData(object):
 
     The APIs are kept separate as they should not be a part of the data sent to the browser.
     """
-    YAMLTag = '!PyHouseData'
 
     def __init__(self):
-        self.APIs = None  # PyHouseAPIs()
         self.Computer = None  # ComputerInformation()
-        self.Families = None  # FamilyInformation()
         self.House = None  # HouseInformation()
-        self.Twisted = None  # TwistedInformation()
-        self.Uuids = None  # AllUuids()
-        self.Xml = None  # XmlInformation()
-        self.Yaml = None  # YamlInformation()
+        # The rest are "Core" components
+        self._APIs = None  # PyHouseAPIs()
+        self._Config = None  # ConfigInformation()
+        self._Families = None  # FamilyInformation()
+        self._Parameters = None  # ParameterInformation()
+        self._Twisted = None  # TwistedInformation()
+        self._Uuids = None  # AllUuids()
 
 
-class PyHouseAPIs(object):
+class ParameterInformation:
+    """
+    ==> PyHouse._Parameters.xxx
+
+    These are filled in first and hold things needed for early initialization.
     """
 
-    ==> PyHouse.APIs
+    def __init__(self):
+        self.Name = None
+        self.UnitSystem = None
+        self.ConfigVersion = 2.0
+
+
+class PyHouseAPIs:
+    """
+    ==> PyHouse._APIs.xxx
 
     Most of these have a single entry.
     """
@@ -64,9 +73,10 @@ class PyHouseAPIs(object):
         self.PyHouseMainAPI = None
 
 
-class BaseObject(object):
-    """ This is the base object.
-    It is part of every entry in the PyHouse database.
+class BaseObject:
+    """
+    This is the base object.
+    It is part of almost every entry in the PyHouse database.
     This data for non device data.
     Do not use this object, derive objects from it.
     """
@@ -79,10 +89,10 @@ class BaseObject(object):
         self.LastUpdate = None
 
 
-class CommunicationAPIs(object):
+class CommunicationAPIs:
     """
+    ==> PyHouse._APIs.Computer.Communication.xxx as in the def below.
 
-    ==> PyHouse.APIs.Computer.Communication as in the def below.
     """
 
     def __init__(self):
@@ -92,10 +102,10 @@ class CommunicationAPIs(object):
         self.TwitterAPI = None
 
 
-class ComputerAPIs():
+class ComputerAPIs:
     """
+    ==> PyHouse._APIs.Computer.xxx as in the def below.
 
-    ==> PyHouse.APIs.Computer.xxx as in the def below.
     """
 
     def __init__(self):
@@ -110,26 +120,7 @@ class ComputerAPIs():
         self.WebSocketAPI = None
 
 
-class CoordinateData(object):
-    """
-    If applied to components of a house (facing the 'Front' of a house:
-        X or the distance to the Right from the room's Left side.
-        Y or the distance back from the Front of the room.
-        Z or the Height above the floor.
-    Preferably the distance is kept in Meters but for you die hard Imperial measurement people in Decimal feet (no inches)!
-
-    In case you need some hints:
-        Light switches are about 1.0 meters above the floor.
-        Outlets are about 0.2 meters above the floor.
-    """
-
-    def __init__(self):
-        self.X_Easting = 0.0
-        self.Y_Northing = 0.0
-        self.Z_Height = 0.0
-
-
-class CommunicationData(object):
+class CommunicationData:
     """Email information.
     """
 
@@ -138,7 +129,7 @@ class CommunicationData(object):
         self.Twitter = None  # TwitterData()
 
 
-class EmailData(object):
+class EmailData:
     """Email information.
     """
 
@@ -149,7 +140,7 @@ class EmailData(object):
         self.GmailPassword = ''
 
 
-class EthernetControllerData(object):
+class EthernetControllerData:
     """A lighting controller that is connected to the node via Ethernet
     """
 
@@ -159,10 +150,10 @@ class EthernetControllerData(object):
         self.Protocol = 'TCP'
 
 
-class HouseAPIs(object):
+class HouseAPIs:
     """ These are all the sub-systems of House.
 
-    ==> PyHouse.APIs.House
+    ==> PyHouse._APIs.House
     """
 
     def __init__(self):
@@ -190,7 +181,7 @@ class HouseAPIs(object):
 #        self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
-class LightingData(object):
+class LightingData:
     """
     DeviceType = 1
 
@@ -203,35 +194,7 @@ class LightingData(object):
         self.Lights = {}  # LightData()  DeviceSubType = 2
 
 
-class LocationData(object):
-    """ Location of the houses
-    Latitude and Longitude allow the computation of local sunrise and sunset
-    """
-
-    def __init__(self):
-        self.Street = ''
-        self.City = ''
-        self.State = ''  # 'FL'
-        self.ZipCode = ''  # '12345'
-        self.Phone = ''
-        self.Latitude = 0.0  # 28.938448
-        self.Longitude = 0.0  # 82.517208
-        self.Elevation = 0.0  # 30
-        self.Region = ''  # 'America'
-        self.TimeZoneName = 'America/New_York'  # 'America/New_York'
-        #
-        self._name = ''  # 'Greenwich'
-        self._region = ''  # 'England'
-        self.DomainID = None
-        self.RiseSet = RiseSetData()  # RiseSetData()
-        self._TimeZoneOffset = '-5:00'
-        self._IsDaylightSavingsTime = False
-        #  Computed at startup (refreshed periodically)
-        #  self._Sunrise = None
-        #  self._Sunset = None
-
-
-class ModuleObject(object):
+class ModuleObject:
     """
     """
 
@@ -239,7 +202,7 @@ class ModuleObject(object):
         self.Active = False
 
 
-class NullControllerData(object):
+class NullControllerData:
     """ A lighting controller that is connected to the node via Nothing
     """
 
@@ -247,7 +210,7 @@ class NullControllerData(object):
         self.InterfaceType = 'Null'
 
 
-class RiseSetData(object):
+class RiseSetData:
     """ These fields are each a datetime.datetime
     They were calculated by the sunrisesunset module for the house's location and timezone.
     They are therefore, the local time of sunrise and sunset.
@@ -261,7 +224,7 @@ class RiseSetData(object):
         self.Dusk = None
 
 
-class ScheduleThermostatData(object):
+class ScheduleThermostatData:
     """
     """
 
@@ -270,7 +233,7 @@ class ScheduleThermostatData(object):
         self.CoolSetting = None
 
 
-class SecurityData(object):
+class SecurityData:
     """
     DeviceType = 3
     ==> PyHouse.House.Security.xxx as in the def below
@@ -281,7 +244,7 @@ class SecurityData(object):
         self.MotionSensors = {}  # DeviceSubtype = 2
 
 
-class SerialControllerData(object):
+class SerialControllerData:
     """ The additional data needed for serial interfaces.
     """
 
@@ -297,7 +260,7 @@ class SerialControllerData(object):
         self.XonXoff = False
 
 
-class TwistedInformation(object):
+class TwistedInformation:
     """ Twisted info is kept in this class
     """
 
@@ -307,7 +270,7 @@ class TwistedInformation(object):
         self.Site = None
 
 
-class TwitterData(object):
+class TwitterData:
     """ Email information.
     """
 
@@ -318,7 +281,7 @@ class TwitterData(object):
         self.TwitterAccessSecret = ''
 
 
-class USBControllerData(object):
+class USBControllerData:
     """ A lighting controller that is plugged into one of the nodes USB ports
     """
 
@@ -328,10 +291,10 @@ class USBControllerData(object):
         self.Vendor = 0
 
 
-class AllUuids(object):
+class AllUuids:
     """
 
-    ==> PyHouse.Uuids.xxx as in the def below
+    ==> PyHouse._Uuids.xxx as in the def below
     """
 
     def __init__(self):
@@ -341,10 +304,10 @@ class AllUuids(object):
         self.HouseUuid = None
 
 
-class UuidData(object):
+class UuidData:
     """ a dict with the key = UUID and values of ...
 
-    ==> PyHouse.Uuids.All.{} as in the def below
+    ==> PyHouse._Uuids.All.{} as in the def below
     """
 
     def __init__(self):
@@ -352,7 +315,7 @@ class UuidData(object):
         self.UuidType = None  # Light, Thermostat, Room ...
 
 
-class WeatherData(object):
+class WeatherData:
     """
     """
 
@@ -364,7 +327,7 @@ class WeatherData(object):
         self.WindDirection = 0  # Degrees
 
 
-class WeatherInformation(object):
+class WeatherInformation:
     """
     """
 
@@ -372,7 +335,7 @@ class WeatherInformation(object):
         self.stationID = None
 
 
-class WebData(object):
+class WebData:
     """ Information about the configuration and control web server
 
     ==> PyHouse.Computer.Web.xxx - as in the def below.
@@ -386,30 +349,6 @@ class WebData(object):
         self.SecurePort = 8588
         self.secureServer = None
         self.Logins = {}  # LoginData()
-
-
-class XmlInformation(object):
-    """ A collection of XLM data used for Configuration
-
-    ==> PyHouse.Xml.xxx
-    """
-
-    def __init__(self):
-        self.XmlConfigDir = '/etc/pyhouse/'
-        self.XmlFileName = None
-        self.XmlRoot = None
-        self.XmlVersion = __version__  # Version from this module.
-        self.XmlOldVersion = None  # Version of the file read in at program start.
-
-
-class YamlInformation(object):
-    """ A collection of Yaml data used for Configuration
-
-    ==> PyHouse.Yaml.xxx
-    """
-
-    def __init__(self):
-        self.YamlConfigDir = '/etc/pyhouse/'
 
 
 class BaseUUIDObject(BaseObject):
@@ -433,9 +372,11 @@ class FamilyInformation(BaseObject):
         super(FamilyInformation, self).__init__()
         self.FamilyDevice_ModuleAPI = None  # Insteon_device.API()
         self.FamilyDevice_ModuleName = None  # Insteon_device
+        self.FamilyPackageName = None  # Modules.Families.Insteon
         self.FamilyXml_ModuleName = None  # Insteon_xml
         self.FamilyXml_ModuleAPI = None  # Address of Insteon_xml
-        self.FamilyPackageName = None  # Modules.Families.Insteon
+        self.FamilyYaml_ModuleName = None
+        self.FamilyConfigAPI = None
 
 
 class InternetConnectionData(BaseObject):
@@ -520,7 +461,7 @@ class HouseInformation(BaseUUIDObject):
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
         self.Lighting = {}  # LightingData()
-        self.Location = {}  # LocationData() - one location per house.
+        self.Location = {}  # LocationInformation() - one location per house.
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomInformation()
         self.Rules = {}  # RulesData()
@@ -710,23 +651,6 @@ class CoreLightingData(DeviceData):
         # self. Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
         self.ControllerNode = None
         self.ControllerName = None
-
-# class ThermostatData(DeviceData):
-
-    """
-
-    ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
-    """
-
-#    def __init__(self):
-#        super(ThermostatData, self).__init__()
-#        self.CoolSetPoint = 0
-#        self.CurrentTemperature = 0
-#        self.HeatSetPoint = 0
-#        self.ThermostatMode = 'Cool'  # Cool | Heat | Auto | EHeat
-#        self.ThermostatScale = 'F'  # F | C
-#        self.ThermostatStatus = 'Off'  # On
-#        self.UUID = None
 
 """
 CoreLightingData dependent.

@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 try:
@@ -314,7 +314,7 @@ class PimDriverInterface(DecodeResponses):
         p_controller_obj._Queue.put(p_command)
 
     def dequeue_and_send(self, p_controller_obj):
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
         try:
             l_command = p_controller_obj._Queue.get(False)
         except  Queue.Empty:
@@ -326,7 +326,7 @@ class PimDriverInterface(DecodeResponses):
     def receive_loop(self, p_controller_obj):
         """Periodically, get the current RX data from the driver.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj._DriverAPI != None:
             l_msg = p_controller_obj._DriverAPI.Read()
             if len(l_msg) == 0:

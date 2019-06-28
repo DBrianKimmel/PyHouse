@@ -136,7 +136,7 @@ class C1_Load(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_xml = XmlConfigTools.find_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
+        self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentData()
         self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
 

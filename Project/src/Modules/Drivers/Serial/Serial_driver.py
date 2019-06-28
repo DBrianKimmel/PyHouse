@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers.Serial.test.test_Serial_driver -*-
-
-@name:      PyHouse/src/Modules/Drivers/Serial/Serial_driver.py
+@name:      PyHouse/Project/src/Modules/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -25,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 import pyudev
@@ -35,12 +33,12 @@ from twisted.internet.serialport import SerialPort
 #  Import PyMh files
 from Modules.Drivers.interface import DriverStatus
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
-#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
-class FindPort:
+class FindPort():
     """ Check the localhost computer for a port that we will use for the device.
     We will use the information to see ???
     """
@@ -120,14 +118,14 @@ class SerialAPI:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
                     l_port,
-                    p_pyhouse_obj.Twisted.Reactor,
+                    p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
             p_controller_obj.Active = True
             l_topic = 'house/driver/serial/status'
             l_obj = DriverStatus()
             l_obj.Status = 'Open'
-            p_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+            p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Port, e_err))

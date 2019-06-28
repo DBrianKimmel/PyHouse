@@ -89,7 +89,7 @@ class Xml(object):
         l_dict = {}
         l_count = 0
         try:
-            l_section = XmlConfigTools.find_section(p_pyhouse_obj, 'ComputerDivision/BridgesSection')
+            l_section = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision/BridgesSection')
             if l_section == None:
                 return l_dict
         except AttributeError as e_err:

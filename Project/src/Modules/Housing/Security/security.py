@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Security/security.py
+@name:      PyHouse/Project/src/Modules/Security/security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-04-01'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
-from Modules.Core.Utilities.xml_tools import PutGetXML
+from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Families.family_utils import FamUtil
 from Modules.Housing.Security.pi_camera import API as cameraApi
@@ -116,7 +116,7 @@ class Utility(object):
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
             l_family = p_obj.DeviceFamily
-            l_family_obj = p_pyhouse_obj.FamilyInformation[l_family]
+            l_family_obj = p_pyhouse_obj._Families[l_family]
             l_api = l_family_obj.FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except Exception as e_err:
@@ -179,16 +179,7 @@ class XML(object):
         """
         l_count = 0
         l_dict = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        if l_xml is None:
-            return l_dict
-        l_xml = l_xml.find('HouseDivision')
-        if l_xml is None:
-            return l_dict
-        l_xml = l_xml.find('SecuritySection')
-        if l_xml is None:
-            return l_dict
-        l_xml = l_xml.find('MotionDetectorSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/SecuritySection/MotionDetectorSection')
         if l_xml is None:
             return l_dict
         try:
@@ -229,16 +220,7 @@ class XML(object):
         """
         l_count = 0
         l_dict = {}
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
-        if l_xml is None:
-            return l_dict
-        l_xml = l_xml.find('HouseDivision')
-        if l_xml is None:
-            return l_dict
-        l_xml = l_xml.find('SecuritySection')
-        if l_xml is None:
-            return l_dict
-        l_xml = l_xml.find('GarageDoorSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/SecuritySection/GarageDoorSection')
         if l_xml is None:
             return l_dict
         try:

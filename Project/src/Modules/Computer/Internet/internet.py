@@ -21,7 +21,7 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2019-04-15'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 
@@ -44,7 +44,7 @@ class Utility(object):
     def _internet_loop(p_pyhouse_obj):
         # API.FindExternalIp(p_pyhouse_obj)
         # API.UpdateDynDnsSites(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Utility._internet_loop, p_pyhouse_obj)
+        p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, Utility._internet_loop, p_pyhouse_obj)
 
     @staticmethod
     def _read_xml_configuration(p_pyhouse_obj):
@@ -67,7 +67,7 @@ class API(object):
         """
         Start async operation of the Internet module.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility._internet_loop, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility._internet_loop, self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def SaveXml(self, p_xml):

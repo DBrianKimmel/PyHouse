@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-05-25'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -100,10 +100,10 @@ class Utility(ClientConnections):
             LOG.error(p_reason)
             pass
 
-        l_reactor = p_pyhouse_obj.Twisted.Reactor
-        _l_app = p_pyhouse_obj.Twisted.Application
+        l_reactor = p_pyhouse_obj._Twisted.Reactor
+        _l_app = p_pyhouse_obj._Twisted.Application
         # l_app = Klein()
-        p_pyhouse_obj.Twisted.Application = klein_app
+        p_pyhouse_obj._Twisted.Application = klein_app
         # LOG.debug('{}'.format(PrettyFormatAny.form(klein_app, 'KleinApp', 190)))
         l_endpoint_description = 'tcp'
         l_endpoint_description += ':port={}'.format(p_port)
@@ -146,8 +146,8 @@ class Utility(ClientConnections):
          for example, if your DNS is not working, but you know that the IP address 7.6.5.4 points to awesome.site.example.com, you could specify:
             tls:awesome.site.example.com:443:endpoint=tcp\:7.6.5.4\:443.
         """
-        _l_reactor = p_pyhouse_obj.Twisted.Reactor
-        _l_app = p_pyhouse_obj.Twisted.Application
+        _l_reactor = p_pyhouse_obj._Twisted.Reactor
+        _l_app = p_pyhouse_obj._Twisted.Application
         l_endpoint_description = 'tls:'
         if p_host != None:
             l_endpoint_description += '{}:'.format(p_host)
@@ -157,7 +157,7 @@ class Utility(ClientConnections):
         # l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
         # l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
         # l_factory = protocol.Factory.forP rotocol(echoserv.Echo)
-        # p_pyhouse_obj.Twisted.Reactor.listenSSL(8000, l_factory, l_certificate.options())
+        # p_pyhouse_obj._Twisted.Reactor.listenSSL(8000, l_factory, l_certificate.options())
         return
 
 
@@ -167,7 +167,7 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.State = web_utils.WS_IDLE
         self.m_web_running = False
-        p_pyhouse_obj.Twisted.Application = Klein()
+        p_pyhouse_obj._Twisted.Application = Klein()
         LOG.info('Initialized.')
 
     def LoadXml(self, p_pyhouse_obj):

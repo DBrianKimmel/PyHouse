@@ -52,7 +52,7 @@ class XML:
     def read_all_buttons_xml(self, p_pyhouse_obj):
         l_count = 0
         l_dict = {}
-        l_xml = XmlConfigTools.find_section(p_pyhouse_obj, 'HouseDivision/LightingSection/ButtonSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/LightingSection/ButtonSection')
         if l_xml is None:
             return l_dict
         try:

@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-05-09'
+__updated__ = '2019-06-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -83,7 +83,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.FamilyInformation = familyAPI(self.m_pyhouse_obj).m_family
+        self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).m_family
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = deviceXML()
 
@@ -109,7 +109,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         # print(PrettyFormatAny.form(VALID_FAMILIES, 'A1-01-A - Valid'))
-        self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj.FamilyInformation))
+        self.assertEqual(len(VALID_FAMILIES), len(self.m_pyhouse_obj._Families))
         self.assertEqual(VALID_FAMILIES[0], TESTING_FAMILY_NAME_0)  # Null
         self.assertEqual(VALID_FAMILIES[1], TESTING_FAMILY_NAME_1)  # Insteon
         self.assertEqual(VALID_FAMILIES[2], TESTING_FAMILY_NAME_2)  # UPB

@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -615,7 +615,7 @@ class HueHub:
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_headers = Headers({'User-Agent': ['Hue Hub Web Client']})
-        self.m_hue_agent = Agent(p_pyhouse_obj.Twisted.Reactor)
+        self.m_hue_agent = Agent(p_pyhouse_obj._Twisted.Reactor)
         LOG.info('Initialized')
 
     def _build_uri(self, p_command=b'/config'):
