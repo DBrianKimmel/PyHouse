@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Utilities.config_tools.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/config_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,19 +9,20 @@
 
 """
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-29'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import os
+# from ruamel.yaml import comments
 from xml.etree import ElementTree as ET
 from ruamel.yaml import YAML
 
 #  Import PyMh files
 from Modules.Core.Utilities.xml_tools import PutGetXML
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
@@ -54,11 +55,24 @@ class Yaml:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def generate_running_key_value(self, p_object):
-        """ get key, value of pyhouse object
-        Iterable.
+    def validate_yaml_in_main(self, p_info_obj, p_yaml_def):
+        """
+        @param p_info_obj: is the xxxInformation() object we are getting the config data for.
+        @param p_yaml_def: is the yaml from the config file that we are extracting for the info_obj.
+        """
+        for l_yaml_key, l_yaml_value in p_yaml_def.items():
+            try:
+                _l_x = getattr(p_info_obj, l_yaml_key)
+            except AttributeError:
+                LOG.warn('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_yaml_key, l_yaml_value))
+                continue
+            setattr(p_info_obj, l_yaml_key, l_yaml_value)
+        return p_info_obj  # For testing
 
-        This will take a pyhouse object and return each data storage item
+    def generate_running_key_value(self, p_object):
+        """ get key, value of pyhouse object Iterable.
+
+        This will take a pyhouse object and return each data storage item as a key, value tuple.
         """
         l_obj = p_object
         for l_key in [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]:
@@ -66,19 +80,17 @@ class Yaml:
             yield (l_key, l_value)
         return
 
-    def _find_config_file(self, p_filename):
+    def _find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
         If unit testing, we must find the file in the source tree.
-        @return: a ConfigYamlNodeInformation filled in.
+        @return: a ConfigYamlNodeInformation() filled in.
         """
         l_node = ConfigYamlNodeInformation()
         l_node.FileName = p_filename
         l_dir = self.m_pyhouse_obj._Config.ConfigDir
-        # print('ConfigDir: ', l_dir, p_filename)
         for l_root, _l_dirs, l_files in os.walk(l_dir):
             if p_filename in l_files:
                 l_path = os.path.join(l_root, p_filename)
-                # print('Path: ', l_path)
                 l_node.YamlPath = l_path
                 return l_node
         return l_node
@@ -89,14 +101,14 @@ class Yaml:
 
         @return: a ConfigYamlNodeInformation() filled in
         """
-        l_node = self._find_config_file(p_filename)
+        l_node = self._find_config_node(p_filename)
         if l_node.YamlPath == None:
-            LOG.error('Config file "{}" was not found within the config dir "{}".'.format(l_node.FileName, l_node.YamlPath))
+            LOG.error('Config file "{}" was not found within the config dir "{}".'.format(
+                        l_node.FileName, self.m_pyhouse_obj._Config.ConfigDir))
             return l_node
         l_yaml = YAML(typ='rt')
         l_yaml.allow_duplicate_keys = True
-        # ruamel.yaml.add_constructor(u'!Ref', your_ref_constructor, constructor=ruamel.yaml.SafeConstructor)
-        with open(l_node.YamlPath) as l_file:
+        with open(l_node.YamlPath, 'r') as l_file:
             l_data = l_yaml.load(l_file)
             l_node.Yaml = l_data
         self.m_pyhouse_obj._Config.YamlTree[p_filename] = l_node
@@ -107,11 +119,13 @@ class Yaml:
     def write_yaml(self, p_data, p_filename, addnew=False):
         """
         @param p_data: is the yaml data to be written.
-        @param p_filename: is the name of the read in yaml file
+        @param p_filename: is the name of the read in yaml file 'rooms.yaml'
         @param addnew: defaults to false, will add '-new' to the saved filename.
         """
+        l_now = datetime.datetime.now()
         l_node = self.m_pyhouse_obj._Config.YamlTree[p_filename]
         l_filename = l_node.YamlPath
+        l_node.Yaml.insert(2, '# Updated', str(l_now), comment="Test Comment!")
         if addnew:
             l_filename += '-new'
         l_yaml = YAML(typ='rt')
@@ -119,6 +133,14 @@ class Yaml:
         l_yaml.version = (1, 2)
         with open(l_filename, 'w+') as l_file:
             l_yaml.dump(p_data, l_file)
+        LOG.debug('Saved Yaml file "{}"'.format(p_filename))
+
+    def dump_string(self, p_data):
+        """
+        """
+        l_yaml = YAML(typ='rt')
+        l_data = l_yaml.dump(p_data, None, transform=print)
+        return l_data
 
 
 class API:

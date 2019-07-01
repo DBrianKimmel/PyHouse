@@ -26,7 +26,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-29'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -44,7 +44,7 @@ from Modules.Housing.Entertainment.entertainment import \
     MqttActions as entertainmentMqtt
 from Modules.Housing import location, rooms, floors
 # from Modules.Housing.location import Xml as locationXML
-from Modules.Housing.rooms import Xml as roomsXML, Mqtt as roomsMqtt
+from Modules.Housing.rooms import Mqtt as roomsMqtt
 from Modules.Housing.Hvac.hvac import API as hvacAPI, MqttActions as hvacMqtt
 from Modules.Housing.Irrigation.irrigation import API as irrigationAPI, MqttActions as irrigationMqtt
 from Modules.Housing.Lighting.lighting import API as lightingAPI, MqttActions as lightingMqtt
@@ -71,7 +71,7 @@ class HouseInformation(BaseUUIDObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = {}  # EntertainmentData() in Entertainment/entertainment_data.py
+        self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
         self.Lighting = {}  # LightingData()
@@ -193,7 +193,7 @@ class Utility:
     def _load_component_config(p_pyhouse_obj):
         """ Load the XML config file for all the components of the house.
         """
-        p_pyhouse_obj._APIs.House.EntertainmentAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.House.EntertainmentAPI.LoadConfig(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.FamilyAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)

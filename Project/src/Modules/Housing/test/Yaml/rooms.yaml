@@ -38,13 +38,11 @@ Rooms:
      Active: 'True'
      Comment: The
      LastUpdate: 2010-01-01 01:02:03
-     UUID: 'room....-0003-11e6-953b-74da3859e09a'
      Corner: [0.0, 0.0, 0.0]
      Floor: 1
      Size: [0.0, 0.0, 0.0]
      RoomType: Room
-     Trigger: None
-
+ 
    - Name: Living Room
      Active: 'True'
      Comment: The
@@ -60,7 +58,6 @@ Rooms:
      Active: 'True'
      Comment: The
      LastUpdate: 2010-01-01 01:02:03
-     UUID: 'room....-0005-11e6-953b-74da3859e09a'
      Corner: [0.0, 0.0, 0.0]
      Floor: 1
      Size: [0.0, 0.0, 0.0]

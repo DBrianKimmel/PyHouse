@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2019-06-06'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,8 +22,8 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData, \
-        EntertainmentPluginData
+        EntertainmentInformation, \
+        EntertainmentPluginInformation
 from Modules.Housing.Entertainment.samsung.samsung import XML as samsungXml, SECTION
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
@@ -162,8 +162,8 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_pioneer = self.m_xml.pioneer_sect.find('Device')
 
     def test_01_Device(self):
@@ -194,8 +194,8 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_section = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
         # self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_section
 

@@ -6,11 +6,9 @@
 # Updated:   Jun 21, 2019
 # License:   MIT License
 # Summary:   This is for all the rooms in a house.
-#   Rooms are consistant on all nodes within a house.
----
 
-# Floors are defined first.
-# Outside is always present and must be first.
+#   Rooms are consistant on all nodes within a house.
+#   Outside is always present and must be first.
 
 Floors:
    - Name: Outide

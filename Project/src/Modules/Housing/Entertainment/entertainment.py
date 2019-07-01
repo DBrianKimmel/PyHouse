@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Entertainment/entertainment.py
+@name:      PyHouse/Project/src/Modules/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -24,26 +24,27 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-06-30'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
-# import importlib
-# import xml.etree.ElementTree as ET
+import importlib
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import extract_tools
-from Modules.Core.Utilities.xml_tools import XmlConfigTools
+from Modules.Core.Utilities import extract_tools, config_tools
+# from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData, \
-        EntertainmentDeviceControl
+        EntertainmentInformation, \
+        EntertainmentDeviceControl, EntertainmentPluginInformation
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
+
+CONFIG_FILE_NAME = 'entertainment.yaml'
 
 
 class Ent:
@@ -113,6 +114,95 @@ class MqttActions():
         return p_logmsg
 
 
+class Yaml:
+    """
+    """
+
+    def first(self, p_ordered):
+        """ Return the first element from an ordered collection
+           or an arbitrary element from an unordered collection.
+           Raise StopIteration if the collection is empty.
+        """
+        return next(iter(p_ordered))
+
+    def load_defined_plugins(self, p_pyhouse_obj):
+        """
+        """
+        for l_name, l_plugin in p_pyhouse_obj.House.Entertainment.Plugins.items():
+            l_plugin_name = 'Modules.Housing.Entertainment.' + l_name + '.' + l_name
+            l_module = importlib.import_module(l_plugin_name)
+            l_plugin._Module = l_module
+            # Initialize Plugin
+            l_plugin._API = l_module.API(p_pyhouse_obj)
+            LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
+            pass
+
+    def _extract_services(self, p_pyhouse_obj, p_yaml):
+        """ Get a service loaded
+        """
+        # LOG.debug('Services:\n\t{}'.format(p_yaml))
+        for l_service in p_yaml:
+            # LOG.debug('Key:\n\t{}'.format(l_service))
+            l_obj = EntertainmentPluginInformation()
+            l_name = self.first(l_service)
+            l_ix = l_name.lower()
+            l_obj.Name = l_name
+            l_obj.Active = True
+            l_obj.Type = 'Service'
+            p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
+        # LOG.debug('Services: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment)))
+
+    def _extract_devices(self, p_pyhouse_obj, p_yaml):
+        """
+        """
+        # LOG.debug('Devices:\n\t{}'.format(p_yaml))
+        for l_device in p_yaml:
+            # LOG.debug('Key:\n\t{}'.format(l_device))
+            l_obj = EntertainmentPluginInformation()
+            l_name = self.first(l_device)
+            l_ix = l_name.lower()
+            l_obj.Name = l_name
+            l_obj.Active = True
+            l_obj.Type = 'Device'
+            p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
+        # LOG.debug('Devices: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment)))
+
+    def _update_entertain_from_yaml(self, p_pyhouse_obj, p_node_yaml):
+        """ Update Entertainment.
+        This iterates thru the entertainment config file and finds the names of all components that we will need to load as plugins.
+        """
+        LOG.debug('Entertainment\n\t{}\n'.format(p_node_yaml))
+        try:
+            l_yaml = p_node_yaml['Entertainment']
+        except:
+            LOG.error('The "Entertainment" tag is missing in the "entertainment.yaml" file!')
+            return None
+        # Extract all the services (if any).
+        try:
+            l_services = l_yaml['Services']
+            self._extract_services(p_pyhouse_obj, l_services)
+        except Exception as e_err:
+            LOG.warn('There is no "Services" section in the entertainment.yaml file!\n\t{}'.format(e_err))
+        # Extract all the devices.
+        try:
+            l_devices = l_yaml['Devices']
+            self._extract_devices(p_pyhouse_obj, l_devices)
+        except Exception as e_err:
+            LOG.warn('There is no "Devices" section in the entertainment.yaml file\n\t{}'.format(e_err))
+        #
+        LOG.debug('Plugins Requested: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment.Plugins)))
+
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """ Read the Entertainment.Yaml file.
+        This config file will contain all the service and device names to load.
+        """
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
+        l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_entertain = self._update_entertain_from_yaml(p_pyhouse_obj, l_node.Yaml)
+        self.load_defined_plugins(p_pyhouse_obj)
+        return l_entertain  # for testing purposes
+
+
 class API(Ent):
     """ Entertainment is a core module.
     However, there are a large number of subsystems possible.
@@ -122,9 +212,18 @@ class API(Ent):
     def __init__(self, p_pyhouse_obj):
         """ Create all the empty structures needed to load, run and save the entertainment information.
         """
-        p_pyhouse_obj.House.Entertainment = EntertainmentData()  # Create empty entertainment plugin section
+        p_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Create empty entertainment plugin section
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def LoadConfig(self, p_pyhouse_obj):
+        """ Read the entertainment config.
+
+        @return: the Entertainment object of PyHouse_obj
+        """
+        LOG.info("XML Loading - Version:{}".format(__version__))
+        Yaml().LoadYamlConfig(p_pyhouse_obj)
+        return
 
     def _module_start_loop(self, p_pyhouse_obj, p_plugin):
         """
@@ -138,37 +237,6 @@ class API(Ent):
         l_obj.HostName = p_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
         # p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
-
-    def LoadXml(self, p_pyhouse_obj):
-        """ Read the entertainment section.
-        Everything present in the XML must be read into the pyhouse_obj structure.
-
-        SubSections not active will not be loaded or instantiated.
-
-        If a subsection is available, load its module and let it read the xml for itself.
-
-        @return: the Entertainment object of PyHouse_obj
-        """
-        LOG.info("XML Loading - Version:{}".format(__version__))
-        _l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-
-        """
-        if l_xml == None:
-            l_entertain.Active = False
-            return l_entertain
-        l_count = 0
-        for _section_element in l_xml:
-            # self._module_load_loop(p_pyhouse_obj, l_section_element)
-            l_count += 1
-        l_entertain.Active = True
-        l_entertain.PluginCount = l_count
-        LOG.info('XML Loaded {} Entertainment Sections'.format(l_count))
-        return l_entertain
-        """
-
-        l_entertainment_obj = entertainmentXML().read_entertainment_all(p_pyhouse_obj)
-        p_pyhouse_obj.House.Entertainment = l_entertainment_obj
-        return l_entertainment_obj
 
     def Start(self):
         LOG.info("Starting - Version:{}".format(__version__))
@@ -188,12 +256,7 @@ class API(Ent):
         return l_entertainment_xml  # For debugging
 
     def Stop(self):
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House))
         LOG.info("Stopped.")
-
-    def XXXDecodeMqtt(self, p_topic, p_message):
-        """ Decode messages sent to the house module.
-        """
-        l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
-        return l_logmsg
 
 # ## END DBK

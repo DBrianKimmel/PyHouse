@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2019-04-20
 
 """
 
-__updated__ = '2019-06-06'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,7 @@ from Modules.Housing.test.xml_housing import \
 from Modules.Housing.Entertainment.test.xml_entertainment import \
     TESTING_ENTERTAINMENT_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentInformation, EntertainmentPluginInformation
 from Modules.Core.Utilities import convert
 
 
@@ -160,8 +160,8 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_pandora = self.m_xml.pandora_sect.find('Service')
 
     def test_01_Build(self):
@@ -217,8 +217,8 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_pandora = self.m_xml.entertainment_sect.find('PandoraSection').find('Device')
         self.m_pandora = pandoraXML().read_pandora_section_xml(self.m_pyhouse_obj)
 
@@ -245,7 +245,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.attrib['Key'], TESTING_PANDORA_SERVICE_KEY_0)
         self.assertEqual(l_xml.attrib['Active'], TESTING_PANDORA_SERVICE_ACTIVE_0)
         self.assertEqual(l_xml.find('Comment').text, TESTING_PANDORA_SERVICE_COMMENT_0)
-        # EntertainmentServiceData
+        # EntertainmentServiceInformation
         self.assertEqual(l_xml.find('Host').text, TESTING_PANDORA_SERVICE_HOST_0)
         self.assertEqual(l_xml.find('MaxPlayTime').text, TESTING_PANDORA_SERVICE_MAX_PLAY_TIME_0)
         self.assertEqual(l_xml.find('ConnectionModel').text, TESTING_PANDORA_CONNECTION_DEVICE_MODEL_0_0)

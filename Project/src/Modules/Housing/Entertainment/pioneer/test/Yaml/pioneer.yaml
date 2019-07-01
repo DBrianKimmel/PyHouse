@@ -1,0 +1,29 @@
+# Name:      PyHouse/Project/src/Modules/Housing/Entertainment/Pioneer/test/Yaml/pioneer.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 29, 2019
+# Updated:   Jun 29, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Pioneer:
+  Active: 'True'
+  Comment: The Pandora music service
+  LastActive: 2001-01-01 01:02:03
+
+  Device:
+
+  - Name: Pioneer A/V Receiver
+    Comment: Main Receiver
+    Host:
+      Name: pioneer-ct
+      IPv4: 192.168.9.121
+      IPv6: None
+      Port: 8102
+    Login:
+      Username: None
+      Password: None
+    Type: Receiver
+
+### END DBK

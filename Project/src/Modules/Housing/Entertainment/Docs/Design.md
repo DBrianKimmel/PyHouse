@@ -51,7 +51,7 @@ class EntertainmentData():
 	Active = False
     PluginCount = 0
     # Plugins are indexed by the entertainment-family name (always lower cased).
-    Plugins = {}  # EntertainmentPluginData()
+    Plugins = {}  # EntertainmentPluginInformation()
 ```
 
 ### Plugins
@@ -61,14 +61,14 @@ The plugin structure is as follows
     PyHouse.House.Entertainment.Plugins[PluginName]
 
 ```python
-EntertainmentPluginData():
+EntertainmentPluginInformation():
     Active = False
     Name = None
     Type = 'Missing Type'  # Service: Component (a device):
     DeviceCount = 0
-    Devices = {}  # EntertainmentDeviceData()
+    Devices = {}  # EntertainmentDeviceInformation()
     ServiceCount = 0
-    Services = {}  # EntertainmentServiceData()
+    Services = {}  # EntertainmentServiceInformation()
 ```
 
 ### Loading XML
@@ -112,10 +112,10 @@ Obj:transport               <<class 'twisted.internet.tcp.Client'> to ('192.168.
 ```
 
 
-### EntertainmentDeviceData
+### EntertainmentDeviceInformation
 
 ```python
-super(EntertainmentDeviceData, self).__init__()
+super(EntertainmentDeviceInformation, self).__init__()
 self.DeviceCount = 0
 self._Factory = None  # The factory pointer for this device of an entertainment sub-section
 self._Transport = None

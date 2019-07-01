@@ -11,7 +11,7 @@ Passed all 18 tests - DBK - 2018-10-10
 
 """
 
-__updated__ = '2019-06-06'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,8 +23,8 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData, \
-        EntertainmentPluginData
+        EntertainmentInformation, \
+        EntertainmentPluginInformation
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Housing.Entertainment.pioneer.pioneer import \
         SECTION, \
@@ -181,8 +181,8 @@ class B1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_pioneer = self.m_xml.pioneer_sect.find('Device')
 
     def test_01_Device(self):
@@ -257,8 +257,8 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_section = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_section
 
@@ -312,7 +312,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         """
         l_obj = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_obj
-        # print(PrettyFormatAny.form(l_obj, 'D1-04-A - EntertainmentPluginData'))
+        # print(PrettyFormatAny.form(l_obj, 'D1-04-A - EntertainmentPluginInformation'))
         l_xml = pioneerXml.write_pioneer_section_xml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(l_xml, 'D1-04-B - All Devices'))
 
@@ -323,8 +323,8 @@ class E1_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_pioneer = pioneerXml.read_pioneer_section_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_pioneer
         self.m_api = pioneerAPI(self.m_pyhouse_obj)

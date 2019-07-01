@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-29'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -457,7 +457,7 @@ class HouseInformation(BaseUUIDObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = {}  # EntertainmentData() in Entertainment/entertainment_data.py
+        self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
         self.Lighting = {}  # LightingData()

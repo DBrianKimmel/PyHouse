@@ -13,7 +13,7 @@ Cannon Trail Blueray Player
 
 """
 
-__updated__ = '2019-05-15'
+__updated__ = '2019-06-30'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentDeviceInformation
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -30,7 +30,7 @@ LOG = Logger.getLogger('PyHouse.Panasonic   ')
 SECTION = 'panasonic'
 
 
-class PanasonicDeviceData(EntertainmentDeviceData):
+class PanasonicDeviceData(EntertainmentDeviceInformation):
 
     def __init__(self):
         super(PanasonicDeviceData, self).__init__()

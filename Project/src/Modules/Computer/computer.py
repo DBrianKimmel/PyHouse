@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -159,10 +159,9 @@ class Utility:
         # LOG.debug('{}'.format(PrettyFormatAny.form(p_pyhouse_obj._APIs.Computer, 'Computer Api\'s', 190)))
 
     def _load_component_config(self, p_pyhouse_obj):
-        # p_pyhouse_obj._APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages.
-        p_pyhouse_obj._APIs.Computer.MqttAPI.LoadConfig()  # Start this first so we can send messages.
-        p_pyhouse_obj._APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
-        #
+        p_pyhouse_obj._APIs.Computer.MqttAPI.LoadConfig(p_pyhouse_obj)  # Start this first so we can send messages.
+
+        p_pyhouse_obj._APIs.Computer.NodesAPI.LoadConfig(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         p_pyhouse_obj._APIs.Computer.BridgesAPI.LoadConfig(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
@@ -194,10 +193,10 @@ class Utility:
         """ Save the XML for each of the components of the Computer
         """
         # No need to save Mqtt as it cannot change during runtime
-        p_pyhouse_obj._APIs.Computer.BridgesAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.BridgesAPI.SaveConfig(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.InternetAPI.SaveXml(p_xml)
-        p_pyhouse_obj._APIs.Computer.NodesAPI.SaveXml(p_xml)
+        p_pyhouse_obj._APIs.Computer.NodesAPI.SaveConfig(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.WeatherAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.WebAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.WebSocketAPI.SaveXml(p_xml)

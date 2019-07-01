@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -31,10 +31,10 @@ from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_KEY, \
         TESTING_HOUSE_UUID
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData, \
-        EntertainmentPluginData, \
-        EntertainmentDeviceData, \
-        EntertainmentServiceData
+        EntertainmentInformation, \
+        EntertainmentPluginInformation, \
+        EntertainmentDeviceInformation, \
+        EntertainmentServiceInformation
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION, \
         XML_ENTERTAINMENT, \
@@ -226,9 +226,9 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertainment_obj = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
-        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginData()
+        self.m_entertainment_obj = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginInformation()
 
     def test_01_Setup(self):
         """
@@ -246,7 +246,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
         """
         l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         l_xml = l_xml.findall('Device')[0]
-        l_device = EntertainmentDeviceData()
+        l_device = EntertainmentDeviceInformation()
         # print(PrettyFormatAny.form(l_xml, 'C1-02-A - Onkyo XML'))
         l_ret = entertainmentXML().read_entertainment_device(l_xml, l_device)
         # print(PrettyFormatAny.form(l_ret, 'C1-02-B - Onkyo Device'))
@@ -271,7 +271,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
         """
         l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/OnkyoSection')
         l_xml = l_xml.findall('Device')[1]
-        l_device = EntertainmentDeviceData()
+        l_device = EntertainmentDeviceInformation()
         # print(PrettyFormatAny.form(l_xml, 'C1-03-A - Onkyo XML'))
         l_ret = entertainmentXML().read_entertainment_device(l_xml, l_device)
         # print(PrettyFormatAny.form(l_ret, 'C1-03-B - Onkyo Device'))
@@ -288,9 +288,9 @@ class C2_RdService(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_entertainment_obj = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
-        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginData()
+        self.m_entertainment_obj = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
     def test_01_Setup(self):
         """
@@ -309,7 +309,7 @@ class C2_RdService(SetupMixin, unittest.TestCase):
         l_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection/PandoraSection')
         l_service_xml = l_xml.findall('Service')
         # print(PrettyFormatAny.form(l_service_xml[0], 'C2-02-A - Pandora XML'))
-        l_service = EntertainmentServiceData()
+        l_service = EntertainmentServiceInformation()
         # print(PrettyFormatAny.form(l_service, 'C2-02-B - Pandora XML'))
         l_ret = entertainmentXML().read_entertainment_service(l_service_xml[0], l_service)
         # print(PrettyFormatAny.form(l_ret, 'C2-02-C - Pandora Service'))
@@ -327,8 +327,8 @@ class C3_RdSubSect(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertainment_obj = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
+        self.m_entertainment_obj = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
 
     def test_01_Setup(self):
         """
@@ -377,8 +377,8 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertainment_obj = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
+        self.m_entertainment_obj = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
 
     def test_01_Setup(self):
         """
@@ -543,9 +543,9 @@ class E1_Device(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertainment_obj = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
-        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginData()
+        self.m_entertainment_obj = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginInformation()
 
     def test_01_Setup(self):
         """

@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-29'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -36,7 +36,7 @@ class HouseInformation(BaseUUIDObject):
     def __init__(self):
         super(HouseInformation, self).__init__()
         self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = {}  # EntertainmentData() in Entertainment/entertainment_data.py
+        self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Floors = {}  # FloorsInformation()
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
@@ -80,41 +80,6 @@ class LocationInformationPrivate(LocationInformation):
         self._Yaml = None
         self._TimeZoneOffset = '-5:00'
         self._IsDaylightSavingsTime = False
-
-
-class FloorsInformation:
-    """ A room of the house.
-    Used to draw pictures of the house
-    Used to define the location of switches, lights etc.
-
-    ==> PyHouse.House.Rooms.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(FloorsInformation, self).__init__()
-        self.Floor = {}  #
-
-
-class FloorsInformationPrivate(FloorsInformation):
-
-    def __init__(self):
-        super(FloorsInformationPrivate, self).__init__()
-        self._Yaml = None
-
-    def __repr__(self):
-        l_ret = 'Signal(name={.name}, Length={.Length})'.format(self, self)
-
-
-class FloorInformation(BaseObject):
-    """ A room of the house.
-    Used to draw pictures of the house
-    Used to define the location of switches, lights etc.
-
-    ==> PyHouse.House.Rooms.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(FloorInformation, self).__init__()
 
 
 class RoomsInformation:

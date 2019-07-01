@@ -15,7 +15,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-06-28'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -74,6 +74,19 @@ class MqttActions:
         return p_logmsg
 
 
+class Yaml:
+
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """
+        """
+        pass
+
+    def SaveYamlConfig(self, p_pyhouse_obj):
+        """
+        """
+        pass
+
+
 class API():
 
     def __init__(self, p_pyhouse_obj):
@@ -82,25 +95,27 @@ class API():
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized - Version:{}'.format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self, p_pyhouse_obj):
         """ Load the Node xml info.
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.Nodes = l_nodes
-        LOG.info('Loaded XML - Version:{}'.format(__version__))
-        return l_nodes
+        # self.m_pyhouse_obj = p_pyhouse_obj
+        # l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
+        # p_pyhouse_obj.Computer.Nodes = l_nodes
+        Yaml().LoadYamlConfig(p_pyhouse_obj)
+        LOG.info('Loaded Config - Version:{}'.format(__version__))
+        return
 
     def Start(self):
         self.m_local.Start()
         self.m_sync.Start()
         LOG.info('Started - Version:{}'.format(__version__))
 
-    def SaveXml(self, p_xml):
-        l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
-        LOG.info("Saved XML for {} nodes.".format(l_count))
-        return l_xml  # For testing
+    def SaveConfig(self, p_pyhouse_obj):
+        # l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
+        # p_xml.append(l_xml)
+        Yaml().SaveYamlConfig(p_pyhouse_obj)
+        LOG.info("Saved Config")
+        return
 
     def Stop(self):
         self.m_local.Stop()

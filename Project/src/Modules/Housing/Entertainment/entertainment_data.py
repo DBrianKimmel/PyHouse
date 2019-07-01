@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Housing/Entertainment/entertainment_data.py -*-
-
-@name:      PyHouse/src/Modules/Housing/Entertainment/entertainment_data.py
+@name:      PyHouse/Project/src/Modules/Housing/Entertainment/entertainment_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 
@@ -19,8 +17,9 @@ __updated__ = '2019-06-03'
 from Modules.Core.data_objects import BaseObject
 
 
-class EntertainmentData():
-    """ This is the PyHouse.House.Entertainment node of the master object.
+class EntertainmentInformation():
+    """
+    This is the PyHouse.House.Entertainment node of the master object.
     It is a dynamic structure for the various entertainment devices in a house.
 
     Top level
@@ -31,12 +30,12 @@ class EntertainmentData():
     def __init__(self):
         self.Active = False
         self.PluginCount = 0
-        # Plugins are indexed bt the entertainment-family name (always lower cased).
-        self.Plugins = {}  # EntertainmentPluginData()
+        # Plugins are indexed by the entertainment-family name (always lower cased).
+        self.Plugins = {}  # EntertainmentPluginInformation()
 
 
-class EntertainmentPluginData():
-    """ This is filled in for every xxxSection under the EntertainmentSection of the XML file
+class EntertainmentPluginInformation():
+    """ This is filled in for every xxxSection under the Entertainment entry of the config file
 
     ==> PyHouse.House.Entertainment.Plugins[PluginName].xxx
     The family is the PluginName - onkyo, pandora, etc. - Always lower case.
@@ -53,25 +52,25 @@ class EntertainmentPluginData():
         #
         # Devices are indxed by the device number 0..x
         self.DeviceCount = 0
-        self.Devices = {}  # EntertainmentDeviceData()
+        self.Devices = {}  # EntertainmentDeviceInformation()
         #
         # Services are indxed by the service number 0..x
         self.ServiceCount = 0
-        self.Services = {}  # EntertainmentServiceData()
+        self.Services = {}  # EntertainmentServiceInformation()
         #
         self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self._Module = None
         self._OpenSessions = 0
 
 
-class EntertainmentDeviceData(BaseObject):
+class EntertainmentDeviceInformation(BaseObject):
     """ This is a skeleton entry.
     Other device parameters are placed in here by the specific entertainment device.
     This should be augmented by every device.
     """
 
     def __init__(self):
-        super(EntertainmentDeviceData, self).__init__()
+        super(EntertainmentDeviceInformation, self).__init__()
         self._Endpoint = None
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
@@ -96,13 +95,13 @@ class EntertainmentDeviceData(BaseObject):
         self.Zones = {}
 
 
-class EntertainmentServiceData(BaseObject):
+class EntertainmentServiceInformation(BaseObject):
     """ This is a skeleton entry.
     Other device parameters are placed in here by the specific entertainment device.
     """
 
     def __init__(self):
-        super(EntertainmentServiceData, self).__init__()
+        super(EntertainmentServiceInformation, self).__init__()
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
         self._Connector = None

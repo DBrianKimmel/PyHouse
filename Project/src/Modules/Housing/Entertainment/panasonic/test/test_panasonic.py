@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-10-25'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Housing.Entertainment.panasonic.panasonic import XML as panasonicXML, SECTION
 from Modules.Core.Utilities import convert
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData, EntertainmentPluginData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentInformation, EntertainmentPluginInformation
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
 from Modules.Housing.Entertainment.panasonic.test.xml_panasonic import \
@@ -49,7 +49,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
@@ -148,8 +148,8 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Set up the general PyHouse object, Entertainment, and panasonic structures
         """
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_panasonic = self.m_xml.entertainment_sect.find('PanasonicSection').find('Device')
 
     def test_01_base(self):
@@ -232,8 +232,8 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_panasonic = self.m_xml.entertainment_sect.find('PanasonicSection').find('Device')
         self.m_panasonic = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)
 
@@ -297,8 +297,8 @@ class E1_Load(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_panasonic = self.m_xml.entertainment_sect.find('PanasonicSection').find('Device')
         self.m_panasonic = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)
         # self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]

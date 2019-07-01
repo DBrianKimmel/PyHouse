@@ -10,7 +10,7 @@
 Passed all 18 tests - DBK 2019-06-2
 
 """
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -65,8 +65,8 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly.
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-D - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'A1-01-E - Rooms'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'A1-01-C - Rooms'))
         self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
         self.assertEqual(self.m_pyhouse_obj.House.Rooms.Room, {})
@@ -154,9 +154,9 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_01_Build(self):
         """ The basic read info as set up
         """
-        # print(PrettyFormatAny.form(self.m_working_rooms, 'C1-01-A - WorkingRooms'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-01-B - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'C1-01-C - Rooms'))
+        print(PrettyFormatAny.form(self.m_working_rooms, 'C1-01-A - WorkingRooms'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-01-B - House'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'C1-01-C - Rooms'))
 
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
@@ -164,9 +164,9 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
         l_yaml = l_node.Yaml
         l_yamlrooms = l_yaml['Rooms']
-        # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
-        # print(PrettyFormatAny.form(l_yaml, 'C1-02-B' - Yaml))
-        # print(PrettyFormatAny.form(l_yamlrooms, 'C1-02-C - YamlRooms'))
+        print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
+        print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
+        print(PrettyFormatAny.form(l_yamlrooms, 'C1-02-C - YamlRooms'))
         self.assertEqual(l_yamlrooms[0]['Name'], 'Outside')
         self.assertEqual(len(l_yamlrooms), 5)
 
@@ -222,18 +222,28 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         """ Basic test to read in data and update it so we can check for new data in output.
         """
         self.m_working_rooms[0].Comment = 'After mods'
-        # print(PrettyFormatAny.form(l_rooms, 'C2-01-A'))
-        # print(PrettyFormatAny.form(self.m_working_rooms[0], 'C2-01-B'))
-        # print(PrettyFormatAny.form(self.m_rooms[0], 'C2-01-C'))
+        print(PrettyFormatAny.form(self.m_working_rooms[0], 'C2-01-A - WorkingRooms'))
+        print(PrettyFormatAny.form(self.m_rooms[0], 'C2-01-B - ReadRooms'))
         self.assertEqual(self.m_working_rooms[0].Comment, 'After mods')
 
     def test_02_Prep(self):
         """
         """
         self.m_working_rooms[0].Comment = 'After mods'
-        print(PrettyFormatAny.form(self.m_working_rooms[0], 'C2-02-A - Working Obj'))
         l_ret = self.m_yaml._copy_to_yaml(self.m_pyhouse_obj)
+        print(PrettyFormatAny.form(self.m_working_rooms[0], 'C2-02-A - Working Obj'))
         print(PrettyFormatAny.form(l_ret, 'C2-02-B - yaml staging'))
+
+    def test_03_Add(self):
+        """ Add a new o the config K,V
+        """
+        print(PrettyFormatAny.form(self.m_rooms, 'C2-03-A - Rooms', 190))
+        print(PrettyFormatAny.form(self.m_rooms[4], 'C2-03-B - Room4', 190))
+        setattr(self.m_rooms[4], 'NewKey', 'A new value')
+        print(PrettyFormatAny.form(self.m_rooms[4], 'C2-03-C - Room4', 190))
+        l_data = config_tools.Yaml(self.m_pyhouse_obj).dump_string(self.m_rooms)
+        print(l_data)
+        pass
 
 
 class D1_Maint(SetupMixin, unittest.TestCase):

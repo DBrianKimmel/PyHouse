@@ -1,9 +1,29 @@
 %YAML 1.2
 ---
+
 Mqtt:
-- Broker: {Active: 'true', BrokerHost: mqtt-ct, BrokerPassword: None, BrokerPort: 1883,
-    BrokerUser: None, Class: Local, Comment: For Cannon Trail (if reachable), LastUpdate: ! '2019-05-18
-      12:41:20.061260', Name: Cannon Trail, UUID: 92c6466-5852-11e7-8389-801f02b5e4e6}
-- Broker: {Active: 'true', BrokerHost: localhost, BrokerPassword: None, BrokerPort: 1883,
-    BrokerUser: None, Class: Local, Comment: For testing so we have a local broker,
-    LastUpdate: ! '2019-05-18 12:41:20.061260', Name: Local Laptop, UUID: 392c6466-5852-11e7-8389-801f02b5e4e6}
+  - Broker:
+      Name: Test Broker 1
+      Active: 'true'
+      Comment: For CT (if reachable)
+      LastUpdate: 2019-05-18 12:41:20.061260
+      UUID: 92c6466-5852-11e7-8389-801f02b5e4e6
+      BrokerHost: mqtt-ct
+      BrokerPort: 1883
+      BrokerUser: None
+      BrokerPassword: None
+      Class: Local
+
+  - Broker:
+      Name: Developer
+      Active: 'true'
+      Comment: On the local development computer
+      LastUpdate: 2019-05-18 12:41:20.061260
+      UUID: 392c6466-5852-11e7-8389-801f02b5e4e6
+      BrokerHost: localhost
+      BrokerPort: 1883
+      BrokerUser: None
+      BrokerPassword: None
+      Class: Local
+
+### END DBK

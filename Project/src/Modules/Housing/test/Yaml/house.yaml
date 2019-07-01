@@ -10,9 +10,13 @@
 
 House:
    Name: TestHouse
-
 #   Location: !include location.yaml
 #   Floors: !include floors.yaml
 #   Rooms: !include rooms.yaml
+   HVAC:
+   Irrigation:
+   Lighting:
+   Scheduling:
+   Security:
 
 ### END DBK

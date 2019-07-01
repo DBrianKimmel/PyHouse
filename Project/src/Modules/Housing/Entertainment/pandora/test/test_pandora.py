@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/entertain/test/test_pandora.py
+@name:      PyHouse/Project/src/Modules/Housing/Entertainment/pandora/test/test_pandora.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -7,11 +7,11 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Passed all 24 tests - DBK - 2019-06-02
-
+Passed all 2 tests - DBK - 2019-06-30
+5
 """
 
-__updated__ = '2019-06-07'
+__updated__ = '2019-06-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -51,7 +51,7 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_KEY, \
     TESTING_HOUSE_UUID
 from Modules.Housing.Entertainment.entertainment_data import \
-    EntertainmentPluginData
+    EntertainmentPluginInformation
 from Modules.Housing.Entertainment.test.xml_entertainment import \
     TESTING_ENTERTAINMENT_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -269,7 +269,7 @@ class E1_API(SetupMixin, unittest.TestCase):
     def test_01_Init(self):
         """ Test that the data structure is correct.
         """
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         self.assertIsNone(l_base._API)
@@ -285,7 +285,7 @@ class E2_API(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
         self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
 
         # self.m_xml_pandora = self.m_xml.entertainment_sect.find('PandoraSection').find('Device')
         # self.m_pandora = pandoraXml.read_pandora_section_xml(self.m_pyhouse_obj)
@@ -310,7 +310,7 @@ class E3_API(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
         self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_api.LoadXml(self.m_pyhouse_obj)
 
     def test_03_Start(self):
@@ -339,7 +339,7 @@ class F1_Mqtt(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
         self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_api.LoadXml(self.m_pyhouse_obj)
         self.m_mqtt = MqttActions(self.m_pyhouse_obj)
 
@@ -365,7 +365,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
         self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_api.LoadXml(self.m_pyhouse_obj)
 
     def test_01_Time(self):
@@ -397,7 +397,7 @@ class G1_Extract(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
         self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_api.LoadXml(self.m_pyhouse_obj)
 
 
@@ -409,7 +409,7 @@ class G2_Extract(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
         self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginData()
+        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_api.LoadXml(self.m_pyhouse_obj)
 
 # ## END DBK

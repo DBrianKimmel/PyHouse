@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-28'
+__updated__ = '2019-06-30'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,10 +22,10 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData, \
-        EntertainmentPluginData, \
-        EntertainmentDeviceData, \
-        EntertainmentServiceData
+        EntertainmentInformation, \
+        EntertainmentPluginInformation, \
+        EntertainmentDeviceInformation, \
+        EntertainmentServiceInformation
 from Modules.Core.Utilities.xml_tools import XmlConfigTools  # , PutGetXML
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
@@ -35,7 +35,7 @@ LOG = Logger.getLogger('PyHouse.EntertainXML   ')
 class XML:
     """
     Devices all have the same basic part
-    @return: EntertainmentDeviceData object
+    @return: EntertainmentDeviceInformation object
     """
 
     def read_entertainment_device(self, p_xml, p_device):
@@ -73,7 +73,7 @@ class XML:
     def read_entertainment_service(self, p_entry_xml, p_service):
         """
         @param p_entry_xml: Element <Service> within <PandoraSection>
-        @return: a EntertainmentServiceData object
+        @return: a EntertainmentServiceInformation object
         """
         XmlConfigTools.read_base_object_xml(p_service, p_entry_xml)
         p_service.Host = PutGetXML.get_ip_from_xml(p_entry_xml, 'Host', 'None')
@@ -123,7 +123,7 @@ class XML:
         """
         """
         l_active = True
-        l_plugin_data = EntertainmentPluginData()
+        l_plugin_data = EntertainmentPluginInformation()
         l_plugin_data.Name = l_name = XmlConfigTools.extract_section_name(p_section_element)
         l_plugin_data.Active = l_active  # = PutGetXML.get_bool_from_xml(p_section_element, 'Active', True)
         LOG.debug('Working on {}'.format(l_name))
@@ -144,10 +144,10 @@ class XML:
         """ Read one complete subsection (pioneer, onkyo, pandora, ...
         The subsection must have a valid Type element
         @param p_xml: points to a XxxSectionElement
-        @return: EntertainmentPluginData - ready to add into EntertainmentData['name'].
+        @return: EntertainmentPluginInformation - ready to add into EntertainmentInformation['name'].
         """
         l_xml = p_xml
-        l_plugin = EntertainmentPluginData()
+        l_plugin = EntertainmentPluginInformation()
         l_name = l_xml.tag
         l_plugin.Name = l_name
         l_plugin.Active = l_active = PutGetXML.get_text_from_xml(l_xml, 'Active')
@@ -163,13 +163,13 @@ class XML:
             l_module_name = 'Modules.Housing.Entertainment.' + l_plugin.Name + '.' + l_plugin.Name
         if l_type == 'Component':
             for l_xml in l_xml.findall('Device'):
-                l_ret = self.read_entertainment_device(l_xml, EntertainmentDeviceData())
+                l_ret = self.read_entertainment_device(l_xml, EntertainmentDeviceInformation())
                 l_plugin.Devices[l_count] = l_ret
                 l_count += 1
             l_plugin.DeviceCount = l_count
         elif l_type == 'Service':
             for l_xml in l_xml.findall('Service'):
-                l_ret = self.read_entertainment_service(l_xml, EntertainmentServiceData())
+                l_ret = self.read_entertainment_service(l_xml, EntertainmentServiceInformation())
                 l_plugin.Services[l_count] = l_ret
                 l_count += 1
             l_plugin.ServiceCount = l_count
@@ -211,7 +211,7 @@ class XML:
         """ Read one complete subsection (pioneer, onkyo, pandora, ...
         Place all the plugins into the PyHouse Object structure
         """
-        l_plugins = EntertainmentData()
+        l_plugins = EntertainmentInformation()
         l_count = 0
         l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         if l_xml != None:

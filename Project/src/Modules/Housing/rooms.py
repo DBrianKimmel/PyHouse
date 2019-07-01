@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-29'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -140,7 +140,6 @@ class Yaml:
         except:
             LOG.error('The "Rooms" tag is missing in the "rooms.yaml" file!')
             return None
-        l_loc = p_pyhouse_obj.House.Rooms
         for l_ix, l_room_yaml in enumerate(l_yaml):
             l_room_obj = self._extract_room_config(l_room_yaml)
             l_rooms.update({l_ix:l_room_obj})
@@ -167,14 +166,11 @@ class Yaml:
         """
         l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
         l_config = l_node.Yaml['Rooms']
-        # LOG.debug(PrettyFormatAny.form(l_config, 'Rooms', 190))
         l_working = p_pyhouse_obj.House.Rooms
-        # LOG.debug(PrettyFormatAny.form(l_working, 'House', 190))
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
-            l_config[l_key] = l_val
+            setattr(l_config, l_key, l_val)
         p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
-        # LOG.debug(PrettyFormatAny.form(l_node, 'Updated', 190))
         l_ret = {'Rooms': l_config}
         return l_ret
 
@@ -330,7 +326,7 @@ class Api:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         Yaml().LoadYamlConfig(self.m_pyhouse_obj)
-        # Xml().LoadXmlConfig(self.m_pyhouse_obj)
+        LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
 
     def SaveConfig(self):
         """

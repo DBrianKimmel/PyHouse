@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-30'
 
 #  Import system type stuff
 import os
@@ -34,8 +34,8 @@ from Modules.Core.data_objects import \
 from Modules.Core.Utilities.config_tools import \
     ConfigInformation
 from Modules.Housing.Entertainment.entertainment_data import \
-    EntertainmentData, \
-    EntertainmentPluginData
+    EntertainmentInformation, \
+    EntertainmentPluginInformation
 from Modules.Families.family import \
     Utility as familyUtil, \
     API as familyAPI
@@ -168,8 +168,8 @@ class SetupPyHouseObj():
 
     @staticmethod
     def _build_entertainment(_p_pyhouse_obj):
-        l_ret = EntertainmentData()
-        l_ret.Plugins = EntertainmentPluginData()
+        l_ret = EntertainmentInformation()
+        l_ret.Plugins = EntertainmentPluginInformation()
         return l_ret
 
     @staticmethod

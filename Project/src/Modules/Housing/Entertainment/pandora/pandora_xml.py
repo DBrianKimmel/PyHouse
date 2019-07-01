@@ -1,5 +1,4 @@
 """
-
 @name: PyHouse/Project/src/Modules/Housing/Entertainment/pandora/pandora_xml.py
 @author: D. Brian Kimmel
 @contact: D.BrianKimmel@gmail.com
@@ -14,7 +13,7 @@
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentServiceData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentServiceInformation
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 
@@ -32,9 +31,9 @@ class XML:
     def _read_pandora_base(self, p_entry_xml):
         """
         @param p_entry_xml: Element <Device> within <PandoraSection>
-        @return: a EntertainmentServiceData object
+        @return: a EntertainmentServiceInformation object
         """
-        l_service = EntertainmentServiceData()
+        l_service = EntertainmentServiceInformation()
         l_obj = entertainmentXML().read_entertainment_service(p_entry_xml, l_service)
         return l_obj
 
@@ -53,7 +52,7 @@ class XML:
             Fill in an entry in Entertainment Plugins
 
         @param p_pyhouse_obj: containing an XML Element for the <PandoraSection>
-        @return: a EntertainmentPluginData object filled in.
+        @return: a EntertainmentPluginInformation object filled in.
         """
         l_plugin_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         l_plugin_obj.Name = SECTION

@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,7 +24,7 @@ from twisted.internet.protocol import ClientCreator
 # Import PyMh files
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentInformation
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.onkyo.onkyo import \
         SECTION, \
@@ -61,7 +61,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 

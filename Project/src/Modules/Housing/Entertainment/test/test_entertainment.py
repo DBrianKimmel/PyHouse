@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Entertainment/test/test_entertainment.py
+@name:      PyHouse/Project/src/Modules/Entertainment/test/test_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2019-03-18
 
 """
 
-__updated__ = '2019-04-01'
+__updated__ = '2019-06-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,7 +23,7 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
 from Modules.Housing.Entertainment.entertainment_data import \
-        EntertainmentData
+        EntertainmentInformation
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
         TESTING_HOUSE_NAME, \
@@ -49,10 +49,8 @@ class SetupMixin(object):
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_entertainment')
 
 
@@ -137,8 +135,8 @@ class C1_Load(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
-        self.m_entertainment_obj = EntertainmentData()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentData()  # Clear before loading
+        self.m_entertainment_obj = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
 
     def test_01_Setup(self):
         """
@@ -153,7 +151,7 @@ class C1_Load(SetupMixin, unittest.TestCase):
     def test_03_XML(self):
         """ Test
         """
-        l_ret = self.m_api.LoadXml(self.m_pyhouse_obj)
+        l_ret = self.m_api.LoadConfig(self.m_pyhouse_obj)
         l_entertain = self.m_pyhouse_obj.House.Entertainment
         # print(PrettyFormatAny.form(l_entertain, 'C1-01-A - Entertainment'))
         # print(PrettyFormatAny.form(l_entertain.Plugins, 'C1-01-B- Plugins'))
@@ -181,11 +179,11 @@ class D1_Save(SetupMixin, unittest.TestCase):
     def test_02_XML(self):
         """ Test
         """
-        l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_ret, 'D1-02-A - Ret'))
+        l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadConfig(self.m_pyhouse_obj)
         l_xml = ET.Element('HouseDivision')
         l_xml1 = entertainmentAPI(self.m_pyhouse_obj).SaveXml(l_xml)
         l_ent = self.m_pyhouse_obj.House.Entertainment = l_ret
+        # print(PrettyFormatAny.form(l_ret, 'D1-02-A - Ret'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'D1-02-B - HouseInformation()'))
         # print(PrettyFormatAny.form(l_ent, 'D1-02-C - Entertainment'))
         # print(PrettyFormatAny.form(l_ent.Plugins, 'D1-02-D- Plugins'))
@@ -199,7 +197,7 @@ class D1_Save(SetupMixin, unittest.TestCase):
     def test_03_XML(self):
         """ Test
         """
-        l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)
+        l_ret = entertainmentAPI(self.m_pyhouse_obj).LoadConfig(self.m_pyhouse_obj)
         l_xml = ET.Element('HouseDivision')
         l_xml1 = entertainmentAPI(self.m_pyhouse_obj).SaveXml(l_xml)
         l_ent = self.m_pyhouse_obj.House.Entertainment = l_ret

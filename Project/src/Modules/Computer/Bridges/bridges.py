@@ -15,7 +15,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-06-27'
+__updated__ = '2019-06-28'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +24,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import BaseUUIDObject
 from Modules.Core.Utilities import config_tools
-from Modules.Computer.Bridges.bridges_xml import Xml as bridgesXML
+# from Modules.Computer.Bridges.bridges_xml import Xml as bridgesXML
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Bridges        ')
@@ -63,10 +63,10 @@ class Yaml:
     """
     """
 
-    def _get_bridge_plugin_config(self, p_pyhouse_obj, p_node_yaml):
+    def _get_bridge_plugin_config(self, _p_pyhouse_obj, _p_node_yaml):
         """
         """
-        l_list = []
+        _l_list = []
         pass
 
     def LoadYamlConfig(self, p_pyhouse_obj):
@@ -119,13 +119,10 @@ class API:
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self, p_pyhouse_obj):
-        """ Load the xml info.
+        """ Load the config info.
         """
-        # l_bridges = bridgesXML().read_bridges_xml(p_pyhouse_obj, self)
-        l_node = Yaml().LoadYamlConfig(p_pyhouse_obj)
-        # p_pyhouse_obj.Computer.Bridges = l_bridges
-        LOG.info("Loaded XML")
-        # Yaml().LoadYamlConfig(self.m_pyhouse_obj)
+        Yaml().LoadYamlConfig(p_pyhouse_obj)
+        LOG.info("Loaded Config")
 
     def Start(self):
         l_count = 0
@@ -143,15 +140,14 @@ class API:
                 LOG.info('Other Bridge Active: {}'.format(l_bridge.Name))
             l_count += 1
 
-    def SaveXml(self, p_xml):
-        """ Generate the Bridges XML branch, Append it to the PyHouse XML tree.
-
-        @param p_xml: the XML tree that we will eventually write to disk.
+    def SaveConfig(self, p_pyhouse_obj):
         """
-        l_xml = bridgesXML().write_bridges_xml(self.m_pyhouse_obj)
-        p_xml.append(l_xml)  # Add the bridges branch to the tree,
-        LOG.info("Saved Bridges XML")
-        return l_xml
+
+        @param p_pyhouse_obj: the master obj
+        """
+        Yaml().SaveYamlConfig(p_pyhouse_obj)
+        LOG.info("Saved Bridges Config")
+        return
 
     def Stop(self):
         LOG.info("Stopped.")

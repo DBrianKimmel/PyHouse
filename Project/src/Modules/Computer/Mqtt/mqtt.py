@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-06-28'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -140,11 +140,11 @@ class API:
         # p_pyhouse_obj.Computer.Mqtt.Brokers = []
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadConfig(self):
+    def LoadConfig(self, p_pyhouse_obj):
         """ Load the Mqtt Config info.
         """
         LOG.info("Loading Config - Version:{}".format(__version__))
-        Yaml().LoadYamlConfig(self.m_pyhouse_obj, self)
+        Yaml().LoadYamlConfig(p_pyhouse_obj, self)
 
     def Start(self):
         """
@@ -158,11 +158,12 @@ class API:
             LOG.info('No Mqtt brokers are started.')
         return
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self, p_pyhouse_obj):
         """
         There is nothing in the config that can be altered during runtime
         so there is no need to write out the Yaml file to back it up.
         """
+        Yaml().SaveYamlConfig(p_pyhouse_obj)
         return None
 
     def Stop(self):

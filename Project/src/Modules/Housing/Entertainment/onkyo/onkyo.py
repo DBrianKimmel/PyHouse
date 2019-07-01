@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-30'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +24,7 @@ from queue import Queue
 
 #  Import PyMh files and modules.
 from Modules.Housing.Entertainment.entertainment_data import \
-    EntertainmentDeviceData, \
+    EntertainmentDeviceInformation, \
     EntertainmentDeviceStatus, \
     EntertainmentDeviceControl
 from Modules.Core.Utilities import convert
@@ -37,7 +37,7 @@ LOG = Logger.getLogger('PyHouse.Onkyo          ')
 SECTION = 'onkyo'
 
 
-class OnkyoDeviceInformation(EntertainmentDeviceData):
+class OnkyoDeviceInformation(EntertainmentDeviceInformation):
     """ A superet that contains some onkyo specific fields
     """
 

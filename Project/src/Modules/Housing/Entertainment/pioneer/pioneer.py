@@ -21,7 +21,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-30'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,7 +39,7 @@ from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Housing.Entertainment.samsung.samsung import SamsungDeviceData
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceData
+from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceInformation
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
@@ -63,7 +63,7 @@ CONTROL_COMMANDS = {
     }
 
 
-class PioneerDeviceData(EntertainmentDeviceData):
+class PioneerDeviceData(EntertainmentDeviceInformation):
     """
     """
 

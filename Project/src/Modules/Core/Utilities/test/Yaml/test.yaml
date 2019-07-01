@@ -1,17 +1,20 @@
 ---
-# Name:      PyHouse/Project/src/Modules/Housing/test/Yaml/location.yaml
+# Name:      PyHouse/Project/src/Modules/Core/Utility/test/Yaml/test.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
-# Created:   Jun 25, 2019
-# Updated:   Jun 25, 2019
+# Created:   Jun 28, 2019
+# Updated:   Jun 28, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
-Location:
+Testing:
    Street: 1600 Pennsylvania Ave NW
    City: Washington
    State: DC
+   Login:
+     Username: My Name
+     Password: My Password
    ZipCode: 20500
    Country: USA
    Phone: (888) 555-1212

@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-30'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,10 +38,10 @@ from Modules.Core.Utilities.extract_tools import extract_quoted
 # from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Housing.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
-        EntertainmentPluginData, \
+        EntertainmentPluginInformation, \
         EntertainmentServiceControl, \
         EntertainmentServiceStatus, \
-        EntertainmentServiceData
+        EntertainmentServiceInformation
 # from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 
 from Modules.Computer import logging_pyh as Logger
@@ -53,7 +53,7 @@ SECTION = 'pandora'
 #  (i) Control fifo at /home/briank/.config/pianobar/ctl opened
 
 
-class PandoraPluginData(EntertainmentPluginData):
+class PandoraPluginData(EntertainmentPluginInformation):
     """
     """
 
@@ -62,7 +62,7 @@ class PandoraPluginData(EntertainmentPluginData):
         self._OpenSessions = 0
 
 
-class PandoraServiceData(EntertainmentServiceData):
+class PandoraServiceData(EntertainmentServiceInformation):
 
     def __init__(self):
         super(PandoraServiceData, self).__init__()
@@ -75,10 +75,10 @@ class PandoraServiceStatusData(EntertainmentServiceStatus):
         super(PandoraServiceStatusData, self).__init__()
         self.Album = None
         self.Artist = None
-        self.DateTimePlayed = None
-        # self.DateTimeStarted = None
+        self.DateTimePlayed = None  # Time the latest song started.
+        self.DateTimeStarted = None  # Time service connected to pandora.com
         self.Error = None  # If some error occurred
-        self.From = None  # This host id to identify where it came from
+        self.From = None  # This host id to identify the computer node connecting to pandora.
         self.inUseDevice = None
         self.Likability = None
         self.PlayingTime = None

@@ -11,24 +11,23 @@ There is location information for the house.
 This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
-from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
-from Modules.Families.Insteon.test.xml_insteon import L_INSTEON_GROUP_LIST_0
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-06-28'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
-from mypy.main import config_types
+# from mypy.main import config_types
 
 #  Import PyMh files
 from Modules.Core.data_objects import RiseSetData
 from Modules.Core.Utilities import config_tools
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Housing.house_data import LocationInformationPrivate
+from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
 
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Location       ')
@@ -179,7 +178,7 @@ class Yaml:
     def SaveYamlConfig(self, p_pyhouse_obj):
         """
         """
-        LOG.info('Saving Config - Version:{}'.format(__version__))
+        # LOG.info('Saving Config - Version:{}'.format(__version__))
         l_config = self._copy_to_yaml(p_pyhouse_obj)
         config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
         return l_config
@@ -209,6 +208,6 @@ class Api:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         Yaml().SaveYamlConfig(self.m_pyhouse_obj)
-        Xml().SaveXmlConfig(self.m_pyhouse_obj)
+        # Xml().SaveXmlConfig(self.m_pyhouse_obj)
 
 #  ## END DBK
