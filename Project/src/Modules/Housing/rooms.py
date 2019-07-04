@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-07-02'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -112,6 +112,7 @@ class Yaml:
         @param p_yaml: is the config fragment containing one room's information.
         @return: a RoomInformation() obj filled in.
         """
+        l_required = ['Name', 'Active']
         l_obj = RoomInformation()
         for l_key, l_val in p_yaml.items():
             # Check for extra attributes in the config file.
@@ -123,7 +124,7 @@ class Yaml:
             setattr(l_obj, l_key, l_val)
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            if getattr(l_obj, l_key) == None:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 

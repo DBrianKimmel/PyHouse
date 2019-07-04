@@ -1,13 +1,13 @@
-# Name:      PyHouse/Project/admin/config/Yaml/rooms.yaml
+---
+# Name:      PyHouse/Project/admin/config/Yaml/house/floors.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
 # Created:   Jun 21, 2019
-# Updated:   Jun 21, 2019
+# Updated:   Jul 01, 2019
 # License:   MIT License
-# Summary:   This is for all the rooms in a house.
+# Summary:   This is for all the floors in a house.
 
-#   Rooms are consistant on all nodes within a house.
 #   Outside is always present and must be first.
 
 Floors:

@@ -1,26 +1,12 @@
 ---
-# Name:      Modules/Housing/Entertainment/pandora/test/Yaml/pandora.yaml
+# Name:      PyHouse/Project/admin/config/Yaml/pandora.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
-# Created:   Jun 29, 2019
-# Updated:   Jun 30, 2019
+# Created:   Jun  7, 2019
+# Updated:   Jul  1, 2019
 # License:   MIT License
-# Summary:   This is for PyHouse
-
-#	<Type>Service</Type>
-#	<Service Active="True" Key="0" Name="PandoraOnPi">
-#		<Comment>Running on pi-06-ct</Comment>
-#		<LastUpdate>2019-05-12 12:25:34.228837</LastUpdate>
-#		<Host>None</Host>
-#		<ConnectionFamily>Pioneer</ConnectionFamily>
-#		<ConnectionName>VSX-822-K</ConnectionName>
-#		<InputName>CD</InputName>
-#		<InputCode />
-#		<MaxPlayTime>0</MaxPlayTime>
-#		<Type>Receiver</Type>
-#		<Volume>53</Volume>
-#	</Service>
+# Summary:   This is for pandora.
 
 Pandora:
   Name: Pandora service
@@ -33,6 +19,7 @@ Pandora:
     - Name: Primary
       Active: 'true'
       Comment: main connection
+      MaxSessions: 1
       Host:
         Name: pandora-ct
         Port: None
@@ -50,6 +37,7 @@ Pandora:
     - Name: Downstairs
       Active: 'false'
       Comment: for music downstairs
+      MaxSessions: 1
       Host:
         Name: pi-02-ct
       Connection:

@@ -9,20 +9,24 @@
 
 """
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-07-04'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import os
-# from ruamel.yaml import comments
 from xml.etree import ElementTree as ET
 from ruamel.yaml import YAML
+from ruamel.yaml.comments import CommentedSeq as cs
+from ruamel.yaml.comments import TaggedScalar as ts
+from ruamel.yaml.scalarstring import SingleQuotedScalarString as sq
+from ruamel.yaml.comments import CommentedMap as ordereddict
 
 #  Import PyMh files
 from Modules.Core.Utilities.xml_tools import PutGetXML
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.data_objects import HostInformation, LoginInformation
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
@@ -50,10 +54,121 @@ class ConfigYamlNodeInformation:
         self.FileName = None
 
 
-class Yaml:
+class YamlCreate:
+    """ For creating and appending to yaml files.
+
+    """
+
+    def create_yaml(self, p_tag: str):
+        """ create a yaml structure with a nested-map.
+
+        Yaml = ordereddict([('p_tag', None)])
+        p_tag:
+            <empty position>
+
+        @param p_tag: is the top level map string
+        """
+        if p_tag == None:
+            LOG.error('Create requires a concrete tag (not "None".  "ERROR_TAG" is used as the tag instead!')
+            p_tag = 'ERROR_TAG'
+        YAML_STR = p_tag + ':'
+        l_yaml = YAML()
+        l_yaml.indent(mapping=2, sequence=4, offset=2)
+        l_data = l_yaml.load(YAML_STR)
+        return l_data
+
+    def add_key_value_to_nested_map(self, p_yaml, p_tag, p_key, p_value):
+        """
+        @param p_yaml: is the fragment where the addition is to go.
+        @param p_tag: is a list of tags to add the K,V entry below.  The tags are relative to the top of the yaml fragment.
+        """
+        print('Yaml: {}'.format(p_yaml))
+
+    def add_dict(self, p_yaml, p_key, p_add_dict):
+        """
+        @param p_yaml: is the fragment where the addition is to go.
+        @param p_add_dict: is the dict to add
+        """
+        print('Yaml: {}'.format(p_yaml))
+        for l_key, l_val in p_add_dict.items():
+            print('Adding: {} : {}'.format(l_key, l_val))
+            setattr(p_yaml, l_key, l_val)
+        return p_yaml
+
+    def add_list(self, p_yaml, p_key, p_add_obj):
+        """
+        Insert a list entry into the list fragment that is the surrounding yaml.
+
+        @param p_yaml_frag: is the list fragment where the addition is to go.
+        @param p_add: is the object to add
+        """
+        if p_yaml == None:
+            p_yaml = p_add_obj
+        else:
+            l_ix = len(p_yaml) - 2  # This is the Index where the object object needs to be inserted.
+            p_yaml.insert(l_ix, p_key, p_add_obj)
+            # p_yaml[-1] = p_add_obj
+        return p_yaml
+
+    def add_obj(self, p_yaml, p_key, p_tag):
+        """ Add a new ordereddict to the yaml after the Key location
+        @param p_yaml: is the yaml fragment that contains p_key (Rooms)
+        @param p_key: is the key we will add a new tag into (Room)
+        @param p_tag: is the
+        """
+        l_working = p_yaml[p_key]
+        print('Working: {}'.format(l_working))
+        for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
+            l_val = getattr(l_working, l_key)
+            # setattr(l_config, l_key, l_val)
+
+    def add_to_obj(self, p_yaml, p_key, p_obj):
+        """
+        """
+        l_working = p_yaml[p_key]
+        print('Working: {}'.format(l_working))
+        for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
+            l_val = getattr(l_working, l_key)
+            # setattr(l_config, l_key, l_val)
+
+
+class YamlFetch:
+    """
+    """
+
+    def fetch_host_info(self, p_yaml):
+        """
+        @param p_yaml: is the 'Host' ordereddict
+        """
+        l_obj = HostInformation()
+        for l_key, l_val in p_yaml.items():
+            setattr(l_obj, l_key, l_val)
+        return l_obj
+
+    def fetch_login_info(self, p_yaml):
+        """
+        """
+        l_obj = LoginInformation()
+        for l_key, l_val in p_yaml.items():
+            setattr(l_obj, l_key, l_val)
+        if l_obj.Name == None:
+            l_obj.Name = l_obj.UserName
+        else:
+            l_obj.UserName = l_obj.Name
+        return l_obj
+
+
+class Yaml(YamlCreate, YamlFetch):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+
+    def find_first_element(self, p_ordered):
+        """ Return the first element from an ordered collection
+           or an arbitrary element from an unordered collection.
+           Raise StopIteration if the collection is empty.
+        """
+        return next(iter(p_ordered))
 
     def validate_yaml_in_main(self, p_info_obj, p_yaml_def):
         """
@@ -112,7 +227,7 @@ class Yaml:
             l_data = l_yaml.load(l_file)
             l_node.Yaml = l_data
         self.m_pyhouse_obj._Config.YamlTree[p_filename] = l_node
-        LOG.info('Loaded config file "{}" '.format(p_filename))
+        # LOG.info('Loaded config file "{}" '.format(p_filename))
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj._Config.YamlTree, 'Tree', 190))
         return l_node
 
@@ -125,7 +240,7 @@ class Yaml:
         l_now = datetime.datetime.now()
         l_node = self.m_pyhouse_obj._Config.YamlTree[p_filename]
         l_filename = l_node.YamlPath
-        l_node.Yaml.insert(2, '# Updated', str(l_now), comment="Test Comment!")
+        l_node.Yaml.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
         if addnew:
             l_filename += '-new'
         l_yaml = YAML(typ='rt')
@@ -179,4 +294,6 @@ class API:
         except AttributeError as e_err:
             LOG.error('Err:{}'.format(e_err))
 
+    def _Stop(self):
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy', 190))
 #  ## END DBK

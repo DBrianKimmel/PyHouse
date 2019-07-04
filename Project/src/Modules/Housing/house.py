@@ -26,7 +26,7 @@ PyHouse.House.
               ...
 """
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-07-02'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -43,7 +43,6 @@ from Modules.Housing.Entertainment.entertainment import \
     API as entertainmentAPI, \
     MqttActions as entertainmentMqtt
 from Modules.Housing import location, rooms, floors
-# from Modules.Housing.location import Xml as locationXML
 from Modules.Housing.rooms import Mqtt as roomsMqtt
 from Modules.Housing.Hvac.hvac import API as hvacAPI, MqttActions as hvacMqtt
 from Modules.Housing.Irrigation.irrigation import API as irrigationAPI, MqttActions as irrigationMqtt
@@ -197,7 +196,7 @@ class Utility:
         p_pyhouse_obj._APIs.House.FamilyAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.HvacAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.IrrigationAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.House.LightingAPI.LoadXml(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.House.LightingAPI.LoadConfig(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.PoolAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.ScheduleAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.SecurityAPI.LoadXml(p_pyhouse_obj)
@@ -223,7 +222,7 @@ class Utility:
         p_xml.append(p_pyhouse_obj._APIs.House.EntertainmentAPI.SaveXml(p_xml))
         p_xml.append(p_pyhouse_obj._APIs.House.HvacAPI.SaveXml(p_xml))
         p_xml.append(p_pyhouse_obj._APIs.House.IrrigationAPI.SaveXml(p_xml))
-        p_xml.append(p_pyhouse_obj._APIs.House.LightingAPI.SaveXml(p_xml))
+        p_xml.append(p_pyhouse_obj._APIs.House.LightingAPI.SaveConfig(p_xml))
         p_xml.append(p_pyhouse_obj._APIs.House.PoolAPI.SaveXml(p_xml))
         p_xml.append(p_pyhouse_obj._APIs.House.ScheduleAPI.SaveXml(p_xml))
         p_xml.append(p_pyhouse_obj._APIs.House.SecurityAPI.SaveXml(p_xml))

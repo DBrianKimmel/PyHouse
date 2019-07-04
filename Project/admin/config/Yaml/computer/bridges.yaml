@@ -13,5 +13,6 @@
 Bridges:
    Insteon: !include insteon.yaml
    AcuRite: !include acurite.yaml
+   HueHub: !include huehub.yaml
 
 ### END DBK

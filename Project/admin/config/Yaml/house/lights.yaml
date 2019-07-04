@@ -1,15 +1,14 @@
-# Name:      PyHouse/Project/admin/config/Yaml/house/house.yaml
+---
+# Name:      PyHouse/Project/admin/config/Yaml/house/lights.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
 # Created:   Jun 10, 2019
-# Updated:   Jun 10, 2019
+# Updated:   Jul 01, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
-House:
-   Name: cannon trail
-   Location: !include house/location.yaml
-   Rooms: !include house/rooms.yaml
+Lights:
+  - Name: Light 1
 
 ### END DBK

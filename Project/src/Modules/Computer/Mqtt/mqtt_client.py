@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-01'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -48,13 +48,13 @@ class Util(object):
         """
         p_pyhouse_obj.Computer.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Start Connecting via TCP to broker: {}'.format(p_broker_obj.Name))
-        if p_broker_obj.BrokerHost is None or p_broker_obj.BrokerPort is None:
-            LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker_obj.BrokerHost, p_broker_obj.BrokerPort))
+        if p_broker_obj.Host.Name is None or p_broker_obj.Host.Port is None:
+            LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker_obj.Host.Name, p_broker_obj.Host.Port))
             p_broker_obj._ProtocolAPI = None
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
-            _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.BrokerHost, p_broker_obj.BrokerPort, l_factory)
-            LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker_obj.Name, p_broker_obj.BrokerHost))
+            _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.Host.Name, p_broker_obj.Host.Port, l_factory)
+            LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker_obj.Name, p_broker_obj.Host.Name))
             LOG.info('Prefix: {}'.format(p_pyhouse_obj.Computer.Mqtt.Prefix))
 
     @defer.inlineCallbacks
@@ -84,7 +84,7 @@ class Util(object):
             if not l_broker_obj.Active:
                 LOG.info('Skipping not active broker: {}'.format(l_broker_obj.Name))
                 continue
-            if l_broker_obj.BrokerPort < 2000:
+            if l_broker_obj.Host.Port < 2000:
                 self.connect_to_one_broker_TCP(p_pyhouse_obj, l_broker_obj)
             else:
                 self.connect_to_one_broker_TLS(p_pyhouse_obj, l_broker_obj)

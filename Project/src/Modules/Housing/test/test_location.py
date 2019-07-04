@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/housing/test/test_location.py
+@name:      PyHouse/Project/src/Modules/housing/test/test_location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -13,7 +13,7 @@ Passed all 13 tests - DBK - 2018-02-13
 from Modules.Core.data_objects import PyHouseInformation, HouseInformation
 from Modules.Core.Utilities import config_tools
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-02'
 
 # Import system type stuff
 import sys

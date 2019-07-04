@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-06-28'
+__updated__ = '2019-07-01'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,7 +47,7 @@ from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI, MqttActions as nodesMqtt
 # from Modules.Computer.Nodes.node_sync import API as syncAPI
-from Modules.Computer.weather import API as weatherAPI
+from Modules.Computer.Weather.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
 from Modules.Computer.Web.websocket_server import API as websocketAPI
 

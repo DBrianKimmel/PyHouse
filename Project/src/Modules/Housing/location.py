@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-06-28'
+__updated__ = '2019-07-02'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -131,7 +131,7 @@ class Yaml:
         except:
             LOG.error('The "Location" tag is missing in the "location.yaml" file!')
             return None
-        LOG.debug('location.yaml {}'.format(l_yaml))
+        # LOG.debug('location.yaml {}'.format(l_yaml))
         l_loc = p_pyhouse_obj.House.Location
         for l_key, l_val in l_yaml.items():
             if l_key not in l_yaml:

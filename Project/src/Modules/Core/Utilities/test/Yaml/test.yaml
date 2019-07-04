@@ -13,14 +13,19 @@ Testing:
    City: Washington
    State: DC
    Login:
-     Username: My Name
+     UserName: My Name
      Password: My Password
-   ZipCode: 20500
-   Country: USA
-   Phone: (888) 555-1212
-   TimeZoneName: America/New_York
-   Latitude: 38.897789
-   Longitude: -77.036619
-   Elevation: 30.0
+   Host:
+     Name: Host-name-xxx
+     IPv4: 192.168.2.3
+     IPv6: 2003:12:456::24
+     Port: 12345
+   Lights:
+     - Name: Front Hall
+       Comment: Ceiling light
+     - Name: Living Room
+     - Name: Foyer
+   AddOn1:
+   AddOn2:
    
 ### END DBK

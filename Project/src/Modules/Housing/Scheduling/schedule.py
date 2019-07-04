@@ -38,14 +38,13 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-03'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import aniso8601
-# import jsonpickle
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert, extract_tools

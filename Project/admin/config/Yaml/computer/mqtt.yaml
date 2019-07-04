@@ -1,16 +1,16 @@
 ---
-# Name:      PyHouse/Project/src/Module/Computer/Mqtt/test/Yaml/mqtt.yaml
+# Name:      PyHouse/Project/admin/config/Yaml/computer/mqtt.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
-# Created:   Jun 24, 2019
-# Updated:   Jun 26, 2019
+# Created:   Jun 19, 2019
+# Updated:   Jun 19, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
 Mqtt:
    - Broker:
-      Name: Test Broker 1
+      Name: Cannon Trail Active
       Active: 'true'
       Comment: For Cannon Trail (if reachable)
       LastUpdate: 2019-05-18 12:41:20.061260

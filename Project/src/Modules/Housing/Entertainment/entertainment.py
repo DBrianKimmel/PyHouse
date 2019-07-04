@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-06-30'
+__updated__ = '2019-07-01'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -118,13 +118,6 @@ class Yaml:
     """
     """
 
-    def first(self, p_ordered):
-        """ Return the first element from an ordered collection
-           or an arbitrary element from an unordered collection.
-           Raise StopIteration if the collection is empty.
-        """
-        return next(iter(p_ordered))
-
     def load_defined_plugins(self, p_pyhouse_obj):
         """
         """
@@ -144,7 +137,7 @@ class Yaml:
         for l_service in p_yaml:
             # LOG.debug('Key:\n\t{}'.format(l_service))
             l_obj = EntertainmentPluginInformation()
-            l_name = self.first(l_service)
+            l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_service)
             l_ix = l_name.lower()
             l_obj.Name = l_name
             l_obj.Active = True
@@ -159,7 +152,7 @@ class Yaml:
         for l_device in p_yaml:
             # LOG.debug('Key:\n\t{}'.format(l_device))
             l_obj = EntertainmentPluginInformation()
-            l_name = self.first(l_device)
+            l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_device)
             l_ix = l_name.lower()
             l_obj.Name = l_name
             l_obj.Active = True

@@ -15,18 +15,17 @@ PyHouse.House.Lighting.
                        Lights
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-02'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+from typing import Any
 import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
-from Modules.Core.data_objects import LightingData
+from Modules.Core.data_objects import LightingData, PyHouseInformation
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
-# from Modules.Families.family_utils import FamUtil
-# from Modules.Housing.Lighting.lighting_utility import Utility
 from Modules.Housing.Lighting.lighting_buttons import XML as buttonsXML
 from Modules.Housing.Lighting.lighting_controllers import XML as controllersXML, MqttActions as controllerMqtt
 from Modules.Housing.Lighting.lighting_lights import MqttActions as lightMqtt, XML as lightXML
@@ -38,10 +37,10 @@ class MqttActions:
     """
     """
 
-    def __init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj: PyHouseInformation) -> None:
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_topic: list, p_message, p_logmsg) -> str:
         """
         --> pyhouse/<housename>/lighting/<category>/xxx
         """
@@ -68,6 +67,11 @@ class MqttActions:
         else:
             l_logmsg += '\tUnknown Light sub-topic {}'.format(p_message)
         return l_logmsg
+
+
+class Yaml:
+    """
+    """
 
 
 class XML:
@@ -105,13 +109,13 @@ class API(XML):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self, p_pyhouse_obj):
         """ Load the Lighting xml info.
         """
         p_pyhouse_obj.House.Lighting = LightingData()  # Clear before loading
         self.read_lighting_xml(p_pyhouse_obj)
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self, p_xml):
         """ Save the Lighting section.
         It will contain several sub-sections
         """

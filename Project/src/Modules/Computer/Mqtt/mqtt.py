@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-28'
+__updated__ = '2019-07-02'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -63,8 +63,13 @@ class Yaml:
     """ Extract the config info from the config file "mqtt.yaml"
     """
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
     def _extract_broker(self, p_broker, p_api):
         """ Extract one broker information
+        @param p_broker: is a single brokers yaml ordereddict.
+        @param p_api: is the Api for ???
         @return: MqttBrokerInformation if defined, else None
         """
         l_obj = MqttBrokerInformation()
@@ -75,6 +80,11 @@ class Yaml:
             LOG.warn('No Broker: in mqtt.yaml')
             return None
         for l_key, l_val in l_broker.items():
+            if l_key == 'Host':
+                l_val = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(l_val)
+            elif l_key == 'Active':
+                l_val = bool(l_val)
+            # LOG.debug('Key:{}; Val:{};'.format(l_key, l_val))
             setattr(l_obj, l_key, l_val)
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker', 190))
         LOG.info('Loaded broker: {}'.format(l_obj.Name))
@@ -106,24 +116,14 @@ class Yaml:
     def LoadYamlConfig(self, p_pyhouse_obj, p_api):
         """ Read the Mqtt.Yaml file.
         """
-        LOG.info('Reading config file "{}".'.format(CONFIG_FILE_NAME))
+        # LOG.info('Reading mqtt config file "{}".'.format(CONFIG_FILE_NAME))
         l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        p_pyhouse_obj.Computer.Mqtt.Brokers = self._extract_brokers(l_yaml, p_api)
-
-        l_computer = platform.node()
-
-        p_pyhouse_obj.Computer.Mqtt.ClientID = 'PyH-Comp-' + l_computer
-        p_pyhouse_obj.Computer.Mqtt.Prefix = 'pyhouse/' + p_pyhouse_obj._Parameters.Name  # we have not configured house at this point
-
-        # p_pyhouse_obj._Config.YamlTree.Mqtt = l_yaml
-
-        return p_pyhouse_obj.Computer  # for testing purposes
-
-    def SaveYamlConfig(self, p_pyhouse_obj):
-        """
-        There is nothing in the config that can be altered during runtime
-        so there is no need to write out the Yaml file to back it up.
-        """
+        l_obj = MqttInformation()
+        l_obj.Brokers = self._extract_brokers(l_yaml, p_api)
+        l_obj.ClientID = 'PyH-Comp-' + platform.node()
+        l_obj.Prefix = 'pyhouse/' + p_pyhouse_obj._Parameters.Name  # we have not configured house at this point
+        p_pyhouse_obj.Computer.Mqtt = l_obj
+        return l_obj  # for testing purposes
 
 
 class API:
@@ -144,7 +144,7 @@ class API:
         """ Load the Mqtt Config info.
         """
         LOG.info("Loading Config - Version:{}".format(__version__))
-        Yaml().LoadYamlConfig(p_pyhouse_obj, self)
+        Yaml(p_pyhouse_obj).LoadYamlConfig(p_pyhouse_obj, self)
 
     def Start(self):
         """
@@ -163,7 +163,6 @@ class API:
         There is nothing in the config that can be altered during runtime
         so there is no need to write out the Yaml file to back it up.
         """
-        Yaml().SaveYamlConfig(p_pyhouse_obj)
         return None
 
     def Stop(self):

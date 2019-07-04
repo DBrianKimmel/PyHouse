@@ -1,0 +1,20 @@
+---
+# Name:      PyHouse/Project/src/Module/Families/Insteon/test/Yaml/insteon.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jul  2, 2019
+# Updated:   Jul  2, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Insteon:
+  Address: 12.34.56
+  DevCat: 01.21
+  ProductKey: 12.34.56
+  EngineVersion: 1
+  FirmwareVersion: 3F
+  GroupNumber: 3
+  GroupList: [1,2,3]
+
+### END DBK

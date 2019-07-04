@@ -48,7 +48,7 @@ CoreLightingData(DeviceData):
 
 There are two different concepts called controllers.
 
-The first is a device, connected to a computer, that sends commands from the computer to the devicer.
+The first is a device, connected to a computer, that sends commands from the computer to the device.
 Insteon, UPB and X10 all have these controllers.  Other families may also have them also.
 They connect to a serial port or a USB port on the computer side.
 

@@ -7,11 +7,11 @@
 @note:      Created on Apr 26, 2017
 @summary:   Test
 
-Passed all 11 tests - DBK - 2019-06-26
+Passed all 11 tests - DBK - 2019-07-01
 
 """
 
-__updated__ = '2019-06-26'
+__updated__ = '2019-07-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,11 +20,16 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import ScheduleLightData, ControllerData
+from Modules.Core.data_objects import \
+    ScheduleLightData, \
+    ControllerData, \
+    PyHouseInformation, \
+    ComputerInformation
 from Modules.Computer.Mqtt import mqtt
 from Modules.Computer.Mqtt.mqtt import \
     API as mqttAPI, \
     Yaml as mqttYaml
+from Modules.Computer.Mqtt.mqtt_data import MqttInformation
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQTT_BROKER
 from Modules.Core.Utilities import json_tools, config_tools
@@ -146,29 +151,45 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_yaml = mqttYaml()
+        self.m_yaml = mqttYaml(self.m_pyhouse_obj)
         self.m_working_rooms = self.m_pyhouse_obj.Computer.Mqtt
 
     def test_01_Build(self):
         """ The basic read info as set up
         """
         # print(PrettyFormatAny.form(self.m_working_rooms, 'C1-01-A - WorkingRooms'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-05-A - Computer'))
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'C1-05-B - Mqtt'))
-        pass
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-01-A - Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'C1-01-B - Mqtt'))
+        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Computer.Mqtt, MqttInformation)
 
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
         l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
         l_yaml = l_node.Yaml
+        l_first = config_tools.Yaml(self.m_pyhouse_obj).find_first_element(l_yaml)
         l_yaml_top = l_yaml['Mqtt']
-        print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
-        print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
-        print(PrettyFormatAny.form(l_yaml_top, 'C1-02-C - Yaml_top'))
-        print(PrettyFormatAny.form(l_yaml_top[0], 'C1-02-D - Yaml_top[0]'))
+        # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
+        # print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
+        # print(PrettyFormatAny.form(l_yaml_top, 'C1-02-C - Yaml_top'))
+        # print(PrettyFormatAny.form(l_yaml_top[0], 'C1-02-D - Yaml_top[0]'))
+        self.assertEqual(l_first, 'Mqtt')
         self.assertEqual(l_yaml_top[0]['Broker']['Name'], 'Test Broker 1')
         self.assertEqual(len(l_yaml_top), 2)
+
+    def test_03_Broker(self):
+        """ Extract one broker
+        """
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_yaml = l_node.Yaml['Mqtt']
+        l_first_broker = config_tools.Yaml(self.m_pyhouse_obj).find_first_element(l_yaml)
+        l_broker = self.m_yaml._extract_broker(l_first_broker, self)
+        print('C1-03-A - Yaml: {}'.format(l_first_broker))
+        print(PrettyFormatAny.form(l_broker, 'C1-03-B - Broker'))
+        self.assertEqual(l_broker.Name, 'Test Broker 1')
+        self.assertEqual(l_broker.Active, 'True')
 
 
 class F1_Form(SetupMixin, unittest.TestCase):

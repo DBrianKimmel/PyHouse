@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-07-03'
 __version_info__ = (19, 5, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -27,7 +27,7 @@ import xml.etree.ElementTree as ET
 #  Import PyHouse files
 from Modules.Core.data_objects import UuidData, CoreLightingData
 from Modules.Families.family_utils import FamUtil
-from Modules.Core.Utilities import extract_tools
+from Modules.Core.Utilities import extract_tools, config_tools
 from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Housing.Lighting.lighting_utility import Utility as lightingUtility
@@ -38,6 +38,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.LightingLights ')
 SECTION = 'LightSection'
+CONFIG_FILE_NAME = 'lights.yaml'
 
 
 class LightData(CoreLightingData):
@@ -112,6 +113,41 @@ class MqttActions:
             l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
             LOG.warn('Unknown Lights Topic: {}'.format(p_topic[0]))
         return l_logmsg
+
+
+class Yaml:
+    """
+    """
+
+    def _copy_to_yaml(self, p_pyhouse_obj):
+        """ Create or Update the yaml information.
+        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
+
+        The running info is a dict and the yaml is a list!
+
+        @return: the updated yaml ready information.
+        """
+        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_config = l_node.Yaml['Lights']
+        l_working = p_pyhouse_obj.House.Lighting.Lights
+        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
+            l_val = getattr(l_working, l_key)
+            setattr(l_config, l_key, l_val)
+        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
+        l_ret = {'Lights': l_config}
+        return l_ret
+
+    def _build_yaml(self):
+        """
+        """
+
+    def SaveYamlConfig(self, p_pyhouse_obj):
+        """
+        """
+        LOG.info('Saving Config - Version:{}'.format(__version__))
+        l_config = self._copy_to_yaml(p_pyhouse_obj)
+        config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        return l_config
 
 
 class XML:
@@ -201,6 +237,11 @@ class XML:
             l_count += 1
         LOG.info('Saved {} Lights XML'.format(l_count))
         return l_xml
+
+
+class Config:
+    """
+    """
 
 
 class API(MqttActions):

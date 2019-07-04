@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2019-06-22'
+__updated__ = '2019-07-01'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.data_objects import BaseObject
+from Modules.Core.data_objects import BaseObject, HostInformation
 
 
 class MqttInformation:
@@ -41,9 +41,10 @@ class MqttBrokerInformation(BaseObject):
 
     def __init__(self):
         super(MqttBrokerInformation, self).__init__()
-        self.BrokerAddress = None  # Host name or Address
-        self.BrokerHost = None  # Host name
-        self.BrokerPort = None
+        self.Host = HostInformation()
+        # self.BrokerAddress = None  # Host name or Address
+        # self.BrokerHost = None  # Host name
+        # self.Host.Port = None
         self.Class = 'Local'
         self.Keepalive = 60  # seconds
         self.Password = None

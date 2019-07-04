@@ -1,4 +1,15 @@
 %YAML 1.2
 ---
-Location: {City: null, Country: null, Elevation: null, Latitude: null, Longitude: null,
-  Phone: null, State: null, Street: null, TimeZoneName: null, ZipCode: null}
+Location:
+  Street: 1600 Pennsylvania Ave NW
+  City: Washington
+  State: DC
+  ZipCode: 20500
+  Country: USA
+  Phone: (888) 555-1212
+  TimeZoneName: America/New_York
+  Latitude: 38.897789
+  Longitude: -77.036619
+  Elevation: 30.0
+
+### END DBK

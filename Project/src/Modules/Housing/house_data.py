@@ -12,11 +12,12 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-07-02'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+from typing import Any
 
 #  Import PyMh files
 from Modules.Core.data_objects import BaseUUIDObject, RiseSetData, BaseObject

@@ -1,7 +1,7 @@
 """
 -*- test-case-name: PyHouse.Modules.Lighting.test.test_lighting_buttons -*-
 
-@name:      PyHouse/src/Modules/Lighting/lighting_buttons.py
+@name:      PyHouse/Project/src/Modules/Lighting/lighting_buttons.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-23'
+__updated__ = '2019-07-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET

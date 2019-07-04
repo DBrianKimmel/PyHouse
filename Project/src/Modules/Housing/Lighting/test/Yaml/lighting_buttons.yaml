@@ -1,3 +1,4 @@
+---
 # Name:      PyHouse/Project/src/Module/Housing/Lighting/test/Yaml/lighting_buttons.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
@@ -6,8 +7,20 @@
 # Updated:   Jun 24, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
----
-Buttons:
-   - Name: xxx
+
+Button:
+   - Name: Test Button 1
+     Active: True
+     Comment: A comment
+     LastUpdate: 2010-01-02 03:04:05
+     Type: Button # VALID_LIGHTING_TYPE = Button | Controller | Light
+     Device:
+       Family: Null
+       Type: 0 # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
+       SubType: 0
+     Room:
+       Name: None
+       Coords: None  # CoordinateData() of the device itself
+       UUID: None
 
 ### END DBK

@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-07-01'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -150,6 +150,19 @@ class EthernetControllerData:
         self.Protocol = 'TCP'
 
 
+class HostInformation:
+    """ Used for all host related information
+    This is usually not completely filled in.
+    Twisted kinda likes hostnames instead of IP addresses.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Port = None
+        self.IPv4 = None
+        self.IPv6 = None
+
+
 class HouseAPIs:
     """ These are all the sub-systems of House.
 
@@ -192,6 +205,18 @@ class LightingData:
         self.Buttons = {}  # ButtonData()  DeviceSubType = 3
         self.Controllers = {}  # ControllerData()  DeviceSubType = 1
         self.Lights = {}  # LightData()  DeviceSubType = 2
+
+
+class LoginInformation:
+    """ Used for all Login related information
+    Either UserName or Name may be given - they are then set to be the same.
+    This is done to make it easier to edit the yaml config files.
+    """
+
+    def __init__(self):
+        self.UserName = None
+        self.Name = None
+        self.Password = None
 
 
 class ModuleObject:

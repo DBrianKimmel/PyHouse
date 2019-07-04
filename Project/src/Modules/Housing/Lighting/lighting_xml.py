@@ -1,7 +1,5 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/Project/src/Modules/Housing/Lighting/lighting_xml.py -*-
-
-@name:      /home/briank/workspace/PyHouse/Project/src/Modules/Housing/Lighting/lighting_xml.py
+@name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-02'
 
 #  Import system type stuff
 # import xml.etree.ElementTree as ET

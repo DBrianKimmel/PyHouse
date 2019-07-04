@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-19'
+__updated__ = '2019-07-01'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -53,7 +53,7 @@ class Xml(object):
         return l_obj
 
     @staticmethod
-    def _read_one_broker(p_xml):
+    def X_read_one_broker(p_xml):
         """
         @param p_xml: XML information for one BrokerBroker
         @return: a b object filled in with data from the XML passed in

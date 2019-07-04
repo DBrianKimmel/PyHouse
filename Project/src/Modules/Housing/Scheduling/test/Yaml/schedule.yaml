@@ -1,0 +1,19 @@
+---
+# Name:      PyHouse/Project/src/Modules/Core/Utility/test/Yaml/test.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 28, 2019
+# Updated:   Jun 28, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Schedules:
+  - Name: Event
+    Time: sunset
+    Type: Light
+    Light: Test Light 1
+    Brightness: 0
+    DOW: SMTWTFS
+
+### END
