@@ -10,9 +10,10 @@
 Passed all 19 tests - DBK - 2019-06-18
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-06'
 
 # Import system type stuff
+import os
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
@@ -20,6 +21,7 @@ import xml.etree.ElementTree as ET
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core import setup_pyhouse
+from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 from Modules.Core.data_objects import \
     PyHouseAPIs, \
     ComputerInformation, \
@@ -80,6 +82,29 @@ class B1_UUIDs(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
+    def _build_file(self, p_pyhouse_obj, p_filename):
+        l_file = os.path.join(p_pyhouse_obj.Xml.XmlConfigDir, p_filename)
+        return l_file
+
+    def _read_file(self, p_pyhouse_obj, p_filename):
+        l_name = self._build_file(p_pyhouse_obj, p_filename)
+        try:
+            l_file = open(l_name, 'r')
+            l_ret = l_file.read()
+        except IOError:
+            l_ret = toolUuid.create_uuid()
+        return l_ret
+
+
+def _write_file(self, p_pyhouse_obj, p_filename, p_uuid):
+    l_name = self._build_file(p_pyhouse_obj, p_filename)
+    try:
+        l_file = open(l_name, 'w')
+        l_ret = l_file.write(p_uuid)
+    except IOError as e_err:
+        l_ret = e_err
+    return l_ret
+
     def test_01_Xml(self):
         l_xml = self.m_pyhouse_obj.Xml
         # print(PrettyFormatAny.form(l_xml, 'PyHouse,Xml'))
@@ -88,16 +113,16 @@ class B1_UUIDs(SetupMixin, unittest.TestCase):
     def test_02_build(self):
         """
         """
-        l_file = setup_pyhouse._build_file(self.m_pyhouse_obj, 'Computer.uuid')
+        l_file = self._build_file(self.m_pyhouse_obj, 'Computer.uuid')
         self.assertEqual(l_file, '/etc/pyhouse/Computer.uuid')
 
     def test_03_Read(self):
-        _l_uuid = setup_pyhouse._read_file(self.m_pyhouse_obj, 'Computer.uuid')
+        _l_uuid = self._read_file(self.m_pyhouse_obj, 'Computer.uuid')
         # print('B1-03-A - UUID: {}'.format(l_uuid))
 
     def test_04_Write(self):
         l_uuid = '222ec0e9-d76e-11e6-b40f-74dfbfae5aed'
-        _l_ret = setup_pyhouse._write_file(self.m_pyhouse_obj, 'Computer.uuid', l_uuid)
+        _l_ret = self._write_file(self.m_pyhouse_obj, 'Computer.uuid', l_uuid)
         # print('B1-03-A - UUID: {}'.format(l_ret))
 
 

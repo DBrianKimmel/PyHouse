@@ -9,15 +9,15 @@
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files
-from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttBrokerInformation
+from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttBrokerInformation
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import HouseInformation, ComputerInformation
+from Modules.Core.data_objects import HouseInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 
 LOG = Logger.getLogger('PyHouse.Mqtt_Xml       ')
@@ -30,7 +30,7 @@ class Xml(object):
 
     @staticmethod
     def _read_computer_name(p_pyhouse_obj):
-        l_obj = ComputerInformation()
+        l_obj = p_pyhouse_obj.Computer
         l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision')
         if l_xml is None:
             l_obj.Name = 'Default Name'

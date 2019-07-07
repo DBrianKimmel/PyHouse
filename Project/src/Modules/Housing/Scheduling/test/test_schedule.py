@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-06'
 
 # Import system type stuff
 import datetime
@@ -26,7 +26,7 @@ import twisted
 # Import PyMh files and modules.
 from Modules.Core.data_objects import RiseSetData
 from Modules.Core.Utilities import convert
-from Modules.Computer.Mqtt.mqtt import API as mqttAPI
+from Modules.Core.Mqtt.mqtt import API as mqttAPI
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 # from Modules.Housing.Scheduling import schedule
 from Modules.Housing.Scheduling.schedule_xml import Xml as scheduleXml
@@ -318,7 +318,7 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         self.m_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Schedules = self.m_schedules
         self.m_schedule_obj = self.m_schedules[0]
-        # self.m_pyhouse_obj._APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj)
 
     def test_01_one(self):
         """ No way to test the dispatch routine
@@ -339,7 +339,7 @@ class C2_List(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.Schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._APIs.Computer.MqttAPI = mqttAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj)
         twisted.internet.base.DelayedCall.debug = True
 
     def test_01_BuildSched(self):

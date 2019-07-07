@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-02'
+__updated__ = '2019-07-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,12 +19,12 @@ import datetime
 import platform
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Utilities import config_tools
-from Modules.Computer.Mqtt.mqtt_client import Util as mqttUtil
-from Modules.Computer.Mqtt.mqtt_data import MqttInformation, MqttJson, MqttBrokerInformation
+from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
+from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttJson, MqttBrokerInformation
 from Modules.Housing.house import MqttActions as houseMqtt
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -36,7 +36,7 @@ CONFIG_FILE_NAME = 'mqtt.yaml'
 
 
 def _make_topic(p_pyhouse_obj, p_topic):
-    l_topic = p_pyhouse_obj.Computer.Mqtt.Prefix + p_topic
+    l_topic = p_pyhouse_obj.Core.Mqtt.Prefix + p_topic
     return l_topic
 
 
@@ -122,7 +122,7 @@ class Yaml:
         l_obj.Brokers = self._extract_brokers(l_yaml, p_api)
         l_obj.ClientID = 'PyH-Comp-' + platform.node()
         l_obj.Prefix = 'pyhouse/' + p_pyhouse_obj._Parameters.Name  # we have not configured house at this point
-        p_pyhouse_obj.Computer.Mqtt = l_obj
+        p_pyhouse_obj.Core.Mqtt = l_obj
         return l_obj  # for testing purposes
 
 
@@ -135,10 +135,10 @@ class API:
     def __init__(self, p_pyhouse_obj, p_parent):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_parent = p_parent
-        p_pyhouse_obj.Computer.Mqtt = MqttInformation()
-        p_pyhouse_obj.Computer.Mqtt.Prefix = 'ReSeT'
-        # p_pyhouse_obj.Computer.Mqtt.Brokers = []
-        LOG.info("Initialized - Version:{}".format(__version__))
+        p_pyhouse_obj.Core.Mqtt = MqttInformation()
+        p_pyhouse_obj.Core.Mqtt.Prefix = 'ReSeT'
+        # p_pyhouse_obj.Core.Mqtt.Brokers = []
+        LOG.info("Initialized - Version:{} == {}".format(__version__, self))
 
     def LoadConfig(self, p_pyhouse_obj):
         """ Load the Mqtt Config info.
@@ -151,7 +151,7 @@ class API:
         """
         LOG.info("Starting - Version:{}".format(__version__))
 
-        if self.m_pyhouse_obj.Computer.Mqtt.Brokers != {}:
+        if self.m_pyhouse_obj.Core.Mqtt.Brokers != {}:
             l_count = mqttUtil().connect_to_all_brokers(self.m_pyhouse_obj)
             LOG.info("Mqtt {} broker Connection(s) Started.".format(l_count))
         else:
@@ -176,14 +176,14 @@ class API:
         All publish commands point to here.
         This routine will run thru the list of brokers and publish to each broker.
 
-        # self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
+        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
 
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param p_message : is the message we want to send
         """
         l_topic = _make_topic(self.m_pyhouse_obj, p_topic)
         l_message = _make_message(self.m_pyhouse_obj, p_message)
-        for l_broker in self.m_pyhouse_obj.Computer.Mqtt.Brokers.values():
+        for l_broker in self.m_pyhouse_obj.Core.Mqtt.Brokers.values():
             if not l_broker.Active:
                 continue
             try:
@@ -248,7 +248,7 @@ class API:
         try:
             l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[l_name])
         except (KeyError, TypeError):
-            l_node = NodeData()
+            l_node = NodeInformation()
         l_node.NodeInterfaces = {}
 
 # ## END DBK

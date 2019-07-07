@@ -4,12 +4,14 @@
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
 # Created:   Jun 10, 2019
-# Updated:   Jul 01, 2019
+# Updated:   Jul 06, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
 Computer:
    Name: pi-01-ct
+   Comment: This is for testing
+#
    Mqtt: !include computer/mqtt.yaml
    Bridges: !include computer/bridges.yaml
 

@@ -1,7 +1,5 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/Bridges/bridges.py -*-
-
-@name:      PyHouse/src/Modules/Computer/Bridges/bridges.py
+@name:      PyHouse/Project/src/Modules/Computer/Bridges/bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -15,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-06-28'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -89,14 +87,12 @@ class Yaml:
         """
         l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
         l_config = l_node.Yaml['Bridges']
-        l_working = p_pyhouse_obj.House.Rooms
-        # LOG.debug(PrettyFormatAny.form(l_working, 'House', 190))
+        l_working = p_pyhouse_obj.Computer.Bridges
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             l_config[l_key] = l_val
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
-        # LOG.debug(PrettyFormatAny.form(l_node, 'Updated', 190))
-        l_ret = {'Rooms': l_config}
+        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Bridges'] = l_config
+        l_ret = {'Bridges': l_config}
         return l_ret
 
     def SaveYamlConfig(self, p_pyhouse_obj):

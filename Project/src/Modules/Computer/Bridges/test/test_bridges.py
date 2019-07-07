@@ -12,7 +12,7 @@ Passed all 6 tests - DBK - 2018-02-12
 """
 from Modules.Core.data_objects import PyHouseInformation, ComputerInformation
 
-__updated__ = '2019-06-27'
+__updated__ = '2019-07-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -83,7 +83,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
 
     def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
@@ -150,6 +150,6 @@ class D1_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
 
 # ## END DBK

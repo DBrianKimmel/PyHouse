@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-06'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import os
@@ -17,7 +17,7 @@ import os
 # from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import RoomInformation, NodeData
+from Modules.Core.data_objects import RoomInformation, NodeInformation
 from Modules.Computer.Web.web_utils import GetJSONComputerInfo
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
@@ -65,7 +65,7 @@ class NodesElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.Computer.Nodes[l_ix]
         except KeyError:
-            l_obj = NodeData()
+            l_obj = NodeInformation()
         l_obj.Name = l_json['Name']
         l_obj.Active = l_json['Active']
         l_obj.Key = l_ix

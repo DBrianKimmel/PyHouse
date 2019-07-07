@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-07'
 
 #  Import system type stuff
 import pyudev
@@ -125,7 +125,7 @@ class SerialAPI:
             l_topic = 'house/driver/serial/status'
             l_obj = DriverStatus()
             l_obj.Status = 'Open'
-            p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+            p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Port, e_err))

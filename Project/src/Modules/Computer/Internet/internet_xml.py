@@ -9,13 +9,13 @@
 
 """
 
-__updated__ = '2019-06-19'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import InternetConnectionData
+from Modules.Core.data_objects import InternetConnectionInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Computer import logging_pyh as Logger
 
@@ -32,7 +32,7 @@ class Util(object):
         """
         @param p_xml: points to a single "Internet" element
         """
-        l_obj = InternetConnectionData()
+        l_obj = InternetConnectionInformation()
         try:
             l_obj.Name = PutGetXML.get_text_from_xml(p_xml, 'Name')
             l_obj.Key = PutGetXML.get_int_from_xml(p_xml, 'Key', 0)

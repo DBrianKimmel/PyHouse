@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-06'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -17,7 +17,7 @@ from twisted.internet import defer
 # from twisted.internet.ssl import Certificate, optionsForClientTLS
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt.mqtt_protocol import PyHouseMqttFactory
+from Modules.Core.Mqtt.mqtt_protocol import PyHouseMqttFactory
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
@@ -46,7 +46,7 @@ class Util(object):
         """ Provide a TCP connection to the designated broker.
         @param p_broker_obj: Designates which broker to connect.
         """
-        p_pyhouse_obj.Computer.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
+        p_pyhouse_obj.Core.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Start Connecting via TCP to broker: {}'.format(p_broker_obj.Name))
         if p_broker_obj.Host.Name is None or p_broker_obj.Host.Port is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker_obj.Host.Name, p_broker_obj.Host.Port))
@@ -55,13 +55,13 @@ class Util(object):
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
             _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.Host.Name, p_broker_obj.Host.Port, l_factory)
             LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker_obj.Name, p_broker_obj.Host.Name))
-            LOG.info('Prefix: {}'.format(p_pyhouse_obj.Computer.Mqtt.Prefix))
+            LOG.info('Prefix: {}'.format(p_pyhouse_obj.Core.Mqtt.Prefix))
 
     @defer.inlineCallbacks
     def connect_to_one_broker_TLS(self, p_pyhouse_obj, _p_broker):
         """
         """
-        p_pyhouse_obj.Computer.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
+        p_pyhouse_obj.Core.Mqtt.ClientID = self._make_client_name(p_pyhouse_obj)
         LOG.info('Connecting via TLS...')
         # l_factory = protocol.Factory.forProtocol(echoclient.EchoClient)
         # l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
@@ -80,7 +80,7 @@ class Util(object):
         These connections will automatically reconnect if the connection is broken (broker reboots e.g.)
         """
         l_count = 0
-        for l_broker_obj in p_pyhouse_obj.Computer.Mqtt.Brokers.values():
+        for l_broker_obj in p_pyhouse_obj.Core.Mqtt.Brokers.values():
             if not l_broker_obj.Active:
                 LOG.info('Skipping not active broker: {}'.format(l_broker_obj.Name))
                 continue

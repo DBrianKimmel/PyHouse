@@ -19,7 +19,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,7 +33,7 @@ import pyudev
 import subprocess
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 # from Modules.Communication import ir_control
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 
@@ -432,7 +432,7 @@ class Util(object):
     def create_local_node(self):
         """ Create the local node info structure
         """
-        l_node = NodeData()
+        l_node = NodeInformation()
         l_node.Name = self.m_pyhouse_obj.Computer.Name
         l_node.Key = 0
         l_node.Active = True
@@ -442,7 +442,7 @@ class Util(object):
         l_node.NodeRole = Util.find_node_role()
         l_node.LastUpdate = datetime.now()
         # l_topic = 'computer/local'
-        # self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)
+        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)
         return l_node
 
 

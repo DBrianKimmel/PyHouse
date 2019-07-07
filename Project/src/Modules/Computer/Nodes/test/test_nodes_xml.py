@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2019-05-14'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Nodes.test.xml_nodes import \
         TESTING_NODES_NODE_NAME_0, \
@@ -94,7 +94,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -133,7 +133,7 @@ class A3_Xml(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_FindXML(self):
         """ Be sure that the XML contains the right stuff.

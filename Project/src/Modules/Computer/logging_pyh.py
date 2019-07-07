@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.Modules.Computer.test.test_logging_pyh -*-
-
-@name:      PyHouse/src/Modules/Computer/logging_pyh.py
+name:      PyHouse/src/Modules/Computer/logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014-2017 by D. Brian Kimmel
+@copyright: 2014-2019 by D. Brian Kimmel
 @note:      Created on Jan 20, 2014
 @license:   MIT License
 @summary:   Log Module.
@@ -21,7 +19,7 @@ It configures PyHouse in the logging standard library module plus twisted loggin
 
 """
 
-__updated__ = '2016-11-21'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import logging
@@ -31,6 +29,7 @@ import logging
 
 def getLogger(p_name):
     return logging.getLogger(p_name)
+
 
 def addHandler(p_handler):
     logging.Logger.addHandler(p_handler)
@@ -73,6 +72,7 @@ class Manager(object):
     """
     Simplified version of 'logging.Manager'.
     """
+
     def __init__(self):
         self.loggers = {}
 

@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-01-19'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 from Modules.Computer.Nodes.nodes import API as nodesApi
 from Modules.Computer.Nodes.node_local import API as localApi
 from Modules.Computer.Nodes.test.xml_nodes import \
@@ -53,7 +53,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.
@@ -73,7 +73,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_Nodes(self):
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
@@ -89,7 +89,7 @@ class B1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_PyHouse(self):
         nodesApi(self.m_pyhouse_obj).LoadXml(self.m_pyhouse_obj)

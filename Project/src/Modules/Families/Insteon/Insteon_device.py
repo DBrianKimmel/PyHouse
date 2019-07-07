@@ -18,14 +18,13 @@ serial_port
 
 """
 
-__updated__ = '2019-06-09'
+__updated__ = '2019-07-05'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-#  from Modules.Core.data_objects import NodeData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
 

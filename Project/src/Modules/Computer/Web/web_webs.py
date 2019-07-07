@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import os
@@ -19,7 +19,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import WebData
+from Modules.Core.data_objects import WebInformation
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
@@ -54,7 +54,7 @@ class WebsElement(athena.LiveElement):
         """A new/changed web is returned.  Process it and update the internal data via ???.py
         """
         l_json = json_tools.decode_json_unicode(p_json)
-        l_obj = WebData()
+        l_obj = WebInformation()
         l_obj.Port = l_json['Port']
         self.m_pyhouse_obj._APIs.Computer.WebAPI.SaveXml(l_obj)
 

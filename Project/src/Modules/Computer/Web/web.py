@@ -17,14 +17,14 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2019-05-05'
+__updated__ = '2019-07-05'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import WebData, LoginData
+from Modules.Core.data_objects import LoginData, WebInformation
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.web_server import API as WebAPI
 # from Modules.Computer.Web.websocket_server import API as WebSocketAPI
@@ -50,7 +50,7 @@ class API(object):
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Mqtt xml info.
         """
-        p_pyhouse_obj.Computer.Web = WebData()  # Clear before loading.
+        p_pyhouse_obj.Computer.Web = WebInformation()  # Clear before loading.
         p_pyhouse_obj.Computer.Web.Logins = LoginData()  # Clear before loading.
         l_ret = webXml.read_web_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.Web = l_ret

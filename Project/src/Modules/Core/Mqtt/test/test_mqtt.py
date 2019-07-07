@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-07-01
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -25,13 +25,13 @@ from Modules.Core.data_objects import \
     ControllerData, \
     PyHouseInformation, \
     ComputerInformation
-from Modules.Computer.Mqtt import mqtt
-from Modules.Computer.Mqtt.mqtt import \
+from Modules.Core.Mqtt import mqtt
+from Modules.Core.Mqtt.mqtt import \
     API as mqttAPI, \
     Yaml as mqttYaml
-from Modules.Computer.Mqtt.mqtt_data import MqttInformation
+from Modules.Core.Mqtt.mqtt_data import MqttInformation
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
-from Modules.Computer.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQTT_BROKER
+from Modules.Core.Mqtt.test.xml_mqtt import TESTING_MQTT_SECTION, TESTING_MQTT_BROKER
 from Modules.Core.Utilities import json_tools, config_tools
 
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
@@ -133,7 +133,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
 
     def test_01_Tags(self):
         """ Be sure that the XML contains the right stuff.
@@ -152,17 +152,17 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_yaml = mqttYaml(self.m_pyhouse_obj)
-        self.m_working_rooms = self.m_pyhouse_obj.Computer.Mqtt
+        self.m_working_rooms = self.m_pyhouse_obj.Core.Mqtt
 
     def test_01_Build(self):
         """ The basic read info as set up
         """
         # print(PrettyFormatAny.form(self.m_working_rooms, 'C1-01-A - WorkingRooms'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-01-A - Computer'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'C1-01-B - Mqtt'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt, 'C1-01-B - Mqtt'))
         self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
-        self.assertIsInstance(self.m_pyhouse_obj.Computer.Mqtt, MqttInformation)
+        self.assertIsInstance(self.m_pyhouse_obj.Core.Mqtt, MqttInformation)
 
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
@@ -196,7 +196,7 @@ class F1_Form(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
 
     def test_01_Topic(self):
         """ Test topic.

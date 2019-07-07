@@ -1,6 +1,4 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_setup_logging -*-
-
 @name:      PyHouse/src/Modules/Core/setup_logging.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
@@ -17,7 +15,7 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import datetime

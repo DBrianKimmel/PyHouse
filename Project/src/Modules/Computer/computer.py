@@ -28,7 +28,7 @@ PyHouse.Computer.
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,15 +38,13 @@ import platform
 
 #  Import PyHouse files
 from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
-from Modules.Core.Utilities import extract_tools, uuid_tools
+from Modules.Core.Utilities import extract_tools, uuid_tools, config_tools
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Bridges.bridges import API as bridgesAPI
 from Modules.Computer.Communication.communication import API as communicationAPI
 from Modules.Computer.Internet.internet import API as internetAPI
-from Modules.Computer.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer.Nodes.nodes import API as nodesAPI, MqttActions as nodesMqtt
-# from Modules.Computer.Nodes.node_sync import API as syncAPI
 from Modules.Computer.Weather.weather import API as weatherAPI
 from Modules.Computer.Web.web import API as webAPI
 from Modules.Computer.Web.websocket_server import API as websocketAPI
@@ -56,6 +54,7 @@ LOG = Logger.getLogger('PyHouse.Computer       ')
 
 COMPUTER_DIVISION = 'ComputerDivision'
 UUID_FILE_NAME = 'Computer.uuid'
+CONFIG_FILE_NAME = 'computer.yaml'
 
 # MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
 
@@ -105,7 +104,7 @@ class MqttActions:
         return l_logmsg
 
 
-class Xml():
+class Xml:
 
     def _read_computer_specs(self, p_obj, p_xml):
         """ Read the extra computer info
@@ -134,6 +133,38 @@ class Xml():
         return l_xml
 
 
+class Yaml:
+    """
+    """
+
+    def _update_computer_from_yaml(self, p_pyhouse_obj, p_node_yaml):
+        """ Copies the data from the yaml config file to the Rooms part of the PyHouse obj.
+        Check for duplicate room names!
+        @param p_pyhouse_obj: is the entire house object
+        @param p_node_yaml: is ConfigYamlNodeInformation filled with room data.
+            {'Rooms': [{'Name': 'Outside', 'Active': 'True', 'Comment': 'Things outsi...
+        """
+        l_rooms = {}
+        try:
+            l_yaml = p_node_yaml['Rooms']  # Get the rooms info list.
+        except:
+            LOG.error('The "Rooms" tag is missing in the "rooms.yaml" file!')
+            return None
+        for l_ix, l_room_yaml in enumerate(l_yaml):
+            l_room_obj = self._extract_room_config(l_room_yaml)
+            l_rooms.update({l_ix:l_room_obj})
+        p_pyhouse_obj.House.Rooms = l_rooms
+        return l_rooms  # For testing.
+
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """ Read the computer.yaml file.
+        """
+        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_obj = p_pyhouse_obj.Computer
+        LOG.debug('Computer.Yaml - {}'.format(l_yaml.Yaml))
+        return l_obj  # for testing purposes
+
+
 class Utility:
     """
     There are currently (2019) 8 components - be sure all are in every method.
@@ -141,41 +172,41 @@ class Utility:
 
     m_pyhouse_obj = None
 
-    def _init_component_apis(self, p_pyhouse_obj, p_api):
+    def _init_component_apis(self, p_pyhouse_obj, p_computer_api):
         """
         Initialize all the computer division APIs
         """
         p_pyhouse_obj._APIs.Computer = ComputerAPIs()
-        p_pyhouse_obj._APIs.Computer.ComputerAPI = p_api
-        p_pyhouse_obj._APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj, p_api)
+        p_pyhouse_obj._APIs.Computer.ComputerAPI = p_computer_api
+        # p_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(p_pyhouse_obj, p_computer_api)
         #
         p_pyhouse_obj._APIs.Computer.BridgesAPI = bridgesAPI(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
+        # p_pyhouse_obj._APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
         # LOG.debug('{}'.format(PrettyFormatAny.form(p_pyhouse_obj._APIs.Computer, 'Computer Api\'s', 190)))
 
     def _load_component_config(self, p_pyhouse_obj):
-        p_pyhouse_obj._APIs.Computer.MqttAPI.LoadConfig(p_pyhouse_obj)  # Start this first so we can send messages.
+        # p_pyhouse_obj._APIs.Core.MqttAPI.LoadConfig(p_pyhouse_obj)  # Start this first so we can send messages.
 
         p_pyhouse_obj._APIs.Computer.NodesAPI.LoadConfig(p_pyhouse_obj)  # Nodes are sent in Mqtt open
         p_pyhouse_obj._APIs.Computer.BridgesAPI.LoadConfig(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
+        # p_pyhouse_obj._APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.WebSocketAPI.LoadXml(p_pyhouse_obj)
 
     def _start_component_apis(self, p_pyhouse_obj):
-        p_pyhouse_obj._APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
+        # p_pyhouse_obj._APIs.Core.MqttAPI.Start()  # Start this first so we can send messages/
         p_pyhouse_obj._APIs.Computer.BridgesAPI.Start()
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI.Start()
         p_pyhouse_obj._APIs.Computer.InternetAPI.Start()
         p_pyhouse_obj._APIs.Computer.NodesAPI.Start()
-        p_pyhouse_obj._APIs.Computer.WeatherAPI.Start()
+        # p_pyhouse_obj._APIs.Computer.WeatherAPI.Start()
         p_pyhouse_obj._APIs.Computer.WebAPI.Start()
         p_pyhouse_obj._APIs.Computer.WebSocketAPI.Start()
 
@@ -183,9 +214,9 @@ class Utility:
         p_pyhouse_obj._APIs.Computer.BridgesAPI.Stop()
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI.Stop()
         p_pyhouse_obj._APIs.Computer.InternetAPI.Stop()
-        p_pyhouse_obj._APIs.Computer.MqttAPI.Stop()
+        p_pyhouse_obj._APIs.Core.MqttAPI.Stop()
         p_pyhouse_obj._APIs.Computer.NodesAPI.Stop()
-        p_pyhouse_obj._APIs.Computer.WeatherAPI.Stop()
+        # p_pyhouse_obj._APIs.Computer.WeatherAPI.Stop()
         p_pyhouse_obj._APIs.Computer.WebAPI.Stop()
         p_pyhouse_obj._APIs.Computer.WebSocketAPI.Stop()
 
@@ -197,7 +228,7 @@ class Utility:
         p_pyhouse_obj._APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.InternetAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.NodesAPI.SaveConfig(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.Computer.WeatherAPI.SaveXml(p_xml)
+        # p_pyhouse_obj._APIs.Computer.WeatherAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.WebAPI.SaveXml(p_xml)
         p_pyhouse_obj._APIs.Computer.WebSocketAPI.SaveXml(p_xml)
         return p_xml
@@ -227,6 +258,7 @@ class API(Utility):
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         # Xml().read_computer_config(p_pyhouse_obj)
+        Yaml().LoadYamlConfig(p_pyhouse_obj)
         self._load_component_config(p_pyhouse_obj)
         LOG.info('Loaded Config.')
 

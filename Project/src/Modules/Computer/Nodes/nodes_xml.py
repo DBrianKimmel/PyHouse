@@ -10,14 +10,14 @@
 PyHouse_obj.Computer.Nodes is a dict of nodes.
 
 """
-__updated__ = '2019-06-19'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 # import datetime
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, NodeInterfaceData, UuidData
+from Modules.Core.data_objects import NodeInformation, NodeInterfaceData, UuidData
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities import uuid_tools
 from Modules.Computer import logging_pyh as Logger
@@ -88,7 +88,7 @@ class Xml(object):
         @param p_node_xml: is the element in the Xml config file that describes a node.
         @return: a node object filled in.
         """
-        l_node_obj = NodeData()
+        l_node_obj = NodeInformation()
         XmlConfigTools.read_base_UUID_object_xml(l_node_obj, p_node_xml)
         l_node_obj.ConnectionAddr_IPv4 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV4')
         l_node_obj.ConnectionAddr_IPv6 = PutGetXML.get_text_from_xml(p_node_xml, 'ConnectionAddressV6')

@@ -10,9 +10,9 @@
 Passed all 7 tests - DBK - 2018-02-13
 
 """
-from Modules.Computer.Bridges.bridges_data import BridgesData
+from Modules.Computer.Bridges.bridges_data import BridgesInformation
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -76,7 +76,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         l_xml = self.m_xml.bridges_sect
-        l_bridges = BridgesData()
+        l_bridges = BridgesInformation()
         l_dict = HueXml.ReadXml(l_bridges, l_xml)
         pass
 

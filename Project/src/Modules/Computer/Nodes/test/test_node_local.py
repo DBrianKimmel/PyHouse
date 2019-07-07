@@ -11,7 +11,7 @@ Passed all 26 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-05-14'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from netifaces import *
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes.node_local import \
     Interfaces, \
@@ -71,7 +71,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_PyHouseObj(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-01-A - PyHouse.Xml'))
@@ -108,7 +108,7 @@ class A3_Xml(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_Nodes(self):
         l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
@@ -129,7 +129,7 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_Families(self):
         """ Check the AF list for what we assume is the correct number later.
@@ -219,7 +219,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        self.m_node = NodeData()
+        self.m_node = NodeInformation()
         self.m_iface_api = Interfaces()
 
     def test_01_AllIfaceNames(self):
@@ -289,7 +289,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
         self.assertEqual(l_node[0].Name, INTERFACE_wL)
 
     def test_06_AllInterfaces(self):
-        l_node = NodeData()
+        l_node = NodeInformation()
         l_if, _l_v4, _l_v6 = Interfaces()._get_all_interfaces()
         l_node.NodeInterfaces = l_if
         # print(PrettyFormatAny.form(l_node.NodeInterfaces, 'B2-06-A - Node Interfaces'))

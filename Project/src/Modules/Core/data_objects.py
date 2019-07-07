@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,6 +35,7 @@ class PyHouseInformation:
     """
 
     def __init__(self):
+        self.Core = None  # CoreInformation()
         self.Computer = None  # ComputerInformation()
         self.House = None  # HouseInformation()
         # The rest are "Core" components
@@ -43,7 +44,17 @@ class PyHouseInformation:
         self._Families = None  # FamilyInformation()
         self._Parameters = None  # ParameterInformation()
         self._Twisted = None  # TwistedInformation()
-        self._Uuids = None  # AllUuids()
+        self._Uuids = None  # UuidInformation()
+
+
+class CoreInformation:
+    """
+    ==> PyHouse.Core.xxx
+
+    """
+
+    def __init__(self):
+        self.Mqtt = {}  # MqttInformation()
 
 
 class ParameterInformation:
@@ -67,6 +78,7 @@ class PyHouseAPIs:
     """
 
     def __init__(self):
+        self.Core = None  # CoreAPIs()
         self.Computer = None  # ComputerAPIs()
         self.House = None  # HouseAPIs()
         self.CoreSetupAPI = None
@@ -91,7 +103,7 @@ class BaseObject:
 
 class CommunicationAPIs:
     """
-    ==> PyHouse._APIs.Computer.Communication.xxx as in the def below.
+    ==> PyHouse._APIs.Computer.CommAPIs.xxx as in the def below.
 
     """
 
@@ -100,6 +112,16 @@ class CommunicationAPIs:
         self.EmailAPI = None
         self.PhoneAPI = None
         self.TwitterAPI = None
+
+
+class CoreAPIs:
+    """
+    """
+
+    def __init__(self):
+        self.MqttAPI = None
+        self.CoreSetupAPI = None
+        self.PyHouseMainAPI = None
 
 
 class ComputerAPIs:
@@ -111,16 +133,15 @@ class ComputerAPIs:
     def __init__(self):
         self.BridgesAPI = None
         self.ComputerAPI = None
-        self.Communication = None  # CommunicationAPIs()
+        self.CommAPIs = None  # CommunicationAPIs()
         self.InternetAPI = None
-        self.MqttAPI = None
         self.NodesAPI = None
         self.WeatherAPI = None
         self.WebAPI = None
         self.WebSocketAPI = None
 
 
-class CommunicationData:
+class CommunicationInformation:
     """Email information.
     """
 
@@ -316,7 +337,7 @@ class USBControllerData:
         self.Vendor = 0
 
 
-class AllUuids:
+class UuidInformation:
     """
 
     ==> PyHouse._Uuids.xxx as in the def below
@@ -360,7 +381,7 @@ class WeatherInformation:
         self.stationID = None
 
 
-class WebData:
+class WebInformation:
     """ Information about the configuration and control web server
 
     ==> PyHouse.Computer.Web.xxx - as in the def below.
@@ -404,7 +425,7 @@ class FamilyInformation(BaseObject):
         self.FamilyConfigAPI = None
 
 
-class InternetConnectionData(BaseObject):
+class InternetConnectionInformation(BaseObject):
     """ Check our nodes external IP-v4 address
     """
 
@@ -446,15 +467,14 @@ class ComputerInformation(BaseUUIDObject):
 
     def __init__(self):
         super(ComputerInformation, self).__init__()
-        self.Bridges = {}  # BridgeData() in Modules.Computer.Bridges.bridge_data
-        self.Communication = {}  # CommunicationData()
-        self.InternetConnection = {}  # InternetConnectionData()
-        self.Mqtt = {}  # MqttInformation()
-        self.Nodes = {}  # NodeData()
         self.Primary = False
         self.Priority = 99
+        self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridge_data
+        self.Communication = {}  # CommunicationInformation()
+        self.InternetConnection = {}  # InternetConnectionInformation()
+        self.Nodes = {}  # NodeInformation()
         self.Weather = {}  # WeatherInformation()
-        self.Web = {}  # WebData()
+        self.Web = {}  # WebInformation()
 
 
 class DeviceData(BaseUUIDObject):
@@ -513,7 +533,7 @@ class LoginData(BaseUUIDObject):
         self.ServerState = None
 
 
-class NodeData(BaseUUIDObject):
+class NodeInformation(BaseUUIDObject):
     """ Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
@@ -522,7 +542,7 @@ class NodeData(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(NodeData, self).__init__()
+        super(NodeInformation, self).__init__()
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
         self.ControllerTypes = []  # A list of devce controller types attached to this node

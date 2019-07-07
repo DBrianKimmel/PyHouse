@@ -10,7 +10,7 @@
 """
 from Modules.Core.data_objects import BaseObject
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -159,7 +159,7 @@ class Mqtt:
                 room/update - to add or modify a room
         """
         l_topic = 'house/room/' + p_topic
-        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_room_obj)
+        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_room_obj)
 
 
 class Api:

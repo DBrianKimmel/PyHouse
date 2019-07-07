@@ -15,13 +15,13 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-06'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Families.UPB.UPB_Pim import API as upbPimAPI
-from Modules.Computer.Mqtt.mqtt import API as mqttAPI
+from Modules.Core.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.UPB_device     ')
@@ -56,7 +56,7 @@ class API(object):
                     LOG.info('Controller {} Started.'.format(l_controller_obj.Name))
                     l_count += 1
                     l_topic = 'house/lighting/controller/' + l_controller_prefix + '/start'
-                    self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
+                    self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
                 else:
                     LOG.error('Controller {} failed to start.'.format(l_controller_obj.Name))
                     l_controller_obj.Active = False

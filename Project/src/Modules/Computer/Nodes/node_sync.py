@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,7 +17,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import datetime
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeInformation
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeSync       ')
@@ -46,13 +46,13 @@ class Util(object):
             l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
         except KeyError as e_err:
             LOG.error('No such node {}'.format(e_err))
-            l_node = NodeData()
+            l_node = NodeInformation()
         l_node.NodeInterfaces = None
-        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)
+        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)
 
         # l_topic = 'computer/login/initial'
         # l_message = {}
-        # p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_message)
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_message)
 
         p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_who_is_there, p_pyhouse_obj)
 
@@ -61,7 +61,7 @@ class Util(object):
         l_topic = "computer/node/sync/iam"
         l_uuid = p_pyhouse_obj.Computer.UUID
         l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
-        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/iam
+        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/iam
 
     @staticmethod
     def add_node(p_pyhouse_obj, p_message_obj):
@@ -77,7 +77,7 @@ class Util(object):
             p_pyhouse_obj.Computer.Nodes[l_uuid].LastUpdate = l_now
         else:
             LOG.info('Node not present - Adding. {}  {}'.format(l_uuid, l_name))
-            l_obj = NodeData()
+            l_obj = NodeInformation()
             l_obj.Name = l_name
             l_obj.Key = l_uuid
             l_obj.Active = p_message_obj['Active']

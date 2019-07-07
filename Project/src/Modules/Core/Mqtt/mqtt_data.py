@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-06'
 
 #  Import system type stuff
 
@@ -22,7 +22,7 @@ from Modules.Core.data_objects import BaseObject, HostInformation
 class MqttInformation:
     """
 
-    ==> PyHouse.Computer.Mqtt.xxx as in the def below
+    ==> PyHouse.Core.Mqtt.xxx as in the def below
     """
 
     def __init__(self):
@@ -36,7 +36,7 @@ class MqttInformation:
 class MqttBrokerInformation(BaseObject):
     """ 0-N
 
-    ==> PyHouse.Computer.Mqtt.Brokers.XXX as in the def below
+    ==> PyHouse.Core.Mqtt.Brokers.XXX as in the def below
     """
 
     def __init__(self):

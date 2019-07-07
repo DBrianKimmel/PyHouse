@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import WebData, LoginData
+from Modules.Core.data_objects import WebInformation, LoginData
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
 from Modules.Computer.Web.test.xml_web import \
@@ -52,7 +52,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_pyhouse_obj.Computer.Web = WebData()
+        self.m_pyhouse_obj.Computer.Web = WebInformation()
         self.m_pyhouse_obj.Computer.Web.Logins = LoginData()
         self.m_api = webXml()
 

@@ -21,7 +21,7 @@ TODO:
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-07'
 
 #  Import system type stuff
 import datetime
@@ -406,7 +406,7 @@ class Utility(LightHandlerAPI):
         else:
             LOG.error('Insteon Controller start failed')
         l_topic = 'house/lighting/controller/status'
-        p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, p_controller_obj)
+        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 
     def get_plm_info(self, p_pyhouse_obj, p_controller_obj):
@@ -452,7 +452,7 @@ class API(Utility):
 
         l_topic = 'house/lighting/controller/status'
         l_msg = p_controller_obj
-        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_msg)
+        self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_msg)
 
         LOG.info('Started.')
         return l_ret

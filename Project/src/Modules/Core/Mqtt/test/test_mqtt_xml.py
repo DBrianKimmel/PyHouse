@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2019-05-23
 
 """
-__updated__ = '2019-05-25'
+__updated__ = '2019-07-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,8 +20,8 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
-from Modules.Computer.Mqtt.mqtt_xml import Xml as mqttXML
-from Modules.Computer.Mqtt.test.xml_mqtt import \
+from Modules.Core.Mqtt.mqtt_xml import Xml as mqttXML
+from Modules.Core.Mqtt.test.xml_mqtt import \
     XML_MQTT, \
     TESTING_MQTT_SECTION, \
     TESTING_MQTT_BROKER, \

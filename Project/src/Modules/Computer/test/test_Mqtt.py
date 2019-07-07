@@ -9,11 +9,11 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-07-06'
 
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Computer.Mqtt import test as I_test
+from Modules.Core.Mqtt import test as I_test
 
 
 class Z_Suite(unittest.TestCase):

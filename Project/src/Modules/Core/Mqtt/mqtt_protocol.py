@@ -13,23 +13,21 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-06'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import random
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
-#  from twisted.internet import ssl
-#  from twisted.internet.ssl import Certificate
 from twisted.internet import error
 
 #  Import PyMh files and modules.
-from Modules.Computer.Mqtt.mqtt_util import EncodeDecode
+from Modules.Core.Mqtt.mqtt_util import EncodeDecode
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.debug_tools import FormatBytes
 
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
@@ -609,7 +607,7 @@ class MQTTClient(MQTTProtocol):
                  ):
         """ At this point all config has been read in and Set-up """
         _l_comp_name = p_pyhouse_obj.Computer.Name
-        self.m_mqtt = p_pyhouse_obj.Computer.Mqtt
+        self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
             l_house_name = p_pyhouse_obj.House.Name.lower() + '/'
         except AttributeError:
@@ -630,8 +628,8 @@ class MQTTClient(MQTTProtocol):
         self.m_willRetain = willRetain
         self.m_UserName = p_broker.UserName
         self.m_Password = p_broker.Password
-        p_pyhouse_obj.Computer.Mqtt.Prefix = self.m_prefix
-        l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Computer.Mqtt.ClientID)
+        p_pyhouse_obj.Core.Mqtt.Prefix = self.m_prefix
+        l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Core.Mqtt.ClientID)
         l_msg += "\n\tUser:'{}';\n\tPass:'{}';".format(p_broker.UserName, p_broker.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.Host.Name)
         LOG.info(l_msg)
@@ -645,7 +643,7 @@ class MQTTClient(MQTTProtocol):
         """
         LOG.debug("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.Host.Name))
         self.m_state = MQTT_FACTORY_CONNECTING
-        self.connect(self.m_broker, self.m_pyhouse_obj.Computer.Mqtt)
+        self.connect(self.m_broker, self.m_pyhouse_obj.Core.Mqtt)
         self.m_pyhouse_obj._Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
     def connectionLost(self, reason):
@@ -660,7 +658,7 @@ class MQTTClient(MQTTProtocol):
     def mqttConnected(self):
         """ Now that we have a net connection to the broker, Subscribe.
         """
-        l_topic = self.m_pyhouse_obj.Computer.Mqtt.Prefix + '#'
+        l_topic = self.m_pyhouse_obj.Core.Mqtt.Prefix + '#'
         LOG.info("Subscribing to MQTT Feed: {}".format(l_topic))
         if self.m_state == MQTT_FACTORY_CONNECTING:
             self.subscribe(l_topic)
@@ -682,7 +680,7 @@ class MQTTClient(MQTTProtocol):
         """ Override
         Subscribe Ack message
         """
-        self.m_pyhouse_obj._APIs.Computer.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.Core.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         """ Override
@@ -718,21 +716,17 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         self.m_broker = p_broker
         l_addr = p_broker.Host.Name
         LOG.info('PyHouseMqttFactory Mqtt Initialized.\n\tBroker Name: {};\n\tClientId: {};\n\tHost: {};'.format(
-                p_broker.Name, p_pyhouse_obj.Computer.Mqtt.ClientID, l_addr))
+                p_broker.Name, p_pyhouse_obj.Core.Mqtt.ClientID, l_addr))
         p_broker._ProtocolAPI = self
 
     def buildProtocol(self, _p_addr):
         """ Override.
-
         Create an instance of a subclass of Protocol.
 
-        The returned instance will handle input on an incoming server
-        connection, and an attribute "factory" pointing to the creating
-        factory.
+        The returned instance will handle input on an incoming server connection,
+         and an attribute "factory" pointing to the creating factory.
 
-        Alternatively, L{None} may be returned to immediately close the
-        new connection.
-
+        Alternatively, None may be returned to immediately close the new connection.
         """
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client

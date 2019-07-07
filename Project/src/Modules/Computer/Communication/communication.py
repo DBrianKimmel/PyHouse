@@ -1,7 +1,7 @@
 """
 -*- test-case-name: Pyhouse.src.Modules.Communication.test.test-communication -*-
 
-@name:      Pyhouse/src/Modules/Communication/communication.py
+@name:      Pyhouse/Project/src/Modules/Communication/communication.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-15'
+__updated__ = '2019-07-04'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

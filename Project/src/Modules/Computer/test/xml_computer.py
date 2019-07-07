@@ -18,7 +18,7 @@ ComputerDivision - Name, Key, Active
 
 """
 
-__updated__ = '2019-03-16'
+__updated__ = '2019-07-06'
 
 # Import system type stuff
 
@@ -26,7 +26,7 @@ __updated__ = '2019-03-16'
 from Modules.Computer.Bridges.test.xml_bridges import XML_BRIDGES
 from Modules.Computer.Communication.test.xml_communications import XML_COMMUNICATION
 from Modules.Computer.Internet.test.xml_internet import XML_INTERNET
-from Modules.Computer.Mqtt.test.xml_mqtt import XML_MQTT
+from Modules.Core.Mqtt.test.xml_mqtt import XML_MQTT
 from Modules.Computer.Nodes.test.xml_nodes import XML_NODES
 from Modules.Computer.Web.test.xml_web import XML_WEB_SERVER
 

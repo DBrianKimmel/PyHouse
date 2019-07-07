@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2019-05-25
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,19 +22,18 @@ from twisted.internet import reactor
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Computer.Mqtt.mqtt_data import MqttBrokerInformation
+from Modules.Core.Mqtt.mqtt_data import MqttBrokerInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Core.data_objects import \
     ScheduleLightData, \
     ControllerData, \
     ComputerInformation
 from Modules.Housing.location import LocationInformationPrivate
-from Modules.Computer.Mqtt.mqtt import _make_message
-# from Modules.Computer.Mqtt.mqtt_client import Util  # , API as mqttAPI
-from Modules.Computer.Mqtt.test.xml_mqtt import \
+from Modules.Core.Mqtt.mqtt import _make_message
+# from Modules.Core.Mqtt.mqtt_client import Util  # , API as mqttAPI
+from Modules.Core.Mqtt.test.xml_mqtt import \
     TESTING_BROKER_NAME_1, \
     TESTING_BROKER_ACTIVE_1
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
 BROKER_TLS = '192.168.1.10'
@@ -108,7 +107,7 @@ class A2_XML(SetupMixin, unittest.TestCase):
         pass
 
     def test_04_Mqtt(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt, 'A2_4_A - Init Mqtt'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt, 'A2_4_A - Init Mqtt'))
         pass
 
 
@@ -136,9 +135,9 @@ class B1_TcpConnect(SetupMixin, unittest.TestCase):
     def test_01_Broker(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
-        self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt.Brokers, 'B1-01-A - Broker', 80))
+        self.m_pyhouse_obj.Core.Mqtt.Brokers = {}
+        self.m_pyhouse_obj.Core.Mqtt.Brokers[0] = self.m_broker
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt.Brokers, 'B1-01-A - Broker', 80))
         self.assertEqual(self.m_broker.Name, TESTING_BROKER_NAME_1)
 
 
@@ -158,9 +157,9 @@ class B2_ConnectTLS(SetupMixin, unittest.TestCase):
     def test_01_Broker(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.m_pyhouse_obj.Computer.Mqtt.Brokers = {}
-        self.m_pyhouse_obj.Computer.Mqtt.Brokers[0] = self.m_broker
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Mqtt.Brokers, 'B2-01-A - Broker', 80))
+        self.m_pyhouse_obj.Core.Mqtt.Brokers = {}
+        self.m_pyhouse_obj.Core.Mqtt.Brokers[0] = self.m_broker
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt.Brokers, 'B2-01-A - Broker', 80))
         self.assertEqual(self.m_broker.Name, 'ClientTest')
 
 
@@ -186,7 +185,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Mqtt.Prefix = "pyhouse/test_house/"
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
         # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.Host.Port = PORT

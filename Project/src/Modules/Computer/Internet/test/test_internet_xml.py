@@ -11,7 +11,7 @@ Passed all 16 tests - DBK - 2017-03-29
 
 """
 
-__updated__ = '2017-03-29'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,7 +19,7 @@ from twisted.trial import unittest
 import datetime
 
 # Import PyMh files
-from Modules.Core.data_objects import InternetConnectionData
+from Modules.Core.data_objects import InternetConnectionInformation
 from Modules.Computer.Internet.internet_xml import API as internetAPI, Util as internetUtil
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
@@ -60,8 +60,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_internet_xml')
 
@@ -72,7 +74,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_internet_obj = InternetConnectionData()
+        self.m_internet_obj = InternetConnectionInformation()
         self.m_api = internetAPI()
 
     def test_01_BuildObjects(self):
@@ -98,14 +100,13 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         pass
 
 
-
 class B1_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by inernet.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_internet_obj = InternetConnectionData()
+        self.m_internet_obj = InternetConnectionInformation()
         self.m_api = internetAPI()
 
     def test_01_Derived(self):
@@ -161,7 +162,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_internet_obj = InternetConnectionData()
+        self.m_internet_obj = InternetConnectionInformation()
         self.m_api = internetAPI()
         self.m_internet_dict = self.m_api.read_internet_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Computer.InternetConnection = self.m_internet_dict
@@ -214,7 +215,7 @@ class D1_JSON(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_internet_obj = InternetConnectionData()
+        self.m_internet_obj = InternetConnectionInformation()
         self.m_api = internetAPI()
 
     def test_01_Create(self):

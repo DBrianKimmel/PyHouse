@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-23'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -17,7 +17,7 @@ from twisted.trial import unittest
 
 #  Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Core.data_objects import NodeData
+from Modules.Core.data_objects import NodeInformation
 from Modules.Computer.Nodes import node_local
 
 
@@ -39,7 +39,7 @@ class Test_02_ReadXML(unittest.TestCase):
     def setUp(self):
         self.m_pyhouse_obj._Config.XmlRoot = ET.fromstring(XML_LONG)
         self.m_pyhouse_obj.Services = CoreServicesInformation()
-        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = NodeData()
+        self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = NodeInformation()
         self.m_api = node_local.API()
 
 

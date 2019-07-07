@@ -8,7 +8,7 @@
 # License:   MIT License
 # Summary:   This is for PyHouse
 
-Bridges:
+Bridges: 
 Mqtt:
 Nodes:
 Web:

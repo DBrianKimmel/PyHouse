@@ -11,14 +11,14 @@ Passed all 8 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-01-19'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import NodeData, NodeInterfaceData
+from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 from Modules.Computer.Nodes.node_sync import Util
 from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
@@ -58,7 +58,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_Tags(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'a1-01-a - PyHouse'))
@@ -107,7 +107,7 @@ class C1_Util(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeData()
+        self.m_node_obj = NodeInformation()
 
     def test_01_Who(self):
         # Util.send_who_is_there(self.m_pyhouse_obj)

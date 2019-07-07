@@ -20,24 +20,27 @@ The second part is the house.
 This will set up this node and then find all other nodes in the same domain (House).
 Then start the House and all the sub systems.
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-06-28'
+__updated__ = '2019-07-07'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
-# import datetime
 from xml.etree import ElementTree as ET
 
 #  Import PyMh files and modules.
-# These 3 must be the first so logging is runninf as the rest of PyHouse starts up.
+# These 3 must be the first so logging is running as the rest of PyHouse starts up.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 from Modules.Core.Utilities import config_tools
-from Modules.Core.data_objects import ParameterInformation
+from Modules.Core.data_objects import ParameterInformation, CoreInformation
+#
+from Modules.Core.Mqtt.mqtt_data import MqttInformation
+from Modules.Core.Mqtt.mqtt import API as mqttAPI
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.CoreSetupPyHous')
-
+# #
 from Modules.Core.Utilities.config_tools import API as configAPI, ConfigInformation
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 
@@ -51,47 +54,9 @@ MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
 INITIAL_DELAY = 1 * MINUTES
 XML_SAVE_DELAY = 3 * HOURS  # 2 hours
-CONFIG_DIR = '/etc/pyhouse'
-XML_FILE_NAME = '/etc/pyhouse/master.xml'
+CONFIG_DIR = '/etc/pyhouse/'
+XML_FILE_NAME = 'master.xml'
 CONFIG_FILE_NAME = 'pyhouse.yaml'
-
-
-def _build_file(p_pyhouse_obj, p_filename):
-    l_file = os.path.join(p_pyhouse_obj.Xml.XmlConfigDir, p_filename)
-    return l_file
-
-
-def _read_file(p_pyhouse_obj, p_filename):
-    l_name = _build_file(p_pyhouse_obj, p_filename)
-    try:
-        l_file = open(l_name, 'r')
-        l_ret = l_file.read()
-    except IOError:
-        l_ret = toolUuid.create_uuid()
-    return l_ret
-
-
-def _write_file(p_pyhouse_obj, p_filename, p_uuid):
-    l_name = _build_file(p_pyhouse_obj, p_filename)
-    try:
-        l_file = open(l_name, 'w')
-        l_ret = l_file.write(p_uuid)
-    except IOError as e_err:
-        l_ret = e_err
-    return l_ret
-
-
-class PyHouseObj():
-
-    m_pyhouse_obj = None
-
-    @classmethod
-    def SetObj(cls, p_pyhouse_obj):
-        cls.m_pyhouse_obj = p_pyhouse_obj
-
-    @classmethod
-    def GetObj(cls):
-        return cls.m_pyhouse_obj
 
 
 class Utility(object):
@@ -109,6 +74,7 @@ class Utility(object):
         House.uuid
         Domain.uuid
         """
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse', 190))
         p_pyhouse_obj._Uuids.All = {}
         l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
         try:
@@ -136,14 +102,10 @@ class Utility(object):
         l_log.Start()
         LOG.info("Starting.")
 
-    def initialize_pyhouse_obj(self, p_pyhouse_obj):
+    def _load_pyhouse_yaml_file(self, p_pyhouse_obj):
         """
         """
-        l_filename = 'pyhouse.yaml'
-        p_pyhouse_obj._Config = ConfigInformation()
-        p_pyhouse_obj._Parameters = ParameterInformation()
-        self._setup_config(p_pyhouse_obj)
-        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(l_filename)
+        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         try:
             l_dict = l_yaml.Yaml['PyHouse']
             p_pyhouse_obj._Parameters.UnitSystem = l_dict['UnitSystem']
@@ -154,6 +116,28 @@ class Utility(object):
             p_pyhouse_obj._Parameters.UnitSystem = 'Metric'
             p_pyhouse_obj._Parameters.Name = 'nameless wonder'
             p_pyhouse_obj._Parameters.ConfigVersion = 1.0
+
+    def _setup_config(self, p_pyhouse_obj):
+        """
+        """
+        if p_pyhouse_obj._Config.ConfigDir is None:
+            p_pyhouse_obj._Config.ConfigDir = CONFIG_DIR
+        try:
+            l_xmltree = ET.parse(p_pyhouse_obj._Config.ConfigDir + XML_FILE_NAME)
+        except (SyntaxError, IOError):
+            l_xml = ET.Element("PyHouse")
+            l_xmltree = ET.ElementTree(element=l_xml)
+        p_pyhouse_obj._Config.XmlRoot = l_xmltree.getroot()
+
+    def initialize_pyhouse_obj(self, p_pyhouse_obj):
+        """
+        """
+        p_pyhouse_obj.Core = CoreInformation()
+        # p_pyhouse_obj.Core.Mqtt = MqttInformation()
+        p_pyhouse_obj._Config = ConfigInformation()
+        p_pyhouse_obj._Parameters = ParameterInformation()
+        self._setup_config(p_pyhouse_obj)
+        self._load_pyhouse_yaml_file(p_pyhouse_obj)
 
 
 class API(Utility):
@@ -167,27 +151,19 @@ class API(Utility):
         Note that the Configuration file is NOT read until the following Start() method begins.
         Also note that the reactor is *NOT* yet running.
         """
-        LOG.info('Initializing - Version:{}'.format(__version__))
-        PyHouseObj.SetObj(p_pyhouse_obj)
+        LOG.info('Initializing - Version:{} - {}'.format(__version__, p_pyhouse_obj))
         self.initialize_pyhouse_obj(p_pyhouse_obj)
         Utility.init_uuids(p_pyhouse_obj)
+        Utility._sync_startup_logging(p_pyhouse_obj)
+
+        # print(PrettyFormatAny.form(p_pyhouse_obj._APIs, 'Debug', 190))
+
+        p_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(p_pyhouse_obj, self)
         p_pyhouse_obj._APIs.Computer.ComputerAPI = computerAPI(p_pyhouse_obj)
         p_pyhouse_obj._APIs.House.HouseAPI = houseAPI(p_pyhouse_obj)
-        Utility._sync_startup_logging(p_pyhouse_obj)
+        # Utility._sync_startup_logging(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized.')
-
-    def _setup_config(self, p_pyhouse_obj):
-        """
-        """
-        if p_pyhouse_obj._Config.ConfigDir is None:
-            p_pyhouse_obj._Config.ConfigDir = '/etc/pyhouse/'
-        try:
-            l_xmltree = ET.parse(p_pyhouse_obj._Config.ConfigDir + 'master.xml')
-        except (SyntaxError, IOError):
-            l_xml = ET.Element("PyHouse")
-            l_xmltree = ET.ElementTree(element=l_xml)
-        p_pyhouse_obj._Config.XmlRoot = l_xmltree.getroot()
 
     def LoadConfig(self, p_pyhouse_obj):
         """ Load in the entire configuration for PyHouse.
@@ -210,9 +186,7 @@ class API(Utility):
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj._APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self._xml_save_loop, self.m_pyhouse_obj)
-        #  LOG.debug(' PyHouseObj: {}'.format(PrettyFormatAny.form(PyHouseObj, 'PyHouseObj')))
         LOG.info("Started.\n==========\n")
-        #  print('Everything Started setup_pyhouse-117')
 
     def SaveConfig(self, p_pyhouse_obj):
         """
@@ -229,7 +203,7 @@ class API(Utility):
 
     def Stop(self):
         l_topic = 'computer/shutdown'
-        self.m_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
         self.SaveConfig()
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Stop()
         self.m_pyhouse_obj._APIs.House.HouseAPI.Stop()

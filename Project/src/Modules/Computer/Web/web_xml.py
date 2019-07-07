@@ -17,14 +17,14 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2019-06-19'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import LoginData, WebData
+from Modules.Core.data_objects import LoginData, WebInformation
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 LOG = Logger.getLogger('PyHouse.WebXml         ')
@@ -148,7 +148,7 @@ class Xml(object):
 
         @param p_pyhouse_xml: is the entire PyHouse Object
         """
-        l_obj = WebData()
+        l_obj = WebInformation()
         l_obj.Logins = Xml._add_default_login()
         l_obj.WebPort = 8580
         l_obj.SecurePort = 8588

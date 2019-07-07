@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-07-01'
+__updated__ = '2019-07-07'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -229,7 +229,7 @@ class API(Ent):
         l_obj.Model = l_name
         l_obj.HostName = p_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._APIs.Computer.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def Start(self):
         LOG.info("Starting - Version:{}".format(__version__))

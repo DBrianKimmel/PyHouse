@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-30'
+__updated__ = '2019-07-06'
 
 #  Import system type stuff
 import os
@@ -30,7 +30,7 @@ from Modules.Core.data_objects import \
     TwistedInformation, \
     LightingData, \
     SecurityData, \
-    AllUuids
+    UuidInformation
 from Modules.Core.Utilities.config_tools import \
     ConfigInformation
 from Modules.Housing.Entertainment.entertainment_data import \
@@ -43,7 +43,7 @@ from Modules.Housing.house import API as housingAPI
 # from Modules.Housing.location import LocationInformation
 from Modules.Housing.Hvac.hvac_data import HvacData
 from Modules.Computer import logging_pyh as Logger
-from Modules.Computer.Mqtt.mqtt_data import MqttInformation
+from Modules.Core.Mqtt.mqtt_data import MqttInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #
@@ -299,7 +299,7 @@ class SetupPyHouseObj():
         l_pyhouse_obj._Config = self._build_config(p_root)
         l_pyhouse_obj._Families = familyUtil()._init_family_component_apis(l_pyhouse_obj)
         l_pyhouse_obj._Twisted = self._build_twisted()
-        l_pyhouse_obj._Uuids = AllUuids()
+        l_pyhouse_obj._Uuids = UuidInformation()
         l_pyhouse_obj._Uuids.All = {}
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj

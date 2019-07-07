@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 
@@ -21,13 +21,13 @@ from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Bridges_Data   ')
 
 
-class BridgesData(object):
+class BridgesInformation(object):
     """
     ==> PyHouse.Computer.Bridges.
     """
 
     def __init__(self):
-        super(BridgesData, self).__init__()
+        super(BridgesInformation, self).__init__()
         self.Bridges = {}
 
 
