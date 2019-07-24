@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-24'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -70,7 +70,7 @@ class DecodeResponses(object):
                 l_need_len = Insteon_utils.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
-                    LOG.debug('Got response:{}'.format(FormatBytes(p_controller_obj._Message[0:l_need_len])))
+                    # LOG.debug('Got response:{}'.format(FormatBytes(p_controller_obj._Message[0:l_need_len])))
                     self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
                     return 'Ok'
                 else:
@@ -154,15 +154,15 @@ class DecodeResponses(object):
 
         """
         l_message = p_controller_obj._Message
-        l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         #
-        if l_device_obj.DeviceType == 1:  # Light Type
+        if l_device_obj.DeviceType == 'Lighting':  # Light Type
             DecodeLight().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
             return
-        elif l_device_obj.DeviceType == 2:  # HVAC Type
+        elif l_device_obj.DeviceType == 'Hvac':  # HVAC Type
             DecodeHvac().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
-        elif l_device_obj.DeviceType == 3:  # Security Type
+        elif l_device_obj.DeviceType == 'Security':  # Security Type
             DecodeSecurity().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
             return
         else:
@@ -174,8 +174,8 @@ class DecodeResponses(object):
         See p 234(247) of 2009 developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj_from = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        _l_obj_to = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
+        l_obj_from = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        _l_obj_to = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
         _l_flags = l_message[8]
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
@@ -233,7 +233,7 @@ class DecodeResponses(object):
         See p 273 of developers guide.
         """
         l_message = p_controller_obj._Message
-        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
         l_firmver = l_message[7]
@@ -294,7 +294,7 @@ class DecodeResponses(object):
         Depending on the command sent, another response MAY follow this message with further data.
         """
         l_message = p_controller_obj._Message
-        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
+        l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         _l_msgflags = utilDecode._decode_message_flag(l_message[5])
         l_ack = utilDecode.get_ack_nak(l_message[8])
         l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
@@ -355,7 +355,7 @@ class DecodeResponses(object):
         l_flags = l_message[3]
         l_flag_control = l_flags & 0x40
         l_group = l_message[4]
-        l_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
+        l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
         l_data = [l_message[8], l_message[9], l_message[10]]
         l_ack = utilDecode.get_ack_nak(l_message[11])
         l_type = 'Responder'

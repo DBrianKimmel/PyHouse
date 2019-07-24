@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-04'
+__updated__ = '2019-07-20'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -49,14 +49,27 @@ class ConfigInformation:
 class ConfigYamlNodeInformation:
 
     def __init__(self):
+        self.FileName = None
         self.Yaml = None
         self.YamlPath = None
-        self.FileName = None
+        self._Error = None
+
+
+class Tools:
+    """
+    """
+
+    def read_coords(self, p_yaml):
+        """ Read a set of room co-ordinates
+        Written as "[1.2, 3.4, 5.6]"
+        """
+        l_coord = []
+        _l_x = p_yaml
+        return l_coord
 
 
 class YamlCreate:
     """ For creating and appending to yaml files.
-
     """
 
     def create_yaml(self, p_tag: str):
@@ -69,7 +82,7 @@ class YamlCreate:
         @param p_tag: is the top level map string
         """
         if p_tag == None:
-            LOG.error('Create requires a concrete tag (not "None".  "ERROR_TAG" is used as the tag instead!')
+            LOG.error('Create requires a concrete tag (not "None") "ERROR_TAG" is used as the tag instead !')
             p_tag = 'ERROR_TAG'
         YAML_STR = p_tag + ':'
         l_yaml = YAML()
@@ -77,21 +90,30 @@ class YamlCreate:
         l_data = l_yaml.load(YAML_STR)
         return l_data
 
-    def add_key_value_to_nested_map(self, p_yaml, p_tag, p_key, p_value):
-        """
+    def add_key_value_to_map(self, p_yaml, p_key, p_value):
+        """ Add a key,Value pair to a map
+        Test:
+           Key: Value
+           New Key: New Value  <== Added
+
         @param p_yaml: is the fragment where the addition is to go.
         @param p_tag: is a list of tags to add the K,V entry below.  The tags are relative to the top of the yaml fragment.
         """
-        print('Yaml: {}'.format(p_yaml))
+        p_yaml.append(p_key)
+        # print('Yaml: {}'.format(p_yaml))
 
     def add_dict(self, p_yaml, p_key, p_add_dict):
-        """
+        """ Add a key,Value pair to a map
+        Test:
+           Key: Value
+           New Key: New Value  <== Added
+
         @param p_yaml: is the fragment where the addition is to go.
         @param p_add_dict: is the dict to add
         """
-        print('Yaml: {}'.format(p_yaml))
+        # print('Yaml: {}'.format(p_yaml))
         for l_key, l_val in p_add_dict.items():
-            print('Adding: {} : {}'.format(l_key, l_val))
+            # print('Adding: {} : {}'.format(l_key, l_val))
             setattr(p_yaml, l_key, l_val)
         return p_yaml
 
@@ -117,7 +139,8 @@ class YamlCreate:
         @param p_tag: is the
         """
         l_working = p_yaml[p_key]
-        print('Working: {}'.format(l_working))
+        p_obj = l_working
+        # print('Working: {}'.format(l_working))
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             # setattr(l_config, l_key, l_val)
@@ -126,7 +149,7 @@ class YamlCreate:
         """
         """
         l_working = p_yaml[p_key]
-        print('Working: {}'.format(l_working))
+        # print('Working: {}'.format(l_working))
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             # setattr(l_config, l_key, l_val)
@@ -161,7 +184,23 @@ class YamlFetch:
 class Yaml(YamlCreate, YamlFetch):
 
     def __init__(self, p_pyhouse_obj):
+        """
+        """
         self.m_pyhouse_obj = p_pyhouse_obj
+
+    def create_yaml_node(self, p_tag):
+        """ Create a node for a yaml config file
+        @param p_tag: is the name to be used
+        """
+        LOG.debug(self.m_pyhouse_obj)
+        l_filename = p_tag.lower() + '.yaml'
+        l_node = ConfigYamlNodeInformation()
+        l_node._Error = None
+        l_node.FileName = l_filename
+        l_node.YamlPath = self.m_pyhouse_obj._Config.ConfigDir + '/' + l_filename
+        l_node.Yaml = self.create_yaml(p_tag)
+        self.m_pyhouse_obj._Config.YamlTree[l_filename] = l_node
+        return l_node
 
     def find_first_element(self, p_ordered):
         """ Return the first element from an ordered collection
@@ -198,16 +237,20 @@ class Yaml(YamlCreate, YamlFetch):
     def _find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
         If unit testing, we must find the file in the source tree.
+
         @return: a ConfigYamlNodeInformation() filled in.
         """
         l_node = ConfigYamlNodeInformation()
         l_node.FileName = p_filename
         l_dir = self.m_pyhouse_obj._Config.ConfigDir
         for l_root, _l_dirs, l_files in os.walk(l_dir):
+            # print('Root:{}\nDirs:{}\nFiles:{}\n'.format(l_root, _l_dirs, l_files))
             if p_filename in l_files:
+                # print('*** Found file:{}'.format(p_filename))
                 l_path = os.path.join(l_root, p_filename)
                 l_node.YamlPath = l_path
                 return l_node
+        l_node._Error = 'NoFile'
         return l_node
 
     def read_yaml(self, p_filename):

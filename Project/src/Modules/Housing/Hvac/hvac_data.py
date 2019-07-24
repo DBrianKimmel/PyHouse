@@ -11,12 +11,12 @@
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.data_objects import DeviceData
+from Modules.Core.data_objects import DeviceInformation
 
 
 class HvacData():
     """
-    DeviceType = 2
+    DeviceType = 'Hvac'
 
     ==> PyHouse.House.Hvac.xxx as in the def below
     """
@@ -25,7 +25,7 @@ class HvacData():
         self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
-class ThermostatData(DeviceData):
+class ThermostatData(DeviceInformation):
     """
 
     ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below

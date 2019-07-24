@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-07-01
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-07-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import \
     ScheduleLightData, \
-    ControllerData, \
+    ControllerInformation, \
     PyHouseInformation, \
     ComputerInformation
 from Modules.Core.Mqtt import mqtt
@@ -47,7 +47,7 @@ LIGHTING_MSG = \
     'DevCat': 288,
     'DeviceFamily': 'Insteon',
     'DeviceSubType': 2,
-    'DeviceType': 1,
+    'DeviceType': 'Lighting',
     'DsrDtr': False,
     'EngineVersion': 0,
     'FirmwareVersion': 0,
@@ -240,7 +240,7 @@ class F1_Form(SetupMixin, unittest.TestCase):
     def test_07_MessageObj(self):
         """ Add an object.
         """
-        l_data = ControllerData()
+        l_data = ControllerInformation()
         l_data.Name = 'Mqtt Schedule Object'
         l_data.LightName = 'Test Light'
         l_data.RoomName = 'Living Room'

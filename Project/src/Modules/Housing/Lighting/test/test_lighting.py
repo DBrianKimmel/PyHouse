@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Lighting/test/test_lighting.py
+@name:      Modules/Lighting/test/test_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@ Passed all 10 tests.  DBK 2019-01-22
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-12'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Housing.Lighting.lighting import Yaml as lightingYaml
 from Modules.Housing.Lighting.lighting_lights import LightData
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI, XML as lightingXML
@@ -47,18 +48,13 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_light_obj = LightData()
-        self.m_api = lightingAPI(self.m_pyhouse_obj)
-        self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj._Families = self.m_family
+        self.m_yaml = SetupPyHouseObj().BuildYaml(None)
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
-    def test_00_Print(self):
+    def test_00_Id(self):
+        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_lighting')
 
 
@@ -69,8 +65,12 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_01_Version(self):
-        self.assertGreater(self.m_pyhouse_obj._Config.XmlVersion, '1.4.0')
+
+class A2_Xml(SetupMixin, unittest.TestCase):
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        pass
 
     def test_02_XmlTags(self):
         """ Be sure that the XML contains the right stuff.
@@ -82,13 +82,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_xml.button.tag, 'Button')
         self.assertEqual(self.m_xml.controller.tag, 'Controller')
         self.assertEqual(self.m_xml.light.tag, 'Light')
-
-
-class A2_Xml(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
 
     def test_01_Raw(self):
         """ All 3 lighting types
@@ -105,14 +98,14 @@ class A2_Xml(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.tag, TESTING_LIGHTING_SECTION)
 
 
-class B1_Read(SetupMixin, unittest.TestCase):
+class B1_XmlRead(SetupMixin, unittest.TestCase):
     """ This section tests the utility class
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def test_1_Button(self):
+    def test_01_Button(self):
         """Utility.
         """
         l_xml = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
@@ -121,7 +114,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.Buttons[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.Buttons[1].Name, TESTING_LIGHTING_BUTTON_NAME_1)
 
-    def test_2_Controller(self):
+    def test_02_Controller(self):
         """Utility.
         """
         l_xml = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
@@ -130,7 +123,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.Controllers[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.Controllers[1].Name, TESTING_CONTROLLER_NAME_1)
 
-    def test_3_Light(self):
+    def test_03_Light(self):
         """Utility.
         """
         l_xml = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
@@ -140,7 +133,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.Lights[0].DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_xml.Lights[1].Name, TESTING_LIGHT_NAME_1)
 
-    def test_4_Lighting(self):
+    def test_04_Lighting(self):
         """Read all the lighting info (Buttons, Controllers, Lights)
         """
         l_obj = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
@@ -156,7 +149,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Lights[1].Name, TESTING_LIGHT_NAME_1)
 
 
-class B2_Write(SetupMixin, unittest.TestCase):
+class B2_XmlWrite(SetupMixin, unittest.TestCase):
     """ This section tests the utility class
     """
 
@@ -164,7 +157,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_pyhouse_obj.House.Lighting = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
 
-    def test_1_lighting(self):
+    def test_01_lighting(self):
         """Write out the 'LightingSection' which contains the 'LightSection',
         """
         # .read_lighting_xml(self.m_pyhouse_obj)
@@ -180,5 +173,30 @@ class B2_Write(SetupMixin, unittest.TestCase):
         self.assertEqual(l_xml.find('ButtonSection').tag, 'ButtonSection')
         self.assertEqual(l_xml.find('ControllerSection').tag, 'ControllerSection')
         self.assertEqual(l_xml.find('ControllerSection/Controller').tag, 'Controller')
+
+
+class C1_YamlRead(SetupMixin, unittest.TestCase):
+    """ This section tests Yaml config reading
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+
+    def test_01_Setup(self):
+        """
+        """
+
+
+class C2_YamlWrite(SetupMixin, unittest.TestCase):
+    """ This section tests the utility class
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        self.m_pyhouse_obj.House.Lighting = lightingXML().read_lighting_xml(self.m_pyhouse_obj)
+
+    def test_01_lighting(self):
+        """Write out the 'LightingSection' which contains the 'LightSection',
+        """
 
 # ## END DBK

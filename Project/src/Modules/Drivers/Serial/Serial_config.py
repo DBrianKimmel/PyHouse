@@ -9,13 +9,13 @@
 
 """
 
-__updated__ = '2019-06-09'
+__updated__ = '2019-07-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import SerialControllerData
+from Modules.Core.data_objects import SerialControllerInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialXml      ')
@@ -26,8 +26,8 @@ class SerialInformation():
     """
 
     def __init__(self):
-        self.InterfaceType = 'Serial'
-        self.BaudRate = 0
+        self.Type = 'Serial'
+        self.Baud = 0
         self.ByteSize = 8
         self.DsrDtr = False
         self.Parity = 'N'
@@ -37,13 +37,33 @@ class SerialInformation():
         self.XonXoff = False
 
 
+class Config:
+    """
+    """
+
+    def load_config(self, p_config, p_obj):
+        """
+        """
+        l_obj = p_obj  # SerialInformation()
+        l_required = ['Baud']
+        for l_key, l_value in p_config.items():
+            if l_key == 'BaudRate':
+                l_key = 'Baud'
+            setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if hasattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Serial Config is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+
 class XML(object):
     """Read and write the interface information based in the interface type.
     """
 
     @staticmethod
     def read_interface_xml(p_controller_entry):
-        l_serial = SerialControllerData()
+        l_serial = SerialControllerInformation()
         l_serial.BaudRate = PutGetXML.get_int_from_xml(p_controller_entry, 'BaudRate', 19200)
         l_serial.ByteSize = PutGetXML.get_int_from_xml(p_controller_entry, 'ByteSize', 8)
         l_serial.DsrDtr = PutGetXML.get_bool_from_xml(p_controller_entry, 'DsrDtr', False)

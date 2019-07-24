@@ -25,6 +25,7 @@ latex/
 .settings/
 _trial_temp/
 .mypy_cache/
+__pycache__/
 
 ### Private Info
 Laptop*

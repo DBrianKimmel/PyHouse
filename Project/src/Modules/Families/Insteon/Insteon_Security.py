@@ -12,7 +12,7 @@
 """
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-13'
 
 #  Import system type stuff
 
@@ -57,11 +57,11 @@ class DecodeResponses(object):
         l_device = SensorMessage(p_device_obj.Name, p_device_obj.RoomName, 'Generic ')
         l_topic = 'houe/security/'
         l_mqtt_msg = 'security '
-        if p_device_obj.DeviceSubType == 1:
+        if p_device_obj.DeviceSubType == 'GarageDoorOpener':
             l_mqtt_msg += 'Garage Door: '
             l_device.Type = 'Garage Door'
             l_topic += 'garage_door'
-        elif p_device_obj.DeviceSubType == 2:
+        elif p_device_obj.DeviceSubType == 'MotionDetector':
             l_mqtt_msg += 'Motion Sensor: '
             l_device.Type = 'Motion Sensor'
             l_topic += 'motion_sensor'
@@ -89,11 +89,11 @@ class DecodeResponses(object):
             l_mqtt_msg += 'Request-ID-From:"{}"; '.format(p_device_obj.Name)
 
         elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
-            if p_device_obj.DeviceSubType == 1:  # The status turns on when the Garage Door goes closed
+            if p_device_obj.DeviceSubType == 'GarageDoorOpener':  # The status turns on when the Garage Door goes closed
                 l_mqtt_msg += 'Garage Door Closed; '.format(p_device_obj.Name)
                 p_device_obj.Status = 'Close'
                 l_device.Status = 'Garage Door Closed.'
-            elif p_device_obj.DeviceSubType == 2:
+            elif p_device_obj.DeviceSubType == 'MotionDetector':
                 l_mqtt_msg += 'Motion Detected; '.format(p_device_obj.Name)
                 l_device.Status = 'Motion Detected.'
             else:
@@ -102,11 +102,11 @@ class DecodeResponses(object):
                 p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_device)  #  /security
 
         elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
-            if p_device_obj.DeviceSubType == 1:
+            if p_device_obj.DeviceSubType == GarageDoorOpener:
                 l_mqtt_msg += 'Garage Door Opened; '.format(p_device_obj.Name)
                 p_device_obj.Status = 'Opened'
                 l_device.Status = 'Garage Door Opened.'
-            elif p_device_obj.DeviceSubType == 2:
+            elif p_device_obj.DeviceSubType == MotopnDetector:
                 l_mqtt_msg += 'NO Motion; '.format(p_device_obj.Name)
                 l_device.Status = 'Motion Stopped.'
             else:

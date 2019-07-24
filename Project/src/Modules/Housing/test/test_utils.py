@@ -12,7 +12,7 @@ passed all 6 tests - DBK - 2018-02-13
 """
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
 
-__updated__ = '2019-06-09'
+__updated__ = '2019-07-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import DeviceData
+from Modules.Core.data_objects import DeviceInformation
 from Modules.Housing import utils
 from Modules.Housing.test.xml_rooms import \
     TESTING_ROOM_NAME_0, \
@@ -96,13 +96,13 @@ class B1_Rooms(SetupMixin, unittest.TestCase):
 
     def test_01_Read(self):
         l_xml = ET.Element('TestElement')
-        l_obj = DeviceData()
+        l_obj = DeviceInformation()
         utils.read_room_reference_xml(l_obj, l_xml)
         print(PrettyFormatAny.form(l_obj, 'B1-01-A - Data'))
 
     def test_02_Write(self):
         l_xml = ET.Element('TestElement')
-        l_obj = DeviceData()
+        l_obj = DeviceInformation()
         utils.read_room_reference_xml(l_obj, l_xml)
         print(PrettyFormatAny.form(l_obj, 'B1-02-A - Data'))
 

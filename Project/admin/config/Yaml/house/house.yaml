@@ -4,14 +4,24 @@
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
 # Created:   Jun 10, 2019
-# Updated:   Jul 01, 2019
+# Updated:   Jul 11, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
 House:
    Name: cannon trail
-   Location: !include house/location.yaml
-   Rooms: !include house/rooms.yaml
-   Floors: !include floors.yaml
+   # Location: !include location.yaml
+   # Floors: !include floors.yaml
+   # Rooms: !include rooms.yaml
+   Modules:  # Uncomment to use module.
+      - Entertainment
+      # - HVAC
+      - Irrigation
+      - Lighting
+      # - Pool
+      - Rules
+      - Scheduling
+      - Security
+      - Sync
 
 ### END DBK

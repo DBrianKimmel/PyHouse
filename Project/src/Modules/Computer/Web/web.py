@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Web/web.py
+@name:      Modules/Computer/Web/web.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -17,7 +17,7 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2019-07-05'
+__updated__ = '2019-07-10'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,14 +47,14 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the Mqtt xml info.
         """
-        p_pyhouse_obj.Computer.Web = WebInformation()  # Clear before loading.
-        p_pyhouse_obj.Computer.Web.Logins = LoginData()  # Clear before loading.
-        l_ret = webXml.read_web_xml(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.Web = l_ret
-        LOG.info('Loaded XML')
+        self.m_pyhouse_obj.Computer.Web = WebInformation()  # Clear before loading.
+        self.m_pyhouse_obj.Computer.Web.Logins = LoginData()  # Clear before loading.
+        l_ret = webXml.read_web_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.Computer.Web = l_ret
+        LOG.info('Loaded Web Config')
 
     def Start(self):
         #  l_obj = self.LoadXml(self.m_pyhouse_obj)
@@ -63,10 +63,9 @@ class API(object):
         # WebSocketAPI(self.m_pyhouse_obj).Start()
         LOG.info('Started.')
 
-    def SaveXml(self, p_xml):
-        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
-        LOG.info("Saved Web XML.")
+    def SaveConfig(self):
+        webXml.write_web_xml(self.m_pyhouse_obj)
+        LOG.info("Saved Web Config.")
 
     def Stop(self):
         LOG.info('Stopped.')

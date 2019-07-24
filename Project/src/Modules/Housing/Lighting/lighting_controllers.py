@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Lighting/lighting_controllers.py
+@name:      Modules/Housing/Lighting/lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -17,23 +17,41 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-06-03'
-__version_info__ = (19, 5, 2)
+__updated__ = '2019-07-24'
+__version_info__ = (19, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import ControllerData, UuidData
-from Modules.Drivers.interface import Xml as interfaceXML
-from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
-from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Housing.Lighting.lighting_xml import LightingXML
+from Modules.Core.Utilities import config_tools
+from Modules.Drivers.interface import Config as interfaceConfig
+from Modules.Families.family import Config as familyConfig
+from Modules.Housing.Security.login import Config as loginConfig
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightController')
+
+CONFIG_FILE_NAME = 'controllers.yaml'
+
+
+class ControllerInformation:
+    """
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None
+        self.DeviceType = 'Lighting'
+        self.DeviceSubType = 'Controller'
+        self.Family = None  # LightFamilyInformation()
+        self.Interface = None  # Interface module specific Information()
+        self.Login = None  # LoginInformation() Optional
+        self._Message = bytearray()
+        self._Queue = None
+        self._DriverAPI = None
 
 
 class MqttActions:
@@ -64,99 +82,129 @@ class MqttActions:
         return l_logmsg
 
 
-class XML:
+class Config:
+    """
+    """
 
-    def _read_controller_data(self, _p_pyhouse_obj, p_obj, p_xml):
+    def _extract_family(self, p_config):
         """
-        There are extra fields for controllers - get them.
-        See ControllerData()
         """
-        p_obj.InterfaceType = PutGetXML.get_text_from_xml(p_xml, 'InterfaceType')
-        p_obj.Port = PutGetXML.get_text_from_xml(p_xml, 'Port')
-        return p_obj  # for testing
+        l_ret = familyConfig().load_family_config(p_config, self.m_pyhouse_obj)
+        return l_ret
 
-    def _write_controller_data(self, p_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'InterfaceType', p_obj.InterfaceType)
-        PutGetXML.put_text_element(p_xml, 'Port', p_obj.Port)
-        return p_xml
-
-    def _read_interface_data(self, _p_pyhouse_obj, p_obj, p_xml):
-        try:
-            interfaceXML.read_interface_xml(p_obj, p_xml)
-        except Exception as e_err:  # DeviceFamily invalid or missing
-            LOG.error('ERROR - Read Interface Data - {} - {} - {}'.format(e_err, p_obj.Name, p_obj.InterfaceType))
-        return p_obj
-
-    def _write_interface_data(self, p_obj, p_xml):
-        try:
-            l_xml = interfaceXML.write_interface_xml(p_obj)
-            p_xml.append(l_xml)
-        except Exception:
-            pass
-        return p_xml
-
-    def _read_one_controller_xml(self, p_pyhouse_obj, p_xml):
+    def _extract_interface(self, p_config):
         """
-        Load all the xml for one controller.
-        Base Device, Controller, Family and Interface
         """
-        l_obj = ControllerData()
-        l_obj.DeviceType = 1  # Lighting
-        l_obj.DeviceSubType = 2  # Controller
-        LightingXML()._read_base_device(l_obj, p_xml)
-        try:
-            self._read_controller_data(p_pyhouse_obj, l_obj, p_xml)
-            self._read_interface_data(p_pyhouse_obj, l_obj, p_xml)
-            LightingXML()._read_family_data(p_pyhouse_obj, l_obj, p_xml)
-        except Exception as e_err:
-            LOG.error('ERROR - ReadOneController - {}'.format(e_err))
-            l_obj = ControllerData()
+        l_ret = interfaceConfig().load_interface(p_config)
+        return l_ret
+
+    def _extract_login(self, p_config):
+        """
+        """
+        l_ret = loginConfig.load_name_password(p_config)
+        return  l_ret
+
+    def _load_one_controller(self, p_config):
+        """ Extract the config info for one Controller.
+        """
+        l_obj = ControllerInformation()
+        l_required = ['Name', 'Family', 'Interface']
+        for l_key, l_value in p_config.items():
+            # print('Controller Key: {}; Value: {}'.format(l_key, l_value))
+            if l_key == 'Family':
+                l_ret = self._extract_family(l_value)
+                l_obj.Family = l_ret
+            elif l_key == 'Interface':
+                l_ret = self._extract_interface(l_value)
+                l_obj.Interface = l_ret
+            elif l_key == 'Login':
+                l_ret = self._extract_login(l_value)
+                l_obj.Interface = l_ret
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.error('The Controller "{}" is missing a rquired entry for "{}"'.format(l_obj.Name, l_key))
+                return None
+        LOG.info('Loaded controller {}'.format(l_obj.Name))
         return l_obj
 
-    def _write_one_controller_xml(self, p_pyhouse_obj, p_controller_obj):
-        l_controller_xml = LightingXML()._write_base_device('Controller', p_controller_obj)
-        self._write_controller_data(p_controller_obj, l_controller_xml)
-        self._write_interface_data(p_controller_obj, l_controller_xml)
-        LightingXML()._write_family_data(p_pyhouse_obj, p_controller_obj, l_controller_xml)
-        return l_controller_xml
-
-    def read_all_controllers_xml(self, p_pyhouse_obj):
-        """Called from lighting.
-        Get the entire configuration of all the controllers and place them in a holding dict.
-
-        @param p_pyhouse_obj: is the entire PyHouse Data
-        @param p_controller_section_xml: is the XML element containing all controllers. <ControllerSection>
-        @param p_version: is the old version of the XML Config file
-        @return: a dict of all the controllers configured.
+    def _load_all_controllers(self, p_config):
         """
-        l_count = 0
+        PyHouse.House.Lighting.Controllers
+        """
         l_dict = {}
-        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/LightingSection/ControllerSection')
-        if l_xml is None:
-            return l_dict
-        try:
-            for l_one_xml in l_xml.iterfind('Controller'):
-                l_obj = self._read_one_controller_xml(p_pyhouse_obj, l_one_xml)
-                l_obj.Key = l_count
-                l_dict[l_count] = l_obj
-                l_uuid_obj = UuidData()
-                l_uuid_obj.UUID = l_obj.UUID
-                l_uuid_obj.UuidType = 'Controller'
-                UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
-                LOG.info('Loaded controller {}'.format(l_obj.Name))
-                l_count += 1
-        except AttributeError as e_error:  # No Controller section
-            LOG.warning('No Controllers found - {}'.format(e_error))
-        LOG.info("Loaded {} Controllers".format(l_count))
+        for l_ix, l_key in enumerate(p_config):
+            # print('Controllers Key: {}'.format(l_key))
+            l_obj = self._load_one_controller(l_key)
+            l_dict[l_ix] = l_obj
         return l_dict
 
-    def write_all_controllers_xml(self, p_pyhouse_obj):
-        l_count = 0
-        l_controllers_xml = ET.Element('ControllerSection')
-        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
-            l_controllers_xml.append(self._write_one_controller_xml(p_pyhouse_obj, l_controller_obj))
-            l_count += 1
-        LOG.info('Saved {} Controllers XML'.format(l_count))
-        return l_controllers_xml
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """ Read the controllers.yaml file if it exists.
+        It contains Controllers data for the house.
+        """
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj = p_pyhouse_obj
+        try:
+            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        except:
+            p_pyhouse_obj.House.Lighting.Controllers = None
+            return None
+        try:
+            l_yaml = l_node.Yaml['Controllers']
+        except:
+            LOG.warn('The controllers.yaml file does not start with "Controllers:"')
+            p_pyhouse_obj.House.Lighting.Controllers = None
+            return None
+        l_controllers = self._load_all_controllers(l_yaml)
+        p_pyhouse_obj.House.Lighting.Controllers = l_controllers
+        return l_controllers  # for testing purposes
+
+# ----------
+
+    def _copy_to_yaml(self, p_pyhouse_obj):
+        """ Update the yaml information.
+        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
+
+        The running info is a dict and the yaml is a list!
+
+        @return: the updated yaml ready information.
+        """
+        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_config = l_node.Yaml['Controllers']
+        l_working = p_pyhouse_obj.House.Lighting.Controllers
+        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
+            l_val = getattr(l_working, l_key)
+            setattr(l_config, l_key, l_val)
+        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Controllers'] = l_config
+        l_ret = {'Controllers': l_config}
+        return l_ret
+
+    def SaveYamlConfig(self, p_pyhouse_obj):
+        """
+        """
+        LOG.info('Saving Config - Version:{}'.format(__version__))
+        l_config = self._copy_to_yaml(p_pyhouse_obj)
+        config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        return l_config
+
+
+class API:
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def LoadConfig(self):
+        """
+        """
+        Config().LoadYamlConfig(self.m_pyhouse_obj)
+
+    def SaveConfig(self):
+        """
+        """
 
 #  ## END DBK

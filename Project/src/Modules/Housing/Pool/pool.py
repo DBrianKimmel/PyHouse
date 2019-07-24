@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-19'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -87,25 +87,19 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
 
+    def LoadConfig(self):
+        l_dict = Xml.read_all_pools_xml(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.House.Pools = l_dict
+        return l_dict
+
     def Start(self):
-        self.LoadXml(self.m_pyhouse_obj)
+        # self.LoadXml(self.m_pyhouse_obj)
         LOG.info("Started.")
 
     def Stop(self):
         LOG.info("Stopped.")
 
-    def LoadXml(self, p_pyhouse_obj):
-        l_dict = Xml.read_all_pools_xml(p_pyhouse_obj)
-        # p_pyhouse_obj.House.Pools = l_dict
-        return l_dict
-
-    def SaveXml(self, p_xml):
-        (l_xml, l_count) = Xml.write_all_pools_xml(self.m_pyhouse_obj)
-        if l_count > 0:
-            p_xml.append(l_xml)
-            LOG.info("Saved {} Pools XML.".format(l_count))
-        else:
-            LOG.info('No Pools were defined.')
-        return p_xml
+    def SaveConfig(self):
+        Xml.write_all_pools_xml(self.m_pyhouse_obj)
 
 # ## END DBK

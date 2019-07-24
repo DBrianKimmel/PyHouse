@@ -8,9 +8,9 @@
 * Summary:   This is the design documentation for 
 
 
-# Lighting
+# Drivers / Interfaces
 
-Drivers module is an attempt to provice a common interface for various different methods of communicating with external devices.
+Drivers module is an attempt to provide a common interface for various different methods of communicating with external devices.
 Such devices include Insteon PLMs, Hue Hubs and many others. 
 
 ### END DBK

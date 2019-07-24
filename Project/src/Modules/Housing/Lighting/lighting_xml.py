@@ -9,19 +9,14 @@
 
 """
 
-__updated__ = '2019-07-02'
+__updated__ = '2019-07-22'
 
 #  Import system type stuff
-# import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-# from Modules.Core.data_objects import ControllerData, UuidData
 from Modules.Families.family_utils import FamUtil
 from Modules.Computer import logging_pyh as Logger
-# from Modules.Drivers.interface import Xml as interfaceXML
 from Modules.Core.Utilities.device_tools import XML as deviceXML
-# from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
-# from Modules.Core.Utilities.xml_tools import PutGetXML
 
 LOG = Logger.getLogger('PyHouse.LightingXml    ')
 
@@ -47,12 +42,12 @@ class LightingXML:
     def _read_family_data(self, p_pyhouse_obj, p_obj, p_xml):
         """Read the family specific data for this controller.
         """
-        l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
+        l_api = None  # FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
         return l_api  # for testing
 
     def _write_family_data(self, p_pyhouse_obj, p_controller_obj, p_xml):
         try:
-            l_family = p_controller_obj.DeviceFamily
+            l_family = p_controller_obj.Family.Name
             l_family_obj = p_pyhouse_obj._Families[l_family]
             l_api = l_family_obj.FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_controller_obj)

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-21'
+__updated__ = '2019-07-22'
 
 #  Import system type stuff
 
@@ -68,7 +68,7 @@ class Utility:
         for l_obj in p_objs.values():
             if l_obj.Active != True:  # Skip inactive devices.
                 continue
-            l_family = l_obj.DeviceFamily
+            l_family = l_obj.Family.Name
             if l_family == p_family:
                 l_ret.append(l_obj)
         if l_ret == []:

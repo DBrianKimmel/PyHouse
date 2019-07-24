@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.Project.src.Modules.Utility.test.test_convert -*-
-
-@Name:      PyHouse/Project/src/Modules.Core.Utilities.convert.py
+@Name:      Modules/Core/Utilities/convert.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2019 by D. Brian Kimmel
@@ -13,7 +11,7 @@
 Utility routines to convert external readable numbers to integers for ease in comparing.
 """
 
-__updated__ = '2019-04-01'
+__updated__ = '2019-07-22'
 
 # Import system type stuff
 import math

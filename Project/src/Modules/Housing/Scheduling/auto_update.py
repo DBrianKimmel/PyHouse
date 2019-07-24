@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.Modules.Scheduling.test.test_auto_update -*-
-
-@name:      PyHouse/src/Modules/Scheduling/auto_update.py
+@name:      Modules/Housing/Scheduling/auto_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -13,7 +11,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-09'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 

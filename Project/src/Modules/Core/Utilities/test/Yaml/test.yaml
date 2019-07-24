@@ -25,7 +25,7 @@ Testing:
        Comment: Ceiling light
      - Name: Living Room
      - Name: Foyer
-   AddOn1:
+   Include1: !include abc.yaml
    AddOn2:
    
 ### END DBK

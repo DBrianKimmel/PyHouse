@@ -20,9 +20,8 @@ The second part is the house.
 This will set up this node and then find all other nodes in the same domain (House).
 Then start the House and all the sub systems.
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-19'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -48,7 +47,7 @@ from Modules.Computer.computer import API as computerAPI
 from Modules.Housing.house import API as houseAPI
 # from Modules.Core.Utilities.xml_tools import PutGetXML
 
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
@@ -151,7 +150,7 @@ class API(Utility):
         Note that the Configuration file is NOT read until the following Start() method begins.
         Also note that the reactor is *NOT* yet running.
         """
-        LOG.info('Initializing - Version:{} - {}'.format(__version__, p_pyhouse_obj))
+        LOG.info('Initializing - Version:{}'.format(__version__))
         self.initialize_pyhouse_obj(p_pyhouse_obj)
         Utility.init_uuids(p_pyhouse_obj)
         Utility._sync_startup_logging(p_pyhouse_obj)
@@ -171,8 +170,8 @@ class API(Utility):
         """
         LOG.info("Loading Config - Version:{}\n======================== Loading Config Files ========================\n".format(__version__))
         # p_pyhouse_obj = configAPI(p_pyhouse_obj).LoadConfig(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.House.HouseAPI.LoadConfig(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig()
+        p_pyhouse_obj._APIs.House.HouseAPI.LoadConfig()
         LOG.info("Loaded Config - Version:{}".format(__version__))
 
     def Start(self):
@@ -197,8 +196,8 @@ class API(Utility):
         LOG.info('\n======================== Saving Config Files ========================\n')
         configAPI(p_pyhouse_obj).create_xml_config_foundation(p_pyhouse_obj)
         p_pyhouse_obj._APIs.Computer.ComputerAPI.SaveConfig(p_pyhouse_obj)
-        p_pyhouse_obj._APIs.House.HouseAPI.SaveConfig(p_pyhouse_obj)
-        configAPI(p_pyhouse_obj).write_xml_config_file(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.House.HouseAPI.SaveConfig()
+        # configAPI(p_pyhouse_obj).write_xml_config_file(p_pyhouse_obj)
         LOG.info("Saved all Config sections.\n======================== Saved Config Files ========================\n")
 
     def Stop(self):

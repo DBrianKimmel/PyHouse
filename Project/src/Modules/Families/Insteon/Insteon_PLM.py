@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.Insteon.test.test_Insteon_PLM -*-
-
-@name:      PyHouse/src/Modules/Families/Insteon/Insteon_PLM.py
+@name:      Modules/Families/Insteon/Insteon_PLM.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -14,14 +12,9 @@ This module carries state information about the controller.
 This is necessary since the responses may follow a command at any interval.
 Responses do not all have to follow the command that caused them.
 
-TODO:
-    Work toward getting one instance per controller.
-        We may then need to assign lights to a particular controller if there is more than one in a house.
-    implement all-links
-
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-22'
 
 #  Import system type stuff
 import datetime
@@ -31,15 +24,17 @@ except ImportError:
     import queue as Queue
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
 from Modules.Families.Insteon import Insteon_decoder, Insteon_utils, Insteon_Link
 from Modules.Families.Insteon.Insteon_constants import MESSAGE_TYPES
 from Modules.Families.Insteon.Insteon_data import InsteonData
 from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
 from Modules.Families.family_utils import FamUtil
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.debug_tools import FormatBytes
+
+from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_PLM    ')
 
 #  Timeouts for send/receive delays
@@ -61,7 +56,7 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
-class ControllerData(InsteonData):
+class ControllerInformation(InsteonData):
     """Holds statefull information about a single Insteon controller device.
 
     There are several different control devices - this is 2412x and 2413x
@@ -79,7 +74,7 @@ class ControllerData(InsteonData):
         Command 1 and 2 hold the values sent to the device.
         This is so that the return values received later can be correlated to the command we last sent to the device.
         """
-        super(ControllerData, self).__init__()
+        super(ControllerInformation, self).__init__()
         self._Command1 = None
         self._Command2 = None
 
@@ -116,12 +111,12 @@ class Commands(object):
         """
         try:
             l_command = Insteon_utils.create_command_message('insteon_send')
-            Util.int2message(p_obj.InsteonAddress, l_command, 2)
+            Insteon_utils.insert_address_into_message(p_obj.Family.Address, l_command, 2)
             l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  #  0x0F
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
             Insteon_utils.queue_command(p_controller_obj, l_command)
-            # LOG.info('Send Command: {}'.format((l_command)))
+            LOG.debug('Send Command: {}'.format(FormatBytes(l_command)))
         except Exception as _e_err:
             LOG.error('Error creating command: {}\n{}\n>>{}<<'.format(_e_err, PrettyFormatAny.form(p_obj, 'Device'), FormatBytes(l_command)))
 
@@ -192,19 +187,18 @@ class PlmDriverProtocol(Commands):
         pass
 
     def _find_to_name(self, p_command):
-        """ Finf the device we are sending a message "To"
+        """ Find the device we are sending a message "To"
         """
         l_name = 'No device'
         try:
-            l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, p_command[2:5])
+            l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, p_command[2:5])
             l_name = l_device_obj.Name
         except Exception:
             l_name = "Device does not exist."
         return l_name
 
     def dequeue_and_send(self, p_controller_obj):
-        """Check the sending queue every SEND_TIMEOUT seconds and send if
-        anything to send.
+        """Check the sending queue every SEND_TIMEOUT seconds and send if anything to send.
 
         Uses twisted to get a callback when the timer expires.
         """
@@ -287,14 +281,14 @@ class LightHandlerAPI(object):
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj: is the ControllerData() info
+        @param p_controller_obj: is the ControllerInformation() info
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         l_msg = "Controller:{}, ".format(p_controller_obj.Name)
-        l_msg += "DeviceFamily:{}, ".format(p_controller_obj.DeviceFamily)
-        l_msg += "InterfaceType:{}".format(p_controller_obj.InterfaceType)
+        l_msg += "DeviceFamily:{}, ".format(p_controller_obj.Family.Name)
+        l_msg += "InterfaceType:{}".format(p_controller_obj.Interface.Type)
         LOG.info('Start Controller - {}'.format(l_msg))
         l_driver = FamUtil.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
         p_controller_obj._DriverAPI = l_driver
@@ -316,7 +310,7 @@ class LightHandlerAPI(object):
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
-        LOG.info('Request Status from device: {} - {}'.format(p_obj.RoomName, p_obj.Name))
+        # LOG.info('Request Status from device: {} - {}'.format(p_obj.Room.Name, p_obj.Name))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0)  #  0x19
 
     @staticmethod
@@ -334,6 +328,8 @@ class LightHandlerAPI(object):
             i2cs = 2012 add checksums + new commands.
         """
         LOG.info('Request Engine version from device: {}'.format(p_obj.Name))
+        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller', 190))
+        LOG.debug(PrettyFormatAny.form(p_obj, 'Device', 190))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0)  #  0x0D
 
     @staticmethod
@@ -341,6 +337,8 @@ class LightHandlerAPI(object):
         """Get the device DevCat
         """
         LOG.info('Request ID(devCat) from device: {}'.format(p_obj.Name))
+        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller', 190))
+        LOG.debug(PrettyFormatAny.form(p_obj, 'Device', 190))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  #  0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
@@ -355,31 +353,35 @@ class LightHandlerAPI(object):
         """
         LOG.info('Getting information for all Insteon devices.')
 
-        for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
+        # for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
+        #    if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+        #        self._get_obj_info(p_controller_obj, l_obj)
 
         for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+            if l_obj == None:
+                return
+            if l_obj.Family.Name == 'Insteon' and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
                 InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
 
         for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+            if l_obj == None:
+                return
+            if l_obj.Family.Name == 'Insteon':  # and l_obj.Active:
                 self._get_obj_info(p_controller_obj, l_obj)
                 # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.values():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
+        # for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.values():
+        #    if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+        #        self._get_obj_info(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
+        # for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
+        #    if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+        #        self._get_obj_info(p_controller_obj, l_obj)
 
-        for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
-            if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
+        # for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
+        #    if l_obj.DeviceFamily == 'Insteon' and l_obj.Active:
+        #        self._get_obj_info(p_controller_obj, l_obj)
 
 
 class Utility(LightHandlerAPI):

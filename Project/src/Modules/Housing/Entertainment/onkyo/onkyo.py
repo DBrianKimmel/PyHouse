@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-22'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -241,7 +241,7 @@ class OnkyoFactory(Factory):
     """
     """
     protocol = OnkyoProtocol
-    m_pyhouse_oj = None
+    m_pyhouse_obj = None
     m_device_obj = None
 
     def __init__(self, p_pyhouse_obj, p_device_obj):
@@ -296,7 +296,7 @@ class OnkyoClient(OnkyoProtocol):
 
     def _build_volume(self, p_yaml, p_queue_entry):
         """ Internally, volume is a percent 0 to 100
-        My onkyo receiver uses hex 00 to 64 foor the value.
+        My onkyo receiver uses hex 00 to 64 for the value.
         """
         l_zone = int(p_queue_entry.Zone)
         l_command = p_queue_entry.Command

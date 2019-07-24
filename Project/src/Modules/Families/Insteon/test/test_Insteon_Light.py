@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2015-07-29
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import HouseInformation, ControllerData
+from Modules.Core.data_objects import HouseInformation, ControllerInformation
 from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
 from Modules.Housing.Lighting.lighting_lights import API as lightingAPI
 from Modules.Housing.Lighting.test.xml_controllers import \
@@ -131,7 +131,7 @@ class B1_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_ctrlr = ControllerData()
+        self.m_ctrlr = ControllerInformation()
 
     def test_01_GetObjFromMsg(self):
         self.m_ctrlr._Message = MSG_50_A
@@ -164,7 +164,7 @@ class B2_Decode(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_ctrlr = ControllerData()
+        self.m_ctrlr = ControllerInformation()
         self.m_decode = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_ctrlr)
 
     def test_01_GetObjFromMsg(self):
@@ -185,7 +185,7 @@ class C1_Light(SetupMixin, unittest.TestCase):
 
     def test_01_x(self):
         self.m_ctrlr._Message = MSG_50_A
-        l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, self.m_ctrlr._Message[2:5])
+        l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, self.m_ctrlr._Message[2:5])
 
         l_decode = Decode_Light().decode_0x50(self.m_pyhouse_obj, self.m_ctrlr, l_device_obj)
         print(PrettyFormatAny.form(l_device_obj, "C1-01-A - Decode"))
@@ -193,7 +193,7 @@ class C1_Light(SetupMixin, unittest.TestCase):
 
     def test_02_x(self):
         self.m_ctrlr._Message = MSG_50_B
-        l_device_obj = utilDecode.get_obj_from_message(self.m_pyhouse_obj, self.m_ctrlr._Message[2:5])
+        l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, self.m_ctrlr._Message[2:5])
 
         l_decode = Decode_Light().decode_0x50(self.m_pyhouse_obj, self.m_ctrlr, l_device_obj)
         print(PrettyFormatAny.form(l_device_obj, "C1-02-A - Decode"))

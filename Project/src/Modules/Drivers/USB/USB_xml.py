@@ -11,13 +11,13 @@
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import USBControllerData
+from Modules.Core.data_objects import USBControllerInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Computer import logging_pyh as Logger
 
@@ -31,7 +31,7 @@ class XML(object):
     @staticmethod
     def read_interface_xml(p_controller_xml):
         l_xml = p_controller_xml.find('USB')
-        l_usb = USBControllerData()
+        l_usb = USBControllerInformation()
         try:
             l_usb.Product = PutGetXML.get_int_from_xml(l_xml, 'Product')
             l_usb.Vendor = PutGetXML.get_int_from_xml(l_xml, 'Vendor')

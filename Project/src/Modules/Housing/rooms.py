@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-22'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,12 +35,30 @@ LOG = Logger.getLogger('PyHouse.Rooms          ')
 CONFIG_FILE_NAME = 'rooms.yaml'
 
 
+class RoomInformation:
+    """ A room of the house.
+    Used to draw pictures of the house
+    Used to define the location of switches, lights etc.
+
+    ==> PyHouse.House.Rooms.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None
+        self.Corner = None  # CoordinateInformation()
+        self.Floor = None  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
+        self.RoomType = None
+        self.Size = None  # CoordinateInformation()
+        self.Trigger = None
+
+
 class Xml:
     """ Class to read and write the XML config file for PyHouse.
     """
 
     def _read_one_room(self, p_room_element):
-        l_room_obj = RoomInformation
+        l_room_obj = RoomInformation()
         try:
             XmlConfigTools.read_base_UUID_object_xml(l_room_obj, p_room_element)
             # l_room_obj.Comment = PutGetXML.get_text_from_xml(p_room_element, 'Comment')
@@ -97,14 +115,23 @@ class Xml:
         return l_rooms_xml
 
 
-class Yaml:
-    """ Update the Yaml config files.
-    This will handle the rooms.yaml file
-    ==> PyHouseObj._Config.YamlTree{'rooms.yaml'}.xxx
-    --> xxx = {Yaml, YamlPath, Filename}
+class Config:
+    """ This will handle the rooms.yaml file
     """
 
-    def _extract_room_config(self, p_yaml) -> dict:
+    def load_room_config(self, p_config):
+        """ Get the room information for some other config
+        """
+        l_obj = RoomInformation()
+        try:
+            for l_key, l_value in p_config.items():
+                # print('RoomKey:{}; Value:{}'.format(l_key, l_val))
+                setattr(l_obj, l_key, l_value)
+            return l_obj
+        except:
+            l_obj.Name = p_config
+
+    def _extract_one_room(self, p_config) -> dict:
         """ Extract the config info for one room.
         Warn if there are extra attributes in the config.
         Warn if there are missing attributes in the config.
@@ -112,9 +139,9 @@ class Yaml:
         @param p_yaml: is the config fragment containing one room's information.
         @return: a RoomInformation() obj filled in.
         """
-        l_required = ['Name', 'Active']
+        l_required = ['Name']
         l_obj = RoomInformation()
-        for l_key, l_val in p_yaml.items():
+        for l_key, l_val in p_config.items():
             # Check for extra attributes in the config file.
             try:
                 _l_x = getattr(l_obj, l_key)
@@ -128,7 +155,7 @@ class Yaml:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
-    def _update_rooms_from_yaml(self, p_pyhouse_obj, p_node_yaml):
+    def _extract_all_rooms(self, p_pyhouse_obj, p_config):
         """ Copies the data from the yaml config file to the Rooms part of the PyHouse obj.
         Check for duplicate room names!
         @param p_pyhouse_obj: is the entire house object
@@ -136,14 +163,9 @@ class Yaml:
             {'Rooms': [{'Name': 'Outside', 'Active': 'True', 'Comment': 'Things outsi...
         """
         l_rooms = {}
-        try:
-            l_yaml = p_node_yaml['Rooms']  # Get the rooms info list.
-        except:
-            LOG.error('The "Rooms" tag is missing in the "rooms.yaml" file!')
-            return None
-        for l_ix, l_room_yaml in enumerate(l_yaml):
-            l_room_obj = self._extract_room_config(l_room_yaml)
-            l_rooms.update({l_ix:l_room_obj})
+        for l_ix, l_value in enumerate(p_config):
+            l_obj = self._extract_one_room(l_value)
+            l_rooms.update({l_ix:l_obj})
         p_pyhouse_obj.House.Rooms = l_rooms
         return l_rooms  # For testing.
 
@@ -152,10 +174,23 @@ class Yaml:
         It contains Rooms data for all rooms in the house.
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
-        l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        l_rooms = self._update_rooms_from_yaml(p_pyhouse_obj, l_node.Yaml)
+        self.m_pyhouse_obj = p_pyhouse_obj
+        try:
+            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        except:
+            p_pyhouse_obj.House.Rooms = None
+            return None
+        try:
+            l_yaml = l_node.Yaml['Rooms']
+        except:
+            LOG.warn('The rooms.yaml file does not start with "Rooms:"')
+            p_pyhouse_obj.House.Rooms = None
+            return None
+        l_rooms = self._extract_all_rooms(p_pyhouse_obj, l_yaml)
         p_pyhouse_obj.House.Rooms = l_rooms
         return l_rooms  # for testing purposes
+
+# ----------
 
     def _copy_to_yaml(self, p_pyhouse_obj):
         """ Update the yaml information.
@@ -326,14 +361,13 @@ class Api:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        Yaml().LoadYamlConfig(self.m_pyhouse_obj)
+        Config().LoadYamlConfig(self.m_pyhouse_obj)
         LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
 
     def SaveConfig(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        Yaml().SaveYamlConfig(self.m_pyhouse_obj)
-        # Xml().SaveXmlConfig(self.m_pyhouse_obj)
+        Config().SaveYamlConfig(self.m_pyhouse_obj)
 
 #  ## END DBK

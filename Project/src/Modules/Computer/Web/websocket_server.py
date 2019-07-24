@@ -1,7 +1,5 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/Web/websocket_server.py -*-
-
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Web/websocket_server.py
+@name:      Modules/Computer/Web/websocket_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-10'
 
 #  Import system type stuff
 import json
@@ -225,7 +223,7 @@ class API(Utility):
             LOG.warn("SSL not available.")
             self.m_contextFactory = None
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         pass
 
     def Start(self):
@@ -233,7 +231,7 @@ class API(Utility):
         self.start_websocket_server(self.m_pyhouse_obj)
         LOG.info('Started.')
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self):
         pass
 
     def Stop(self):

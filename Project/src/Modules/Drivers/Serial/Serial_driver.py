@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Drivers/Serial/Serial_driver.py
+@name:      Modules/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-24'
 
 #  Import system type stuff
 import pyudev
@@ -93,7 +93,7 @@ class SerialProtocol(Protocol):
         """
         _l_len = len(p_data)
         self.m_controller_obj._Data.extend(p_data)
-        # LOG.info('Rxed {} bytes of data {}'.format(l_len, FormatBytes(p_data)))
+        # LOG.debug('Rxed {} bytes of data {}'.format(_l_len, FormatBytes(p_data)))
 
 
 class SerialAPI:
@@ -111,9 +111,9 @@ class SerialAPI:
         """
         l_serial = None
         p_controller_obj._Data = bytearray()
-        l_baud = p_controller_obj.BaudRate
-        l_port = p_controller_obj.Port
-        # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
+        l_baud = p_controller_obj.Interface.Baud
+        l_port = '/dev/ttyUSB0'  # p_controller_obj.Port
+        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
@@ -128,7 +128,7 @@ class SerialAPI:
             p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
-                        p_controller_obj.Name, p_controller_obj.Port, e_err))
+                        p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))
             p_controller_obj.Active = True
         self.m_serial = l_serial
         return l_serial
@@ -182,7 +182,7 @@ class API(SerialAPI):
 
     def Start(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj: is the ControllerData() object for a serial device to open.
+        @param p_controller_obj: is the ControllerInformation() object for a serial device to open.
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
@@ -211,7 +211,7 @@ class API(SerialAPI):
         """
         Non-Blocking write to the serial port
         """
-        #  LOG.info('Writing - {}'.format(FormatBytes(p_message)))
+        LOG.info('Writing - {}'.format(FormatBytes(p_message)))
         self.write_device(p_message)
 
 #  ## END DBK

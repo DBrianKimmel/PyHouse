@@ -11,7 +11,7 @@ Passed all 5 tests - DBK - 2019-01-10
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,7 @@ from twisted.trial import unittest
 from Modules.Drivers.USB.USB_xml import XML as usbXML
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerInformation
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.device_tools import stuff_new_attrs
 from Modules.Drivers.USB.test.xml_usb import TESTING_USB_VENDOR, TESTING_USB_PRODUCT
@@ -79,7 +79,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_Interface(self):
         l_xml = self.m_xml.controller_sect[1]
         # print(PrettyFormatAny.form(l_xml, 'B1-01-A - L L'))
-        l_device = ControllerData()
+        l_device = ControllerInformation()
         l_obj = self.m_api.read_base_device_object_xml(l_device, l_xml)
         # print(PrettyFormatAny.form(l_obj, 'B1-01-B - L L'))
         l_interface = usbXML.read_interface_xml(l_xml)
@@ -100,7 +100,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def test_01_Interface(self):
         l_xml = self.m_xml.controller_sect[1]
         # print(PrettyFormatAny.form(l_xml, 'B2-01-A - L L'))
-        l_device = ControllerData()
+        l_device = ControllerInformation()
         l_obj = self.m_api.read_base_device_object_xml(l_device, l_xml)
         # print(PrettyFormatAny.form(l_obj, 'B2-01-B - L L'))
         l_interface = usbXML.read_interface_xml(l_xml)

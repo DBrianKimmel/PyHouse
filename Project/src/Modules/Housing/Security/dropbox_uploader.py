@@ -1,20 +1,11 @@
 """
-Created on Jun 25, 2014
-
-@author: briank
-"""
-"""
--*- test-case-name: PyHouse.src.Modules.security.test.test_dropbox_uploader -*-
-
-@name: PyHouse/src/Modules/security/dropbox_uploader.py
-@author: D. Brian Kimmel
-@contact: D.BrianKimmel@gmail.com
-@copyright: 2014 by D. Brian Kimmel
-@note: Created on May 31, 2014
-@license: MIT License
-@summary: Gather this node's information.
-
-
+name:       Modules/security/dropbox_uploader.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: 2014-2019 by D. Brian Kimmel
+@note:      Created on May 31, 2014
+@license:   MIT License
+@summary:   Gather this node's information.
 
 """
 

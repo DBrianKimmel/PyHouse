@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -52,7 +52,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         # self.m_pyhouse_obj._Families = family.API().build_lighting_family_info()
-        # self.m_controller_obj = ControllerData()
+        # self.m_controller_obj = ControllerInformation()
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.

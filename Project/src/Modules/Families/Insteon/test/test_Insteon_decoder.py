@@ -13,7 +13,7 @@ This test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerInformation
 from Modules.Families.Insteon import Insteon_decoder
 # from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family import API as familyAPI
@@ -114,7 +114,7 @@ class B1_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_ctrlr = ControllerData()
+        self.m_ctrlr = ControllerInformation()
 
     def test_01_GetObjFromMsg(self):
         self.m_ctrlr._Message = MSG_50_A
@@ -144,7 +144,7 @@ class B2_Decode(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_ctrlr = ControllerData()
+        self.m_ctrlr = ControllerInformation()
         self.m_decode = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_ctrlr)
 
     def test_01_GetObjFromMsg(self):

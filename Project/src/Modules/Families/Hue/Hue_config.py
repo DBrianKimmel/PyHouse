@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Families/Hue/Hue_xml.py -*-
-
-@name:      PyHouse/src/Modules/Families/Hue/Hue_xml.py
+@name:      Modules/Families/Hue/Hue_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-15'
+__updated__ = '2019-07-21'
 
 # Import system type stuff
 
@@ -20,6 +18,40 @@ from Modules.Core.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 from Modules.Families.Hue.Hue_data import HueAddInData
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_xml    ')
+
+
+class HueInformation:
+    """
+    """
+
+    def __init__(self):
+        self.Family = None
+        self.Address = None
+        self.Host = None
+        self.Port = None
+
+
+class Config:
+    """
+    """
+
+    def extract_family_config(self, p_config):
+        """
+        Device:
+           Family:
+              Name: Insteon
+              Address: 12.34.56
+
+        @param p_config: is the yaml fragment containing the family tree.
+        """
+        l_obj = InsteonInformation()
+        l_required = ['Name', 'Address']
+        for l_key, l_value in p_config.items():  # A map
+            print('Insteon Family Config Key:{}; Value{}'.format(l_key, l_value))
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.error('Insteon Family config is missing a required entry for "{}"'.format(l_key))
+        return l_obj
 
 
 class Xml(object):

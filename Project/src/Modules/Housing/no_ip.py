@@ -2,14 +2,14 @@
 @name:      PyHouse/src/Modules/housing/no_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Feb 13, 2014
 @summary:
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2019-07-12'
 
 """
 #define DEBUG
@@ -2470,10 +2470,8 @@ void autoconf()
 
 """
 
-
 # Import system type stuff
 from Modules.Computer import logging_pyh as Logger
-
 
 LOG = Logger.getLogger('PyHouse.No-Ip       ')
 
@@ -2526,6 +2524,7 @@ int bencode(const char *p_s, char *p_dst)
 """
     pass
 
+
 def bdecode(p_in, p_out):
     """
 #if ENCRYPT
@@ -2565,7 +2564,10 @@ def bdecode(p_in, p_out):
     return 0;
 }
 """
+
+
 pass
+
 
 def Msg(p_msg):
     LOG.error('{}'.format(p_msg))

@@ -41,9 +41,9 @@ class BaseObject(object):
 class BaseUUIDObject(BaseObject):
         self.UUID = None
 class RoomInformation(BaseUUIDObject):
-        self.Corner = ''  # CoordinateData()
+        self.Corner = ''  # CoordinateInformation()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
-        self.Size = ''  # CoordinateData()
+        self.Size = ''  # CoordinateInformation()
         self.RoomType = 'Room'
         self._AddFlag = False
         self._DeleteFlag = False

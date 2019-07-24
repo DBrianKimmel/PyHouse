@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Scheduling/schedule.py
+@name:      Modules/Housing/Scheduling/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-09'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -69,6 +69,13 @@ SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
+
+
+class RiseSet:
+
+    def __init__(self):
+        self.SunRise = None
+        self.SunSet = None
 
 
 class MqttActions:
@@ -145,13 +152,6 @@ class MqttActions:
                 p_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
                 LOG.warn('Unknown Schedule Topic: {}'.format(p_topic[0]))
         return p_logmsg
-
-
-class RiseSet:
-
-    def __init__(self):
-        self.SunRise = None
-        self.SunSet = None
 
 
 class TimeField:
@@ -478,12 +478,12 @@ class API():
         Utility._setup_components(p_pyhouse_obj)
         LOG.info("Initialized.")
 
-    def LoadXml(self, p_pyhouse_obj):
-        """ Load the Schedule from the XML info.
+    def LoadConfig(self):
+        """ Load the Schedule from the Config info.
         """
-        p_pyhouse_obj.House.Schedules = {}
-        l_schedules = scheduleXml.read_schedules_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Schedules = l_schedules
+        self.m_pyhouse_obj.House.Schedules = {}
+        l_schedules = scheduleXml.read_schedules_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Schedules = l_schedules
         LOG.info('Loaded {} Schedules XML'.format(len(l_schedules)))
         return l_schedules  # for testing
 
@@ -500,13 +500,11 @@ class API():
         """
         LOG.info("Stopped.")
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self):
         """
         """
-        l_xml, l_count = scheduleXml.write_schedules_xml(self.m_pyhouse_obj.House.Schedules)
-        p_xml.append(l_xml)
-        LOG.info('Saved {} Schedules XML.'.format(l_count))
-        return l_xml  # for testing
+        scheduleXml.write_schedules_xml(self.m_pyhouse_obj.House.Schedules)
+        LOG.info('Saved Schedules Config.')
 
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-13'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,8 +38,8 @@ class Utility(object):
     @staticmethod
     def _read_thermostat_base(p_pyhouse_obj, p_xml):
         l_obj = Utility._read_base(p_pyhouse_obj, p_xml)
-        l_obj.DeviceType = 2
-        l_obj.DeviceSubType = 1
+        l_obj.DeviceType = 'Hvac'
+        l_obj.DeviceSubType = 'Thermostat'
         return l_obj
 
     @staticmethod

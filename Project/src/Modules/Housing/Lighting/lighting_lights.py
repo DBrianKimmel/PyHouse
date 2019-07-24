@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting_lights.py
+@name:      Modules/Housing/Lighting/lighting_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -7,7 +7,7 @@
 @license:   MIT License
 @summary:   This module handles the lights component of the lighting system.
 
-Inherit from lighting_core.
+Light switches such as Insteon.
 
 Each entry should contain enough information to allow functionality of various family of lighting controllers.
 
@@ -17,28 +17,66 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-07-03'
-__version_info__ = (19, 5, 2)
+__updated__ = '2019-07-24'
+__version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 
 #  Import PyHouse files
-from Modules.Core.data_objects import UuidData, CoreLightingData
+from Modules.Core.data_objects import CoreLightingData
+from Modules.Families.family import Config as familyConfig
 from Modules.Families.family_utils import FamUtil
 from Modules.Core.Utilities import extract_tools, config_tools
-from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
-from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Housing.Lighting.lighting_utility import Utility as lightingUtility
-from Modules.Housing.Lighting.lighting_xml import LightingXML
+from Modules.Housing.rooms import Config as roomConfig
 from Modules.Core.state import State
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logging
 LOG = Logging.getLogger('PyHouse.LightingLights ')
-SECTION = 'LightSection'
+
 CONFIG_FILE_NAME = 'lights.yaml'
+
+
+class LightInformation:
+    """ This is the information that the user needs to enter to uniquely define a light.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None  # Optional
+        self.DeviceType = 'Lighting'
+        self.DeviceSubType = 'Light'
+        self.LastUpdate = None  # Not user entered but maintained
+        self.Uuid = None  # Not user entered but maintained
+        self.Family = None  # LightFamilyInformation()
+        self.Room = None  # LightRoomInformation() Optional
+
+
+class LightFamilyInformation:
+    """ This is the family information we need for a light
+
+    Families may stuff other necessary information in here.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None  # Optional
+        self.Address = None
+
+
+class LightRoomInformation:
+    """ This is the room information we need for a light.
+    This allows duplicate light names such as 'Ceiling' in different rooms.
+    It also allows for group control by room.
+
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None  # Optional
+        self.Uuid = None  # Not user entered but maintained
 
 
 class LightData(CoreLightingData):
@@ -115,9 +153,87 @@ class MqttActions:
         return l_logmsg
 
 
-class Yaml:
+class Config:
+    """ The major work here is to load and save the information about a light switch.
     """
-    """
+
+    def _extract_room(self, p_config):
+        """ Get the room and position within the room of the device.
+        """
+        l_ret = roomConfig().load_room_config(p_config)
+        return l_ret
+
+    def _extract_family(self, p_config):
+        """
+        """
+        l_ret = familyConfig().load_family_config(p_config, self.m_pyhouse_obj)
+        return l_ret
+
+    def _extract_one_light(self, p_config) -> dict:
+        """ Extract the config info for one Light.
+        - Name: Light 1
+          Comment: This is test light 1
+          Family:
+             Name: Insteon
+             Address: 11.44.33
+          Dimmable: true  # Optional
+          Room:
+             Name: Living Room
+        @param p_config: is the config fragment containing one light's information.
+        @return: a LightInformation() obj filled in.
+        """
+        l_obj = LightInformation()
+        l_required = ['Name', 'Family']
+        for l_key, l_value in p_config.items():
+            # print('Light Key: {}; Val: {}'.format(l_key, l_val))
+            if l_key == 'Family':
+                l_ret = self._extract_family(l_value)
+                l_obj.Family = l_ret
+            elif l_key == 'Room':
+                l_ret = self._extract_room(l_value)
+                l_obj.Room = l_ret
+                pass
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for required data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+    def _extract_all_lights(self, p_config):
+        """ Get all of the lights configured
+        """
+        l_dict = {}
+        for l_ix, l_light in enumerate(p_config):
+            # print('Light: {}'.format(l_light))
+            l_light_obj = self._extract_one_light(l_light)
+            l_dict[l_ix] = l_light_obj
+        return l_dict
+
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """ Read the lights.yaml file if it exists.  No file = no lights.
+        It must contain 'Lights:'
+        All the lights are a list.
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Loading _Config - Version:{}'.format(__version__))
+        try:
+            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        except:
+            p_pyhouse_obj.House.Lighting.Lights = None
+            return None
+        try:
+            l_yaml = l_node.Yaml['Lights']
+        except:
+            LOG.warn('The lights.yaml file does not start with "Lights:"')
+            p_pyhouse_obj.House.Lighting.Lights = None
+            return None
+        l_lights = self._extract_all_lights(l_yaml)
+        p_pyhouse_obj.House.Lighting.Lights = l_lights
+        return l_lights  # for testing purposes
+
+# -------------
 
     def _copy_to_yaml(self, p_pyhouse_obj):
         """ Create or Update the yaml information.
@@ -127,13 +243,20 @@ class Yaml:
 
         @return: the updated yaml ready information.
         """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
-        l_config = l_node.Yaml['Lights']
+        try:
+            l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+            l_config = l_node.Yaml['Lights']
+        except Exception as e_err:
+            LOG.info('No Lights yaml file - creating a new file - {}'.format(e_err))
+            l_node = config_tools.Yaml(p_pyhouse_obj).create_yaml_node('Lights')
+            l_config = l_node.Yaml['Lights']
         l_working = p_pyhouse_obj.House.Lighting.Lights
+        LOG.debug(PrettyFormatAny.form(l_working, 'Working lights', 190))
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             setattr(l_config, l_key, l_val)
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
+            LOG.debug('Key:{}'.format(l_key))
+        # p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Lights'] = l_config
         l_ret = {'Lights': l_config}
         return l_ret
 
@@ -141,107 +264,46 @@ class Yaml:
         """
         """
 
-    def SaveYamlConfig(self, p_pyhouse_obj):
+    def _save_one_light(self, p_light_obj):
+        """ Create a Yaml map of all light attributes to save
         """
+        LOG.debug('Saving one light: {}'.format(p_light_obj))
+        l_ret = p_light_obj.Name
+        return l_ret
+
+    def _save_all_lights(self, p_pyhouse_obj, p_config):
+        """ Lights are list items
+
+        @param p_config: is the yaml['Lights'] structure
+        @return: a complete yaml tree ready to save
+        """
+        LOG.debug(p_config)
+        l_lights = p_pyhouse_obj.House.Lighting.Lights
+        for l_light_obj in l_lights.values():
+            l_config = self._save_one_light(l_light_obj)
+            try:
+                LOG.debug('Inserting one light')
+                p_config.insert(-1, l_config)
+            except:
+                LOG.debug('Create a list of lights')
+            # p_config[-1] = l_config
+        return p_config
+
+    def SaveYamlConfig(self, p_pyhouse_obj):
+        """ Save all the lights in a separate yaml file.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml(p_pyhouse_obj)
+        try:
+            l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+            l_config = l_node.Yaml['Lights']
+        except Exception as e_err:
+            LOG.info('No Lights yaml file - creating a new file - {}'.format(e_err))
+            l_node = config_tools.Yaml(p_pyhouse_obj).create_yaml_node('Lights')
+            p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME] = l_node
+            l_config = l_node.Yaml['Lights']
+        l_config = self._save_all_lights(p_pyhouse_obj, l_config)
         config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
         return l_config
-
-
-class XML:
-
-    def _read_light_data(self, p_obj, p_xml):
-        # p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
-        if (p_xml.find('Brightness') != None):
-            p_obj.BrightnessPct = PutGetXML.get_int_from_xml(p_xml, 'Brightness', 44)
-        else:
-            p_obj.BrightnessPct = PutGetXML.get_int_from_xml(p_xml, 'CurLevel', 45)
-        p_obj.IsDimmable = PutGetXML.get_bool_from_xml(p_xml, 'IsDimmable', False)
-        p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType', 41)
-        p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType', 43)
-        p_obj.RoomName = PutGetXML.get_text_from_xml(p_xml, 'RoomName')
-        p_obj.RoomUUID = PutGetXML.get_uuid_from_xml(p_xml, 'RoomUUID')
-        p_obj.RoomCoords = PutGetXML.get_coords_from_xml(p_xml, 'RoomCoords')
-        try:
-            p_obj.Trigger = PutGetXML.get_bool_from_xml(p_xml, 'Trigger')
-        except AttributeError:
-            p_obj.Trigger = False
-        return p_obj  # for testing
-
-    def _write_light_data(self, p_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'Brightness', p_obj.BrightnessPct)
-        PutGetXML.put_text_element(p_xml, 'IsDimmable', p_obj.IsDimmable)
-        PutGetXML.put_bool_element(p_xml, 'Trigger', p_obj.Trigger)
-        return p_xml
-
-    def _read_one_light_xml(self, p_pyhouse_obj, p_xml):
-        """
-        Load all the xml for one controller.
-        Base Device, Light, Family
-        """
-        l_obj = LightData()
-        l_obj.DeviceType = 1  # Lighting
-        l_obj.DeviceSubType = 3  # Lights
-        try:
-            l_obj = LightingXML()._read_base_device(l_obj, p_xml)
-            self._read_light_data(l_obj, p_xml)
-            LightingXML()._read_family_data(p_pyhouse_obj, l_obj, p_xml)
-        except Exception as e_err:
-            LOG.error('ERROR - ReadOneController - {}'.format(e_err))
-            l_obj = LightData()
-        return l_obj
-
-    def _write_one_light_xml(self, p_pyhouse_obj, p_controller_obj):
-        l_xml = LightingXML()._write_base_device('Light', p_controller_obj)
-        self._write_light_data(p_controller_obj, l_xml)
-        LightingXML()._write_family_data(p_pyhouse_obj, p_controller_obj, l_xml)
-        return l_xml
-
-    def read_all_lights_xml(self, p_pyhouse_obj):
-        """
-        @param p_pyhouse_obj: is the master information store
-        @param p_version: is the XML version of the file to use.
-        @return: a dict of lights info
-        """
-        l_count = 0
-        l_dict = {}
-        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/LightingSection/LightSection')
-        if l_xml is None:
-            return l_dict
-        try:
-            for l_one_xml in l_xml.iterfind('Light'):
-                l_obj = self._read_one_light_xml(p_pyhouse_obj, l_one_xml)
-                l_obj.Key = l_count  # Renumber
-                l_dict[l_count] = l_obj
-                l_uuid_obj = UuidData()
-                l_uuid_obj.UUID = l_obj.UUID
-                l_uuid_obj.UuidType = 'Light'
-                UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
-                LOG.info('Loaded light {}'.format(l_obj.Name))
-                l_count += 1
-        except AttributeError as e_err:  # No Lights section
-            LOG.warning('Lighting_Lights - No Lights defined - {}'.format(e_err))
-            #  print('XXX-1', e_err)
-            l_dict = {}
-        LOG.info("Loaded {} Lights".format(l_count))
-        return l_dict
-
-    def write_all_lights_xml(self, p_pyhouse_obj):
-        l_xml = ET.Element(SECTION)
-        l_count = 0
-        for l_light_obj in p_pyhouse_obj.House.Lighting.Lights.values():
-            l_one = self._write_one_light_xml(p_pyhouse_obj, l_light_obj)
-            l_xml.append(l_one)
-            l_count += 1
-        LOG.info('Saved {} Lights XML'.format(l_count))
-        return l_xml
-
-
-class Config:
-    """
-    """
 
 
 class API(MqttActions):
@@ -249,8 +311,24 @@ class API(MqttActions):
     """
 
     def __init__(self, p_pyhouse_obj):
+        # p_pyhouse_obj.House.Lighting.Lights = {}
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def LoadConfig(self):
+        """
+        """
+        LOG.info('Load Config')
+        Config().LoadYamlConfig(self.m_pyhouse_obj)
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Lighting_lights.API.LoadConfig', 190))
+        return {}
+
+    def SaveConfig(self):
+        """ Save the Lighting section.
+        It will contain several sub-sections
+        """
+        LOG.info('Save Config')
+        Config().SaveYamlConfig(self.m_pyhouse_obj)
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         """

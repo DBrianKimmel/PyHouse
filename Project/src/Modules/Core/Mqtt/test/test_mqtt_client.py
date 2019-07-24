@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2019-05-25
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-07-09'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,7 +26,7 @@ from Modules.Core.Mqtt.mqtt_data import MqttBrokerInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Core.data_objects import \
     ScheduleLightData, \
-    ControllerData, \
+    ControllerInformation, \
     ComputerInformation
 from Modules.Housing.location import LocationInformationPrivate
 from Modules.Core.Mqtt.mqtt import _make_message
@@ -216,7 +216,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
     def test_04_MessageObj(self):
         """ Add an object.
         """
-        l_data = ControllerData()
+        l_data = ControllerInformation()
         l_data.Name = 'Mqtt Schedule Object'
         l_data.LightName = 'Test Light'
         l_data.RoomName = 'Living Room'

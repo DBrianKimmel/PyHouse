@@ -11,12 +11,12 @@
 
 """
 
-__updated__ = '2019-03-20'
+__updated__ = '2019-07-24'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import DeviceData
+from Modules.Core.data_objects import DeviceInformation
 from Modules.Housing.Lighting.lighting_lights import LightData
 
 
@@ -32,13 +32,13 @@ class HueLightData(LightData):
         self.HueUniqueId = None
 
 
-class HueHubData(DeviceData):
+class HueHubData(DeviceInformation):
     """
     """
 
     def __init__(self):
         super(HueHubData, self).__init__()
-        self.DeviceType = 4
+        self.DeviceType = 'Bridge'
         self.ApiKey = 'None defined'
 
 

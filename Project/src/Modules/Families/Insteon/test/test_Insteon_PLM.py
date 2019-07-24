@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 # Import PyMh files
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import ControllerData, HouseInformation
+from Modules.Core.data_objects import ControllerInformation, HouseInformation
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -138,7 +138,7 @@ class C04_Thermostat(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
 
     def test_01_x(self):
         pass

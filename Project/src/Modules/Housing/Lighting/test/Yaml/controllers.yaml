@@ -1,0 +1,45 @@
+---
+# Name:      Module/Housing/Lighting/test/Yaml/controllers.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jul 20, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Controllers:
+
+   - Name: Plm-1
+     Comment: A comment
+     Family:
+        Name: Insteon
+        Address: 11.22.33
+     Interface:
+        Type: Serial
+        Baud: 19200
+
+   - Name: TestPlm
+     Comment: Portable, Goes where I do.
+     Family:
+        Name: Insteon
+        Address: 44.55.66
+     Interface:
+        Type: Serial
+        Baud: 19200
+        Port: /dev/ttyUSB0
+
+   - Name: InsteonHub
+     Comment: 2442DD type Hub
+     Family:
+        Name: Insteon
+        Address: 77.88.99
+     Interface:
+        Type: Tcp
+        Host: insteon-hub-ct
+        Port: 25105
+     Login:
+        Name: !Secret UserName
+        Password: !Secret Password
+
+### END DBK

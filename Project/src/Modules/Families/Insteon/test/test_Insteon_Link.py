@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2016-10-31'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerInformation
 from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
 # from Modules.Families.Insteon.Insteon_utils import Decode
 from test.testing_mixin import SetupPyHouseObj
@@ -35,18 +35,19 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_obj = ControllerData()
+        self.m_obj = ControllerInformation()
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_Insteon_Link')
 
 
 class B01_Decode(SetupMixin, unittest.TestCase):
-
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))

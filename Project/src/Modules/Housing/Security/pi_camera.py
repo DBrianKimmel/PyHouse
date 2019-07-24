@@ -1,9 +1,8 @@
 """
-
-@name:      PyHouse/src/Modules/Security/pi_camera.py
+@name:      Modules/Housing/Security/pi_camera.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013_2016 by D. Brian Kimmel
+@copyright: (c) 2013_2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 18, 2013
 @Summary:
@@ -35,12 +34,10 @@ from datetime import datetime
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SecurityCamera ')
 
-
 FRAME_INTERVAL = 1000  # mili-seconds
 MIN_PIXELS = 25
 THRESHOLD = 10
 SENSITIVITY = 20
-
 
 forceCapture = True
 forceCaptureTime = 60 * 60  # Once an hour

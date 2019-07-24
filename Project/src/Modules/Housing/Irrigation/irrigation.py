@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Irrigation.test.test_irrigation -*-
-
-@name:      PyHouse/src/Modules/Irrigation/irrigation.py
+@name:      Modules/Housing/Irrigation/irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-03'
+__updated__ = '2019-07-09'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -75,22 +73,20 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized')
 
-    def LoadXml(self, p_pyhouse_obj):
-        """ Load the Irrigations xml info.
+    def LoadConfig(self):
+        """ Load the Irrigations config info.
         """
-        l_obj = irrigationXml.read_irrigation_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Irrigation = l_obj
+        l_obj = irrigationXml.read_irrigation_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Irrigation = l_obj
         LOG.info('Loaded XML')
         return l_obj
 
     def Start(self):
         LOG.info('Started Irrigation')
 
-    def SaveXml(self, p_xml):
-        (l_xml, l_count) = irrigationXml.write_irrigation_xml(self.m_pyhouse_obj.House.Irrigation)
-        p_xml.append(l_xml)
-        LOG.info("Saved {} Irrigation XML.".format(l_count))
-        return p_xml
+    def SaveConfig(self):
+        irrigationXml.write_irrigation_xml(self.m_pyhouse_obj.House.Irrigation)
+        LOG.info("Saved Irrigation XML.")
 
     def Stop(self):
         LOG.info('Stopped Irrigation')

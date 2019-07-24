@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ from xml.etree import ElementTree as ET
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import LightData, ButtonData, ControllerData
+from Modules.Core.data_objects import LightData, ButtonData, ControllerInformation
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_ROOM_NAME, \
@@ -64,7 +64,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = deviceXML
         self.m_button_obj = ButtonData()
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
         self.m_light_obj = LightData()
 
 
@@ -149,7 +149,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_02_BaseController(self):
         """ Read in the xml file and fill in the lights
         """
-        l_obj = ControllerData()
+        l_obj = ControllerInformation()
         l_base = self.m_api.read_base_device_object_xml(l_obj, self.m_xml.controller)
         self.assertEqual(str(l_base.Name), TESTING_CONTROLLER_NAME_0)
         self.assertEqual(str(l_base.Key), TESTING_CONTROLLER_KEY_0)
@@ -201,7 +201,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_02_BaseController(self):
         """ Read in the xml file and fill in the lights
         """
-        l_obj = ControllerData()
+        l_obj = ControllerInformation()
         l_base = self.m_api.read_base_device_object_xml(l_obj, self.m_xml.controller)
         l_xml = self.m_api.write_base_device_object_xml('Light', l_base)
         # print(PrettyFormatAny.form(l_xml, 'C1-02-A - Base'))

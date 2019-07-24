@@ -14,7 +14,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-05-18'
+__updated__ = '2019-07-22'
 
 #  Import system type stuff
 
@@ -92,7 +92,7 @@ class Send():
         l_command[2] = p_code
         l_command[3] = p_flag
         l_command[4] = p_light_obj.GroupNumber
-        Util.int2message(p_light_obj.InsteonAddress, l_command, 5)
+        Insteon_utils.insert_address_into_message(p_light_obj.Family.Address, l_command, 5)
         l_command[8:11] = p_data
         Insteon_utils.queue_command(p_controller_obj, l_command)
 
@@ -121,7 +121,7 @@ class Decode(object):
         l_msg = Insteon_utils.decode_link_code(l_message[2])
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
-        l_device_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_from_id)
+        l_device_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_from_id)
         utilDecode._devcat(l_message[7:9], p_controller_obj)
         _l_version = l_message[9]
         LOG.info('All-Linking completed - Link Code:{}, Group:{}, From:{} '.format(l_msg, l_link_group, l_device_obj.Name))
@@ -183,7 +183,7 @@ class Decode(object):
         [9] = Link Data 3
         """
         l_message = p_controller_obj._Message
-        l_obj = utilDecode.get_obj_from_message(p_pyhouse_obj, l_message[4:7])
+        l_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_message[4:7])
         l_link_obj = LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]

@@ -27,7 +27,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-24'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -554,8 +554,8 @@ class HueDispatch(HueProtocol):
                 l_light.Key = l_light_obj[0]
                 l_light.Active = True
                 l_light.DeviceFamily = 'Hue'
-                l_light.DeviceType = 1  # Lighting
-                l_light.DeviceSubType = 2  # Light
+                l_light.DeviceType = 'Lighting'  # Lighting
+                l_light.DeviceSubType = 'Light'
                 l_light.ControllerName = 'Hue Hub'
                 l_light.LastUpdate = datetime.datetime.now()
                 l_light.IsDimmable = True

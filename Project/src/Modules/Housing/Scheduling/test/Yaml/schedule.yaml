@@ -9,11 +9,33 @@
 # Summary:   This is for PyHouse
 
 Schedules:
-  - Name: Event
-    Time: sunset
-    Type: Light
-    Light: Test Light 1
-    Brightness: 0
+  - Name: Base
+    Occupancy: Home  # Away, Vacation, Off
     DOW: SMTWTFS
+    Time: sunset - 0:15  # HH:mm
+    Light:  # Light, Thermostat, Irrigation, Entertainment
+      Name: Ceiling  # Light, if present, is ignored
+      Room: Living Room
+      Brightness: 0  # Off, On, %%
+      Duration: 2:00  # HH:mm
+
+  - Name: test
+    Occupancy: Vacation
+    DOW: ---W--S
+    Time: 0:15  # HH:mm
+    Irrigation:
+      Name: SystemName
+      Zone: 1
+      Duration: 0:40  # HH:mm
+
+  - Name: Event
+    Occupancy: Vacation
+    DOW: -MTWTF-
+    Time: 0:15  # HH:mm
+    Thermostat:
+      Name: Main
+      Room: Hall
+      Heat: 72
+      Cool: 77
 
 ### END

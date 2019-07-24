@@ -10,14 +10,14 @@
 Passed all 9 tests - DBK - 2019-01-10
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerInformation
 from Modules.Drivers.Serial import Serial_driver
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Lighting.lighting import API as lightingAPI
@@ -55,7 +55,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def _fake_params(self):
-        l_obj = ControllerData()
+        l_obj = ControllerInformation()
         l_obj.BaudRate = 19200
         return l_obj
 

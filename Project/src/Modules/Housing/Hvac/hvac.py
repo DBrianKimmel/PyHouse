@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Hvac/hvac.py
+@name:      Modules/Housing/Hvac/hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-06-09'
+__updated__ = '2019-07-09'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -75,9 +75,11 @@ class API(Utility):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
 
-    def LoadXml(self, p_pyhouse_obj):
-        l_obj = hvacXML.read_hvac_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Hvac = l_obj
+    def LoadConfig(self):
+        """ Load the HVAC config info.
+        """
+        l_obj = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Hvac = l_obj
         return l_obj
 
     def Start(self):
@@ -86,10 +88,8 @@ class API(Utility):
     def Stop(self):
         LOG.info("Stopped.")
 
-    def SaveXml(self, p_xml):
-        l_xml = hvacXML.write_hvac_xml(self.m_pyhouse_obj, p_xml)
-        p_xml.append(l_xml)
+    def SaveConfig(self):
+        # hvacXML.write_hvac_xml()
         LOG.info("Saved Hvac XML.")
-        return l_xml
 
 #  ## END DBK

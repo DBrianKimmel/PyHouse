@@ -158,14 +158,14 @@ class BaseObject(object):
         self.LastUpdate = None
 class BaseUUIDObject(BaseObject):
         self.UUID = None
-class DeviceData(BaseUUIDObject):
+class DeviceInformation(BaseUUIDObject):
         self.DeviceFamily = 'Null'
         self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
         self.DeviceSubType = 0
-        self.RoomCoords = None  # CoordinateData()
+        self.RoomCoords = None  # CoordinateInformation()
         self.RoomName = ''
         self.RoomUUID = None
-class CoreLightingData(DeviceData):
+class CoreLightingData(DeviceInformation):
         # self. Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
 class LightData(CoreLightingData):
         self.BrightnessPct = 0  # 0% to 100%

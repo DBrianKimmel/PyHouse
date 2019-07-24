@@ -11,20 +11,20 @@ Passed all 23 tests - DBK - 2017-04-29
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-22'
 
 # Import system type stuff
 from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import ControllerData
+# from Modules.Core.data_objects import ControllerInformation
 from Modules.Core.Utilities import convert
 from Modules.Families.family import API as familyAPI
 from Modules.Families.Insteon import Insteon_utils
 from Modules.Families.Insteon.Insteon_utils import Util, Decode as utilDecode
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
-from Modules.Housing.Lighting.lighting import Utility as lightingUtility
+# from Modules.Housing.Lighting.lighting import Utility as lightingUtility
 from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0, \
     TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0
@@ -73,11 +73,11 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_obj = ControllerData()
+        # self.m_obj = ControllerInformation()
         self.inst = Util
-        self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        # self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):
@@ -159,6 +159,22 @@ class B1_Conversions(SetupMixin, unittest.TestCase):
         result = self.inst.message2int(MSG_62[2:5])
         self.assertEqual(result, MSG_62_INT)
 
+    def test_02_Addr(self):
+        """
+        """
+        l_addr = '12.34.56'
+        l_msg = bytearray(b'0000000000')
+        l_ret = Insteon_utils.insert_address_into_message(l_addr, l_msg, 2)
+        print('B1-02-A - {}'.format(FormatBytes(l_ret)))
+
+    def test_03_Addr(self):
+        """
+        """
+        l_msg = bytearray(b'\x02\x62\x17\xc2\x02\x0f\x19\x00\x06')
+        l_ret = Insteon_utils.extract_address_from_message(l_msg, 2)
+        print('B1-03-A Addr: {}'.format(l_ret))
+        self.assertEqual(l_ret, '17.C2.02')
+
 
 class B2_Lookup(SetupMixin, unittest.TestCase):
 
@@ -207,33 +223,11 @@ class C1_Convert(SetupMixin, unittest.TestCase):
         """ Get 3 bytes and convert it to a long int
         """
         result = self.inst.message2int(MSG_50[2:5])
-        # print('C1-01-A - ', FormatBytes(MSG_50[2:5]), result)
+        print('C1-01-A - ', FormatBytes(MSG_50[2:5]), result)
         self.assertEqual(result, MSG_50_INT)
         #
         result = self.inst.message2int(MSG_62[2:5])
         self.assertEqual(result, MSG_62_INT)
-
-    def test_02_i2msg(self):
-        """ Convert a long int to a 3 byte address
-        """
-        l_msg = bytearray(b'0000000000')
-        result = self.inst.int2message(ADDR_DR_SLAVE_INT, l_msg, 2)
-        # print('C1-02-A - ', FormatBytes(result))
-        # print('C1-02-B - ', FormatBytes(l_msg))
-        self.assertEqual(result[2:5], ADDR_DR_SLAVE_MSG)
-        #
-
-    def test_03_i2msg(self):
-        """ Convert a long int to a 3 byte address
-        """
-        l_msg = bytearray(b'          ')
-        result = self.inst.int2message(ADDR_NOOK_INT, l_msg, 2)
-        # print('C1-03-A - ', FormatBytes(result))
-        # print('C1-03-B - ', FormatBytes(l_msg))
-        self.assertEqual(result[2:5], ADDR_NOOK_MSG)
-
-    def test_04_Json(self):
-        pass
 
 
 class D1_Decode(SetupMixin, unittest.TestCase):
@@ -264,7 +258,7 @@ class D2_Decode(SetupMixin, unittest.TestCase):
         """
         l_msg = MSG_50
         # print(FormatBytes(l_msg), 'D2-01-A - Message')
-        _l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_msg[2:5])
+        _l_ret = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_msg[2:5])
         # print(PrettyFormatAny.form(_l_ret, 'D2-01-B - Combined Dicts'))
 
 
@@ -281,7 +275,7 @@ class E1_Lookup(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights[0], 'E1-01-A - Lighting'))
         l_addr = INSTEON_0_MSG
-        l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_addr)
+        l_ret = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_addr)
         l_dotted = convert.int2dotted_hex(l_ret.InsteonAddress, 3)
         # print(PrettyFormatAny.form(l_ret, 'E1-01-B - Lighting'))
         self.assertEqual(l_dotted, TESTING_INSTEON_ADDRESS_0)
@@ -301,7 +295,7 @@ class F1_Update(SetupMixin, unittest.TestCase):
         _l_light = self.m_pyhouse_obj.House.Lighting.Lights[0]
         # print(PrettyFormatAny.form(l_light, 'F1-01-A - Light'))
         l_addr = INSTEON_1_MSG
-        l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_addr)
+        l_ret = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_addr)
         l_ret.Port = PORT_NAME
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_ret)
         # print(PrettyFormatAny.form(l_light, 'F1-01-B - l_ret'))
@@ -313,7 +307,7 @@ class F1_Update(SetupMixin, unittest.TestCase):
         _l_controller = self.m_pyhouse_obj.House.Lighting.Controllers[0]
         # print(PrettyFormatAny.form(l_controller, 'F1-02-A - Controller'))
         l_addr = INSTEON_1_MSG
-        l_ret = utilDecode.get_obj_from_message(self.m_pyhouse_obj, l_addr)
+        l_ret = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_addr)
         l_ret.Port = PORT_NAME
         Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_ret)
         # print(PrettyFormatAny.form(l_controller, 'F1-02-B - l_ret'))
@@ -336,18 +330,5 @@ class F1_Update(SetupMixin, unittest.TestCase):
         """
         _l_garage = self.m_pyhouse_obj.House.Lighting.Buttons[0]
         # print(PrettyFormatAny.form(l_garage, 'F1-05-A - Garage'))
-
-
-class J1_Json(SetupMixin, unittest.TestCase):
-    """ Update the PyHouse store given an object with an insteon address.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
-
-    def test_01_get(self):
-        """
-        """
 
 # ## END DBK

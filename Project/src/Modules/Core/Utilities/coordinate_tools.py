@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-06-16'
+__updated__ = '2019-07-15'
 
 #  Import system type stuff
 # import xml.etree.ElementTree as ET
 # import datetime
 
 #  Import PyMh files
-from Modules.Housing.house_data import CoordinateData
+from Modules.Housing.house_data import CoordinateInformation
 
 
 class Coords:
@@ -29,9 +29,9 @@ class Coords:
 
         @param p_str: Json returns a list of X, Y and Z values.
                         It should look like >> [ 1, 2.2, 33.44 ] but it could be deformed by the user.
-        @return: a CoordinateData() object filled in.
+        @return: a CoordinateInformation() object filled in.
         """
-        l_ret = CoordinateData()
+        l_ret = CoordinateInformation()
         if isinstance(p_coords, list):
             l_list = p_coords
         else:

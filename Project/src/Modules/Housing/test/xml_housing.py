@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Housing/test/xml_housing.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 7, 2014
 @summary:   XML data for house location
@@ -20,7 +20,7 @@ Comments should not need explaining.  They are just present and can contain just
 """
 from Modules.Housing.Rules.test.xml_rules import XML_RULES_SECTION
 
-__updated__ = '2019-05-11'
+__updated__ = '2019-07-12'
 
 # Import system type stuff
 

@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-24'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -161,7 +161,7 @@ class EmailData:
         self.GmailPassword = ''
 
 
-class EthernetControllerData:
+class EthernetControllerInformation:
     """A lighting controller that is connected to the node via Ethernet
     """
 
@@ -215,7 +215,7 @@ class HouseAPIs:
 #        self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
-class LightingData:
+class XXLightingInformation:
     """
     DeviceType = 1
 
@@ -224,8 +224,9 @@ class LightingData:
 
     def __init__(self):
         self.Buttons = {}  # ButtonData()  DeviceSubType = 3
-        self.Controllers = {}  # ControllerData()  DeviceSubType = 1
+        self.Controllers = {}  # ControllerInformation()  DeviceSubType = 1
         self.Lights = {}  # LightData()  DeviceSubType = 2
+        self.Outlets = {}
 
 
 class LoginInformation:
@@ -248,7 +249,7 @@ class ModuleObject:
         self.Active = False
 
 
-class NullControllerData:
+class NullControllerInformation:
     """ A lighting controller that is connected to the node via Nothing
     """
 
@@ -290,7 +291,7 @@ class SecurityData:
         self.MotionSensors = {}  # DeviceSubtype = 2
 
 
-class SerialControllerData:
+class SerialControllerInformation:
     """ The additional data needed for serial interfaces.
     """
 
@@ -327,7 +328,7 @@ class TwitterData:
         self.TwitterAccessSecret = ''
 
 
-class USBControllerData:
+class USBControllerInformation:
     """ A lighting controller that is plugged into one of the nodes USB ports
     """
 
@@ -410,12 +411,12 @@ BaseObject dependent.
 """
 
 
-class FamilyInformation(BaseObject):
+class XXXFamilyInformation(BaseObject):
     """ A container for every family that has been defined in modules.
     """
 
     def __init__(self):
-        super(FamilyInformation, self).__init__()
+        super(XXXFamilyInformation, self).__init__()
         self.FamilyDevice_ModuleAPI = None  # Insteon_device.API()
         self.FamilyDevice_ModuleName = None  # Insteon_device
         self.FamilyPackageName = None  # Modules.Families.Insteon
@@ -477,17 +478,17 @@ class ComputerInformation(BaseUUIDObject):
         self.Web = {}  # WebInformation()
 
 
-class DeviceData(BaseUUIDObject):
+class DeviceInformation(BaseUUIDObject):
     """ This data is in every other device object.
     Do not use this object, derive objects from it.
     """
 
     def __init__(self):
-        super(DeviceData, self).__init__()
+        super(DeviceInformation, self).__init__()
         self.DeviceFamily = 'Null'
-        self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
-        self.DeviceSubType = 0
-        self.RoomCoords = None  # CoordinateData() of the device itself
+        self.DeviceType = None  # Controllers, Lighting, Hvac, Security, Bridge
+        self.DeviceSubType = None
+        self.RoomCoords = None  # CoordinateInformation() of the device itself
         self.RoomName = ''
         self.RoomUUID = None
 
@@ -505,7 +506,7 @@ class HouseInformation(BaseUUIDObject):
         self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
-        self.Lighting = {}  # LightingData()
+        self.Lighting = {}  # LightingInformation()
         self.Location = {}  # LocationInformation() - one location per house.
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomInformation()
@@ -554,12 +555,12 @@ class NodeInformation(BaseUUIDObject):
         self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
-class NodeControllerData(BaseUUIDObject):
+class NodeControllerInformation(BaseUUIDObject):
     """
     """
 
     def __init__(self):
-        super(NodeControllerData, self).__init__()
+        super(NodeControllerInformation, self).__init__()
 
 
 class NodeInterfaceData(BaseUUIDObject):
@@ -586,10 +587,10 @@ class RoomInformation(BaseUUIDObject):
 
     def __init__(self):
         super(RoomInformation, self).__init__()
-        self.Corner = ''  # CoordinateData()
+        self.Corner = ''  # CoordinateInformation()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         # self.LastUpdate = None
-        self.Size = ''  # CoordinateData()
+        self.Size = ''  # CoordinateInformation()
         self.RoomType = 'Room'
         self._AddFlag = False
         self._DeleteFlag = False
@@ -683,11 +684,11 @@ class ScheduleLightData(ScheduleBaseData):
         self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
 """
-DeviceData dependent.
+DeviceInformation dependent.
 """
 
 
-class CoreLightingData(DeviceData):
+class CoreLightingData(DeviceInformation):
     """ Basic information about some sort of lighting object.
     """
 
@@ -702,17 +703,17 @@ CoreLightingData dependent.
 """
 
 
-class ButtonData(CoreLightingData):
+class XXXButtonData(CoreLightingData):
     """ A Lighting button.
     This is the wall switch and may control more than one light
     Also may control scenes.
     """
 
     def __init__(self):
-        super(ButtonData, self).__init__()
+        super(XXXButtonData, self).__init__()
 
 
-class ControllerData(CoreLightingData):
+class XXControllerInformation(CoreLightingData):
     """ This data is common to all lighting controllers.
 
     _isFunctional is used to disable the controller for the current run.
@@ -722,9 +723,9 @@ class ControllerData(CoreLightingData):
     """
 
     def __init__(self):
-        super(ControllerData, self).__init__()
+        super(XXControllerInformation, self).__init__()
         self.InterfaceType = ''  # Serial | USB | Ethernet
-        self.LasuUsed = None  # Date time of successful start
+        # self.LasuUsed = None  # Date time of successful start
         self.Node = None  # node the controller is connected to
         self.Port = ''
         self.Ret = None  # Return Code

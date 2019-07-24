@@ -1,17 +1,15 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Housing/test/test-Rules.py -*-
-
 @name:      /home/briank/workspace/PyHouse/src/Modules/Housing/test/test-Rules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Feb 13, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-07-12'
 
 from twisted.trial import unittest, reporter, runner
 

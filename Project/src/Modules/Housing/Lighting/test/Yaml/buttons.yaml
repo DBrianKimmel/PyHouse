@@ -8,7 +8,7 @@
 # License:   MIT License
 # Summary:   This is for PyHouse
 
-Button:
+Buttons:
    - Name: Test Button 1
      Active: True
      Comment: A comment
@@ -20,7 +20,7 @@ Button:
        SubType: 0
      Room:
        Name: None
-       Coords: None  # CoordinateData() of the device itself
+       Coords: None  # CoordinateInformation() of the device itself
        UUID: None
 
 ### END DBK

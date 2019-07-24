@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Entertainment/entertainment.py
+@name:      Modules/Housing/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-12'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -209,13 +209,13 @@ class API(Ent):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadConfig(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Read the entertainment config.
 
         @return: the Entertainment object of PyHouse_obj
         """
-        LOG.info("XML Loading - Version:{}".format(__version__))
-        Yaml().LoadYamlConfig(p_pyhouse_obj)
+        LOG.info("Config Loading - Version:{}".format(__version__))
+        Yaml().LoadYamlConfig(self.m_pyhouse_obj)
         return
 
     def _module_start_loop(self, p_pyhouse_obj, p_plugin):
@@ -239,13 +239,13 @@ class API(Ent):
             l_count += 1
         LOG.info("Started {} plugin(s)- Version:{}".format(l_count, __version__))
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self):
         """ Stick in the entertainment section
         """
-        LOG.info("Saving XML.")
+        LOG.info("Saving Config.")
         l_entertainment_xml = entertainmentXML().write_entertainment_all(self.m_pyhouse_obj)
-        p_xml.append(l_entertainment_xml)
-        LOG.info("Saved XML.")
+        # p_xml.append(l_entertainment_xml)
+        LOG.info("Saved Config.")
         return l_entertainment_xml  # For debugging
 
     def Stop(self):

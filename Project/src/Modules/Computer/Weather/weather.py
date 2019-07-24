@@ -1,22 +1,16 @@
 """
--*- test-case-name: PyHouse.Modules.Computer.test.test_weather -*-
-
-@name:      PyHouse/src/Modules/Computer/weather.py
+@name:      Modules/Computer/weather.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2014-2017 by D. Brian Kimmel
+@copyright: 2014-2019 by D. Brian Kimmel
 @note:      Created on Jan 20, 2014
 @license:   MIT License
 @summary:
-
-
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-07-10'
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Computer import logging_pyh as Logger
@@ -25,11 +19,12 @@ LOG = Logger.getLogger('PyHouse.Weather        ')
 
 
 class API(object):
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized.")
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         pass
 
     def Start(self):
@@ -38,10 +33,7 @@ class API(object):
     def Stop(self):
         pass
 
-    def SaveXml(self, p_xml):
-        l_xml = ET.Element('Weather')
-        p_xml.append(l_xml)
+    def SaveConfig(self):
         LOG.info('Saved XML.')
-        return p_xml
 
 #  ## END DBK

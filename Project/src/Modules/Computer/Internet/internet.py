@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_internet -*-
-
-@Name:      PyHouse/src/Modules/Computer/Internet/internet.py
+@Name:      Modules/Computer/Internet/internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2019 by D. Brian Kimmel
@@ -21,7 +19,7 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-10'
 
 #  Import system type stuff
 
@@ -60,21 +58,20 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def LoadXml(self, p_pyhouse_obj):
-        Utility._read_xml_configuration(p_pyhouse_obj)
+    def LoadConfig(self):
+        Utility._read_xml_configuration(self.m_pyhouse_obj)
+        LOG.info('Loaded Internet Config')
 
     def Start(self):
         """
         Start async operation of the Internet module.
         """
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility._internet_loop, self.m_pyhouse_obj)
-        LOG.info("Started.")
+        LOG.info("Started Internet.")
 
-    def SaveXml(self, p_xml):
-        l_xml = internetAPI().write_internet_xml(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
-        LOG.info('Saved Internet XML')
-        return p_xml
+    def SaveConfig(self):
+        internetAPI().write_internet_xml(self.m_pyhouse_obj)
+        LOG.info('Saved Internet Config')
 
     def Stop(self):
         """

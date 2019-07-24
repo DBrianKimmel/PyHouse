@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-10'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -114,10 +114,10 @@ class API:
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadConfig(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the config info.
         """
-        Yaml().LoadYamlConfig(p_pyhouse_obj)
+        Yaml().LoadYamlConfig(self.m_pyhouse_obj)
         LOG.info("Loaded Config")
 
     def Start(self):
@@ -136,14 +136,12 @@ class API:
                 LOG.info('Other Bridge Active: {}'.format(l_bridge.Name))
             l_count += 1
 
-    def SaveConfig(self, p_pyhouse_obj):
+    def SaveConfig(self):
         """
-
         @param p_pyhouse_obj: the master obj
         """
-        Yaml().SaveYamlConfig(p_pyhouse_obj)
+        Yaml().SaveYamlConfig(self.m_pyhouse_obj)
         LOG.info("Saved Bridges Config")
-        return
 
     def Stop(self):
         LOG.info("Stopped.")

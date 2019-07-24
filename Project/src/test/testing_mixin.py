@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-07-21'
 
 #  Import system type stuff
 import os
@@ -20,6 +20,7 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from Modules.Housing.house_data import LocationInformationPrivate
+from Modules.Housing.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
     PyHouseAPIs, \
@@ -28,9 +29,8 @@ from Modules.Core.data_objects import \
     HouseInformation, \
     HouseAPIs, \
     TwistedInformation, \
-    LightingData, \
     SecurityData, \
-    UuidInformation
+    UuidInformation, CoreInformation
 from Modules.Core.Utilities.config_tools import \
     ConfigInformation
 from Modules.Housing.Entertainment.entertainment_data import \
@@ -40,7 +40,6 @@ from Modules.Families.family import \
     Utility as familyUtil, \
     API as familyAPI
 from Modules.Housing.house import API as housingAPI
-# from Modules.Housing.location import LocationInformation
 from Modules.Housing.Hvac.hvac_data import HvacData
 from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt_data import MqttInformation
@@ -126,21 +125,6 @@ class YamlData():
         self.root = None
 
 
-class LoadPyHouse(object):
-    """
-    """
-
-    def __init__(self):
-        pass
-
-    def load_computer(self):
-        pass
-
-    def load_house(self, p_pyhouse_obj):
-        # housingAPI.LoadXml(p_pyhouse_obj)
-        pass
-
-
 class SetupPyHouseObj():
     """
     """
@@ -177,7 +161,7 @@ class SetupPyHouseObj():
         l_ret = HouseInformation()
         l_ret.Location = LocationInformationPrivate()
         l_ret.Entertainment = SetupPyHouseObj._build_entertainment(p_pyhouse_obj)
-        l_ret.Lighting = LightingData()
+        l_ret.Lighting = LightingInformation()
         l_ret.Hvac = HvacData()
         l_ret.Security = SecurityData()
         return l_ret
@@ -186,6 +170,10 @@ class SetupPyHouseObj():
     def _build_computer(_p_pyhouse_obj):
         l_ret = ComputerInformation()
         l_ret.Mqtt = MqttInformation()
+        return l_ret
+
+    def _build_core(self):
+        l_ret = CoreInformation()
         return l_ret
 
     def _build_apis(self):
@@ -292,12 +280,13 @@ class SetupPyHouseObj():
         """ This will create the pyhpuse_obj structure.
         """
         l_pyhouse_obj = PyHouseInformation()
+        l_pyhouse_obj.Core = SetupPyHouseObj()._build_core()
         l_pyhouse_obj.Computer = SetupPyHouseObj._build_computer(l_pyhouse_obj)
         l_pyhouse_obj.House = SetupPyHouseObj._build_house_data(l_pyhouse_obj)
         #
         l_pyhouse_obj._APIs = self._build_apis()
         l_pyhouse_obj._Config = self._build_config(p_root)
-        l_pyhouse_obj._Families = familyUtil()._init_family_component_apis(l_pyhouse_obj)
+        # l_pyhouse_obj._Families = familyUtil()._init_family_component_apis(l_pyhouse_obj)
         l_pyhouse_obj._Twisted = self._build_twisted()
         l_pyhouse_obj._Uuids = UuidInformation()
         l_pyhouse_obj._Uuids.All = {}

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/test/xml_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2017 by D. Brian Kimmel
+@copyright: (c) 2010-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jan 20, 2010
 @summary:   Handle all of the information for all houses.
@@ -12,7 +12,7 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
-__updated__ = '2018-03-23'
+__updated__ = '2019-07-12'
 
 #  Import system type stuff
 

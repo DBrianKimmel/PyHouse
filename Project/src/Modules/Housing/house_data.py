@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-07-02'
+__updated__ = '2019-07-22'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,7 +20,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from typing import Any
 
 #  Import PyMh files
-from Modules.Core.data_objects import BaseUUIDObject, RiseSetData, BaseObject
+from Modules.Core.data_objects import BaseUUIDObject, RiseSetData
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Computer import logging_pyh as Logger
@@ -41,7 +41,7 @@ class HouseInformation(BaseUUIDObject):
         self.Floors = {}  # FloorsInformation()
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
-        self.Lighting = {}  # LightingData()
+        self.Lighting = {}  # LightingInformation()
         self.Location = {}  # house.location.LocationInformation() - one location per house.
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomInformation()
@@ -113,14 +113,23 @@ class RoomInformation(BaseUUIDObject):
 
     def __init__(self):
         super(RoomInformation, self).__init__()
-        self.Corner = None  # CoordinateData()
+        self.Corner = None  # CoordinateInformation()
         self.Floor = None  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.RoomType = None
-        self.Size = None  # CoordinateData()
+        self.Size = None  # CoordinateInformation()
         self.Trigger = None
 
 
-class CoordinateData:
+class RoomLocationInformation:
+    """ This allows an object to be located within a room.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Location = None  # CoordinateInformation()
+
+
+class CoordinateInformation:
     """
     If applied to components of a house (facing the 'Front' of a house:
         X or the distance to the Right from the room's Left side.

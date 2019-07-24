@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -18,7 +18,7 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerInformation
 from Modules.Drivers.interface import Xml as interfaceXml
 from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
 from Modules.Drivers.Serial.test.xml_serial import XML_SERIAL
@@ -33,7 +33,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
         self.m_ctlr_api = controllerAPI()
 
 

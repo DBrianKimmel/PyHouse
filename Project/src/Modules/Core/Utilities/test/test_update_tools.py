@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-07-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -26,7 +26,7 @@ from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
     TESTING_PANDORA_SECTION
 from Modules.Core.Utilities import update_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.data_objects import DeviceData, LoginData
+from Modules.Core.data_objects import DeviceInformation, LoginData
 
 DATE_1 = datetime(2001, 1, 2)
 DATE_2 = datetime(2099, 12, 30)
@@ -115,7 +115,7 @@ class B1_Dates(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ok, False)
 
     def test_03_Equal(self):
-        l_obj = DeviceData()
+        l_obj = DeviceInformation()
         l_date = datetime.now()
         l_obj.LastUpdate = l_date
         l_ok = update_tools.is_update_needed(l_obj, l_obj)
@@ -125,7 +125,7 @@ class B1_Dates(SetupMixin, unittest.TestCase):
         """
         now > 2001
         """
-        l_local = DeviceData()
+        l_local = DeviceInformation()
         l_remote = LoginData()
         l_date = datetime.now()
         l_local.LastUpdate = l_date
@@ -137,7 +137,7 @@ class B1_Dates(SetupMixin, unittest.TestCase):
         """
         now < 2099
         """
-        l_local = DeviceData()
+        l_local = DeviceInformation()
         l_remote = LoginData()
         l_date = datetime.now()
         l_local.LastUpdate = l_date
@@ -149,7 +149,7 @@ class B1_Dates(SetupMixin, unittest.TestCase):
         """
         2001 < Now
         """
-        l_local = DeviceData()
+        l_local = DeviceInformation()
         l_remote = LoginData()
         l_date = datetime.now()
         l_local.LastUpdate = DATE_1
@@ -161,7 +161,7 @@ class B1_Dates(SetupMixin, unittest.TestCase):
         """
         2099 > Now
         """
-        l_local = DeviceData()
+        l_local = DeviceInformation()
         l_remote = LoginData()
         l_date = datetime.now()
         l_local.LastUpdate = DATE_2

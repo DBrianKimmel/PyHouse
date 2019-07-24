@@ -12,7 +12,7 @@ This may be instanced as many times as there are USB devices to control.
 This should also allow control of many different houses.
 """
 
-__updated__ = '2018-12-17'
+__updated__ = '2019-07-09'
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
@@ -244,7 +244,7 @@ class API(UsbDriverAPI):
 
     def Start(self, p_controller_obj, p_parent):
         """
-        @param p_controller_obj: is the ControllerData() object we are starting.
+        @param p_controller_obj: is the ControllerInformation() object we are starting.
         @param p_parent: is the address of the caller USB device driver
         """
         global g_usb

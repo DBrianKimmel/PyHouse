@@ -12,16 +12,20 @@
 
 Lighting was the first piece of PyHouse.
 
+Turn on the Kithen Ceiling lights.
+Turn off the Bedroom Ceiling lights.
+Turn on the Outside lights.
+
 ## Lighting
 
 Since I started using Insteon, the lighting module became 3 sub modules:
 * Controllers
-* Switches
+* Lights & Outlets
 * Buttons
 
 ### Common
 
-Common to Buttons, Controllers, Switches(Lights).
+Common to Buttons, Controllers, Lights&Outlets.
 
 ```python
 BaseObject():
@@ -32,14 +36,14 @@ BaseObject():
         LastUpdate - Date and time last changed
 BaseUUIDObject(BaseObject):
         UUID - None
-DeviceData(BaseUUIDObject):
+DeviceInformation(BaseUUIDObject):
         DeviceFamily - Insteon, Hue, ...
         DeviceType - 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
         DeviceSubType - 0
-        RoomCoords - None  # CoordinateData()
+        RoomCoords - None  # CoordinateInformation()
         RoomName - The name of the room where the device is located.
         RoomUUID - None
-CoreLightingData(DeviceData):
+CoreLightingData(DeviceInformation):
         Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Controller | Light
 ```
 
@@ -65,16 +69,16 @@ BaseObject():
         LastUpdate = None
 BaseUUIDObject(BaseObject):
         UUID = None
-DeviceData(BaseUUIDObject):
+DeviceInformation(BaseUUIDObject):
         DeviceFamily = 'Null'
         DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
         DeviceSubType = 0
-        RoomCoords = None  # CoordinateData()
+        RoomCoords = None  # CoordinateInformation()
         RoomName = ''
         RoomUUID = None
-CoreLightingData(DeviceData):
+CoreLightingData(DeviceInformation):
         # Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
-ControllerData(CoreLightingData):
+ControllerInformation(CoreLightingData):
         InterfaceType = ''  # Serial | USB | Ethernet
         LasuUsed = None  # Date time of successful start
         Node = None  # node the controller is connected to
@@ -139,11 +143,11 @@ class BaseObject(object):
         self.LastUpdate = None
 class BaseUUIDObject(BaseObject):
         self.UUID = None
-class DeviceData(BaseUUIDObject):
+class DeviceInformation(BaseUUIDObject):
         self.DeviceFamily = 'Null'
         self.DeviceType = 0  # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
         self.DeviceSubType = 0
-        self.RoomCoords = None  # CoordinateData()
+        self.RoomCoords = None  # CoordinateInformation()
         self.RoomName = ''
         self.RoomUUID = None
 ```

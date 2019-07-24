@@ -1,5 +1,5 @@
 ---
-# Name:      PyHouse/Project/src/Module/Housing/Lighting/test/Yaml/lighting_controllers.yaml
+# Name:      Module/Families/test/Yaml/families.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
@@ -8,7 +8,10 @@
 # License:   MIT License
 # Summary:   This is for PyHouse
 
-Controllers:
-   - Name: xxx
+Families:
+# These are the families that will be loaded.
+# Do not include the 'Null' family.
+   - Insteon: !include insteon.yaml
+   - UPB: !include upb.yaml
 
 ### END DBK

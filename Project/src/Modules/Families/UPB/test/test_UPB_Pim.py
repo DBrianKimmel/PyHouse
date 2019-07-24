@@ -11,8 +11,7 @@ Passed all 30 tests - DBK - 2015-08-15
 
 """
 
-__updated__ = '2017-04-26'
-
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 try:
@@ -24,7 +23,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Families.UPB.UPB_Pim import BuildCommand, DecodeResponses
-from Modules.Core.data_objects import ControllerData
+from Modules.Core.data_objects import ControllerInformation
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 
@@ -55,7 +54,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 class B1_Build(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
         self.m_controller_obj._Queue = Queue.Queue(300)
 
     def test_01_Nibble2Hex(self):
@@ -140,7 +139,7 @@ class B2_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_api = DecodeResponses()
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
         self.m_controller_obj._Message = TEST_MESSAGE
 
     def test_01_NextChar(self):
@@ -151,7 +150,7 @@ class B3_Decode(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_api = DecodeResponses()
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
         self.m_controller_obj._Message = TEST_MESSAGE
 
     def test_01_GetRest(self):
@@ -195,7 +194,7 @@ class B4_Driver(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         self.m_api = DecodeResponses()
-        self.m_controller_obj = ControllerData()
+        self.m_controller_obj = ControllerInformation()
         self.m_controller_obj._Message = TEST_MESSAGE
 
     def test_01_LoopStart(self):
@@ -231,6 +230,7 @@ class B6_PimAPI(SetupMixin, unittest.TestCase):
 
     def test_01_PyHouse(self):
         pass
+
 
 class C1_API(SetupMixin, unittest.TestCase):
     """

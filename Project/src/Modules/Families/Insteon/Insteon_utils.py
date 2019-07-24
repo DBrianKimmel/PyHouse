@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py -*-
-
-@name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
+@name:      Modules/Families/Insteon/Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -14,10 +12,9 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-01-29'
+__updated__ = '2019-07-24'
 
 #  Import system type stuff
-import math
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert
@@ -29,7 +26,9 @@ from Modules.Families.Insteon.Insteon_constants import \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
     STX
-# from Modules.Core.Utilities import device_tools
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Computer import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
 
@@ -102,19 +101,20 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
     """ Given some insteon object feched from its insteon address, update the p_pyhouse_obj storage to reflect
     the new information gleaned from the insteon responses.
     """
+    return
     l_ix = p_insteon_obj.Key
     try:
-        if p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 1:
+        if p_insteon_obj.DeviceType == 'Lighting' and p_insteon_obj.DeviceSubType == 'Button':
             p_pyhouse_obj.House.Lighting.Buttons[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 2:
+        elif p_insteon_obj.DeviceType == 'Lighting' and p_insteon_obj.DeviceSubType == 'Controller':
             p_pyhouse_obj.House.Lighting.Controllers[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 1 and p_insteon_obj.DeviceSubType == 3:
+        elif p_insteon_obj.DeviceType == 'Lighting' and p_insteon_obj.DeviceSubType == 'Light':
             p_pyhouse_obj.House.Lighting.Lights[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 2:
+        elif p_insteon_obj.DeviceType == 'Hvac':
             p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 1:
+        elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'Thermostat':
             p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 3 and p_insteon_obj.DeviceSubType == 2:
+        elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'GarageDoorOpener':
             p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
         else:
             LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
@@ -123,31 +123,25 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
         LOG.error('ERROR {}'.format(e_err))
 
 
+def insert_address_into_message(p_address, p_message, p_offset=2):
+    """ Insert the insteon address into a byte stream message
+    """
+    # LOG.debug(PrettyFormatAny.form(p_address, 'Address', 190))
+    l_ret = p_message
+    p_message[p_offset] = int(p_address[0:2], 16)
+    p_message[p_offset + 1] = int(p_address[3:5], 16)
+    p_message[p_offset + 2] = int(p_address[6:8], 16)
+    return  l_ret
+
+
+def extract_address_from_message(p_message, p_offset=0):
+    """
+    """
+    l_ret = '{:02X}.{:02X}.{:02X}'.format(p_message[p_offset], p_message[p_offset + 1], p_message[p_offset + 2])
+    return l_ret
+
+
 class Util(object):
-
-    @staticmethod
-    def int2message(p_int, p_message, p_index=2):
-        """Place an Insteon address (int internally) into a message at a given offset.
-        The message must exist and be long enough to include a 3 byte area for the address.
-        @param p_int: is the insteon address as a long integer
-        @param p_message: is the message bytearray
-        @param p_index: is the offset into the message where the converted address will be placed.
-        """
-        if p_int > 16777215 or p_int < 0:
-            LOG.error('ERROR - Insteon_utils - trying to convert {} to message byte string.'.format(p_int))
-            p_int = 0xBADBAD
-        l_ix = int(math.pow(256, 2))
-
-        l_int = int(p_int)
-        # print('')
-        while l_ix > 0:
-            # print('l_ix1 ', l_ix, l_int)
-            l_byte, l_int = divmod(int(l_int), int(l_ix))
-            # print('l_ix2 ', l_ix, l_byte)
-            p_message[p_index] = l_byte
-            l_ix = int(l_ix / 256)
-            p_index += 1
-        return p_message
 
     @staticmethod
     def message2int(p_message):
@@ -282,10 +276,16 @@ class Decode(object):
         @param p_addr: is the address that we want to find.
         @return: the object that has the address.  None if not found in the given clss.
         """
+        # LOG.debug('Looking for address: {}'.format(p_addr))
         for l_obj in p_class.values():
-            if l_obj.DeviceFamily != 'Insteon':
+            # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
+            # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
+            if l_obj.Family.Name != 'Insteon':
                 continue  #  ignore any non-Insteon devices in the class
-            if l_obj.InsteonAddress == p_addr:
+            if l_obj.Family.Address == p_addr:
+                # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
+                # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
+                LOG.debug('Found address "{}" in "{}" called "{}"'.format(p_addr, l_obj.DeviceSubType, l_obj.Name))
                 return l_obj
         return None
 
@@ -314,15 +314,16 @@ class Decode(object):
             l_ret.Name = '**NoName-' + l_dotted + '-**'
         return l_ret
 
-    @staticmethod
-    def get_obj_from_message(p_pyhouse_obj, p_message_addr):
+    def get_obj_from_message(self, p_pyhouse_obj, p_message_addr):
         """ Here we have a message to or from an Insteon device.  Find out what device has that address.
 
         @param p_message_addr: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
         @return: The device object that contains the address -OR- a dummy object with noname in Name
         """
-        l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
-        if l_address < (256 * 256):  #  First byte zero ?
+        # Extract the 3 byte Insteon address from the message
+        # l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
+        l_address = extract_address_from_message(p_message_addr)
+        if l_address.startswith('00'):  #  First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = CoreLightingData()
             stuff_new_attrs(l_device_obj, InsteonData())  #  an empty new object

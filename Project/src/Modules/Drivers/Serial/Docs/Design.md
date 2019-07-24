@@ -13,6 +13,8 @@ This is the interface for devices connected to to this computer that use the ser
 
 The device will have created a /dev/ttyUSBx port when it was plugged in or rebooted.
 
+In order to make the usb more reliable, 
+
 ## Opening
 
 When the device is found and open successfully, a Mqtt Message is sent to announce the fact.

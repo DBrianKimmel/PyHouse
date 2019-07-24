@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Security/security.py
+@name:      Modules/Housing/Security/security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -63,8 +63,8 @@ class Utility(object):
         """
         l_obj = GarageDoorData()
         l_obj = deviceXML.read_base_device_object_xml(l_obj, p_xml)
-        l_obj.DeviceType = 3
-        l_obj.DeviceSubType = 1
+        l_obj.DeviceType = 'Security'
+        l_obj.DeviceSubType = 'GarageDoorOpener'
         return l_obj
 
     @staticmethod
@@ -80,8 +80,8 @@ class Utility(object):
         """
         l_obj = MotionSensorData()
         l_obj = deviceXML.read_base_device_object_xml(l_obj, p_xml)
-        l_obj.DeviceType = 3
-        l_obj.DeviceSubType = 2
+        l_obj.DeviceType = 'Security'
+        l_obj.DeviceSubType = 'MotionDetector'
         return l_obj
 
     @staticmethod
@@ -115,7 +115,7 @@ class Utility(object):
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
-            l_family = p_obj.DeviceFamily
+            l_family = p_obj.Family.Name
             l_family_obj = p_pyhouse_obj._Families[l_family]
             l_api = l_family_obj.FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_obj)
@@ -265,27 +265,24 @@ class API(object):
         self.m_api = cameraApi(p_pyhouse_obj)
         LOG.info('Initialized')
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the Security Information
         """
         LOG.info('Loading XML')
-        p_pyhouse_obj.House.Security = SecurityData()  # Clear before loading
-        p_pyhouse_obj.House.Security.GarageDoors = XML.read_all_GarageDoors_xml(p_pyhouse_obj)
-        p_pyhouse_obj.House.Security.MotionSensors = XML.read_all_MotionSensors_xml(p_pyhouse_obj)
+        self.m_pyhouse_obj.House.Security = SecurityData()  # Clear before loading
+        self.m_pyhouse_obj.House.Security.GarageDoors = XML.read_all_GarageDoors_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Security.MotionSensors = XML.read_all_MotionSensors_xml(self.m_pyhouse_obj)
         LOG.info('Loaded XML')
-        return p_pyhouse_obj.House.Security
+        return self.m_pyhouse_obj.House.Security
 
     def Start(self):
         self.m_api.Start()
         LOG.info("Started.")
 
-    def SaveXml(self, p_xml):
-        l_xml = ET.Element('SecuritySection')
-        l_xml.append(XML.write_all_GarageDoors_xml(self.m_pyhouse_obj))
-        l_xml.append(XML.write_all_MotionSensors_xml(self.m_pyhouse_obj))
-        p_xml.append(l_xml)
+    def SaveConfig(self):
+        XML.write_all_GarageDoors_xml(self.m_pyhouse_obj)
+        XML.write_all_MotionSensors_xml(self.m_pyhouse_obj)
         LOG.info("Saved XML.")
-        return p_xml
 
     def Stop(self):
         LOG.info("Stopped.")

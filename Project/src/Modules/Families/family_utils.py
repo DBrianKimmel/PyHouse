@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.test.test_family_utils -*-
-
-@name:      PyHouse/src/Modules/Families/family_utils.py
+@name:      Modules/Families/family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2019 by D. Brian Kimmel
 @note:      Created on Aug 9, 2011
 @license:   MIT License
 @summary:   This module is for *USING* device families
@@ -15,13 +13,12 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-07-21'
 
 #  Import system type stuff.
 
 #  Import PyHouse files and modules.
 from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import FamilyInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
@@ -44,12 +41,12 @@ class FamUtil(object):
         l_family_name = p_device_obj.DeviceFamily
         try:
             l_family_obj = p_pyhouse_obj._Families[l_family_name]
-        except KeyError as e_err:
+        except (KeyError, TypeError) as e_err:
             l_msg = PrettyFormatAny.form(p_pyhouse_obj.House, ' House Information', 40)
             LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'
                       .format(p_device_obj.Name, l_family_name, e_err, l_msg))
             if l_family_name == 'Null':
-                p_pyhouse_obj._Families['Null'] = FamilyInformation()
+                p_pyhouse_obj._Families['Null'] = FamilyModuleInformation()
                 p_pyhouse_obj._Families['Null'].Name = 'Null'
             l_family_obj = p_pyhouse_obj._Families['Null']
         return l_family_obj
@@ -60,18 +57,18 @@ class FamUtil(object):
         Based on the InterfaceType of the controller, load the appropriate driver and get its API().
         """
         l_dev_name = _get_device_name(p_controller_obj)
-        if p_controller_obj.InterfaceType.lower() == 'serial':
+        if p_controller_obj.Interface.Type.lower() == 'serial':
             from Modules.Drivers.Serial import Serial_driver
             l_driver = Serial_driver.API(p_pyhouse_obj)
-        elif p_controller_obj.InterfaceType.lower() == 'ethernet':
+        elif p_controller_obj.Interface.Type.lower() == 'ethernet':
             from Modules.Drivers.Ethernet import Ethernet_driver
             l_driver = Ethernet_driver.API(p_pyhouse_obj)
-        elif p_controller_obj.InterfaceType.lower() == 'usb':
+        elif p_controller_obj.Interface.Type.lower() == 'usb':
             from Modules.Drivers.USB import USB_driver
             l_driver = USB_driver.API(p_pyhouse_obj)
         else:
             LOG.error('No driver for device: {} with interface type: {}'.format(
-                    l_dev_name, p_controller_obj.InterfaceType))
+                    l_dev_name, p_controller_obj.Interface.Type))
             from Modules.Drivers.Null import Null_driver
             l_driver = Null_driver.API(p_pyhouse_obj)
         p_controller_obj._DriverAPI = l_driver

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_device.py
+@name:      Modules/families/Insteon/test/test_Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -10,7 +10,7 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-01-21'
+__updated__ = '2019-07-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -24,6 +24,8 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 
 class SetupMixin(object):
 
@@ -34,10 +36,8 @@ class SetupMixin(object):
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_Insteon_device')
 
 
@@ -57,10 +57,9 @@ class C01_API(SetupMixin, unittest.TestCase):
         """
         pass
 
-
-def suite():
-    suite = unittest.TestSuite()
-    # suite.addTest(Test_02_API('test_0202_Init'))
-    return suite
+# def suite():
+#    suite = unittest.TestSuite()
+#    # suite.addTest(Test_02_API('test_0202_Init'))
+#    return suite
 
 # ## END

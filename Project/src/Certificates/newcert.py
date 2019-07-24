@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Certificates.test.test_newcert -*-
-
 @name:       PyHouse/src/Certificates/newcert.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  (c) 2015 by D. Brian Kimmel
+@copyright:  (c) 2015-2019 by D. Brian Kimmel
 @note:       Created on Feb 24, 2015
 @license:    MIT License
 @summary:
@@ -28,17 +26,18 @@ def getCAPrivateCert():
     if l_privatePath.exists():
         return PrivateCertificate.loadPEM(l_privatePath.getContent())
     else:
-        l_caKey = KeyPair.generate(size = 4096)
-        l_caCert = l_caKey.selfSignedCert(1, CN = "the-authority")
+        l_caKey = KeyPair.generate(size=4096)
+        l_caCert = l_caKey.selfSignedCert(1, CN="the-authority")
         l_privatePath.setContent(l_caCert.dumpPEM())
         return l_caCert
 
+
 def clientCertFor(p_name):
     l_signingCert = getCAPrivateCert()
-    l_clientKey = KeyPair.generate(size = 4096)
-    l_csr = l_clientKey.requestObject(DN(CN = p_name), "sha1")
+    l_clientKey = KeyPair.generate(size=4096)
+    l_csr = l_clientKey.requestObject(DN(CN=p_name), "sha1")
     l_clientCert = l_signingCert.signRequestObject(
-        l_csr, serialNumber = 1, digestAlgorithm = "sha1")
+        l_csr, serialNumber=1, digestAlgorithm="sha1")
     return PrivateCertificate.fromCertificateAndKeyPair(l_clientCert, l_clientKey)
 
 

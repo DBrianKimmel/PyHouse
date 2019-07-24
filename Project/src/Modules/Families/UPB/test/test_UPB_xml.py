@@ -12,7 +12,7 @@ Passed all 6 tests - DBK - 2019-01-22
 """
 from Modules.Core.test.xml_device import TESTING_DEVICE_FAMILY_UPB
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -37,7 +37,7 @@ from Modules.Housing.Lighting.test.xml_lights import \
     TESTING_LIGHT_ROOM_NAME_1, \
     TESTING_LIGHT_ROOM_UUID_1, \
     TESTING_LIGHT_UUID_1
-from Modules.Core.data_objects import ControllerData, HouseInformation
+from Modules.Core.data_objects import ControllerInformation, HouseInformation
 from Modules.Housing.Lighting.lighting_lights import LightData
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.device_tools import XML as deviceXML
@@ -63,7 +63,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_01_Read(self):
         l_list = list(self.m_xml.controller_sect.iterfind('Controller'))
         l_xml = l_list[1]
-        l_dev = ControllerData()
+        l_dev = ControllerInformation()
         upbXML.ReadXml(l_dev, l_xml)
         self.assertEqual(l_dev.UPBAddress, int(TESTING_UPB_ADDRESS))
         self.assertEqual(l_dev.UPBNetworkID, int(TESTING_UPB_NETWORK))
@@ -72,7 +72,7 @@ class A1_XML(SetupMixin, unittest.TestCase):
     def test_02_Write(self):
         l_list = list(self.m_xml.controller_sect.iterfind('Controller'))
         l_xml = l_list[1]
-        l_dev = ControllerData()
+        l_dev = ControllerInformation()
         upbXML.ReadXml(l_dev, l_xml)
         l_out = ET.Element('Testing')
         upbXML.WriteXml(l_out, l_dev)

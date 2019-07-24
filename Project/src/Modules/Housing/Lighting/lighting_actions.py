@@ -14,7 +14,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-05-12'
+__updated__ = '2019-07-22'
 
 #  Import system type stuff
 
@@ -43,7 +43,7 @@ class API:
         l_lighting_objs = p_pyhouse_obj.House.Lighting
         l_light_obj = Utility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
         #
-        l_controller_objs = Utility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.DeviceFamily)
+        l_controller_objs = Utility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
         l_control = LightData()
         l_control.BrightnessPct = p_schedule_obj.Level
         l_control.TransitionTime = p_schedule_obj.Rate
@@ -61,13 +61,13 @@ class API:
         """
         @param p_pyhouse_obj: The entire data set.
         @param p_light_obj: the device being controlled
-        @param p_controller_obj: ControllerData()
+        @param p_controller_obj: ControllerInformation()
         @param p_control: the idealized light control params
 
         """
         try:
             LOG.info('Turn Light: "{}" to level: "{}", Family: "{}"; Controller: {}'.format(
-                    p_light_obj.Name, p_control.BrightnessPct, p_light_obj.DeviceFamily, p_controller_obj.Name))
+                    p_light_obj.Name, p_control.BrightnessPct, p_light_obj.Family.Name, p_controller_obj.Name))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
             # print(PrettyFormatAny.form(l_family_api.AbstractControlLight, 'Family API'))
             l_family_api.AbstractControlLight(p_pyhouse_obj, p_light_obj, p_controller_obj, p_control)

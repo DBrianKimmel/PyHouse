@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-23'
+__updated__ = '2019-07-15'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -19,7 +19,7 @@ import dateutil.parser as dparser
 # import uuid
 
 #  Import PyMh files
-from Modules.Housing.house_data import CoordinateData
+from Modules.Housing.house_data import CoordinateInformation
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities.uuid_tools import Uuid
 
@@ -330,7 +330,7 @@ class PutGetXML(object):
             l_flt = float(l_fld)
             return l_flt
 
-        l_ret = CoordinateData()
+        l_ret = CoordinateInformation()
         l_raw = XML.get_any_field(p_xml, p_name)
         #  LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
         try:

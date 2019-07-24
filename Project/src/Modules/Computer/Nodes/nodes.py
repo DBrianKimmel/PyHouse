@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Nodes/nodes.py
+@name:     Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -15,7 +15,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-06-28'
+__updated__ = '2019-07-10'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -95,13 +95,13 @@ class API():
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized - Version:{}'.format(__version__))
 
-    def LoadConfig(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the Node xml info.
         """
         # self.m_pyhouse_obj = p_pyhouse_obj
         # l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
         # p_pyhouse_obj.Computer.Nodes = l_nodes
-        Yaml().LoadYamlConfig(p_pyhouse_obj)
+        Yaml().LoadYamlConfig(self.m_pyhouse_obj)
         LOG.info('Loaded Config - Version:{}'.format(__version__))
         return
 
@@ -110,10 +110,10 @@ class API():
         self.m_sync.Start()
         LOG.info('Started - Version:{}'.format(__version__))
 
-    def SaveConfig(self, p_pyhouse_obj):
+    def SaveConfig(self):
         # l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
         # p_xml.append(l_xml)
-        Yaml().SaveYamlConfig(p_pyhouse_obj)
+        Yaml().SaveYamlConfig(self.m_pyhouse_obj)
         LOG.info("Saved Config")
         return
 

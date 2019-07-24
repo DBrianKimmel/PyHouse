@@ -11,13 +11,13 @@
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2019-07-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import NullControllerData
+from Modules.Core.data_objects import NullControllerInformation
 # from Modules.Core.Utilities.xml_tools import PutGetXML
 
 
@@ -27,7 +27,7 @@ class XML(object):
 
     @staticmethod
     def read_interface_xml(p_controller_entry):
-        l_obj = NullControllerData()
+        l_obj = NullControllerInformation()
         return l_obj
 
     @staticmethod
