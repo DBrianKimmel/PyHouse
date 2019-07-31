@@ -18,7 +18,7 @@ import os
 from twisted.web.template import Element, XMLString, renderer
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webRooms       ')
 
 # Handy helper for finding external resources nearby.

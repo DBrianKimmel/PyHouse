@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Utilities/device_tools.py
+@name:      Modules/Core/Utilities/device_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-07-16'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Housing import utils
+from Modules.House import utils
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.DeviceTools    ')
 

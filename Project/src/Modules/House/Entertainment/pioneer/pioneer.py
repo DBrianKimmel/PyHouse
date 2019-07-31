@@ -1,0 +1,477 @@
+"""
+@name:      Modules/House/Entertainment/pioneer/pioneer.py
+@author:    D. Brian Kimmel
+@contact:   D.BrianKimmel@gmail.com
+@copyright: (c) 2016-2019 by D. Brian Kimmel
+@note:      Created on Jul 10, 2016
+@license:   MIT License
+@summary:
+
+Control of pioneer home entertainment devices'.
+First is an A/V receiver VSX-822-K.
+
+Listen to Mqtt message to control device
+==> pyhouse/<house name>/house/entertain/<device>/<function>
+
+    <device> = receiver, tv, etc...
+    <function> = control, status
+    <value> = on, off, 0-100, zone#, input#
+
+See: pioneer/__init__.py for documentation.
+
+"""
+
+__updated__ = '2019-07-31'
+__version_info__ = (19, 5, 1)
+__version__ = '.'.join(map(str, __version_info__))
+
+#  Import system type stuff
+from twisted.internet.protocol import Protocol, ClientFactory
+from twisted.internet.error import ConnectionDone
+from twisted.conch.telnet import StatefulTelnetProtocol
+
+#  Import PyMh files and modules.
+from Modules.Core.Utilities import extract_tools, config_tools
+from Modules.Core.Utilities.convert import long_to_str
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation
+from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
+
+from Modules.Core import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.Pioneer        ')
+
+SECTION = 'pioneer'
+DISCONNECT_TIMER = 30  # Seconds
+CONFIG_FILE_NAME = 'pioneer.yaml'
+
+# See https://tylerwatt12.com/vsx-822k-telnet-interface/
+CONTROL_COMMANDS = {
+    'PowerQuery':       b'?P',
+    'PowerOn':          b'PN',
+    'PowerOff':         b'PF',
+    'VolumeQuery':      b'?V',
+    'VolumeUp':         b'VU',
+    'VolumeDown':       b'VD',
+    'MuteQuery':        b'?M',
+    'FunctionQuery':    b'?F',
+    'FunctionPandora':  b'01FN'
+    }
+
+
+class PioneerPluginInformation(EntertainmentPluginInformation):
+    """
+    """
+
+    def __init__(self):
+        super(PioneerPluginInformation, self).__init__()
+
+
+class PioneerDeviceInformation(EntertainmentDeviceInformation):
+    """
+    """
+
+    def __init__(self):
+        super(PioneerDeviceInformation, self).__init__()
+        self.CommandSet = None  # Command sets change over the years.
+        self.IPv4 = None
+        self.Port = None
+        self.RoomName = None
+        self.RoomUUID = None
+        self.Type = None
+        self.Volume = None
+        self._isControlling = False
+        self._isRunning = False
+
+
+class MqttActions:
+    """
+    """
+
+    m_transport = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _find_device(self, p_family, p_model):
+        # l_pioneer = self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        for l_device in l_devices.values():
+            if l_device.Name.lower() == p_model.lower():
+                LOG.info("found model - {} {}".format(p_family, p_model))
+                return l_device
+        LOG.error('No such model as {}'.format(p_model))
+        return None
+
+    def _get_power(self, p_message):
+        """
+        force power to be None, 'On' or 'Off'
+        """
+        l_ret = extract_tools.get_mqtt_field(p_message, 'Power')
+        if l_ret == None:
+            return l_ret
+        if l_ret == 'On':
+            return 'On'
+        return 'Off'
+
+    def _decode_control(self, _p_topic, p_message):
+        """ Decode the message.
+        As a side effect - control pioneer.
+
+        @param p_message: is the payload used to control
+        """
+        LOG.debug('Decode-Control called:\n\tTopic:{}\n\tMessage:{}'.format(_p_topic, p_message))
+        l_family = extract_tools.get_mqtt_field(p_message, 'Family')
+        if l_family == None:
+            l_family = 'pioneer'
+        l_model = extract_tools.get_mqtt_field(p_message, 'Model')
+        # l_device_obj = self._find_device(l_family, l_model)
+        l_power = self._get_power(p_message)
+        l_input = extract_tools.get_mqtt_field(p_message, 'Input')
+        l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
+        l_logmsg = '\tPioneer Control:\n\t\tDevice:{}-{}\n\t\tPower:{}\n\t\tVolume:{}\n\t\tInput:{}'.format(l_family, l_model, l_power, l_volume, l_input)
+        #
+        if l_power != None:
+            l_logmsg += ' Turn power {} to {}.'.format(l_power, l_model)
+            self._pioneer_power(l_family, l_model, l_power)
+        #
+        if l_input != None:
+            l_logmsg += ' Turn input to {}.'.format(l_input)
+            self._pioneer_input(l_family, l_model, l_input)
+        #
+        if l_volume != None:
+            l_logmsg += ' Change volume {}.'.format(l_volume)
+            self._pioneer_volume(l_family, l_model, l_volume)
+        #
+        return l_logmsg
+
+    def decode(self, p_topic, p_message):
+        """ Decode the Mqtt message
+        ==> pyhouse/<house name>/entertainment/pioneer/<type>/<Name>/...
+        <type> = ?
+
+        @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
+        """
+        # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
+        l_logmsg = ' Pioneer-{}'.format(p_topic[0])
+        if p_topic[0].lower() == 'control':
+            l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
+        elif p_topic[0].lower() == 'status':
+            pass
+        else:
+            l_logmsg += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
+        return l_logmsg
+
+
+class Config:
+    """
+    """
+
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def dump_struct(self):
+        """
+        """
+        l_entertain = self.m_pyhouse_obj.House.Entertainment
+        l_pioneer = l_entertain.Plugins['pioneer']
+        LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment', 190))
+        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins', 190))
+        LOG.debug(PrettyFormatAny.form(l_pioneer, 'Pioneer', 190))
+        LOG.debug(PrettyFormatAny.form(l_pioneer.Services, 'Pandora', 190))
+        #
+        for l_key, l_service in l_pioneer.Services.items():
+            LOG.debug(PrettyFormatAny.form(l_service, 'Service', 190))
+            if hasattr(l_service, 'Connection'):
+                LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection', 190))
+            if hasattr(l_service, 'Host'):
+                LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host', 190))
+            if hasattr(l_service, 'Login'):
+                LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login', 190))
+
+    def _extract_host(self, p_config):
+        """
+        """
+        l_ret = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(p_config)
+        return l_ret
+
+    def _extract_one_device(self, p_config):
+        """
+        """
+        # self.dump_struct()
+        l_required = ['Name', 'Type', 'Host']
+        l_obj = PioneerDeviceInformation()
+        for l_key, l_value in p_config.items():
+            if l_key == 'Host':
+                l_ret = self._extract_host(l_value)
+                l_obj.Host = l_ret
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj  # For testing.
+
+    def _extract_all_devices(self, p_config):
+        """
+        """
+        l_dict = {}
+        for l_ix, l_value in enumerate(p_config):
+            l_device = self._extract_one_device(l_value)
+            l_dict[l_ix] = l_device
+        return l_dict
+
+    def _extract_all_pioneer(self, p_config):
+        """
+        """
+        # self.dump_struct()
+        l_required = ['Name']
+        l_obj = PioneerPluginInformation()
+        l_old = self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer']
+        l_obj._API = l_old._API
+        l_obj._Module = l_old._Module
+        for l_key, l_value in p_config.items():
+            if l_key == 'Device':
+                l_devices = self._extract_all_devices(l_value)
+                l_obj.Devices = l_devices
+                l_obj.DeviceCount = len(l_devices)
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj  # For testing.
+
+    def LoadYamlConfig(self):
+        """ Read the pioneer.yaml file.
+        """
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
+        try:
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        except:
+            return None
+        try:
+            l_yaml = l_node.Yaml['Pioneer']
+        except:
+            LOG.warn('The pioneer.yaml file does not start with "Pioneer:"')
+            return None
+        l_pioneer = self._extract_all_pioneer(l_yaml)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_pioneer
+        self.dump_struct()
+        return l_pioneer  # for testing purposes
+
+
+class PioneerProtocol(StatefulTelnetProtocol):
+    """ There is an instance of this for every pioneer device that we are controlling.
+
+    Each protocol instance is mapped to a Pioneer Device (and visa  versa)
+    """
+
+    def __init__(self, p_pyhouse_obj, p_device_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pioneer_device_obj = p_device_obj
+        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
+        LOG.info('Protocol Init - Version:{}'.format(__version__))
+
+    def _get_status(self):
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['PowerQuery'])  # Query Power
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['MuteQuery'])
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['VolumeQuery'])
+        self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['FunctionQuery'])
+
+    def dataReceived(self, p_data):
+        """ This seems to be a line received function
+        """
+        Protocol.dataReceived(self, p_data)
+        self.setLineMode()
+        l_data = p_data[:-2]  # Drop the trailing CrLf
+        if l_data == b'R':
+            return
+        LOG.info('Data Received.\n\tData:{}'.format(l_data))
+
+    def lineReceived(self, p_line):
+        StatefulTelnetProtocol.lineReceived(self, p_line)
+        LOG.info('Line Received.\n\tData:{}'.format(p_line))
+
+    def connectionMade(self):
+        """ *3
+        Setup
+        We have connected - now get the initial conditions.
+        """
+        Protocol.connectionMade(self)
+        self.setLineMode()
+        LOG.info('Connection Made.')
+        self.m_pioneer_device_obj._Transport = self.transport
+        self._get_status()
+
+    def connectionLost(self, reason=ConnectionDone):
+        """ TearDown
+        """
+        Protocol.connectionLost(self, reason=reason)
+        LOG.warn('Lost connection.\n\tReason:{}'.format(reason))
+
+
+class PioneerClient(PioneerProtocol):
+    """
+    """
+
+    def __init__(self, p_pyhouse_obj, p_device_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pioneer_device_obj = p_device_obj
+
+    def send_command(self, p_device_obj, p_command):
+        LOG.info('Send command {}'.format(p_command))
+        try:
+            l_host = p_device_obj._Connector.host
+            p_device_obj._Transport.write(p_command + b'\r\n')
+            LOG.info('Send TCP command:{} to {}'.format(p_command, l_host))
+        except AttributeError as e_err:
+            LOG.error("Tried to call send_command without a pioneer device configured.\n\tError:{}".format(e_err))
+
+
+class PioneerFactory(ClientFactory):
+    """
+    This is a factory which produces protocols.
+    By default, buildProtocol will create a protocol of the class given in self.protocol.
+    """
+
+    def __init__(self, p_pyhouse_obj, p_device_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pioneer_device_obj = p_device_obj
+        LOG.info('Init - Version:{}'.format(__version__))
+
+    def startedConnecting(self, p_connector):
+        """ *1
+        Called when we are connecting to the device.
+        Provides access to the connector.
+        """
+        self.m_pioneer_device_obj._Connector = p_connector
+
+    def buildProtocol(self, p_addr):
+        """ *2
+        Create an instance of PioneerProtocol.
+
+        @param p_addr: an object implementing twisted.internet.interfaces.IAddress
+        @return:
+        """
+        self.protocol = PioneerProtocol(self.m_pyhouse_obj, self.m_pioneer_device_obj)
+        l_client = PioneerClient(self.m_pyhouse_obj, self.m_pioneer_device_obj)
+        LOG.info('BuildProtocol - Addr = {}; Client:{}'.format(p_addr, l_client))
+        return l_client
+
+    def clientConnectionLost(self, p_connector, p_reason):
+        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
+        ClientFactory.clientConnectionLost(self, p_connector, p_reason)
+
+    def clientConnectionFailed(self, p_connector, p_reason):
+        LOG.error('Connection failed.\n\tReason:{}'.format(p_reason))
+        ClientFactory.clientConnectionFailed(self, p_connector, p_reason)
+
+    def connectionLost(self, p_reason):
+        """ This is required. """
+        LOG.error('ConnectionLost.\n\tReason: {}'.format(p_reason))
+
+    def makeConnection(self, p_transport):
+        """ This is required. """
+        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+
+
+class API(MqttActions, PioneerClient):
+    """This interfaces to all of PyHouse.
+    """
+
+    m_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = Config(p_pyhouse_obj)
+        LOG.info("API Initialized - Version:{}".format(__version__))
+
+    def _pioneer_power(self, p_family, p_model, p_power):
+        """
+        @param p_power: 'On' or 'Off'
+        """
+        # Get the device_obj to control
+        l_device_obj = self._find_device(p_family, p_model)
+        if p_power == 'On':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['PowerOn'])  # Query Power
+        else:
+            pass
+        LOG.debug('Change Power to {}'.format(p_power))
+
+    def _pioneer_volume(self, p_family, p_model, p_volume):
+        """
+        @param p_volume: 'VolumeUp1', 'VolumeUp5', 'VolumeDown1' or 'VolumeDown5'
+        """
+        LOG.debug('Volume:{}'.format(p_volume))
+        l_device_obj = self._find_device(p_family, p_model)
+        if p_volume == 'VolumeUp1':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+        elif p_volume == 'VolumeUp5':
+            self.send_command(l_device_obj, b'VU')
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeUp'])
+        elif p_volume == 'VolumeDown1':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+        elif p_volume == 'VolumeDown5':
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+            self.send_command(l_device_obj, CONTROL_COMMANDS['VolumeDown'])
+        else:
+            pass
+        LOG.debug('Change Volume to {}'.format(p_volume))
+
+    def _pioneer_input(self, p_family, p_model, p_input):
+        """
+        @param p_input: Channel Code
+        """
+        l_device_obj = self._find_device(p_family, p_model)
+        self.send_command(l_device_obj, b'01FN')
+        LOG.debug('Change input channel to {}'.format(p_input))
+
+    def LoadConfig(self):
+        """ Read the XML for all Pioneer devices.
+        """
+        self.m_config.LoadYamlConfig()
+        LOG.info("Loaded Pioneer Device(s) - Version:{}".format(__version__))
+
+    def Start(self):
+        """ Start all the Pioneer factories if we have any Pioneer devices.
+        """
+        LOG.info('Starting...')
+        l_count = 0
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        for l_device_obj in l_devices.values():
+            l_count += 1
+            if not l_device_obj.Active:
+                continue
+            if l_device_obj._isRunning:
+                LOG.info('Pioneer device {} is already running.'.format(l_device_obj.Name))
+            l_host = long_to_str(l_device_obj.IPv4)
+            l_port = l_device_obj.Port
+            l_factory = PioneerFactory(self.m_pyhouse_obj, l_device_obj)
+            l_connector = self.m_pyhouse_obj._Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
+            l_device_obj._Factory = l_factory
+            l_device_obj._Connector = l_connector
+            l_device_obj._isRunning = True
+            self.m_pioneer_device_obj = l_device_obj
+            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_device_obj.Name, l_host, l_port))
+        LOG.info("Started {} Pioneer device(s).".format(l_count))
+
+    def SaveConfig(self):
+        # l_xml = XML().write_pioneer_section_xml(self.m_pyhouse_obj)
+        LOG.info("Saved Pioneer Config.")
+        # return l_xml
+
+    def Stop(self):
+        LOG.info("Stopped.")
+
+# ## END DBK

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Utilities/config_tools.py
+@name:      Modules/Core/Utilities/config_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-20'
+__updated__ = '2019-07-31'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -28,7 +28,7 @@ from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Core.data_objects import HostInformation, LoginInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
 
 
@@ -40,8 +40,8 @@ class ConfigInformation:
 
     def __init__(self):
         self.ConfigDir = None
-        self.XmlRoot = None
-        self.XmlTree = None
+        # self.XmlRoot = None
+        # self.XmlTree = None
         self.YamlFileName = None
         self.YamlTree = {}  # ConfigYamlNodeInformation()
 
@@ -234,7 +234,7 @@ class Yaml(YamlCreate, YamlFetch):
             yield (l_key, l_value)
         return
 
-    def _find_config_node(self, p_filename):
+    def find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
         If unit testing, we must find the file in the source tree.
 
@@ -244,14 +244,11 @@ class Yaml(YamlCreate, YamlFetch):
         l_node.FileName = p_filename
         l_dir = self.m_pyhouse_obj._Config.ConfigDir
         for l_root, _l_dirs, l_files in os.walk(l_dir):
-            # print('Root:{}\nDirs:{}\nFiles:{}\n'.format(l_root, _l_dirs, l_files))
             if p_filename in l_files:
-                # print('*** Found file:{}'.format(p_filename))
                 l_path = os.path.join(l_root, p_filename)
                 l_node.YamlPath = l_path
                 return l_node
-        l_node._Error = 'NoFile'
-        return l_node
+        return None  # Not Found
 
     def read_yaml(self, p_filename):
         """ Find the Yaml file and read it in.
@@ -259,7 +256,7 @@ class Yaml(YamlCreate, YamlFetch):
 
         @return: a ConfigYamlNodeInformation() filled in
         """
-        l_node = self._find_config_node(p_filename)
+        l_node = self.find_config_node(p_filename)
         if l_node.YamlPath == None:
             LOG.error('Config file "{}" was not found within the config dir "{}".'.format(
                         l_node.FileName, self.m_pyhouse_obj._Config.ConfigDir))

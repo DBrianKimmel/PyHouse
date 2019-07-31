@@ -12,14 +12,13 @@ XML to define the PyHouse.xml file
 used for testing
 """
 
-__updated__ = '2019-07-12'
+__updated__ = '2019-07-28'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.data_objects import __version__ as dataVersion
 from Modules.Computer.test.xml_computer import XML_COMPUTER_DIVISION
-from Modules.Housing.test.xml_housing import XML_HOUSE_DIVISION
 
 TESTING_PYHOUSE = 'PyHouse'
 
@@ -53,7 +52,6 @@ XML_EMPTY = '\n'.join([
 XML_LONG = '\n'.join([
     L_PYHOUSE_START,
     XML_COMPUTER_DIVISION,
-    XML_HOUSE_DIVISION,
     L_PYHOUSE_END
 ])
 

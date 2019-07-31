@@ -28,7 +28,7 @@ from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities import extract_tools
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Nodes          ')
 
 

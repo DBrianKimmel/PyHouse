@@ -20,7 +20,7 @@ import xml.etree.ElementTree as ET
 from Modules.Core.data_objects import NodeInformation, NodeInterfaceData, UuidData
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities import uuid_tools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Nodes_xml      ')
 
 NODE_SECTION = 'NodeSection'

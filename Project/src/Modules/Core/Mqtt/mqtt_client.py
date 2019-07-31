@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -18,7 +18,7 @@ from twisted.internet import defer
 
 #  Import PyMh files and modules.
 from Modules.Core.Mqtt.mqtt_protocol import PyHouseMqttFactory
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
 CLIENT_PREFIX = 'PyH-Comp-'
@@ -39,7 +39,10 @@ class Util(object):
         """ Create the name of this client.
         The broker is configured to only accept connections starting with 'PyH-'
         """
-        l_client_name = CLIENT_PREFIX + p_pyhouse_obj.Computer.Name
+        try:
+            l_client_name = CLIENT_PREFIX + p_pyhouse_obj.Computer.Name
+        except:
+            l_client_name = CLIENT_PREFIX + 'Devel'
         return l_client_name
 
     def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker_obj):
@@ -81,6 +84,7 @@ class Util(object):
         """
         l_count = 0
         for l_broker_obj in p_pyhouse_obj.Core.Mqtt.Brokers.values():
+            LOG.debug('Starting Broker "{}"'.format(l_broker_obj.Name))
             if not l_broker_obj.Active:
                 LOG.info('Skipping not active broker: {}'.format(l_broker_obj.Name))
                 continue

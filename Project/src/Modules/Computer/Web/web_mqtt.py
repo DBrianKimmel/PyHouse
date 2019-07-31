@@ -19,7 +19,7 @@ import os
 # Import PyMh files and modules.
 from Modules.Computer.Web.web_utils import GetJSONComputerInfo
 from Modules.Core.Mqtt.mqtt_data import MqttBrokerInformation
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.uuid_tools import Uuid
 

@@ -1,0 +1,29 @@
+# Name:      Moduless/Housing/test/Yaml/floors.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 28, 2019
+# Updated:   Jul 29, 2019
+# License:   MIT License
+# Summary:   This is for all the floors in a house.
+
+# Floors are defined first.
+# Outside is always present and must be first.
+
+Floors:
+   - Name: Outside
+     Floor: 0
+     Comment: Anything outside the house
+
+   - Name: Basement
+     Floor: B
+     Comment: The basement
+
+   - Name: 1st
+     Floor: 1
+     Comment: The first floor
+
+   - Name: 2nd
+     Floor: 2
+
+### END DBK

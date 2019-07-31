@@ -21,7 +21,7 @@ from twisted.internet.protocol import Protocol
 from Modules.Drivers.USB.USB_data import UsbData
 from Modules.Drivers.USB.USB_open import API as usbopenAPI
 from Modules.Core.Utilities.debug_tools import FormatBytes
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.USBDriver      ')
 

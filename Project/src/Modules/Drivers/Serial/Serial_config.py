@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 # Import PyMh files
 from Modules.Core.data_objects import SerialControllerInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialXml      ')
 
 

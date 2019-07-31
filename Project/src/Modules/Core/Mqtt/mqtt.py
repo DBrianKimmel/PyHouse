@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Mqtt/mqtt.py
+@name:      Modules/Core/Mqtt/mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-07-31'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,11 +25,11 @@ from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Utilities import config_tools
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttJson, MqttBrokerInformation
-from Modules.Housing.house import MqttActions as houseMqtt
+from Modules.House.house import MqttActions as houseMqtt
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
 CONFIG_FILE_NAME = 'mqtt.yaml'
@@ -59,14 +59,16 @@ def _make_message(p_pyhouse_obj, p_message=None):
     return l_json
 
 
-class Yaml:
+class Config:
     """ Extract the config info from the config file "mqtt.yaml"
     """
+
+    m_pyH = house_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _extract_broker(self, p_broker, p_api):
+    def _extract_one_broker(self, p_broker, p_api):
         """ Extract one broker information
         @param p_broker: is a single brokers yaml ordereddict.
         @param p_api: is the Api for ???
@@ -90,7 +92,7 @@ class Yaml:
         LOG.info('Loaded broker: {}'.format(l_obj.Name))
         return l_obj
 
-    def _extract_brokers(self, p_node, p_api):
+    def _extract_all_brokers(self, p_node, p_api):
         """
         """
         # LOG.info('Loading Config, Extract Broker info - Version:{}'.format(__version__))
@@ -105,7 +107,7 @@ class Yaml:
             LOG.error('No Mqtt: in "mqtt.yaml" file!')
             return None
         for l_item in l_config:
-            l_broker = self._extract_broker(l_item, p_api)
+            l_broker = self._extract_one_broker(l_item, p_api)
             if l_broker != None:
                 l_brokers[l_count] = l_broker
                 l_count += 1
@@ -113,16 +115,16 @@ class Yaml:
         LOG.info('Loaded {} Mqtt Brokers.'.format(l_count))
         return l_brokers
 
-    def LoadYamlConfig(self, p_pyhouse_obj, p_api):
+    def LoadYamlConfig(self, p_api):
         """ Read the Mqtt.Yaml file.
         """
         # LOG.info('Reading mqtt config file "{}".'.format(CONFIG_FILE_NAME))
-        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_yaml = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         l_obj = MqttInformation()
-        l_obj.Brokers = self._extract_brokers(l_yaml, p_api)
+        l_obj.Brokers = self._extract_all_brokers(l_yaml, p_api)
         l_obj.ClientID = 'PyH-Comp-' + platform.node()
-        l_obj.Prefix = 'pyhouse/' + p_pyhouse_obj._Parameters.Name  # we have not configured house at this point
-        p_pyhouse_obj.Core.Mqtt = l_obj
+        l_obj.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
+        self.m_pyhouse_obj.Core.Mqtt = l_obj
         return l_obj  # for testing purposes
 
 
@@ -131,20 +133,23 @@ class API:
     """
 
     m_actions = None
+    m_config = None
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj, p_parent):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = Config(p_pyhouse_obj)
         self.m_parent = p_parent
         p_pyhouse_obj.Core.Mqtt = MqttInformation()
         p_pyhouse_obj.Core.Mqtt.Prefix = 'ReSeT'
         # p_pyhouse_obj.Core.Mqtt.Brokers = []
         LOG.info("Initialized - Version:{} == {}".format(__version__, self))
 
-    def LoadConfig(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the Mqtt Config info.
         """
         LOG.info("Loading Config - Version:{}".format(__version__))
-        Yaml(p_pyhouse_obj).LoadYamlConfig(p_pyhouse_obj, self)
+        self.m_config.LoadYamlConfig(self)
 
     def Start(self):
         """

@@ -34,7 +34,7 @@ from twisted.internet.serialport import SerialPort
 from Modules.Drivers.interface import DriverStatus
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
@@ -211,7 +211,7 @@ class API(SerialAPI):
         """
         Non-Blocking write to the serial port
         """
-        LOG.info('Writing - {}'.format(FormatBytes(p_message)))
+        # LOG.debug('Writing - {}'.format(FormatBytes(p_message)))
         self.write_device(p_message)
 
 #  ## END DBK

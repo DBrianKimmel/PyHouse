@@ -23,7 +23,7 @@ from Modules.Core.data_objects import MotionSensorData
 from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Core.Utilities import json_tools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webMotion   ')
 
 

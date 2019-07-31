@@ -7,7 +7,7 @@ Created on Aug 23, 2014
 # Import system type stuff
 
 # Import PyHouse Modules
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.NullDriver     ')
 

@@ -50,7 +50,7 @@ from Modules.Computer.Web import web_rootMenu
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.WebMainpage    ')
 
 #  Handy helper for finding external resources nearby.

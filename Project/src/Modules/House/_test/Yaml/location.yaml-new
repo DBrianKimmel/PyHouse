@@ -1,0 +1,15 @@
+%YAML 1.2
+---
+Location:
+  Street: test street
+  City: Washington
+  State: DC
+  ZipCode: 20500
+  Country: USA
+  Phone: (888) 555-1212
+  TimeZoneName: America/New_York
+  Latitude: 38.897789
+  Longitude: -77.036619
+  Elevation: 30.0
+
+### END DBK

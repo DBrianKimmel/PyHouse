@@ -20,7 +20,7 @@ House:
       - Lighting
       # - Pool
       - Rules
-      - Scheduling
+      - Schedules
       - Security
       - Sync
 

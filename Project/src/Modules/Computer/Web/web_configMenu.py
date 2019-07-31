@@ -20,7 +20,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.webCfgMenu  ')
 

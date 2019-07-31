@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import InternetConnectionInformation
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Internet_xml   ')
 

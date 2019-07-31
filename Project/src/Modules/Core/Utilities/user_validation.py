@@ -30,7 +30,7 @@ from twisted.cred import checkers, credentials, error as credError, portal
 from twisted.internet import defer, protocol
 from twisted.protocols import basic
 from zope.interface import Interface, implements
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.UserValidate   ')
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-@name:      PyHouse/Project/src/Pyhouse.py
+@name:      Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -77,8 +77,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-07-07'
-__version_info__ = (19, 6, 0)
+__updated__ = '2019-07-28'
+__version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -88,20 +88,11 @@ import os
 import platform
 import signal
 import sys
-from twisted.internet import reactor
 
 #  Import PyHouse files and modules.
-from Modules.Core import setup_pyhouse
-from Modules.Core.data_objects import \
-    UuidInformation, \
-    PyHouseAPIs, \
-    PyHouseInformation, \
-    TwistedInformation, \
-    UuidData, CoreAPIs
-from Modules.Core.Utilities.config_tools import ConfigInformation
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core import core
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse                ')
 
 LOCK_PATH = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "lock")
@@ -224,13 +215,14 @@ class API:
         """
         global g_API
         g_API = self
+        # self.m_pyhouse_obj
         LOG.info('Initialized.\n==================================================================\n')
 
-    def LoadConfig(self, p_pyhouse_obj: object):
+    def LoadConfig(self):
         """ This loads all the configuration.
         """
-        p_pyhouse_obj._APIs.Core.CoreSetupAPI.LoadConfig(p_pyhouse_obj)
-        p_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
+        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.LoadConfig()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
         pass
 
@@ -241,14 +233,6 @@ class API:
         LOG.info('Starting - Reactor is now running.')
         self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
-
-    def SaveConfig(self, p_pyhouse_obj):
-        """Update XML file with current info.
-        Keep on running after the snapshot.
-        """
-        LOG.info("Saving Config")
-        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.SaveConfig(p_pyhouse_obj)
-        LOG.info("Saved Config.\n")
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
@@ -269,35 +253,7 @@ class BeforeReactor(API):
     It is run right after Singleton protection is invoked.
     """
 
-    def _create_pyhouse_obj(self):
-        """ This creates the master PyHouse_Obj from scratch.
-        """
-        self.m_pyhouse_obj = PyHouseInformation()
-
-    def _setup_APIs(self):
-        """
-        """
-        self.m_pyhouse_obj._APIs = PyHouseAPIs()
-        self.m_pyhouse_obj._APIs.Core = CoreAPIs()
-        self.m_pyhouse_obj._APIs.Core.PyHouseMainAPI = self
-
-    def _setup_Config(self):
-        """
-        """
-        self.m_pyhouse_obj._Config = ConfigInformation()
-
-    def _setup_Twisted(self):
-        """
-        """
-        self.m_pyhouse_obj._Twisted = TwistedInformation()
-        self.m_pyhouse_obj._Twisted.Reactor = reactor
-
-    def _setup_Uuids(self):
-        """
-        """
-        self.m_pyhouse_obj._Uuids = UuidInformation()
-        self.m_pyhouse_obj._Uuids.All = UuidData()
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'SetupUuids-PyHouse', 190))
+    m_pyhouse_obj = None
 
     def start_setup(self):
         """
@@ -305,20 +261,7 @@ class BeforeReactor(API):
         call never returns until the reactor is stopped (permanent stoppage).
         """
         print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
-        self._create_pyhouse_obj()
-        self._setup_APIs()
-        self._setup_Config()
-        # _Families are set up in ???
-        # _Parameters are set up in ???
-        self._setup_Twisted()
-        self._setup_Uuids()
-        #
-        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
-        #
-        self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig, self.m_pyhouse_obj)
-        LOG.info("Initialized - Version:{}\n======================== Initialized ========================\n".format(__version__))
-        LOG.info('Starting Reactor...')
-        self.m_pyhouse_obj._Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        core.API()
         #
         #  When the reactor stops we continue here
         #

@@ -29,7 +29,7 @@ from Modules.Core.Utilities.debug_tools import FormatBytes
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 

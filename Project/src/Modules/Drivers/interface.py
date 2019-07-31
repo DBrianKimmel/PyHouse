@@ -18,7 +18,7 @@ There are several different interfaces at this point (2013-10-29):
 This module reads and writes the Config for those controllers.
 """
 
-__updated__ = '2019-07-23'
+__updated__ = '2019-07-30'
 
 # Import system type stuff
 
@@ -29,8 +29,8 @@ from Modules.Drivers.Serial.Serial_config import Config as serialConfig
 from Modules.Drivers.USB.USB_xml import XML as usbXML
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
 
-from Modules.Computer import logging_pyh as Logging
-LOG = Logging.getLogger('PyHouse.Interface      ')
+from Modules.Core import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.Interface      ')
 
 
 class DriverInterfaceInformation():
@@ -71,47 +71,5 @@ class Config:
         if l_obj.Type == 'Serial':
             serialConfig().load_config(p_config, l_obj)
         return l_obj
-
-
-class Xml:
-    """Read and write the interface information based in the interface type.
-    """
-
-    @staticmethod
-    def read_interface_xml(p_controller_obj, p_controller_xml):
-        """Update the controller object by extracting the passed in XML.
-
-        This is basically a dispatcher.
-
-        @param p_controller_obj: This is the object we are going to stuff the interface info into.
-        """
-        if p_controller_obj.InterfaceType == 'Ethernet':
-            l_interface = ethernetXML.read_interface_xml(p_controller_xml)
-        elif p_controller_obj.InterfaceType == 'Serial':
-            l_interface = serialXML.read_interface_xml(p_controller_xml)
-        elif p_controller_obj.InterfaceType == 'USB':
-            l_interface = usbXML.read_interface_xml(p_controller_xml)
-        elif p_controller_obj.InterfaceType == 'Null':
-            l_interface = nullXML.read_interface_xml(p_controller_xml)
-        else:
-            LOG.error('Reading a controller driver interface section  For {} - Unknown InterfaceType - {}'
-                      .format(p_controller_obj.Name, p_controller_obj.InterfaceType))
-            l_interface = None
-        stuff_new_attrs(p_controller_obj, l_interface)
-        return l_interface  # for testing
-
-    @staticmethod
-    def write_interface_xml(p_controller_obj):
-        if p_controller_obj.InterfaceType == 'Ethernet':
-            l_xml = ethernetXML.write_interface_xml(p_controller_obj)
-        elif p_controller_obj.InterfaceType == 'Serial':
-            l_xml = serialXML.write_interface_xml(p_controller_obj)
-        elif p_controller_obj.InterfaceType == 'USB':
-            l_xml = usbXML.write_interface_xml(p_controller_obj)
-        elif p_controller_obj.InterfaceType == 'Null':
-            l_xml = nullXML.write_interface_xml(p_controller_obj)
-        else:
-            LOG.error('ERROR - WriteDriverXml - Unknown InterfaceType - {} for {}'.format(p_controller_obj.InterfaceType, p_controller_obj.Name))
-        return l_xml
 
 # ## END DBK

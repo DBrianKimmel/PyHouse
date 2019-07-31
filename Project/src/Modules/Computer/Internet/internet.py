@@ -27,7 +27,7 @@ __updated__ = '2019-07-10'
 from Modules.Computer.Internet.internet_xml import API as internetAPI
 from Modules.Computer.Internet.inet_find_external_ip import API as findAPI
 from Modules.Computer.Internet.inet_update_dyn_dns import API as updateAPI
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Internet       ')
 INITIAL_DELAY = 5

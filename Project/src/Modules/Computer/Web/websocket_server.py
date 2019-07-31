@@ -22,7 +22,7 @@ from twisted.web.server import Site
 # from autobahn.twisted.resource import WebSocketResource
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 WEBSOCKET_PORT = 8586

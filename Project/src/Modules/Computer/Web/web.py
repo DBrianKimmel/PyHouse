@@ -29,7 +29,7 @@ from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web.web_server import API as WebAPI
 # from Modules.Computer.Web.websocket_server import API as WebSocketAPI
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Web            ')
 
 

@@ -20,7 +20,7 @@ import os
 from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_buttons
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.

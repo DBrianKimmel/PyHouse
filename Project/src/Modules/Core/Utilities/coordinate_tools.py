@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-07-15'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 # import xml.etree.ElementTree as ET
 # import datetime
 
 #  Import PyMh files
-from Modules.Housing.house_data import CoordinateInformation
+from Modules.House.house_data import CoordinateInformation
 
 
 class Coords:

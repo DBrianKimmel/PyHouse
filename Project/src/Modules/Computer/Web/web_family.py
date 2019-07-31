@@ -16,7 +16,7 @@ __updated__ = '2016-11-15'
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webFamily   ')
 
 

@@ -93,7 +93,7 @@ import usb
 
 # Import PyMh files
 # from Modules.Drivers.USB import USB_driver
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from _ctypes import Array
 from array import array
 

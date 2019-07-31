@@ -19,7 +19,7 @@ import uuid
 
 #  Import PyMh files
 # from Modules.Core.data_objects import UuidData
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UuidTools      ')
 
 

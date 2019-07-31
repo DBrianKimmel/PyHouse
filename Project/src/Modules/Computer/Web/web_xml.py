@@ -23,7 +23,7 @@ __updated__ = '2019-07-05'
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.data_objects import LoginData, WebInformation
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools

@@ -21,7 +21,7 @@ from twisted.web._element import Element
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import json_tools
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webClock    ')
 
 #  Handy helper for finding external resources nearby.

@@ -22,7 +22,7 @@ import os
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 #  Handy helper for finding external resources nearby.

@@ -17,7 +17,7 @@ __updated__ = '2019-07-15'
 from Modules.Core.data_objects import JsonHouseData
 from Modules.Core.Utilities import json_tools
 from Modules.Housing.Lighting.lighting import LightingInformation
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webUtils       ')
 
 #  Web States defined

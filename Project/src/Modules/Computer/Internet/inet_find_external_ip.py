@@ -16,7 +16,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-07-30'
 
 # Import system type stuff
 import re
@@ -25,10 +25,10 @@ from twisted.web.client import Agent, readBody
 from twisted.web.http_headers import Headers
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import convert
 
-LOG = logging_pyh.getLogger('PyHouse.InternetFnd    ')
+LOG = Logger.getLogger('PyHouse.InternetFnd    ')
 
 
 class FindExternalIpAddress(object):

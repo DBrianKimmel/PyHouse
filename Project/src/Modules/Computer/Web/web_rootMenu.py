@@ -15,7 +15,7 @@ __updated__ = '2019-06-24'
 from twisted.web._element import renderer, Element
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webRootMenu    ')
 
 

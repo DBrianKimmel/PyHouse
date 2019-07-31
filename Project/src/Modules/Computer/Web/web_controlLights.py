@@ -21,7 +21,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webCtlLigt  ')

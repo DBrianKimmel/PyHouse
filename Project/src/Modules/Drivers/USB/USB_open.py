@@ -26,7 +26,7 @@ import usb.util
 
 # Import PyHouse modules
 from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.USBDriver_Open ')

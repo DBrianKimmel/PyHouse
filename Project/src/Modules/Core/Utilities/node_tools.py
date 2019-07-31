@@ -19,7 +19,7 @@ __updated__ = '2019-06-09'
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeTools      ')
 
 

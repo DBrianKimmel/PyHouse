@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-07-24'
+__updated__ = '2019-07-30'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -81,8 +81,8 @@ class PyHouseAPIs:
         self.Core = None  # CoreAPIs()
         self.Computer = None  # ComputerAPIs()
         self.House = None  # HouseAPIs()
-        self.CoreSetupAPI = None
-        self.PyHouseMainAPI = None
+        # self.CoreSetupAPI = None
+        # self.PyHouseMainAPI = None
 
 
 class BaseObject:
@@ -124,21 +124,21 @@ class CoreAPIs:
         self.PyHouseMainAPI = None
 
 
-class ComputerAPIs:
+class XXXComputerAPIs:
     """
     ==> PyHouse._APIs.Computer.xxx as in the def below.
 
     """
 
     def __init__(self):
-        self.BridgesAPI = None
+        # self.BridgesAPI = None
         self.ComputerAPI = None
         self.CommAPIs = None  # CommunicationAPIs()
         self.InternetAPI = None
         self.NodesAPI = None
-        self.WeatherAPI = None
-        self.WebAPI = None
-        self.WebSocketAPI = None
+        # self.WeatherAPI = None
+        # self.WebAPI = None
+        # self.WebSocketAPI = None
 
 
 class CommunicationInformation:
@@ -191,17 +191,17 @@ class HouseAPIs:
     """
 
     def __init__(self):
-        self.EntertainmentAPI = None  # Uses Plugins
-        self.FamilyAPI = None
+        # self.EntertainmentAPI = None  # Uses Plugins
+        self.FamilyAPI = None  # Uses Plugins
         self.HouseAPI = None
-        self.HvacAPI = None
-        self.IrrigationAPI = None
-        self.LightingAPI = None
-        self.PoolAPI = None
-        self.ScheduleAPI = None
-        self.SecurityAPI = None
-        self.SunRiseSetAPI = None
-        self.SyncAPI = None
+        # self.HvacAPI = None
+        # self.IrrigationAPI = None
+        # self.LightingAPI = None
+        # self.PoolAPI = None
+        # self.ScheduleAPI = None
+        # self.SecurityAPI = None
+        # self.SunRiseSetAPI = None
+        # self.SyncAPI = None
 
 # class HvacData():
 
@@ -460,14 +460,14 @@ BaseUUIDObject dependent.
 """
 
 
-class ComputerInformation(BaseUUIDObject):
+class XXXComputerInformation(BaseUUIDObject):
     """
 
     ==> PyHouse.Computer.xxx - as in the def below.
     """
 
     def __init__(self):
-        super(ComputerInformation, self).__init__()
+        super(XXXComputerInformation, self).__init__()
         self.Primary = False
         self.Priority = 99
         self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridge_data

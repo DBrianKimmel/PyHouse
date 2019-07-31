@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Core/setup_logging.py
+@name:      Modules/Core/setup_logging.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -15,10 +15,9 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2019-07-05'
+__updated__ = '2019-07-30'
 
 #  Import system type stuff
-import datetime
 import logging.config
 from twisted.python import log
 
@@ -145,34 +144,9 @@ l_observer = log.PythonLoggingObserver(loggerName=LOGGER_NAME_TWISTED)
 l_observer.start()
 
 
-class DeleteOldLogs(object):
-    """
-    """
+class API:  #  To remove eclipse warnings.
 
-    @staticmethod
-    def run_daily(p_pyhouse_obj):
-        l_delay = 60 * 60 * 24
-        p_pyhouse_obj._Twisted.Reactor.callLater(l_delay, DeleteOldLogs.run_daily, p_pyhouse_obj)
-        pass
-
-    @staticmethod
-    def run_at_12_05(p_pyhouse_obj):
-        l_now = datetime.datetime.now()
-        l_1205 = datetime.time(0, 5, 0)
-        if l_now == l_1205:
-            pass
-        l_delay = 1
-        p_pyhouse_obj._Twisted.Reactor.callLater(l_delay, DeleteOldLogs.run_daily, p_pyhouse_obj)
-
-
-class API(object):  #  To remove eclipse warnings.
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        #  print('setup_logging-153')
-
-    def Start(self):
-        DeleteOldLogs.run_at_12_05(self.m_pyhouse_obj)
+    def __init__(self):
         pass
 
 #  ## END DBK

@@ -17,7 +17,7 @@ __updated__ = '2019-07-05'
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import BaseUUIDObject
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Bridges_Data   ')
 
 

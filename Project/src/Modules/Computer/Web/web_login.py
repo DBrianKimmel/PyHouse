@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-07-29'
 
 #  Import system type stuff
 import os
@@ -40,8 +40,8 @@ from Modules.Housing.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
 from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
 from Modules.Housing import VALID_FLOORS
 from Modules.Housing.Lighting import VALID_LIGHTING_TYPE
-from Modules.Housing.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
-from Modules.Computer import logging_pyh as Logger
+from Modules.Housing.Schedules import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Web.web_users import VALID_USER_ROLES
 from Modules.Core.Utilities import json_tools

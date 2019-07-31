@@ -11,7 +11,7 @@ This should also allow control of many different houses.
 # Import system type stuff
 
 # Import PyHouse modules
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.USBDriver')
 

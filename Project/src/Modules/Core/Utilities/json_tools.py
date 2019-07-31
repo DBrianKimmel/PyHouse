@@ -21,7 +21,7 @@ __updated__ = '2017-04-30'
 import jsonpickle
 
 # Import PyMh files
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Json_Tools     ')
 

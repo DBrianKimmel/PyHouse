@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-21'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 import os
@@ -19,13 +19,14 @@ import sys
 from twisted.internet import reactor
 
 #  Import PyMh files and modules.
-from Modules.Housing.house_data import LocationInformationPrivate
-from Modules.Housing.Lighting.lighting import LightingInformation
+from Modules.House.house_data import LocationInformationPrivate
+from Modules.House.Entertainment.entertainment import \
+    EntertainmentInformation, \
+    EntertainmentPluginInformation
+from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
     PyHouseAPIs, \
-    ComputerInformation, \
-    ComputerAPIs, \
     HouseInformation, \
     HouseAPIs, \
     TwistedInformation, \
@@ -33,15 +34,12 @@ from Modules.Core.data_objects import \
     UuidInformation, CoreInformation
 from Modules.Core.Utilities.config_tools import \
     ConfigInformation
-from Modules.Housing.Entertainment.entertainment_data import \
-    EntertainmentInformation, \
-    EntertainmentPluginInformation
-from Modules.Families.family import \
+from Modules.House.Family.family import \
     Utility as familyUtil, \
     API as familyAPI
-from Modules.Housing.house import API as housingAPI
-from Modules.Housing.Hvac.hvac_data import HvacData
-from Modules.Computer import logging_pyh as Logger
+from Modules.House.house import API as housingAPI
+from Modules.House.Hvac.hvac_data import HvacData
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt_data import MqttInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
@@ -129,14 +127,12 @@ class SetupPyHouseObj():
     """
     """
 
-    def _build_config(self, p_root):
+    def _build_config(self):
         """
         Change the path for finding yaml config files to the PySource src package.
         """
         l_ret = ConfigInformation()
         l_ret.ConfigDir = TEST_PATH
-        l_ret.XmlRoot = p_root
-        l_ret.XmlFileName = '/etc/pyhouse/master.xml'
         return l_ret
 
     def _build_yaml(self, p_root):
@@ -276,7 +272,7 @@ class SetupPyHouseObj():
     def _house_yaml(self, p_yaml):
         pass
 
-    def BuildPyHouseObj(self, p_root):
+    def BuildPyHouseObj(self):
         """ This will create the pyhpuse_obj structure.
         """
         l_pyhouse_obj = PyHouseInformation()
@@ -285,7 +281,7 @@ class SetupPyHouseObj():
         l_pyhouse_obj.House = SetupPyHouseObj._build_house_data(l_pyhouse_obj)
         #
         l_pyhouse_obj._APIs = self._build_apis()
-        l_pyhouse_obj._Config = self._build_config(p_root)
+        l_pyhouse_obj._Config = self._build_config()
         # l_pyhouse_obj._Families = familyUtil()._init_family_component_apis(l_pyhouse_obj)
         l_pyhouse_obj._Twisted = self._build_twisted()
         l_pyhouse_obj._Uuids = UuidInformation()

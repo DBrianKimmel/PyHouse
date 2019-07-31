@@ -16,7 +16,7 @@ __updated__ = '2019-01-11'
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.CoreUpdateTool ')
 

@@ -1,0 +1,18 @@
+---
+# Name:      PyHouse/Project/src/Modules/Housing/Entertainment/test/Yaml/entertainment.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 29, 2019
+# Updated:   Jul 25, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Entertainment:
+  Services:
+    - Pandora: !include pandora.yaml
+  Devices:
+    - Pioneer: !include pioneer.yaml
+    - Samsung: !include samsung.yaml
+   
+### END DBK

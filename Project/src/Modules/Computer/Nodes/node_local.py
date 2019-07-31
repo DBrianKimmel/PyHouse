@@ -37,7 +37,7 @@ from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 # from Modules.Communication import ir_control
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 
 __all__ = ['NODE_NOTHING', 'NODE_USB_CONTROLLER',
