@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_houseMenu -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_houseMenu -*-
 
 @name:      PyHouse/src/Modules/Web/web_houseMenu.py
 @author:    D. Brian Kimmel

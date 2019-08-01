@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/test/test_Scheduling.py
+@name:      PyHouse/src/Modules/_test/test_Scheduling.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel

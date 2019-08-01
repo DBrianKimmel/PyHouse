@@ -1,5 +1,5 @@
 """
-@name:      Modules/Computer/Nodes/test/test_node_status.py
+@name:      Modules/Computer/Nodes/_test/test_node_status.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2018 by D. Brian Kimmel
@@ -44,7 +44,7 @@ class A0(unittest.TestCase):
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):
@@ -63,7 +63,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
 class A2_Xml(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):

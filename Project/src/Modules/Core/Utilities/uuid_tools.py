@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_uuid_tools -*-
+-*- _test-case-name: PyHouse.src.Modules.Core.Utilities._test.test_uuid_tools -*-
 
 @name:      PyHouse/src/Modules.Core.Utilities.uuid_tools.py
 @author:    D. Brian Kimmel

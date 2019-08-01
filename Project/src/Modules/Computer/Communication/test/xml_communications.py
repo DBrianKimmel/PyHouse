@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Communication/test/xml_communications.py
+@name:      PyHouse/src/Modules/Communication/_test/xml_communications.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2017 by D. Brian Kimmel

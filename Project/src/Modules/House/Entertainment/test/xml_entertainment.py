@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Entertainment/test/xml_entertainment.py
+@name:      PyHouse/src/Modules/Entertainment/_test/xml_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2018 by D. Brian Kimmel

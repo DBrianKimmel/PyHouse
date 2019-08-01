@@ -1,5 +1,5 @@
 """
-@name:      Modules/families/Insteon/test/test_Insteon_device.py
+@name:      Modules/families/Insteon/_test/test_Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -37,7 +37,7 @@ class SetupMixin(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_Insteon_device')
 
 

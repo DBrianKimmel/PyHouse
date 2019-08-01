@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Core/test/test_conversions.py
+@name:      PyHouse/src/Modules/Core/_test/test_conversions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel

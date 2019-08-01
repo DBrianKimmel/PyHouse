@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/pandora/test/xml_pandora.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/pandora/_test/xml_pandora.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2018 by D. Brian Kimmel

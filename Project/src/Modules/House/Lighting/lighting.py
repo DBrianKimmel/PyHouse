@@ -25,10 +25,10 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyHouse files
 from Modules.Core.Utilities import config_tools
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.House.Lighting.lighting_buttons import API as buttonsApi
-from Modules.House.Lighting.lighting_controllers import MqttActions as controllerMqtt, API as controllersApi
-from Modules.House.Lighting.lighting_lights import MqttActions as lightMqtt, API as lightsApi
-from Modules.House.Lighting.lighting_outlets import API as outletsApi
+from Modules.House.Lighting.buttons import API as buttonsApi
+from Modules.House.Lighting.controllers import MqttActions as controllerMqtt, API as controllersApi
+from Modules.House.Lighting.lights import MqttActions as lightMqtt, API as lightsApi
+from Modules.House.Lighting.outlets import API as outletsApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

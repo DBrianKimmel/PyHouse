@@ -1,8 +1,8 @@
 """
-@name:      PyHouse/src/Modules.Core.Utilities.test/test_xml_tools.py
+@name:      Modules.Core.Utilities._test/test_xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2013-2018 by D. Brian Kimmel
+@copyright: 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 11, 2013
 @summary:   This module is for testing XML tools.
@@ -10,7 +10,7 @@
 Passed all 64 tests - DBK 2018-08-07
 """
 
-__updated__ = '2019-06-12'
+__updated__ = '2019-07-31'
 
 # Import system type stuff
 import datetime
@@ -20,19 +20,19 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import CoreLightingData
-from Modules.Housing.location import LocationInformation
+from Modules.House.location import LocationInformation
 from Modules.Core.Utilities import convert
 from test.xml_data import \
     XML_LONG, \
     XML_EMPTY
-from Modules.Housing.Lighting.test.xml_lighting import \
+from Modules.House.Lighting.test.xml_lighting import \
     TESTING_LIGHTING_SECTION, \
     XML_LIGHTING
-from Modules.Housing.Lighting.test.xml_lights import \
+from Modules.House.Lighting.test.xml_lights import \
     TESTING_LIGHT_NAME_0, \
     TESTING_LIGHT_UUID_0, \
     TESTING_LIGHT_ACTIVE_0
-from Modules.Housing.Lighting.test.xml_controllers import \
+from Modules.House.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0, \
     TESTING_CONTROLLER_KEY_0, \
     TESTING_CONTROLLER_ACTIVE_0
@@ -508,9 +508,9 @@ class E2_DateTime(SetupMixin, unittest.TestCase):
 
 class F1_Coords(SetupMixin, unittest.TestCase):
     """
-    This series test reeading and writing of CoOrdinates.
+    This series _test reeading and writing of CoOrdinates.
     Since there are various input formats tested and the xml-tools output is always ideal,
-    we need to use string literals to test for correctness.
+    we need to use string literals to _test for correctness.
     """
 
     def setUp(self):

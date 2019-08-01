@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Computer/Web/web_irrigation.py -*-
+-*- _test-case-name: PyHouse/src/Modules/Computer/Web/web_irrigation.py -*-
 
 @name:      Modules/Computer/Web/web_irrigation.py
 @author:    D. Brian Kimmel

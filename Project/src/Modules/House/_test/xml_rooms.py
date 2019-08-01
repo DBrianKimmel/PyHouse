@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/test/xml_rooms.py
+@name:      PyHouse/Project/src/Modules/Housing/_test/xml_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel

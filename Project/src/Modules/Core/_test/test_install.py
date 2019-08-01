@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Core/test/test_install.py
+@name:      /home/briank/workspace/PyHouse/src/Modules/Core/_test/test_install.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2017 by D. Brian Kimmel

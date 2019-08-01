@@ -1,5 +1,5 @@
 """
-@name:      Modules/Schedules/test/test_schedule_xml.py
+@name:      Modules/Schedules/_test/test_schedule_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -123,8 +123,8 @@ class A2_SetupXml(SetupMixin, unittest.TestCase):
 
 class A3_XML(SetupMixin, unittest.TestCase):
     """
-    Be sure that we load the data properly as a whole test.
-    Detailed test of xml is in the test_schedule_xml module.
+    Be sure that we load the data properly as a whole _test.
+    Detailed _test of xml is in the test_schedule_xml module.
     """
 
     def setUp(self):

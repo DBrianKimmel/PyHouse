@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Irrigation/test/test_irrigation_xml.py
+@name:      PyHouse/src/Modules/Irrigation/_test/test_irrigation_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel

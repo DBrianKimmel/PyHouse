@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/samsung/test/xml_samsung.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/samsung/_test/xml_samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2018 by D. Brian Kimmel

@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Sync/sync.py
+@name:      Modules/House/Sync/sync.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -13,7 +13,7 @@ If multiple house UUISs match - one of them is master and any/all different ones
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 

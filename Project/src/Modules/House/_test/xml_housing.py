@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/test/xml_housing.py
+@name:      PyHouse/src/Modules/Housing/_test/xml_housing.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -7,7 +7,7 @@
 @note:      Created on Nov 7, 2014
 @summary:   XML data for house location
 
-See PyHouse/src/test/xml_data.py for the entire hierarchy.
+See PyHouse/src/_test/xml_data.py for the entire hierarchy.
 
 Here is the description of the various configuration entries.
 

@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Web.test.test_web_clock -*-
+-*- _test-case-name: PyHouse.src.Modules.Computer.Web._test.test_web_clock -*-
 
 @name:      PyHouse/Project/src/Modules/Computer/Web/web_clock.py
 @author:    D. Brian Kimmel

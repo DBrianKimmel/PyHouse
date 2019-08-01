@@ -1,5 +1,5 @@
 """
-@name:      Modules/Schedules/test/xml_schedule.py
+@name:      Modules/Schedules/_test/xml_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel

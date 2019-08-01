@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_buttons -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_buttons -*-
 
 @name:      PyHouse/src/Modules/web/web_buttons.py
 @author:    D. Brian Kimmel

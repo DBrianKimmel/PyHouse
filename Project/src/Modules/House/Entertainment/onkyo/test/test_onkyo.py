@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/test/test_onkyo.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/_test/test_onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2017 by D. Brian Kimmel
@@ -7,7 +7,7 @@
 @note:      Created on Mar 22, 2014
 @summary:   Test
 
-Run 'PyHouse/src/test/test_xml_data.py' if XML is corrupted.
+Run 'PyHouse/src/_test/test_xml_data.py' if XML is corrupted.
 
 Passed all 8 tests - DBK - 2018-11-03
 
@@ -18,7 +18,7 @@ __updated__ = '2019-06-29'
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-# from twisted.test import proto_helpers
+# from twisted._test import proto_helpers
 from twisted.internet.protocol import ClientCreator
 
 # Import PyMh files

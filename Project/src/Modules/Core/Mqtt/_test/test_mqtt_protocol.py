@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/test/test_protocol.py
+@name:      PyHouse/src/Modules/Computer/Mqtt/_test/test_protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel

@@ -473,7 +473,7 @@ class API(Utility):
 
         @param p_controller_obj: optional
         @param p_device_obj: the device being controlled
-        @param p_control: the idealized light control params ==> Modules.House.Lighting.lighting_lights.LightData()
+        @param p_control: the idealized light control params ==> Modules.House.Lighting.lights.LightData()
         """
         l_level = int(p_control.BrightnessPct)
         l_rate = 0  # The transition time is not implemented currently.

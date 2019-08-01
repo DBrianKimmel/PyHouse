@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Bridges/test/test_bridges.py
+@name:      PyHouse/Project/src/Modules/Computer/Bridges/_test/test_bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -58,7 +58,7 @@ class A0(unittest.TestCase):
 
     def test_00_Print(self):
         print('Id: test_bridges')
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):

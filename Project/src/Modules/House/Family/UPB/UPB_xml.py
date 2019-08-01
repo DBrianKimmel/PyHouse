@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.families.UPB.test.test_Device_UPB -*-
+-*- _test-case-name: PyHouse.src.Modules.families.UPB._test.test_Device_UPB -*-
 
 @name:      PyHouse/Project/src/Modules/families/UPB/UPB_xml.py
 @author:    D. Brian Kimmel

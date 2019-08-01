@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Internet/test/xml_internet.py
+@name:      PyHouse/src/Modules/Computer/Internet/_test/xml_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2018 by D. Brian Kimmel

@@ -1,7 +1,7 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/test/test_Bridges.py -*-
+-*- _test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/_test/test_Bridges.py -*-
 
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/test/test_Bridges.py
+@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/_test/test_Bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel

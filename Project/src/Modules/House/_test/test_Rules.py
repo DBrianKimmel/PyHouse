@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Housing/test/test-Rules.py
+@name:      /home/briank/workspace/PyHouse/src/Modules/Housing/_test/_test-Rules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel

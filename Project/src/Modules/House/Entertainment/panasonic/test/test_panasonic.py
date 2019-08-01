@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/panasonic/test/test_panasonic.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/panasonic/_test/test_panasonic.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2018 by D. Brian Kimmel
@@ -198,7 +198,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Volume), TESTING_PANASONIC_DEVICE_VOLUME_1)
 
     def test_04_All(self):
-        """ test reading of entire device set.
+        """ _test reading of entire device set.
         """
         l_obj = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(l_obj, 'C1-04-A - Plugins.'))
@@ -210,7 +210,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(str(l_obj.Devices[1].Name), TESTING_PANASONIC_DEVICE_NAME_1)
 
     def test_05_Data(self):
-        """ test that the data structure is correct.
+        """ _test that the data structure is correct.
         """
         l_obj = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)
         print(PrettyFormatAny.form(l_obj, 'C1-05-A - Read'))
@@ -238,7 +238,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         self.m_panasonic = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)
 
     def test_01_Data(self):
-        """ test that the data structure is correct.
+        """ _test that the data structure is correct.
         """
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
         print(PrettyFormatAny.form(l_base, 'C1-05-B1 - Base'))

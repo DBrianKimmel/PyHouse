@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Famlies/UPB/test/test_UPB_Pim.py
+@name:      PyHouse/src/Modules/Famlies/UPB/_test/test_UPB_Pim.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2017 by D. Brian Kimmel

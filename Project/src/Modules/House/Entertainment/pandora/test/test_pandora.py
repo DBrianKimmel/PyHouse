@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Entertainment/pandora/test/test_pandora.py
+@name:      PyHouse/Project/src/Modules/Housing/Entertainment/pandora/_test/test_pandora.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -86,7 +86,7 @@ class SetupMixin:
 
 
 class A0(unittest.TestCase):
-    """ Prints the test ID
+    """ Prints the _test ID
     """
 
     def test_00_Print(self):
@@ -138,7 +138,7 @@ class A2_SetupXml(SetupMixin, unittest.TestCase):
 
 
 class A3_XML(SetupMixin, unittest.TestCase):
-    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
     """
 
     def setUp(self):

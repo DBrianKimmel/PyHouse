@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Nodes/test/test_nodes.py
+@name:      PyHouse/src/Modules/Computer/Nodes/_test/test_nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -47,7 +47,7 @@ class A0(unittest.TestCase):
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):
@@ -83,7 +83,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
 class B1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):

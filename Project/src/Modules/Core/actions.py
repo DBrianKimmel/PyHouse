@@ -1,5 +1,5 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Core/actions.py -*-
+-*- _test-case-name: /home/briank/PyHouse/src/Modules/Core/actions.py -*-
 
 @name:      /home/briank/PyHouse/src/Modules/Core/actions.py
 @author:    D. Brian Kimmel

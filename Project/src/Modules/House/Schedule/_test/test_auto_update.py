@@ -1,5 +1,5 @@
 """
-@name:      Modules/Schedules/test/test_auto_update.py
+@name:      Modules/Schedules/_test/test_auto_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -18,7 +18,7 @@ __updated__ = '2019-07-29'
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.test import proto_helpers
-# import twisted.internet.test.reactormixins.ReactorBuilder
+# import twisted.internet._test.reactormixins.ReactorBuilder
 
 # Import PyMh files and modules.
 from Modules.Housing.Schedules import auto_update
@@ -70,7 +70,7 @@ class B2_Base(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """
         Test to be sure that setup is running OK.
-        This test is repeated throughout the entire testing suite.
+        This _test is repeated throughout the entire testing suite.
         """
         self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
         self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision', 'XML - No Computer division')

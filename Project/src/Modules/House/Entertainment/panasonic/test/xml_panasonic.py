@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/panasonic/test/xml_panasonic.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/panasonic/_test/xml_panasonic.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2018 by D. Brian Kimmel

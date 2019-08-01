@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_schedules -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_schedules -*-
 
 @name:      PyHouse/src/Modules/web/web_schedules.py
 @author:    D. Brian Kimmel

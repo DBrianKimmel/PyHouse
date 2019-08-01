@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Utilities/test/test_update_tools.py
+@name:      Modules/Core/Utilities/_test/test_update_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-16'
+__updated__ = '2019-07-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,8 +19,8 @@ from datetime import datetime
 # Import PyMh files
 from test.xml_data import XML_LONG, TESTING_VERSION, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_DIVISION
-from Modules.Housing.Entertainment.pandora.test.xml_pandora import \
+from Modules.House.test.xml_housing import TESTING_HOUSE_DIVISION
+from Modules.House.Entertainment.pandora.test.xml_pandora import \
     XML_PANDORA_SECTION, \
     L_PANDORA_SECTION_START, \
     TESTING_PANDORA_SECTION
@@ -50,7 +50,7 @@ class A0(unittest.TestCase):
 
 class A1_XML(SetupMixin, unittest.TestCase):
     """
-    This section will verify the XML in the 'Modules.test.xml_data' file is correct
+    This section will verify the XML in the 'Modules._test.xml_data' file is correct
     and what the node_local module can read/write.
     """
 

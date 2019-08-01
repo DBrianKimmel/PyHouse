@@ -9,26 +9,9 @@
 
 This handles the Computer part of the node.  (The other part is "House").
 
-This takes care of starting all the computer modules (In Order).
-    Logging
-    Mqtt Broker(s)
-    Bridges
-    Nodes
-    Internet Connection(s)
-    Web Server(s)
-
-PyHouse.Computer.
-            Bridges
-            Communication
-            Internet
-            Mqtt
-            Nodes
-            Weather
-            Web
-
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,7 +21,6 @@ import platform
 import importlib
 
 #  Import PyHouse files
-# from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
 from Modules.Core.Utilities import extract_tools, uuid_tools, config_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
 
@@ -64,7 +46,6 @@ MODULES = [
 
 class ComputerInformation:
     """
-
     ==> PyHouse.Computer.xxx - as in the def below.
     """
 

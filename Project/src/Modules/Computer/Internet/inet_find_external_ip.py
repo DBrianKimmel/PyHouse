@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_inet_find_external_ip -*-
+-*- _test-case-name: PyHouse.src.Modules.Computer.Internet._test.test_inet_find_external_ip -*-
 
 @Name:      PyHouse/src/Modules/Computer/Internet/inet_find_external_ip.py
 @author:    D. Brian Kimmel

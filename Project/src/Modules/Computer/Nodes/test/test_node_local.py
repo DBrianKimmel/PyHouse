@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Core/test/test_node_local.py
+@name:      PyHouse/src/Modules/Core/_test/test_node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -65,7 +65,7 @@ class A0(unittest.TestCase):
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):
@@ -102,7 +102,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
 class A3_Xml(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):
@@ -123,7 +123,7 @@ class A3_Xml(SetupMixin, unittest.TestCase):
 
 class B1_Netiface(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):
@@ -213,7 +213,7 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
 
 
 class B2_Iface(SetupMixin, unittest.TestCase):
-    """ test getting interface information.
+    """ _test getting interface information.
     """
 
     def setUp(self):
@@ -225,7 +225,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
     def test_01_AllIfaceNames(self):
         """ This will be different on different computers
 
-        I don't know how to test the returned list for validity.
+        I don't know how to _test the returned list for validity.
         Uncomment the print to see what your computer returned.
         """
         l_names = Interfaces()._find_all_interface_names()
@@ -251,7 +251,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
 
     def test_03_AddrLists(self):
         """
-        I don't know how to test the returned list for validity.
+        I don't know how to _test the returned list for validity.
         Uncomment the print to see what your computer returned.
         """
         l_names = Interfaces()._find_all_interface_names()

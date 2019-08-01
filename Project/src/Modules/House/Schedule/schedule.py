@@ -51,8 +51,8 @@ from Modules.Core.Utilities import convert, extract_tools, config_tools
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.House.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.House.Irrigation.irrigation_action import API as irrigationActionsAPI
-from Modules.House.Lighting.lighting_actions import API as lightActionsAPI
-from Modules.House.Lighting.lighting_utility import Utility as lightingUtility
+from Modules.House.Lighting.actions import API as lightActionsAPI
+from Modules.House.Lighting.utility import Utility as lightingUtility
 from Modules.House.Schedule import sunrisesunset
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -78,7 +78,7 @@ class ScheduleInformation:
     def __init__(self):
         self.Name = None
         self.Comment = None
-        self.DayOfWeek = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
+        self.DOW = 'SMTWTFS'  # DayOfWeek - a dash '-' replaces the day letter if NOT that day
         self.Occupancy = 'Always'  # Always, Home, Away, Vacation, ...
         self.Type = ''  # Valid Schedule Type
         self.Time = None
@@ -290,7 +290,10 @@ class SchedTime:
         @param p_now: is a datetime.datetime.now()
         @return: the number of days till the next DayOfWeek - 0..6, 10 if never
         """
-        l_dow = p_schedule_obj.DayOfWeek
+        l_dow = p_schedule_obj.DOW
+
+        return 0
+
         l_now_day = p_now.weekday()
         l_day = 2 ** l_now_day
         l_is_in_dow = (l_dow & l_day) != 0
@@ -380,7 +383,7 @@ class Utility():
     """
 
     @staticmethod
-    def _setup_components(p_pyhouse_obj):
+    def XXX_setup_components(p_pyhouse_obj):
         # p_pyhouse_obj.House.Schedules = {}
         pass
 
@@ -404,8 +407,6 @@ class Utility():
         l_riseset = Utility.fetch_sunrise_set(p_pyhouse_obj)
         # Loop through the possible scheduled events.
         for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
-            if not l_schedule_obj.Active:
-                continue  # Skip inactive schedules.
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
             if l_seconds < MINIMUM_TIME:
                 continue
@@ -518,11 +519,15 @@ class Config:
         """
         l_obj = ScheduleLightInformation()
         for l_key, l_value in p_config.items():
-            print('Light Sched Key:{}; Value:{}'.format(l_key, l_value))
+            # print('Light Sched Key:{}; Value:{}'.format(l_key, l_value))
             setattr(l_obj, l_key, l_value)
         return l_obj
 
     def _extract_thermostat_schedule(self):
+        """
+        """
+
+    def _extract_DOW_field(self):
         """
         """
 
@@ -541,6 +546,8 @@ class Config:
                 l_ret = self._extract_light_schedule(l_value)
                 l_obj.Light = l_ret
             elif l_key == 'Thermostat':
+                pass
+            elif l_key == 'DOW':
                 pass
             else:
                 setattr(l_obj, l_key, l_value)

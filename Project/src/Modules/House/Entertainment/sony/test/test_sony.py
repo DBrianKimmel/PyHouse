@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/PyHouse/src/Modules/Housing/Entertainment/test/test_sony.py
+@name:      /home/briank/PyHouse/src/Modules/Housing/Entertainment/_test/test_sony.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel

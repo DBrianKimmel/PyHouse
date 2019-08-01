@@ -1,11 +1,11 @@
 """
-@name:      PyHouse/src/Modules/families/Insteon/test/test_Insteon_xml.py
+@name:      PyHouse/src/Modules/families/Insteon/_test/test_Insteon_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Aug 5, 2014
 @license:   MIT License
-@summary:   This module test insteon xml
+@summary:   This module _test insteon xml
 
 Passed all 15 tests - DBK - 2017-04-20
 

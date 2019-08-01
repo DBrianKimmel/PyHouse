@@ -9,7 +9,7 @@
 
 For posterity, you'll first need to generate a few client certificates all signed by the same CA.
 You've probably already done this, but so others can understand the answer and try it out on their own
-(and so I could test my answer myself ;-)), they'll need some code like this:
+(and so I could _test my answer myself ;-)), they'll need some code like this:
 
 With this program, you can create a few certificates like so:
     $ python newcert.py a

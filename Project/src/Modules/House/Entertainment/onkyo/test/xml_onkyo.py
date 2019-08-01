@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/onkyo/test/xml_onkyo.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/onkyo/_test/xml_onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel

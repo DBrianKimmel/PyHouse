@@ -9,25 +9,9 @@
 
 This is one of two major functions (the other is computer).
 
-House.py knows everything about a single house.
-
-Rooms and lights and HVAC are associated with a particular house.
-
-PyHouse.House.
-              Family Information
-              Hvac
-              Irrigation
-              Lighting
-              Location
-              Pools
-              Rooms
-              Rules
-              Schedules
-              ...
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,18 +22,16 @@ import importlib
 #  Import PyMh files
 from Modules.Core.data_objects import HouseAPIs, BaseUUIDObject
 from Modules.Core.Utilities import uuid_tools, config_tools
-from Modules.House.Family.family import API as familyAPI
 from Modules.House import location, rooms, floors
 from Modules.House.rooms import Mqtt as roomsMqtt
 
-from Modules.House.Entertainment.entertainment import API as entertainmentAPI, MqttActions as entertainmentMqtt
-from Modules.House.Hvac.hvac import API as hvacAPI, MqttActions as hvacMqtt
-from Modules.House.Irrigation.irrigation import API as irrigationAPI, MqttActions as irrigationMqtt
-from Modules.House.Lighting.lighting import API as lightingAPI, MqttActions as lightingMqtt
-from Modules.House.Pool.pool import API as poolAPI
-from Modules.House.Schedule.schedule import API as scheduleAPI, MqttActions as scheduleMqtt
-from Modules.House.Security.security import API as securityAPI
-from Modules.House.Sync.sync import API as syncAPI
+from Modules.House.Entertainment.entertainment import MqttActions as entertainmentMqtt
+from Modules.House.Hvac.hvac import MqttActions as hvacMqtt
+from Modules.House.Irrigation.irrigation import MqttActions as irrigationMqtt
+from Modules.House.Lighting.lighting import MqttActions as lightingMqtt
+from Modules.House.Schedule.schedule import MqttActions as scheduleMqtt
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
@@ -80,6 +62,7 @@ class HouseInformation(BaseUUIDObject):
         # self.HouseMode = 'Home'  # Home, Away, Vacation,
         #
         self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
+        self.Family = {}
         self.Hvac = {}  # HvacData()
         self.Irrigation = {}  # IrrigationData()
         self.Lighting = {}  # LightingInformation()
@@ -221,7 +204,7 @@ class Utility:
         """
         """
         for l_module in self.m_module_needed:
-            LOG.debug('Module: {}'.format(l_module))
+            # LOG.debug('Module: {}'.format(l_module))
             l_package = 'Modules.House.' + l_module.capitalize()  # p_family_obj.PackageName  # contains e.g. 'Modules.Families.Insteon'
             l_name = l_package + '.' + l_module.lower()
             try:
@@ -236,11 +219,11 @@ class Utility:
                 LOG.error('ERROR - Module: {}\n\t{}'.format(l_module, e_err))
                 LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef', 190)))
                 l_api = None
-            LOG.debug('Imported: {}'.format(l_ret))
+            # LOG.debug('Imported: {}'.format(l_ret))
             l_api_name = l_module.capitalize() + 'API'
             l_house = self.m_pyhouse_obj._APIs.House
             setattr(l_house, l_api_name, l_api)
-            LOG.debug(PrettyFormatAny.form(l_house, 'House'))
+            # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
         LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
 
     def _init_component_apis(self, p_api):

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/families/UPB/test/test_UPB_device.py
+@name:      PyHouse/src/Modules/families/UPB/_test/test_UPB_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2017 by D. Brian Kimmel

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Irrigation/RainBird/test/test_rainbird.py
+@name:      PyHouse/Project/src/Modules/Housing/Irrigation/RainBird/_test/test_rainbird.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel

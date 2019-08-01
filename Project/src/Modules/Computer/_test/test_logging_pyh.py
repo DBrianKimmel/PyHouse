@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/test/test_logging_pyh.py
+@name:      PyHouse/src/Modules/Computer/_test/test_logging_pyh.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel

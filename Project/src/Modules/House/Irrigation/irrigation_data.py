@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Housing/Irrigation/irrigation_data.py -*-
+-*- _test-case-name: PyHouse/src/Modules/Housing/Irrigation/irrigation_data.py -*-
 
 @name:      PyHouse/src/Modules/Housing/Irrigation/irrigation_data.py
 @author:    D. Brian Kimmel

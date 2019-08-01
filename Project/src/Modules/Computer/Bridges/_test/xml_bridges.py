@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Bridges/test/xml_bridges.py
+@name:      PyHouse/src/Modules/Computer/Bridges/_test/xml_bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel

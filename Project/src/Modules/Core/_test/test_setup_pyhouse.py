@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/test/test_setup_pyhouse.py
+@name:      PyHouse/Project/src/Modules/Core/_test/test_setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -46,12 +46,12 @@ class A0(unittest.TestCase):
 
     def test_00_Print(self):
         print('Id: test_setup_pyhouse')
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):

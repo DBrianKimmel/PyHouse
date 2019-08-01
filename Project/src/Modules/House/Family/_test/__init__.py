@@ -2,6 +2,6 @@
 #
 #
 
-print("Running families.test now.")
+print("Running families._test now.")
 
 # ## END DBK

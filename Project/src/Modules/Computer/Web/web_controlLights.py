@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_controlLights -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_controlLights -*-
 
 @name:      PyHouse/src/Modules/web/web_controlLights.py
 @author:    D. Brian Kimmel

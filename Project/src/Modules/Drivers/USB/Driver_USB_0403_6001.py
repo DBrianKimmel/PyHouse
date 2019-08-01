@@ -1,6 +1,6 @@
 """
 
-@name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_utils.py
+@name:      PyHouse/src/Modules/Families/Insteon/_test/test_Insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2017 by D. Brian Kimmel

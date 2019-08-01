@@ -24,7 +24,7 @@ LOG = Logger.getLogger('PyHouse.Internet_xml   ')
 
 class Util(object):
     """
-    This section is fairly well tested by the unit test module.
+    This section is fairly well tested by the unit _test module.
     """
 
     @staticmethod

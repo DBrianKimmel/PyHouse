@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Mqtt/test/test_mqtt.py
+@name:      PyHouse/Project/src/Modules/Computer/Mqtt/_test/test_mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -126,7 +126,7 @@ class A0(unittest.TestCase):
     def test_00_Print(self):
         print('Id: test_mqtt_util')
         _w = FormatBytes('123')
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
 
 
 class A1_XML(SetupMixin, unittest.TestCase):

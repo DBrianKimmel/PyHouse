@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/test/xml_computer.py
+@name:      PyHouse/src/Modules/Computer/_test/xml_computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2018 by D. Brian Kimmel

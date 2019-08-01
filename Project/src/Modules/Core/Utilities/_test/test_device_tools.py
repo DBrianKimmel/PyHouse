@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules.Core.Utilities.test/test_device_tools.py
+@name:      PyHouse/src/Modules.Core.Utilities._test/test_device_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel

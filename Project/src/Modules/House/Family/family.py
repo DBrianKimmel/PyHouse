@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/family.py
+@name:      Modules/House/Family/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel

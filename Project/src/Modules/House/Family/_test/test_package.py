@@ -1,5 +1,5 @@
 """
-@Name:      PyHouse/src/Modules/Family/test/test_package.py
+@Name:      PyHouse/src/Modules/Family/_test/test_package.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2018 by D. Brian Kimmel
@@ -45,7 +45,7 @@ class Test_01(unittest.TestCase):
         pass
 
     def test_0111_Insteon(self):
-        l_name = 'Insteon.test'
+        l_name = 'Insteon._test'
         # unittest.TestSuite(l_name)
         # suite = unittest.TestLoader().loadTestsFromTestCase(test_Insteon_device().Test_02_API)
         pass
@@ -74,7 +74,7 @@ class Test_02_Insteon(unittest.TestCase):
         pass
 
     def test_0111_Insteon(self):
-        l_name = 'Insteon.test'
+        l_name = 'Insteon._test'
         # unittest.TestSuite(l_name)
         pass
 

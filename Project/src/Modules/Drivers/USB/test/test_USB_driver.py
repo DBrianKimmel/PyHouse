@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Drivers/USB/test/test_USB_driver.py
+@name:      PyHouse/src/Modules/Drivers/USB/_test/test_USB_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2017 by briank

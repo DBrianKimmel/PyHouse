@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/utils.py
+@name:      Modules/House/utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-12'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 

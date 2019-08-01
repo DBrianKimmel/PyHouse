@@ -1,5 +1,5 @@
 """
-@name:      Modules/Core/Utilities/test/test_config_tools.py
+@name:      Modules/Core/Utilities/_test/test_config_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -25,7 +25,7 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.config_tools import \
     Yaml as configYaml
-from Modules.Housing.Lighting.lighting_lights import LightData
+from Modules.House.Lighting.lighting_lights import LightData
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -36,11 +36,11 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_xml_root)
         self.m_yaml = SetupPyHouseObj().BuildYaml(None)
         self.m_pyhouse_obj._Config.ConfigDir
-        self.m_filename = 'test.yaml'
+        self.m_filename = '_test.yaml'
         self.m_yamlconf = configYaml(self.m_pyhouse_obj)
 
     def dump_to_file(self, p_yaml):
-        """ For debugging to see a new test.yaml file.
+        """ For debugging to see a new _test.yaml file.
         Only do this once in the entire suite.  It overwrites any previous output.
         """
         self.m_yamlconf.write_yaml(p_yaml, self.m_filename, addnew=True)
@@ -51,7 +51,7 @@ class A0(unittest.TestCase):
     """
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_config_file')
 
 
@@ -76,7 +76,7 @@ class A1_Config(SetupMixin, unittest.TestCase):
 
 class B1_YamlCreate(SetupMixin, unittest.TestCase):
     """
-    This section will test various Yaml structure creations
+    This section will _test various Yaml structure creations
     """
 
     def setUp(self):
@@ -84,7 +84,7 @@ class B1_YamlCreate(SetupMixin, unittest.TestCase):
         self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
 
     def test_01_create(self):
-        """ test the creation of a yaml structure
+        """ _test the creation of a yaml structure
         This will create an almost empty yaml config structure
         """
         LIGHTS = 'Lights'
@@ -100,7 +100,7 @@ class B1_YamlCreate(SetupMixin, unittest.TestCase):
         self.assertIsNone(l_yaml[LIGHTS])
 
     def test_02_create(self):
-        """ test the creation of a yaml structure
+        """ _test the creation of a yaml structure
         This will create an almost empty yaml config structure
 
         This will cause an ERROR log message to be printed!!!
@@ -115,7 +115,7 @@ class B1_YamlCreate(SetupMixin, unittest.TestCase):
         self.assertEqual(l_tag, "ERROR_TAG")
 
     def test_03_CreateNode(self):
-        """ test the creation of a yaml structure
+        """ _test the creation of a yaml structure
         This will create an almost empty yaml config structure
         """
         l_node = self.m_yamlconf.create_yaml_node('Test3')
@@ -126,16 +126,16 @@ class B1_YamlCreate(SetupMixin, unittest.TestCase):
 
 class B2_YamlLoad(SetupMixin, unittest.TestCase):
     """
-    This section will test various Yaml structure creations
+    This section will _test various Yaml structure creations
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_filename = 'test.yaml'
+        self.m_filename = '_test.yaml'
         self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
 
     def test_01_load(self):
-        """ test the creation of a yaml structure by reading in a yaml file.
+        """ _test the creation of a yaml structure by reading in a yaml file.
         """
         # print('B2-01-A - Node: {}'.format(self.m_node))
         # print(PrettyFormatAny.form(self.m_node, 'B2-01-B - Find', 190))
@@ -145,7 +145,7 @@ class B2_YamlLoad(SetupMixin, unittest.TestCase):
         self.assertIsInstance(self.m_node.Yaml, OrderedDict)
 
     def test_02_load(self):
-        """ test the creation of a yaml structure by reading in a yaml file.
+        """ _test the creation of a yaml structure by reading in a yaml file.
         """
         l_yaml = self.m_node.Yaml
         l_testing = l_yaml['Testing']
@@ -160,7 +160,7 @@ class B2_YamlLoad(SetupMixin, unittest.TestCase):
 
 class C1_YamlFind(SetupMixin, unittest.TestCase):
     """
-    This section will test various Yaml functions
+    This section will _test various Yaml functions
     """
 
     def setUp(self):
@@ -171,7 +171,7 @@ class C1_YamlFind(SetupMixin, unittest.TestCase):
 
         This will find the Yaml file in one of the sub-directories of the configured root.
         """
-        l_filename = 'test.yaml'
+        l_filename = '_test.yaml'
         l_node = configYaml(self.m_pyhouse_obj).find_config_node(l_filename)
         # print(PrettyFormatAny.form(l_node, 'C1-01-A - Find', 190))
         # self.dump_to_file(l_yaml)
@@ -197,7 +197,7 @@ class C1_YamlFind(SetupMixin, unittest.TestCase):
 
         This will find the Yaml file in one of the sub-dirs of the config'ed root.
         """
-        l_filename = 'test.yml'
+        l_filename = '_test.yml'
         l_node = configYaml(self.m_pyhouse_obj).find_config_node(l_filename)
         # print(PrettyFormatAny.form(l_node, 'C1-03-A - Find', 190))
         # self.dump_to_file(l_yaml)
@@ -208,12 +208,12 @@ class C1_YamlFind(SetupMixin, unittest.TestCase):
 
 class C2_Yaml(SetupMixin, unittest.TestCase):
     """
-    This section will test various Yaml functions
+    This section will _test various Yaml functions
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_filename = 'test.yaml'
+        self.m_filename = '_test.yaml'
         self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
 
     def test_01_find(self):
@@ -301,7 +301,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
 
 class C3_Fetch(SetupMixin, unittest.TestCase):
     """
-    This section will test various Yaml Fetch functions
+    This section will _test various Yaml Fetch functions
     """
 
     def setUp(self):

@@ -1,5 +1,5 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Housing/Entertainment/Sony.py -*-
+-*- _test-case-name: /home/briank/PyHouse/src/Modules/Housing/Entertainment/Sony.py -*-
 
 @name:      /home/briank/PyHouse/src/Modules/Housing/Entertainment/Sony.py
 @author:    D. Brian Kimmel

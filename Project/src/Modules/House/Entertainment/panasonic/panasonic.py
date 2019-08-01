@@ -1,5 +1,5 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Housing/Entertainment/panasonic.py -*-
+-*- _test-case-name: /home/briank/PyHouse/src/Modules/Housing/Entertainment/panasonic.py -*-
 
 @name:      src.Modules.House.Entertainment.panasonic
 @author:    D. Brian Kimmel

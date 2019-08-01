@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Entertainment/test/test_samsung.py
+@name:      PyHouse/src/Modules/Housing/Entertainment/_test/test_samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2018 by D. Brian Kimmel
@@ -112,7 +112,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
 
 class A3_XML(SetupMixin, unittest.TestCase):
-    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
     """
 
     def setUp(self):

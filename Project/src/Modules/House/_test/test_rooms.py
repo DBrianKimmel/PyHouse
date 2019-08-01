@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/test/test_rooms.py
+@name:      PyHouse/Project/src/Modules/Housing/_test/test_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -40,7 +40,7 @@ class SetupMixin:
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_rooms')
 
 
@@ -63,7 +63,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
 
 class A2_XML(SetupMixin, unittest.TestCase):
-    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
     """
 
     def setUp(self):
@@ -195,7 +195,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         self.m_working_rooms = self.m_pyhouse_obj.House.Rooms
 
     def test_01_Read(self):
-        """ Basic test to read in data and update it so we can check for new data in output.
+        """ Basic _test to read in data and update it so we can check for new data in output.
         """
         self.m_working_rooms[0].Comment = 'After mods'
         print(PrettyFormatAny.form(self.m_working_rooms[0], 'C2-01-A - WorkingRooms'))

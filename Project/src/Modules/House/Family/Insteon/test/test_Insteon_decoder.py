@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_decoder.py
+@name:      PyHouse/src/Modules/Families/Insteon/_test/test_Insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2017 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 Passed all 8 tests - DBK - 2017-10-08
 
-This test needs the lighting controller data so it must be loaded,
+This _test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
@@ -61,7 +61,7 @@ class A0(unittest.TestCase):
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
-    """Test that the Setup and the XML is correct for this test module.
+    """Test that the Setup and the XML is correct for this _test module.
     """
 
     def setUp(self):

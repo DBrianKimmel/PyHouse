@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.utils.test.test_load_password -*-
+-*- _test-case-name: PyHouse.src.Modules.utils._test.test_load_password -*-
 
 @name:      PyHouse/src/Modules/utils/load_passwords.py
 @author:    briank

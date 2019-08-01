@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Internet/test/test_inet_update_dyn_dns.py
+@name:      PyHouse/src/Modules/Computer/Internet/_test/test_inet_update_dyn_dns.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2018 by D. Brian Kimmel

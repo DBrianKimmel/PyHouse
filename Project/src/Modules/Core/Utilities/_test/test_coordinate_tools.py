@@ -1,5 +1,5 @@
 """
-@name:       PyHouse/src/Modules.Core.Utilities.test/test_coordinate_tools.py
+@name:       PyHouse/src/Modules.Core.Utilities._test/test_coordinate_tools.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
 @copyright:  2016-2017 by D. Brian Kimmel

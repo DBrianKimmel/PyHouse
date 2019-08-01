@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/family_utils.py
+@name:      Modules/House/Family/family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-07-21'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff.
 

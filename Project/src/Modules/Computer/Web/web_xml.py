@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.Modules.Web.test.test_web_xml -*-
+-*- _test-case-name: PyHouse.Modules.Web._test.test_web_xml -*-
 
 @name:      PyHouse/src/Modules/Web/web_xml.py
 @author:    D. Brian Kimmel

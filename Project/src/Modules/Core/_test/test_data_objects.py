@@ -1,11 +1,11 @@
 """
-@name:      PyHouse/src/Modules/Core/test/test_data_objects.py
+@name:      PyHouse/src/Modules/Core/_test/test_data_objects.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gm6il.com
 @copyright: (c) 2014-2017 by D. Brian Kimmel
 @note:      Created on Mar 22, 2014
 @license:   MIT License
-@summary:   test ?.
+@summary:   _test ?.
 
 Passed all 2 tests - DBK - 2017-01-19
 

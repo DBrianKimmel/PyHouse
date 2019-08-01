@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/abstract_device.py
+@name:      Modules/Houe/Family/abstract_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-19'
+__updated__ = '2019-07-31'
 
 
 class API:

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Drivers/Serial/test/xml_serial.py
+@name:      PyHouse/Project/src/Modules/Drivers/Serial/_test/xml_serial.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel

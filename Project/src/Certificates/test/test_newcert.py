@@ -1,5 +1,5 @@
 """
-@name:       PyHouse/src/Certificates/test/test_newcert.py
+@name:       PyHouse/src/Certificates/_test/test_newcert.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
 @copyright:  (c) 2015-2017 by D. Brian Kimmel

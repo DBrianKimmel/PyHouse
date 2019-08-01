@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Core/test/xml_device.py
+@name:      PyHouse/src/Modules/Core/_test/xml_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel
@@ -7,7 +7,7 @@
 @note:      Created on Jul 18, 2015
 @Summary:
 
-See PyHouse/src/test/xml_data.py for the entire hierarchy.
+See PyHouse/src/_test/xml_data.py for the entire hierarchy.
 
 """
 

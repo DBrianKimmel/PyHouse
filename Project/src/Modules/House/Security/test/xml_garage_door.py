@@ -1,22 +1,20 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Housing/Security/test/xml_garage_door.py -*-
-
-@name:      /home/briank/PyHouse/src/Modules/Housing/Security/test/xml_garage_door.py
+@name:      Modules/House/Security/_test/xml_garage_door.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2019 by D. Brian Kimmel
 @note:      Created on Nov 1, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-07-13'
+__updated__ = '2019-07-31'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.Insteon.test.xml_insteon import XML_INSTEON_0
+from Modules.House.Family.Insteon.test.xml_insteon import XML_INSTEON_0
 
 L_GARAGE_DOOR_SECTION_START = '<GarageDoorSection>'
 L_GARAGE_DOOR_SECTION_END = '</GarageDoorSection>'

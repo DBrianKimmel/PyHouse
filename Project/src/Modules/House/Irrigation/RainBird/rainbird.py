@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse/src/Modules/Housing/Irrigation/RainBird/test_rainbird.py -*-
+-*- _test-case-name: PyHouse/src/Modules/Housing/Irrigation/RainBird/test_rainbird.py -*-
 
 @name:      PyHouse/src/Modules/Housing/Irrigation/RainBird/rainbird.py
 @author:    D. Brian Kimmel

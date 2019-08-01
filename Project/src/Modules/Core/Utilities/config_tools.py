@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -233,6 +233,14 @@ class Yaml(YamlCreate, YamlFetch):
             l_value = getattr(l_obj, l_key)
             yield (l_key, l_value)
         return
+
+    def require_config_file(self, p_filename):
+        try:
+            l_node = self.read_yaml(p_filename)
+        except:
+            LOG.error('Required YAML config file is missing: "{}"'.format(p_filename))
+            return None
+        return l_node
 
     def find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.

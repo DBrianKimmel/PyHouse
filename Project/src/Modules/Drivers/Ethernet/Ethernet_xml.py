@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers.Erhernet.test.test_ethernet_xml -*-
+-*- _test-case-name: PyHouse.src.Modules.Drivers.Erhernet._test.test_ethernet_xml -*-
 
 @name:      PyHouse/src/Modules/Drivers/Ethernet/ethernet_xml.py
 @author:    D. Brian Kimmel

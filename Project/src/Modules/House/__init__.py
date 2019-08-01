@@ -1,11 +1,11 @@
 """
-Housing package documentation.
+House package documentation.
 
 The housing package allows more than one house to be in the XML file
 at a time.  We live in two different houses and take the development
 computer back and forth between them.  Having several houses in the
 XML file keeps the data from the previous year intact.  In addition,
-I can add a test house to the houses and do development testing without
+I can add a _test house to the houses and do development testing without
 disturbing the real house information.
 
 The houses (plural) module is a singleton and loads a house module for each

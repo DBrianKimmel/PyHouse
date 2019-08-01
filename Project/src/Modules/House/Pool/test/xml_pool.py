@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/Pool/test/xml_pool.py
+@name:      PyHouse/src/Modules/Housing/Pool/_test/xml_pool.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel

@@ -1,5 +1,5 @@
 """
--*- test-case-name: Pyhouse/src/Modules.Core.Utilities.modular.py -*-
+-*- _test-case-name: Pyhouse/src/Modules.Core.Utilities.modular.py -*-
 
 @name:      Pyhouse/src/Modules.Core.Utilities.modular.py
 @author:    D. Brian Kimmel

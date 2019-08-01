@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules.Core.Utilities.test/test_uuid_tools.py
+@name:      PyHouse/src/Modules.Core.Utilities._test/test_uuid_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel
@@ -49,7 +49,7 @@ class A0(unittest.TestCase):
 
 class A1_Setup(SetupMixin, unittest.TestCase):
     """
-    This section tests the setup of the test
+    This section tests the setup of the _test
     """
 
     def setUp(self):
@@ -92,7 +92,7 @@ class B1_Defs(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_File(self):
-        """ Fixed literal file name in test to be sure it is exactly where we want it.
+        """ Fixed literal file name in _test to be sure it is exactly where we want it.
         """
         l_file = uuid_tools._file_name(self.m_pyhouse_obj, 'Computer.uuid')
         print('B1-01-A - File Name:{}'.format(l_file))

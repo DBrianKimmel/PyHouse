@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Security/pi_camera.py
+@name:      Modules/House/Security/pi_camera.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013_2019 by D. Brian Kimmel
@@ -52,7 +52,7 @@ class Image(object):
     """
     """
 
-    # Capture a small test image (for motion detection)
+    # Capture a small _test image (for motion detection)
     def capture_test_image(self):
         command = "raspistill -w %s -h %s -t 0 -e bmp -o -" % (100, 75)
         imageData = StringIO.StringIO()

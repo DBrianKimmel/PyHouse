@@ -1,5 +1,5 @@
 """
-@name:      Modules/Schedules/test/test_schedule.py
+@name:      Modules/Schedules/_test/test_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -102,7 +102,7 @@ class SetupMixin(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_schedule')
 
 
@@ -274,7 +274,7 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_01_one(self):
-        """ No way to test the dispatch routine
+        """ No way to _test the dispatch routine
         """
         self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'  # to set dispatch to testing
         _l_schedule = self.m_pyhouse_obj.House.Schedules[0]
@@ -365,9 +365,9 @@ class C5_Full(SetupMixin, unittest.TestCase):
 
 class D1_Time_Sun(SetupMixin, unittest.TestCase):
     """
-    These "D" classes will test the parsing of the "Time" attribute of the Schedule.
+    These "D" classes will _test the parsing of the "Time" attribute of the Schedule.
 
-    D1 will test the sun related part - the words: Dawn etc
+    D1 will _test the sun related part - the words: Dawn etc
 
         Dawn    = 06:04:52
         SunRise = 06:31:56
@@ -443,9 +443,9 @@ class D1_Time_Sun(SetupMixin, unittest.TestCase):
 
 class D2_Time_Sign(SetupMixin, unittest.TestCase):
     """
-    These "D" classes will test the parsing of the "Time" attribute of the Schedule.
+    These "D" classes will _test the parsing of the "Time" attribute of the Schedule.
 
-    D2 will test the sign portion:
+    D2 will _test the sign portion:
         Possible valid formats are:
         "" (blank)
         +offset
@@ -506,9 +506,9 @@ class D2_Time_Sign(SetupMixin, unittest.TestCase):
 
 class D3_Time_Offset(SetupMixin, unittest.TestCase):
     """
-    These "D" classes will test the parsing of the "Time" attribute of the Schedule.
+    These "D" classes will _test the parsing of the "Time" attribute of the Schedule.
 
-    D3 will test the offset portion:
+    D3 will _test the offset portion:
         Possible valid formats are:
         "" (Blank)
         hh
@@ -561,9 +561,9 @@ class D3_Time_Offset(SetupMixin, unittest.TestCase):
 
 class D4_Timefield(SetupMixin, unittest.TestCase):
     """
-    These "D" classes will test the parsing of the "Time" attribute of the Schedule.
+    These "D" classes will _test the parsing of the "Time" attribute of the Schedule.
 
-    D4 will test the entire field.
+    D4 will _test the entire field.
 
         Possible valid formats are:
         "" (Blank)

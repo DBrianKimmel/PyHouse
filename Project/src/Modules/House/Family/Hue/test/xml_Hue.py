@@ -1,7 +1,7 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Families/Hue/test/xml_Hue.py -*-
+-*- _test-case-name: /home/briank/workspace/PyHouse/src/Modules/Families/Hue/_test/xml_Hue.py -*-
 
-@name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/test/xml_Hue.py
+@name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/_test/xml_Hue.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel

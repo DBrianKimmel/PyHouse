@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Entertainment/test/test_entertainment_xml.py
+@name:      PyHouse/Project/src/Modules/Housing/Entertainment/_test/test_entertainment_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -100,7 +100,7 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
-    """ Print out the test module ID.
+    """ Print out the _test module ID.
     """
 
     def setUp(self):
@@ -152,7 +152,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
 
 class A3_XML(SetupMixin, unittest.TestCase):
-    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
     """
 
     def setUp(self):
@@ -195,7 +195,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
 
 
 class B1_Setup(SetupMixin, unittest.TestCase):
-    """ This will test reading the onkyo devices as they are a part of the test suite.
+    """ This will _test reading the onkyo devices as they are a part of the _test suite.
     """
 
     def setUp(self):
@@ -220,7 +220,7 @@ class B1_Setup(SetupMixin, unittest.TestCase):
 
 
 class C1_ReadDevice(SetupMixin, unittest.TestCase):
-    """ This will test reading the onkyo devices as they are a part of the test suite.
+    """ This will _test reading the onkyo devices as they are a part of the _test suite.
     """
 
     def setUp(self):
@@ -283,7 +283,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
 
 class C2_RdService(SetupMixin, unittest.TestCase):
     """
-    This will test reading the pandora services as they are a part of the test suite.
+    This will _test reading the pandora services as they are a part of the _test suite.
     """
 
     def setUp(self):
@@ -320,7 +320,7 @@ class C2_RdService(SetupMixin, unittest.TestCase):
 
 
 class C3_RdSubSect(SetupMixin, unittest.TestCase):
-    """ This will test all of the sub modules ability to load their part of the XML file
+    """ This will _test all of the sub modules ability to load their part of the XML file
             and this modules ability to put everything together in the structure
     """
 
@@ -370,7 +370,7 @@ class C3_RdSubSect(SetupMixin, unittest.TestCase):
 
 
 class C4_ReadAll(SetupMixin, unittest.TestCase):
-    """ This will test all of the sub modules ability to load their part of the XML file
+    """ This will _test all of the sub modules ability to load their part of the XML file
             and this modules ability to put everything together in the structure
     """
 
@@ -537,7 +537,7 @@ class D4_WriteAll(SetupMixin, unittest.TestCase):
 
 
 class E1_Device(SetupMixin, unittest.TestCase):
-    """ This will test reading the onkyo devices as they are a part of the test suite.
+    """ This will _test reading the onkyo devices as they are a part of the _test suite.
     """
 
     def setUp(self):

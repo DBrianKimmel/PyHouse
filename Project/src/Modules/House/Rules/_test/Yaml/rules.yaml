@@ -1,0 +1,18 @@
+---
+# Name:      Modules/House/Rules/_test/Yaml/rules.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Aug  1, 2019
+# Updated:   Aug  1, 2019
+# License:   MIT License
+# Summary:   This is for all the rules in a house.
+
+Rules:
+   - Name: MBR Closet
+     Comment:  Turn off closet light if on too long
+
+   - Name: Outside 123
+     Comment: Turn the outside lights on for 1 hour if the garage door opens after sunset and before sunrise
+
+### END DBK

@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/test/test_family.py
+@name:      Modules/Families/_test/test_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -56,12 +56,12 @@ class SetupMixin(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_family')
 
 
 class A1_Validate(SetupMixin, unittest.TestCase):
-    """ This section tests the test environment to be valid before testing the "Real" stuff.
+    """ This section tests the _test environment to be valid before testing the "Real" stuff.
     """
 
     def setUp(self):

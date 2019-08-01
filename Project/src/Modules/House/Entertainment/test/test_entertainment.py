@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Entertainment/test/test_entertainment.py
+@name:      PyHouse/Project/src/Modules/Entertainment/_test/test_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -50,7 +50,7 @@ class SetupMixin(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_entertainment')
 
 
@@ -95,7 +95,7 @@ class A2_Xml(SetupMixin, unittest.TestCase):
 
 
 class A3_XML(SetupMixin, unittest.TestCase):
-    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
     """
 
     def setUp(self):
@@ -128,7 +128,7 @@ class A3_XML(SetupMixin, unittest.TestCase):
 
 
 class C1_Load(SetupMixin, unittest.TestCase):
-    """ This will test all of the sub modules ability to load their part of the XML file
+    """ This will _test all of the sub modules ability to load their part of the XML file
             and this modules ability to put everything together in the structure
     """
 

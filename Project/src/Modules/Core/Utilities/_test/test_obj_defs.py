@@ -1,5 +1,5 @@
 """
-@name:      C:/Users/briank/workspace/PyHouse/src/Modules.Core.Utilities.test/test_obj_defs.py
+@name:      C:/Users/briank/workspace/PyHouse/src/Modules.Core.Utilities._test/test_obj_defs.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel

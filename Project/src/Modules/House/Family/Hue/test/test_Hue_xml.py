@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/test/test_Hue_xml.py
+@name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/_test/test_Hue_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel

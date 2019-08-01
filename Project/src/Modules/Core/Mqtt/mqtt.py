@@ -26,6 +26,7 @@ from Modules.Core.Utilities import config_tools
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttJson, MqttBrokerInformation
 from Modules.House.house import MqttActions as houseMqtt
+from Modules.Computer.computer import MqttActions as computerMqtt
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -233,7 +234,7 @@ class API:
             l_logmsg += '\n\tSender: {}\n'.format(l_sender)
         # Branch on the <division> portion of the topic
         if l_topic_list[0] == 'computer':
-            l_logmsg += self.m_parent.DecodeMqtt(l_topic_list[1:], p_message)
+            l_logmsg += computerMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
         elif l_topic_list[0] == 'house':
             l_logmsg += houseMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
         elif l_topic_list[0] == 'login':

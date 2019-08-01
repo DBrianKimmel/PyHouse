@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Housing/test/test_Entertainment.py
+@name:      PyHouse/src/Modules/Housing/_test/test_Entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel

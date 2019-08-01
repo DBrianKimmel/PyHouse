@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Utilities/test/test_convert.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/_test/test_convert.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: 2013-2019 by D. Brian Kimmel
@@ -18,8 +18,8 @@ import datetime
 
 # Import PyMh files and modules.
 from Modules.Core.Utilities import convert
-# from test.xml_data import XML_LONG
-# from test.testing_mixin import SetupPyHouseObj
+# from _test.xml_data import XML_LONG
+# from _test.testing_mixin import SetupPyHouseObj
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAnySetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
 STR_IPV4 = '192.168.1.54'

@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers.USB.test.test_usb_xml -*-
+-*- _test-case-name: PyHouse.src.Modules.Drivers.USB._test.test_usb_xml -*-
 
 @name:      PyHouse/src/Modules/Drivers/USB/usb_xml.py
 @author:    D. Brian Kimmel

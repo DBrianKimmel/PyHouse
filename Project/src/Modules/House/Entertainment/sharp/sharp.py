@@ -1,5 +1,5 @@
 """
--*- test-case-name: /home/briank/PyHouse/src/Modules/Entertainment/sharp.py -*-
+-*- _test-case-name: /home/briank/PyHouse/src/Modules/Entertainment/sharp.py -*-
 
 @name:      src.Modules.Entertainment.sharp
 @author:    D. Brian Kimmel

@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_thermostats -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_thermostats -*-
 
 @name:      PyHouse/src/Modules/Web/web_thermostats.py
 @author:    D. Brian Kimmel

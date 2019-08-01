@@ -1,17 +1,15 @@
 """
--*- test-case-name: PyHouse.src.Modules.Families.X10.test.test_X10_device -*-
-
-@name:      PyHouse/src/Modules/Families/X10/X10_device.py
+@name:      Modules/House/Family/X10/X10_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2019 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon/X10
 
 """
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-07-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

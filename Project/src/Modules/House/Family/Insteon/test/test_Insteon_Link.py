@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Families/Insteon/test/test_Insteon_Link.py
+@name:      PyHouse/src/Modules/Families/Insteon/_test/test_Insteon_Link.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel

@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/test/test_rooms.py
+@name:      Modules/Housing/_test/test_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -40,7 +40,7 @@ class SetupMixin:
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_floors')
 
 
@@ -138,7 +138,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         self.m_working_floors = self.m_pyhouse_obj.House.Floors
 
     def test_01_Basic(self):
-        """ Basic test to read in data and update it so we can check for new data in output.
+        """ Basic _test to read in data and update it so we can check for new data in output.
         """
         self.m_working_floors[0].Comment = 'After mods'
         # print(PrettyFormatAny.form(self.m_working_floors[0], 'C2-01-B'))

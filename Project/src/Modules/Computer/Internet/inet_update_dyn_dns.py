@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_inet_update_dyn_dns-*-
+-*- _test-case-name: PyHouse.src.Modules.Computer.Internet._test.test_inet_update_dyn_dns-*-
 
 @Name:      PyHouse/src/Modules/Computer/Internet/inet_update_dyn_dns.py
 @author:    D. Brian Kimmel

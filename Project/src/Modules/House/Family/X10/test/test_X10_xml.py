@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/families/X10/test/test_X10_xml.py
+@name:      PyHouse/src/Modules/families/X10/_test/test_X10_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2017 by briank

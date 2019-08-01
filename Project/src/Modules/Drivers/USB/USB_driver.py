@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Drivers/USB.test.test_USB_driver -*-
+-*- _test-case-name: PyHouse.src.Modules.Drivers/USB._test.test_USB_driver -*-
 
 @name:      PyHouse/src/Modules/Drivers/USB/USB_driver.py
 @author:    D. Brian Kimmel
@@ -79,7 +79,7 @@ class UsbDriverAPI(object):
         @return: the number of bytes fetched from the controller
         """
         try:
-            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout=100)  # Note - No device to test with
+            l_msg = p_USB_obj.UsbDevice.read(p_USB_obj.epi_addr, p_USB_obj.epi_packet_size, timeout=100)  # Note - No device to _test with
             LOG.debug("read_device() - Msg:{}".format(FormatBytes(l_msg)))
         except usb.USBError as e_err:
             LOG.error("ERROR - read_device() got USBError - {}".format(e_err))

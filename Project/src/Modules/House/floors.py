@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/f.py
+@name:      Modules/House/f.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2019-07-31'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 

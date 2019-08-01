@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Computer/Internet/test/test_internet.py
+@name:      PyHouse/src/Computer/Internet/_test/test_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2017 by D. Brian Kimmel
