@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Bridges/_test/test_bridges.py
+@name:      Modules/Computer/Bridges/_test/test_bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -10,36 +10,27 @@
 Passed all 6 tests - DBK - 2018-02-12
 
 """
-from Modules.Core.data_objects import PyHouseInformation, ComputerInformation
+# from ruamel.yaml.comments import CommentedMap
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-08-02'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Computer.Bridges.bridges import \
-    API as bridgesAPI, \
-    Yaml as bridgesYaml
-from Modules.Computer.test.xml_computer import TESTING_COMPUTER_DIVISION
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.computer import ComputerInformation
+from Modules.Computer.Bridges.bridges import Config as bridgesConfig
+from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Utilities import json_tools, config_tools
-from Modules.Computer.Bridges.test.xml_bridges import \
-        XML_BRIDGES, \
-        TESTING_BRIDGES_SECTION, \
-        TESTING_BRIDGE_NAME_0, \
-        TESTING_BRIDGE_NAME_1, \
-        TESTING_BRIDGE_COMMENT_0
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_filename = 'bridges.yaml'
 
     def jsonPair(self, p_json, p_key):
@@ -57,8 +48,8 @@ class SetupMixin(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        print('Id: test_bridges')
         _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
+        print('Id: test_bridges')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
@@ -66,7 +57,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly.
@@ -79,44 +70,13 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_pyhouse_obj.Computer.Bridges, {})
 
 
-class A2_XML(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
-
-    def test_01_Tags(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
-
-
-class A2_Xml(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
-
-    def test_01_Raw(self):
-        l_raw = XML_BRIDGES
-        # print('A2-01-A - Raw', l_raw)
-        self.assertEqual(l_raw[:16], '<BridgesSection>')
-
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_BRIDGES)
-        # print('A2-02-A - Parsed', l_xml)
-        self.assertEqual(l_xml.tag, TESTING_BRIDGES_SECTION)
-
-
 class C1_YamlRead(SetupMixin, unittest.TestCase):
     """ Read the YAML config files.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_yaml = bridgesYaml()
+        SetupMixin.setUp(self)
+        self.m_config = bridgesConfig(self.m_pyhouse_obj)
         self.m_working_bridges = self.m_pyhouse_obj.Computer.Bridges
 
     def test_01_Build(self):
@@ -125,31 +85,33 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_working_bridges, 'C1-01-A - WorkingBridges'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-01-B - Computer'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Bridges, 'C1-01-C - Bridges'))
+        self.assertEqual(self.m_working_bridges, {})
 
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
         l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
         l_yaml = l_node.Yaml
-        l_yamlbridges = l_yaml['Bridges']
-        print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
-        print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
-        print(PrettyFormatAny.form(l_yamlbridges, 'C1-02-C - YamlBridges'))
-        # self.assertEqual(l_yamlbridges[0]['Name'], 'Outside')
-        # self.assertEqual(len(l_yamlbridges), 5)
-        pass
+        l_config = l_yaml['Bridges']
+        # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
+        # print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
+        print(PrettyFormatAny.form(l_config, 'C1-02-C - YamlBridges'))
+        print('C1-02-D - Config: {}'.format(l_config))
+        print('C1-02-E - Config: {}'.format(l_config.item()))
+        self.assertEqual(l_config['Insteon']['Name'], 'Insteon')
+        self.assertEqual(len(l_config), 3)
 
     def test_03_GetIncludes(self):
         """
         """
         l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
-        l_ret = bridgesYaml()._get_bridge_plugin_config(self.m_pyhouse_obj, l_node)
+        l_ret = bridgesConfig(self.m_pyhouse_obj)._extract_all_bridges(l_node)
 
 
 class D1_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
 
 # ## END DBK

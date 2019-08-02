@@ -21,7 +21,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-02'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,9 +33,10 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import extract_tools, config_tools
 from Modules.Core.Utilities.convert import long_to_str
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation
 from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pioneer        ')
@@ -450,12 +451,11 @@ class API(MqttActions, PioneerClient):
         l_count = 0
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device_obj in l_devices.values():
+            LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device', 190))
             l_count += 1
-            if not l_device_obj.Active:
-                continue
             if l_device_obj._isRunning:
                 LOG.info('Pioneer device {} is already running.'.format(l_device_obj.Name))
-            l_host = long_to_str(l_device_obj.IPv4)
+            l_host = l_device_obj.Host.Name
             l_port = l_device_obj.Port
             l_factory = PioneerFactory(self.m_pyhouse_obj, l_device_obj)
             l_connector = self.m_pyhouse_obj._Twisted.Reactor.connectTCP(l_host, l_port, l_factory)

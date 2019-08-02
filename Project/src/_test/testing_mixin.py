@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-02'
 
 #  Import system type stuff
 import os
@@ -28,7 +28,6 @@ from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
     PyHouseAPIs, \
-    HouseInformation, \
     HouseAPIs, \
     TwistedInformation, \
     SecurityData, \
@@ -38,7 +37,7 @@ from Modules.Core.Utilities.config_tools import \
 from Modules.House.Family.family import \
     Utility as familyUtil, \
     API as familyAPI
-from Modules.House.house import API as housingAPI
+from Modules.House.house import API as housingAPI, HouseInformation
 from Modules.House.Hvac.hvac_data import HvacData
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt_data import MqttInformation

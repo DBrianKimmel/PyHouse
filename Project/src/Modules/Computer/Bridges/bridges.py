@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-07-26'
+__updated__ = '2019-08-02'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,6 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import BaseUUIDObject
 from Modules.Core.Utilities import config_tools
-# from Modules.Computer.Bridges.bridges_xml import Xml as bridgesXML
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Bridges        ')
@@ -62,14 +61,19 @@ class Config:
     """
 
     m_pyhouse_obj = None
+    m_bridges__defined = []
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_bridge_plugin_config(self, _p_pyhouse_obj, _p_node_yaml):
+    def _extract_all_bridges(self, p_config):
+        """ Get the list of bridges we have
         """
-        """
-        _l_list = []
+        LOG.debug('Bridges: {}'.format(p_config))
+        for l_ix, l_value in enumerate(p_config):
+            LOG.debug('Bridge Key 1: {}; Value: {}'.format(l_ix, l_value))
+        for l_key, l_value in p_config.items():
+            LOG.debug('Bridge Key 2: {}; Value: {}'.format(l_key, l_value))
         pass
 
     def LoadYamlConfig(self):
@@ -83,13 +87,12 @@ class Config:
         try:
             l_yaml = l_node.Yaml['Bridges']
         except:
-            LOG.warn('The bridges.yaml file does not start with "Bri:dges"')
+            LOG.warn('The bridges.yaml file does not start with "Bridges"')
             return None
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        self._get_bridge_plugin_config(self.m_pyhouse_obj, l_node.Yaml)
-        # l_bridges = self._update_bridges_from_yaml(p_pyhouse_obj, l_node.Yaml)
-        # p_pyhouse_obj.House.Rooms = l_bridges
+        self._extract_all_bridges(l_yaml)
         return l_node  # for testing purposes
+
+# ----------
 
     def _copy_to_yaml(self, p_pyhouse_obj):
         """ Update the yaml information.
@@ -132,6 +135,7 @@ class API:
 
     def LoadConfig(self):
         """ Load the config info.
+        This usually is only !include records
         """
         self.m_config.LoadYamlConfig()
         LOG.info("Loaded Config")
@@ -145,7 +149,7 @@ class API:
                 continue
             if l_bridge.Type == 'Hue':
                 # Atempt to not load unless used
-                from Modules.Families.Hue.Hue_hub import HueHub
+                from Modules.House.Family.Hue.Hue_hub import HueHub
                 LOG.info('Hue Bridge Active: {}'.format(l_bridge.Name))
                 HueHub(self.m_pyhouse_obj).HubStart(l_bridge)
             else:

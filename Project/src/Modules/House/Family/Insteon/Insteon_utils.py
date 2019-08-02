@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2019-08-01'
 
 #  Import system type stuff
 
@@ -320,7 +320,7 @@ class Decode(object):
         @param p_message_addr: is the address portion of the message byte array from the PLM we are extracting the Insteon address from.
         @return: The device object that contains the address -OR- a dummy object with noname in Name
         """
-        LOG.debug('Addr ')
+        # LOG.debug('Addr ')
         # Extract the 3 byte Insteon address from the message
         # l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
         l_address = extract_address_from_message(p_message_addr)

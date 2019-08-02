@@ -17,15 +17,16 @@ InsteonControllers
 serial_port
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-07-27'
+__updated__ = '2019-08-01'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Device ')
 

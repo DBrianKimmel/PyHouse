@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-02'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -44,7 +44,7 @@ from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Family.Hue.Hue_data import HueLightData
-from Modules.House.Lighting.lighting_utility import Utility as lightingUtility
+from Modules.House.Lighting.utility import Utility as lightingUtility
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
@@ -55,7 +55,7 @@ uid = '2f402f80-da50-11e1-9b23-%s' % ''.join(mac)
 icon = 'hue.png'
 description_xml = 'description.xml'
 lights = []
-username = "83b7780291a6ceffbe0bd049104df"
+username = "9nR8rIGRYNKBlROabMWuAlhGfAgSjBS2EWHoFYy3"
 devicetype = "something"
 portalservices = False
 
@@ -717,5 +717,18 @@ class HueHub:
         self.m_bridge_obj = p_bridge_obj
         self._get_all_config()
         LOG.info('Started')
+
+    def Start(self):
+        """ Start the hub(bridge) and then get the hub data
+
+        @param p_bridge_obj: is PyHouse_Obj.Computers.Bridges.xxx with xxx being a HueHub
+
+        """
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'House', 190))
+        for l_bridge_obj in self.m_pyhouse_obj:
+            l_bridge_obj._Queue = Queue(32)
+            self.m_bridge_obj = l_bridge_obj
+            self._get_all_config()
+        LOG.debug('Started')
 
 # ## END DBK

@@ -9,13 +9,14 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Core.Utilities.xml_tools import PutGetXML, stuff_new_attrs
 from Modules.House.Family.Hue.Hue_data import HueAddInData
+
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_xml    ')
 

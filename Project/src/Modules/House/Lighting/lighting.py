@@ -7,8 +7,6 @@
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
 
-Lighting Device type is "1".
-
 PyHouse.House.Lighting.
                        Buttons
                        Controllers
@@ -16,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +22,6 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyHouse files
 from Modules.Core.Utilities import config_tools
-from Modules.Core.Utilities.xml_tools import XmlConfigTools
 from Modules.House.Lighting.buttons import API as buttonsApi
 from Modules.House.Lighting.controllers import MqttActions as controllerMqtt, API as controllersApi
 from Modules.House.Lighting.lights import MqttActions as lightMqtt, API as lightsApi
@@ -62,7 +59,7 @@ class MqttActions:
         --> pyhouse/<housename>/lighting/<category>/xxx
         """
         p_logmsg += '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
+        # LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'button':
             pass
         elif p_topic[0] == 'controller':

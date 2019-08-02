@@ -9,12 +9,13 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.House.Family.Hue.Hue_hub import HueHub
+
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_device     ')
 
@@ -24,14 +25,15 @@ class API(object):
     """
 
     m_pyhouse_obj = None
+    m_hue_hub = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_hue_hub = HueHub(p_pyhouse_obj)
         LOG.info('Initialized')
 
     def LoadConfig(self, p_pyhouse_obj):
-        """ Reading the xml has already happened - handled by Bridges.
-        Now we set up the rest client
+        """
         """
         LOG.info('Loading')
         HueHub(self.m_pyhouse_obj).Start(p_pyhouse_obj)
@@ -40,7 +42,7 @@ class API(object):
         """
         """
         # if self.m_pyhouse_obj.Computer != {}:
-        # HueHub(self.m_pyhouse_obj).Start(self.m_pyhouse_obj)
+        self.m_hue_hub.Start()
         LOG.info('Started')
         pass
 

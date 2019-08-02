@@ -20,6 +20,7 @@ Pioneer:
       Name: pioneer-ct
       Port: 8102
     Type: Receiver
+    Model: VSX-822-K
 
   - Name: BluRay
     Comment: Disk Player

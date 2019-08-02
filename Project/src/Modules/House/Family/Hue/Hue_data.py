@@ -9,13 +9,13 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-01'
 
 # Import system type stuff
 
 # Import PyMh files
 from Modules.Core.data_objects import DeviceInformation
-from Modules.House.Lighting.lighting_lights import LightData
+from Modules.House.Lighting.lights import LightData
 
 
 class HueLightData(LightData):

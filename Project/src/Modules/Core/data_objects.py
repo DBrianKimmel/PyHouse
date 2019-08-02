@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-08-02'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -95,8 +95,8 @@ class BaseObject:
 
     def __init__(self):
         self.Name = 'undefined baseobject'
-        self.Key = 0
-        self.Active = False
+        # self.Key = 0
+        # self.Active = False
         self.Comment = ''
         self.LastUpdate = None
 
@@ -493,7 +493,7 @@ class DeviceInformation(BaseUUIDObject):
         self.RoomUUID = None
 
 
-class HouseInformation(BaseUUIDObject):
+class XXXHouseInformation(BaseUUIDObject):
     """ The collection of information about a house.
     Causes JSON errors due to API type data methinks.
 
@@ -501,7 +501,7 @@ class HouseInformation(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(HouseInformation, self).__init__()
+        super(XXXHouseInformation, self).__init__()
         self.HouseMode = 'Home'  # Home, Away, Vacation,
         self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Hvac = {}  # HvacData()

@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-08-02'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,16 +38,20 @@ LOG = Logger.getLogger('PyHouse.House          ')
 
 CONFIG_FILE_NAME = 'house.yaml'
 UUID_FILE_NAME = 'House.uuid'
-MODULES = ['Entertainment',
-           'Family',
-           'Hvac',
-           'Irrigation',
-           'Lighting',
-           'Pool',
-           'Rules',
-           'Schedule',
-           'Security',
-           'Sync']
+
+# Note that the following are in the order needed to sequence the startup
+MODULES = [
+        'Lighting',
+        'Hvac',
+        'Security',
+        'Irrigation',
+        'Pool',
+        'Rules',
+        'Schedule',
+        'Sync',
+        'Entertainment',
+        'Family'
+        ]
 
 
 class HouseInformation(BaseUUIDObject):
@@ -183,7 +187,7 @@ class Utility:
     """
     """
 
-    m_module_needed = ['Family']
+    m_module_needed = []
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
@@ -199,6 +203,9 @@ class Utility:
             l_node = config_tools.Yaml.find_config_node(self, l_filename)
             if l_node != None:
                 self.m_module_needed.append(l_module)
+        if 'Family' not in self.m_module_needed:
+            self.m_module_needed.append('Family')
+        LOG.debug('Found configured modules: {}'.format(self.m_module_needed))
 
     def _import_all_found_modules(self):
         """
@@ -225,13 +232,6 @@ class Utility:
             setattr(l_house, l_api_name, l_api)
             # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
         LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
-
-    def _init_component_apis(self, p_api):
-        """
-        Initialize all the house _APIs
-        """
-        # print(PrettyFormatAny.form(p_pyhouse_obj.House, 'house.API-2', 180))
-        self.m_pyhouse_obj._APIs.House.HouseAPI = p_api
 
     def _load_component_config(self):
         """ Load the config file for all the components of the house.
@@ -323,10 +323,12 @@ class API:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
         self.m_utility = Utility(p_pyhouse_obj)
+        #
         p_pyhouse_obj.House = HouseInformation()
         self.m_location_api = location.Api(p_pyhouse_obj)
         self.m_floor_api = floors.Api(p_pyhouse_obj)
         self.m_rooms_api = rooms.Api(p_pyhouse_obj)
+        #
         p_pyhouse_obj.House.Name = p_pyhouse_obj._Parameters.Name
         p_pyhouse_obj.House.Key = 0
         p_pyhouse_obj.House.Active = True
@@ -335,9 +337,8 @@ class API:
         p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
         p_pyhouse_obj._APIs.House = HouseAPIs()
         p_pyhouse_obj._APIs.House.HouseAPI = self
-
-        self.m_utility._init_component_apis(self)
-
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House', 190))
+        #
         self.m_utility.find_all_configed_modules()
         self.m_utility._import_all_found_modules()
 
@@ -351,7 +352,7 @@ class API:
         self.m_location_api.LoadConfig()
         self.m_floor_api.LoadConfig()
         self.m_rooms_api.LoadConfig()
-        self.m_utility.find_all_configed_modules()
+        # self.m_utility.find_all_configed_modules()
         self.m_utility._load_component_config()
         LOG.info('Loaded Config - Version:{}'.format(__version__))
         return

@@ -25,17 +25,29 @@ Each command to the hub is a seperate transaction, the connection closes after t
 Each Hue Hub has an API Key.
 To get it do the following.
 
-Browse to 'https://<HueHubIpAddress>/debug/clip.html'
+Browse to:
 
-In the 'url' field enter '/api'
+```http
+https://<HueHubIpAddress>/debug/clip.html
+```
 
-In the 'message body' field enter '{ "devicetype": "my_hue_app#iphone peter" }'
+In the 'url' field enter:
+
+```
+/api
+```
+
+In the 'message body' field enter:
+
+```
+{ "devicetype": "my_hue_app#iphone peter" }
+```
 
 Then press the big round button on the hue hub.
 
 Then click on the 'post' button.
 
-Note the API key will change every time you do this, so beware.
+Note! the API key will change every time you do this, so beware.
 
 
 ## Config
