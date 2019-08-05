@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-03'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -724,7 +724,9 @@ class HueHub:
         @param p_bridge_obj: is PyHouse_Obj.Computers.Bridges.xxx with xxx being a HueHub
 
         """
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'House', 190))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse', 190))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Computer', 190))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House', 190))
         for l_bridge_obj in self.m_pyhouse_obj:
             l_bridge_obj._Queue = Queue(32)
             self.m_bridge_obj = l_bridge_obj

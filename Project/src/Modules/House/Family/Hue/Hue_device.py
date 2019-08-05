@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-08-05'
 
 # Import system type stuff
 
@@ -42,7 +42,7 @@ class API(object):
         """
         """
         # if self.m_pyhouse_obj.Computer != {}:
-        self.m_hue_hub.Start()
+        # self.m_hue_hub.Start()
         LOG.info('Started')
         pass
 

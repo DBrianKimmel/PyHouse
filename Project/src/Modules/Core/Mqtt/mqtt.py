@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-04'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -190,8 +190,8 @@ class API:
         l_topic = _make_topic(self.m_pyhouse_obj, p_topic)
         l_message = _make_message(self.m_pyhouse_obj, p_message)
         for l_broker in self.m_pyhouse_obj.Core.Mqtt.Brokers.values():
-            if not l_broker.Active:
-                continue
+            # if not l_broker.Active:
+            #    continue
             try:
                 l_broker._ProtocolAPI.publish(l_topic, l_message)
                 # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))

@@ -15,7 +15,7 @@ HueHub:
    Host:
       Name: hue-ct
       Port: None
-   Login:
+   Security:
       Name: !secret EncryptedName1
       Password: !secret EncriptedPassword1
 

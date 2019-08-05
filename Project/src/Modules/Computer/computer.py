@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-08-04'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -187,6 +187,7 @@ class Utility:
             l_node = config_tools.Yaml.find_config_node(self, l_filename)
             if l_node != None:
                 self.m_module_needed.append(l_module)
+        LOG.debug('Found configured modules: {}'.format(self.m_module_needed))
 
     def _import_all_found_modules(self):
         """
@@ -209,6 +210,8 @@ class Utility:
             l_api_name = l_module.capitalize() + 'API'
             l_computer = self.m_pyhouse_obj._APIs.Computer
             setattr(l_computer, l_api_name, l_api)
+        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
 
     def _init_component_apis(self, p_pyhouse_obj, _p_computer_api):
         """

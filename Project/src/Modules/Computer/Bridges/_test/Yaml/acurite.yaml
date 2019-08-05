@@ -17,7 +17,7 @@ AcuRite:
       HostName: weather-sta-ct
       Port: None
       Protocol: TCP
-   Login:
+   Security:
       ApiKey: None
       UserName: None
       Password: None

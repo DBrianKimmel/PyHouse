@@ -17,7 +17,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-03'
 __version_info__ = (19, 7, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -48,7 +48,7 @@ class ControllerInformation:
         self.DeviceSubType = 'Controller'
         self.Family = None  # LightFamilyInformation()
         self.Interface = None  # Interface module specific Information()
-        self.Login = None  # LoginInformation() Optional
+        self.Security = None  # SecurityInformation() Optional
         self._Message = bytearray()
         self._Queue = None
         self._DriverAPI = None

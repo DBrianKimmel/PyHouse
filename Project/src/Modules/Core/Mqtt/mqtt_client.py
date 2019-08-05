@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-04'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -85,9 +85,9 @@ class Util(object):
         l_count = 0
         for l_broker_obj in p_pyhouse_obj.Core.Mqtt.Brokers.values():
             LOG.debug('Starting Broker "{}"'.format(l_broker_obj.Name))
-            if not l_broker_obj.Active:
-                LOG.info('Skipping not active broker: {}'.format(l_broker_obj.Name))
-                continue
+            # if not l_broker_obj.Active:
+            #    LOG.info('Skipping not active broker: {}'.format(l_broker_obj.Name))
+            #    continue
             if l_broker_obj.Host.Port < 2000:
                 self.connect_to_one_broker_TCP(p_pyhouse_obj, l_broker_obj)
             else:

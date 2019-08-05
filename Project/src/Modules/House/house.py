@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-04'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -231,7 +231,8 @@ class Utility:
             l_house = self.m_pyhouse_obj._APIs.House
             setattr(l_house, l_api_name, l_api)
             # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
-        LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
 
     def _load_component_config(self):
         """ Load the config file for all the components of the house.
@@ -337,7 +338,7 @@ class API:
         p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
         p_pyhouse_obj._APIs.House = HouseAPIs()
         p_pyhouse_obj._APIs.House.HouseAPI = self
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House', 190))
         #
         self.m_utility.find_all_configed_modules()
         self.m_utility._import_all_found_modules()

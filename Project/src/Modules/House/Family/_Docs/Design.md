@@ -41,7 +41,7 @@ To add a family named 'NewFamily', do the following:
     * Add a package named 'New_Family'.
     * Add the family name (Capitalized) to the list VALID_FAMILIES in __init__ of families.
     * Add a module named <NewFamily>_device.py
-    * Add a module named <NewFamily>_xml.py
+    * Add a module named <NewFamily>_config.py
     * Add any other modules needed by the Device module.
         <NewFamily>_data
         <NewFamily>_utils
@@ -77,7 +77,7 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 ## Init
 
-During the initialization phase pf PyHouse, the families are discovered using the VALID_FAMILIES of __init__
+During the initialization phase of PyHouse, the families are discovered using the VALID_FAMILIES of __init__
 
 When the 'house' is being initialized, one of the early initializations is of families.
 

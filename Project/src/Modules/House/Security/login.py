@@ -21,7 +21,7 @@ class LoginInformation:
     """
 
     def __init__(self):
-        self.Name = None  # Usernamey
+        self.Name = None  # Username
         self.Password = None
 
 

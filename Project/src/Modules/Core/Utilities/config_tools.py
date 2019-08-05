@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-08-03'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,7 +25,7 @@ from ruamel.yaml.comments import CommentedMap as ordereddict
 
 #  Import PyMh files
 from Modules.Core.Utilities.xml_tools import PutGetXML
-from Modules.Core.data_objects import HostInformation, LoginInformation
+from Modules.Core.data_objects import HostInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
@@ -53,6 +53,19 @@ class ConfigYamlNodeInformation:
         self.Yaml = None
         self.YamlPath = None
         self._Error = None
+
+
+class SecurityInformation:
+    """
+    """
+
+    def __init__(self):
+        """
+        """
+        self.Name = None  # Username
+        self.Passwoed = None
+        self.ApiKey = None
+        self.AccessKey = None
 
 
 class Tools:
@@ -168,10 +181,10 @@ class YamlFetch:
             setattr(l_obj, l_key, l_val)
         return l_obj
 
-    def fetch_login_info(self, p_yaml):
+    def fetch_security_info(self, p_yaml):
         """
         """
-        l_obj = LoginInformation()
+        l_obj = SecurityInformation()
         for l_key, l_val in p_yaml.items():
             setattr(l_obj, l_key, l_val)
         if l_obj.Name == None:

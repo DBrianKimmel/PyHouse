@@ -1,7 +1,7 @@
 * Name:      PyHouse/Project/src/Modules/Housing/Docs/Design
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Copyright: (c) 2018-2019 by D. Brian Kimmel
 * Created:   2018-09-30
 * Updated:   2019-01-11
 * License:   MIT License

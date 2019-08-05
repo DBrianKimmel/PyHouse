@@ -38,7 +38,7 @@ Controllers:
         Type: Tcp
         Host: insteon-hub-ct
         Port: 25105
-     Login:
+     Security:
         Name: !Secret UserName
         Password: !Secret Password
 

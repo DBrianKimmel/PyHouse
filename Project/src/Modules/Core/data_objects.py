@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-03'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -229,7 +229,7 @@ class XXLightingInformation:
         self.Outlets = {}
 
 
-class LoginInformation:
+class XXXLoginInformation:
     """ Used for all Login related information
     Either UserName or Name may be given - they are then set to be the same.
     This is done to make it easier to edit the yaml config files.

@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-04'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -28,6 +28,8 @@ LOG = Logger.getLogger('PyHouse.Bridges        ')
 
 CONFIG_FILE_NAME = 'bridges.yaml'
 
+BridgeList = []
+
 
 class BridgesInformation:
     """
@@ -36,28 +38,30 @@ class BridgesInformation:
 
     def __init__(self):
         super(BridgesInformation, self).__init__()
-        self.Bridges = {}
+        self.Bridges = {}  # BridgeInformation()
 
 
-class BridgeInformation(BaseUUIDObject):
+class BridgeInformation:
     """
     ==> PyHouse.Computer.Bridges[x].xxx as below
     """
 
     def __init__(self):
-        super(BridgeInformation, self).__init__()
+        self.Name = None
+        self.Comment = None
+        self.UUID = None
         self.Connection = None  # 'Ethernet, Serial, USB
         self.FamilyName = None
         self.Type = None  # Insteon, Hue
         self.IPv4Address = '9.8.7.6'
         self.Tcp_port = None
-        self.UserName = None
-        self.Password = None
+        self.Security = None  # SecurityInformation()
         self._Queue = None
 
 
 class Config:
-    """
+    """ Load the bridges.yaml config file.
+    If the config file has an !include xxx.yaml, schedule the family to load and set up.
     """
 
     m_pyhouse_obj = None
@@ -66,15 +70,26 @@ class Config:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _extract_one_bridge(self, p_config):
+        """
+        """
+        l_obj = BridgeInformation()
+        LOG.debug('One Bridge: {}'.format(p_config))
+        return l_obj
+
     def _extract_all_bridges(self, p_config):
         """ Get the list of bridges we have
         """
         LOG.debug('Bridges: {}'.format(p_config))
-        for l_ix, l_value in enumerate(p_config):
-            LOG.debug('Bridge Key 1: {}; Value: {}'.format(l_ix, l_value))
+        l_dict = {}
+        # for l_ix, l_value in enumerate(p_config):
+        #    LOG.debug('Bridge Key 1: {}; Value: {}'.format(l_ix, l_value))
         for l_key, l_value in p_config.items():
-            LOG.debug('Bridge Key 2: {}; Value: {}'.format(l_key, l_value))
-        pass
+            # LOG.debug('Bridge Key 2: {}; Value: {}'.format(l_key, l_value))
+            BridgeList.append(l_key.lower())
+            l_obj = self._extract_one_bridge(l_value)
+            l_dict[l_key.lower()] = l_obj
+        return l_dict
 
     def LoadYamlConfig(self):
         """ Read the .Yaml file.
@@ -89,7 +104,8 @@ class Config:
         except:
             LOG.warn('The bridges.yaml file does not start with "Bridges"')
             return None
-        self._extract_all_bridges(l_yaml)
+        l_bridges = self._extract_all_bridges(l_yaml)
+        self.m_pyhouse_obj.Computer.Bridges = l_bridges
         return l_node  # for testing purposes
 
 # ----------
@@ -144,9 +160,6 @@ class API:
         l_count = 0
         LOG.info("Starting Bridges")
         for l_bridge in self.m_pyhouse_obj.Computer.Bridges.values():
-            if not l_bridge.Active:
-                LOG.info('Skipping not active bridge: {}'.format(l_bridge.Name))
-                continue
             if l_bridge.Type == 'Hue':
                 # Atempt to not load unless used
                 from Modules.House.Family.Hue.Hue_hub import HueHub

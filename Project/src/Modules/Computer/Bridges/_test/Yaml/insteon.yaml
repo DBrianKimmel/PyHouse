@@ -16,7 +16,7 @@
       HostName: insteon-hub-ct
       Port: None
       Protocol: TCP
-   Login:
+   Security:
       ApiKey: None
       UserName: None
       Password: None

@@ -18,7 +18,7 @@ serial_port
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-08-05'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -139,7 +139,7 @@ class API:
         """ Note that the controller may not be available on this node.
         """
         LOG.info('Starting the Insteon Controllers.')
-        self.m_plm = Utility()._start_all_controllers(self.m_pyhouse_obj)
+        # self.m_plm = Utility()._start_all_controllers(self.m_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
 
     def SaveConfig(self):
