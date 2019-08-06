@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-08-03'
+__updated__ = '2019-08-05'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -654,6 +654,8 @@ class HueHub:
         /sensors
         /rules
         """
+        return
+
         _l_agent_d = self.HubGet('/config')
         _l_agent_d = self.HubGet('/lights')
         # _l_agent_d = self.HubGet('/groups')

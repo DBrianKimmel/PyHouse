@@ -14,8 +14,8 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-08-01'
-__version_info__ = (19, 7, 1)
+__updated__ = '2019-08-06'
+__version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -23,8 +23,8 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyHouse files
 from Modules.Core.Utilities import config_tools
 from Modules.House.Lighting.buttons import API as buttonsApi
-from Modules.House.Lighting.controllers import MqttActions as controllerMqtt, API as controllersApi
-from Modules.House.Lighting.lights import MqttActions as lightMqtt, API as lightsApi
+from Modules.House.Lighting.controllers import API as controllersApi, MqttActions as controllerMqtt
+from Modules.House.Lighting.lights import API as lightsApi, MqttActions as lightMqtt
 from Modules.House.Lighting.outlets import API as outletsApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -107,6 +107,8 @@ class Config:
         l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         return l_node  # for testing purposes
 
+# ----------
+
     def _copy_to_yaml(self, p_pyhouse_obj):
         """ Create or Update the yaml information.
         The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
@@ -142,6 +144,8 @@ class API:
     """ Handles all the components of the lighting sub-system.
     """
 
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
         p_pyhouse_obj.House.Lighting = LightingInformation()
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -157,7 +161,6 @@ class API:
         """
         LOG.info('Loading Lighting config files.')
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Lighting.API.LoadConfig', 190))
-        # self.read_lighting_xml(self.m_pyhouse_obj)
         Config().LoadYamlConfig(self.m_pyhouse_obj)
         self.m_buttons.LoadConfig()
         self.m_controllers.LoadConfig()
@@ -180,7 +183,7 @@ class API:
         self.m_controllers.SaveConfig()
         self.m_lights.SaveConfig()
         self.m_outlets.SaveConfig()
-        LOG.info("Saved Lighting XML.")
+        LOG.info("Saved Lighting Config.")
         return
 
     def Stop(self):

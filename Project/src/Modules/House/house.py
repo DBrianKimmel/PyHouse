@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-04'
+__updated__ = '2019-08-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -223,7 +223,7 @@ class Utility:
             try:
                 l_api = l_ret.API(self.m_pyhouse_obj)
             except Exception as e_err:
-                LOG.error('ERROR - Module: {}\n\t{}'.format(l_module, e_err))
+                LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(l_module, e_err))
                 LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef', 190)))
                 l_api = None
             # LOG.debug('Imported: {}'.format(l_ret))

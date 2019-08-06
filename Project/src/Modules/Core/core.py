@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-06'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -236,6 +236,7 @@ class API(Utility):
     def LoadConfig(self):
         """ Load in the entire configuration for PyHouse.
         This will fill in pyhouse_obj for all defined features of PyHouse.
+
         """
         LOG.info("Loading Config - Version:{}\n======================== Loading Config Files ========================\n".format(__version__))
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig()

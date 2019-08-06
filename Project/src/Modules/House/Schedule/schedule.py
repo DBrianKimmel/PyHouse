@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,7 +72,7 @@ CONFIG_FILE_NAME = 'schedule.yaml'
 
 
 class ScheduleInformation:
-    """
+    """ This is the basic schedule info
     """
 
     def __init__(self):
@@ -80,21 +80,40 @@ class ScheduleInformation:
         self.Comment = None
         self.DOW = 'SMTWTFS'  # DayOfWeek - a dash '-' replaces the day letter if NOT that day
         self.Occupancy = 'Always'  # Always, Home, Away, Vacation, ...
-        self.Type = ''  # Valid Schedule Type
         self.Time = None
-        self.Light = None
+        self.Sched = None  # One of the schedule detail types below.
 
 
 class ScheduleLightInformation:
-    """
+    """ This is the lighting specific part.
     """
 
     def __init__(self):
+        self.Type = 'Light'
         self.Brightness = 0
-        self.Name = None
+        self.Name = None  # Light name
         self.Rate = 0
         self.Duration = None
-        self.RoomName = None
+        self.Room = None  # Room Name
+
+
+class ScheduleIrrigationInformation:
+    """ This is the Irrigation specific part.
+    """
+
+    def __init__(self):
+        self.Type = 'Irrigation'
+        self.System = None
+        self.Zone = None
+        self.Duration = None
+
+
+class ScheduleThermostatInformation:
+    """ This is the HVAC Thermostat specific part
+    """
+
+    def __init__(self):
+        self.Type = 'Thermostat'
 
 
 class RiseSet:
@@ -330,7 +349,7 @@ class SchedTime:
         return l_seconds
 
 
-class ScheduleExecution():
+class ScheduleExecution:
 
     def dispatch_one_schedule(self, p_pyhouse_obj, p_schedule_obj):
         """
@@ -340,19 +359,19 @@ class ScheduleExecution():
         l_obj = p_schedule_obj
         p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         #
-        if p_schedule_obj.ScheduleType == 'Lighting':
+        if p_schedule_obj.Sched.Type == 'Lighting':
             LOG.info('Execute_one_schedule type = Lighting')
             lightActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
-        elif p_schedule_obj.ScheduleType == 'Hvac':
+        elif p_schedule_obj.Sched.Type == 'Hvac':
             LOG.info('Execute_one_schedule type = Hvac')
             hvacActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
-        elif p_schedule_obj.ScheduleType == 'Irrigation':
+        elif p_schedule_obj.Sched.Type == 'Irrigation':
             LOG.info('Execute_one_schedule type = Irrigation')
             irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
-        elif p_schedule_obj.ScheduleType == 'TeStInG14159':  # To allow a path for unit tests
+        elif p_schedule_obj.Sched.Type == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
             #  scheduleActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
@@ -372,13 +391,13 @@ class ScheduleExecution():
         @param p_key_list: a list of schedule keys in the next time schedule to be executed.
         """
         LOG.info("About to execute - Schedule Items:{}".format(p_key_list))
-        for l_slot in range(len(p_key_list)):
-            l_schedule_obj = p_pyhouse_obj.House.Schedules[p_key_list[l_slot]]
+        for l_slot in p_key_list:
+            l_schedule_obj = p_pyhouse_obj.House.Schedules[l_slot]
             ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
         Utility.schedule_next_event(p_pyhouse_obj)
 
 
-class Utility():
+class Utility:
     """
     """
 
@@ -479,7 +498,7 @@ class Utility():
         return None
 
 
-class Timers(object):
+class Timers:
     """
     """
 
@@ -510,9 +529,13 @@ class Config:
         """
         """
 
-    def _extract_irrigation_schedule(self):
+    def _extract_irrigation_schedule(self, p_config):
         """
         """
+        l_obj = ScheduleIrrigationInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        return l_obj
 
     def _extract_light_schedule(self, p_config):
         """
@@ -523,9 +546,13 @@ class Config:
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_thermostat_schedule(self):
+    def _extract_thermostat_schedule(self, p_config):
         """
         """
+        l_obj = ScheduleThermostatInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        return l_obj
 
     def _extract_DOW_field(self):
         """
@@ -540,13 +567,17 @@ class Config:
             if l_key == 'Entertainment':
                 pass
             elif l_key == 'Irrigation':
-                pass
+                l_obj.Type = 'Irrigation'
+                l_ret = self._extract_irrigation_schedule(l_value)
+                l_obj.Sched = l_ret
             elif l_key == 'Light':
                 l_obj.Type = 'Light'
                 l_ret = self._extract_light_schedule(l_value)
-                l_obj.Light = l_ret
+                l_obj.Sched = l_ret
             elif l_key == 'Thermostat':
-                pass
+                l_obj.Type = 'Thermostat'
+                l_ret = self._extract_thermostat_schedule(l_value)
+                l_obj.Sched = l_ret
             elif l_key == 'DOW':
                 pass
             else:
@@ -555,6 +586,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Schedule config file is missing an entry for "{}"'.format(l_key))
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Schedule', 190))
         return l_obj
 
     def _extract_all_schedules(self, p_config):
@@ -563,10 +595,9 @@ class Config:
         l_scheds = {}
         for l_ix, l_value in enumerate(p_config):
             l_obj = self._extract_one_schedule(l_value)
-            l_scheds.update({l_ix:l_obj})
+            l_scheds[l_ix] = l_obj
             LOG.debug('Loaded Schedule {}'.format(l_obj.Name))
-        self.m_pyhouse_obj.House.Schedules = l_scheds
-        return l_scheds  # For testing.
+        return l_scheds
 
     def LoadYamlConfig(self):
         """
@@ -583,6 +614,7 @@ class Config:
             return None
         l_scheds = self._extract_all_schedules(l_yaml)
         self.m_pyhouse_obj.House.Schedules = l_scheds
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules, 'Schedule', 190))
         return l_scheds  # for testing purposes
 
 # ----------
@@ -592,7 +624,7 @@ class Config:
         """
 
 
-class API():
+class API:
 
     m_pyhouse_obj = None
     m_config = None

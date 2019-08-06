@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-06'
 
 #  Import system type stuff
 
@@ -21,7 +21,6 @@ __updated__ = '2019-07-31'
 from Modules.House.Family.family_utils import FamUtil
 from Modules.House.Lighting.utility import Utility
 from Modules.House.Lighting.lights import LightData
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightingAction ')
@@ -38,14 +37,14 @@ class API:
         @param p_schedule_obj: the schedule event being executed.
 
         """
-        l_light_name = p_schedule_obj.LightName
+        l_light_name = p_schedule_obj.sched.Name
         l_lighting_objs = p_pyhouse_obj.House.Lighting
         l_light_obj = Utility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
         #
         l_controller_objs = Utility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
         l_control = LightData()
-        l_control.BrightnessPct = p_schedule_obj.Level
-        l_control.TransitionTime = p_schedule_obj.Rate
+        l_control.BrightnessPct = p_schedule_obj.Sched.Brightness
+        l_control.TransitionTime = p_schedule_obj.Sched.Rate
         if len(l_controller_objs) < 1:
             LOG.warn('No controllers on this server for Light: {}'.format(l_light_obj.Name))
             return

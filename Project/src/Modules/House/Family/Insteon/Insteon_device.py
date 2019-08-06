@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/Insteon/Insteon_device.py
+@name:      Modules/House/Family/Insteon/Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -18,7 +18,7 @@ serial_port
 
 """
 
-__updated__ = '2019-08-05'
+__updated__ = '2019-08-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -91,8 +91,7 @@ class Utility(object):
 
         Return the Insteon_PLM API reference if one is found:
         """
-        #  l_count = 0
-        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
+        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
         for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
             LOG.info('Loading Controller "{}"'.format(l_controller_obj.Name))
             if l_controller_obj == None:
@@ -139,7 +138,8 @@ class API:
         """ Note that the controller may not be available on this node.
         """
         LOG.info('Starting the Insteon Controllers.')
-        # self.m_plm = Utility()._start_all_controllers(self.m_pyhouse_obj)
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Pypouse_obj.House.Lighting', 190))
+        self.m_plm = Utility()._start_all_controllers(self.m_pyhouse_obj)
         LOG.info('Started the Insteon Controllers.')
 
     def SaveConfig(self):

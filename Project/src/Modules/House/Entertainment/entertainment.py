@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-05'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -54,7 +54,6 @@ class EntertainmentInformation():
     """
 
     def __init__(self):
-        self.Active = False
         self.PluginCount = 0
         # Plugins are indexed by the entertainment-family name (always lower cased).
         self.Plugins = {}  # EntertainmentPluginInformation()
@@ -127,16 +126,6 @@ class MqttActions():
         # Ok
         p_logmsg = '\tEntertainment: '
         try:
-            if not l_module_obj.Active:
-                p_logmsg += ' Module: {} is not active - skipping'.format(l_module)
-                LOG.debug('Return {}'.format(p_logmsg))
-                return p_logmsg
-            # LOG.debug('Plugin Active')
-        except KeyError:
-            p_logmsg += ' {} not defined here.'.format(l_module)
-            LOG.debug('Error {}'.format(p_logmsg))
-            return p_logmsg
-        try:
             l_module_api = l_module_obj._API
             p_logmsg += l_module_api.decode(p_topic[1:], p_message)
             # LOG.debug('{}'.format(p_logmsg))
@@ -185,7 +174,9 @@ class Config:
             l_obj.Active = True
             l_obj.Type = 'Service'
             p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
+            p_pyhouse_obj.House.Entertainment.PluginCount += 1
         # LOG.debug('Services: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment)))
+        return l_obj
 
     def _extract_devices(self, p_pyhouse_obj, p_yaml):
         """
@@ -200,7 +191,9 @@ class Config:
             l_obj.Active = True
             l_obj.Type = 'Device'
             p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
+            p_pyhouse_obj.House.Entertainment.PluginCount += 1
         # LOG.debug('Devices: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment)))
+        return l_obj
 
     def _extract_all_entertainment(self, p_config):
         """ Update Entertainment.
