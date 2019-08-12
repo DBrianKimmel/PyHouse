@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Lighting/lighting_utility.py
+@name:      Modules/House/Lighting/utility.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-22'
+__updated__ = '2019-08-10'
 
 #  Import system type stuff
 
@@ -58,23 +58,21 @@ class Utility:
         return None
 
     def get_controller_objs_by_family(self, p_objs, p_family):
-        """ Gets a controller for a device.
+        """ Gets all the controllers for a device.
 
-        @param p_objs: a dict f objects to search - such as p_pyhouse_obj.House.Lighting.Controllers{}
+        @param p_objs: a dict of objects to search - such as p_pyhouse_obj.House.Lighting.Controllers{}
         @param p_family: the family to search for - 'Insteon'
         @return: a list of controller objs that match the family
         """
         l_ret = []
         for l_obj in p_objs.values():
-            if l_obj.Active != True:  # Skip inactive devices.
-                continue
-            l_family = l_obj.Family.Name
-            if l_family == p_family:
+            l_family = l_obj.Family.Name.lower()
+            if l_family == p_family.lower():
                 l_ret.append(l_obj)
         if l_ret == []:
             LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
         else:
-            LOG.debug('Found {} active controller(s) {} for family {}'.format(len(l_ret), l_ret, p_family))
+            LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
         return l_ret
 
 # ## END DBK

@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 try:
@@ -420,8 +420,8 @@ class API(UpbPimAPI):
     def Start(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        if not p_controller_obj.Active:
-            return False
+        # if not p_controller_obj.Active:
+        #    return False
         if self.start_controller(p_pyhouse_obj, p_controller_obj):
             LOG.info('Starting driver loop')
             self.driver_loop_start(p_pyhouse_obj, p_controller_obj)
@@ -433,8 +433,8 @@ class API(UpbPimAPI):
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         for l_obj in self.m_house_obj.Lights.values():
-            if l_obj.Active == False:
-                continue
+            # if l_obj.Active == False:
+            #    continue
             l_name = p_device_obj.Name
             if l_obj.Name == l_name:
                 l_id = self._get_id_from_name(l_name)

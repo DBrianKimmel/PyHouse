@@ -51,7 +51,7 @@ class ThermostatStatus():
         self.Status = None
         self.Fan = None
         self.Mode = None
-        self.Family = 'Insteon'
+        self.Family = 'insteon'
         self.BrightnessPct = None
 
 # ## END DBK

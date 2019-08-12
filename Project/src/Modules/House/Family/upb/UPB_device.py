@@ -15,7 +15,7 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 
@@ -31,10 +31,10 @@ class Utility(object):
 
     @staticmethod
     def _is_upb_active(p_controller_obj):
-        if p_controller_obj.DeviceFamily != 'UPB':
+        if p_controller_obj.Family.Name != 'UPB':
             return False
-        if p_controller_obj.Active:
-            return True
+        # if p_controller_obj.Active:
+        #    return True
 
 
 class API(object):
@@ -59,7 +59,7 @@ class API(object):
                     self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
                 else:
                     LOG.error('Controller {} failed to start.'.format(l_controller_obj.Name))
-                    l_controller_obj.Active = False
+                    # l_controller_obj.Active = False
         LOG.info('Started {} UPB Controllers.'.format(l_count))
 
     def Stop(self):
@@ -77,7 +77,7 @@ class API(object):
         return p_xml
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
-        LOG.debug('Change light Name:{}, DeviceFamily:{}'.format(p_light_obj.Name, p_light_obj.DeviceFamily))
+        LOG.debug('Change light Name:{}, Family.Name:{}'.format(p_light_obj.Name, p_light_obj.Family.Name))
         self.m_plm.AbstractControlLight(p_light_obj, p_source, p_level)
 
 # ## END

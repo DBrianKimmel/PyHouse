@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-07-24'
+__updated__ = '2019-08-09'
 
 #  Import system type stuff
 import pyudev
@@ -121,15 +121,17 @@ class SerialAPI:
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
-            p_controller_obj.Active = True
+            # p_controller_obj.Active = True
             l_topic = 'house/driver/serial/status'
             l_obj = DriverStatus()
+            l_obj.Name = 'Serial Driver'
+            l_obj.Node = p_pyhouse_obj.Computer.Name
             l_obj.Status = 'Open'
             p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))
-            p_controller_obj.Active = True
+            # p_controller_obj.Active = True
         self.m_serial = l_serial
         return l_serial
 

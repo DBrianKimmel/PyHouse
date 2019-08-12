@@ -17,7 +17,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -135,7 +135,7 @@ class Config:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.error('The Controller "{}" is missing a rquired entry for "{}"'.format(l_obj.Name, l_key))
                 return None
-        LOG.info('Loaded controller {}'.format(l_obj.Name))
+        LOG.info('Extracted controller {}'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_controllers(self, p_config):

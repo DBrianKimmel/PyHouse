@@ -50,7 +50,7 @@ while True:
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -301,8 +301,8 @@ class API(Connecting):
         l_count = 0
         for l_samsung_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices.values():
             l_count += 1
-            if not l_samsung_device_obj.Active:
-                continue
+            # if not l_samsung_device_obj.Active:
+            #    continue
             self.connect_samsung(l_samsung_device_obj)
         LOG.info("Started {} Samsung Devices.".format(l_count))
 

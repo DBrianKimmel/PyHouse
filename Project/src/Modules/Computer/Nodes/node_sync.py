@@ -1,5 +1,5 @@
 """
-@name:       PyHouse/Project/src/Modules/Computer/Nodes/node_sync.py
+@name:       Modules/Computer/Nodes/node_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
 @copyright:  2016-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -80,7 +80,7 @@ class Util(object):
             l_obj = NodeInformation()
             l_obj.Name = l_name
             l_obj.Key = l_uuid
-            l_obj.Active = p_message_obj['Active']
+            # l_obj.Active = p_message_obj['Active']
             l_obj.Comment = p_message_obj['Comment']
             l_obj.ConnectionAddr_IPv4 = p_message_obj['ConnectionAddr_IPv4']
             l_obj.ConnectionAddr_IPv6 = p_message_obj['ConnectionAddr_IPv6']
@@ -104,7 +104,7 @@ class API(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized - Version:{}".format(__version__))
+        # LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, _p_pyhouse_obj):
         pass

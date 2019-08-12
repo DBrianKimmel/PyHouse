@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-10'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -201,14 +201,14 @@ class API(Utility):
         Note that the Configuration file is NOT read until the following Start() method begins.
         Also note that the reactor is *NOT* yet running.
         """
-        LOG.info('Initializing - Version:{}'.format(__version__))
+        LOG.info("\n======================== Initializing ======================== Version: {}\n".format(__version__))
         setup_logging.API()  # Start up logging
         LOG.info('Setting up Main Data areas')
         self.m_pyhouse_obj = PyHouseInformation()
         self.m_pyhouse_obj.Core = self._setup_Core()  # First
         self.m_pyhouse_obj._APIs = self._setup_APIs()
         self.m_pyhouse_obj._Config = self._setup_Config()
-        self.m_pyhouse_obj._Families = self._setup_Families()
+        # self.m_pyhouse_obj._Families = self._setup_Families()
         self.m_pyhouse_obj._Parameters = self._setup_Parameters()
         self.m_pyhouse_obj._Twisted = self._setup_Twisted()
         self.m_pyhouse_obj._Uuids = self._setup_Uuids()
@@ -225,7 +225,7 @@ class API(Utility):
         LOG.info('All data has been set up.')
         #
         self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig)
-        LOG.info("Initialized - Version:{}\n======================== Initialized ========================\n".format(__version__))
+        LOG.info("\n======================== Initialized ======================== Version: {}\n".format(__version__))
         LOG.info('Starting Reactor...')
         self.m_pyhouse_obj._Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
         #
@@ -238,12 +238,12 @@ class API(Utility):
         This will fill in pyhouse_obj for all defined features of PyHouse.
 
         """
-        LOG.info("Loading Config - Version:{}\n======================== Loading Config Files ========================\n".format(__version__))
+        LOG.info("\n======================== Loading Config Files ======================== Version: {}\n".format(__version__))
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig()
         self.m_pyhouse_obj._APIs.House.HouseAPI.LoadConfig()
         LOG.info("Loaded Config - Version:{}".format(__version__))
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
-        LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
+        LOG.info("\n======================== Loaded Config Files ======================== Version: {}\n".format(__version__))
         # self.Start()
 
     def Start(self):
@@ -253,11 +253,12 @@ class API(Utility):
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         print('Reactor is now running.')
+        LOG.info("\n======================== Starting ======================== Version: {}\n".format(__version__))
         LOG.info('Starting - Reactor is now running.')
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Start()
         self.m_pyhouse_obj._APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self._config_save_loop, self.m_pyhouse_obj)
-        LOG.info("Started.\n==========\n")
+        LOG.info("\n======================== Started ======================== Version: {}\n".format(__version__))
 
     def SaveConfig(self):
         """
@@ -269,7 +270,7 @@ class API(Utility):
         configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.SaveConfig()
         self.m_pyhouse_obj._APIs.House.HouseAPI.SaveConfig()
-        LOG.info("Saved all Config sections.\n======================== Saved Config Files ========================\n")
+        LOG.info("\n======================== Saved Config Files ==========================\n")
 
     def Stop(self):
         l_topic = 'computer/shutdown'

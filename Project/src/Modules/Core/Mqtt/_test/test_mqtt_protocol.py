@@ -1,65 +1,40 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/_test/test_protocol.py
+@name:      Modules/Core/Mqtt/_test/test_protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2018 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2015
 @Summary:
 
-Passed all 5 tests - DBK- 2018-10-02
+Passed all 4 tests - DBK- 2019-08-08
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-08-08'
 
 #  Import system type stuff
 from twisted.trial import unittest
-import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttBrokerInformation
 from Modules.Core.Mqtt.mqtt_protocol import MQTTProtocol
-from Modules.Computer.test.xml_computer import \
-    TESTING_COMPUTER_DIVISION
-from Modules.Core.Mqtt.test.xml_mqtt import \
-    TESTING_MQTT_SECTION, \
-    TESTING_MQTT_BROKER
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
     """
     """
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_mqtt_protocol')
-
-
-class A1_Setup(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_Tags(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-01-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.computer_div.tag, TESTING_COMPUTER_DIVISION)
-        self.assertEqual(self.m_xml.mqtt_sect.tag, TESTING_MQTT_SECTION)
-        self.assertEqual(self.m_xml.broker.tag, TESTING_MQTT_BROKER)
 
 
 class B1_Packet(SetupMixin, unittest.TestCase):
@@ -67,7 +42,7 @@ class B1_Packet(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        SetupMixin.setUp(self)
 
     def test_01_String(self):
         pass
@@ -79,7 +54,7 @@ class B2_Packet(SetupMixin, unittest.TestCase):
     m_broker = {}
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
+        SetupMixin.setUp(self)
         self.m_mqtt = MqttInformation()
         self.m_mqtt.ClientID = "TestClient"
         self.m_broker = MqttBrokerInformation()

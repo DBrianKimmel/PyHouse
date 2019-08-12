@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-10'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,7 +31,7 @@ from Modules.Core.Utilities import extract_tools, config_tools
 from Modules.House.Lighting.utility import Utility as lightingUtility
 from Modules.House.rooms import Config as roomConfig
 from Modules.Core.state import State
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny, PrettyFormatObject
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightingLights ')
@@ -235,6 +235,8 @@ class MqttActions:
     """ Mqtt section
     """
 
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
@@ -245,19 +247,22 @@ class MqttActions:
         l_control = LightData()
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
-        # LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
+        LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
         #
         l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
         if l_light_obj == None:
             LOG.warn(' Light "{}" was not found.'.format(l_light_name))
             return
-        # LOG.debug(PrettyFormatAny.form(l_light_obj, 'Light', 190))
+        LOG.debug(PrettyFormatObject(l_light_obj, 'Light'))
+        LOG.debug(PrettyFormatAny.form(l_light_obj.Family, 'Light.Family', 190))
         #
-        l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'Insteon')
-        # LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
+        l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'insteon')
+        LOG.debug(PrettyFormatAny.form(l_controller_obj[0], 'Controller', 190))
         #
         if len(l_controller_obj) > 0:
             l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
+            if l_api == None:
+                return
             l_api.AbstractControlLight(self.m_pyhouse_obj, l_light_obj, l_controller_obj[0], l_control)
 
     def decode(self, p_topic, p_message):
@@ -267,6 +272,8 @@ class MqttActions:
         @param p_topic: is the topic after 'lighting'
         @return: a message to be logged as a Mqtt message
         """
+        if self.m_pyhouse_obj is None:
+            LOG.error('Missing PyHouse obj')
         l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
         # LOG.debug('LightingLightsDispatch Topic:{}\n\t{}'.format(p_topic, p_message))
         if p_topic[0] == 'control':

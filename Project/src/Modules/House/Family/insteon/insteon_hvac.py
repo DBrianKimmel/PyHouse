@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_HVAC.py
+@name:      Modules/House/Family/insteon/insteon_hvac.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -20,13 +20,13 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.Insteon.Insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.Insteon.Insteon_utils import Decode as utilDecode
+from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.InsteonHVAC    ')
 
@@ -68,7 +68,7 @@ class InsteonThermostatStatus:
 
     def __init__(self):
         self.Name = None
-        self.Family = 'Insteon'
+        self.Family = 'insteon'
         self.Temperature = None
         self.Humidity = None
         self.CoolSetpoint = None
@@ -108,7 +108,7 @@ class DecodeResponses(object):
         l_topic = 'house/hvac/thermostat/{}'.format(p_device_obj.Name)
         l_mqtt_message = "thermostat: "
         l_status = InsteonThermostatStatus()
-        l_status.Family = 'Insteon'
+        l_status.Family = 'insteon'
         l_status.Name = p_device_obj.Name
 
         l_firmware = l_message[7]

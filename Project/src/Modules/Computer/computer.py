@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-08-04'
+__updated__ = '2019-08-10'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -187,7 +187,7 @@ class Utility:
             l_node = config_tools.Yaml.find_config_node(self, l_filename)
             if l_node != None:
                 self.m_module_needed.append(l_module)
-        LOG.debug('Found configured modules: {}'.format(self.m_module_needed))
+        LOG.info('Found config files for: {}'.format(self.m_module_needed))
 
     def _import_all_found_modules(self):
         """
@@ -271,7 +271,7 @@ class API:
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Computer.Key = 0
-        p_pyhouse_obj.Computer.Active = True
+        # p_pyhouse_obj.Computer.Active = True
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
         p_pyhouse_obj.Computer.Comment = ''
         p_pyhouse_obj.Computer.LastUpdate = datetime.now()

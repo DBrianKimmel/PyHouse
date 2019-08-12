@@ -1,8 +1,8 @@
 """
-@name:      /home/briank/PyHouse/src/Modules/Housing/Security/_test/test_security.py
+@name:      Modules/Housing/Security/_test/test_security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2018 by D. Brian Kimmel
+@copyright: (c) 2016-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 1, 2016
 @summary:   Test
@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-08-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -19,49 +19,20 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import GarageDoorData
-from Modules.Housing.Security.security import Utility, XML, API as securityAPI
-from Modules.Families.family import API as familyAPI
+from Modules.House.Security.security import Utility, API as securityAPI
+from Modules.House.Family.family import API as familyAPI
 from Modules.Core.Utilities import convert, json_tools
-from Modules.Housing.Security.test.xml_garage_door import \
-    TESTING_GARAGE_DOOR_NAME_0, \
-    TESTING_GARAGE_DOOR_ACTIVE_0, \
-    TESTING_GARAGE_DOOR_KEY_0, \
-    TESTING_GARAGE_DOOR_COMMENT_0, \
-    TESTING_GARAGE_DOOR_DEVICE_TYPE_0, \
-    TESTING_GARAGE_DOOR_DEVICE_SUBTYPE_0, \
-    TESTING_GARAGE_DOOR_ROOM_NAME_0, \
-    TESTING_GARAGE_DOOR_ROOM_UUID_0, \
-    TESTING_GARAGE_DOOR_UUID_0
-from Modules.Core.test.xml_device import \
-    TESTING_DEVICE_FAMILY_INSTEON
-from Modules.Families.Insteon.test.xml_insteon import \
-    TESTING_INSTEON_DEVCAT_0, \
-    TESTING_INSTEON_ENGINE_VERSION_0, \
-    TESTING_INSTEON_ADDRESS_0
-from Modules.Housing.Security.test.xml_motion_sensors import \
-    TESTING_MOTION_SENSOR_NAME_0, \
-    TESTING_MOTION_SENSOR_ACTIVE_0, \
-    TESTING_MOTION_SENSOR_KEY_0, \
-    TESTING_MOTION_SENSOR_UUID_0, \
-    TESTING_MOTION_SENSOR_COMMENT_0, \
-    TESTING_MOTION_SENSOR_DEVICE_TYPE_0, \
-    TESTING_MOTION_SENSOR_DEVICE_SUBTYPE_0, \
-    TESTING_MOTION_SENSOR_ROOM_NAME_0, \
-    TESTING_MOTION_SENSOR_ROOM_UUID_0, \
-    TESTING_MOTION_SENSOR_DEVCAT_0, \
-    TESTING_MOTION_SENSOR_ADDRESS_0
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_xml = SetupPyHouseObj().BuildXml()
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj._Families = self.m_family
+        self.m_pyhouse_obj.House.Family = self.m_family
         self.m_api = securityAPI
         self.m_garage_door_obj = GarageDoorData()
 
@@ -80,7 +51,7 @@ class A1(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_FindXml(self):
         """ Be sure that the XML contains the right stuff.

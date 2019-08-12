@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -97,15 +97,12 @@ def _format_cols(p_strings, p_widths, split=' '):
 def _formatObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
     """Print a nicely formatted overview of an object.
 
-    The output lines will be wrapped at maxlen, with lindent of space
-    for names of attributes.  A maximum of maxspew characters will be
-    printed for each attribute value.
+    The output lines will be wrapped at maxlen, with lindent of space for names of attributes.
+    A maximum of maxspew characters will be printed for each attribute value.
 
-    You can hand formatObj any data type -- a module, class, instance,
-    new class.
+    You can hand formatObj any data type -- a module, class, instance, new class.
 
-    Note that in reformatting for compactness the routine trashes any
-    formatting in the docstrings it prints.
+    Note that in reformatting for compactness the routine trashes any formatting in the docstrings it prints.
 
     Example:
        >>> class Foo(object):
@@ -220,7 +217,7 @@ def _formatObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxs
 
 
 def PrettyFormatObject(p_obj, p_title, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
-    _formatObject(p_title, p_obj, suppressdoc, maxlen, lindent, maxspew)
+    return _formatObject(p_title, p_obj, suppressdoc, maxlen, lindent, maxspew)
 
 
 class PrettyFormatAny(object):
@@ -228,7 +225,7 @@ class PrettyFormatAny(object):
     """
 
     @staticmethod
-    def form(p_any, title='No Title Given', maxlen=120):
+    def form(p_any, title='No Title Given', maxlen=190):
         """ Top level call PrettyFormatAmy(form(obj, Title, MaxLineLen)
         """
         l_indent = 0

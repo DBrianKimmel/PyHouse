@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Nodes/node_local.py
+@name:      Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019  by D. Brian Kimmel
@@ -19,7 +19,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -197,7 +197,7 @@ class Interfaces():
         """
         l_interface = NodeInterfaceData()
         l_interface.Name = p_interface_name
-        l_interface.Active = True
+        # l_interface.Active = True
         l_interface.Key = 0
         l_interface.UUID = toolUuid.create_uuid()  # We need a way to persist the UUID instead of this
         l_interface.NodeInterfaceType = 'Other'
@@ -435,7 +435,7 @@ class Util(object):
         l_node = NodeInformation()
         l_node.Name = self.m_pyhouse_obj.Computer.Name
         l_node.Key = 0
-        l_node.Active = True
+        # l_node.Active = True
         l_node.UUID = self.m_pyhouse_obj.Computer.UUID
         Interfaces().add_interfaces(l_node)
         Devices().find_devices(l_node)
@@ -452,7 +452,7 @@ class API(Util):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info("Initialized - Version:{}".format(__version__))
+        # LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadXml(self, p_pyhouse_obj):
         """ Load the Node xml info.

@@ -11,8 +11,7 @@
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 
@@ -27,6 +26,6 @@ class NullData(LightData):
 
     def __init__(self):
         super(NullData, self).__init__()
-        self.DeviceFamily = 'Null'
+        self.Family.Name = 'Null'
 
 # ## END DBK

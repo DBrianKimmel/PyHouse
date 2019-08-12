@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Mqtt/mqtt_client.py
+@name:      Modules/Core/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-04'
+__updated__ = '2019-08-09'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -57,8 +57,8 @@ class Util(object):
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
             _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.Host.Name, p_broker_obj.Host.Port, l_factory)
-            LOG.info('TCP Connected to broker: {}; Host: {};'.format(p_broker_obj.Name, p_broker_obj.Host.Name))
-            LOG.info('Prefix: {}'.format(p_pyhouse_obj.Core.Mqtt.Prefix))
+            LOG.info('TCP Connected to:\n\tBroker: {};\n\tHost: {};\n\tPrefix: {};'.format(
+                p_broker_obj.Name, p_broker_obj.Host.Name, p_pyhouse_obj.Core.Mqtt.Prefix))
 
     @defer.inlineCallbacks
     def connect_to_one_broker_TLS(self, p_pyhouse_obj, _p_broker):
@@ -84,10 +84,7 @@ class Util(object):
         """
         l_count = 0
         for l_broker_obj in p_pyhouse_obj.Core.Mqtt.Brokers.values():
-            LOG.debug('Starting Broker "{}"'.format(l_broker_obj.Name))
-            # if not l_broker_obj.Active:
-            #    LOG.info('Skipping not active broker: {}'.format(l_broker_obj.Name))
-            #    continue
+            # LOG.debug('Starting Broker "{}"'.format(l_broker_obj.Name))
             if l_broker_obj.Host.Port < 2000:
                 self.connect_to_one_broker_TCP(p_pyhouse_obj, l_broker_obj)
             else:

@@ -9,12 +9,12 @@
 
 """
 
-__updated__ = '2019-08-05'
+__updated__ = '2019-08-10'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.House.Family.Hue.Hue_hub import HueHub
+from Modules.House.Family.hue.hue_hub import HueHub
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_device     ')
@@ -32,11 +32,11 @@ class API(object):
         self.m_hue_hub = HueHub(p_pyhouse_obj)
         LOG.info('Initialized')
 
-    def LoadConfig(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """
         """
         LOG.info('Loading')
-        HueHub(self.m_pyhouse_obj).Start(p_pyhouse_obj)
+        # HueHub(self.m_pyhouse_obj).Start(p_pyhouse_obj)
 
     def Start(self):
         """
@@ -44,12 +44,11 @@ class API(object):
         # if self.m_pyhouse_obj.Computer != {}:
         # self.m_hue_hub.Start()
         LOG.info('Started')
-        pass
 
-    def SaveConfig(self, p_xml):
+    def SaveConfig(self):
         """ Handled by Bridges
         """
-        return p_xml
+        return
 
     def ControlDevice(self, p_device_obj, p_bridge_obj, p_control):
         """ Control some device using the Philips Hue HUB.

@@ -18,7 +18,7 @@ There are several different interfaces at this point (2013-10-29):
 This module reads and writes the Config for those controllers.
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 
@@ -48,6 +48,7 @@ class DriverStatus():
     """
 
     def __init__(self):
+        self.Name = None
         self.Node = None
         self.Status = None  # Open, Died, Closed
 

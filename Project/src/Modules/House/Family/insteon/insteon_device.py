@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_device.py
+@name:      Modules/House/Family/insteon/insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -18,7 +18,7 @@ serial_port
 
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-11'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -28,7 +28,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Insteon_Device ')
+LOG = Logger.getLogger('PyHouse.insteon_device ')
 
 
 class InsteonCommandData():
@@ -48,12 +48,13 @@ class Utility(object):
     @staticmethod
     def _is_insteon(p_controller_obj):
         try:
-            return p_controller_obj.Family.Name == 'Insteon'
+            return p_controller_obj.Family.Name == 'insteon'
         except AttributeError:
             return False
 
     @staticmethod
     def _is_active(p_controller_obj):
+        return True
         try:
             return p_controller_obj.Active == True
         except AttributeError:
@@ -70,14 +71,14 @@ class Utility(object):
         @param p_controller_obj: ==> ControllerInformation(CoreLightingData)
         @return: None if no PLM, API Pointer if OK
         """
-        from Modules.House.Family.Insteon import Insteon_PLM
-        l_plmAPI = Insteon_PLM.API()
+        from Modules.House.Family.insteon import insteon_plm
+        l_plmAPI = insteon_plm.API()
         l_uuid = p_pyhouse_obj.Computer.UUID
         p_controller_obj._HandlerAPI = l_plmAPI
         if l_plmAPI.Start(p_pyhouse_obj, p_controller_obj):
             LOG.info('Successfully started Insteon controller {}'.format(p_controller_obj.Name))
             p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerCount += 1
-            p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerTypes.append('Insteon')
+            p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerTypes.append('insteon')
             return l_plmAPI
         else:
             LOG.error('Controller {} failed to start.'.format(p_controller_obj.Name))
@@ -91,13 +92,10 @@ class Utility(object):
 
         Return the Insteon_PLM API reference if one is found:
         """
-        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
         for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
-            LOG.info('Loading Controller "{}"'.format(l_controller_obj.Name))
-            if l_controller_obj == None:
-                continue
-            # LOG.debug('Trying to start controller "{}"'.format(l_controller_obj.Name))
-            # LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
+            LOG.info('Starting Controller "{}"'.format(l_controller_obj.Name))
+            LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
             if Utility._is_valid_controller(l_controller_obj):
                 LOG.debug('Insteon Controller: {} - will be started.'.format(l_controller_obj.Name))
                 l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
@@ -105,7 +103,7 @@ class Utility(object):
             elif Utility._is_insteon(l_controller_obj):
                 LOG.warn('Insteon Controller: {} - will NOT be started per config file.'.format(l_controller_obj.Name))
             else:
-                # LOG.debug('Not an insteon controller')
+                LOG.debug('Not an insteon controller')
                 pass  #  Not interested in this controller. (Non-Insteon)
         return None
 
@@ -122,11 +120,11 @@ class API:
     """
 
     m_plm = None
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        p_pyhouse_obj.House._Commands['Insteon'] = {}
+        p_pyhouse_obj.House._Commands['insteon'] = {}
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_plm = None
         LOG.info('Created an instance of Insteon_device.')
 
     def LoadConfig(self):
@@ -135,12 +133,12 @@ class API:
         LOG.info('Loading Config')
 
     def Start(self):
-        """ Note that the controller may not be available on this node.
+        """ Note that some controllers may not be available on this node.
         """
         LOG.info('Starting the Insteon Controllers.')
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Pypouse_obj.House.Lighting', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Pypouse_obj.House.Lighting', 190))
         self.m_plm = Utility()._start_all_controllers(self.m_pyhouse_obj)
-        LOG.info('Started the Insteon Controllers.')
+        LOG.info('Started all the Insteon Controllers.')
 
     def SaveConfig(self):
         """
@@ -163,8 +161,8 @@ class API:
         @param p_control: the idealized light control params
         """
         LOG.debug('Controlling Insteon device "{}" using "{}"'.format(p_device_obj.Name, p_controller_obj.Name))
-        if not p_controller_obj._isFunctional:
-            return
+        # if not p_controller_obj._isFunctional:
+        #    return
         # l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
         self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
 

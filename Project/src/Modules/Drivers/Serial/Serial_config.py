@@ -1,15 +1,15 @@
 """
-@name:      PyHouse/Project/src/Modules/Drivers/Serial/serial_xml.py
+@name:      Modules/Drivers/Serial/serial_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2014
-@summary:   Read and write Serial xml
+@summary:   Read and write Serial config
 
 """
 
-__updated__ = '2019-07-23'
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

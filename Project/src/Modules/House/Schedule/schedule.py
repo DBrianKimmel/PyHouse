@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-10'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -151,7 +151,7 @@ class MqttActions:
         l_sched = ScheduleBaseData()
         l_sched.Name = l_name
         l_sched.Key = l_key
-        l_sched.Active = True
+        # l_sched.Active = True
         l_sched.Comment = extract_tools.get_mqtt_field(p_message, 'Comment')
         l_sched.LastUpdate = datetime.datetime.now()
         l_sched.UUID = extract_tools.get_mqtt_field(p_message, 'UUID')
@@ -586,7 +586,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Schedule config file is missing an entry for "{}"'.format(l_key))
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Schedule', 190))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Schedule', 190))
         return l_obj
 
     def _extract_all_schedules(self, p_config):
@@ -596,7 +596,7 @@ class Config:
         for l_ix, l_value in enumerate(p_config):
             l_obj = self._extract_one_schedule(l_value)
             l_scheds[l_ix] = l_obj
-            LOG.debug('Loaded Schedule {}'.format(l_obj.Name))
+            LOG.debug('Loaded Schedule "{}"'.format(l_obj.Name))
         return l_scheds
 
     def LoadYamlConfig(self):

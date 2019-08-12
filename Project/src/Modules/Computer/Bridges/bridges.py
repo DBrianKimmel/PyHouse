@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-08-04'
+__updated__ = '2019-08-10'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -162,7 +162,7 @@ class API:
         for l_bridge in self.m_pyhouse_obj.Computer.Bridges.values():
             if l_bridge.Type == 'Hue':
                 # Atempt to not load unless used
-                from Modules.House.Family.Hue.Hue_hub import HueHub
+                from Modules.House.Family.hue.hue_hub import HueHub
                 LOG.info('Hue Bridge Active: {}'.format(l_bridge.Name))
                 HueHub(self.m_pyhouse_obj).HubStart(l_bridge)
             else:

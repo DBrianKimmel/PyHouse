@@ -1,12 +1,11 @@
-* Name:      PyHouse/Project/src/Modules/Computer/Mqtt/Docs/Design.md
+* Name:      PyHouse/Project/src/Modules/Computer/Mqtt/Docs/README.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2019-2019 by D. Brian Kimmel
-* Created:   2019-05-15
-* Updated:   2019-05-23
+* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Created:   2018-10-01
+* Updated:   2019-04-04
 * License:   MIT License
-* Summary:   This is the design documentation for the Mqtt section of PyHouse.
-
+* Summary:   This is the design documentation for the Mqtt Module of PyHouse.
 
 # MQTT
 
@@ -42,5 +41,66 @@ There are several general and nearly universal topic endings that are in use.
 	</Broker>
 </MqttSection>
 ```
+
+## Broker
+
+This module connects to a MQTT broker using the 3.1.1 protocol.
+The client name must start with 'PyH-'.
+It uses straight TCP and will soon allow TLS.
+
+## Design
+
+This Mqtt module is accessed by every other module.
+
+The API is setup from the computer module.
+It initialized as the first thing in the computer setup so it can be called to post and decode messages early on.
+
+### Topic
+
+1. The topics all start out with pyhouse
+
+==>pyhouse
+
+1. The next section is the house name.
+House names must be unique within the realm that the broker and backup brokers serve.
+House names may include spaces
+
+==>pyhouse/housename
+
+The next section is the message category.
+
+==>pyhouse/housename/category
+
+Categories:
+- computer
+- entertainment
+- hvac
+- irrigation
+- lighting
+- pool
+- room
+- rule
+- schedule
+- security
+
+The next section is the action field.
+
+==>pyhouse/housename/lighting/action
+
+Actions:
+- status
+- control
+- delete
+- add
+- synchronize
+
+
+### Payload
+
+The playload is structured to carry the information
+
+# References
+
+[Certificates](http://www.steves-internet-guide.com/mosquitto-tls/)
 
 ### END DBK

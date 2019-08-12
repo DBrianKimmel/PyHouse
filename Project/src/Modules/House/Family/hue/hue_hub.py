@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-08-05'
+__updated__ = '2019-08-11'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -43,7 +43,7 @@ from twisted.web.iweb import IBodyProducer
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Family.Hue.Hue_data import HueLightData
+from Modules.House.Family.hue.hue_data import HueLightData
 from Modules.House.Lighting.utility import Utility as lightingUtility
 
 from Modules.Core import logging_pyh as Logger
@@ -288,7 +288,9 @@ class BytesProducer(object):
 
 
 # class server(BaseHTTPRequestHandler):
-class Server(object):
+class Server:
+    """
+    """
 
     m_client_address = None
     m_path = '/'
@@ -491,9 +493,14 @@ class HueProtocol(Protocol):
             elif p_command == '/sensors':
                 HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_sensors(p_body)
 
+        def eb_failed(fail_reason):
+            LOG.warn("initial Hue Hub connection failed: {}".format(fail_reason))
+            # l_ReconnectingService.stopService()
+
         l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)
         if l_msg == '':
             self.m_finished.addCallback(cb_log, self.m_command, self.m_code, self.m_body, self.m_finished, self.m_pyhouse_obj)
+            self.m_finished.addErrback(eb_failed, p_reason)
             self.m_finished.callback(None)
             return
         LOG.debug('Finished receiving body: {}'.format(PrettyFormatAny.form(l_msg, 'Reason', 190)))
@@ -550,8 +557,8 @@ class HueDispatch(HueProtocol):
             for l_key, l_value in l_light_obj[1].items():
                 l_light.HueLightIndex = l_light_obj[0]
                 l_light.Key = l_light_obj[0]
-                l_light.Active = True
-                l_light.DeviceFamily = 'Hue'
+                # l_light.Active = True
+                l_light.Family.Name = 'Hue'
                 l_light.DeviceType = 'Lighting'  # Lighting
                 l_light.DeviceSubType = 'Light'
                 l_light.ControllerName = 'Hue Hub'

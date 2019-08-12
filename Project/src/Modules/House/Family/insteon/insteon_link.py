@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_Link.py
+@name:      Modules/House/Family/insteon/insteon_link.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -12,18 +12,18 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-07-22'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert
-from Modules.House.Family.Insteon.Insteon_data import InsteonData
-from Modules.House.Family.Insteon.Insteon_constants import ACK
-from Modules.House.Family.Insteon import Insteon_utils
-from Modules.House.Family.Insteon.Insteon_utils import Decode as utilDecode, Util
+from Modules.House.Family.insteon.insteon_data import InsteonData
+from Modules.House.Family.insteon.insteon_constants import ACK
+from Modules.House.Family.insteon import insteon_utils
+from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode, Util
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Insteon_Link   ')
+LOG = Logger.getLogger('PyHouse.insteon_link   ')
 
 
 class LinkData():
@@ -50,8 +50,8 @@ class Send():
         See p 255(268) of 2009 developers guide.
         """
         LOG.info("Queue command to reset the PLM (67).")
-        l_command = Insteon_utils.create_command_message('plm_reset')
-        Insteon_utils.queue_command(p_controller_obj, l_command)
+        l_command = insteon_utils.create_command_message('plm_reset')
+        insteon_utils.queue_command(p_controller_obj, l_command)
 
     @staticmethod
     def queue_0x69_command(p_controller_obj):
@@ -59,8 +59,8 @@ class Send():
         See p 248(261) of 2009 developers guide.
         """
         LOG.info("Command to get First all-link record (0x69).")
-        l_command = Insteon_utils.create_command_message('plm_first_all_link')
-        Insteon_utils.queue_command(p_controller_obj, l_command)
+        l_command = insteon_utils.create_command_message('plm_first_all_link')
+        insteon_utils.queue_command(p_controller_obj, l_command)
 
     @staticmethod
     def queue_0x6A_command(p_controller_obj):
@@ -68,8 +68,8 @@ class Send():
         See p 249(262) of 2009 developers guide.
         """
         LOG.info("Command to get the next all-link record (0x6A).")
-        l_command = Insteon_utils.create_command_message('plm_next_all_link')
-        Insteon_utils.queue_command(p_controller_obj, l_command)
+        l_command = insteon_utils.create_command_message('plm_next_all_link')
+        insteon_utils.queue_command(p_controller_obj, l_command)
 
     @staticmethod
     def queue_0x6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data):
@@ -86,13 +86,13 @@ class Send():
         [10] = Data
        """
         LOG.info("Command to manage all-link record (6F).")
-        l_command = Insteon_utils.create_command_message('manage_all_link_record')
+        l_command = insteon_utils.create_command_message('manage_all_link_record')
         l_command[2] = p_code
         l_command[3] = p_flag
         l_command[4] = p_light_obj.GroupNumber
-        Insteon_utils.insert_address_into_message(p_light_obj.Family.Address, l_command, 5)
+        insteon_utils.insert_address_into_message(p_light_obj.Family.Address, l_command, 5)
         l_command[8:11] = p_data
-        Insteon_utils.queue_command(p_controller_obj, l_command)
+        insteon_utils.queue_command(p_controller_obj, l_command)
 
 
 class Decode(object):
@@ -116,7 +116,7 @@ class Decode(object):
         [9] = Firmwear Version
         """
         l_message = p_controller_obj._Message
-        l_msg = Insteon_utils.decode_link_code(l_message[2])
+        l_msg = insteon_utils.decode_link_code(l_message[2])
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
         l_device_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_from_id)

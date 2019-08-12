@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -147,6 +147,7 @@ class API:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.info("Initialing - Version:{}".format(__version__))
         p_pyhouse_obj.House.Lighting = LightingInformation()
         self.m_pyhouse_obj = p_pyhouse_obj
         #
@@ -166,7 +167,7 @@ class API:
         self.m_controllers.LoadConfig()
         self.m_lights.LoadConfig()
         self.m_outlets.LoadConfig()
-        #
+        LOG.info('Loaded Lighting config files.')
 
     def Start(self):
         """ Allow loading of sub modules and drivers.

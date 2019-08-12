@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/mqtt_util.py
+@name:      Modules/Core/Mqtt/mqtt_util.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-25'
+__updated__ = '2019-08-08'
 
 
 class EncodeDecode(object):

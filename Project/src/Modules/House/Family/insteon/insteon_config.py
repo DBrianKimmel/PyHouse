@@ -11,7 +11,7 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerInformation.
 """
 
-__updated__ = '2019-07-27'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 
@@ -39,9 +39,6 @@ class InsteonInformation:
 
 class Config:
     """
-    These routines are called from read_family_data in various modules.
-    This is done so Lights, Thermostats, Irrigation and Pool devices can use the XML data for Insteon devices.
-
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """
 

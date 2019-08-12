@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_utils.py
+@name:      Modules/House/Family/insteon/insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 
@@ -20,8 +20,8 @@ __updated__ = '2019-08-01'
 from Modules.Core.Utilities import convert
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
-from Modules.House.Family.Insteon.Insteon_data import InsteonData
-from Modules.House.Family.Insteon.Insteon_constants import \
+from Modules.House.Family.insteon.insteon_data import InsteonData
+from Modules.House.Family.insteon.insteon_constants import \
     MESSAGE_LENGTH, \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
@@ -280,7 +280,7 @@ class Decode(object):
         for l_obj in p_class.values():
             # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
             # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
-            if l_obj.Family.Name != 'Insteon':
+            if l_obj.Family.Name != 'insteon':
                 continue  #  ignore any non-Insteon devices in the class
             if l_obj.Family.Address == p_addr:
                 # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))

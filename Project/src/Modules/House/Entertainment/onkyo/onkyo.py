@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Entertainment/onkyo/onkyo.py
+@name:      Modules/Housing/Entertainment/onkyo/onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c)2016-2019 by D. Brian Kimmel
@@ -9,26 +9,23 @@
 
 """
 
-__updated__ = '2019-07-22'
+__updated__ = '2019-08-12'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
 import yaml
-from twisted.internet.protocol import Factory
-from twisted.internet.error import ConnectionDone
 from twisted.internet.endpoints import TCP4ClientEndpoint
+from twisted.internet.error import ConnectionDone
+from twisted.internet.protocol import Factory
 from twisted.protocols.basic import LineReceiver
 from queue import Queue
 
 #  Import PyMh files and modules.
-from Modules.Housing.Entertainment.entertainment_data import \
-    EntertainmentDeviceInformation, \
-    EntertainmentDeviceStatus, \
-    EntertainmentDeviceControl
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities import extract_tools
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceControl, EntertainmentDeviceStatus
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
@@ -279,17 +276,6 @@ class OnkyoClient(OnkyoProtocol):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def Xconnect(self, p_device_obj):
-        l_host = p_device_obj.Host
-        l_port = p_device_obj.Port
-        l_factory = OnkyoFactory(self.m_pyhouse_obj, p_device_obj)
-        l_connector = self.m_pyhouse_obj._Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-        p_device_obj._Factory = l_factory
-        p_device_obj._Connector = l_connector
-        p_device_obj._isRunning = True
-        self.m_device_obj = p_device_obj
-        LOG.info("Started Onkyo Device: '{}'; Host:{}; Port:{};".format(p_device_obj.Name, l_host, l_port))
-
     def _build_header(self):
         """
         """
@@ -357,7 +343,7 @@ class OnkyoClient(OnkyoProtocol):
             LOG.error("Tried to call send_command without a onkyo device configured.\n\tError:{}".format(e_err))
 
 
-class OnkeoControl():
+class OnkeoControl:
     """
     """
 
@@ -532,7 +518,6 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         This is the start.
         """
         l_name = SECTION + '_' + p_device.Model.lower() + '.yaml'
-        # l_filename = os.path.join(self.m_pyhouse_obj.Yaml.YamlConfigDir, l_name)
         l_filename = os.path.join(self.m_pyhouse_obj._Config.ConfigDir, l_name)
         with open(l_filename) as l_file:
             l_yaml = yaml.safe_load(l_file)
@@ -543,10 +528,7 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
     def LoadXml(self, p_pyhouse_obj):
         """ Read the XML for all Onkyo devices.
         """
-
-        # l_device_obj = XML.read_onkyo_section_xml(p_pyhouse_obj)
         l_device_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        # self._read_yaml(l_device_obj)
         LOG.info("Loaded Onkyo XML")
         return l_device_obj
 
@@ -564,8 +546,6 @@ class API(MqttActions, OnkyoClient, OnkeoControl):
         l_count = 0
         for l_device_obj in l_devices.values():
             self._read_yaml(l_device_obj)
-            if not l_device_obj.Active:
-                continue
             if l_device_obj._isRunning:
                 LOG.info('Onkyo device {} is already running.'.format(l_device_obj.Name))
                 continue

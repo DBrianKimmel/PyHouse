@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -167,7 +167,7 @@ class Maint:
     def _json_2_obj(p_json):
         l_obj = RoomInformation
         l_obj.Name = p_json['Name']
-        l_obj.Active = p_json['Active']
+        # l_obj.Active = p_json['Active']
         l_obj.Key = 0
         l_obj.UUID = p_json['UUID']
         l_obj.Comment = p_json['Comment']

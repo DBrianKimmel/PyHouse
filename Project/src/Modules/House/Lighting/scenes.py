@@ -11,17 +11,17 @@ Handle the scenes component of the lighting system.
 
 """
 
-__updated__ = '2017-03-26'
-
+__updated__ = '2019-08-09'
 
 Scene_Data = {}
+
 
 class ScenesData(object):
     """
     """
 
     def __init__(self):
-        self.Active = None
+        # self.Active = None
         self.Name = None
         self.Light = None
         self.Controller = None
@@ -44,7 +44,7 @@ class ScenesAPI(ScenesData):
 
     def load_scene(self, p_dict):
         l_scene = ScenesData()
-        l_scene.Active = p_dict.get('Active', None)
+        # l_scene.Active = p_dict.get('Active', None)
         Name = l_scene.Name = p_dict.get('Name', None)
         Scene_Data[Name] = l_scene
         return l_scene

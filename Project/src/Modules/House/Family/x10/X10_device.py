@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,11 +34,11 @@ class ReadWriteXml(object):
         return p_device_obj
 
     def insert_device_xml(self, p_entry_xml, p_device_obj):
-        if p_device_obj.DeviceFamily == 'Insteon':
+        if p_device_obj.Family.Name == 'Insteon':
             ET.SubElement(p_entry_xml, 'Address').text = p_device_obj.Address
             ET.SubElement(p_entry_xml, 'GroupList').text = str(p_device_obj.GroupList)
             ET.SubElement(p_entry_xml, 'GroupNumber').text = str(p_device_obj.GroupNumber)
-        elif p_device_obj.DeviceFamily == 'UPB':
+        elif p_device_obj.Family.Name == 'UPB':
             try:
                 ET.SubElement(p_entry_xml, 'Password').text = str(p_device_obj.Password)
                 ET.SubElement(p_entry_xml, 'UnitID').text = str(p_device_obj.UnitID)

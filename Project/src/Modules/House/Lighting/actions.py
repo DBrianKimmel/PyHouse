@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-09'
 
 #  Import system type stuff
 
@@ -49,8 +49,8 @@ class API:
             LOG.warn('No controllers on this server for Light: {}'.format(l_light_obj.Name))
             return
         for l_controller_obj in l_controller_objs:
-            if not l_controller_obj.Active:
-                continue
+            # if not l_controller_obj.Active:
+            #    continue
             LOG.info("\n\tSchedLightName:{}; Level:{}; LightName:{}; Controller:{}".format(
                     l_light_name, l_control.BrightnessPct, l_light_obj.Name, l_controller_obj.Name))
             self.ControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)

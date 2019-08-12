@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-06'
+__updated__ = '2019-08-11'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -106,7 +106,7 @@ class MqttActions:
             l_logmsg = scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
-            LOG.warn('Unknown House Topic: {}'.format(p_topic[0]))
+            LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_topic[0], p_topic, p_message))
         return l_logmsg
 
 
@@ -149,7 +149,7 @@ class Config:
         """ Read the Rooms.Yaml file.
         It contains Rooms data for all rooms in the house.
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # LOG.deb('Loading Config - Version:{}'.format(__version__))
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
@@ -189,6 +189,7 @@ class Utility:
 
     m_module_needed = []
     m_pyhouse_obj = None
+    m_debugging_skip = []
 
     def __init__(self, p_pyhouse_obj):
         """
@@ -196,22 +197,28 @@ class Utility:
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def find_all_configed_modules(self):
-        """ Find all house modules that have a "module".yaml config file in /etc/pyhouse.
+        """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
         """
         for l_module in MODULES:
             l_filename = l_module.lower() + '.yaml'
             l_node = config_tools.Yaml.find_config_node(self, l_filename)
             if l_node != None:
                 self.m_module_needed.append(l_module)
+        # Add family - It is not configured but is derived from things configured.
         if 'Family' not in self.m_module_needed:
             self.m_module_needed.append('Family')
-        LOG.debug('Found configured modules: {}'.format(self.m_module_needed))
+        LOG.info('Found config files for: {}'.format(self.m_module_needed))
+        return self.m_module_needed  # for debugging
 
     def _import_all_found_modules(self):
+        """ Now we know what we need, load and run just those modules.
         """
-        """
+        LOG.debug('Importing configured modules: {}'.format(self.m_module_needed))
         for l_module in self.m_module_needed:
-            # LOG.debug('Module: {}'.format(l_module))
+            if l_module in self.m_debugging_skip:
+                LOG.warn('Skip import (for debugging) of module "{}"'.format(l_module))
+                continue
+            LOG.debug('Starting import of Module: "{}"'.format(l_module))
             l_package = 'Modules.House.' + l_module.capitalize()  # p_family_obj.PackageName  # contains e.g. 'Modules.Families.Insteon'
             l_name = l_package + '.' + l_module.lower()
             try:
@@ -237,44 +244,33 @@ class Utility:
     def _load_component_config(self):
         """ Load the config file for all the components of the house.
         """
+        LOG.debug('Loading configured modules: {}'.format(self.m_module_needed))
         l_obj = self.m_pyhouse_obj._APIs.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            LOG.debug('Loading House Module "{}"'.format(l_key))
             if l_key == 'HouseAPI':
                 continue
+            if l_a == None:
+                LOG.warn('Skipping "{}"'.format(l_key))
+                continue
+            LOG.debug('Loading House Module "{}"'.format(l_key))
             l_a.LoadConfig()
         return
-        self.m_pyhouse_obj._APIs.House.EntertainmentAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.FamilyAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.HvacAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.IrrigationAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.LightingAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.PoolAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.ScheduleAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.SecurityAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.SyncAPI.LoadConfig()
-        pass
 
     def _start_house_parts(self):
         """ Family must start before the other things (that depend on family).
         """
+        LOG.debug('Starting configured modules: {}'.format(self.m_module_needed))
         l_obj = self.m_pyhouse_obj._APIs.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
             if l_key == 'HouseAPI':
                 continue
+            if l_a == None:
+                LOG.warn('Skipping "{}"'.format(l_key))
+                continue
             l_a.Start()
         return
-        self.m_pyhouse_obj._APIs.House.FamilyAPI.Start()  # Families start before things that need them.
-        self.m_pyhouse_obj._APIs.House.EntertainmentAPI.Start()
-        self.m_pyhouse_obj._APIs.House.HvacAPI.Start()
-        self.m_pyhouse_obj._APIs.House.IrrigationAPI.Start()
-        self.m_pyhouse_obj._APIs.House.LightingAPI.Start()
-        self.m_pyhouse_obj._APIs.House.PoolAPI.Start()
-        self.m_pyhouse_obj._APIs.House.ScheduleAPI.Start
-        self.m_pyhouse_obj._APIs.House.SecurityAPI.Start()
-        self.m_pyhouse_obj._APIs.House.SyncAPI.Start()
 
     def _save_component_apis(self):
         """ These are sub-module parts of the house.
@@ -284,22 +280,20 @@ class Utility:
             l_a = getattr(l_obj, l_key)
             if l_key == 'HouseAPI':
                 continue
+            if l_a == None:
+                LOG.warn('Skipping "{}"'.format(l_key))
+                continue
             l_a.SaveConfig()
         return
-        self.m_pyhouse_obj._APIs.House.EntertainmentAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.HvacAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.IrrigationAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.LightingAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.PoolAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.ScheduleAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.SecurityAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.SyncAPI.SaveConfig()
 
     def stop_house_parts(self):
         l_obj = self.m_pyhouse_obj._APIs.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
             if l_key == 'HouseAPI':
+                continue
+            if l_a == None:
+                LOG.warn('Skipping "{}"'.format(l_key))
                 continue
             l_a.Stop()
         return
@@ -332,7 +326,7 @@ class API:
         #
         p_pyhouse_obj.House.Name = p_pyhouse_obj._Parameters.Name
         p_pyhouse_obj.House.Key = 0
-        p_pyhouse_obj.House.Active = True
+        # p_pyhouse_obj.House.Active = True
         p_pyhouse_obj.House.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
         p_pyhouse_obj.House.Comment = ''
         p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
@@ -353,7 +347,6 @@ class API:
         self.m_location_api.LoadConfig()
         self.m_floor_api.LoadConfig()
         self.m_rooms_api.LoadConfig()
-        # self.m_utility.find_all_configed_modules()
         self.m_utility._load_component_config()
         LOG.info('Loaded Config - Version:{}'.format(__version__))
         return

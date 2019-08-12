@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -115,7 +115,7 @@ class Utility(object):
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
             l_family = p_obj.Family.Name
-            l_family_obj = p_pyhouse_obj._Families[l_family]
+            l_family_obj = p_pyhouse_obj.House.Family[l_family]
             l_api = l_family_obj.FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except Exception as e_err:

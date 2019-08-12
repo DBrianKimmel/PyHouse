@@ -1,4 +1,4 @@
-* Name:      PyHouse/Project/src/Modules/Families/Hue/Docs/Design
+* Name:      Modules/House/Family/Hue/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel

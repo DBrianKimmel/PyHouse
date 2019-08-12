@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-10'
 
 #  Import system type stuff
 import os
@@ -138,7 +138,7 @@ class SetupPyHouseObj():
     def _build_yaml(self, p_root):
         l_ret = YamlData()
         l_ret.YamlRoot = p_root
-        l_ret.YamlFileName = '/etc/pyhouse/master.yaml'
+        l_ret.YamlFileName = 'pyhouse.yaml'
         return l_ret
 
     def _build_twisted(self):
@@ -165,11 +165,11 @@ class SetupPyHouseObj():
     @staticmethod
     def _build_computer(_p_pyhouse_obj):
         l_ret = ComputerInformation()
-        l_ret.Mqtt = MqttInformation()
         return l_ret
 
     def _build_core(self):
         l_ret = CoreInformation()
+        l_ret.Mqtt = MqttInformation()
         return l_ret
 
     def _build_apis(self):
@@ -282,7 +282,6 @@ class SetupPyHouseObj():
         #
         l_pyhouse_obj._APIs = self._build_apis()
         l_pyhouse_obj._Config = self._build_config()
-        # l_pyhouse_obj._Families = familyUtil()._init_family_component_apis(l_pyhouse_obj)
         l_pyhouse_obj._Twisted = self._build_twisted()
         l_pyhouse_obj._Uuids = UuidInformation()
         l_pyhouse_obj._Uuids.All = {}
@@ -307,7 +306,7 @@ class SetupPyHouseObj():
         pass
 
     def LoadHouse(self, p_pyhouse_obj):
-        p_pyhouse_obj._Families = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
+        p_pyhouse_obj.House.Family = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
         housingAPI(p_pyhouse_obj).LoadXml(p_pyhouse_obj)
         return
 

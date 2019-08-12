@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Computer/Mqtt/_test/test_mqtt_client.py
+@name:      Modules/Core/Mqtt/_test/test_mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -7,33 +7,26 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 13 tests - DBK - 2019-05-25
+Passed all 7 tests - DBK - 2019-08-08
 
 """
+from Modules.House.Lighting.controllers import ControllerInformation
+from Modules.House.house_data import LocationInformationPrivate
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-08-08'
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from twisted.internet import reactor
-# import twisted
 
 #  Import PyMh files and modules.
-from test.xml_data import XML_LONG, XML_EMPTY, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Mqtt.mqtt_data import MqttBrokerInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Core.data_objects import \
-    ScheduleLightData, \
-    ControllerInformation, \
-    ComputerInformation
-from Modules.Housing.location import LocationInformationPrivate
+    ScheduleLightData
 from Modules.Core.Mqtt.mqtt import _make_message
-# from Modules.Core.Mqtt.mqtt_client import Util  # , API as mqttAPI
-from Modules.Core.Mqtt.test.xml_mqtt import \
-    TESTING_BROKER_NAME_1, \
-    TESTING_BROKER_ACTIVE_1
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
 BROKER_TLS = '192.168.1.10'
@@ -46,10 +39,8 @@ class SetupMixin(object):
     """
     """
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        # self.m_api = mqttAPI(self.m_pyhouse_obj)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_broker = MqttBrokerInformation()
 
     def jsonPair(self, p_json, p_key):
@@ -66,71 +57,20 @@ class SetupMixin(object):
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_mqtt_client')
 
 
-class A1_XML(SetupMixin, unittest.TestCase):
+class C1_TcpConnect(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_1_Tags(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-1-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.mqtt_sect.tag, 'MqttSection')
-
-
-class A2_XML(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_BrokerCnt(self):
-        l_xml = self.m_xml.mqtt_sect
-        # print(PrettyFormatAny.form(l_xml, 'A2-1-A - Xml'))
-        self.assertEqual(len(l_xml), 2)
-
-    def test_02_PyHouse(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A2_2_A - PyHouse'))
-        self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
-        self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
-
-    def test_03_Computer(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'A2_3_A - Init Computer'))
-        pass
-
-    def test_04_Mqtt(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt, 'A2_4_A - Init Mqtt'))
-        pass
-
-
-class A3_EmptyXML(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_EMPTY))
-
-    # def test_01_Mqtt(self):
-    #    l_mqtt = self.m_api.LoadXml(self.m_pyhouse_obj)
-    #    self.assertEqual(len(l_mqtt.Brokers), 0)
-
-
-class B1_TcpConnect(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_pyhouse_obj._Twisted.Reactor = reactor
         # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4
         self.m_broker.Host.Port = PORT
-        self.m_broker.Active = TESTING_BROKER_ACTIVE_1
-        self.m_broker.Name = TESTING_BROKER_NAME_1
+        # self.m_broker.Name = TESTING_BROKER_NAME_1
 
     def test_01_Broker(self):
         """ Be sure that the XML contains the right stuff.
@@ -138,13 +78,13 @@ class B1_TcpConnect(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.Core.Mqtt.Brokers = {}
         self.m_pyhouse_obj.Core.Mqtt.Brokers[0] = self.m_broker
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt.Brokers, 'B1-01-A - Broker', 80))
-        self.assertEqual(self.m_broker.Name, TESTING_BROKER_NAME_1)
+        # self.assertEqual(self.m_broker.Name, TESTING_BROKER_NAME_1)
 
 
-class B2_ConnectTLS(SetupMixin, unittest.TestCase):
+class C2_ConnectTLS(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_pyhouse_obj._Twisted.Reactor = reactor
         # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKER_TLS
@@ -163,10 +103,10 @@ class B2_ConnectTLS(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_broker.Name, 'ClientTest')
 
 
-class C1_Tools(SetupMixin, unittest.TestCase):
+class D1_Tools(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_02_Obj(self):
         """ Be sure that the XML contains the right stuff.
@@ -184,7 +124,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_pyhouse_obj.Core.Mqtt.Prefix = "pyhouse/test_house/"
         # twisted.internet.base.DelayedCall.debug = True
         self.m_broker.BrokerAddress = BROKERv4

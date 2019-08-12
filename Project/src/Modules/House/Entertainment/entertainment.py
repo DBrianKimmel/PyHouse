@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-08-05'
+__updated__ = '2019-08-12'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -90,6 +90,8 @@ class EntertainmentPluginInformation():
 class MqttActions():
     """ Mqtt section
     """
+
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -162,7 +164,7 @@ class Config:
             pass
 
     def _extract_services(self, p_pyhouse_obj, p_yaml):
-        """ Get a service loaded
+        """ Get all service loaded
         """
         # LOG.debug('Services:\n\t{}'.format(p_yaml))
         for l_service in p_yaml:
@@ -171,7 +173,6 @@ class Config:
             l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_service)
             l_ix = l_name.lower()
             l_obj.Name = l_name
-            l_obj.Active = True
             l_obj.Type = 'Service'
             p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
             p_pyhouse_obj.House.Entertainment.PluginCount += 1
@@ -179,7 +180,7 @@ class Config:
         return l_obj
 
     def _extract_devices(self, p_pyhouse_obj, p_yaml):
-        """
+        """ Get all devices loaded.
         """
         # LOG.debug('Devices:\n\t{}'.format(p_yaml))
         for l_device in p_yaml:
@@ -188,7 +189,6 @@ class Config:
             l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_device)
             l_ix = l_name.lower()
             l_obj.Name = l_name
-            l_obj.Active = True
             l_obj.Type = 'Device'
             p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
             p_pyhouse_obj.House.Entertainment.PluginCount += 1

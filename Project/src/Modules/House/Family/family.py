@@ -22,17 +22,17 @@ The Family specific information is used to control and monitor the different dev
 
 An Insteon_device module is used to read and write information to an Insteon controller connected to the computer.
 
-    FamilyPackageName         Will point to the package directory 'Modules.House.Family.Insteon'
+    FamilyPackageName         Will point to the package directory 'Modules.House.Family.insteon'
     FamilyDevice_ModuleName   will contain 'Insteon_device'
     FamilyXml_ModuleName      will contain 'Insteon_xml'
 
-    FamilyDevice_ModuleAPI    will point to Insteon_device.API() to allow API functions to happen.
+    DeviceAPI    will point to Insteon_device.API() to allow API functions to happen.
     FamilyXml_ModuleAPI       will point to Insteon_xml.API() where ReadXml
     FamilyYaml_ModuleAPI      will point to Insteon_yaml.API() where LoadConfig
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-11'
 
 # Import system type stuff
 import importlib
@@ -48,18 +48,20 @@ CONFIG_FILE_NAME = 'families.yaml'
 
 class FamilyModuleInformation:
     """ A container for every family that has been defined in modules.
-    PyHouse_obj._Families is a dict indexed by capitalize() family name.
+
+    PyHouse_obj.House.Family.()
+    PyHouse_obj.House.Family is a dict indexed by lower() family name.
 
     Each entry is an object of this class.
     """
 
     def __init__(self):
         self.Name = None
-        self.DeviceName = None  # Insteon_device
-        self.ConfigName = None  # Insteon_yaml
-        self.PackageName = None  # Modules.House.Family.Insteon
-        self.DeviceAPI = None  # Insteon_device.API()
-        self.ConfigAPI = None
+        self.DeviceName = None  # insteon_device
+        # self.ConfigName = None  # insteon_yaml
+        self.PackageName = None  # Modules.House.Family.insteon
+        self.DeviceAPI = None  # insteon_device.API()
+        # self.ConfigAPI = None
 
 
 class FamilyConfigInformation:
@@ -86,7 +88,7 @@ class Utility:
         @param p_module_name: is a name of a module that we want to import ('Insteon_device')
         @return: the imported module object or None
         """
-        l_package = p_family_obj.PackageName  # contains e.g. 'Modules.House.Family.Insteon'
+        l_package = p_family_obj.PackageName  # contains e.g. 'Modules.House.Family.insteon'
         l_module = l_package + '.' + p_module_name
         try:
             l_ret = importlib.import_module(l_module, package=l_package)
@@ -128,23 +130,23 @@ class Utility:
     def _build_module_names(self, p_name):
         """
         """
-        l_name = p_name.capitalize()
+        l_name = p_name.lower()
         LOG.debug('Building names for "{}"'.format(l_name))
         l_obj = FamilyModuleInformation()
         l_obj.Name = l_name
         l_obj.PackageName = 'Modules.House.Family.' + l_name
         l_obj.DeviceName = l_name + '_device'
-        l_obj.ConfigName = l_name + '_config'
+        # l_obj.ConfigName = l_name + '_config'
         return l_obj
 
     def _build_one_family_data(self, p_pyhouse_obj, p_name):
         """Build up the FamilyModuleInformation names portion entry for a single family
 
         For the Insteon family:
-            Insteon_device                   ==> FamilyDevice_ModuleName
-            Insteon_xml                      ==> FamilyXml_ModuleName
-            Insteon_yaml                     ==> FamilyYaml_ModuleName
-            Modules.House.Family.Insteon         ==> PackageName
+            insteon_device                   ==> FamilyDevice_ModuleName
+            insteon_xml                      ==> FamilyXml_ModuleName
+            insteon_yaml                     ==> FamilyYaml_ModuleName
+            Modules.House.Family.insteon         ==> PackageName
 
         @param p_name: a Valid Name such as "Insteon"
         """
@@ -155,8 +157,8 @@ class Utility:
         importlib.import_module(l_family_obj.PackageName)
         l_device_ref = Utility()._do_import(l_family_obj, l_family_obj.DeviceName)
         l_family_obj.DeviceAPI = Utility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
-        l_config_ref = Utility()._do_import(l_family_obj, l_family_obj.ConfigName)
-        l_family_obj.ConfigAPI = Utility()._create_config_instance(p_pyhouse_obj, l_family_obj.ConfigName, l_config_ref)
+        # l_config_ref = Utility()._do_import(l_family_obj, l_family_obj.ConfigName)
+        # l_family_obj.ConfigAPI = Utility()._create_config_instance(p_pyhouse_obj, l_family_obj.ConfigName, l_config_ref)
         LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
         return l_family_obj
 
@@ -183,7 +185,8 @@ class Config:
         # Load specific family information dispatched from here
         #
         for l_key, l_value in p_config.items():
-            # print('Family Key: {}; Value: {}'.format(l_key, l_value))
+            if l_key == 'Name':
+                l_value = l_value.lower()
             setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
@@ -191,14 +194,14 @@ class Config:
                 LOG.warn('Controller Yaml is missing an entry for "{}"'.format(l_key))
 
         # Now build the families actually called for in the config files.
-        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj._Families, 'Families', 190))
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'House.Family', 190))
         try:
-            _l_test = p_pyhouse_obj._Families[l_obj.Name]
+            _l_test = p_pyhouse_obj.House.Family[l_obj.Name]
             pass
-        except:
-            LOG.debug('Config family {} '.format(l_obj.Name))
+        except Exception as e_err:
+            LOG.debug('Config family {} Update family\n\tError: {}'.format(l_obj.Name, e_err))
             l_module.Name = l_obj.Name
-            p_pyhouse_obj._Families[l_obj.Name] = l_module
+            p_pyhouse_obj.House.Family[l_obj.Name] = l_module
         return l_obj
 
 
@@ -208,25 +211,27 @@ class API:
     m_family = {}
 
     def __init__(self, p_pyhouse_obj):
-        p_pyhouse_obj._Families = {}
+        p_pyhouse_obj.House.Family = self.m_family
         self.m_pyhouse_obj = p_pyhouse_obj
-        # self.m_family = Utility()._init_family_component_apis(p_pyhouse_obj)
         LOG.info('Initialized')
 
     def LoadConfig(self):
         """
-        Build p_pyhouse_obj._Families
+        Build p_pyhouse_obj House Family
         """
-        # self.m_pyhouse_obj._Families = self.m_family
+        # LOG.debug('Reloading Families')
+        # self.m_pyhouse_obj.House.Family = self.m_family
+        pass
 
     def Start(self):
         """
-        Build p_pyhouse_obj._Families
         """
         LOG.info("Starting all families.")
-        for l_family_obj in self.m_pyhouse_obj._Families.values():
+        for l_fam, l_family_obj in self.m_pyhouse_obj.House.Family.items():
             LOG.info('Starting Family {}'.format(l_family_obj.Name))
+            LOG.debug(PrettyFormatAny.form(l_family_obj, 'PyHouse Family'))
             l_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, l_family_obj.Name)
+            self.m_pyhouse_obj.House.Family[l_fam] = l_family_obj
             l_family_obj.DeviceAPI.Start()
         LOG.info("Started all lighting families.")
         return self.m_family

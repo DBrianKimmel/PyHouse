@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-04'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -85,8 +85,8 @@ class Config:
         for l_key, l_val in l_broker.items():
             if l_key == 'Host':
                 l_val = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(l_val)
-            elif l_key == 'Active':
-                l_val = bool(l_val)
+            # elif l_key == 'Active':
+            #    l_val = bool(l_val)
             # LOG.debug('Key:{}; Val:{};'.format(l_key, l_val))
             setattr(l_obj, l_key, l_val)
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker', 190))

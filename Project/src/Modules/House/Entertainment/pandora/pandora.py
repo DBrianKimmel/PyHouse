@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-08-03'
+__updated__ = '2019-08-09'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -524,7 +524,7 @@ class PandoraControl(A_V_Control):
         l_file = Path(PIANOBAR_LOCATION)
         if l_file.is_file():
             return True
-        p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Active = False
+        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Active = False
         return False
 
     def _clear_status_fields(self):

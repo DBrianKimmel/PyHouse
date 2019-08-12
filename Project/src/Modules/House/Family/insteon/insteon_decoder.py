@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_decoder.py
+@name:      Modules/House/Family/insteon/insteon_decoder.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -22,23 +22,23 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-07-24'
+__updated__ = '2019-08-11'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.Insteon import Insteon_utils
-from Modules.House.Family.Insteon.Insteon_HVAC import DecodeResponses as DecodeHvac
-from Modules.House.Family.Insteon.Insteon_Light import DecodeResponses as DecodeLight
-from Modules.House.Family.Insteon.Insteon_Security import DecodeResponses as DecodeSecurity
-from Modules.House.Family.Insteon.Insteon_Link import Decode as linkDecode
-from Modules.House.Family.Insteon.Insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
-from Modules.House.Family.Insteon.Insteon_utils import Decode as utilDecode
+from Modules.House.Family.insteon import insteon_utils
+from Modules.House.Family.insteon.insteon_hvac import DecodeResponses as DecodeHvac
+from Modules.House.Family.insteon.insteon_light import DecodeResponses as DecodeLight
+from Modules.House.Family.insteon.insteon_security import DecodeResponses as DecodeSecurity
+from Modules.House.Family.insteon.insteon_link import Decode as linkDecode
+from Modules.House.Family.insteon.insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
+from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Insteon_decode ')
+LOG = Logger.getLogger('PyHouse.insteon_decode ')
 
 #  OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 
@@ -67,7 +67,7 @@ class DecodeResponses(object):
         while len(p_controller_obj._Message) >= 2:
             l_stx = p_controller_obj._Message[0]
             if l_stx == STX:
-                l_need_len = Insteon_utils.get_message_length(p_controller_obj._Message)
+                l_need_len = insteon_utils.get_message_length(p_controller_obj._Message)
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     # LOG.debug('Got response:{}'.format(FormatBytes(p_controller_obj._Message[0:l_need_len])))
@@ -87,7 +87,7 @@ class DecodeResponses(object):
         """
         l_ret = p_ret
         l_cur_len = len(p_controller_obj._Message)
-        l_chop = Insteon_utils.get_message_length(p_controller_obj._Message)
+        l_chop = insteon_utils.get_message_length(p_controller_obj._Message)
         if l_cur_len >= l_chop:
             p_controller_obj._Message = p_controller_obj._Message[l_chop:]
             l_ret = self.decode_message(p_controller_obj)
@@ -189,7 +189,7 @@ class DecodeResponses(object):
             l_obj_from.ProductKey = l_product_key
             l_obj_from.DevCat = l_devcat
         p_controller_obj.Ret = True
-        Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj_from)
+        insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj_from)
         return
 
     def _decode_0x52_record(self, p_controller_obj):
@@ -239,7 +239,7 @@ class DecodeResponses(object):
         l_firmver = l_message[7]
         LOG.info("== 60 - Insteon Modem Info - DevCat={}, DevSubCat={}, Firmware={} - Name={}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
         if l_message[8] == ACK:
-            Insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj)
+            insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj)
             p_controller_obj.Ret = True
         else:
             LOG.error("== 60 - No ACK - Got {:#x}".format(l_message[8]))

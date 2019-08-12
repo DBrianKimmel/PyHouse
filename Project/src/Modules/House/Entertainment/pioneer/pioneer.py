@@ -21,19 +21,20 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-12'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from twisted.internet.protocol import Protocol, ClientFactory
+from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.error import ConnectionDone
+from twisted.internet.protocol import Protocol, ClientFactory
 from twisted.conch.telnet import StatefulTelnetProtocol
+from queue import Queue
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import extract_tools, config_tools
-from Modules.Core.Utilities.convert import long_to_str
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceStatus
 from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -74,14 +75,21 @@ class PioneerDeviceInformation(EntertainmentDeviceInformation):
     def __init__(self):
         super(PioneerDeviceInformation, self).__init__()
         self.CommandSet = None  # Command sets change over the years.
-        self.IPv4 = None
-        self.Port = None
         self.RoomName = None
-        self.RoomUUID = None
         self.Type = None
         self.Volume = None
         self._isControlling = False
         self._isRunning = False
+
+
+class PioneerDeviceStatus(EntertainmentDeviceStatus):
+    """
+    The device family is part of the topic.
+    """
+
+    def __init__(self):
+        super(PioneerDeviceStatus, self).__init__()
+        pass
 
 
 class MqttActions:
@@ -261,8 +269,58 @@ class Config:
             return None
         l_pioneer = self._extract_all_pioneer(l_yaml)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_pioneer
-        self.dump_struct()
+        # self.dump_struct()
         return l_pioneer  # for testing purposes
+
+
+class PioneerControl:
+    """
+    """
+
+    def _get_endpoint(self, p_pyhouse_obj, p_device_obj):
+        """
+        """
+        l_reactor = p_pyhouse_obj._Twisted.Reactor
+        l_host = p_device_obj.Host.Name
+        l_port = p_device_obj.Host.Port
+        l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
+        return l_endpoint
+
+    def pioneer_start_connecting(self, p_pyhouse_obj, p_device_obj):
+        """ Open connections to the various Onkyo devices we will communicate with.
+        This will also publish a status message with controller info.
+
+        @param p_device_obj: OnkyoDeviceInformation()
+        """
+
+        def cb_got_protocol(p_protocol, p_device_obj, p_status):
+            p_device_obj._Protocol = p_protocol
+            p_device_obj._isRunning = True
+            p_status.Type = 'Connected'
+            p_status.Connected = True
+            p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
+            l_topic = 'house/entertainment/onkyo/status'
+            self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_status)
+
+        def eb_got_protocol(p_reason, p_device_obj, p_status):
+            p_device_obj._Protocol = None
+            p_device_obj._isRunning = False
+            p_status.Type = 'UnConnected'
+            p_status.Connected = False
+            l_topic = 'house/entertainment/onkyo/status'
+            self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_status)
+            LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
+
+        p_device_obj._Queue = Queue(32)
+        l_status = PioneerDeviceStatus()
+        l_status.Family = 'onkyo'
+        l_status.Model = p_device_obj.Model
+        l_status.Node = p_pyhouse_obj.Computer.Name
+        l_endpoint = self._get_endpoint(p_pyhouse_obj, p_device_obj)
+        d_connector = l_endpoint.connect(PioneerFactory(p_pyhouse_obj, p_device_obj))
+        d_connector.addCallback(cb_got_protocol, p_device_obj, l_status)
+        d_connector.addErrback(eb_got_protocol, p_device_obj, l_status)
+        # self.m_device_lst.append(p_device_obj)
 
 
 class PioneerProtocol(StatefulTelnetProtocol):
@@ -270,6 +328,8 @@ class PioneerProtocol(StatefulTelnetProtocol):
 
     Each protocol instance is mapped to a Pioneer Device (and visa  versa)
     """
+
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -318,6 +378,8 @@ class PioneerProtocol(StatefulTelnetProtocol):
 class PioneerClient(PioneerProtocol):
     """
     """
+
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -451,19 +513,13 @@ class API(MqttActions, PioneerClient):
         l_count = 0
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device_obj in l_devices.values():
+            # # Read Yaml here
             LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device', 190))
             l_count += 1
             if l_device_obj._isRunning:
                 LOG.info('Pioneer device {} is already running.'.format(l_device_obj.Name))
-            l_host = l_device_obj.Host.Name
-            l_port = l_device_obj.Port
-            l_factory = PioneerFactory(self.m_pyhouse_obj, l_device_obj)
-            l_connector = self.m_pyhouse_obj._Twisted.Reactor.connectTCP(l_host, l_port, l_factory)
-            l_device_obj._Factory = l_factory
-            l_device_obj._Connector = l_connector
-            l_device_obj._isRunning = True
-            self.m_pioneer_device_obj = l_device_obj
-            LOG.info("Started Pioneer Device: '{}'; IP:{}; Port:{};".format(l_device_obj.Name, l_host, l_port))
+                continue
+            PioneerControl().pioneer_start_connecting(self.m_pyhouse_obj, l_device_obj)
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveConfig(self):

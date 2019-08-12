@@ -1,5 +1,5 @@
 """
-@name:      Modules/families/Insteon/_test/test_Insteon_device.py
+@name:      Modules/House/family/Insteon/_test/test_Insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -10,7 +10,7 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-07-19'
+__updated__ = '2019-08-09'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

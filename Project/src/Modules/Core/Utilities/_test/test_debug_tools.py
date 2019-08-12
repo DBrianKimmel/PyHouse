@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules.Core.Utilities._test/test_debug_tools.py
+@name:      Modules/Core/Utilities/_test/test_debug_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel
@@ -10,19 +10,17 @@
 Passed all 22 tests - DBK - 2018-08-02
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-05-02'
+__updated__ = '2019-08-10'
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files
 from Modules.Core.Utilities import debug_tools
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.Utilities.test.xml_xml_tools import XML_TEST, TESTING_TUPLE
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities._test.xml_xml_tools import TESTING_TUPLE
 
 STRING = 'Now is the time for all good men to come to the aid of something or other.'
 U_STRING = u'Now is NOT the time for any bad women to go to the aid of nothing not evil.'
@@ -39,22 +37,20 @@ LOTS_NLS = 'Now\r' + '   is\n' + 'the\n\r' + 'time\r\n' + 'for\n' + 'all\n' \
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_long = "In order for your computers to be useful, they must be set up on a network.\n" \
                         "That network could be a private network, a private network connected to the internet or the public internet itself. " \
                         " With IPv4 (addresses like 123.45.67.89) you almost always have to have a private network, connected to the internet or not.  " \
                         "With new IPv6 (addresses like 2001:db8::dead:beef) you will probably have an address on the public internet."
         self.m_short = "This is short"
+        self.m_empty = ''
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_debug_tools')
 
 
@@ -63,7 +59,7 @@ class B1_Truncate(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Short(self):
         """Testing _nuke_newlines().
@@ -81,13 +77,21 @@ class B1_Truncate(SetupMixin, unittest.TestCase):
         # print('B1-02-A Long: ', l_ret)
         self.assertLess(len(l_ret), l_max + 1)
 
+    def test_03_Empty(self):
+        """Testing _nuke_newlines().
+        """
+        l_max = 40
+        l_ret = debug_tools._trunc_string(self.m_empty, l_max)
+        # print('B1-03-A Empty:>>{}<<'.format(l_ret))
+        self.assertLess(len(l_ret), l_max + 1)
+
 
 class B2_Newlines(SetupMixin, unittest.TestCase):
     """Testing _nuke newlines
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Short(self):
         """Testing _nuke_newlines().
@@ -114,8 +118,7 @@ class B2_Newlines(SetupMixin, unittest.TestCase):
         l_max = 30
         l_short = 'This\n\n\n\n'
         l_ret = debug_tools._nuke_newlines(l_short)
-        print('B2-03-A Empty_1: ', l_ret, 'xxx')
-        # print('-----')
+        print('B2-03-A Empty_1:>>{}<<'.format(l_ret))
         self.assertLess(len(l_ret), l_max + 1)
 
 
@@ -125,7 +128,7 @@ class C1_Line(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Short_10(self):
         l_str = debug_tools._nuke_newlines(self.m_short)
@@ -145,7 +148,7 @@ class C1_Line(SetupMixin, unittest.TestCase):
         l_str = debug_tools._nuke_newlines(self.m_long)
         l_maxlen = 10
         l_ret = debug_tools._format_line(l_str, l_maxlen)
-        # print('\nC1-03-A Long 10: ', l_ret)
+        print('\nC1-03-A Long 10: ', l_ret)
         self.assertEqual(len(l_ret), 27)
 
     def test_04_Long_50(self):
@@ -160,7 +163,7 @@ class C1_Line(SetupMixin, unittest.TestCase):
         l_str = debug_tools._nuke_newlines(l_str)
         l_maxlen = 50
         l_ret = debug_tools._format_line(l_str, l_maxlen)
-        print('\nC1-0-A Long 50: ', l_ret)
+        print('\nC1-05-A Long 50: ', l_ret)
         self.assertEqual(len(l_ret), 1)
 
 
@@ -169,7 +172,7 @@ class C2_Cols(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Short(self):
         """ Test formatting of columns
@@ -210,13 +213,22 @@ class C2_Cols(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(l_ret, "C2-04-B - Empty Cols"))
         self.assertEqual(len(l_ret), 2 * 10 - (10 - 5))
 
+    def test_05_Empty(self):
+        """ Test formatting of columns
+        """
+        l_strings = ['Comment', ' ']
+        l_widths = [10, 10]
+
+        l_lines = list(map(debug_tools._nuke_newlines, l_strings))
+        print('\nC2-05-A - Lines:', l_lines)
+
 
 class C3_Objs(SetupMixin, unittest.TestCase):
     """Test format_object functionality.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Cols(self):
         """ Test formatting of objs
@@ -232,7 +244,7 @@ class D1_PFA(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_String(self):
         """ Test formatting of string literals
@@ -243,7 +255,7 @@ class D1_PFA(SetupMixin, unittest.TestCase):
         over the lazy dog's back
         """
         l_str = "The quick brown fox jumped over the lazy dog's back"  # 51 bytes
-        l_len = len(l_str)
+        # l_len = len(l_str)
         l_ret = debug_tools.PrettyFormatAny._format_string(l_str, maxlen=40, indent=10)
         print('\nD1-01-A - String:\n' + l_ret)
         self.assertLessEqual(len(l_str), 51)
@@ -258,12 +270,6 @@ class D1_PFA(SetupMixin, unittest.TestCase):
         l_ret = debug_tools.PrettyFormatAny._format_dict(DICTS, 50, 0)
         print('\nD1-03-A - Dicts:\n' + l_ret)
         self.assertGreaterEqual(len(l_ret), 1)
-
-    def test_04_Xml(self):
-        l_xml = ET.fromstring(XML_TEST)
-        l_ret = debug_tools.PrettyFormatAny._format_XML(l_xml, maxlen=40, indent=10)
-        print('\nD1-04-A - XML:\n' + l_ret)
-        pass
 
     def test_05_Lists(self):
         l_ret = debug_tools.PrettyFormatAny._format_list(LISTS, 50, 0)

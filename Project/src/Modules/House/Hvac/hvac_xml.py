@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-10'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -106,10 +106,10 @@ class Utility(object):
     @staticmethod
     def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
         try:
-            l_api = p_pyhouse_obj._Families[p_obj.DeviceFamily].FamilyXml_ModuleAPI
+            l_api = p_pyhouse_obj.House.Family[p_obj.Family.Name].FamilyXml_ModuleAPI
             l_api.WriteXml(p_xml, p_obj)
         except (KeyError, AttributeError) as e_err:
-            l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.DeviceFamily)
+            l_msg = 'Write Family Error {}  Family:{}'.format(e_err, p_obj.Family.Name)
             LOG.error(l_msg)
 
     @staticmethod

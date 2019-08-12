@@ -1,5 +1,5 @@
 """
-@Name:      PyHouse/Project/src/Modules/Core/data_objects.py
+@Name:      Modules/Core/data_objects.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-08-03'
+__updated__ = '2019-08-11'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,7 +41,7 @@ class PyHouseInformation:
         # The rest are "Core" components
         self._APIs = None  # PyHouseAPIs()
         self._Config = None  # ConfigInformation()
-        self._Families = None  # FamilyInformation()
+        # self._Families = None  # FamilyInformation()
         self._Parameters = None  # ParameterInformation()
         self._Twisted = None  # TwistedInformation()
         self._Uuids = None  # UuidInformation()
@@ -246,7 +246,8 @@ class ModuleObject:
     """
 
     def __init__(self):
-        self.Active = False
+        # self.Active = False
+        pass
 
 
 class NullControllerInformation:
@@ -411,21 +412,6 @@ BaseObject dependent.
 """
 
 
-class XXXFamilyInformation(BaseObject):
-    """ A container for every family that has been defined in modules.
-    """
-
-    def __init__(self):
-        super(XXXFamilyInformation, self).__init__()
-        self.FamilyDevice_ModuleAPI = None  # Insteon_device.API()
-        self.FamilyDevice_ModuleName = None  # Insteon_device
-        self.FamilyPackageName = None  # Modules.Families.Insteon
-        self.FamilyXml_ModuleName = None  # Insteon_xml
-        self.FamilyXml_ModuleAPI = None  # Address of Insteon_xml
-        self.FamilyYaml_ModuleName = None
-        self.FamilyConfigAPI = None
-
-
 class InternetConnectionInformation(BaseObject):
     """ Check our nodes external IP-v4 address
     """
@@ -485,7 +471,7 @@ class DeviceInformation(BaseUUIDObject):
 
     def __init__(self):
         super(DeviceInformation, self).__init__()
-        self.DeviceFamily = 'Null'
+        # self.DeviceFamily = 'Null'
         self.DeviceType = None  # Controllers, Lighting, Hvac, Security, Bridge
         self.DeviceSubType = None
         self.RoomCoords = None  # CoordinateInformation() of the device itself

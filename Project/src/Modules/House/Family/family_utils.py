@@ -7,19 +7,20 @@
 @license:   MIT License
 @summary:   This module is for *USING* device families
 
-All device objects use 'DeviceFamily' to designate the family.
+All device objects use 'Family.Name' to designate the family.
 This is because the things we wish to automate all have some controller that speaks to that
  class of device.
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff.
 
 #  Import PyHouse files and modules.
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Family.family import FamilyModuleInformation
 
 LOG = Logger.getLogger('PyHouse.FamilyUtils ')
 
@@ -36,19 +37,19 @@ class FamUtil(object):
     @staticmethod
     def _get_family_obj(p_pyhouse_obj, p_device_obj):
         """
-        Given some device object, extract the Family object using .DeviceFamily
+        Given some device object, extract the Family object using .Family.Name
         """
-        l_family_name = p_device_obj.DeviceFamily
+        l_family_name = p_device_obj.Family.Name
         try:
-            l_family_obj = p_pyhouse_obj._Families[l_family_name]
+            l_family_obj = p_pyhouse_obj.House.Family[l_family_name]
         except (KeyError, TypeError) as e_err:
             l_msg = PrettyFormatAny.form(p_pyhouse_obj.House, ' House Information', 40)
             LOG.error('Could not get family object for:\n\tDevice Name:\t{}\n\tFamily:\t\t{}\n\tKey Error:\t{}{}'
                       .format(p_device_obj.Name, l_family_name, e_err, l_msg))
             if l_family_name == 'Null':
-                p_pyhouse_obj._Families['Null'] = FamilyModuleInformation()
-                p_pyhouse_obj._Families['Null'].Name = 'Null'
-            l_family_obj = p_pyhouse_obj._Families['Null']
+                p_pyhouse_obj.House.Family['null'] = FamilyModuleInformation()
+                p_pyhouse_obj.House.Family['null'].Name = 'Null'
+            l_family_obj = p_pyhouse_obj.House.Family['null']
         return l_family_obj
 
     @staticmethod
@@ -78,16 +79,16 @@ class FamUtil(object):
     def get_family(p_device_obj):
         """
         @param p_device_obj: contains the info about the device we are working on.
-        @return: the DeviceFamily which is the Name of the family (e.g. Insteon)
+        @return: the Family.Name which is the Name of the family (e.g. Insteon)
         """
         l_dev_name = _get_device_name(p_device_obj)
         try:
-            l_family = p_device_obj.DeviceFamily
+            l_family = p_device_obj.Family.Name
         except AttributeError as e_err:
-            l_msg = 'ERROR - Device "{}" has no DeviceFamily Attribute - {}'.format(l_dev_name, e_err)
+            l_msg = 'ERROR - Device "{}" has no Family.Name Attribute - {}'.format(l_dev_name, e_err)
             LOG.error(l_msg)
             l_family = 'Null'
-        return l_family
+        return l_family.lower()
 
     @staticmethod
     def _get_family_device_api(p_pyhouse_obj, p_device_obj):
@@ -99,16 +100,19 @@ class FamUtil(object):
         l_dev_name = _get_device_name(p_device_obj)
         try:
             l_family = FamUtil.get_family(p_device_obj)
-            l_family_obj = p_pyhouse_obj._Families[l_family]
-            l_device_api = l_family_obj.FamilyDevice_ModuleAPI
-        except:
-            l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info '.format(l_dev_name, l_family)
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'House'))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family[l_family], 'Family'))
+            l_family_obj = p_pyhouse_obj.House.Family[l_family]
+            l_device_api = l_family_obj.DeviceAPI
+        except Exception as e_err:
+            l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info\n\tError: {}'.format(l_dev_name, l_family, e_err)
             LOG.error(l_msg)
             l_device_api = None
         return l_device_api
 
     @staticmethod
-    def _get_family_xml_api(p_pyhouse_obj, p_device_obj):
+    def XXX_get_family_xml_api(p_pyhouse_obj, p_device_obj):
         """
         This will get the reference to a family which will read or write family specific XML data
 
@@ -126,9 +130,9 @@ class FamUtil(object):
         return l_xmlAPI
 
     @staticmethod
-    def read_family_data(p_pyhouse_obj, p_device_obj, p_xml):
+    def XXXread_family_data(p_pyhouse_obj, p_device_obj, p_xml):
         """
-        This is a dispatch type routine.  It will use the DeviceFamily field contents to run the
+        This is a dispatch type routine.  It will use the Family.Name field contents to run the
         appropiate family XML-read routine.
 
         Get the family specific XML data for any device.
@@ -143,7 +147,7 @@ class FamUtil(object):
         except Exception as e_err:
             l_ret = 'ERROR family_utils-149  API:{}  Device:"{}"\n   {}'.format(l_xml_api, p_device_obj.Name, e_err)
             LOG.error('ERROR - Unable to load family information for a device.'
-                      '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.DeviceFamily, e_err))
+                      '\n\tDevice: {}\n\tFamily: {}\n\t{}'.format(p_device_obj.Name, p_device_obj.Family.Name, e_err))
         return l_ret  # for testing
 
 #  ## END DBK

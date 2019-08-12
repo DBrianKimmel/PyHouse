@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-25'
+__updated__ = '2019-08-12'
 
 # Import system type stuff
 
@@ -36,11 +36,8 @@ class EntertainmentDeviceInformation(BaseObject):
         self._isRunning = False
         #
         self.CommandSet = None  # Command sets change over the years.
-        self.IPv4 = None  # IPv4 if No  FQDN or IPv6
-        self.IPv6 = None  # IPv6 addr of the device if no FQDN
-        self.Host = None  # FQDN of the device
+        self.Host = None  # HostInformation()
         self.Model = None
-        self.Port = None
         self.RoomName = None
         self.RoomUUID = None
         self.Type = None
@@ -60,7 +57,7 @@ class EntertainmentServiceInformation(BaseObject):
         self._Transport = None
         self._Connector = None
 
-        self.Host = '1.2.3.4'
+        self.Host = None  # HostInformation()
         self.ConnectionFamily = None  # pioneer, onkyo
         self.ConnectionModel = None  # Model
         self.InputName = None

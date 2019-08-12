@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_Light.py
+@name:      Modules/House/Family/insteon/insteon_light.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -11,15 +11,15 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.Utilities.debug_tools import FormatBytes
-from Modules.House.Family.Insteon import Insteon_utils
-from Modules.House.Family.Insteon.Insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.Insteon.Insteon_utils import Decode as utilDecode
+from Modules.House.Family.insteon import insteon_utils
+from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Light  ')
@@ -29,7 +29,7 @@ class InsteonLightStatus:
 
     def __init__(self):
         self.Name = None
-        self.Family = 'Insteon'
+        self.Family = 'insteon'
         self.Type = 1  # 1 = Lighting
         self.SubType = 1  # 1 = Button
         self.BrightnessPct = None
@@ -112,7 +112,7 @@ class DecodeResponses:
         except AttributeError as e_err:
             LOG.error('ERROR decoding 0x50 record {}'.format(e_err))
 
-        Insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)
+        insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)
         p_controller_obj.Ret = True
         LOG.debug('Light Response {}'.format(l_debug_msg))
         LOG.info('Light: {}, Brightness: {}'.format(p_device_obj.Name, p_device_obj.BrightnessPct))

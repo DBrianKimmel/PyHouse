@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Insteon/Insteon_Security.py
+@name:      Modules/House/Family/insteon/insteon_security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel
@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-07-13'
+__updated__ = '2019-08-11'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.Insteon import Insteon_utils
-from Modules.House.Family.Insteon.Insteon_utils import Decode as utilDecode
-from Modules.House.Family.Insteon.Insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.insteon import insteon_utils
+from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Secure ')
@@ -101,11 +101,11 @@ class DecodeResponses(object):
                 p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_device)  #  /security
 
         elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
-            if p_device_obj.DeviceSubType == GarageDoorOpener:
+            if p_device_obj.DeviceSubType == 'GarageDoorOpener':
                 l_mqtt_msg += 'Garage Door Opened; '.format(p_device_obj.Name)
                 p_device_obj.Status = 'Opened'
                 l_device.Status = 'Garage Door Opened.'
-            elif p_device_obj.DeviceSubType == MotopnDetector:
+            elif p_device_obj.DeviceSubType == 'MotionDetector':
                 l_mqtt_msg += 'NO Motion; '.format(p_device_obj.Name)
                 l_device.Status = 'Motion Stopped.'
             else:
@@ -114,7 +114,7 @@ class DecodeResponses(object):
                 p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_device)  #  /security
 
         LOG.info('Security {}'.format(l_mqtt_msg))
-        Insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)
+        insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)
         return
 
 # ## END DBK

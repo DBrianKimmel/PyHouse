@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Mqtt/protocol.py
+@name:      Modules/Core/Mqtt/mqtt_protocol.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-08-08'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,7 +25,7 @@ from twisted.internet import error
 #  Import PyMh files and modules.
 from Modules.Core.Mqtt.mqtt_util import EncodeDecode
 from Modules.Core.Utilities import json_tools
-from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -597,6 +597,7 @@ class MQTTClient(MQTTProtocol):
     """
     """
 
+    m_pyhouse_obj = None
     m_pingPeriod = 50
     m_prefix = ''
     m_mqtt = None
@@ -605,7 +606,8 @@ class MQTTClient(MQTTProtocol):
     def __init__(self, p_pyhouse_obj, p_broker,
                  keepalive=None, willQos=0, willTopic=None, willMessage=None, willRetain=False
                  ):
-        """ At this point all config has been read in and Set-up """
+        """ At this point all config has been read in and Set-up
+        """
         _l_comp_name = p_pyhouse_obj.Computer.Name
         self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
@@ -622,7 +624,7 @@ class MQTTClient(MQTTProtocol):
             self.m_keepalive = 60 * 1000
         self.m_willQos = willQos
         if willTopic is not None:
-            willTopic = self.m_prefix + 'lwt'
+            willTopic = self.m_prefix + '/lwt'
         self.m_willTopic = willTopic
         self.m_willMessage = willMessage
         self.m_willRetain = willRetain
@@ -641,7 +643,7 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.debug("Client TCP or TLS - KeepAlive: {} seconds\n\tAddr; {}".format(self.m_keepalive / 1000, self.m_broker.Host.Name))
+        LOG.debug("Client TCP or TLS - KeepAlive: {} seconds;\n\tHost: {};".format(self.m_keepalive / 1000, self.m_broker.Host.Name))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_broker, self.m_pyhouse_obj.Core.Mqtt)
         self.m_pyhouse_obj._Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
@@ -667,7 +669,7 @@ class MQTTClient(MQTTProtocol):
     def connackReceived(self, p_status):
         """ Override
         """
-        LOG.debug("Received Connack from MQTT Broker\n\tAddr:{}".format(self.m_broker.Host.Name))
+        LOG.debug("Received Connack from MQTT Broker\n\tAddr: {}\n\tStatus: {}".format(self.m_broker.Host.Name, p_status))
         if p_status == 0:
             self.mqttConnected()
 
@@ -731,14 +733,14 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolAPI = l_client
         self.resetDelay()
-        LOG.debug('Building MQTT Protocol - Client:{}')
+        LOG.debug('Building MQTT Protocol - Client:{}'.format(l_client))
         return l_client
 
     def startedConnecting(self, p_connector):
         """ Override.
         Called when a connection has been started.
         """
-        # LOG.info('Started to connect. {}'.format(p_connector))
+        LOG.info('Started to connect. {}'.format(p_connector))
         pass
 
     def clientConnectionFailed(self, p_connector, p_reason):
@@ -752,8 +754,10 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """ Override.
         Called when an established connection is lost.
         """
-        LOG.warn('Made connection LOST.\n\tAddr: {};\n\tReason:{};'.format(self.m_broker.Host.Name, p_reason))
+        LOG.warn('Made connection LOST.\n\tHost: {};\n\tReason:{};'.format(self.m_broker.Host.Name, p_reason))
+        LOG.debug(PrettyFormatAny.form(p_reason, 'Reason', 190))
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
+        p_reason.printTraceback()
 
     def connectionLost(self, p_reason):
         """ Override.
@@ -764,7 +768,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
     def makeConnection(self, p_transport):
         """ This is required.
         """
-        # LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
         pass
 
 #  ## END DBK
