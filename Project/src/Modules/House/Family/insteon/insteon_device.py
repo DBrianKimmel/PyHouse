@@ -93,7 +93,7 @@ class Utility(object):
         Return the Insteon_PLM API reference if one is found:
         """
         # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
-        l_controllers = p_pyhouse_obj.Lighting.Controllers
+        l_controllers = p_pyhouse_obj.House.Lighting.Controllers
         if l_controllers == None:
             return
         for l_controller_obj in l_controllers.values():
@@ -112,7 +112,10 @@ class Utility(object):
 
     @staticmethod
     def _stop_all_controllers(p_pyhouse_obj):
-        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
+        l_controllers = p_pyhouse_obj.House.Lighting.Controllers
+        if l_controllers == None:
+            return
+        for l_controller_obj in l_controllers.values():
             if Utility._is_valid_controller(l_controller_obj):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 
