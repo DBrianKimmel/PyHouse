@@ -7,4 +7,13 @@
 * License:   MIT License
 * Summary:   This is the design for Hue Hub.
 
+
+# Sonoff
+
+## Packages
+
+* python3-venv
+* python3-flask
+
+
 ### END DBK

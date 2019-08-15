@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-08-10'
+__updated__ = '2019-08-14'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -202,7 +202,7 @@ class Config:
         @param p_config: is the yaml['Lights'] structure
         @return: a complete yaml tree ready to save
         """
-        LOG.debug(p_config)
+        # LOG.debug(p_config)
         l_lights = self.m_pyhouse_obj.House.Lighting.Lights
         for l_light_obj in l_lights.values():
             l_config = self._save_one_light(l_light_obj)
@@ -226,8 +226,8 @@ class Config:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).create_yaml_node('Lights')
             self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME] = l_node
             l_config = l_node.Yaml['Lights']
-        l_config = self._save_all_lights(l_config)
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        # l_config = self._save_all_lights(l_config)
+        # config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
         return l_config
 
 

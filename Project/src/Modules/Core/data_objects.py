@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-13'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -497,7 +497,7 @@ class XXXHouseInformation(BaseUUIDObject):
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomInformation()
         self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleBaseData()
+        self.Schedules = {}  # ScheduleInformation()
         self.Security = {}  # SecurityData()
         self._Commands = {}  # Module dependent
 
@@ -594,7 +594,7 @@ class RulesData(BaseUUIDObject):
         self.Action = None
 
 
-class ScheduleBaseData(BaseUUIDObject):
+class XXXScheduleBaseData(BaseUUIDObject):
     """ A schedule of when events happen.
 
     ==> PyHouse.House.Schedules.xxx as in the def below
@@ -609,7 +609,7 @@ class ScheduleBaseData(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(ScheduleBaseData, self).__init__()
+        super(XXXScheduleBaseData, self).__init__()
         self.DayOfWeek = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
         self.ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
         self.ScheduleType = ''  # Valid Schedule Type
@@ -633,21 +633,21 @@ ScheduleBaseData dependent
 """
 
 
-class ScheduleHvacData(ScheduleBaseData):
+class XXXScheduleHvacData(XXXScheduleBaseData):
     """
     """
 
     def __init__(self):
-        super(ScheduleHvacData, self).__init__()
+        super(XXXScheduleHvacData, self).__init__()
         self.ScheduleType = 'Hvac'
 
 
-class ScheduleIrrigationData(ScheduleBaseData):
+class XXXScheduleIrrigationData(XXXScheduleBaseData):
     """
     """
 
     def __init__(self):
-        super(ScheduleIrrigationData, self).__init__()
+        super(XXXScheduleIrrigationData, self).__init__()
         self.ScheduleType = 'Irrigation'
         self.Duration = None
         self.System = None
@@ -655,12 +655,12 @@ class ScheduleIrrigationData(ScheduleBaseData):
         self.Zone = None
 
 
-class ScheduleLightData(ScheduleBaseData):
+class XXXScheduleLightData(XXXScheduleBaseData):
     """ A schedule piece for lighting events.
     """
 
     def __init__(self):
-        super(ScheduleLightData, self).__init__()
+        super(XXXScheduleLightData, self).__init__()
         self.Level = 0
         self.LightName = None
         self.LightUUID = None

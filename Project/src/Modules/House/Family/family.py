@@ -32,7 +32,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-13'
 
 # Import system type stuff
 import importlib
@@ -199,7 +199,7 @@ class Config:
             _l_test = p_pyhouse_obj.House.Family[l_obj.Name]
             pass
         except Exception as e_err:
-            LOG.debug('Config family {} Update family\n\tError: {}'.format(l_obj.Name, e_err))
+            LOG.debug('Config family "{}" Update family.\n\tError: {}'.format(l_obj.Name, e_err))
             l_module.Name = l_obj.Name
             p_pyhouse_obj.House.Family[l_obj.Name] = l_module
         return l_obj
@@ -246,6 +246,7 @@ class API:
         """
         Load all the families for testing.
         """
-        return Utility()._init_family_component_apis(self.m_pyhouse_obj)
+        # return Utility()._init_family_component_apis(self.m_pyhouse_obj)
+        pass
 
 # ## END DBK

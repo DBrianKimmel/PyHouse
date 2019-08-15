@@ -1,5 +1,5 @@
 """
-@name:     Modules/Computer/Nodes/nodes.py
+@name:      Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -15,7 +15,7 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-07-10'
+__updated__ = '2019-08-14'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +24,6 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Computer.Nodes.node_local import API as localAPI
 from Modules.Computer.Nodes.node_sync import API as syncAPI
-from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities import extract_tools
 
@@ -70,7 +69,7 @@ class MqttActions:
             p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic[1:], p_message)
         else:
             p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-            LOG.warn('Unknown Node(s0 Topic: {}'.format(l_topic))
+            LOG.warn('Unknown Node sub-topic: {}\n\tMsg: {}'.format(l_topic, p_message))
         return p_logmsg
 
 
@@ -89,6 +88,8 @@ class Yaml:
 
 class API():
 
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_local = localAPI(p_pyhouse_obj)
         self.m_sync = syncAPI(p_pyhouse_obj)
@@ -98,10 +99,8 @@ class API():
     def LoadConfig(self):
         """ Load the Node xml info.
         """
-        # self.m_pyhouse_obj = p_pyhouse_obj
-        # l_nodes = nodesXml.read_all_nodes_xml(p_pyhouse_obj)
-        # p_pyhouse_obj.Computer.Nodes = l_nodes
         Yaml().LoadYamlConfig(self.m_pyhouse_obj)
+        # p_pyhouse_obj.Computer.Nodes = l_nodes
         LOG.info('Loaded Config - Version:{}'.format(__version__))
         return
 

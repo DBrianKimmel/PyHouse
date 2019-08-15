@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-13'
 __version_info__ = (18, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -108,6 +108,7 @@ class DecodeResponses(object):
         l_cmd = p_controller_obj._Message[1]
         if l_cmd == 0:
             LOG.warning("Found a '0' record ->{}.".format(FormatBytes(l_message)))
+            p_controller_obj._Message = p_controller_obj._Message[1:]
             return l_ret
         elif l_cmd == 0x50: l_ret = self._decode_0x50(p_controller_obj)
         elif l_cmd == 0x51: l_ret = self._decode_0x51(p_controller_obj)

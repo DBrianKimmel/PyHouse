@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-08-08'
+__updated__ = '2019-08-15'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -712,7 +712,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         @param p_pyhouse_obj: is the master information store
         @param p_client_id: is the ID of this computer that will be supplied to the broker
-        @param p_broker: is the PyHouse object for this broker:  mqtt_data.py - MqttBrokerInformation(BaseObject)
+        @param p_broker: is the PyHouse object for this broker:  mqtt.py - MqttBrokerInformation()
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker

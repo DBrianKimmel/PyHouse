@@ -70,41 +70,6 @@ This is a schedule object published.
 The Schedule object entry:
 
 ```python
-class BaseObject(object):
-        self.Name = 'undefined baseobject'
-        self.Key = 0
-        self.Active = False
-        self.Comment = ''
-        self.LastUpdate = None
-class BaseUUIDObject(BaseObject):
-        self.UUID = None
-class ScheduleBaseData(BaseUUIDObject):
-        self.DayOfWeek = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
-        self.ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
-        self.ScheduleType = ''  # Valid Schedule Type
-        self.Time = None
-        #  for use by web browser - not saved in xml
-        self._AddFlag = False
-        self._DeleteFlag = False
-        
-class ScheduleLightData(ScheduleBaseData):
-        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
-        self.Level = 0
-        self.LightName = None
-        self.LightUUID = None
-        self.Rate = 0
-        self.RoomName = None
-        self.RoomUUID = None
-        
-class ScheduleIrrigationData(ScheduleBaseData):
-        self.ScheduleType = 'Irrigation'
-        self.Duration = None
-        self.System = None
-        self.SystemUUID = None
-        self.Zone = None
-        
-class ScheduleHvacData(ScheduleBaseData):
-        self.ScheduleType = 'Hvac'
 
 ```
 
@@ -119,14 +84,7 @@ DOW is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, 
 -   64 is valid on Sunday
 
 ```python
-class ScheduleLightData(ScheduleBaseData):
-        self.Level = 0
-        self.LightName = None
-        self.LightUUID = None
-        self.Rate = 0
-        self.RoomName = None
-        self.RoomUUID = None
-        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
+
 ```
 
 

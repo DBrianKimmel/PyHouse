@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2019-08-14'
 
 # Import system type stuff
 import datetime
@@ -25,20 +25,13 @@ import twisted
 from Modules.Core.data_objects import RiseSetData
 from Modules.Core.Utilities import convert, config_tools
 from Modules.Core.Mqtt.mqtt import API as mqttAPI
-from Modules.Housing.Schedules.schedule import \
+from Modules.House.Schedule.schedule import \
     Config as scheduleConfig, \
     SchedTime, \
     API as scheduleAPI, \
     Utility as scheduleUtility, \
-    TimeField
-from Modules.Housing.Schedules.test.xml_schedule import \
-    TESTING_SCHEDULE_SUNRISE_0, \
-    TESTING_SCHEDULE_SUNSET_0, \
-    TESTING_SCHEDULE_DAWN_0, \
-    TESTING_SCHEDULE_DUSK_0, \
-    TESTING_SCHEDULE_NOON_0, \
-    TESTING_SCHEDULE_DOW_0
-from test.testing_mixin import SetupPyHouseObj
+    TimeField, CONFIG_FILE_NAME
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 T_TODAY = datetime.datetime(2015, 6, 6, 12, 34, 56)
@@ -57,6 +50,8 @@ T_FRIDAY = datetime.datetime(2015, 6, 12, 1, 2, 3)
 DayOfWeek_FRIDAY = 16
 T_SATURDAY = datetime.datetime(2015, 6, 13, 1, 2, 3)
 DayOfWeek_SATURDAY = 32
+
+DOW_ALL = 'SMTWTFS'
 
 
 def get_seconds(p_datetime):
@@ -82,11 +77,11 @@ class Mock(object):
     @staticmethod
     def RiseSet():
         l_ret = RiseSetData()
-        l_ret.Dawn = TESTING_SCHEDULE_DAWN_0
-        l_ret.SunRise = TESTING_SCHEDULE_SUNRISE_0
-        l_ret.Noon = TESTING_SCHEDULE_NOON_0
-        l_ret.SunSet = TESTING_SCHEDULE_SUNSET_0
-        l_ret.Dusk = TESTING_SCHEDULE_DUSK_0
+        l_ret.Dawn = 0
+        l_ret.SunRise = 0
+        l_ret.Noon = 0
+        l_ret.SunSet = 0
+        l_ret.Dusk = 0
         return l_ret
 
 
@@ -106,65 +101,12 @@ class A0(unittest.TestCase):
         print('Id: test_schedule')
 
 
-class A1_Setup(SetupMixin, unittest.TestCase):
-    """
-    Uses DayOfWeek and todays delay to get delay time in minutes.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self)
-
-    def test_02_FamilyInformation(self):
-        """ Just to be sure the family data is loaded properly.
-        """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Families, 'A1-02-A - _Families'))
-        self.assertEqual(self.m_pyhouse_obj._Families['Insteon'].Name, 'Insteon')
-        self.assertEqual(self.m_pyhouse_obj._Families['Null'].Name, 'Null')
-        self.assertEqual(self.m_pyhouse_obj._Families['UPB'].Name, 'UPB')
-        self.assertEqual(self.m_pyhouse_obj._Families['X10'].Name, 'X10')
-        self.assertEqual(self.m_pyhouse_obj._Families['Insteon'].Key, 1)
-        self.assertEqual(self.m_pyhouse_obj._Families['Null'].Key, 0)
-        self.assertEqual(self.m_pyhouse_obj._Families['UPB'].Key, 2)
-        self.assertEqual(self.m_pyhouse_obj._Families['X10'].Key, 3)
-        self.assertEqual(self.m_pyhouse_obj._Families['Null'].Active, True)
-
-    def test_03_Dawn(self):
-        """ Test that dusk dawn loaded properly
-        """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location._RiseSet, 'A1-03-A - Dusk Dawn'))
-        self.assertEqual(self.m_pyhouse_obj.House.Location._RiseSet.Dawn, TESTING_SCHEDULE_DAWN_0)
-
-
-class A3_Utility(SetupMixin, unittest.TestCase):
-    """
-    Testing conversion and extraction
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self)
-        self.m_pyhouse_obj.House.Schedules = self.m_schedules
-        self.m_schedule_obj = self.m_schedules[0]
-
-    def test_02_Mock(self):
-        # print(PrettyFormatAny.form(Mock.RiseSet(), 'A3-02-A - Mock'))
-        pass
-
-    def test_03_schedules(self):
-        # print(PrettyFormatAny.form(self.m_schedules, 'A3-03-A - schedules'))
-        # print(PrettyFormatAny.form(self.m_schedules[0], 'A3-03-B - schedules[0]'))
-        # print(PrettyFormatAny.form(self.m_schedule_obj, 'A3-03-C - schedule_obj'))
-        self.assertEqual(str(self.m_schedules[0].DayOfWeek), TESTING_SCHEDULE_DOW_0)
-        self.assertEqual(str(self.m_schedule_obj.DayOfWeek), TESTING_SCHEDULE_DOW_0)
-
-
 class B1_Global(SetupMixin, unittest.TestCase):
     """ Test converting a datetime to seconds
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_pyhouse_obj.House.Schedules = self.m_schedules
-        self.m_schedule_obj = self.m_schedules[0]
 
     def test_01_Seconds(self):
         """ Testing time conversion to seconds
@@ -193,8 +135,6 @@ class B2_DayOfWeek(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_pyhouse_obj.House.Schedules = self.m_schedules
-        self.m_schedule_obj = self.m_schedules[0]
 
     def test_01_0_Days(self):
         """ Date is within DayOfWeek value
@@ -276,7 +216,7 @@ class C1_Execute(SetupMixin, unittest.TestCase):
     def test_01_one(self):
         """ No way to _test the dispatch routine
         """
-        self.m_pyhouse_obj.House.Schedules[0].ScheduleType = 'TeStInG14159'  # to set dispatch to testing
+        self.m_pyhouse_obj.House.Schedules[0].Sched.Type = 'TeStInG14159'  # to set dispatch to testing
         _l_schedule = self.m_pyhouse_obj.House.Schedules[0]
         # print(PrettyFormatAny.form(l_schedule, 'C1-01-A - Sched'))
         # ScheduleExecution().dispatch_one_schedule(self.m_pyhouse_obj, l_schedule)
@@ -683,7 +623,7 @@ class F1_Config_Read(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         l_yaml = l_node.Yaml
         l_yamlsched = l_yaml['Schedules']
         # print(PrettyFormatAny.form(l_node, 'F1-02-A - Node'))
@@ -695,7 +635,7 @@ class F1_Config_Read(SetupMixin, unittest.TestCase):
     def test_03_ExtractSched(self):
         """ Extract one room info from the yaml
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         l_yaml = l_node.Yaml
         l_sched = self.m_config._extract_light_schedule(l_yaml['Schedules'][0]['Light'])
         print(PrettyFormatAny.form(l_sched, 'F1-03-A - Sched', 190))

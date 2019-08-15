@@ -1,5 +1,5 @@
 """
-@name:      Modules/Drivers/interface.py
+@name:      Modules/Core/Drivers/interface.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -18,15 +18,15 @@ There are several different interfaces at this point (2013-10-29):
 This module reads and writes the Config for those controllers.
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-15'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Drivers.Ethernet.Ethernet_xml import XML as ethernetXML
-from Modules.Drivers.Null.Null_xml import XML as nullXML
-from Modules.Drivers.Serial.Serial_config import Config as serialConfig
-from Modules.Drivers.USB.USB_xml import XML as usbXML
+from Modules.Core.Drivers.Ethernet.Ethernet_xml import XML as ethernetXML
+from Modules.Core.Drivers.Null.Null_xml import XML as nullXML
+from Modules.Core.Drivers.Serial.Serial_driver import Config as serialConfig
+from Modules.Core.Drivers.USB.USB_xml import XML as usbXML
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
 
 from Modules.Core import logging_pyh as Logger
@@ -54,7 +54,14 @@ class DriverStatus():
 
 
 class Config:
-    """
+    """ This abstracts the interface information.
+    Used so far for lighting controllers.
+    Allows for yaml config files to have a section for "Interface:" without defining the contents of that section;
+     getting that information is the job of the particular driver XXX
+
+    Interface:
+       Type: XXX
+       ...
     """
 
     def load_interface(self, p_config):
@@ -70,7 +77,7 @@ class Config:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Controller Yaml is missing an entry for "{}"'.format(l_key))
         if l_obj.Type == 'Serial':
-            serialConfig().load_config(p_config, l_obj)
+            serialConfig().load_serial_config(p_config, l_obj)
         return l_obj
 
 # ## END DBK

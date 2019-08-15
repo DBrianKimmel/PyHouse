@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-13'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -46,7 +46,7 @@ class HouseInformation(BaseUUIDObject):
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomInformation()
         self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleBaseData()
+        self.Schedules = {}  # ScheduleInformation()
         self.Security = {}  # SecurityData()
         self._Commands = {}  # Module dependent
 

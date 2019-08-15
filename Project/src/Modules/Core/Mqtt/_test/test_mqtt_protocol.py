@@ -7,17 +7,17 @@
 @note:      Created on Jun 3, 2015
 @Summary:
 
-Passed all 4 tests - DBK- 2019-08-08
+Passed all 4 tests - DBK- 2019-08-015
 """
 
-__updated__ = '2019-08-08'
+__updated__ = '2019-08-15'
 
 #  Import system type stuff
 from twisted.trial import unittest
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttBrokerInformation
+from Modules.Core.Mqtt.mqtt import MqttInformation, MqttBrokerInformation
 from Modules.Core.Mqtt.mqtt_protocol import MQTTProtocol
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-14'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -45,6 +45,19 @@ class LightingInformation:
         self.Controllers = None  # {} = ControllerInformation()
         self.Lights = None  # {} = LightInformation()
         self.Outlets = None  # {} = OutletInformation
+
+
+class ScheduleLightingInformation:
+    """ This is the lighting specific part.
+    """
+
+    def __init__(self):
+        self.Type = 'Light'
+        self.Brightness = 0
+        self.Name = None  # Light name
+        self.Rate = 0
+        self.Duration = None
+        self.Room = None  # Room Name
 
 
 class MqttActions:
@@ -160,8 +173,7 @@ class API:
     def LoadConfig(self):
         """ Load the Lighting xml info.
         """
-        LOG.info('Loading Lighting config files.')
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Lighting.API.LoadConfig', 190))
+        LOG.info('Loading all Lighting config files.')
         Config().LoadYamlConfig(self.m_pyhouse_obj)
         self.m_buttons.LoadConfig()
         self.m_controllers.LoadConfig()

@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-13'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -74,7 +74,7 @@ class HouseInformation(BaseUUIDObject):
         self.Pools = {}  # PoolData()
         self.Rooms = {}  # RoomInformation()
         self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleBaseData()
+        self.Schedules = {}  # ScheduleInformation()
         self.Security = {}  # SecurityData()
         self._Commands = {}  # Module dependent
 
@@ -213,12 +213,11 @@ class Utility:
     def _import_all_found_modules(self):
         """ Now we know what we need, load and run just those modules.
         """
-        LOG.debug('Importing configured modules: {}'.format(self.m_module_needed))
         for l_module in self.m_module_needed:
             if l_module in self.m_debugging_skip:
                 LOG.warn('Skip import (for debugging) of module "{}"'.format(l_module))
                 continue
-            LOG.debug('Starting import of Module: "{}"'.format(l_module))
+            # LOG.debug('Starting import of Module: "{}"'.format(l_module))
             l_package = 'Modules.House.' + l_module.capitalize()  # p_family_obj.PackageName  # contains e.g. 'Modules.Families.Insteon'
             l_name = l_package + '.' + l_module.lower()
             try:
@@ -364,9 +363,9 @@ class API:
         Take a snapshot of the current Configuration/Status and write out the config files.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_config.SaveYamlConfig()
-        self.m_location_api.SaveConfig()
-        self.m_floor_api.SaveConfig()
+        # self.m_config.SaveYamlConfig()
+        # self.m_location_api.SaveConfig()
+        # self.m_floor_api.SaveConfig()
         self.m_rooms_api.SaveConfig()
         self.m_utility._save_component_apis()  # All the house submodules.
         LOG.info("Saved House Config.")

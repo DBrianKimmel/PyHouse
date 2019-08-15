@@ -17,7 +17,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-15'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,7 +25,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import config_tools
-from Modules.Drivers.interface import Config as interfaceConfig
+from Modules.Core.Drivers.interface import Config as interfaceConfig
 from Modules.House.Family.family import Config as familyConfig
 from Modules.House.Security.login import Config as loginConfig
 
@@ -98,7 +98,7 @@ class Config:
         return l_ret
 
     def _extract_interface(self, p_config):
-        """
+        """ Get the controller interface config.
         """
         l_ret = interfaceConfig().load_interface(p_config)
         return l_ret

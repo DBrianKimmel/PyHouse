@@ -7,10 +7,10 @@
 @note:      Created on Mar 31, 2017
 @summary:   Test
 
-Passed all 9 tests - DBK - 2019-05-25
+Passed all 9 tests - DBK - 2019-08-15
 
 """
-__updated__ = '2019-08-08'
+__updated__ = '2019-08-15'
 
 # Import system type stuff
 from twisted.trial import unittest

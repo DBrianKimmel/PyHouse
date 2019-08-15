@@ -7,26 +7,24 @@
 @note:      Created on Apr 26, 2017
 @summary:   Test
 
-Passed all 11 tests - DBK - 2019-08-08
+Passed all 11 tests - DBK - 2019-08-15
 
 """
-from Modules.Computer.computer import ComputerInformation
-from Modules.House.Lighting.controllers import ControllerInformation
 
-__updated__ = '2019-08-08'
+__updated__ = '2019-08-15'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import \
-    ScheduleLightData, \
-    PyHouseInformation
+from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Mqtt import mqtt
-from Modules.Core.Mqtt.mqtt import API as mqttAPI, CONFIG_FILE_NAME
-from Modules.Core.Mqtt.mqtt_data import MqttInformation
+from Modules.Core.Mqtt.mqtt import API as mqttAPI, CONFIG_FILE_NAME, MqttInformation
 from Modules.Core.Utilities import json_tools, config_tools
+from Modules.Computer.computer import ComputerInformation
+from Modules.House.Lighting.controllers import ControllerInformation
+from Modules.House.Schedule.schedule import ScheduleLightInformation
 
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
@@ -162,8 +160,8 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_yaml = l_node.Yaml['Mqtt']
         l_first_broker = config_tools.Yaml(self.m_pyhouse_obj).find_first_element(l_yaml)
         l_broker = self.m_config._extract_one_broker(l_first_broker, self)
-        print('C1-03-A - Yaml: {}'.format(l_first_broker))
-        print(PrettyFormatAny.form(l_broker, 'C1-03-B - Broker'))
+        # print('C1-03-A - Yaml: {}'.format(l_first_broker))
+        # print(PrettyFormatAny.form(l_broker, 'C1-03-B - Broker'))
         self.assertEqual(l_broker.Name, 'Test Broker 1')
 
 
@@ -202,7 +200,7 @@ class F1_Form(SetupMixin, unittest.TestCase):
     def test_06_MessageObj(self):
         """ Add an object.
         """
-        l_data = ScheduleLightData()
+        l_data = ScheduleLightInformation()
         l_data.Name = 'Mqtt Controller Object'
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'

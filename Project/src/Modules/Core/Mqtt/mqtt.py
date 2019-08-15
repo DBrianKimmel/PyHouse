@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-15'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,12 +19,11 @@ import datetime
 import platform
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeInformation
+from Modules.Core.data_objects import NodeInformation, HostInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Utilities import config_tools
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
-from Modules.Core.Mqtt.mqtt_data import MqttInformation, MqttJson, MqttBrokerInformation
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
 
@@ -34,6 +33,54 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
 CONFIG_FILE_NAME = 'mqtt.yaml'
+
+
+class MqttInformation:
+    """
+
+    ==> PyHouse.Core.Mqtt.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.Brokers = {}  # MqttBrokerData()
+        self.ClientID = 'PyH-'
+        self.Prefix = ''
+        self._ClientAPI = None
+        self._ProtocolAPI = None
+
+
+class MqttBrokerInformation:
+    """ 0-N
+
+    ==> PyHouse.Core.Mqtt.Brokers.XXX as in the def below
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None
+        self.Host = HostInformation()
+        self.Class = 'Local'
+        self.Keepalive = 60  # seconds
+        self.Password = None
+        self.UserName = None
+        self.WillMessage = ''
+        self.WillQoS = 0
+        self.WillRetain = False
+        self.WillTopic = ''
+
+        self._ClientAPI = None
+        self._ProtocolAPI = None
+        self._isTLS = False
+
+
+class MqttJson(object):
+    """ This is a couple of pieces of information that get added into every MQTT message
+        sent out of this computer.
+    """
+
+    def __init__(self):
+        self.Sender = ''  # The Mqtt name of the sending device.
+        self.DateTime = None  # The time on the sending device
 
 
 def _make_topic(p_pyhouse_obj, p_topic):

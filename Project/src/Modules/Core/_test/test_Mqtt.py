@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/_test/test_Mqtt.py
+@name:      Modules/Computer/_test/test_Mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2018 by D. Brian Kimmel
@@ -9,11 +9,11 @@
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-08-15'
 
 from twisted.trial import unittest, reporter, runner
 
-from Modules.Core.Mqtt import test as I_test
+from Modules.Core.Mqtt import _test as I_test
 
 
 class Z_Suite(unittest.TestCase):

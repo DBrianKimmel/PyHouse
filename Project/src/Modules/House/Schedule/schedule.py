@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Schedules/schedule.py
+@name:      Modules/House/Schedule/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -38,8 +38,8 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-08-10'
-__version_info__ = (19, 5, 1)
+__updated__ = '2019-08-14'
+__version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -48,9 +48,9 @@ import aniso8601
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert, extract_tools, config_tools
-from Modules.Core.data_objects import ScheduleBaseData
 from Modules.House.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.House.Irrigation.irrigation_action import API as irrigationActionsAPI
+from Modules.House.Lighting.lighting import ScheduleLightingInformation
 from Modules.House.Lighting.actions import API as lightActionsAPI
 from Modules.House.Lighting.utility import Utility as lightingUtility
 from Modules.House.Schedule import sunrisesunset
@@ -148,7 +148,7 @@ class MqttActions:
         if l_light_obj == None:
             return
         l_key = len(self.m_pyhouse_obj.House.Schedules)
-        l_sched = ScheduleBaseData()
+        l_sched = ScheduleInformation()
         l_sched.Name = l_name
         l_sched.Key = l_key
         # l_sched.Active = True
@@ -157,7 +157,7 @@ class MqttActions:
         l_sched.UUID = extract_tools.get_mqtt_field(p_message, 'UUID')
         l_sched.DayOfWeek = extract_tools.get_mqtt_field(p_message, 'DayOfWeek')
         l_sched.ScheduleMode = extract_tools.get_mqtt_field(p_message, 'ScheduleMode')
-        l_sched.ScheduleType = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
+        l_sched.Sched.Type = extract_tools.get_mqtt_field(p_message, 'Sched.Type')
         l_sched.Time = extract_tools.get_mqtt_field(p_message, 'Time')
         l_sched.Level = extract_tools.get_mqtt_field(p_message, 'Level')
         l_sched.LightName = extract_tools.get_mqtt_field(p_message, 'LightName')
@@ -172,7 +172,7 @@ class MqttActions:
         --> pyhouse/<housename>/house/schedule/...
         """
         p_logmsg += ''
-        l_schedule_type = extract_tools.get_mqtt_field(p_message, 'ScheduleType')
+        l_schedule_type = extract_tools.get_mqtt_field(p_message, 'Sched.Type')
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_light_level = extract_tools.get_mqtt_field(p_message, 'Level')
         if len(p_topic) > 0:
@@ -376,7 +376,7 @@ class ScheduleExecution:
             #  scheduleActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         else:
-            LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.ScheduleType))
+            LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.Sched.Type))
             irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
 
     @staticmethod
@@ -480,7 +480,7 @@ class Utility:
         l_scheds = p_pyhouse_obj.House.Schedules
         for l_sched in  l_scheds.values():
             # print('sched', l_sched.Name)
-            if l_sched.ScheduleType == p_type:
+            if l_sched.Sched.Type == p_type:
                 # print('sched', l_sched.Name)
                 l_sched_list.append(l_sched)
         if len(l_sched_list) == 0:
@@ -540,7 +540,7 @@ class Config:
     def _extract_light_schedule(self, p_config):
         """
         """
-        l_obj = ScheduleLightInformation()
+        l_obj = ScheduleLightingInformation()
         for l_key, l_value in p_config.items():
             # print('Light Sched Key:{}; Value:{}'.format(l_key, l_value))
             setattr(l_obj, l_key, l_value)
@@ -614,7 +614,7 @@ class Config:
             return None
         l_scheds = self._extract_all_schedules(l_yaml)
         self.m_pyhouse_obj.House.Schedules = l_scheds
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules, 'Schedule', 190))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]', 190))
         return l_scheds  # for testing purposes
 
 # ----------

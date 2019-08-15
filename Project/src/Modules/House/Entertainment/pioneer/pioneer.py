@@ -21,7 +21,7 @@ See: pioneer/__init__.py for documentation.
 
 """
 
-__updated__ = '2019-08-12'
+__updated__ = '2019-08-14'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -277,16 +277,21 @@ class PioneerControl:
     """
     """
 
-    def _get_endpoint(self, p_pyhouse_obj, p_device_obj):
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _get_endpoint(self, p_device_obj):
         """
         """
-        l_reactor = p_pyhouse_obj._Twisted.Reactor
+        l_reactor = self.m_pyhouse_obj._Twisted.Reactor
         l_host = p_device_obj.Host.Name
         l_port = p_device_obj.Host.Port
         l_endpoint = TCP4ClientEndpoint(l_reactor, l_host, l_port)
         return l_endpoint
 
-    def pioneer_start_connecting(self, p_pyhouse_obj, p_device_obj):
+    def pioneer_start_connecting(self, p_device_obj):
         """ Open connections to the various Onkyo devices we will communicate with.
         This will also publish a status message with controller info.
 
@@ -315,9 +320,9 @@ class PioneerControl:
         l_status = PioneerDeviceStatus()
         l_status.Family = 'onkyo'
         l_status.Model = p_device_obj.Model
-        l_status.Node = p_pyhouse_obj.Computer.Name
-        l_endpoint = self._get_endpoint(p_pyhouse_obj, p_device_obj)
-        d_connector = l_endpoint.connect(PioneerFactory(p_pyhouse_obj, p_device_obj))
+        l_status.Node = self.m_pyhouse_obj.Computer.Name
+        l_endpoint = self._get_endpoint(p_device_obj)
+        d_connector = l_endpoint.connect(PioneerFactory(self.m_pyhouse_obj, p_device_obj))
         d_connector.addCallback(cb_got_protocol, p_device_obj, l_status)
         d_connector.addErrback(eb_got_protocol, p_device_obj, l_status)
         # self.m_device_lst.append(p_device_obj)
@@ -519,7 +524,7 @@ class API(MqttActions, PioneerClient):
             if l_device_obj._isRunning:
                 LOG.info('Pioneer device {} is already running.'.format(l_device_obj.Name))
                 continue
-            PioneerControl().pioneer_start_connecting(self.m_pyhouse_obj, l_device_obj)
+            PioneerControl(self.m_pyhouse_obj).pioneer_start_connecting(l_device_obj)
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveConfig(self):

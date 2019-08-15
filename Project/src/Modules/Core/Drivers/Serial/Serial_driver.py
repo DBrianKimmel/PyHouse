@@ -1,5 +1,5 @@
 """
-@name:      Modules/Drivers/Serial/Serial_driver.py
+@name:      Modules/Core/Drivers/Serial/Serial_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-15'
 
 #  Import system type stuff
 import pyudev
@@ -31,11 +31,27 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
-from Modules.Drivers.interface import DriverStatus
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
+
+
+class SerialInformation():
+    """ These have defaults values if not overridden.
+    """
+
+    def __init__(self):
+        self.Type = 'Serial'
+        self.Baud = 9600
+        self.ByteSize = 8
+        self.Parity = 'N'
+        self.StopBits = 1.0
+        #
+        self.DsrDtr = False
+        self.RtsCts = False
+        self.Timeout = 1.0
+        self.XonXoff = False
 
 
 class FindPort():
@@ -122,12 +138,12 @@ class SerialAPI:
                     baudrate=l_baud)
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
             # p_controller_obj.Active = True
-            l_topic = 'house/driver/serial/status'
-            l_obj = DriverStatus()
-            l_obj.Name = 'Serial Driver'
-            l_obj.Node = p_pyhouse_obj.Computer.Name
-            l_obj.Status = 'Open'
-            p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+            # l_topic = 'house/driver/serial/status'
+            # l_obj = DriverStatus()
+            # l_obj.Name = 'Serial Driver'
+            # l_obj.Node = p_pyhouse_obj.Computer.Name
+            # l_obj.Status = 'Open'
+            # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))
@@ -171,6 +187,52 @@ class SerialAPI:
             except (AttributeError, TypeError) as e_err:
                 LOG.warning("Bad serial write - {} {}".format(e_err, FormatBytes(p_message)))
         return
+
+
+class Config:
+    """
+    read the serial config.
+
+    Interface:
+        Type: Serial
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB0
+
+    """
+
+    def _extract_baud(self, p_config, p_obj):
+        """ Break down baud info
+        """
+        l_data = p_config.split(',')
+        if len(l_data) > 0:
+            p_obj.Baud = l_data[0]
+        if len(l_data) > 1:
+            p_obj.ByteSize = l_data[1]
+        if len(l_data) > 2:
+            p_obj.Parity = l_data[2]
+        if len(l_data) > 3:
+            p_obj.StopBits = float(l_data[3])
+        return p_obj
+
+    def load_serial_config(self, p_config, p_obj):
+        """
+        Interface:
+           Type: Serial
+           Port: /dev/xxx
+           Baud: 9600,8,N,1
+
+        """
+        l_obj = p_obj  # SerialInformation()
+        l_required = ['Baud']
+        for l_key, l_value in p_config.items():
+            if l_key == 'BaudRate':
+                l_key = 'Baud'
+            setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if hasattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Serial Config is missing an entry for "{}"'.format(l_key))
+        return l_obj
 
 
 class API(SerialAPI):

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-10'
+__updated__ = '2019-08-15'
 
 #  Import system type stuff
 import os
@@ -40,7 +40,7 @@ from Modules.House.Family.family import \
 from Modules.House.house import API as housingAPI, HouseInformation
 from Modules.House.Hvac.hvac_data import HvacData
 from Modules.Core import logging_pyh as Logger
-from Modules.Core.Mqtt.mqtt_data import MqttInformation
+from Modules.Core.Mqtt.mqtt import MqttInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #

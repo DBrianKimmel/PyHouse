@@ -7,13 +7,12 @@
 @note:      Created on Jun 5, 2015
 @Summary:
 
-Passed all 7 tests - DBK - 2019-08-08
+Passed all 7 tests - DBK - 2019-08-15
 
 """
-from Modules.House.Lighting.controllers import ControllerInformation
-from Modules.House.house_data import LocationInformationPrivate
+from Modules.House.Lighting.lighting import ScheduleLightingInformation
 
-__updated__ = '2019-08-08'
+__updated__ = '2019-08-15'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -21,11 +20,10 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.Mqtt.mqtt_data import MqttBrokerInformation
+from Modules.House.Lighting.controllers import ControllerInformation
+from Modules.House.house_data import LocationInformationPrivate
 from Modules.Core.Utilities import json_tools
-from Modules.Core.data_objects import \
-    ScheduleLightData
-from Modules.Core.Mqtt.mqtt import _make_message
+from Modules.Core.Mqtt.mqtt import _make_message, MqttBrokerInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
@@ -143,7 +141,7 @@ class C2_Publish(SetupMixin, unittest.TestCase):
     def test_03_MessageObj(self):
         """ Add an object.
         """
-        l_data = ScheduleLightData()
+        l_data = ScheduleLightingInformation()
         l_data.Name = 'Mqtt Controller Object'
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'

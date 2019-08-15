@@ -18,7 +18,7 @@ serial_port
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-15'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -93,7 +93,10 @@ class Utility(object):
         Return the Insteon_PLM API reference if one is found:
         """
         # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
-        for l_controller_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
+        l_controllers = p_pyhouse_obj.Lighting.Controllers
+        if l_controllers == None:
+            return
+        for l_controller_obj in l_controllers.values():
             LOG.info('Starting Controller "{}"'.format(l_controller_obj.Name))
             LOG.debug(PrettyFormatAny.form(l_controller_obj, 'Controller', 190))
             if Utility._is_valid_controller(l_controller_obj):

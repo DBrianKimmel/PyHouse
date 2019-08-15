@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-15'
 
 #  Import system type stuff.
 
@@ -59,18 +59,18 @@ class FamUtil(object):
         """
         l_dev_name = _get_device_name(p_controller_obj)
         if p_controller_obj.Interface.Type.lower() == 'serial':
-            from Modules.Drivers.Serial import Serial_driver
+            from Modules.Core.Drivers.Serial import Serial_driver
             l_driver = Serial_driver.API(p_pyhouse_obj)
         elif p_controller_obj.Interface.Type.lower() == 'ethernet':
-            from Modules.Drivers.Ethernet import Ethernet_driver
+            from Modules.Core.Drivers.Ethernet import Ethernet_driver
             l_driver = Ethernet_driver.API(p_pyhouse_obj)
         elif p_controller_obj.Interface.Type.lower() == 'usb':
-            from Modules.Drivers.USB import USB_driver
+            from Modules.Core.Drivers.USB import USB_driver
             l_driver = USB_driver.API(p_pyhouse_obj)
         else:
             LOG.error('No driver for device: {} with interface type: {}'.format(
                     l_dev_name, p_controller_obj.Interface.Type))
-            from Modules.Drivers.Null import Null_driver
+            from Modules.Core.Drivers.Null import Null_driver
             l_driver = Null_driver.API(p_pyhouse_obj)
         p_controller_obj._DriverAPI = l_driver
         return l_driver
