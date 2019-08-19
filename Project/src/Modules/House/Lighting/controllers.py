@@ -17,7 +17,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-08-17'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -94,18 +94,21 @@ class Config:
     def _extract_family(self, p_config):
         """
         """
+        # LOG.debug('Extracting Family next')
         l_ret = familyConfig().load_family_config(p_config, self.m_pyhouse_obj)
         return l_ret
 
     def _extract_interface(self, p_config):
         """ Get the controller interface config.
         """
+        # LOG.debug('Extracting Interface next')
         l_ret = interfaceConfig().load_interface(p_config)
         return l_ret
 
     def _extract_security(self, p_config):
         """
         """
+        # LOG.debug('Extracting Security next')
         l_ret = loginConfig(self.m_pyhouse_obj).load_name_password(p_config)
         return  l_ret
 
@@ -127,6 +130,7 @@ class Config:
                     l_ret = self._extract_security(l_value)
                     l_obj.Interface = l_ret
                 else:
+                    LOG.debug('Extracting {}: {}'.format(l_key, l_value))
                     setattr(l_obj, l_key, l_value)
         except:
             LOG.warn('Invalid entry of some type in {}'.format(CONFIG_FILE_NAME))
@@ -142,6 +146,7 @@ class Config:
         """
         PyHouse.House.Lighting.Controllers
         """
+        LOG.debug('All controllers.')
         l_dict = {}
         for l_ix, l_key in enumerate(p_config):
             l_obj = self._extract_one_controller(l_key)
@@ -153,12 +158,12 @@ class Config:
         """ Read the controllers.yaml file if it exists.
         It contains Controllers data for the house.
         """
-        LOG.info('Loading _Config - Version:{}'.format(__version__))
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
             self.m_pyhouse_obj.House.Lighting.Controllers = None
-            LOG.debug('No controllers config found')
+            LOG.warn('No controllers config found')
             return None
         try:
             l_yaml = l_node.Yaml['Controllers']

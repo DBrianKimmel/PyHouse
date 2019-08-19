@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-08-14'
+__updated__ = '2019-08-17'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -75,6 +75,7 @@ class MqttActions:
         # LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
         if p_topic[0] == 'button':
             pass
+            # p_logmsg += but
         elif p_topic[0] == 'controller':
             p_logmsg += controllerMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'light':
@@ -83,17 +84,6 @@ class MqttActions:
             p_logmsg += '\tUnknown Lighting sub-topic {}'.format(p_message)
             LOG.warn('Unknown Lighting Topic: {}'.format(p_topic[0]))
         return p_logmsg
-
-    def XXdecode_light(self, p_topic, p_message):
-        """
-        --> pyhouse/housename/lighting/light/xxx
-        """
-        l_logmsg = '\tLight: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        if p_topic[0] == 'status':
-            pass
-        else:
-            l_logmsg += '\tUnknown Light sub-topic {}'.format(p_message)
-        return l_logmsg
 
 
 class Config:

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-08-17'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -73,7 +73,7 @@ class MqttBrokerInformation:
         self._isTLS = False
 
 
-class MqttJson(object):
+class MqttJson:
     """ This is a couple of pieces of information that get added into every MQTT message
         sent out of this computer.
     """

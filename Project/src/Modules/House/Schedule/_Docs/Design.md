@@ -1,4 +1,4 @@
-* Name:      Modules/Housing/Schedules/Docs/Design
+* Name:      Modules/Housing/Schedules/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2019 by D. Brian Kimmel

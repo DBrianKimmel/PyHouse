@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-13'
+__updated__ = '2019-08-17'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -30,6 +30,7 @@ from Modules.House.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.House.Irrigation.irrigation import MqttActions as irrigationMqtt
 from Modules.House.Lighting.lighting import MqttActions as lightingMqtt
 from Modules.House.Schedule.schedule import MqttActions as scheduleMqtt
+from Modules.House.Lighting.outlets import MqttActions as outletMqtt
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -104,6 +105,8 @@ class MqttActions:
             l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         elif p_topic[0] == 'schedule':
             l_logmsg = scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+        elif p_topic[0] == 'outlet':
+            l_logmsg = outletMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
             LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_topic[0], p_topic, p_message))
@@ -142,7 +145,7 @@ class Config:
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warn('house.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
     def LoadYamlConfig(self):

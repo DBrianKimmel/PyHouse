@@ -14,14 +14,11 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-17'
 
 #  Import system type stuff
 import datetime
-try:
-    import Queue
-except ImportError:
-    import queue as Queue
+import queue as Queue
 
 #  Import PyMh files
 from Modules.House.Family.insteon import insteon_decoder, insteon_utils, insteon_link
@@ -115,7 +112,7 @@ class Commands:
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
             insteon_utils.queue_command(p_controller_obj, l_command)
-            LOG.debug('Send Command: {}'.format(FormatBytes(l_command)))
+            # LOG.debug('Send Command: {}'.format(FormatBytes(l_command)))
         except Exception as _e_err:
             LOG.error('Error creating command: {}\n{}\n>>{}<<'.format(_e_err, PrettyFormatAny.form(p_obj, 'Device'), FormatBytes(l_command)))
 

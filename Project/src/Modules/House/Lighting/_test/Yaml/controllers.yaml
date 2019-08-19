@@ -1,5 +1,5 @@
 ---
-# Name:      Module/Housing/Lighting/test/Yaml/controllers.yaml
+# Name:      Module/House/Lighting/_test/Yaml/controllers.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
@@ -17,7 +17,8 @@ Controllers:
         Address: 11.22.33
      Interface:
         Type: Serial
-        Baud: 19200
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB1
 
    - Name: TestPlm
      Comment: Portable, Goes where I do.
@@ -26,7 +27,7 @@ Controllers:
         Address: 44.55.66
      Interface:
         Type: Serial
-        Baud: 19200
+        Baud: 19200,8,N,1
         Port: /dev/ttyUSB0
 
    - Name: InsteonHub

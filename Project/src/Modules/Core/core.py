@@ -7,13 +7,13 @@
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
 
-The PyHouse system has two parts.
-The first part is the computer.
+In addition to the 'Core' PyHouse system has two parts.
+The first part is the 'Computer'.
     It deals with things that pertain to the computer (this one).
     There can be one or more computers running PyHouse.
     Each computer can control two or more control devices.
 
-The second part is the house.
+The second part is the 'House'.
     There is only one house associated with the PyHouse program.
     Every system and sub-system that pertains to the house being automated is here.
 
@@ -21,12 +21,13 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-08-10'
+__updated__ = '2019-08-17'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
-#  Import system type stuff
+#  Import system type stuf
 import os
+import platform
 from twisted.internet import reactor
 
 #  Import PyMh files and modules.
@@ -38,7 +39,6 @@ from Modules.Core.data_objects import \
     PyHouseAPIs, \
     CoreAPIs, \
     CoreInformation, \
-    ParameterInformation, \
     UuidInformation, \
     TwistedInformation, \
     UuidData
@@ -62,6 +62,21 @@ XML_SAVE_DELAY = 3 * HOURS  # 2 hours
 CONFIG_DIR = '/etc/pyhouse/'
 XML_FILE_NAME = 'master.xml'
 CONFIG_FILE_NAME = 'pyhouse.yaml'
+MIN_CONFIG_VERSION = 2.0
+
+
+class ParameterInformation:
+    """
+    ==> PyHouse._Parameters.xxx
+
+    These are filled in first and hold things needed for early initialization.
+    """
+
+    def __init__(self):
+        self.Name = 'Nameless House'
+        self.Computer = 'Nameless'
+        self.UnitSystem = 'Metric'
+        self.ConfigVersion = 2.0
 
 
 class Config:
@@ -102,20 +117,39 @@ class Utility:
         # l_log.Start()
         # LOG.info("Starting.")
 
-    def _load_pyhouse_yaml_file(self, p_pyhouse_obj):
+    def _extract_pyhouse_info(self, p_config):
         """
         """
-        l_yaml = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_required = ['Name', 'Computer', 'UnitSystem', 'ConfigVersion']
+        l_obj = ParameterInformation()
+        for l_key, l_value in p_config.items():
+            if l_key == 'UnitSystem':
+                l_value = l_value.lower()
+            elif l_key == 'ConfigVersion':
+                if l_value < MIN_CONFIG_VERSION:
+                    LOG.warn('Configuration version is too low.  Some things may have changed.')
+            setattr(l_obj, l_key, l_value)
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('pyhouse.yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+    def LoadYamlConfig(self, p_pyhouse_obj):
+        """ Read the computer.yaml file.
+        """
         try:
-            l_dict = l_yaml.Yaml['PyHouse']
-            p_pyhouse_obj._Parameters.UnitSystem = l_dict['UnitSystem']
-            p_pyhouse_obj._Parameters.Name = l_dict['Name']
-            p_pyhouse_obj._Parameters.ConfigVersion = l_dict['ConfigVersion']
+            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
-            LOG.error('Invalid "pyhouse.yaml" file!')
-            p_pyhouse_obj._Parameters.UnitSystem = 'Metric'
-            p_pyhouse_obj._Parameters.Name = 'nameless wonder'
-            p_pyhouse_obj._Parameters.ConfigVersion = 1.0
+            LOG.error('The main config file (pyhouse.yaml) is missing!')
+            return None
+        try:
+            l_yaml = l_node.Yaml['PyHouse']
+        except:
+            LOG.warn('The pyhouse.yaml file does not start with "PyHouse:"')
+            return None
+        l_parameter = self._extract_pyhouse_info(l_yaml)
+        p_pyhouse_obj._Parameters = l_parameter
+        return l_node  # for testing purposes
 
     def _setup_Core(self):
         """
@@ -129,6 +163,7 @@ class Utility:
         """
         """
         l_obj = ComputerInformation()
+        l_obj.Name = platform.node()
         return l_obj
 
     def _setup_House(self):
@@ -208,14 +243,13 @@ class API(Utility):
         self.m_pyhouse_obj.Core = self._setup_Core()  # First
         self.m_pyhouse_obj._APIs = self._setup_APIs()
         self.m_pyhouse_obj._Config = self._setup_Config()
-        # self.m_pyhouse_obj._Families = self._setup_Families()
         self.m_pyhouse_obj._Parameters = self._setup_Parameters()
         self.m_pyhouse_obj._Twisted = self._setup_Twisted()
         self.m_pyhouse_obj._Uuids = self._setup_Uuids()
         self.m_pyhouse_obj.Computer = self._setup_Computer()
         self.m_pyhouse_obj.House = self._setup_House()
         #
-        self._load_pyhouse_yaml_file(self.m_pyhouse_obj)
+        self.LoadYamlConfig(self.m_pyhouse_obj)
         self._sync_startup_logging(self.m_pyhouse_obj)
         self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj, self)
         self.m_pyhouse_obj._APIs.Core.MqttAPI.LoadConfig()

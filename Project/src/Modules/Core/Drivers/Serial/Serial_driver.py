@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-08-17'
 
 #  Import system type stuff
 import pyudev
@@ -31,13 +31,15 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
+from Modules.Core.data_objects import DriverInterfaceInformation
+
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
-class SerialInformation():
+class SerialInterfaceInformation(DriverInterfaceInformation):
     """ These have defaults values if not overridden.
     """
 
@@ -70,6 +72,56 @@ class FindPort():
             pass
 
 
+class Config:
+    """
+    read the serial config.
+
+    Interface:
+        Type: Serial
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB0
+
+    """
+
+    def _extract_baud(self, p_config, p_obj):
+        """ Break down baud info
+        """
+        LOG.info('Extracting serial config.')
+        l_data = p_config.split(',')
+        if len(l_data) > 0:
+            p_obj.Baud = l_data[0]
+        if len(l_data) > 1:
+            p_obj.ByteSize = l_data[1]
+        if len(l_data) > 2:
+            p_obj.Parity = l_data[2]
+        if len(l_data) > 3:
+            p_obj.StopBits = float(l_data[3])
+        return p_obj
+
+    def load_serial_config(self, p_config, p_obj):
+        """
+        Interface:
+           Type: Serial
+           Port: /dev/xxx
+           Baud: 9600,8,N,1
+
+        """
+        l_obj = p_obj  # SerialInterfaceInformation()
+        l_required = ['Baud']
+        for l_key, l_value in p_config.items():
+            if l_key == 'BaudRate' or l_key == 'Baud':
+                l_key = 'Baud'
+                self._extract_baud(l_value, l_obj)
+                continue
+            setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if hasattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Serial Config is missing an entry for "{}"'.format(l_key))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Serial config'))
+        return l_obj
+
+
 class SerialProtocol(Protocol):
     """
     A very simple protocol.
@@ -81,6 +133,11 @@ class SerialProtocol(Protocol):
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
+        LOG.debug('Serial Protocol init')
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        LOG.debug(PrettyFormatAny.form(p_controller_obj.Family, 'Controller.Family'))
+        LOG.debug(PrettyFormatAny.form(p_controller_obj.Interface, 'Controller.Interface'))
 
     def connectionLost(self, reason):
         """ Override
@@ -109,7 +166,7 @@ class SerialProtocol(Protocol):
         """
         _l_len = len(p_data)
         self.m_controller_obj._Data.extend(p_data)
-        # LOG.debug('Rxed {} bytes of data {}'.format(_l_len, FormatBytes(p_data)))
+        LOG.debug('Rxed {} bytes of data {}'.format(_l_len, FormatBytes(p_data)))
 
 
 class SerialAPI:
@@ -129,7 +186,7 @@ class SerialAPI:
         p_controller_obj._Data = bytearray()
         l_baud = p_controller_obj.Interface.Baud
         l_port = '/dev/ttyUSB0'  # p_controller_obj.Port
-        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
+        # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
@@ -184,61 +241,19 @@ class SerialAPI:
         if self.m_active:
             try:
                 self.m_serial.writeSomeData(p_message)
+                LOG.debug('Write: {}'.format(FormatBytes(p_message)))
             except (AttributeError, TypeError) as e_err:
                 LOG.warning("Bad serial write - {} {}".format(e_err, FormatBytes(p_message)))
         return
-
-
-class Config:
-    """
-    read the serial config.
-
-    Interface:
-        Type: Serial
-        Baud: 19200,8,N,1
-        Port: /dev/ttyUSB0
-
-    """
-
-    def _extract_baud(self, p_config, p_obj):
-        """ Break down baud info
-        """
-        l_data = p_config.split(',')
-        if len(l_data) > 0:
-            p_obj.Baud = l_data[0]
-        if len(l_data) > 1:
-            p_obj.ByteSize = l_data[1]
-        if len(l_data) > 2:
-            p_obj.Parity = l_data[2]
-        if len(l_data) > 3:
-            p_obj.StopBits = float(l_data[3])
-        return p_obj
-
-    def load_serial_config(self, p_config, p_obj):
-        """
-        Interface:
-           Type: Serial
-           Port: /dev/xxx
-           Baud: 9600,8,N,1
-
-        """
-        l_obj = p_obj  # SerialInformation()
-        l_required = ['Baud']
-        for l_key, l_value in p_config.items():
-            if l_key == 'BaudRate':
-                l_key = 'Baud'
-            setattr(l_obj, l_key, l_value)
-        # Check for data missing from the config file.
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            if hasattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Serial Config is missing an entry for "{}"'.format(l_key))
-        return l_obj
 
 
 class API(SerialAPI):
     """
     This is the standard Device Driver interface.
     """
+    m_pyhouse_obj = None
+    m_controller_obj = None
+    m_active = False
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

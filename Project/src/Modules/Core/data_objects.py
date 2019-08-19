@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-08-13'
+__updated__ = '2019-08-17'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -57,7 +57,7 @@ class CoreInformation:
         self.Mqtt = {}  # MqttInformation()
 
 
-class ParameterInformation:
+class XXXParameterInformation:
     """
     ==> PyHouse._Parameters.xxx
 
@@ -122,6 +122,26 @@ class CoreAPIs:
         self.MqttAPI = None
         self.CoreSetupAPI = None
         self.PyHouseMainAPI = None
+
+
+class DriverInterfaceInformation():
+    """
+    ...Interface.xxxx
+    """
+
+    def __init__(self):
+        self.Type = None  # Null, Ethernet, Serial, USB, HTML, Websockets,  ...
+        self.Interface = None
+
+
+class DriverStatus():
+    """
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Node = None
+        self.Status = None  # Open, Died, Closed
 
 
 class XXXComputerAPIs:

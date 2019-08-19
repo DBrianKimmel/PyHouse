@@ -17,11 +17,9 @@ Listen to Mqtt message to control device
     <function> = control, status
     <value> = on, off, 0-100, zone#, input#
 
-See: pioneer/__init__.py for documentation.
-
 """
 
-__updated__ = '2019-08-14'
+__updated__ = '2019-08-16'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -89,7 +87,6 @@ class PioneerDeviceStatus(EntertainmentDeviceStatus):
 
     def __init__(self):
         super(PioneerDeviceStatus, self).__init__()
-        pass
 
 
 class MqttActions:
@@ -185,19 +182,19 @@ class Config:
         """
         l_entertain = self.m_pyhouse_obj.House.Entertainment
         l_pioneer = l_entertain.Plugins['pioneer']
-        LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment', 190))
-        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins', 190))
-        LOG.debug(PrettyFormatAny.form(l_pioneer, 'Pioneer', 190))
-        LOG.debug(PrettyFormatAny.form(l_pioneer.Services, 'Pandora', 190))
+        LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
+        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
+        LOG.debug(PrettyFormatAny.form(l_pioneer, 'Pioneer'))
+        LOG.debug(PrettyFormatAny.form(l_pioneer.Services, 'Pandora'))
         #
-        for l_key, l_service in l_pioneer.Services.items():
-            LOG.debug(PrettyFormatAny.form(l_service, 'Service', 190))
+        for l_service in l_pioneer.Services.values():
+            LOG.debug(PrettyFormatAny.form(l_service, 'Service'))
             if hasattr(l_service, 'Connection'):
-                LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection', 190))
+                LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
             if hasattr(l_service, 'Host'):
-                LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host', 190))
+                LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host'))
             if hasattr(l_service, 'Login'):
-                LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login', 190))
+                LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login'))
 
     def _extract_host(self, p_config):
         """
@@ -292,10 +289,10 @@ class PioneerControl:
         return l_endpoint
 
     def pioneer_start_connecting(self, p_device_obj):
-        """ Open connections to the various Onkyo devices we will communicate with.
+        """ Open connections to the various Pioneer devices we will communicate with.
         This will also publish a status message with controller info.
 
-        @param p_device_obj: OnkyoDeviceInformation()
+        @param p_device_obj: PioneerDeviceInformation()
         """
 
         def cb_got_protocol(p_protocol, p_device_obj, p_status):
@@ -304,7 +301,7 @@ class PioneerControl:
             p_status.Type = 'Connected'
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
-            l_topic = 'house/entertainment/onkyo/status'
+            l_topic = 'house/entertainment/pioneer/status'
             self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
@@ -312,16 +309,19 @@ class PioneerControl:
             p_device_obj._isRunning = False
             p_status.Type = 'UnConnected'
             p_status.Connected = False
-            l_topic = 'house/entertainment/onkyo/status'
+            l_topic = 'house/entertainment/pioneer/status'
             self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_status)
-            LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
+            LOG.debug('Got an error connecting to Pioneer device - {}'.format(p_reason))
+            LOG.debug(PrettyFormatAny.form(p_device_obj, 'Device'))
+            LOG.debug(PrettyFormatAny.form(p_device_obj.Host, 'Host'))
 
         p_device_obj._Queue = Queue(32)
         l_status = PioneerDeviceStatus()
-        l_status.Family = 'onkyo'
+        l_status.Family = 'pioneer'
         l_status.Model = p_device_obj.Model
         l_status.Node = self.m_pyhouse_obj.Computer.Name
         l_endpoint = self._get_endpoint(p_device_obj)
+        LOG.debug(PrettyFormatAny.form(l_endpoint, 'Endpoint'))
         d_connector = l_endpoint.connect(PioneerFactory(self.m_pyhouse_obj, p_device_obj))
         d_connector.addCallback(cb_got_protocol, p_device_obj, l_status)
         d_connector.addErrback(eb_got_protocol, p_device_obj, l_status)
@@ -335,14 +335,16 @@ class PioneerProtocol(StatefulTelnetProtocol):
     """
 
     m_pyhouse_obj = None
+    m_pioneer_device_obj = None
 
     def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_pioneer_device_obj = p_device_obj
-        # LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
-        LOG.info('Protocol Init - Version:{}'.format(__version__))
+        LOG.debug('Factory init for {}'.format(PrettyFormatAny.form(self.m_pioneer_device_obj, 'PioneerFactory-')))
+        LOG.info('PioneerProtocol Init - Version:{}'.format(__version__))
 
     def _get_status(self):
+        LOG.debug('Get Status')
         self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['PowerQuery'])  # Query Power
         self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['MuteQuery'])
         self.send_command(self.m_pioneer_device_obj, CONTROL_COMMANDS['VolumeQuery'])
@@ -385,6 +387,7 @@ class PioneerClient(PioneerProtocol):
     """
 
     m_pyhouse_obj = None
+    m_pioneer_device_obj = None
 
     def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -406,16 +409,20 @@ class PioneerFactory(ClientFactory):
     By default, buildProtocol will create a protocol of the class given in self.protocol.
     """
 
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj, p_device_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_pioneer_device_obj = p_device_obj
-        LOG.info('Init - Version:{}'.format(__version__))
+        LOG.debug(PrettyFormatAny.form(p_device_obj, 'Pioneer Device'))
+        LOG.info('PioneerFactory Init - Version:{}'.format(__version__))
 
     def startedConnecting(self, p_connector):
         """ *1
         Called when we are connecting to the device.
         Provides access to the connector.
         """
+        LOG.debug(PrettyFormatAny.form(p_connector, 'Connector'))
         self.m_pioneer_device_obj._Connector = p_connector
 
     def buildProtocol(self, p_addr):
@@ -427,7 +434,7 @@ class PioneerFactory(ClientFactory):
         """
         self.protocol = PioneerProtocol(self.m_pyhouse_obj, self.m_pioneer_device_obj)
         l_client = PioneerClient(self.m_pyhouse_obj, self.m_pioneer_device_obj)
-        LOG.info('BuildProtocol - Addr = {}; Client:{}'.format(p_addr, l_client))
+        LOG.info('BuildProtocol\n\tAddr = {};\n\tClient:{}'.format(p_addr, l_client))
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
@@ -514,12 +521,12 @@ class API(MqttActions, PioneerClient):
     def Start(self):
         """ Start all the Pioneer factories if we have any Pioneer devices.
         """
-        LOG.info('Starting...')
+        LOG.info('API Start...')
         l_count = 0
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device_obj in l_devices.values():
             # # Read Yaml here
-            LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device', 190))
+            LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
             l_count += 1
             if l_device_obj._isRunning:
                 LOG.info('Pioneer device {} is already running.'.format(l_device_obj.Name))

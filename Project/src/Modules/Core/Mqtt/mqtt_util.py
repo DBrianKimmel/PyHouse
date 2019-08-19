@@ -9,10 +9,10 @@
 
 """
 
-__updated__ = '2019-08-08'
+__updated__ = '2019-08-17'
 
 
-class EncodeDecode(object):
+class EncodeDecode:
     """
     Encode and decode portions of the message.
     Part of the MQTT Protocol.

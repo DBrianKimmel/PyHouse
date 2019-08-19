@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Families/Insteon/Insteon_data.py
+@name:      Modules/House/Family/Insteon/Insteon_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-08-18'
 
 #  Import system type stuff
 

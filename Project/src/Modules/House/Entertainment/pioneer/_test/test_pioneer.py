@@ -11,7 +11,7 @@ Passed all 3 tests - DBK - 2019-08-02
 
 """
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-08-15'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,11 +20,8 @@ from twisted.test import proto_helpers
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House.Entertainment.pioneer.pioneer import \
-        SECTION, \
         API as pioneerAPI, \
         PioneerFactory as pioFactory
-from Modules.House.Entertainment.pioneer.test.xml_pioneer import \
-        TESTING_PIONEER_DEVICE_NAME_0
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

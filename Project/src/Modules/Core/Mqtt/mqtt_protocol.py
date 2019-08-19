@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-08-17'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,7 +34,7 @@ LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
 SUBSCRIBE = 'pyhouse/#'
 
 
-class Packets():
+class Packets:
     """ Routines to create and decode Mqtt Message Packets.
     """
 
@@ -46,7 +46,8 @@ class Packets():
 
 
 class MQTTProtocol(Protocol, Packets):
-    """
+    """ Handle the 15 packet types in the Mqtt Protocol.
+
     This protocol is used for communication with the MQTT broker.
     """
 
@@ -407,7 +408,9 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(l_packet)
 
     def _build_connect(self, p_broker, p_mqtt):
-        """
+        """ Build a Mqtt "Connect" Packet.
+        This is the first packet sent after the TCP handshake establishing the network connection.
+        This is used to establish the Mqtt Protocol connection and login.
         """
         l_varHeader = bytearray()
         l_payload = bytearray()
@@ -611,7 +614,7 @@ class MQTTClient(MQTTProtocol):
         _l_comp_name = p_pyhouse_obj.Computer.Name
         self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
-            l_house_name = p_pyhouse_obj.House.Name.lower() + '/'
+            l_house_name = p_pyhouse_obj.House.Name + '/'
         except AttributeError:
             l_house_name = 'NoName/'
         self.m_prefix = 'pyhouse/' + l_house_name

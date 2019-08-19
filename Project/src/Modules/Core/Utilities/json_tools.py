@@ -14,8 +14,7 @@ Json is now used for Mqtt messages in addition to web browser.
 """
 from Modules.Core.Utilities.debug_tools import FormatBytes
 
-__updated__ = '2017-04-30'
-
+__updated__ = '2019-08-17'
 
 # Import system type stuff
 import jsonpickle
@@ -36,6 +35,7 @@ def encode_json(p_obj):
         l_json = u'{}'
     return l_json
 
+
 def decode_json_unicode(p_json):
     """Convert a json object to a valid python object.
     The object keys and values are all encoded in unicode
@@ -44,9 +44,10 @@ def decode_json_unicode(p_json):
     try:
         l_json = jsonpickle.decode(p_json)
     except (TypeError, ValueError) as e_err:
-        LOG.error('ERROR {}  {}'.format(e_err, FormatBytes(p_json)[:30]))
-        l_json = u'{}'
+        # LOG.error('ERROR {}  {}'.format(e_err, FormatBytes(p_json)[:30]))
+        l_json = p_json
     return l_json
+
 
 def convert_from_unicode(p_input):
     """Convert unicode strings to python 2.7 strings.

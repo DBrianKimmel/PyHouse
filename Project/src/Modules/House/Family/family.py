@@ -32,7 +32,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-08-13'
+__updated__ = '2019-08-15'
 
 # Import system type stuff
 import importlib
@@ -187,6 +187,7 @@ class Config:
         for l_key, l_value in p_config.items():
             if l_key == 'Name':
                 l_value = l_value.lower()
+                p_pyhouse_obj.House.Family[l_value] = l_obj
             setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
@@ -197,9 +198,11 @@ class Config:
         # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'House.Family', 190))
         try:
             _l_test = p_pyhouse_obj.House.Family[l_obj.Name]
-            pass
         except Exception as e_err:
             LOG.debug('Config family "{}" Update family.\n\tError: {}'.format(l_obj.Name, e_err))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'House'))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'Family'))
             l_module.Name = l_obj.Name
             p_pyhouse_obj.House.Family[l_obj.Name] = l_module
         return l_obj

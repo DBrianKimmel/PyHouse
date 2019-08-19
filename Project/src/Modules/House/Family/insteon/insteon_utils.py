@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-18'
 
 #  Import system type stuff
 
@@ -277,16 +277,21 @@ class Decode(object):
         @return: the object that has the address.  None if not found in the given clss.
         """
         # LOG.debug('Looking for address: {}'.format(p_addr))
-        for l_obj in p_class.values():
-            # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
-            # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
-            if l_obj.Family.Name != 'insteon':
-                continue  #  ignore any non-Insteon devices in the class
-            if l_obj.Family.Address == p_addr:
+        if p_class == None:
+            return None
+        try:
+            for l_obj in p_class.values():
                 # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
                 # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
-                # LOG.debug('Found address "{}" in "{}" called "{}"'.format(p_addr, l_obj.DeviceSubType, l_obj.Name))
-                return l_obj
+                if l_obj.Family.Name != 'insteon':
+                    continue  #  ignore any non-Insteon devices in the class
+                if l_obj.Family.Address == p_addr:
+                    # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
+                    # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
+                    # LOG.debug('Found address "{}" in "{}" called "{}"'.format(p_addr, l_obj.DeviceSubType, l_obj.Name))
+                    return l_obj
+        except:
+            pass
         return None
 
     @staticmethod
@@ -294,11 +299,15 @@ class Decode(object):
         """ This will search thru all object groups that an inseton device could be in.
         @return: the object that has the address or a dummy object if not found
         """
-        l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
+        l_ret = None
+        if l_ret == None:
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Buttons, p_address)
+        if l_ret == None:
+            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Outlets, p_address)
         if l_ret == None:
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
         if l_ret == None:
@@ -307,11 +316,10 @@ class Decode(object):
             l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
         #  Add additional classes in here
         if l_ret == None:
-            l_dotted = convert.int2dotted_hex(p_address, 3)
-            LOG.info("WARNING - Address {} ({}) *NOT* found.".format(l_dotted, p_address))
+            LOG.info("WARNING - Address {} *NOT* found.".format(p_address))
             l_ret = CoreLightingData()
             stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
-            l_ret.Name = '**NoName-' + l_dotted + '-**'
+            l_ret.Name = '**NoName-' + p_address + '-**'
         return l_ret
 
     def get_obj_from_message(self, p_pyhouse_obj, p_message_addr, offset=0):

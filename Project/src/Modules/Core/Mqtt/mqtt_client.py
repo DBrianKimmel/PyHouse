@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-17'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -42,7 +42,7 @@ class Util(object):
         try:
             l_client_name = CLIENT_PREFIX + p_pyhouse_obj.Computer.Name
         except:
-            l_client_name = CLIENT_PREFIX + 'Devel'
+            l_client_name = CLIENT_PREFIX + 'DevelX'
         return l_client_name
 
     def connect_to_one_broker_TCP(self, p_pyhouse_obj, p_broker_obj):

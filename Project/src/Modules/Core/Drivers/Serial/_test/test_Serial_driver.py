@@ -89,7 +89,7 @@ class B1_Config(SetupMixin, unittest.TestCase):
     def test_03_Rate(self):
         """
         """
-        l_obj = Serial_driver.SerialInformation()
+        l_obj = Serial_driver.SerialInterfaceInformation()
         print(PrettyFormatAny.form(l_obj, 'B1-03-A - Serial'))
         l_yaml = self.GetYaml()['Interface']['Baud']
         print('B1-03-B - Yaml {}'.format(l_yaml))

@@ -1,5 +1,5 @@
 ---
-# Name:      PyHouse/Project/src/Module/Housing/Lighting/test/Yaml/lighting_buttons.yaml
+# Name:      Module/House/Lighting/_test/Yaml/buttons.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
@@ -9,18 +9,28 @@
 # Summary:   This is for PyHouse
 
 Buttons:
-   - Name: Test Button 1
-     Active: True
+
+   - Name: Button Set 1
      Comment: A comment
-     LastUpdate: 2010-01-02 03:04:05
-     Type: Button # VALID_LIGHTING_TYPE = Button | Controller | Light
+     Family:
+        Name: Insteon
+        Address: 11.22.55
+        Button:
+           - Name: GDO
+             Comment: Garage Door Opener/Closer
+             Group: 1
+           - Name: B
+             Group: 2
+           - Name: C
+             Group: 3
+           - Name: Test
+             Comment: Test Button
+             Group: 4
+ 
+   - Name: Test Button 2
+     Comment: A comment
      Device:
-       Family: Null
-       Type: 0 # 0 = Controllers, 1 = Lighting, 2 = HVAC, 3 = Security, 4 = Bridge
-       SubType: 0
-     Room:
-       Name: None
-       Coords: None  # CoordinateInformation() of the device itself
-       UUID: None
+        Family: Insteon
+        Address: 22.45.67
 
 ### END DBK

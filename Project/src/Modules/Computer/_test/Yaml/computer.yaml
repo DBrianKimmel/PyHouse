@@ -1,5 +1,5 @@
 ---
-# Name:      Module/Computer/test/Yaml/computer.yaml
+# Name:      Module/Computer/_test/Yaml/computer.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
@@ -8,10 +8,11 @@
 # License:   MIT License
 # Summary:   This is for PyHouse
 
-Bridges: 
-Mqtt:
-Nodes:
-Web:
-
+Computer:
+   Name: pi-01-ct
+   # Mqtt: !include computer/mqtt.yaml
+   # Bridges: !include computer/bridges.yaml
+   # Nodes: !include nodes.yaml
+   # Web: !include web.yaml
 
 ### END DBK

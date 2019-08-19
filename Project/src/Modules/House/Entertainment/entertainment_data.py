@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Entertainment/entertainment_data.py
+@name:      Modules/House/Entertainment/entertainment_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-12'
+__updated__ = '2019-08-18'
 
 # Import system type stuff
 
