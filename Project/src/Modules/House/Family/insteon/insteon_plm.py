@@ -14,7 +14,7 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-19'
 
 #  Import system type stuff
 import datetime
@@ -208,7 +208,7 @@ class PlmDriverProtocol(Commands):
             return
         if p_controller_obj._DriverAPI != None:
             l_name = self._find_to_name(l_command)
-            LOG.debug("To: {}, Message: {}".format(l_name, FormatBytes(l_command)))
+            # LOG.debug("To: {}, Message: {}".format(l_name, FormatBytes(l_command)))
             p_controller_obj._Command1 = l_command
             p_controller_obj._DriverAPI.Write(l_command)
         else:

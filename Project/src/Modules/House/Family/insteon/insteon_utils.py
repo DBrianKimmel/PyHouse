@@ -12,12 +12,11 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-08-18'
+__updated__ = '2019-08-19'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.Utilities import convert
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
 from Modules.House.Family.insteon.insteon_data import InsteonData
@@ -144,23 +143,6 @@ def extract_address_from_message(p_message, p_offset=0):
 class Util(object):
 
     @staticmethod
-    def message2int(p_message):
-        """Extract the address (3 bytes) from a response message.
-        The message is a byte array returned from the PLM.
-        Return a 24 bit int that is the address.
-        """
-        try:
-            l_int0 = ord(p_message[0])
-            l_int1 = ord(p_message[1])
-            l_int2 = ord(p_message[2])
-        except TypeError:
-            l_int0 = int(p_message[0])
-            l_int1 = int(p_message[1])
-            l_int2 = int(p_message[2])
-        l_int = ((l_int0 * 256) + l_int1) * 256 + l_int2
-        return l_int
-
-    @staticmethod
     def get_json_data(p_obj, p_json):
         try:
             p_obj.DevCat = int(p_json['DevCat'])
@@ -180,36 +162,39 @@ class Util(object):
 class Decode(object):
 
     @staticmethod
-    def decode_light_brightness(p_byte):
+    def decode_insteon_light_brightness(p_byte):
         return int(((p_byte + 2) * 100) / 256)
 
     @staticmethod
-    def _decode_message_flag(p_byte):
+    def _decode_insteon_message_flag(p_byte):
         """ Get the message flag and convert it to a description of the message.
         See p 42(55) of 2009 developers guide.
+        _________________________________
+        | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |
+        | Type      | E | Hops  | Max   |
 
         @param b_byte: is a byte containing the flags
         @return: A string describing the flags
 
-        Message Types  -  Bits 7,6, 5  0xE0 >> 5
-        000 = Direct Message
-        001 = ACK of Direct Message
-        010 = All Link Cleanup Message
-        011 = ACK of All Link Cleanup Message
-        100 = Broadcast Message
-        101 = NAK of Direct Message
-        110 = All Link Broadcast Message
-        111 = NAK of All Link Cleanup Message
+        Message Types  -  Bits 7(msb),6, 5  0xE0 >> 5
+        000 = SD  = Direct Message
+        001 = SDA = ACK of Direct Message
+        010 = SC  = All Link Cleanup Message
+        011 = SCA = ACK of All Link Cleanup Message
+        100 = SB  = Broadcast Message
+        101 = SDN = NAK of Direct Message
+        110 = SA  = All Link Broadcast Message
+        111 = SDN = NAK of All Link Cleanup Message
 
         """
 
         def decode_message_type_flag(p_type):
-            MESSAGE_TYPE_X = ['Dir(SD)', 'Dir_ACK(SD-ACK)', 'AllCleanup(SC)', 'All_Cleanup_ACK(SC-ACK)', 'Brdcst(SB)', 'Direct_NAK(SD-NAK)', 'All_Brdcst(SA)', 'All_Cleanup_NAK(SC-NAK)']
-            return MESSAGE_TYPE_X[p_type] + '-Msg, '
+            MESSAGE_TYPE_X = ['SD', 'SDA', 'SC', 'SCA', 'SB', 'SDN', 'SA', 'SCN']
+            return MESSAGE_TYPE_X[p_type] + ', '
 
         def decode_extended_flag(p_extended):
-            MESSAGE_LENGTH_X = [' Std-Len,', ' Ext-Len,']
-            return MESSAGE_LENGTH_X[p_extended]
+            MESSAGE_LENGTH_X = ['Std-Len', 'Ext-Len']
+            return MESSAGE_LENGTH_X[p_extended] + ', '
 
         l_type = (p_byte & 0xE0) >> 5
         l_extended = (p_byte & 0x10)
@@ -217,7 +202,7 @@ class Decode(object):
         l_hops_max = (p_byte & 0x03)
         l_ret = decode_message_type_flag(l_type)
         l_ret += decode_extended_flag(l_extended)
-        l_ret += " Hops:{:d}/{:d}({:#x})".format(l_hops_left, l_hops_max, p_byte)
+        l_ret += "Hops:{:d}/{:d}({:#x})".format(l_hops_left, l_hops_max, p_byte)
         return l_ret
 
     @staticmethod
@@ -330,7 +315,6 @@ class Decode(object):
         """
         # LOG.debug('Addr ')
         # Extract the 3 byte Insteon address from the message
-        # l_address = Util.message2int(p_message_addr)  #  Extract the 3 byte address from the message and convert to an Int.
         l_address = extract_address_from_message(p_message_addr)
         if l_address.startswith('00'):  #  First byte zero ?
             l_dotted = str(l_address)

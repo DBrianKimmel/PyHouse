@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities import config_tools
 
-__updated__ = '2019-08-18'
+__updated__ = '2019-08-19'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -87,8 +87,8 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
-        LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
+        # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
 
     def _extract_all_button_sets(self, p_config):
@@ -141,7 +141,7 @@ class API:
         """
         LOG.info('Load Config')
         self.m_config.LoadYamlConfig()
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
         return {}
 
     def SaveConfig(self):

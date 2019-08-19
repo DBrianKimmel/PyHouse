@@ -63,7 +63,7 @@ class DecodeResponses:
         p_device_obj.BrightnessPct = '?'
         p_device_obj.ControllerNode = p_pyhouse_obj.Computer.Name
         p_device_obj.ControllerName = p_controller_obj.Name
-        l_flags = utilDecode._decode_message_flag(l_message[8])
+        l_flags = utilDecode._decode_insteon_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
@@ -102,12 +102,12 @@ class DecodeResponses:
                 l_mqtt_publish = True
                 l_debug_msg += 'Turn OFF; '.format(p_device_obj.Name)
             elif l_cmd1 == MESSAGE_TYPES['status_request']:  #  0x19
-                p_device_obj.BrightnessPct = l_level = utilDecode.decode_light_brightness(l_cmd2)
+                p_device_obj.BrightnessPct = l_level = utilDecode.decode_insteon_light_brightness(l_cmd2)
                 l_mqtt_publish = True
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(p_device_obj.Name, l_level)
             else:
                 l_debug_msg += '\n\tUnknown-type:{} - "{}"; '.format(l_cmd1, FormatBytes(l_message))
-                p_device_obj.BrightnessPct = utilDecode.decode_light_brightness(l_cmd2)
+                p_device_obj.BrightnessPct = utilDecode.decode_insteon_light_brightness(l_cmd2)
                 l_mqtt_publish = True
         except AttributeError as e_err:
             LOG.error('ERROR decoding 0x50 record {}'.format(e_err))

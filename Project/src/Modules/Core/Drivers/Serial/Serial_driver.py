@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-19'
 
 #  Import system type stuff
 import pyudev
@@ -166,7 +166,7 @@ class SerialProtocol(Protocol):
         """
         _l_len = len(p_data)
         self.m_controller_obj._Data.extend(p_data)
-        LOG.debug('Rxed {} bytes of data {}'.format(_l_len, FormatBytes(p_data)))
+        # LOG.debug('Rxed {} bytes of data {}'.format(_l_len, FormatBytes(p_data)))
 
 
 class SerialAPI:
@@ -241,7 +241,7 @@ class SerialAPI:
         if self.m_active:
             try:
                 self.m_serial.writeSomeData(p_message)
-                LOG.debug('Write: {}'.format(FormatBytes(p_message)))
+                # LOG.debug('Write: {}'.format(FormatBytes(p_message)))
             except (AttributeError, TypeError) as e_err:
                 LOG.warning("Bad serial write - {} {}".format(e_err, FormatBytes(p_message)))
         return

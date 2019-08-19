@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-19'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -284,6 +284,8 @@ class ExtractPianobar():
 
     def _extract_nowplaying(self, p_obj, p_line):
         """
+        @param p_obj: is the status
+        @param p_line: is the line from pianobar
         """
         p_line = p_line[2:]
         try:
@@ -324,12 +326,16 @@ class ExtractPianobar():
     def extract_line(self, p_line, p_hold):
         """
         b'\x1b[2K|>  Station "QuickMix" (1608513919875785623)\n\x1b[2K(i) Receiving new playlist...'
-        strippping off the esc sequence ...
+
+        After breaking into lines and strippping off the esc sequence we have ...
+
         b'|>  Station "QuickMix" (1608513919875785623)\n\x1b[2K(i) Receiving new playlist...'
         b'|>  "Mississippi Blues" by "Tim Sparks" on "Sidewalk Blues" <3 @ Acoustic Blues Radio\n'
         b'#   -02:29/03:09\r'
         b'  "Carroll County Blues" by "Bryan Sutton" on "Not Too Far From The Tree" @ Bluegrass Radio'
         b'  "Love Is On The Way" by "Dave Koz" on "Greatest Hits" <3 @ Smooth Jazz Radio'
+
+        @param p_line: is an input line from pianobar.
         """
         if len(p_line) < 5:
             return None
@@ -351,8 +357,8 @@ class ExtractPianobar():
 
         # We gather the play data here
         # We do not send the message yet but will wait for the first time to arrive. ???
-        l_now_playing = PandoraServiceStatusData()
-        if p_line.startswith(b'|>'):  # This is
+        if p_line.startswith(b'|>'):  # This is a new playing selection line.
+            l_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line))
             self._extract_nowplaying(l_now_playing, p_line)
             MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
@@ -385,17 +391,18 @@ class PianobarProtocol(protocol.ProcessProtocol):
     ProcessEnded - Called when the child process exits and all file descriptors associated with it have been closed.
     """
 
+    m_pyhouse_obj = None
     m_buffer = bytes()
-    m_hold = None
+    m_hold = None  # Playing info
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
+        self.m_hold = PandoraServiceStatusData()  # Clear playing info
 
     def _get_line(self, p_buffer):
         """ Get a single line from the buffer.
         Remove the first line from the buffer.
-
         """
         p_buffer = p_buffer.lstrip()
         l_ix = p_buffer.find(b'\r')
@@ -404,12 +411,12 @@ class PianobarProtocol(protocol.ProcessProtocol):
         return p_buffer, l_line
 
     def _process_buffer(self):
-        """
+        """ Process the entire buffer - perhaps several lines.
         """
         self.m_buffer = self.m_buffer.lstrip()
 
         while self.m_buffer:
-            self.m_hold = PandoraServiceStatusData()
+            self.m_hold = PandoraServiceStatusData()  # Clear playing info
             self.m_buffer, l_line = self._get_line(self.m_buffer)
             l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line, self.m_hold)
             if l_ret == 'Quit':
@@ -517,7 +524,7 @@ class PandoraControl(A_V_Control):
         self.m_transport.loseConnection()
         # l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
 
-    def is_pianobar_installed(self, p_pyhouse_obj):
+    def is_pianobar_installed(self, _p_pyhouse_obj):
         """ Check this node to see if pianobar is installed.
         If it is, assume we are the player and connect to the A/V equipment to play
         """
@@ -666,7 +673,7 @@ class Config:
         LOG.debug(PrettyFormatAny.form(l_pandora, 'Pandora', 190))
         LOG.debug(PrettyFormatAny.form(l_pandora.Services, 'Pandora', 190))
         #
-        for l_key, l_service in l_pandora.Services.items():
+        for _l_key, l_service in l_pandora.Services.items():
             LOG.debug(PrettyFormatAny.form(l_service, 'Service', 190))
             if hasattr(l_service, 'Connection'):
                 LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection', 190))

@@ -296,7 +296,7 @@ class DecodeResponses(object):
         """
         l_message = p_controller_obj._Message
         l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
-        _l_msgflags = utilDecode._decode_message_flag(l_message[5])
+        _l_msgflags = utilDecode._decode_insteon_message_flag(l_message[5])
         l_ack = utilDecode.get_ack_nak(l_message[8])
         l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
         if l_ack == 'NAK':

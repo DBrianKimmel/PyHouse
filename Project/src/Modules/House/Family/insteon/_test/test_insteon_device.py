@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/family/Insteon/_test/test_Insteon_device.py
+@name:      Modules/House/Family/insteon/_test/test_insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -10,18 +10,16 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-08-19'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Families.Insteon import Insteon_device
-from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Family.insteon.insteon_data import InsteonData
+from Modules.House.Family.insteon import insteon_device
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -29,9 +27,9 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_xml = SetupPyHouseObj().BuildXml()
 
 
 class A0(unittest.TestCase):
@@ -46,11 +44,10 @@ class C01_API(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Insteon_device.API(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
+        self.m_api = insteon_device.API(self.m_pyhouse_obj)
         self.m_device = InsteonData()
         self.m_light = deviceXML().read_base_device_object_xml(self.m_device, self.m_xml.light)
-        insteonXml.ReadXml(self.m_light, self.m_xml.light)
 
     def test_01_Init(self):
         """ Be sure that the XML contains the right stuff.

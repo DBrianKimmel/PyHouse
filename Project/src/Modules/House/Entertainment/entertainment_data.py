@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-18'
+__updated__ = '2019-08-19'
 
 # Import system type stuff
 
@@ -68,7 +68,7 @@ class EntertainmentServiceInformation(BaseObject):
         self._isRunning = False
 
 
-class EntertainmentDeviceControl():
+class EntertainmentDeviceControl:
     """ Used to control a device.
     All defaults are None - Only fill in what you need so inadvertent controls are not done.
     """
@@ -87,7 +87,7 @@ class EntertainmentDeviceControl():
         self.Zone = None  # '1' or '2'  # For multi zone output
 
 
-class EntertainmentServiceControl():
+class EntertainmentServiceControl:
     """ Used to control a device.
     All defaults are None - Only fill in what you need so inadvertent controls are not done.
     """
@@ -108,7 +108,7 @@ class EntertainmentServiceControl():
         self.Zone = None  # '1'  # For multi zone output
 
 
-class EntertainmentDeviceStatus():
+class EntertainmentDeviceStatus:
     """
     The device family is part of the topic.
     """
@@ -122,7 +122,7 @@ class EntertainmentDeviceStatus():
         self.Node = None
 
 
-class EntertainmentServiceStatus():
+class EntertainmentServiceStatus:
     """ This is the base class for Service Status messages.
     """
 

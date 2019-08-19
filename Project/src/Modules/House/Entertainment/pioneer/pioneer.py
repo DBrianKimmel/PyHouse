@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-08-16'
+__updated__ = '2019-08-19'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -321,10 +321,12 @@ class PioneerControl:
         l_status.Model = p_device_obj.Model
         l_status.Node = self.m_pyhouse_obj.Computer.Name
         l_endpoint = self._get_endpoint(p_device_obj)
+        p_device_obj._Endpoint = l_endpoint
         LOG.debug(PrettyFormatAny.form(l_endpoint, 'Endpoint'))
         d_connector = l_endpoint.connect(PioneerFactory(self.m_pyhouse_obj, p_device_obj))
         d_connector.addCallback(cb_got_protocol, p_device_obj, l_status)
         d_connector.addErrback(eb_got_protocol, p_device_obj, l_status)
+        p_device_obj._Connector = d_connector
         # self.m_device_lst.append(p_device_obj)
 
 
@@ -396,7 +398,7 @@ class PioneerClient(PioneerProtocol):
     def send_command(self, p_device_obj, p_command):
         LOG.info('Send command {}'.format(p_command))
         try:
-            l_host = p_device_obj._Connector.host
+            l_host = p_device_obj.Host.Name
             p_device_obj._Transport.write(p_command + b'\r\n')
             LOG.info('Send TCP command:{} to {}'.format(p_command, l_host))
         except AttributeError as e_err:

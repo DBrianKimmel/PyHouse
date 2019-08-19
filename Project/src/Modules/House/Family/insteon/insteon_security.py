@@ -66,7 +66,7 @@ class DecodeResponses(object):
             l_topic += 'motion_sensor'
         #
         l_firmware = l_message[7]
-        l_flags = utilDecode._decode_message_flag(l_message[8])
+        l_flags = utilDecode._decode_insteon_message_flag(l_message[8])
         l_cmd1 = l_message[9]
         l_cmd2 = l_message[10]
         l_data = [l_cmd1, l_cmd2]
