@@ -21,11 +21,11 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-20'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
-#  Import system type stuf
+#  Import system type stuff
 import os
 import platform
 from twisted.internet import reactor
@@ -313,5 +313,6 @@ class API(Utility):
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Stop()
         self.m_pyhouse_obj._APIs.House.HouseAPI.Stop()
         LOG.info("Stopped.\n==========\n")
+        _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 
 # ## END DBK

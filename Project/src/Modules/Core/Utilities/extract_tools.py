@@ -1,7 +1,5 @@
 """
--*- _test-case-name: PyHouse/Project/src/Modules/Core/Utilities/extract_tools.py -*-
-
-@name:      PyHouse/Project/src/Modules/Core/Utilities/extract_tools.py
+@name:      Modules/Core/Utilities/extract_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-04'
+__updated__ = '2019-08-20'
 
 # Import system type stuff
 

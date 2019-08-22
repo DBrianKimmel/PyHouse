@@ -140,7 +140,7 @@ class PandoraDeviceControlData(EntertainmentDeviceControl):
         self.Zone = None
 
 
-class MqttActions():
+class MqttActions:
     """ Process messages to and from this module.
     Output Control messages use Mqtt to send messages to control the amplifier type device attached to the raspberry pi computer.
     Input Control messages come from a node red computer and are the listener (user) commands for their listening experience.
@@ -253,10 +253,13 @@ class MqttActions():
         return l_logmsg
 
 
-class ExtractPianobar():
+class ExtractPianobar:
     """
     This handles the information coming back from pianobar concerning the playing song.
     """
+
+    m_pyhouse_obj = None
+    m_now_playing = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -358,11 +361,12 @@ class ExtractPianobar():
         # We gather the play data here
         # We do not send the message yet but will wait for the first time to arrive. ???
         if p_line.startswith(b'|>'):  # This is a new playing selection line.
-            l_now_playing = PandoraServiceStatusData()
+            self.m_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line))
-            self._extract_nowplaying(l_now_playing, p_line)
-            MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
-            return l_now_playing
+            self._extract_nowplaying(self.m_now_playing, p_line)
+            self.m
+            MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(self.m_now_playing)
+            return self.m_now_playing
         # get the time and then send the message of now-playing
         if p_line.startswith(b'#'):
             l_now_playing = p_hold

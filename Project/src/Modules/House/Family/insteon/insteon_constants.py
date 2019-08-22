@@ -11,7 +11,7 @@ Note! This is designed for: 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-08-20'
 
 STX = 0x02
 ACK = 0x06
@@ -78,8 +78,8 @@ MESSAGE_TYPES = {
     'peek': 0x2b,
     'peek_internal': 0x2c,
     'poke_internal': 0x2d,
-    'on_at_ramp_rate': 0x2e,
-    'off_at_ramp_rate': 0x2f,
+    'on_at_ramp_rate': 0x2e,  # 'extended_set_get'
+    'off_at_ramp_rate': 0x2f,  # 'read_write_aldb'
     #                        sprinkler_valve_on => 0x40,
     #                        sprinkler_valve_off => 0x41,
     #                        sprinkler_program_on => 0x42,

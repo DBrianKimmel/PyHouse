@@ -35,10 +35,6 @@ The next level is the room.  Rooms may be duplicated between houses but must
 be unique within a single house.  Therefore you may not have 3 bedrooms named
 'bedroom' and so on.
 
-Python modules used:
-    Core python 2.7
-    Twisted            (sudo apt-get -y install --fix-missing python-twisted)
-    nevow              (sudo apt-get -y install --fix-missing python-nevow)
 
 
 for a raspberry-pi with wheezy:

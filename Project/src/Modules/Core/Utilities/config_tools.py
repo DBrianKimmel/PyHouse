@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-03'
+__updated__ = '2019-08-19'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -51,7 +51,7 @@ class ConfigYamlNodeInformation:
     def __init__(self):
         self.FileName = None
         self.Yaml = None
-        self.YamlPath = None
+        self.YamlPath = '/etc/pyhouse/'
         self._Error = None
 
 

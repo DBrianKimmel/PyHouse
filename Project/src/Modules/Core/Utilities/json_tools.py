@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Core.Utilities._test.test_json_tools -*-
-
-@name:      PyHouse/src/Modules.Core.Utilities.json_tools.py
+@name:      Modules/Core/Utilities/json_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 6, 2013
 @Summary:   This module is being phased in and web json is being phased out.
@@ -12,16 +10,16 @@
 Json is now used for Mqtt messages in addition to web browser.
 
 """
-from Modules.Core.Utilities.debug_tools import FormatBytes
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-20'
 
 # Import system type stuff
 import jsonpickle
 
 # Import PyMh files
-from Modules.Core import logging_pyh as Logger
+from Modules.Core.Utilities.debug_tools import FormatBytes
 
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Json_Tools     ')
 
 

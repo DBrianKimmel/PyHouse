@@ -61,9 +61,8 @@ Idea Links:
   https://github.com/zonyl/pytomation
   https://github.com/king-dopey/pytomation forked from zonyl/pytomation
   http://leftovercode.info/smartlinc.php
-  http://misterhouse.sourceforge.net/lib/Insteon/AllLinkDatabase.html
   https://github.com/hollie/misterhouse/
-
+  https://github.com/hollie/misterhouse/blob/master/lib/Insteon/AllLinkDatabase.pm
 
     SmartHome Wiki: Using Custom Commands in SmartLinc
     SmartHome Forum: SmartLinc Direct Command for Light Status?
@@ -77,7 +76,7 @@ Idea Links:
 
 """
 
-__updated__ = '2019-07-28'
+__updated__ = '2019-08-20'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -90,6 +89,7 @@ import signal
 import sys
 
 #  Import PyHouse files and modules.
+from Modules.Core.setup_config import CheckInitialSetup
 from Modules.Core import core
 
 from Modules.Core import logging_pyh as Logger
@@ -261,6 +261,7 @@ class BeforeReactor(API):
         call never returns until the reactor is stopped (permanent stoppage).
         """
         print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
+        CheckInitialSetup()
         core.API()
         #
         #  When the reactor stops we continue here

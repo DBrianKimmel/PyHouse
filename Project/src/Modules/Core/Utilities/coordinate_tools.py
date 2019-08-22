@@ -1,5 +1,5 @@
 """
-@name:       PyHouse/src/Modules.Core.Utilities.coordinate_tools.py
+@name:       Modules/Core/Utilities/coordinate_tools.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
 @copyright:  2016-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-08-20'
 
 #  Import system type stuff
 # import xml.etree.ElementTree as ET

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules.Core.Utilities.debug_tools.py
+@name:      Modules/Core/Utilities/debug_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-20'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
