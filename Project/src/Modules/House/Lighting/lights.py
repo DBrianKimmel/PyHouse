@@ -162,7 +162,7 @@ class Config:
             l_dict[l_ix] = l_light_obj
         return l_dict
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the lights.yaml file if it exists.  No file = no lights.
         It must contain 'Lights:'
         All the lights are a list.
@@ -214,7 +214,7 @@ class Config:
             # p_config[-1] = l_config
         return p_config
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """ Save all the lights in a separate yaml file.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -308,7 +308,7 @@ class API(MqttActions):
         """
         """
         LOG.info('Load Config')
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Lighting_lights.API.LoadConfig', 190))
         return {}
 
@@ -317,7 +317,7 @@ class API(MqttActions):
         It will contain several sub-sections
         """
         LOG.info('Save Config')
-        self.m_config.SaveYamlConfig()
+        self.m_config.save_yaml_config()
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
         """

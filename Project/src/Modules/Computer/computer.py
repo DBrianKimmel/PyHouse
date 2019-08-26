@@ -146,7 +146,7 @@ class Config:
         #    pass
         return l_modules  # For testing.
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the computer.yaml file.
         """
         try:
@@ -286,7 +286,7 @@ class API:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         self.m_utility._load_component_config()
         LOG.info('Loaded Config.')
 

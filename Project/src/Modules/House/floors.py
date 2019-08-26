@@ -93,7 +93,7 @@ class Config:
         self.m_pyhouse_obj.House.Floors = l_floors
         return l_floors  # For testing.
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the floors.yaml file.
         """
         try:
@@ -129,7 +129,7 @@ class Config:
         l_ret = {'Floors': l_config}
         return l_ret
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """
         """
         # LOG.debug('Saving Config - Version:{}'.format(__version__))
@@ -188,13 +188,13 @@ class Api:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         LOG.info('Loaded {} Floors'.format(len(self.m_pyhouse_obj.House.Floors)))
 
     def SaveConfig(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_config.SaveYamlConfig()
+        self.m_config.save_yaml_config()
 
 #  ## END DBK

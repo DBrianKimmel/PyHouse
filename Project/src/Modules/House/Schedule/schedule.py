@@ -599,7 +599,7 @@ class Config:
             LOG.debug('Loaded Schedule "{}"'.format(l_obj.Name))
         return l_scheds
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """
         """
         self.m_pyhouse_obj.House.Schedules = None
@@ -619,7 +619,7 @@ class Config:
 
 # ----------
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """
         """
 
@@ -638,7 +638,7 @@ class API:
         """ Load the Schedule from the Config info.
         """
         self.m_pyhouse_obj.House.Schedules = {}
-        l_schedules = self.m_config.LoadYamlConfig()
+        l_schedules = self.m_config.load_yaml_config()
         self.m_pyhouse_obj.House.Schedules = l_schedules
         LOG.info('Loaded Schedules Config')
         return l_schedules  # for testing
@@ -659,7 +659,7 @@ class API:
     def SaveConfig(self):
         """
         """
-        self.m_config.SaveYamlConfig()
+        self.m_config.save_yaml_config()
         LOG.info('Saved Schedules Config.')
 
     def RestartSchedule(self):

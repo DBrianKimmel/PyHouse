@@ -148,7 +148,7 @@ class Config:
                 LOG.warn('house.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the Rooms.Yaml file.
         It contains Rooms data for all rooms in the house.
         """
@@ -177,7 +177,7 @@ class Config:
         l_ret = {'House': l_config}
         return l_ret
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -345,7 +345,7 @@ class API:
         """ The house is always present but the components of the house are plugins and not always present.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         self.m_location_api.LoadConfig()
         self.m_floor_api.LoadConfig()
         self.m_rooms_api.LoadConfig()
@@ -366,7 +366,7 @@ class API:
         Take a snapshot of the current Configuration/Status and write out the config files.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        # self.m_config.SaveYamlConfig()
+        # self.m_config.save_yaml_config()
         # self.m_location_api.SaveConfig()
         # self.m_floor_api.SaveConfig()
         self.m_rooms_api.SaveConfig()

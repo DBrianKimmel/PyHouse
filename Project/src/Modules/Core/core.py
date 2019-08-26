@@ -134,7 +134,7 @@ class Utility:
                 LOG.warn('pyhouse.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
-    def LoadYamlConfig(self, p_pyhouse_obj):
+    def load_yaml_config(self, p_pyhouse_obj):
         """ Read the computer.yaml file.
         """
         try:
@@ -249,7 +249,7 @@ class API(Utility):
         self.m_pyhouse_obj.Computer = self._setup_Computer()
         self.m_pyhouse_obj.House = self._setup_House()
         #
-        self.LoadYamlConfig(self.m_pyhouse_obj)
+        self.load_yaml_config(self.m_pyhouse_obj)
         self._sync_startup_logging(self.m_pyhouse_obj)
         self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj, self)
         self.m_pyhouse_obj._APIs.Core.MqttAPI.LoadConfig()

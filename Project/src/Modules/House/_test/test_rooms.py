@@ -175,9 +175,9 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.House.Rooms), 5)
 
     def test_05_LoadConfig(self):
-        """ Test that pyhouse_obj has been loaded by the 'LoadYamlConfig' method.
+        """ Test that pyhouse_obj has been loaded by the 'load_yaml_config' method.
         """
-        _l_rooms = self.m_yaml.LoadYamlConfig(self.m_pyhouse_obj)
+        _l_rooms = self.m_yaml.load_yaml_config(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-05-A'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'C1-05-B'))
         # print(PrettyFormatAny.form(_l_rooms, 'C1-04-C'))
@@ -191,7 +191,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_yaml = roomscinfig()
-        self.m_rooms = self.m_yaml.LoadYamlConfig(self.m_pyhouse_obj)
+        self.m_rooms = self.m_yaml.load_yaml_config(self.m_pyhouse_obj)
         self.m_working_rooms = self.m_pyhouse_obj.House.Rooms
 
     def test_01_Read(self):

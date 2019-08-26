@@ -110,7 +110,7 @@ class Config:
         self.m_pyhouse_obj.House.Rooms = l_rooms
         return l_rooms  # For testing.
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the Rooms.Yaml file.
         It contains Rooms data for all rooms in the house.
         """
@@ -150,7 +150,7 @@ class Config:
         l_ret = {'Rooms': l_config}
         return l_ret
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -305,13 +305,13 @@ class Api:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
 
     def SaveConfig(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_config.SaveYamlConfig()
+        self.m_config.save_yaml_config()
 
 #  ## END DBK

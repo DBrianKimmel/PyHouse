@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-26'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -140,17 +140,14 @@ class Config:
         LOG.info('Loaded broker: {}'.format(l_obj.Name))
         return l_obj
 
-    def _extract_all_brokers(self, p_node, p_api):
+    def _extract_all_brokers(self, p_yaml, p_api):
         """
         """
         # LOG.info('Loading Config, Extract Broker info - Version:{}'.format(__version__))
         l_brokers = {}
         l_count = 0
-        if p_node.YamlPath == None:
-            LOG.error('No Mqtt Yaml file found.')
-            return
         try:
-            l_config = p_node.Yaml['Mqtt']
+            l_config = p_yaml['Mqtt']
         except:
             LOG.error('No Mqtt: in "mqtt.yaml" file!')
             return None
@@ -163,11 +160,15 @@ class Config:
         LOG.info('Loaded {} Mqtt Brokers.'.format(l_count))
         return l_brokers
 
-    def LoadYamlConfig(self, p_api):
+    def load_yaml_config(self, p_api):
         """ Read the Mqtt.Yaml file.
         """
         # LOG.info('Reading mqtt config file "{}".'.format(CONFIG_FILE_NAME))
-        l_yaml = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        if l_node == None:
+            LOG.error('Mossing {}'.format(CONFIG_FILE_NAME))
+            return None
+        l_yaml = l_node.Yaml
         l_obj = MqttInformation()
         l_obj.Brokers = self._extract_all_brokers(l_yaml, p_api)
         l_obj.ClientID = 'PyH-Comp-' + platform.node()
@@ -197,7 +198,7 @@ class API:
         """ Load the Mqtt Config info.
         """
         LOG.info("Loading Config - Version:{}".format(__version__))
-        self.m_config.LoadYamlConfig(self)
+        self.m_config.load_yaml_config(self)
 
     def Start(self):
         """
@@ -211,7 +212,7 @@ class API:
             LOG.info('No Mqtt brokers are started.')
         return
 
-    def SaveConfig(self, p_pyhouse_obj):
+    def SaveConfig(self):
         """
         There is nothing in the config that can be altered during runtime
         so there is no need to write out the Yaml file to back it up.

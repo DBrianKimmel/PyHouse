@@ -770,7 +770,7 @@ class Config:
                 LOG.warn('Pandora Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the pandora.yaml file.
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
@@ -811,7 +811,7 @@ class API(MqttActions):
         LOG.info("Loading Config - Version:{}".format(__version__))
         if self.m_pandora_control_api.is_pianobar_installed(self.m_pyhouse_obj):
             LOG.info('Pianobar present')
-            self.m_config.LoadYamlConfig()
+            self.m_config.load_yaml_config()
         else:
             LOG.warn('Pianobar Missing')
 

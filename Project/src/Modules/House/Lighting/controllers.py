@@ -154,7 +154,7 @@ class Config:
         LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers', 190))
         return l_dict
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the controllers.yaml file if it exists.
         It contains Controllers data for the house.
         """
@@ -195,7 +195,7 @@ class Config:
         l_ret = {'Controllers': l_config}
         return l_ret
 
-    def SaveYamlConfig(self, p_pyhouse_obj):
+    def save_yaml_config(self, p_pyhouse_obj):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -220,7 +220,7 @@ class API:
         """
         """
         LOG.info('Loading config.')
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
 
     def SaveConfig(self):
         """

@@ -251,7 +251,7 @@ class Config:
                 LOG.warn('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the pioneer.yaml file.
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
@@ -517,7 +517,7 @@ class API(MqttActions, PioneerClient):
     def LoadConfig(self):
         """ Read the XML for all Pioneer devices.
         """
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         LOG.info("Loaded Pioneer Device(s) - Version:{}".format(__version__))
 
     def Start(self):

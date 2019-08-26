@@ -95,7 +95,7 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_03_Load(self):
         """ Read the rooms.yaml config file
         """
-        controllerConfig().LoadYamlConfig(self.m_pyhouse_obj)
+        controllerConfig().load_yaml_config(self.m_pyhouse_obj)
         l_test = self.m_pyhouse_obj.House.Lighting.Controllers
         # print(PrettyFormatAny.form(l_test, 'C1-03-A - Controllers'))
         # print(PrettyFormatAny.form(l_test[0], 'C1-03-B - Controllers'))

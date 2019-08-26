@@ -118,9 +118,9 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.House.Floors), 4)
 
     def test_05_LoadConfig(self):
-        """ Test that pyhouse_obj has been loaded by the 'LoadYamlConfig' method.
+        """ Test that pyhouse_obj has been loaded by the 'load_yaml_config' method.
         """
-        _l_floors = self.m_yaml.LoadYamlConfig(self.m_pyhouse_obj)
+        _l_floors = self.m_yaml.load_yaml_config(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-05-A - House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'C1-05-B - House.Floors'))
         # print(PrettyFormatAny.form(_l_floors, 'C1-05-C - Load'))
@@ -134,7 +134,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         self.m_yaml = floorsConfig(self.m_pyhouse_obj)
-        self.m_floors = self.m_yaml.LoadYamlConfig(self.m_pyhouse_obj)
+        self.m_floors = self.m_yaml.load_yaml_config(self.m_pyhouse_obj)
         self.m_working_floors = self.m_pyhouse_obj.House.Floors
 
     def test_01_Basic(self):
@@ -158,6 +158,6 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         """
         self.m_working_floors[0].Comment = 'After mods'
         l_ret = self.m_yaml._copy_floors_to_yaml(self.m_pyhouse_obj)
-        self.m_yaml.SaveYamlConfig(self.m_pyhouse_obj)
+        self.m_yaml.save_yaml_config(self.m_pyhouse_obj)
 
 # ## END DBK

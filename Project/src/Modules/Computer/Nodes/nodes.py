@@ -75,12 +75,12 @@ class MqttActions:
 
 class Yaml:
 
-    def LoadYamlConfig(self, p_pyhouse_obj):
+    def load_yaml_config(self, p_pyhouse_obj):
         """
         """
         pass
 
-    def SaveYamlConfig(self, p_pyhouse_obj):
+    def save_yaml_config(self, p_pyhouse_obj):
         """
         """
         pass
@@ -99,7 +99,7 @@ class API():
     def LoadConfig(self):
         """ Load the Node xml info.
         """
-        Yaml().LoadYamlConfig(self.m_pyhouse_obj)
+        Yaml().load_yaml_config(self.m_pyhouse_obj)
         # p_pyhouse_obj.Computer.Nodes = l_nodes
         LOG.info('Loaded Config - Version:{}'.format(__version__))
         return
@@ -112,7 +112,7 @@ class API():
     def SaveConfig(self):
         # l_xml, l_count = nodesXml.write_nodes_xml(self.m_pyhouse_obj)
         # p_xml.append(l_xml)
-        Yaml().SaveYamlConfig(self.m_pyhouse_obj)
+        Yaml().save_yaml_config(self.m_pyhouse_obj)
         LOG.info("Saved Config")
         return
 

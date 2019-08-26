@@ -91,7 +91,7 @@ class Config:
             l_dict[l_key.lower()] = l_obj
         return l_dict
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the .Yaml file.
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
@@ -128,7 +128,7 @@ class Config:
         l_ret = {'Bridges': l_config}
         return l_ret
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -153,7 +153,7 @@ class API:
         """ Load the config info.
         This usually is only !include records
         """
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         LOG.info("Loaded Config")
 
     def Start(self):
@@ -173,7 +173,7 @@ class API:
         """
         @param p_pyhouse_obj: the master obj
         """
-        self.m_config.SaveYamlConfig()
+        self.m_config.save_yaml_config()
         LOG.info("Saved Bridges Config")
 
     def Stop(self):

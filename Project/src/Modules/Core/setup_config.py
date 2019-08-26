@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-20'
+__updated__ = '2019-08-26'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -42,7 +42,7 @@ class CheckInitialSetup:
     def check_etc(self):
         """
         """
-        if not pathlib.Path('/etc/pyhouse').isdir():
+        if not pathlib.Path('/etc/pyhouse').is_dir():
             try:
                 pass
             except:
@@ -51,7 +51,7 @@ class CheckInitialSetup:
     def check_log(self):
         """
         """
-        if not pathlib.Path('/var/log/pyhouse').isdir():
+        if not pathlib.Path('/var/log/pyhouse').is_dir():
             pass
 
 # ## END DBK

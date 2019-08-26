@@ -103,7 +103,7 @@ class Config:
             l_dict[l_ix] = l_button_obj
         return l_dict
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the lights.yaml file if it exists.  No file = no lights.
         It must contain 'Lights:'
         All the lights are a list.
@@ -140,7 +140,7 @@ class API:
         """
         """
         LOG.info('Load Config')
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
         return {}
 

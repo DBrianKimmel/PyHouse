@@ -103,7 +103,7 @@ class Config:
             LOG.debug('\n\tKey: {}\n\tValue: {}'.format(l_key, PrettyFormatAny.form(l_val, 'Lighting.Update', 190)))
         return l_lighting  # For testing.
 
-    def LoadYamlConfig(self, p_pyhouse_obj):
+    def load_yaml_config(self, p_pyhouse_obj):
         """ Read the lighting.yaml file.
         It contains lighting data for the house.
         """
@@ -135,7 +135,7 @@ class Config:
         l_ret = {'Lighting': l_config}
         return l_ret
 
-    def SaveYamlConfig(self, _p_pyhouse_obj):
+    def save_yaml_config(self, _p_pyhouse_obj):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -164,7 +164,7 @@ class API:
         """ Load the Lighting xml info.
         """
         LOG.info('Loading all Lighting config files.')
-        Config().LoadYamlConfig(self.m_pyhouse_obj)
+        Config().load_yaml_config(self.m_pyhouse_obj)
         self.m_buttons.LoadConfig()
         self.m_controllers.LoadConfig()
         self.m_lights.LoadConfig()
@@ -181,7 +181,7 @@ class API:
         It will contain several sub-sections
         """
         LOG.info('SaveConfig')
-        Config().SaveYamlConfig(self.m_pyhouse_obj)
+        Config().save_yaml_config(self.m_pyhouse_obj)
         self.m_buttons.SaveConfig()
         self.m_controllers.SaveConfig()
         self.m_lights.SaveConfig()

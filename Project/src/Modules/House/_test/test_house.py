@@ -69,7 +69,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_01_Load(self):
         """
         """
-        l_node = houseConfig(self.m_pyhouse_obj).LoadYamlConfig()
+        l_node = houseConfig(self.m_pyhouse_obj).load_yaml_config()
         print('C1-01-A - Load: {}'.format(l_node.Yaml))
 
     def test_09_API(self):

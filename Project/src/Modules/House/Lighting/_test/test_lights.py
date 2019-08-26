@@ -138,7 +138,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_07_Load(self):
         """ Test reading of the Lights config file.
         """
-        l_lights = lightsConfig().LoadYamlConfig(self.m_pyhouse_obj)
+        l_lights = lightsConfig().load_yaml_config(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights, 'C1-07-A - Node'))
         self.assertEqual(len(l_lights), 3)
 
@@ -151,7 +151,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         # self.m_obj = lightsXML().read_all_lights_xml(self.m_pyhouse_obj)
-        lightsConfig().LoadYamlConfig(self.m_pyhouse_obj)
+        lightsConfig().load_yaml_config(self.m_pyhouse_obj)
 
     def test_01_(self):
         """Test the write for proper XML Base elements

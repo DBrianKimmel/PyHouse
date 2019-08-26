@@ -121,7 +121,7 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_04_Load(self):
         """ Test complete load
         """
-        l_obj = self.m_config.LoadYamlConfig()
+        l_obj = self.m_config.load_yaml_config()
         # print(PrettyFormatAny.form(l_obj, 'C1-04-A', 190))
         self.assertEqual(l_obj.Street, '1600 Pennsylvania Ave NW')
         self.assertEqual(l_obj.City, 'Washington')
@@ -140,7 +140,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         self.m_config = locationConfig(self.m_pyhouse_obj)
-        self.m_location = self.m_config.LoadYamlConfig()
+        self.m_location = self.m_config.load_yaml_config()
         self.m_working_location = self.m_pyhouse_obj.House.Location
 
     def test_01_(self):
@@ -152,7 +152,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         """ Create a JSON object for Location.
         """
         self.m_location.Street = '_test street'
-        l_ret = self.m_config.SaveYamlConfig()
+        l_ret = self.m_config.save_yaml_config()
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'C2-02-A - Location', 190))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C2-02-B - House', 190))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'C2-02-C - Location', 190))

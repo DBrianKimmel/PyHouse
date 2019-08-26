@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-08-12'
+__updated__ = '2019-08-26'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,7 +32,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import importlib
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import extract_tools, config_tools
+from Modules.Core.Utilities import config_tools
 from Modules.House.Entertainment.entertainment_data import \
         EntertainmentDeviceControl
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -107,30 +107,18 @@ class MqttActions():
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
-        _l_sender = extract_tools.get_mqtt_field(p_message, 'Input')
-        # LOG.debug('MqttEntertainmentDispatch Topic:{}\tSender:{}'.format(p_topic, l_sender))
+        p_logmsg = '\tEntertainment: '
         l_module = p_topic[0].lower()
-        # Test entertainment exists and that plugins exist.
-        try:
-            if self.m_pyhouse_obj.House.Entertainment.PluginCount == 0:
-                l_msg = 'This node contains no Entertainment Plugins, skipping.'
-                LOG.info(l_msg)
-                return l_msg
-        except Exception as e_err:
-            LOG.error('Should not happen. {}'.format(e_err))
         # Does the called for plugin exist?
         try:
             l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
         except:
             l_msg = 'The entertainment module {} does not exist, skipping'.format(l_module)
-            LOG.info(l_msg)
+            # LOG.info(l_msg)
             return l_msg
-        # Ok
-        p_logmsg = '\tEntertainment: '
         try:
             l_module_api = l_module_obj._API
             p_logmsg += l_module_api.decode(p_topic[1:], p_message)
-            # LOG.debug('{}'.format(p_logmsg))
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
             p_logmsg += 'Module {} not defined {}'.format(l_module, e_err)
@@ -161,7 +149,6 @@ class Config:
             l_plugin._API = l_module.API(self.m_pyhouse_obj)
             l_plugin._API.LoadConfig()
             LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
-            pass
 
     def _extract_services(self, p_pyhouse_obj, p_yaml):
         """ Get all service loaded
@@ -214,7 +201,7 @@ class Config:
         #
         # LOG.debug('Plugins Requested: {}'.format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins)))
 
-    def LoadYamlConfig(self):
+    def load_yaml_config(self):
         """ Read the Entertainment.Yaml file.
         This config file will contain all the service and device names to load.
         """
@@ -240,7 +227,7 @@ class Config:
         """
         """
 
-    def SaveYamlConfig(self):
+    def save_yaml_config(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
@@ -272,7 +259,7 @@ class API:
         @return: the Entertainment object of PyHouse_obj
         """
         LOG.info("Config Loading - Version:{}".format(__version__))
-        self.m_config.LoadYamlConfig()
+        self.m_config.load_yaml_config()
         return
 
     def _module_start_loop(self, p_plugin):
@@ -301,7 +288,7 @@ class API:
         """ Stick in the entertainment section
         """
         LOG.info("Saving Config.")
-        self.m_config.SaveYamlConfig()
+        self.m_config.save_yaml_config()
         LOG.info("Saved Config.")
 
     def Stop(self):

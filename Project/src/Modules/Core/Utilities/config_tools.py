@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-08-26'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,10 +18,10 @@ import datetime
 import os
 from xml.etree import ElementTree as ET
 from ruamel.yaml import YAML
-from ruamel.yaml.comments import CommentedSeq as cs
-from ruamel.yaml.comments import TaggedScalar as ts
-from ruamel.yaml.scalarstring import SingleQuotedScalarString as sq
-from ruamel.yaml.comments import CommentedMap as ordereddict
+# from ruamel.yaml.comments import CommentedSeq as cs
+# from ruamel.yaml.comments import TaggedScalar as ts
+# from ruamel.yaml.scalarstring import SingleQuotedScalarString as sq
+# from ruamel.yaml.comments import CommentedMap as ordereddict
 
 #  Import PyMh files
 from Modules.Core.Utilities.xml_tools import PutGetXML
@@ -103,7 +103,7 @@ class YamlCreate:
         l_data = l_yaml.load(YAML_STR)
         return l_data
 
-    def add_key_value_to_map(self, p_yaml, p_key, p_value):
+    def add_key_value_to_map(self, p_yaml, p_key, _p_value):
         """ Add a key,Value pair to a map
         Test:
            Key: Value
@@ -115,7 +115,7 @@ class YamlCreate:
         p_yaml.append(p_key)
         # print('Yaml: {}'.format(p_yaml))
 
-    def add_dict(self, p_yaml, p_key, p_add_dict):
+    def add_dict(self, p_yaml, _p_key, p_add_dict):
         """ Add a key,Value pair to a map
         Test:
            Key: Value
@@ -145,7 +145,7 @@ class YamlCreate:
             # p_yaml[-1] = p_add_obj
         return p_yaml
 
-    def add_obj(self, p_yaml, p_key, p_tag):
+    def add_obj(self, p_yaml, p_key, _p_tag):
         """ Add a new ordereddict to the yaml after the Key location
         @param p_yaml: is the yaml fragment that contains p_key (Rooms)
         @param p_key: is the key we will add a new tag into (Room)
@@ -153,10 +153,11 @@ class YamlCreate:
         """
         l_working = p_yaml[p_key]
         p_obj = l_working
-        # print('Working: {}'.format(l_working))
+        print('Working: {}'.format(l_working))
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
-            l_val = getattr(l_working, l_key)
+            _l_val = getattr(l_working, l_key)
             # setattr(l_config, l_key, l_val)
+        pass
 
     def add_to_obj(self, p_yaml, p_key, p_obj):
         """
@@ -164,7 +165,7 @@ class YamlCreate:
         l_working = p_yaml[p_key]
         # print('Working: {}'.format(l_working))
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
-            l_val = getattr(l_working, l_key)
+            _l_val = getattr(l_working, l_key)
             # setattr(l_config, l_key, l_val)
 
 
@@ -278,10 +279,9 @@ class Yaml(YamlCreate, YamlFetch):
         @return: a ConfigYamlNodeInformation() filled in
         """
         l_node = self.find_config_node(p_filename)
-        if l_node.YamlPath == None:
-            LOG.error('Config file "{}" was not found within the config dir "{}".'.format(
-                        l_node.FileName, self.m_pyhouse_obj._Config.ConfigDir))
-            return l_node
+        if l_node == None:
+            LOG.error('Config file "{}" not found.'.format(p_filename))
+            return None
         l_yaml = YAML(typ='rt')
         l_yaml.allow_duplicate_keys = True
         with open(l_node.YamlPath, 'r') as l_file:
