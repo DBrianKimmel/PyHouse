@@ -92,7 +92,7 @@ class MqttActions:
     """
     """
 
-    m_API = None
+    m_api = None
     m_transport = None
 
     def __init__(self, p_pyhouse_obj):
@@ -106,10 +106,10 @@ class MqttActions:
         l_control = extract_tools.get_mqtt_field(p_message, 'Control')
         if l_control == 'On':
             l_logmsg += ' Turn On '
-            self.m_API.Start()
+            self.m_api.Start()
         elif l_control == 'Off':
             l_logmsg += ' Turn Off '
-            self.m_API.Stop()
+            self.m_api.Stop()
 
         elif l_control == 'VolUp1':
             l_logmsg += ' Volume Up 1 '
@@ -122,9 +122,9 @@ class MqttActions:
         ==> pyhouse/<house name>/entertainment/samsung/<type>/<Name>/...
         <type> = ?
         """
-        if self.m_API == None:
+        if self.m_api == None:
             # LOG.debug('Decoding initializing')
-            self.m_API = API(self.m_pyhouse_obj)
+            self.m_api = API(self.m_pyhouse_obj)
 
         l_logmsg = ''
         if p_topic[2] == 'control':

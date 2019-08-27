@@ -1,54 +1,43 @@
 """
-@name:      Modules/House/Lighting/buttons.py
+@name:      Modules/House/Security/garage_door.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2019 by D. Brian Kimmel
-@note:      Created on Apr 2, 2010
+@copyright: (c) 2019-2019 by D. Brian Kimmel
 @license:   MIT License
-@summary:   Handle the home lighting system automation.
+@note:      Created on aug 26, 2019
+@Summary:
 
 """
 
-__updated__ = '2019-08-27'
+__updated__ = '2019-08-26'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
-#  Import system type stuff
+# Import system type stuff
 
-#  Import PyHouse files
+# Import PyMh files
 from Modules.Core.Utilities import config_tools
-from Modules.House.rooms import Config as roomConfig
 from Modules.House.Family.family import Config as familyConfig
-
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.rooms import Config as roomConfig
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.LightingButton ')
-
-CONFIG_FILE_NAME = 'buttons.yaml'
+LOG = Logger.getLogger('PyHouse.GarageDoor     ')
 
 
-class ButtonInformation:
+class GarageDoorInformation:
+    """
 
-    def __init__(self):
-        self.Name = None
-        self.Comment = None
-        self.DeviceType = 'Lighting'
-        self.DeviceSubType = 'Button'
-        self.Family = None  # FamilyInformation()
-        self.Room = None  # RoomInformation()
-
-
-class ButtonFamilyInformation:
-    """ This is the family information we need for a light
-
-    Families may stuff other necessary information in here.
+    ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
     """
 
     def __init__(self):
         self.Name = None
-        self.Comment = None  # Optional
-        self.Address = None
+        self.Comment = None
+        self.DeviceType = 'Security'
+        self.DeviceSubType = 'GarageDoor'
+        self.Family = None  # FamilyInformation()
+        self.Room = None  # RoomInformation()
+        self.Status = None  # Open | Closed
 
 
 class Config:
@@ -73,7 +62,7 @@ class Config:
         @param p_config: is the config fragment containing one button's information.
         @return: a ButtonInformation() obj filled in.
         """
-        l_obj = ButtonInformation()
+        l_obj = GarageDoorInformation()
         l_required = ['Name', 'Family']
         for l_key, l_value in p_config.items():
             if l_key == 'Family':
@@ -104,7 +93,9 @@ class Config:
         return l_dict
 
     def load_yaml_config(self):
-        """ Read the buttons.yaml file if it exists.  No file = no lights.
+        """ Read the lights.yaml file if it exists.  No file = no lights.
+        It must contain 'Lights:'
+        All the lights are a list.
         """
         LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
@@ -146,7 +137,4 @@ class API:
         """
         """
 
-    def Stop(self):
-        _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse')
-
-#  ## END DBK
+# ## END DBK

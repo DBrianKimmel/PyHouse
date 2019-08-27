@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-08-20'
+__updated__ = '2019-08-27'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -247,7 +247,7 @@ class API(Utility):
         self.m_pyhouse_obj._Twisted = self._setup_Twisted()
         self.m_pyhouse_obj._Uuids = self._setup_Uuids()
         self.m_pyhouse_obj.Computer = self._setup_Computer()
-        self.m_pyhouse_obj.House = self._setup_House()
+        # self.m_pyhouse_obj.House = self._setup_House()
         #
         self.load_yaml_config(self.m_pyhouse_obj)
         self._sync_startup_logging(self.m_pyhouse_obj)

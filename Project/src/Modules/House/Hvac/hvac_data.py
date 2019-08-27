@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Hvac/hvac_data.py
+@name:      Modules/House/Hvac/hvac_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -14,25 +14,14 @@
 from Modules.Core.data_objects import DeviceInformation
 
 
-class HvacData():
-    """
-    DeviceType = 'Hvac'
-
-    ==> PyHouse.House.Hvac.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.Thermostats = {}  # ThermostatData()  Sub = 1
-
-
-class ThermostatData(DeviceInformation):
+class XXXThermostatData(DeviceInformation):
     """
 
     ==> PyHouse.House.Hvac.Thermostats.xxx as in the def below
     """
 
     def __init__(self):
-        super(ThermostatData, self).__init__()
+        super(XXXThermostatData, self).__init__()
         self.CoolSetPoint = 0
         self.CurrentTemperature = 0
         self.HeatSetPoint = 0
@@ -42,7 +31,7 @@ class ThermostatData(DeviceInformation):
         self.UUID = None
 
 
-class ThermostatStatus():
+class XXXThermostatStatus():
     """
     """
 

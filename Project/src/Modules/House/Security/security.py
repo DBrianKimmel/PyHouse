@@ -9,16 +9,14 @@
 
 """
 
-__updated__ = '2019-08-10'
+__updated__ = '2019-08-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
-from Modules.Core.data_objects import UuidData, GarageDoorData, MotionSensorData, SecurityData
 from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities.device_tools import XML as deviceXML
-from Modules.Core.Utilities.uuid_tools import Uuid as UtilUuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Family.family_utils import FamUtil
@@ -27,7 +25,19 @@ from Modules.House.Security.pi_camera import API as cameraApi
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
+CONFIG_FILE_NAME = 'security.yaml'
 # LOCATION = House.Security
+
+
+class SecurityData:
+    """
+    DeviceType = 3
+    ==> PyHouse.House.Security.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.GarageDoors = {}  # DeviceSubtype = 1
+        self.MotionSensors = {}  # DeviceSubtype = 2
 
 
 class MqttActions:
@@ -182,10 +192,6 @@ class Utility(object):
                 l_obj = Utility._read_one_door_xml(p_pyhouse_obj, l_one_xml)
                 l_obj.Key = l_count  # Renumber
                 l_dict[l_count] = l_obj
-                l_uuid_obj = UuidData()
-                l_uuid_obj.UUID = l_obj.UUID
-                l_uuid_obj.UuidType = 'GarageDoor'
-                UtilUuid.add_uuid(p_pyhouse_obj, l_uuid_obj)
                 LOG.info('Loaded Garage Door {}'.format(l_obj.Name))
                 l_count += 1
         except AttributeError as e_err:  # No Lights section
@@ -214,7 +220,6 @@ class Config:
 
 class API:
     """ Called from house.
-
     """
 
     m_pyhouse_obj = None
@@ -227,9 +232,9 @@ class API:
     def LoadConfig(self):
         """ Load the Security Information
         """
-        LOG.info('Loading XML')
+        LOG.info('Loading Config')
         self.m_pyhouse_obj.House.Security = SecurityData()  # Clear before loading
-        LOG.info('Loaded XML')
+        LOG.info('Loaded Config')
         return self.m_pyhouse_obj.House.Security
 
     def Start(self):
@@ -237,7 +242,7 @@ class API:
         LOG.info("Started.")
 
     def SaveConfig(self):
-        LOG.info("Saved XML.")
+        LOG.info("Saved Config.")
 
     def Stop(self):
         LOG.info("Stopped.")

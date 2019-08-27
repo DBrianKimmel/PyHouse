@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-27'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -55,7 +55,7 @@ MODULES = [
         ]
 
 
-class HouseInformation(BaseUUIDObject):
+class HouseInformation:
     """ The collection of information about a house.
     Causes JSON errors due to API type data methinks.
 
@@ -63,9 +63,10 @@ class HouseInformation(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(HouseInformation, self).__init__()
         # self.HouseMode = 'Home'  # Home, Away, Vacation,
         #
+        self.Name = None
+        self.Comment = None
         self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Family = {}
         self.Hvac = {}  # HvacData()

@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-08-13'
+__updated__ = '2019-08-27'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -27,7 +27,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House_data     ')
 
 
-class HouseInformation(BaseUUIDObject):
+class XXXHouseInformation(BaseUUIDObject):
     """ The collection of information about a house.
     Causes JSON errors due to API type data methinks.
 
@@ -35,7 +35,7 @@ class HouseInformation(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(HouseInformation, self).__init__()
+        super(XXXHouseInformation, self).__init__()
         self.HouseMode = 'Home'  # Home, Away, Vacation,
         self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
         self.Floors = {}  # FloorsInformation()

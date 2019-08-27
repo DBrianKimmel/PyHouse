@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-08-26'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -146,7 +146,7 @@ class MqttActions:
     Input Control messages come from a node red computer and are the listener (user) commands for their listening experience.
     """
 
-    m_API = None
+    m_api = None
     m_transport = None
 
     def __init__(self, p_pyhouse_obj):
@@ -189,13 +189,11 @@ class MqttActions:
                     Skip:
         """
         l_logmsg = '\tPandora Control'
-        # l_service_name = extract_tools.get_mqtt_field(p_message, 'Name')
         l_zone = extract_tools.get_mqtt_field(p_message, 'Zone')
         l_input = extract_tools.get_mqtt_field(p_message, 'Input')
         l_power = extract_tools.get_mqtt_field(p_message, 'Power')
         l_volume = extract_tools.get_mqtt_field(p_message, 'Volume')
         l_like = extract_tools.get_mqtt_field(p_message, 'Like')
-        # l_dislike = extract_tools.get_mqtt_field(p_message, 'Dislike')
         l_skip = extract_tools.get_mqtt_field(p_message, 'Skip')
         if l_zone == None:
             l_zone = 0
@@ -205,16 +203,16 @@ class MqttActions:
         if l_power == 'On':
             l_logmsg += ' Turn On '
             PandoraControl(self.m_pyhouse_obj)._start_pandora(p_message)
-            A_V_Control(self.m_pyhouse_obj).ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).change_avdevice(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_power == 'Off':
             l_logmsg += ' Turn Off '
             PandoraControl(self.m_pyhouse_obj)._halt_pandora(p_message)
-            A_V_Control(self.m_pyhouse_obj).ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).change_avdevice(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_volume != None:
             l_logmsg += ' Volume to: {}'.format(l_volume)
-            A_V_Control(self.m_pyhouse_obj).ChangeAVDevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).change_avdevice(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_like == 'LikeYes':
             l_logmsg += ' Like '
@@ -323,10 +321,9 @@ class ExtractPianobar:
     def _extract_errors(self, p_playline):
         """
         """
-        # l_title = extract_quoted(p_playline, b'\"')
         pass
 
-    def extract_line(self, p_line, p_hold):
+    def extract_line(self, p_line):
         """
         b'\x1b[2K|>  Station "QuickMix" (1608513919875785623)\n\x1b[2K(i) Receiving new playlist...'
 
@@ -345,44 +342,37 @@ class ExtractPianobar:
         # <ESC>[2K  Ansi esc sequence needs stripped off first.
         if p_line[0] == 0x1B:
             p_line = p_line[4:]
-        #
-        if p_line.startswith(b'Welcome') or p_line.startswith(b'Press ? for') or p_line.startswith(b'Ok.'):
+        if p_line.startswith(b'Welcome') or \
+           p_line.startswith(b'Press ? for') or \
+           p_line.startswith(b'Ok.') or \
+           p_line.startswith(b'(i)'):
             LOG.info(p_line)
             return None
-        # Housekeeping messages Login, Rx Stations, Rx playlists, ...
-        elif p_line.startswith(b'(i)'):
-            LOG.info(p_line)
-            return None
-        #
         if p_line[0] == b'q':
             LOG.info('Quitting Pandora')
             return 'Quit'
-
         # We gather the play data here
-        # We do not send the message yet but will wait for the first time to arrive. ???
+        # We do not send the message yet but will wait for the first time to arrive.
         if p_line.startswith(b'|>'):  # This is a new playing selection line.
             self.m_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line))
             self._extract_nowplaying(self.m_now_playing, p_line)
-            self.m
+            self.m_now_playing.Error = None
             MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(self.m_now_playing)
             return self.m_now_playing
         # get the time and then send the message of now-playing
         if p_line.startswith(b'#'):
-            l_now_playing = p_hold
-            self._extract_playtime(l_now_playing, p_line)
-            if l_now_playing.TimeTotal == l_now_playing.TimeLeft or \
-                l_now_playing.TimeLeft.endswith('00'):
+            self._extract_playtime(self.m_now_playing, p_line)
+            if self.m_now_playing.TimeTotal == self.m_now_playing.TimeLeft or \
+                self.s_now_playing.TimeLeft.endswith('00'):
                 LOG.info(p_line)
-                MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(l_now_playing)
-            return l_now_playing
-
+                MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(self.m_now_playing)
+            return self.m_now_playing
         if p_line.startswith(b'Network'):  # A network error has occurred, restart
             LOG.info(p_line)
             PandoraControl(self.m_pyhouse_obj)._halt_pandora('Network Error')
             PandoraControl(self.m_pyhouse_obj)._start_pandora('Restarting')
             return 'Restarted'
-
         LOG.debug("Data = {}".format(p_line))
         return None
 
@@ -420,15 +410,13 @@ class PianobarProtocol(protocol.ProcessProtocol):
         self.m_buffer = self.m_buffer.lstrip()
 
         while self.m_buffer:
-            self.m_hold = PandoraServiceStatusData()  # Clear playing info
             self.m_buffer, l_line = self._get_line(self.m_buffer)
-            l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line, self.m_hold)
+            l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line)
             if l_ret == 'Quit':
                 return
             elif l_ret == None:
                 continue
             else:
-                # self.m_hold = l_ret
                 pass
             continue
 
@@ -460,7 +448,7 @@ class PianobarProtocol(protocol.ProcessProtocol):
         LOG.info("PianoBar closed. {}".format(p_reason))
 
 
-class A_V_Control():
+class A_V_Control:
     """ Control the A/V device that pandora plays thru.
     """
 
@@ -469,7 +457,7 @@ class A_V_Control():
         """
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def ChangeAVDevice(self, p_zone, p_power, p_input, p_volume):
+    def change_avdevice(self, p_zone, p_power, p_input, p_volume):
         """ Build the control message for the A/V device.
         Fill in only what is necessary
         """
@@ -526,7 +514,6 @@ class PandoraControl(A_V_Control):
         LOG.info('Halt Pianobar')
         self.m_transport.write(b'q')
         self.m_transport.loseConnection()
-        # l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
 
     def is_pianobar_installed(self, _p_pyhouse_obj):
         """ Check this node to see if pianobar is installed.
@@ -535,7 +522,6 @@ class PandoraControl(A_V_Control):
         l_file = Path(PIANOBAR_LOCATION)
         if l_file.is_file():
             return True
-        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION].Active = False
         return False
 
     def _clear_status_fields(self):
@@ -590,7 +576,6 @@ class PandoraControl(A_V_Control):
         self._pandora_starting()
         l_pandora_plugin_obj._OpenSessions += 1
         self.m_processProtocol = PianobarProtocol(self.m_pyhouse_obj)
-        # self.m_processProtocol.deferred = PianobarProtocol(self.m_pyhouse_obj)
         l_executable = PIANOBAR_LOCATION
         l_args = ('pianobar',)
         l_env = None  # this will pass <os.environ>
@@ -603,7 +588,6 @@ class PandoraControl(A_V_Control):
             l_device_control_obj.From = SECTION
             l_device_control_obj.Power = "On"
             l_device_control_obj.InputName = l_service.InputName
-            # l_device_control_obj.Volume = l_service.Volume
             l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_model))
             l_topic = 'house/entertainment/{}/control'.format(l_family)
@@ -703,15 +687,12 @@ class Config:
             return l_obj
         except:
             l_obj.Name = p_config
-
-        # l_ret = interfaceConfig().load_interface(p_config)
         l_ret = None
         return l_ret
 
     def _extract_login(self, p_config):
         """
         """
-        # l_ret = loginConfig.load_name_password(p_config)
         l_ret = loginConfig(self.m_pyhouse_obj).load_name_password(p_config)
         return  l_ret
 
@@ -777,13 +758,11 @@ class Config:
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
-            # self.m_pyhouse_obj.House.Rooms = None
             return None
         try:
             l_yaml = l_node.Yaml['Pandora']
         except:
             LOG.warn('The pandora.yaml file does not start with "Pandora:"')
-            # self.m_pyhouse_obj.House.Rooms = None
             return None
         l_pandora = self._extract_all_pandora(l_yaml)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = l_pandora
@@ -800,7 +779,7 @@ class API(MqttActions):
         """ Do the housekeeping for the Pandora plugin.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_API = self
+        self.m_api = self
         self.m_config = Config(p_pyhouse_obj)
         LOG.info("API Initialized - Version:{}".format(__version__))
         self.m_pandora_control_api = PandoraControl(p_pyhouse_obj)

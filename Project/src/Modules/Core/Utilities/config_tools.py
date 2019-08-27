@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-08-27'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -280,7 +280,7 @@ class Yaml(YamlCreate, YamlFetch):
         """
         l_node = self.find_config_node(p_filename)
         if l_node == None:
-            LOG.error('Config file "{}" not found.'.format(p_filename))
+            LOG.info('Config file "{}" not found.'.format(p_filename))
             return None
         l_yaml = YAML(typ='rt')
         l_yaml.allow_duplicate_keys = True

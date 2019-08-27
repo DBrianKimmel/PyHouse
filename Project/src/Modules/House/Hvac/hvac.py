@@ -14,19 +14,30 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-07-31'
-__version_info__ = (19, 6, 0)
+__updated__ = '2019-08-27'
+__version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.Utilities import extract_tools
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Hvac.hvac_xml import XML as hvacXML
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac           ')
+
+
+class HvacInformation:
+    """
+    DeviceType = 'Hvac'
+
+    ==> PyHouse.House.Hvac.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
 class Utility(object):
@@ -73,14 +84,12 @@ class API(Utility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pyhouse_obj.House.Hvac = HvacInformation()
         LOG.info("Initialized.")
 
     def LoadConfig(self):
         """ Load the HVAC config info.
         """
-        l_obj = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Hvac = l_obj
-        return l_obj
 
     def Start(self):
         LOG.info("Started.")

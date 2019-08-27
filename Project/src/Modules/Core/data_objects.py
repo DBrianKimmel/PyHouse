@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-08-26'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -301,7 +301,7 @@ class ScheduleThermostatData:
         self.CoolSetting = None
 
 
-class SecurityData:
+class XXXSecurityData:
     """
     DeviceType = 3
     ==> PyHouse.House.Security.xxx as in the def below
@@ -744,18 +744,18 @@ class XXControllerInformation(CoreLightingData):
         self._Queue = None
 
 
-class GarageDoorData(CoreLightingData):
+class XXXGarageDoorData(CoreLightingData):
     """
 
     ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
     """
 
     def __init__(self):
-        super(GarageDoorData, self).__init__()
+        super(XXXGarageDoorData, self).__init__()
         self.Status = None  # Open | Closed
 
 
-class MotionSensorData(CoreLightingData):
+class XXXMotionSensorData(CoreLightingData):
     """ This is the motion sensor data
 
     SubType = 5
@@ -763,7 +763,7 @@ class MotionSensorData(CoreLightingData):
     """
 
     def __init__(self):
-        super(MotionSensorData, self).__init__()
+        super(XXXMotionSensorData, self).__init__()
         self.Motion = None
         self.Timeout = 0
 
