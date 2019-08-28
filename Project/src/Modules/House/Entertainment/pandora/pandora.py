@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-08-27'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -311,11 +311,14 @@ class ExtractPianobar:
         l_line = p_line.strip()
         l_ix = l_line.find(b'/')
         try:
-            p_obj.TimeLeft = l_line[l_ix - 5:l_ix].decode('utf-8')
-            p_obj.TimeTotal = l_line[l_ix + 1:].decode('utf-8')
-            p_obj.PlayingTime = l_line[l_ix + 1:].decode('utf-8')
+            l_left = l_line[l_ix - 5:l_ix].decode('utf-8')
+            l_total = l_line[l_ix + 1:].decode('utf-8')
         except:
-            pass
+            l_left = '01:23'
+            l_left = '06:54'
+        p_obj.TimeLeft = l_left
+        p_obj.TimeTotal = l_total
+        p_obj.PlayingTime = l_total
         return p_obj
 
     def _extract_errors(self, p_playline):
@@ -356,7 +359,7 @@ class ExtractPianobar:
         if p_line.startswith(b'|>'):  # This is a new playing selection line.
             self.m_now_playing = PandoraServiceStatusData()
             LOG.info("Playing: {}".format(p_line))
-            self._extract_nowplaying(self.m_now_playing, p_line)
+            self.m_now_playing = self._extract_nowplaying(self.m_now_playing, p_line)
             self.m_now_playing.Error = None
             MqttActions(self.m_pyhouse_obj).send_mqtt_status_msg(self.m_now_playing)
             return self.m_now_playing
@@ -405,7 +408,10 @@ class PianobarProtocol(protocol.ProcessProtocol):
         return p_buffer, l_line
 
     def _process_buffer(self):
-        """ Process the entire buffer - perhaps several lines.
+        """ Process the entire buffer - perhaps several, in extract_line
+    if self.m_now_playing.TimeTotal == self.m_now_playing.TimeLeft or \
+builtins.AttributeError: 'NoneType' object has no attribute 'TimeTotal'
+ lines.
         """
         self.m_buffer = self.m_buffer.lstrip()
 
