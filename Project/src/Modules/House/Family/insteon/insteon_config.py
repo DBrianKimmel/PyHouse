@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/Insteon/Insteon_config.py
+@name:      Modules/House/Family/insteon/insteon_config.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@ This module merges the Insteon specific information (InsteonData) with the gener
  giving an expanded ControllerInformation.
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-08-28'
 
 #  Import system type stuff
 

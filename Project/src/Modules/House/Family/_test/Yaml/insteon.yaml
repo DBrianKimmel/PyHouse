@@ -11,8 +11,8 @@
 Insteon:
    Hub:
       Model: 2245-222
-      Address: 53.A8.19
-      Mac: 00:0E:F3:53:A8:19
+      Address: 44.55.66
+      Mac: 11:22:33:44:55:66
       User: Fireflan
       Password: VZN6Hf2B
       Port: 25105
@@ -20,7 +20,7 @@ Insteon:
       Date: 2219
       Interface:
          Type: Ethernet
-         Host:
+         Host: insteon-ct
 
    Plm:
    Smartlink:

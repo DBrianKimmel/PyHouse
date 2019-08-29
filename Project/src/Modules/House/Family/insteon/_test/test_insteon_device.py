@@ -10,10 +10,9 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-08-28'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
@@ -29,14 +28,14 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_xml = SetupPyHouseObj().BuildXml()
 
 
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
         _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
-        print('Id: test_Insteon_device')
+        print('Id: test_Insteon_device')        self.m_light = deviceXML().read_base_device_object_xml(self.m_device, self.m_xml.light)
+
 
 
 class C01_API(SetupMixin, unittest.TestCase):
@@ -47,7 +46,6 @@ class C01_API(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
         self.m_api = insteon_device.API(self.m_pyhouse_obj)
         self.m_device = InsteonData()
-        self.m_light = deviceXML().read_base_device_object_xml(self.m_device, self.m_xml.light)
 
     def test_01_Init(self):
         """ Be sure that the XML contains the right stuff.

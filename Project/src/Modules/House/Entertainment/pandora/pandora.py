@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-08-27'
+__updated__ = '2019-08-28'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -262,6 +262,7 @@ class ExtractPianobar:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
+        self.m_now_playing = PandoraServiceStatusData()
 
     def _extract_like(self, p_line):
         """ The like info comes back as a '<' in the now-playing info.
@@ -390,12 +391,14 @@ class PianobarProtocol(protocol.ProcessProtocol):
 
     m_pyhouse_obj = None
     m_buffer = bytes()
+    m_extract = None
     m_hold = None  # Playing info
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
         self.m_hold = PandoraServiceStatusData()  # Clear playing info
+        self.m_extract = ExtractPianobar(self.m_pyhouse_obj)
 
     def _get_line(self, p_buffer):
         """ Get a single line from the buffer.
@@ -409,15 +412,11 @@ class PianobarProtocol(protocol.ProcessProtocol):
 
     def _process_buffer(self):
         """ Process the entire buffer - perhaps several, in extract_line
-    if self.m_now_playing.TimeTotal == self.m_now_playing.TimeLeft or \
-builtins.AttributeError: 'NoneType' object has no attribute 'TimeTotal'
- lines.
         """
         self.m_buffer = self.m_buffer.lstrip()
-
         while self.m_buffer:
             self.m_buffer, l_line = self._get_line(self.m_buffer)
-            l_ret = ExtractPianobar(self.m_pyhouse_obj).extract_line(l_line)
+            l_ret = self.m_extract.extract_line(l_line)
             if l_ret == 'Quit':
                 return
             elif l_ret == None:

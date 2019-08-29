@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-08-28'
 
 #  Import system type stuff
 import os
@@ -21,6 +21,7 @@ from twisted.internet import reactor
 #  Import PyMh files and modules.
 from Modules.Computer.computer import ComputerInformation, ComputerAPIs
 from Modules.House.house_data import LocationInformationPrivate
+from Modules.House.Hvac.hvac import HvacInformation
 from Modules.House.Entertainment.entertainment import \
     EntertainmentInformation, \
     EntertainmentPluginInformation
@@ -30,15 +31,11 @@ from Modules.Core.data_objects import \
     PyHouseAPIs, \
     HouseAPIs, \
     TwistedInformation, \
-    SecurityData, \
     UuidInformation, CoreInformation
 from Modules.Core.Utilities.config_tools import \
-    ConfigInformation
-from Modules.House.Family.family import \
-    Utility as familyUtil, \
-    API as familyAPI
+    ConfigInformation, SecurityInformation
+from Modules.House.Family.family import API as familyAPI
 from Modules.House.house import API as housingAPI, HouseInformation
-from Modules.House.Hvac.hvac_data import HvacData
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt import MqttInformation
 #
@@ -158,8 +155,8 @@ class SetupPyHouseObj():
         l_ret.Location = LocationInformationPrivate()
         l_ret.Entertainment = SetupPyHouseObj._build_entertainment(p_pyhouse_obj)
         l_ret.Lighting = LightingInformation()
-        l_ret.Hvac = HvacData()
-        l_ret.Security = SecurityData()
+        l_ret.Hvac = HvacInformation
+        l_ret.Security = SecurityInformation
         return l_ret
 
     @staticmethod
