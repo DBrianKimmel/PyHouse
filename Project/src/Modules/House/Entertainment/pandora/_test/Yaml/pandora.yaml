@@ -36,6 +36,7 @@ Pandora:
         Name: pandora-ct
         Port: None
       Connection:
+        # The pandora computer is connected to this device
         Type: wire
         Family: Pioneer
         Model: VSX-833-K

@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-08-29'
+__updated__ = '2019-08-30'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -84,7 +84,7 @@ class PandoraDeviceConnectionInformation:
     def __init__(self):
         self.Type = None  # Wire, Bluetooth, Optical
         self.Family = None  # The family of the AV device - Panasonic, Pioneer, Onkyo, etc
-        self.Mode = None  # The model of the AV device - FamilyModel must be defined in a Yaml config file
+        self.Model = None  # The model of the AV device - FamilyModel must be defined in a Yaml config file
         self.Input = None  # The name if the input - Must be in the device config file
 
 
@@ -203,16 +203,16 @@ class MqttActions:
         if l_power == 'On':
             l_logmsg += ' Turn On '
             PandoraControl(self.m_pyhouse_obj)._start_pandora(p_message)
-            A_V_Control(self.m_pyhouse_obj).change_avdevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).change_av_device(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_power == 'Off':
             l_logmsg += ' Turn Off '
             PandoraControl(self.m_pyhouse_obj)._halt_pandora(p_message)
-            A_V_Control(self.m_pyhouse_obj).change_avdevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).change_av_device(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_volume != None:
             l_logmsg += ' Volume to: {}'.format(l_volume)
-            A_V_Control(self.m_pyhouse_obj).change_avdevice(l_zone, l_power, l_input, l_volume)
+            A_V_Control(self.m_pyhouse_obj).change_av_device(l_zone, l_power, l_input, l_volume)
             return l_logmsg
         elif l_like == 'LikeYes':
             l_logmsg += ' Like '
@@ -462,7 +462,7 @@ class A_V_Control:
         """
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def change_avdevice(self, p_zone, p_power, p_input, p_volume):
+    def change_av_device(self, p_zone, p_power, p_input, p_volume):
         """ Build the control message for the A/V device.
         Fill in only what is necessary
         """
@@ -759,7 +759,6 @@ class Config:
     def load_yaml_config(self):
         """ Read the pandora.yaml file.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
@@ -800,7 +799,7 @@ class API(MqttActions):
             LOG.warn('Pianobar Missing')
 
     def Start(self):
-        """ Start the Pandora plugin since we have it configured in the XML.
+        """ Start the Pandora plugin since we have it configured.
 
         This does not start playing pandora.  That takes a control message to play.
         The control message comes from some external source (Alexa, WebPage, SmartPhone) etc.

@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-08-30'
 __version_info__ = (18, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -73,15 +73,12 @@ class EntertainmentPluginInformation():
     def __init__(self):
         self.Name = None
         self.Type = 'Missing Type'  # Service: Component (a device):
-        #
         # Devices are indexed by the device number 0..x
         self.DeviceCount = 0
         self.Devices = {}  # EntertainmentDeviceInformation()
-        #
         # Services are indexed by the service number 0..x
         self.ServiceCount = 0
         self.Services = {}  # EntertainmentServiceInformation()
-        #
         self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self._Module = None
         self._OpenSessions = 0
