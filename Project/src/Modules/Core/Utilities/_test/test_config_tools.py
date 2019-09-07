@@ -10,30 +10,27 @@
 Passed all 21 tests - DBK - 2019-07-08
 
 """
-from pycurl import M_PIPELINING
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-09-07'
 
 # Import system type stuff
 from _collections import OrderedDict
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-from ruamel.yaml.comments import Tag, TaggedScalar
+from ruamel.yaml.comments import TaggedScalar
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.config_tools import \
     Yaml as configYaml
-from Modules.House.Lighting.lighting_lights import LightData
+from Modules.House.Lighting.lights import LightInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_xml_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_xml_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_yaml = SetupPyHouseObj().BuildYaml(None)
         self.m_pyhouse_obj._Config.ConfigDir
         self.m_filename = '_test.yaml'
@@ -61,7 +58,7 @@ class A1_Config(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         # self.m_xml = SetupPyHouseObj().BuildXml(self.m_xml_root)
         # SetupPyHouseObj().BuildXml(self.m_xml.root)
 
@@ -80,7 +77,7 @@ class B1_YamlCreate(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
 
     def test_01_create(self):
@@ -105,7 +102,7 @@ class B1_YamlCreate(SetupMixin, unittest.TestCase):
 
         This will cause an ERROR log message to be printed!!!
         """
-        print('B1-02-A - Log error')
+        # print('B1-02-A - Log error')
         LIGHTS = None
         l_yaml = self.m_yamlconf.create_yaml(LIGHTS)
         l_tag = self.m_yamlconf.find_first_element(l_yaml)
@@ -130,8 +127,8 @@ class B2_YamlLoad(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_filename = '_test.yaml'
+        SetupMixin.setUp(self)
+        self.m_filename = 'test.yaml'
         self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
 
     def test_01_load(self):
@@ -164,14 +161,14 @@ class C1_YamlFind(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_find(self):
         """ find_config_node()
 
         This will find the Yaml file in one of the sub-directories of the configured root.
         """
-        l_filename = '_test.yaml'
+        l_filename = 'test.yaml'
         l_node = configYaml(self.m_pyhouse_obj).find_config_node(l_filename)
         # print(PrettyFormatAny.form(l_node, 'C1-01-A - Find', 190))
         # self.dump_to_file(l_yaml)
@@ -197,7 +194,7 @@ class C1_YamlFind(SetupMixin, unittest.TestCase):
 
         This will find the Yaml file in one of the sub-dirs of the config'ed root.
         """
-        l_filename = '_test.yml'
+        l_filename = 'test.yml'
         l_node = configYaml(self.m_pyhouse_obj).find_config_node(l_filename)
         # print(PrettyFormatAny.form(l_node, 'C1-03-A - Find', 190))
         # self.dump_to_file(l_yaml)
@@ -212,8 +209,8 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_filename = '_test.yaml'
+        SetupMixin.setUp(self)
+        self.m_filename = 'test.yaml'
         self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
 
     def test_01_find(self):
@@ -245,7 +242,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
         l_yaml['Testing']['Street'] = 'This is a new street'
         # print(PrettyFormatAny.form(l_node, 'C2-03-A - Find', 190))
         # print(PrettyFormatAny.form(l_node.Yaml, 'C2-03-B - Yaml', 190))
-        print('C2-03-C - {}'.format(self.m_node.Yaml))
+        # print('C2-03-C - {}'.format(self.m_node.Yaml))
         # self.dump_to_file(l_yaml)
         self.assertEqual(l_yaml['Testing']['Street'], 'This is a new street')
 
@@ -256,7 +253,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
         l_key = 'NewKeyABC'
         l_value = 'This is a new value'
         configYaml(self.m_pyhouse_obj).add_key_value_to_map(l_yaml['Testing'], l_key, l_value)
-        print('C2-04-A - {}'.format(l_yaml))
+        # print('C2-04-A - {}'.format(l_yaml))
         self.dump_to_file(l_yaml)
         # self.assertEqual(l_yaml['Testing']['Street'], 'This is a new street')
 
@@ -270,9 +267,9 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
         l_yaml = l_node.Yaml['Testing']
         # print('C2-05-A - Yaml {}'.format(l_yaml))
         l_ret = configYaml(self.m_pyhouse_obj).add_dict(l_yaml, 'Host', {'DictAddition-1': 'Test add dict'})
-        print('C2-05-B - Yaml {}'.format(l_ret))
+        # print('C2-05-B - Yaml {}'.format(l_ret))
         l_node.Yaml['Testing'] = l_ret
-        print('C2-05-C - Yaml {}'.format(l_node.Yaml))
+        # print('C2-05-C - Yaml {}'.format(l_node.Yaml))
         self.dump_to_file(l_yaml)
 
     def test_06_AddList(self):
@@ -281,11 +278,11 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
         l_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
         l_yaml = l_node.Yaml['Testing']
         l_list = [('Adding 1', 'abc'), 'wxyz']
-        print('C2-06-A - Yaml Frag: {}'.format(l_yaml))
+        # print('C2-06-A - Yaml Frag: {}'.format(l_yaml))
         # print(PrettyFormatAny.form(l_yaml, 'C1-06-B - AddOn1', 190))
         l_ret = configYaml(self.m_pyhouse_obj).add_list(l_yaml, 'TEST', l_list)
-        print('C2-06-C - Yaml {}'.format(l_ret))
-        print('C2-06-D - Yaml {}'.format(l_node.Yaml))
+        # print('C2-06-C - Yaml {}'.format(l_ret))
+        # print('C2-06-D - Yaml {}'.format(l_node.Yaml))
         # self.dump_to_file(l_yaml)
 
     def test_07_addObj(self):
@@ -293,9 +290,9 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
         """
         l_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
         l_yaml = l_node.Yaml['Testing']
-        l_obj = LightData()
-        print('C2-07-A - Yaml Frag: {}'.format(l_yaml))
-        print(PrettyFormatAny.form(l_obj, 'C1-07-A - Light', 190))
+        l_obj = LightInformation()
+        # print('C2-07-A - Yaml Frag: {}'.format(l_yaml))
+        # print(PrettyFormatAny.form(l_obj, 'C1-07-A - Light', 190))
         l_ret = configYaml(self.m_pyhouse_obj).add_obj(l_yaml, 'Host', l_obj)
 
 
@@ -305,7 +302,7 @@ class C3_Fetch(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
 
     def test_01_Host(self):
@@ -314,9 +311,9 @@ class C3_Fetch(SetupMixin, unittest.TestCase):
         l_yaml = self.m_node.Yaml['Testing']
         l_host = l_yaml['Host']
         l_obj = configYaml(self.m_pyhouse_obj).fetch_host_info(l_host)
-        print('C3-01-A - Yaml: {}'.format(l_yaml))
-        print(PrettyFormatAny.form(l_host, 'C2-01-B - Yaml', 190))
-        print(PrettyFormatAny.form(l_obj, 'C2-01-C - Obj', 190))
+        # print('C3-01-A - Yaml: {}'.format(l_yaml))
+        # print(PrettyFormatAny.form(l_host, 'C2-01-B - Yaml', 190))
+        # print(PrettyFormatAny.form(l_obj, 'C2-01-C - Obj', 190))
         self.assertEqual(l_obj.Name, 'Host-name-xxx')
         self.assertEqual(l_obj.Port, 12345)
 
@@ -326,9 +323,9 @@ class C3_Fetch(SetupMixin, unittest.TestCase):
         l_yaml = self.m_node.Yaml['Testing']
         l_login = l_yaml['Login']
         l_obj = configYaml(self.m_pyhouse_obj).fetch_login_info(l_login)
-        print('C3-02-A - Yaml: {}'.format(l_yaml))
-        print(PrettyFormatAny.form(l_login, 'C2-02-B - Yaml', 190))
-        print(PrettyFormatAny.form(l_obj, 'C2-02-C - Obj', 190))
+        # print('C3-02-A - Yaml: {}'.format(l_yaml))
+        # print(PrettyFormatAny.form(l_login, 'C2-02-B - Yaml', 190))
+        # print(PrettyFormatAny.form(l_obj, 'C2-02-C - Obj', 190))
 
 
 class C3_Add(SetupMixin, unittest.TestCase):
@@ -336,7 +333,7 @@ class C3_Add(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
 
     def test_01_Host(self):

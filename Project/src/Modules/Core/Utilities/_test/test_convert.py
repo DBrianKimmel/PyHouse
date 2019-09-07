@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Utilities/_test/test_convert.py
+@name:      Modules/Core/Utilities/_test/test_convert.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: 2013-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 Passed all 14 tests - DBK - 2019-03-30
 """
-__updated__ = '2019-03-31'
+__updated__ = '2019-09-07'
 
 # Import system type stuff
 # import xml.etree.ElementTree as ET

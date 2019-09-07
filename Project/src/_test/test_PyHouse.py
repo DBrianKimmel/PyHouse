@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-10'
+__updated__ = '2019-09-07'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -18,17 +18,15 @@ import xml.etree.ElementTree as ET
 # Import PyMh files and modules.
 # from Modules.House._test import test_house
 import PyHouse
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from _test.testing_mixin import SetupPyHouseObj
 
 
 class SetupMixin(object):
     """
     """
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class A0(unittest.TestCase):
@@ -43,7 +41,7 @@ class A0(unittest.TestCase):
 class Test_01_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_0101_Init(self):
         l_api = PyHouse.API()

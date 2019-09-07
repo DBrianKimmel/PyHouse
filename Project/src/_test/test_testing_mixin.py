@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Projectsrc/_test/test_testing_mixin.py
+@name:      PyHouse/Project/src/_test/test_testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -10,34 +10,29 @@
 Passed all 16 tests - DBK - 2019-06-23
 
 """
+from Modules.Core.data_objects import PyHouseInformation
+from Modules.Computer.computer import ComputerInformation
+from Modules.House.house import HouseInformation
 
-__updated__ = '2019-06-23'
+__updated__ = '2019-09-07'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG, XML_EMPTY
-from test.testing_mixin import SetupPyHouseObj, TEST_PATH
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.data_objects import PyHouseInformation, ComputerInformation, HouseInformation
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_xml = SetupPyHouseObj().BuildXml()
 
-    def setUpObj(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-
-    def setUpXml(self, p_root):
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-
-    def setUpYaml(self, p_root):
-        self.m_yaml = SetupPyHouseObj().BuildYaml(p_root)
+    def setUpObj(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class A0(unittest.TestCase):
@@ -57,7 +52,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the PyHouse obj is built correctly
         """
         l_root = None
-        l_obj = SetupPyHouseObj().BuildPyHouseObj(l_root)
+        l_obj = SetupPyHouseObj().BuildPyHouseObj()
         print(PrettyFormatAny.form(l_obj, 'A1-02-A - PyHouseObj', 90))
         self.assertIsInstance(l_obj, PyHouseInformation)
         self.assertIsInstance(l_obj.Computer, ComputerInformation)
@@ -72,7 +67,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Be sure that the YAML contains the right stuff.
         """
         l_root = None
-        l_obj = SetupPyHouseObj().BuildPyHouseObj(l_root)
+        l_obj = SetupPyHouseObj().BuildPyHouseObj()
         # print(PrettyFormatAny.form(l_obj, 'A1-03-A - PyHouseObj', 90))
         print(PrettyFormatAny.form(l_obj._Config, 'A1-03-B - _Config', 90))
 
@@ -82,7 +77,7 @@ class B1_Empty(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUpObj(self, ET.fromstring(XML_EMPTY))
+        SetupMixin.setUpObj(self)
         pass
 
     def test_01_Obj(self):
@@ -107,7 +102,7 @@ class B2_Long(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUpObj(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUpObj(self)
         pass
 
     def test_01_Obj(self):
@@ -152,14 +147,8 @@ class C1_Build(SetupMixin, unittest.TestCase):
 
     def test_03_PyHouse(self):
         l_root = None
-        l_config = self.m_api.BuildPyHouseObj(l_root)
+        l_config = self.m_api.BuildPyHouseObj()
         # #print(PrettyFormatAny.form(l_root, 'C1-04-A - Root'))
-        pass
-
-    def test_05_XML(self):
-        l_root = ET.fromstring(XML_LONG)
-        l_config = self.m_api.BuildXml(l_root)
-        # print(PrettyFormatAny.form(l_config, 'C1-05-A - Config'))
         pass
 
 # ## END DBK

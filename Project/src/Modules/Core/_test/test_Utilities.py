@@ -1,21 +1,21 @@
 """
-@name:      PyHouse/src/Modules/_test/test_Utilities.py
+@name:      Modules/Core/_test/test_Utilities.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 28, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2019-09-07'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner
 
 # Import PyMh files and modules.
-from Modules.Core.Utilities import test as I_test
+from Modules.Core.Utilities import _test as I_test
 
 
 class Z_Suite(unittest.TestCase):
