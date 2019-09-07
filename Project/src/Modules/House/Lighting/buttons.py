@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-27'
+__updated__ = '2019-09-01'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -89,6 +89,7 @@ class Config:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
+        LOG.info('Extracted button "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_button_sets(self, p_config):
@@ -104,9 +105,9 @@ class Config:
         return l_dict
 
     def load_yaml_config(self):
-        """ Read the buttons.yaml file if it exists.  No file = no lights.
+        """ Read the buttons.yaml file if it exists.  No file = no buttons.
         """
-        LOG.info('Loading _Config - Version:{}'.format(__version__))
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:

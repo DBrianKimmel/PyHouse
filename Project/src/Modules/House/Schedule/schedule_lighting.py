@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-09-04'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -82,7 +82,7 @@ class API():
         """
         @param p_pyhouse_obj: The entire data set.
         @param p_light_obj: the device being controlled
-        @param p_controller_obj: ControllerInformation()
+        @param p_controller_obj: ==> ControllerInformation()
         @param p_control: the idealized light control params
 
         """

@@ -23,7 +23,9 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-09-07'
+__version_info__ = (19, 9, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import pyudev
@@ -31,15 +33,23 @@ from twisted.internet.protocol import Protocol
 from twisted.internet.serialport import SerialPort
 
 #  Import PyMh files
-from Modules.Core.data_objects import DriverInterfaceInformation
 
-from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.SerialDriver   ')
 
 
-class SerialInterfaceInformation(DriverInterfaceInformation):
+class SerialInterfaceInformation:
+    """ This tells us which computer and which port (usually USB) we use.
+    """
+
+    def __init__(self):
+        self.Host = None
+        self.Port = None
+
+
+class SerialPortInformation:
     """ These have defaults values if not overridden.
     """
 
@@ -56,7 +66,7 @@ class SerialInterfaceInformation(DriverInterfaceInformation):
         self.XonXoff = False
 
 
-class FindPort():
+class FindPort:
     """ Check the localhost computer for a port that we will use for the device.
     We will use the information to see ???
     """
@@ -79,12 +89,16 @@ class Config:
     Interface:
         Type: Serial
         Baud: 19200,8,N,1
+        Host: pi-01-ct
         Port: /dev/ttyUSB0
 
     """
 
     def _extract_baud(self, p_config, p_obj):
         """ Break down baud info
+
+        Baud: 19200,8,N,1
+        Speed, Bits, Parity, StopBits
         """
         LOG.info('Extracting serial config.')
         l_data = p_config.split(',')
@@ -105,6 +119,8 @@ class Config:
            Port: /dev/xxx
            Baud: 9600,8,N,1
 
+        @param p_obj: is the DriverInterfaceInformation() with Type, Host and Port already filled in.
+        @return: The info with Baud filled in
         """
         l_obj = p_obj  # SerialInterfaceInformation()
         l_required = ['Baud']
@@ -129,15 +145,16 @@ class SerialProtocol(Protocol):
     """
 
     m_controller_obj = None
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        LOG.debug('Serial Protocol init')
+        # LOG.debug('Serial Protocol init')
         # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-        LOG.debug(PrettyFormatAny.form(p_controller_obj.Family, 'Controller.Family'))
-        LOG.debug(PrettyFormatAny.form(p_controller_obj.Interface, 'Controller.Interface'))
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj.Family, 'Controller.Family'))
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj.Interface, 'Controller.Interface'))
 
     def connectionLost(self, reason):
         """ Override
@@ -148,15 +165,13 @@ class SerialProtocol(Protocol):
         """
         LOG.error('Connection lost for controller {}\n\t{}'.format(self.m_controller_obj.Name, reason))
         SerialAPI().try_restart(self.m_pyhouse_obj, self.m_controller_obj)
-        #  self.m_controller_obj._DriverAPI.Stop()
-        #  self.m_controller_obj._DriverAPI.Start(self.m_pyhouse_obj, self.m_controller_obj)
 
     def connectionMade(self):
         """ Override
 
         Used only to log that we are connected to the controller for this driver.
         """
-        LOG.info('Connection made for controller {}'.format(self.m_controller_obj.Name))
+        LOG.info('Connection made for controller "{}"'.format(self.m_controller_obj.Name))
         self.m_controller_obj._Data = bytearray()
 
     def dataReceived(self, p_data):
@@ -166,7 +181,7 @@ class SerialProtocol(Protocol):
         """
         _l_len = len(p_data)
         self.m_controller_obj._Data.extend(p_data)
-        # LOG.debug('Rxed {} bytes of data {}'.format(_l_len, FormatBytes(p_data)))
+        # LOG.debug('Rxed {} bytes of data {}'.format(_l_len, p_data))
 
 
 class SerialAPI:
@@ -179,13 +194,18 @@ class SerialAPI:
         """
         @param p_pyhouse_obj: is the entire PyHouse Data
         @param p_controller_obj: is the controller information for the serial controller we are opening.
-        @return: True if the driver opened OK and is usable
-                 False if the driver is not functional for any reason.
+        @return: the serial driver pointer
         """
         l_serial = None
         p_controller_obj._Data = bytearray()
         l_baud = p_controller_obj.Interface.Baud
-        l_port = '/dev/ttyUSB0'  # p_controller_obj.Port
+        l_host = p_controller_obj.Interface.Host.lower()
+        l_port = p_controller_obj.Interface.Port
+        l_computer = p_pyhouse_obj.Computer.Name.lower()
+        l_name = p_controller_obj.Name
+        if l_host != l_computer:
+            LOG.warn('Device "{}" is on another computer "{}". This is "{}"  - Ignored.'.format(l_name, l_host, l_computer))
+            return False
         # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
         try:
             l_serial = SerialPort(
@@ -193,18 +213,15 @@ class SerialAPI:
                     l_port,
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
-            LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
-            # p_controller_obj.Active = True
-            # l_topic = 'house/driver/serial/status'
-            # l_obj = DriverStatus()
-            # l_obj.Name = 'Serial Driver'
-            # l_obj.Node = p_pyhouse_obj.Computer.Name
-            # l_obj.Status = 'Open'
-            # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+            p_controller_obj.Interface._DriverApi = self
+            # LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
+            # LOG.debug('Serial:{}'.format(l_serial))
+            # LOG.debug(PrettyFormatAny.form(l_serial, 'Serial'))
+            # LOG.debug('Baud:{}'.format(l_baud))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))
-            # p_controller_obj.Active = True
+            LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         self.m_serial = l_serial
         return l_serial
 
@@ -239,11 +256,13 @@ class SerialAPI:
         """Send the command to the PLM.
         """
         if self.m_active:
+            # LOG.warn(type(p_message))
             try:
-                self.m_serial.writeSomeData(p_message)
-                # LOG.debug('Write: {}'.format(FormatBytes(p_message)))
+                # LOG.debug('Write: {}'.format(p_message))
+                # self.m_serial.writeSomeData(p_message)
+                self.m_serial.write(p_message)
             except (AttributeError, TypeError) as e_err:
-                LOG.warning("Bad serial write - {} {}".format(e_err, FormatBytes(p_message)))
+                LOG.warning('Bad serial write - {} "{}"'.format(e_err, p_message))
         return
 
 
@@ -257,28 +276,28 @@ class API(SerialAPI):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialize Serial Driver')
+        # LOG.info('Initialize Serial Driver')
 
-    def Start(self, p_pyhouse_obj, p_controller_obj):
+    def Start(self, p_controller_obj):
         """
         @param p_controller_obj: is the ControllerInformation() object for a serial device to open.
-        @return: True if the driver opened OK and is usable
-                 False if the driver is not functional for any reason.
+        @return: a oointer to the xxx or None
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
+        LOG.info('Starting serial driver for Controller "{}"'.format(p_controller_obj.Name))
         self.m_controller_obj = p_controller_obj
         FindPort()
         l_ret = self.open_serial_driver(self.m_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret:
-            LOG.info("Started Serial controller {}".format(self.m_controller_obj.Name))
+            p_controller_obj.Interface._DriverApi = self
+            LOG.info('Started Serial controller "{}"'.format(self.m_controller_obj.Name))
         else:
-            LOG.error('ERROR - failed to start Serial controller {}'.format(self.m_controller_obj.Name))
+            LOG.error('ERROR - failed to start Serial controller "{}"'.format(self.m_controller_obj.Name))
         return l_ret
 
     def Stop(self):
         self.close_device(self.m_controller_obj)
-        LOG.info("Stopped controller {}".format(self.m_controller_obj.Name))
+        LOG.info('Stopped controller "{}"'.format(self.m_controller_obj.Name))
 
     def Read(self):
         """

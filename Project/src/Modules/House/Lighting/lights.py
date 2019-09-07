@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-08-14'
+__updated__ = '2019-09-05'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -150,6 +150,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+        LOG.info('Extracted light "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_lights(self, p_config):
@@ -167,7 +168,7 @@ class Config:
         It must contain 'Lights:'
         All the lights are a list.
         """
-        LOG.info('Loading _Config - Version:{}'.format(__version__))
+        # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
@@ -247,17 +248,18 @@ class MqttActions:
         l_control = LightData()
         l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
-        LOG.debug(PrettyFormatAny.form(l_control, 'Control', 190))
+        LOG.info('Mqtt Control "{}'.format(l_light_name))
+        # LOG.debug(PrettyFormatAny.form(l_control, 'Control'))
         #
         l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
         if l_light_obj == None:
             LOG.warn(' Light "{}" was not found.'.format(l_light_name))
             return
-        LOG.debug(PrettyFormatObject(l_light_obj, 'Light'))
-        LOG.debug(PrettyFormatAny.form(l_light_obj.Family, 'Light.Family', 190))
+        # LOG.debug(PrettyFormatObject(l_light_obj, 'Light'))
+        # LOG.debug(PrettyFormatAny.form(l_light_obj.Family, 'Light.Family'))
         #
         l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'insteon')
-        LOG.debug(PrettyFormatAny.form(l_controller_obj[0], 'Controller', 190))
+        # LOG.debug(PrettyFormatAny.form(l_controller_obj[0], 'Controller'))
         #
         if len(l_controller_obj) > 0:
             l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
@@ -309,8 +311,7 @@ class API(MqttActions):
         """
         LOG.info('Load Config')
         self.m_config.load_yaml_config()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Lighting_lights.API.LoadConfig', 190))
-        return {}
+        LOG.info('Loaded {} Lights.'.format(len(self.m_pyhouse_obj.House.Lighting.Lights)))
 
     def SaveConfig(self):
         """ Save the Lighting section.
@@ -324,7 +325,7 @@ class API(MqttActions):
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
 
-        @param p_controller_obj: optional
+        @param p_controller_obj: optional  ==> ControllerInformation
         @param p_device_obj: the device being controlled
         @param p_control: the idealized light control params
         """

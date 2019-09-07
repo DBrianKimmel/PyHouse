@@ -13,14 +13,13 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-08-10'
-__version_info__ = (19, 5, 1)
+__updated__ = '2019-09-06'
+__version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import BaseUUIDObject
 from Modules.Core.Utilities import config_tools
 
 from Modules.Core import logging_pyh as Logger
@@ -74,13 +73,13 @@ class Config:
         """
         """
         l_obj = BridgeInformation()
-        LOG.debug('One Bridge: {}'.format(p_config))
+        LOG.info('One Bridge: {}'.format(p_config))
         return l_obj
 
     def _extract_all_bridges(self, p_config):
         """ Get the list of bridges we have
         """
-        LOG.debug('Bridges: {}'.format(p_config))
+        # LOG.debug('Bridges: {}'.format(p_config))
         l_dict = {}
         # for l_ix, l_value in enumerate(p_config):
         #    LOG.debug('Bridge Key 1: {}; Value: {}'.format(l_ix, l_value))
@@ -154,7 +153,7 @@ class API:
         This usually is only !include records
         """
         self.m_config.load_yaml_config()
-        LOG.info("Loaded Config")
+        LOG.info("Loaded Config - Version:{}".format(__version__))
 
     def Start(self):
         l_count = 0
@@ -173,7 +172,7 @@ class API:
         """
         @param p_pyhouse_obj: the master obj
         """
-        self.m_config.save_yaml_config()
+        # self.m_config.save_yaml_config()
         LOG.info("Saved Bridges Config")
 
     def Stop(self):

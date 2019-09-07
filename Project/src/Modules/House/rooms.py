@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/House/rooms.py
+@name:      Modules/House/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-09-01'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -312,6 +312,6 @@ class Api:
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_config.save_yaml_config()
+        # self.m_config.save_yaml_config()
 
 #  ## END DBK

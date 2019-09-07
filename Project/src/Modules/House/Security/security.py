@@ -9,18 +9,14 @@
 
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-09-04'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.Utilities.extract_tools import get_mqtt_field
-from Modules.Core.Utilities.device_tools import XML as deviceXML
-from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Family.family_utils import FamUtil
-from Modules.House.Security.pi_camera import API as cameraApi
+from Modules.House.Security.camera import API as cameraApi
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
@@ -60,157 +56,6 @@ class MqttActions:
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
         return l_logmsg
-
-
-class Utility(object):
-
-    @staticmethod
-    def _read_base_device(_p_pyhouse_obj, p_xml):
-        """
-        @param p_xml: is the XML Element for the entire device
-        @return: a Lighting device data object with the base info filled in
-        """
-        l_obj = GarageDoorData()
-        l_obj = deviceXML.read_base_device_object_xml(l_obj, p_xml)
-        l_obj.DeviceType = 'Security'
-        l_obj.DeviceSubType = 'GarageDoorOpener'
-        return l_obj
-
-    @staticmethod
-    def _write_base_device(_p_pyhouse_obj, p_door_obj):
-        l_xml = deviceXML.write_base_device_object_xml('GarageDoor', p_door_obj)
-        return l_xml
-
-    @staticmethod
-    def _read_base_motion_device(_p_pyhouse_obj, p_xml):
-        """
-        @param p_xml: is the XML Element for the entire device
-        @return: a Lighting device data object with the base info filled in
-        """
-        l_obj = MotionSensorData()
-        l_obj = deviceXML.read_base_device_object_xml(l_obj, p_xml)
-        l_obj.DeviceType = 'Security'
-        l_obj.DeviceSubType = 'MotionDetector'
-        return l_obj
-
-    @staticmethod
-    def _write_base_motion_device(_p_pyhouse_obj, p_door_obj):
-        l_xml = deviceXML.write_base_device_object_xml('Motion', p_door_obj)
-        return l_xml
-
-    @staticmethod
-    def _read_door_data(_p_pyhouse_obj, p_obj, p_xml):
-        p_obj.Status = PutGetXML.get_text_from_xml(p_xml, 'Status', False)
-        return p_obj  # for testing
-
-    @staticmethod
-    def _write_door_data(p_obj, p_xml):
-        PutGetXML.put_text_element(p_xml, 'Status', p_obj.Status)
-        return p_xml
-
-    @staticmethod
-    def _read_motion_data(_p_pyhouse_obj, p_obj, _p_xml):
-        return p_obj  # for testing
-
-    @staticmethod
-    def _write_motion_data(_p_obj, p_xml):
-        return p_xml
-
-    @staticmethod
-    def _read_family_data(p_pyhouse_obj, p_obj, p_xml):
-        l_api = FamUtil.read_family_data(p_pyhouse_obj, p_obj, p_xml)
-        return l_api  # for testing
-
-    @staticmethod
-    def _write_family_data(p_pyhouse_obj, p_obj, p_xml):
-        try:
-            l_family = p_obj.Family.Name
-            l_family_obj = p_pyhouse_obj.House.Family[l_family]
-            l_api = l_family_obj.FamilyXml_ModuleAPI
-            l_api.WriteXml(p_xml, p_obj)
-        except Exception as e_err:
-            LOG.error('ERROR - {}'.format(e_err))
-
-    @staticmethod
-    def _read_one_door_xml(p_pyhouse_obj, p_xml):
-        """
-        Load all the xml for one controller.
-        Base Device, Light, Family
-        """
-        try:
-            l_obj = Utility._read_base_device(p_pyhouse_obj, p_xml)
-            Utility._read_door_data(p_pyhouse_obj, l_obj, p_xml)
-            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
-        except Exception as e_err:
-            LOG.error('ERROR - ReadOneGarageDoor - {}'.format(e_err))
-            l_obj = GarageDoorData()
-        return l_obj
-
-    @staticmethod
-    def _write_one_door_xml(p_pyhouse_obj, p_controller_obj):
-        l_xml = Utility._write_base_device(p_pyhouse_obj, p_controller_obj)
-        Utility._write_door_data(p_controller_obj, l_xml)
-        Utility._write_family_data(p_pyhouse_obj, p_controller_obj, l_xml)
-        return l_xml
-
-    @staticmethod
-    def _read_one_motion_xml(p_pyhouse_obj, p_xml):
-        """
-        Load all the xml for one Motion Sensor.
-        Base Device, Light, Family
-        """
-        try:
-            l_obj = Utility._read_base_motion_device(p_pyhouse_obj, p_xml)
-            Utility._read_motion_data(p_pyhouse_obj, l_obj, p_xml)
-            Utility._read_family_data(p_pyhouse_obj, l_obj, p_xml)
-        except Exception as e_err:
-            LOG.error('ERROR - ReadOneMotionSensor - {}'.format(e_err))
-            l_obj = MotionSensorData()
-        return l_obj
-
-    @staticmethod
-    def _write_one_motion_xml(p_pyhouse_obj, p_controller_obj):
-        l_xml = Utility._write_base_motion_device(p_pyhouse_obj, p_controller_obj)
-        Utility._write_motion_data(p_controller_obj, l_xml)
-        Utility._write_family_data(p_pyhouse_obj, p_controller_obj, l_xml)
-        return l_xml
-
-    @staticmethod
-    def read_all_GarageDoors_xml(p_pyhouse_obj):
-        """
-        @param p_pyhouse_obj: is the master information store
-        @param p_version: is the XML version of the file to use.
-        @return: a dict of Garage Doors info
-        """
-        l_count = 0
-        l_dict = {}
-        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'HouseDivision/SecuritySection/GarageDoorSection')
-        if l_xml is None:
-            return l_dict
-        try:
-            for l_one_xml in l_xml.iterfind('GarageDoor'):
-                l_obj = Utility._read_one_door_xml(p_pyhouse_obj, l_one_xml)
-                l_obj.Key = l_count  # Renumber
-                l_dict[l_count] = l_obj
-                LOG.info('Loaded Garage Door {}'.format(l_obj.Name))
-                l_count += 1
-        except AttributeError as e_err:  # No Lights section
-            LOG.warning('No Garage Doors defined - {}'.format(e_err))
-            #  print('XXX-1', e_err)
-            l_dict = {}
-        LOG.info("Loaded {} Garage Doors".format(l_count))
-        return l_dict
-
-    @staticmethod
-    def write_all_GarageDoors_xml(p_pyhouse_obj):
-        l_xml = ET.Element('GarageDoorSection')
-        l_count = 0
-        for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
-            l_one = Utility._write_one_door_xml(p_pyhouse_obj, l_obj)
-            l_xml.append(l_one)
-            l_count += 1
-        LOG.info('Saved {} GarageDoors XML'.format(l_count))
-        return l_xml
 
 
 class Config:

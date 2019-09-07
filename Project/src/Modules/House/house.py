@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-08-27'
+__updated__ = '2019-09-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,7 +20,7 @@ import datetime
 import importlib
 
 #  Import PyMh files
-from Modules.Core.data_objects import HouseAPIs, BaseUUIDObject
+from Modules.Core.data_objects import HouseAPIs
 from Modules.Core.Utilities import uuid_tools, config_tools
 from Modules.House import location, rooms, floors
 from Modules.House.rooms import Mqtt as roomsMqtt
@@ -124,7 +124,7 @@ class Config:
     def _extract_modules_info(self, p_yaml):
         """
         """
-        l_required = ['Name']
+        _l_required = ['Name']
         l_obj = HouseInformation()
         try:
             l_modules = p_yaml['Modules']
@@ -247,7 +247,7 @@ class Utility:
     def _load_component_config(self):
         """ Load the config file for all the components of the house.
         """
-        LOG.debug('Loading configured modules: {}'.format(self.m_module_needed))
+        LOG.info('Loading configured modules: {}'.format(self.m_module_needed))
         l_obj = self.m_pyhouse_obj._APIs.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
@@ -256,7 +256,7 @@ class Utility:
             if l_a == None:
                 LOG.warn('Skipping "{}"'.format(l_key))
                 continue
-            LOG.debug('Loading House Module "{}"'.format(l_key))
+            LOG.info('Loading House Module "{}"'.format(l_key))
             l_a.LoadConfig()
         return
 

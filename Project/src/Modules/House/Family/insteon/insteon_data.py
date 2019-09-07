@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-18'
+__updated__ = '2019-09-07'
 
 #  Import system type stuff
 
@@ -30,5 +30,12 @@ class InsteonData(object):
         self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
         self.ProductKey = ''  # 3 bytes
         self.Links = {}
+
+
+class InsteonQueueInformation:
+
+    def __init__(self):
+        self.Command = None
+        self.Text = None
 
 #  ## END DBK

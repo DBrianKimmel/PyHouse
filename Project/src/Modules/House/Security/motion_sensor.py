@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-09-04'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -104,17 +104,17 @@ class Config:
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+            self.m_pyhouse_obj.House.Security.GarageDoors = None
             return None
         try:
-            l_yaml = l_node.Yaml['Buttons']
+            l_yaml = l_node.Yaml['GarageDoors']
         except:
-            LOG.warn('The buttons.yaml file does not start with "Buttons:"')
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+            LOG.warn('The xxx.yaml file does not start with "GarageDoors:"')
+            self.m_pyhouse_obj.House.Security.GarageDoors = None
             return None
-        l_buttons = self._extract_all_button_sets(l_yaml)
-        self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons
-        return l_buttons  # for testing purposes
+        l_gdo = self._extract_all_button_sets(l_yaml)
+        self.m_pyhouse_obj.House.Security.GarageDoors = l_gdo
+        return l_gdo  # for testing purposes
 
 
 class API:
@@ -128,6 +128,9 @@ class API:
         self.m_config = Config(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
+    def LoadConfig(self):
+        """
+        """
         LOG.info('Load Config')
         self.m_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))

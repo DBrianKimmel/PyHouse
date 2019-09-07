@@ -14,8 +14,8 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-08-17'
-__version_info__ = (19, 8, 1)
+__updated__ = '2019-09-05'
+__version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -41,10 +41,10 @@ class LightingInformation:
     """
 
     def __init__(self):
-        self.Buttons = None  # = ButtonInformation()
-        self.Controllers = None  # {} = ControllerInformation()
-        self.Lights = None  # {} = LightInformation()
-        self.Outlets = None  # {} = OutletInformation
+        self.Buttons = None  # ==> ButtonInformation()
+        self.Controllers = None  # ==> ControllerInformation()
+        self.Lights = None  # ==> LightInformation()
+        self.Outlets = None  # ==> OutletInformation
 
 
 class ScheduleLightingInformation:
@@ -148,6 +148,10 @@ class API:
     """
 
     m_pyhouse_obj = None
+    m_buttons = None
+    m_controllers = None
+    m_lights = None
+    m_outlets = None
 
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initialing - Version:{}".format(__version__))
@@ -201,7 +205,7 @@ class API:
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
 
-        @param p_controller_obj: optional
+        @param p_controller_obj: optional  ==> ControllerInformation
         @param p_device_obj: the device being controlled
         @param p_control: the idealized light control params
         """

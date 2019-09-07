@@ -17,8 +17,8 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-08-17'
-__version_info__ = (19, 8, 1)
+__updated__ = '2019-09-07'
+__version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -47,11 +47,11 @@ class ControllerInformation:
         self.DeviceType = 'Lighting'
         self.DeviceSubType = 'Controller'
         self.Family = None  # LightFamilyInformation()
-        self.Interface = None  # Interface module specific Information()
-        self.Security = None  # SecurityInformation() Optional
+        self.Interface = None  # Interface module specific  InterfaceInformation()
+        self.Security = None  # Optional ==> SecurityInformation()
         self._Message = bytearray()
         self._Queue = None
-        self._DriverAPI = None
+        self._isLocal = False
 
 
 class MqttActions:
@@ -100,6 +100,7 @@ class Config:
 
     def _extract_interface(self, p_config):
         """ Get the controller interface config.
+        @return: ==> DriverInterfaceInformation()
         """
         # LOG.debug('Extracting Interface next')
         l_ret = interfaceConfig().load_interface(p_config)
@@ -114,6 +115,8 @@ class Config:
 
     def _extract_one_controller(self, p_config):
         """ Extract the config info for one Controller.
+
+        @return: ==> ControllerInformation
         """
         l_obj = ControllerInformation()
         l_required = ['Name', 'Family', 'Interface']
@@ -121,16 +124,17 @@ class Config:
             for l_key, l_value in p_config.items():
                 # print('Controller Key: {}; Value: {}'.format(l_key, l_value))
                 if l_key == 'Family':
-                    l_ret = self._extract_family(l_value)
-                    l_obj.Family = l_ret
+                    l_obj.Family = self._extract_family(l_value)
                 elif l_key == 'Interface':
                     l_ret = self._extract_interface(l_value)
                     l_obj.Interface = l_ret
+                    if l_ret.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
+                        l_obj._isLocal = True
                 elif l_key == 'Security':
                     l_ret = self._extract_security(l_value)
                     l_obj.Interface = l_ret
                 else:
-                    LOG.debug('Extracting {}: {}'.format(l_key, l_value))
+                    # LOG.debug('Extracting {}: {}'.format(l_key, l_value))
                     setattr(l_obj, l_key, l_value)
         except:
             LOG.warn('Invalid entry of some type in {}'.format(CONFIG_FILE_NAME))
@@ -138,27 +142,28 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.error('The Controller "{}" is missing a rquired entry for "{}"'.format(l_obj.Name, l_key))
+                LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
                 return None
-        LOG.info('Extracted controller {}'.format(l_obj.Name))
+        # LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
+        LOG.info('Extracted controller "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_controllers(self, p_config):
         """
         PyHouse.House.Lighting.Controllers
         """
-        LOG.debug('All controllers.')
+        # LOG.debug('All controllers.')
         l_dict = {}
         for l_ix, l_key in enumerate(p_config):
             l_obj = self._extract_one_controller(l_key)
             l_dict[l_ix] = l_obj
-        LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers', 190))
+        # LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers', 190))
         return l_dict
 
     def load_yaml_config(self):
         """ Read the controllers.yaml file if it exists.
         It contains Controllers data for the house.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
@@ -175,34 +180,6 @@ class Config:
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
         return l_controllers  # for testing purposes
 
-# ----------
-
-    def _copy_to_yaml(self, p_pyhouse_obj):
-        """ Update the yaml information.
-        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
-
-        The running info is a dict and the yaml is a list!
-
-        @return: the updated yaml ready information.
-        """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
-        l_config = l_node.Yaml['Controllers']
-        l_working = p_pyhouse_obj.House.Lighting.Controllers
-        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
-            l_val = getattr(l_working, l_key)
-            setattr(l_config, l_key, l_val)
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Controllers'] = l_config
-        l_ret = {'Controllers': l_config}
-        return l_ret
-
-    def save_yaml_config(self, p_pyhouse_obj):
-        """
-        """
-        LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml(p_pyhouse_obj)
-        config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
-        return l_config
-
 
 class API:
     """
@@ -212,15 +189,16 @@ class API:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        LOG.info('Initializing.')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading config.')
         self.m_config.load_yaml_config()
+        LOG.info('Loaded {} Controllers.'.format(len(self.m_pyhouse_obj.House.Lighting.Controllers)))
 
     def SaveConfig(self):
         """

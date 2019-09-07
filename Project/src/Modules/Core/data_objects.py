@@ -14,8 +14,8 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-08-26'
-__version_info__ = (19, 6, 0)
+__updated__ = '2019-09-02'
+__version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -55,19 +55,6 @@ class CoreInformation:
 
     def __init__(self):
         self.Mqtt = {}  # MqttInformation()
-
-
-class XXXParameterInformation:
-    """
-    ==> PyHouse._Parameters.xxx
-
-    These are filled in first and hold things needed for early initialization.
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.UnitSystem = None
-        self.ConfigVersion = 2.0
 
 
 class PyHouseAPIs:
@@ -124,17 +111,7 @@ class CoreAPIs:
         self.PyHouseMainAPI = None
 
 
-class DriverInterfaceInformation():
-    """
-    ...Interface.xxxx
-    """
-
-    def __init__(self):
-        self.Type = None  # Null, Ethernet, Serial, USB, HTML, Websockets,  ...
-        self.Interface = None
-
-
-class DriverStatus():
+class DriverStatus:
     """
     """
 
@@ -142,23 +119,6 @@ class DriverStatus():
         self.Name = None
         self.Node = None
         self.Status = None  # Open, Died, Closed
-
-
-class XXXComputerAPIs:
-    """
-    ==> PyHouse._APIs.Computer.xxx as in the def below.
-
-    """
-
-    def __init__(self):
-        # self.BridgesAPI = None
-        self.ComputerAPI = None
-        self.CommAPIs = None  # CommunicationAPIs()
-        self.InternetAPI = None
-        self.NodesAPI = None
-        # self.WeatherAPI = None
-        # self.WebAPI = None
-        # self.WebSocketAPI = None
 
 
 class CommunicationInformation:
@@ -235,32 +195,6 @@ class HouseAPIs:
 #        self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
-class XXLightingInformation:
-    """
-    DeviceType = 1
-
-    ==> PyHouse.House.Lighting.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.Buttons = {}  # ButtonData()  DeviceSubType = 3
-        self.Controllers = {}  # ControllerInformation()  DeviceSubType = 1
-        self.Lights = {}  # LightData()  DeviceSubType = 2
-        self.Outlets = {}
-
-
-class XXXLoginInformation:
-    """ Used for all Login related information
-    Either UserName or Name may be given - they are then set to be the same.
-    This is done to make it easier to edit the yaml config files.
-    """
-
-    def __init__(self):
-        self.UserName = None
-        self.Name = None
-        self.Password = None
-
-
 class ModuleObject:
     """
     """
@@ -299,17 +233,6 @@ class ScheduleThermostatData:
     def __init__(self):
         self.HeatSetting = None
         self.CoolSetting = None
-
-
-class XXXSecurityData:
-    """
-    DeviceType = 3
-    ==> PyHouse.House.Security.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.GarageDoors = {}  # DeviceSubtype = 1
-        self.MotionSensors = {}  # DeviceSubtype = 2
 
 
 class SerialControllerInformation:
@@ -466,24 +389,6 @@ BaseUUIDObject dependent.
 """
 
 
-class XXXComputerInformation(BaseUUIDObject):
-    """
-
-    ==> PyHouse.Computer.xxx - as in the def below.
-    """
-
-    def __init__(self):
-        super(XXXComputerInformation, self).__init__()
-        self.Primary = False
-        self.Priority = 99
-        self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridge_data
-        self.Communication = {}  # CommunicationInformation()
-        self.InternetConnection = {}  # InternetConnectionInformation()
-        self.Nodes = {}  # NodeInformation()
-        self.Weather = {}  # WeatherInformation()
-        self.Web = {}  # WebInformation()
-
-
 class DeviceInformation(BaseUUIDObject):
     """ This data is in every other device object.
     Do not use this object, derive objects from it.
@@ -497,29 +402,6 @@ class DeviceInformation(BaseUUIDObject):
         self.RoomCoords = None  # CoordinateInformation() of the device itself
         self.RoomName = ''
         self.RoomUUID = None
-
-
-class XXXHouseInformation(BaseUUIDObject):
-    """ The collection of information about a house.
-    Causes JSON errors due to API type data methinks.
-
-    ==> PyHouse.House.xxx as in the def below.
-    """
-
-    def __init__(self):
-        super(XXXHouseInformation, self).__init__()
-        self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
-        self.Hvac = {}  # HvacData()
-        self.Irrigation = {}  # IrrigationData()
-        self.Lighting = {}  # LightingInformation()
-        self.Location = {}  # LocationInformation() - one location per house.
-        self.Pools = {}  # PoolData()
-        self.Rooms = {}  # RoomInformation()
-        self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleInformation()
-        self.Security = {}  # SecurityData()
-        self._Commands = {}  # Module dependent
 
 
 class LoginData(BaseUUIDObject):
@@ -614,31 +496,6 @@ class RulesData(BaseUUIDObject):
         self.Action = None
 
 
-class XXXScheduleBaseData(BaseUUIDObject):
-    """ A schedule of when events happen.
-
-    ==> PyHouse.House.Schedules.xxx as in the def below
-
-    See schedule.ScheduleExecution().dispatch_one_schedule() for all the valid types.
-
-    DayOfWeek is a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
-            0 is no days of the week
-            1 is valid on Monday
-            2 is valid on Tuesday
-            64 is valid on Sunday
-    """
-
-    def __init__(self):
-        super(XXXScheduleBaseData, self).__init__()
-        self.DayOfWeek = None  # a bitmask (0-127) of days the time is valid {mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64}
-        self.ScheduleMode = 'Always'  # Always, Home, Away, Vacation, ...
-        self.ScheduleType = ''  # Valid Schedule Type
-        self.Time = None
-        #  for use by web browser - not saved in xml
-        self._AddFlag = False
-        self._DeleteFlag = False
-
-
 class SensorData(BaseUUIDObject):
     """ This data is in almost every other Sensor object.
     Do not use this object, derive objects from it.
@@ -647,47 +504,6 @@ class SensorData(BaseUUIDObject):
     def __init__(self):
         super(SensorData, self).__init__()
         self.Sensor = None
-
-"""
-ScheduleBaseData dependent
-"""
-
-
-class XXXScheduleHvacData(XXXScheduleBaseData):
-    """
-    """
-
-    def __init__(self):
-        super(XXXScheduleHvacData, self).__init__()
-        self.ScheduleType = 'Hvac'
-
-
-class XXXScheduleIrrigationData(XXXScheduleBaseData):
-    """
-    """
-
-    def __init__(self):
-        super(XXXScheduleIrrigationData, self).__init__()
-        self.ScheduleType = 'Irrigation'
-        self.Duration = None
-        self.System = None
-        self.SystemUUID = None
-        self.Zone = None
-
-
-class XXXScheduleLightData(XXXScheduleBaseData):
-    """ A schedule piece for lighting events.
-    """
-
-    def __init__(self):
-        super(XXXScheduleLightData, self).__init__()
-        self.Level = 0
-        self.LightName = None
-        self.LightUUID = None
-        self.Rate = 0
-        self.RoomName = None
-        self.RoomUUID = None
-        self.ScheduleType = 'Lighting'  # For future expansion into scenes, entertainment etc.
 
 """
 DeviceInformation dependent.
@@ -707,41 +523,6 @@ class CoreLightingData(DeviceInformation):
 """
 CoreLightingData dependent.
 """
-
-
-class XXXButtonData(CoreLightingData):
-    """ A Lighting button.
-    This is the wall switch and may control more than one light
-    Also may control scenes.
-    """
-
-    def __init__(self):
-        super(XXXButtonData, self).__init__()
-
-
-class XXControllerInformation(CoreLightingData):
-    """ This data is common to all lighting controllers.
-
-    _isFunctional is used to disable the controller for the current run.
-    It remains an active in the XML so it restarts when problem is solved with device.
-
-    ==> PyHouse.House.Lighting.Controllers.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(XXControllerInformation, self).__init__()
-        self.InterfaceType = ''  # Serial | USB | Ethernet
-        # self.LasuUsed = None  # Date time of successful start
-        self.Node = None  # node the controller is connected to
-        self.Port = ''
-        self.Ret = None  # Return Code
-        #  The following are not in XML config file
-        self._isFunctional = True  # if controller is not working currently
-        self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
-        self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
-        self._Data = bytearray()  # Rx InterfaceType specific data
-        self._Message = bytearray()
-        self._Queue = None
 
 
 class XXXGarageDoorData(CoreLightingData):

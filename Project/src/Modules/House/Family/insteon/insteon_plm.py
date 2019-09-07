@@ -14,18 +14,19 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-09-07'
 
 #  Import system type stuff
 import datetime
 import queue as Queue
 
 #  Import PyMh files
+from Modules.Core.Drivers import interface
 from Modules.House.Family.insteon import insteon_decoder, insteon_utils, insteon_link
 from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.insteon.insteon_data import InsteonData
+from Modules.House.Family.insteon.insteon_data import InsteonData, InsteonQueueInformation
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
-from Modules.House.Family.family_utils import FamUtil
+# from Modules.House.Family.family_utils import FamUtil
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -52,7 +53,7 @@ FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 
 
-class ControllerInformation(InsteonData):
+class InsteonControllerInformation(InsteonData):
     """Holds statefull information about a single Insteon controller device.
 
     There are several different control devices - this is 2412x and 2413x
@@ -70,7 +71,7 @@ class ControllerInformation(InsteonData):
         Command 1 and 2 hold the values sent to the device.
         This is so that the return values received later can be correlated to the command we last sent to the device.
         """
-        super(ControllerInformation, self).__init__()
+        super(InsteonControllerInformation, self).__init__()
         self._Command1 = None
         self._Command2 = None
 
@@ -85,10 +86,10 @@ class Commands:
         """
         LOG.info("Command to get IM info (60)")
         l_command = insteon_utils.create_command_message('plm_info')
-        insteon_utils.queue_command(p_controller_obj, l_command)
+        insteon_utils.queue_command(p_controller_obj, l_command, 'Plm Info')
 
     @staticmethod
-    def _queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2):
+    def _queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2, p_text='None'):
         """Send Insteon Standard Length Message (8 bytes) (SD command).
         or Extended length (22 Bytes) (ED command)
         See page 230(243) of 2009 developers guide.
@@ -111,7 +112,7 @@ class Commands:
             l_command[5] = FLAG_MAX_HOPS + FLAG_HOPS_LEFT  #  0x0F
             l_command[6] = p_obj._Command1 = p_cmd1
             l_command[7] = p_obj._Command2 = p_cmd2
-            insteon_utils.queue_command(p_controller_obj, l_command)
+            insteon_utils.queue_command(p_controller_obj, l_command, p_text)
             # LOG.debug('Send Command: {}'.format(FormatBytes(l_command)))
         except Exception as _e_err:
             LOG.error('Error creating command: {}\n{}\n>>{}<<'.format(_e_err, PrettyFormatAny.form(p_obj, 'Device'), FormatBytes(l_command)))
@@ -124,7 +125,7 @@ class Commands:
         LOG.info("Command to set PLM config flag (6B) - to {:#X}".format(p_flags))
         l_command = insteon_utils.create_command_message('plm_set_config')
         l_command[2] = p_flags
-        insteon_utils.queue_command(p_controller_obj, l_command)
+        insteon_utils.queue_command(p_controller_obj, l_command, 'Set Plm Config')
 
     @staticmethod
     def queue_6C_command(p_controller_obj):
@@ -158,7 +159,7 @@ class Commands:
         """
         LOG.info("Command to get PLM config (73).")
         l_command = insteon_utils.create_command_message('plm_get_config')
-        insteon_utils.queue_command(p_controller_obj, l_command)
+        insteon_utils.queue_command(p_controller_obj, l_command, 'Get Plm Config')
 
 
 class PlmDriverProtocol(Commands):
@@ -203,14 +204,16 @@ class PlmDriverProtocol(Commands):
         """
         self.m_pyhouse_obj._Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
         try:
-            l_command = p_controller_obj._Queue.get(False)
+            l_entry = p_controller_obj._Queue.get(False)
+            l_command = l_entry.Command
+            l_text = l_entry.Text
         except Queue.Empty:
             return
-        if p_controller_obj._DriverAPI != None:
-            l_name = self._find_to_name(l_command)
-            # LOG.debug("To: {}, Message: {}".format(l_name, FormatBytes(l_command)))
+        if p_controller_obj.Interface._DriverApi:
+            _l_name = self._find_to_name(l_command)
+            LOG.info("To: {}, Message: {}".format(_l_name, l_text))
             p_controller_obj._Command1 = l_command
-            p_controller_obj._DriverAPI.Write(l_command)
+            p_controller_obj.Interface._DriverApi.Write(l_command)
         else:
             LOG.error('UhOh - No driver for {}'.format(p_controller_obj.Name))
 
@@ -218,7 +221,9 @@ class PlmDriverProtocol(Commands):
         """
         Accumulate data received
         """
-        l_msg = p_controller_obj._DriverAPI.Read()
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        l_msg = p_controller_obj.Interface._DriverApi.Read()
+        # LOG.debug('Read Data: {}'.format(l_msg))
         p_controller_obj._Message.extend(l_msg)
         return p_controller_obj._Message  #  For debugging
 
@@ -231,12 +236,12 @@ class PlmDriverProtocol(Commands):
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
         self.m_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
-        if p_controller_obj._DriverAPI != None:
+        if p_controller_obj.Interface._DriverApi:
             self._append_message(p_controller_obj)
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
                 return
-            #  LOG.info('Receive message is now {}'.format((p_controller_obj._Message)))
+            # LOG.debug('Receive message is now {}'.format((p_controller_obj._Message)))
             l_response_len = insteon_utils.get_message_length(p_controller_obj._Message)
             if l_cur_len >= l_response_len:
                 self.m_decoder.decode_message(p_controller_obj)
@@ -252,7 +257,7 @@ class InsteonPlmCommands:
 
         @param p_obj: is the object for the device that we will query.
         """
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['product_data_request'], 0x00)  #  0x03
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['product_data_request'], 0x00, 'Scan Light')  #  0x03
 
 
 class InsteonPlmAPI:
@@ -278,25 +283,30 @@ class LightHandlerAPI:
     """This is the API for light control.
     """
 
+    m_pyhouse_obj = None
+
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj: is the ControllerInformation() info
-        @return: True if the driver opened OK and is usable
-                 False if the driver is not functional for any reason.
+        @param p_controller_obj: ==> InsteonControllerInformation()
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        l_msg = "Controller:{}, ".format(p_controller_obj.Name)
-        l_msg += "Family.Name:{}, ".format(p_controller_obj.Family.Name)
-        l_msg += "InterfaceType:{}".format(p_controller_obj.Interface.Type)
-        LOG.info('Start Controller - {}'.format(l_msg))
-        l_driver = FamUtil.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
-        p_controller_obj._DriverAPI = l_driver
-        l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
-        return l_ret
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        if p_controller_obj._isLocal:
+            self.m_pyhouse_obj = p_pyhouse_obj
+            l_msg = "Controller:{}, ".format(p_controller_obj.Name)
+            l_msg += "Family.Name:{}, ".format(p_controller_obj.Family.Name)
+            l_msg += "InterfaceType:{}".format(p_controller_obj.Interface.Type)
+            LOG.info('Start Controller - {}'.format(l_msg))
+            interface.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
+            # l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
+            # p_controller_obj.Interface._DriverApi = l_driver
+            # return l_ret
+        else:
+            LOG.warn('Can not config a remote controller.')
+        return True
 
     def stop_controller_driver(self, p_controller_obj):
-        if p_controller_obj._DriverAPI != None:
-            p_controller_obj._DriverAPI.Stop()
+        if p_controller_obj.Interface._DriverApi:
+            p_controller_obj.Interface._DriverApi.Stop()
 
     def set_plm_mode(self, p_controller_obj):
         """Set the PLM to a mode
@@ -310,7 +320,7 @@ class LightHandlerAPI:
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
         # LOG.info('Request Status from device: {} - {}'.format(p_obj.Room.Name, p_obj.Name))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0)  #  0x19
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0, 'Device Status')  #  0x19
 
     @staticmethod
     def _get_one_thermostat_status(p_controller_obj, p_obj):
@@ -318,7 +328,7 @@ class LightHandlerAPI:
         Get the status of a thermostat.
         """
         LOG.info('Request Status from thermostat device: {}'.format(p_obj.Name))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_status'], 0)  #  0x6A
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_status'], 0, 'T-Stat Status')  #  0x6A
 
     @staticmethod
     def _get_engine_version(p_controller_obj, p_obj):
@@ -329,7 +339,7 @@ class LightHandlerAPI:
         LOG.info('Request Engine version from device: {}'.format(p_obj.Name))
         # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller', 190))
         # LOG.debug(PrettyFormatAny.form(p_obj, 'Device', 190))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0)  #  0x0D
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0, 'Engine Version')  #  0x0D
 
     @staticmethod
     def _get_id_request(p_controller_obj, p_obj):
@@ -338,7 +348,7 @@ class LightHandlerAPI:
         LOG.info('Request ID(devCat) from device: {}'.format(p_obj.Name))
         # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller', 190))
         # LOG.debug(PrettyFormatAny.form(p_obj, 'Device', 190))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0)  #  0x10
+        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0, 'ID Request')  #  0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
         self._get_engine_version(p_controller_obj, p_obj)
@@ -351,38 +361,45 @@ class LightHandlerAPI:
         Used at device start up to populate the database.
         """
         LOG.info('Getting information for all Insteon devices.')
-
-        # for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
-        #    if l_obj.DeviceFamily == 'insteon' and l_obj.Active:
-        #        self._get_obj_info(p_controller_obj, l_obj)
-
-        for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
-            if l_obj == None:
-                LOG.warn('No Controllers configured.')
-                return
-            if l_obj.Family.Name == 'insteon':  # and l_obj.Active:
+        l_house = p_pyhouse_obj.House
+        if l_house.Lighting.Buttons != None:
+            for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
                 self._get_obj_info(p_controller_obj, l_obj)
-                InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
 
-        for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
-            if l_obj == None:
-                LOG.warn('No Lights configured.')
-                return
-            if l_obj.Family.Name == 'insteon':  # and l_obj.Active:
-                self._get_obj_info(p_controller_obj, l_obj)
-                # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
+        if l_house.Lighting.Controllers != None:
+            for l_obj in l_house.Lighting.Controllers.values():
+                if l_obj == None:
+                    LOG.warn('No Controllers configured.')
+                    return
+                if l_obj.Family.Name == 'insteon':  # and l_obj.Active:
+                    self._get_obj_info(p_controller_obj, l_obj)
+                    InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
 
-        # for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.values():
-        #    if l_obj.DeviceFamily == 'insteon' and l_obj.Active:
-        #        self._get_obj_info(p_controller_obj, l_obj)
+        if l_house.Lighting.Lights != None:
+            for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
+                if l_obj == None:
+                    LOG.warn('No Lights configured.')
+                    return
+                if l_obj.Family.Name == 'insteon':  # and l_obj.Active:
+                    self._get_obj_info(p_controller_obj, l_obj)
+                    # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
+        if l_house.Lighting.Outlets != None:
+            pass
 
-        # for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
-        #    if l_obj.DeviceFamily == 'insteon' and l_obj.Active:
-        #        self._get_obj_info(p_controller_obj, l_obj)
+        # if l_house.Hvac.Thermostats != None:
+        #    for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.values():
+        #        if l_obj.DeviceFamily == 'insteon':  # and l_obj.Active:
+        #            self._get_obj_info(p_controller_obj, l_obj)
 
-        # for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
-        #    if l_obj.DeviceFamily == 'insteon' and l_obj.Active:
-        #        self._get_obj_info(p_controller_obj, l_obj)
+        # if l_house.Security.GarageDoors != None:
+        #    for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
+        #        if l_obj.DeviceFamily == 'insteon':  # and l_obj.Active:
+        #            self._get_obj_info(p_controller_obj, l_obj)
+
+        # if l_house.Security.MotionSensors != None:
+        #    for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
+        #        if l_obj.DeviceFamily == 'insteon':  # and l_obj.Active:
+        #            self._get_obj_info(p_controller_obj, l_obj)
 
 
 class Utility(LightHandlerAPI):
@@ -398,21 +415,25 @@ class Utility(LightHandlerAPI):
         """
         LOG.info('Starting Controller: "{}"'.format(p_controller_obj.Name))
         l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
-        if l_ret:
+        if True:
             p_controller_obj.Node = p_pyhouse_obj.Computer.Name
             p_controller_obj.LastUsed = datetime.datetime.now()
-            LOG.info('Controller Driver Start was OK.')
+            LOG.info('Controller Driver Start was OK for "{}".'.format(p_controller_obj.Name))
             self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
             self.set_plm_mode(p_controller_obj)
             self.get_all_device_information(p_pyhouse_obj, p_controller_obj)
         else:
-            LOG.error('Insteon Controller start failed')
-        l_topic = 'house/lighting/controller/status'
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
+            LOG.error('Insteon Controller start failed for "{}"'.format(p_controller_obj.Name))
+        # l_topic = 'house/lighting/controller/status'
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 
-    def get_plm_info(self, p_pyhouse_obj, p_controller_obj):
-        pass
+    def get_plm_info(self, _p_pyhouse_obj, p_controller_obj):
+        """
+        """
+        LOG.info('Get Plm Info')
+        if p_controller_obj.Interface._DriverApi:
+            insteon_link.Send().read_aldb_v2(p_controller_obj)
 
     @staticmethod
     def _format_address(p_addr):
@@ -423,9 +444,10 @@ class Utility(LightHandlerAPI):
 class API(Utility):
 
     m_controller_obj = None
+    m_pyhouse_obj = None
 
-    def __init__(self):
-        pass
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     def _put_controller(self, p_controller_obj):
         """ used in testing to load the controller info to be used in testing.
@@ -437,7 +459,7 @@ class API(Utility):
         """
         return self.m_controller_obj
 
-    def Start(self, p_pyhouse_obj, p_controller_obj):
+    def Start(self, p_controller_obj):
         """
         Comes from Insteon_device.API.Start()
         Note that not all insteon devices are known when we start.
@@ -447,14 +469,15 @@ class API(Utility):
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
-        self.m_pyhouse_obj = p_pyhouse_obj
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        self.m_pyhouse_obj = self.m_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        l_ret = self.start_controller_and_driver(p_pyhouse_obj, p_controller_obj)
-        self.get_plm_info(p_pyhouse_obj, p_controller_obj)
+        l_ret = self.start_controller_and_driver(self.m_pyhouse_obj, p_controller_obj)
+        self.get_plm_info(self.m_pyhouse_obj, p_controller_obj)
 
-        l_topic = 'house/lighting/controller/status'
-        l_msg = p_controller_obj
-        self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_msg)
+        # l_topic = 'house/lighting/controller/status'
+        # l_msg = p_controller_obj
+        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_msg)
 
         LOG.info('Started.')
         return l_ret
@@ -479,11 +502,11 @@ class API(Utility):
         l_rate = 0  # The transition time is not implemented currently.
         LOG.debug("Insteon Device Name:'{}'; to level:'{}'; at rate:'{}'; Using:'{}'".format(p_device_obj.Name, l_level, l_rate, p_controller_obj.Name))
         if l_level == 0:
-            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0)  #  0x13
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0, 'Turn OFF')  #  0x13
         elif l_level > 95:
-            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255)  #  0x11
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255, 'Turn ON')  #  0x11
         else:
             l_level = int(l_level * 255 / 100)
-            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level)  #  0x11
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level, 'Device level')  #  0x11
 
 #  ## END DBK

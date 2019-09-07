@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-09-06'
 
 #  Import system type stuff.
 
@@ -56,23 +56,30 @@ class FamUtil(object):
     def get_device_driver_API(p_pyhouse_obj, p_controller_obj):
         """
         Based on the InterfaceType of the controller, load the appropriate driver and get its API().
+        @return: a pointer to the device driver or None
         """
+        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         l_dev_name = _get_device_name(p_controller_obj)
-        if p_controller_obj.Interface.Type.lower() == 'serial':
+        l_type = _get_interface_type(p_controller_obj)
+        if l_type == 'serial':
             from Modules.Core.Drivers.Serial import Serial_driver
-            l_driver = Serial_driver.API(p_pyhouse_obj)
-        elif p_controller_obj.Interface.Type.lower() == 'ethernet':
+            l_driver = Serial_driver.API(p_pyhouse_obj).Start(p_controller_obj)
+
+        elif l_type == 'ethernet':
             from Modules.Core.Drivers.Ethernet import Ethernet_driver
-            l_driver = Ethernet_driver.API(p_pyhouse_obj)
-        elif p_controller_obj.Interface.Type.lower() == 'usb':
+            l_driver = Ethernet_driver.API(p_pyhouse_obj).Start(p_controller_obj)
+
+        elif l_type == 'usb':
             from Modules.Core.Drivers.USB import USB_driver
-            l_driver = USB_driver.API(p_pyhouse_obj)
+            l_driver = USB_driver.API(p_pyhouse_obj).Start(p_controller_obj)
+
         else:
             LOG.error('No driver for device: {} with interface type: {}'.format(
                     l_dev_name, p_controller_obj.Interface.Type))
             from Modules.Core.Drivers.Null import Null_driver
-            l_driver = Null_driver.API(p_pyhouse_obj)
-        p_controller_obj._DriverAPI = l_driver
+            l_driver = Null_driver.API(p_pyhouse_obj).Start(p_controller_obj)
+
+        p_controller_obj.Interface._DriverApi = l_driver
         return l_driver
 
     @staticmethod
@@ -100,11 +107,9 @@ class FamUtil(object):
         l_dev_name = _get_device_name(p_device_obj)
         try:
             l_family = FamUtil.get_family(p_device_obj)
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'House'))
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family[l_family], 'Family'))
             l_family_obj = p_pyhouse_obj.House.Family[l_family]
             l_device_api = l_family_obj.DeviceAPI
+            LOG.info('Got API for "{}"'.format(l_family))
         except Exception as e_err:
             l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info\n\tError: {}'.format(l_dev_name, l_family, e_err)
             LOG.error(l_msg)

@@ -86,7 +86,6 @@ ControllerInformation(CoreLightingData):
         Ret = None  # Return Code
         #  The following are not in XML config file
         self._isFunctional = True  # if controller is not working currently
-        self._DriverAPI = None  # InterfaceType API() - Serial, USB etc.
         self._HandlerAPI = None  # PLM, PIM, etc (family controller device handler) API() address
         self._Data = bytearray()  # Rx InterfaceType specific data
         self._Message = bytearray()

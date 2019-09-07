@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Projects/src/Modules/Families/Insteon/Insteon_constants.py
+@name:      Modules/House/Family/insteon/insteon_constants.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -11,7 +11,7 @@ Note! This is designed for: 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2019-08-20'
+__updated__ = '2019-09-02'
 
 STX = 0x02
 ACK = 0x06
@@ -79,7 +79,8 @@ MESSAGE_TYPES = {
     'peek_internal': 0x2c,
     'poke_internal': 0x2d,
     'on_at_ramp_rate': 0x2e,  # 'extended_set_get'
-    'off_at_ramp_rate': 0x2f,  # 'read_write_aldb'
+    'off_at_ramp_rate': 0x2f,
+    'read_write_aldb': 0x2f,
     #                        sprinkler_valve_on => 0x40,
     #                        sprinkler_valve_off => 0x41,
     #                        sprinkler_program_on => 0x42,

@@ -32,7 +32,9 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-09-06'
+__version_info__ = (19, 9, 1)
+__version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import importlib
@@ -58,10 +60,8 @@ class FamilyModuleInformation:
     def __init__(self):
         self.Name = None
         self.DeviceName = None  # insteon_device
-        # self.ConfigName = None  # insteon_yaml
         self.PackageName = None  # Modules.House.Family.insteon
         self.DeviceAPI = None  # insteon_device.API()
-        # self.ConfigAPI = None
 
 
 class FamilyConfigInformation:
@@ -131,12 +131,11 @@ class Utility:
         """
         """
         l_name = p_name.lower()
-        LOG.debug('Building names for "{}"'.format(l_name))
+        # LOG.debug('Building names for "{}"'.format(l_name))
         l_obj = FamilyModuleInformation()
         l_obj.Name = l_name
         l_obj.PackageName = 'Modules.House.Family.' + l_name
         l_obj.DeviceName = l_name + '_device'
-        # l_obj.ConfigName = l_name + '_config'
         return l_obj
 
     def _build_one_family_data(self, p_pyhouse_obj, p_name):
@@ -144,22 +143,19 @@ class Utility:
 
         For the Insteon family:
             insteon_device                   ==> FamilyDevice_ModuleName
-            insteon_xml                      ==> FamilyXml_ModuleName
-            insteon_yaml                     ==> FamilyYaml_ModuleName
             Modules.House.Family.insteon         ==> PackageName
 
         @param p_name: a Valid Name such as "Insteon"
         """
-        # l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(p_name)
-        LOG.info('Building Family: {}'.format(p_name))
+        LOG.info('Building Family "{}"'.format(p_name))
+        l_key = p_name.lower()
         l_family_obj = self._build_module_names(p_name)
-        # Now import the family python package and 2 modules
+        p_pyhouse_obj.House.Family[l_key] = l_family_obj
+        # Now import the family python package
         importlib.import_module(l_family_obj.PackageName)
         l_device_ref = Utility()._do_import(l_family_obj, l_family_obj.DeviceName)
         l_family_obj.DeviceAPI = Utility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
-        # l_config_ref = Utility()._do_import(l_family_obj, l_family_obj.ConfigName)
-        # l_family_obj.ConfigAPI = Utility()._create_config_instance(p_pyhouse_obj, l_family_obj.ConfigName, l_config_ref)
-        LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
+        # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
         return l_family_obj
 
 
@@ -193,7 +189,6 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Controller Yaml is missing an entry for "{}"'.format(l_key))
-
         # Now build the families actually called for in the config files.
         # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'House.Family', 190))
         try:
@@ -210,8 +205,8 @@ class Config:
 
 class API:
 
-    m_count = 0
     m_family = {}
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         p_pyhouse_obj.House.Family = self.m_family
@@ -229,19 +224,19 @@ class API:
     def Start(self):
         """
         """
-        LOG.info("Starting all families.")
-        for l_fam, l_family_obj in self.m_pyhouse_obj.House.Family.items():
-            LOG.info('Starting Family {}'.format(l_family_obj.Name))
-            LOG.debug(PrettyFormatAny.form(l_family_obj, 'PyHouse Family'))
+        LOG.info('Starting {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
+        for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
+            LOG.info('Starting Family "{}"'.format(l_family_obj.Name))
+            # LOG.debug(PrettyFormatAny.form(l_family_obj, 'PyHouse Family'))
             l_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, l_family_obj.Name)
-            self.m_pyhouse_obj.House.Family[l_fam] = l_family_obj
+            self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
             l_family_obj.DeviceAPI.Start()
-        LOG.info("Started all lighting families.")
+        LOG.info('Started {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
         return self.m_family
 
     def SaveConfig(self):
         """
-        The family section is not saved.  it is rebuilt every Start() time from the lighting info
+        The family section is not saved.  it is rebuilt every Start() time from the config info
         """
         # LOG.info("Saved Config.")
 

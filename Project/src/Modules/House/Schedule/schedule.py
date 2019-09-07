@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-08-14'
+__updated__ = '2019-09-05'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -586,7 +586,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Schedule config file is missing an entry for "{}"'.format(l_key))
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Schedule', 190))
+        LOG.info('Loaded Schedule "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_schedules(self, p_config):
@@ -596,7 +596,6 @@ class Config:
         for l_ix, l_value in enumerate(p_config):
             l_obj = self._extract_one_schedule(l_value)
             l_scheds[l_ix] = l_obj
-            LOG.debug('Loaded Schedule "{}"'.format(l_obj.Name))
         return l_scheds
 
     def load_yaml_config(self):
@@ -614,7 +613,7 @@ class Config:
             return None
         l_scheds = self._extract_all_schedules(l_yaml)
         self.m_pyhouse_obj.House.Schedules = l_scheds
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]', 190))
         return l_scheds  # for testing purposes
 
 # ----------
@@ -632,15 +631,14 @@ class API:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
-        LOG.info("Initialized.")
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """ Load the Schedule from the Config info.
         """
         self.m_pyhouse_obj.House.Schedules = {}
         l_schedules = self.m_config.load_yaml_config()
-        self.m_pyhouse_obj.House.Schedules = l_schedules
-        LOG.info('Loaded Schedules Config')
+        LOG.info('Loaded {} Schedules.'.format(len(self.m_pyhouse_obj.House.Schedules)))
         return l_schedules  # for testing
 
     def Start(self):

@@ -1,8 +1,3 @@
-'''
-Created on Aug 26, 2019
-
-@author: briank
-'''
 """
 @name:      Modules/House/Hvac/thermostat.py
 @author:    D. Brian Kimmel
@@ -14,7 +9,7 @@ Created on Aug 26, 2019
 
 """
 
-__updated__ = '2019-08-27'
+__updated__ = '2019-09-04'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 

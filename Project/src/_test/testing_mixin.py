@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-28'
+__updated__ = '2019-09-02'
 
 #  Import system type stuff
 import os
@@ -187,11 +187,6 @@ class SetupPyHouseObj():
         if p_xml.communication_sect is not None:
             p_xml.email_sect = p_xml.communication_sect.find('EmailSection')
             p_xml.twitter_sect = p_xml.communication_sect.find('TwitterSection')
-        p_xml.node_sect = p_xml.computer_div.find('NodeSection')
-        if p_xml.node_sect is not None:
-            p_xml.node = p_xml.node_sect.find('Node')
-            p_xml.interface_sect = p_xml.node.find('InterfaceSection')
-            p_xml.interface = p_xml.interface_sect.find('Interface')
         #
         p_xml.internet_sect = p_xml.computer_div.find('InternetSection')
         if p_xml.internet_sect is not None:

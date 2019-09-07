@@ -11,7 +11,7 @@ Passed all 23 tests - DBK - 2017-04-29
 
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-09-02'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -19,9 +19,6 @@ from twisted.trial import unittest
 # Import PyMh files and modules.
 from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_utils import Util, Decode as utilDecode
-from Modules.House.Lighting._test.xml_buttons import \
-    TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0, \
-    TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0
 from _test.testing_mixin import SetupPyHouseObj
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -56,29 +53,13 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_xml = SetupPyHouseObj().BuildXml()
         self.inst = Util
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
         print('Id: test_Insteon_utils')
-
-
-class A1_XML(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self)
-
-    def test_01_Create(self):
-        """
-        """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml.XmlRoot, 'A1-01-A - XML'))
-        pass
 
 
 class A2_Command(SetupMixin, unittest.TestCase):

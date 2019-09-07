@@ -21,8 +21,8 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-08-27'
-__version_info__ = (19, 8, 1)
+__updated__ = '2019-09-06'
+__version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -293,6 +293,7 @@ class API(Utility):
         self.m_pyhouse_obj._APIs.House.HouseAPI.Start()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self._config_save_loop, self.m_pyhouse_obj)
         LOG.info("\n======================== Started ======================== Version: {}\n".format(__version__))
+        LOG.info("\n======================== Opperational ========================")
 
     def SaveConfig(self):
         """

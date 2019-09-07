@@ -11,8 +11,9 @@ This is a bunch of routines to deal with Insteon devices.
 Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
+from Modules.Computer.Communication.test.xml_communications import L_EMAIL_END
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-09-07'
 
 #  Import system type stuff
 
@@ -25,8 +26,9 @@ from Modules.House.Family.insteon.insteon_constants import \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
     STX
+from Modules.House.Family.insteon.insteon_data import InsteonQueueInformation
 
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
@@ -42,8 +44,15 @@ def create_command_message(p_command):
     return l_command_bytes
 
 
-def queue_command(p_controller, p_command):
-    p_controller._Queue.put(p_command)
+def queue_command(p_controller, p_command, p_text=None):
+    """ Add the command into the queue
+    @param p_command: is the bytestring to send to the controller
+    @param p_text: is the text to log describing the command
+    """
+    l_entry = InsteonQueueInformation()
+    l_entry.Command = p_command
+    l_entry.Text = p_text
+    p_controller._Queue.put(l_entry)
 
 
 def get_message_length(p_message):
@@ -55,6 +64,10 @@ def get_message_length(p_message):
     l_id = p_message[1]
     try:
         l_message_length = MESSAGE_LENGTH[l_id]
+        if len(p_message) > 8:
+            if p_message[8] & 0x10 > 0:
+                l_message_length += 14
+            pass
     except KeyError:
         l_message_length = 1
     return l_message_length
@@ -133,10 +146,10 @@ def insert_address_into_message(p_address, p_message, p_offset=2):
     return  l_ret
 
 
-def extract_address_from_message(p_message, p_offset=0):
+def extract_address_from_message(p_message, offset=0):
     """
     """
-    l_ret = '{:02X}.{:02X}.{:02X}'.format(p_message[p_offset], p_message[p_offset + 1], p_message[p_offset + 2])
+    l_ret = '{:02X}.{:02X}.{:02X}'.format(p_message[offset], p_message[offset + 1], p_message[offset + 2])
     return l_ret
 
 
@@ -197,8 +210,8 @@ class Decode(object):
             return MESSAGE_LENGTH_X[p_extended] + ', '
 
         l_type = (p_byte & 0xE0) >> 5
-        l_extended = (p_byte & 0x10)
-        l_hops_left = (p_byte & 0x0C) >= 4
+        l_extended = (p_byte & 0x10) >> 4
+        l_hops_left = (p_byte & 0x0C) >> 2
         l_hops_max = (p_byte & 0x03)
         l_ret = decode_message_type_flag(l_type)
         l_ret += decode_extended_flag(l_extended)
@@ -285,20 +298,26 @@ class Decode(object):
         @return: the object that has the address or a dummy object if not found
         """
         l_ret = None
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Buttons, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Outlets, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.GarageDoors, p_address)
-        if l_ret == None:
-            l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
+        l_house = p_pyhouse_obj.House
+        if hasattr(l_house, 'Lighting'):
+            if l_ret == None and l_house.Lighting.Lights != None:
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
+            if l_ret == None and l_house.Lighting.Controllers != None:
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
+            if l_ret == None and l_house.Lighting.Buttons != None:
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Buttons, p_address)
+            if l_ret == None and l_house.Lighting.Outlets != None:
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Outlets, p_address)
+        if hasattr(l_house, 'Hvac') and hasattr(l_house.Hvac, 'Thermostats'):
+            if l_ret == None and l_house.Hvac.Thermostats != None:
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
+        if hasattr(l_house, 'Security'):
+            if hasattr(l_house.Security, 'GarageDoors'):
+                if l_ret == None and l_house.Security.GarageDoors != None:
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.GarageDoors, p_address)
+            if hasattr(l_house.Security, 'MotionSensors'):
+                if l_ret == None and l_house.Security.MotionSensors != None:
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
         #  Add additional classes in here
         if l_ret == None:
             LOG.info("WARNING - Address {} *NOT* found.".format(p_address))
@@ -315,7 +334,7 @@ class Decode(object):
         """
         # LOG.debug('Addr ')
         # Extract the 3 byte Insteon address from the message
-        l_address = extract_address_from_message(p_message_addr)
+        l_address = extract_address_from_message(p_message_addr, offset)
         if l_address.startswith('00'):  #  First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = CoreLightingData()

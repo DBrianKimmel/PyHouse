@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-09-04'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,6 +22,8 @@ from Modules.House.rooms import Config as roomConfig
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.GarageDoor     ')
+
+CONFIG_FILE_NAME = 'garagedoor.yaml'
 
 
 class GarageDoorInformation:
@@ -49,7 +51,7 @@ class Config:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _extract_one_button_set(self, p_config) -> dict:
+    def _extract_one_garage_door(self, p_config) -> dict:
         """ Extract the config info for one button.
         - Name: Button 1
           Comment: This is _test button 1
@@ -80,7 +82,7 @@ class Config:
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
 
-    def _extract_all_button_sets(self, p_config):
+    def _extract_all_garage_doors(self, p_config):
         """ Get all of the button sets configured
         A Button set is a (mini-remote) with 4 or 8 buttons in the set
         The set has one insteon address and each button is in a group
@@ -88,7 +90,7 @@ class Config:
         l_dict = {}
         for l_ix, l_button in enumerate(p_config):
             # print('Light: {}'.format(l_light))
-            l_button_obj = self._extract_one_button_set(l_button)
+            l_button_obj = self._extract_one_garage_door(l_button)
             l_dict[l_ix] = l_button_obj
         return l_dict
 
@@ -101,17 +103,17 @@ class Config:
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         except:
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+            self.m_pyhouse_obj.House.Security.GarageDoors = None
             return None
         try:
-            l_yaml = l_node.Yaml['Buttons']
+            l_yaml = l_node.Yaml['GarageDoors']
         except:
-            LOG.warn('The buttons.yaml file does not start with "Buttons:"')
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+            LOG.warn('The xxx.yaml file does not start with "GarageDoors:"')
+            self.m_pyhouse_obj.House.Security.GarageDoors = None
             return None
-        l_buttons = self._extract_all_button_sets(l_yaml)
-        self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons
-        return l_buttons  # for testing purposes
+        l_gdo = self._extract_all_garage_doors(l_yaml)
+        self.m_pyhouse_obj.House.Security.GarageDoors = l_gdo
+        return l_gdo  # for testing purposes
 
 
 class API:
