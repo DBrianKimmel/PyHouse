@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_buttons -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_buttons -*-
 
 @name:      PyHouse/src/Modules/web/web_buttons.py
 @author:    D. Brian Kimmel
@@ -11,18 +11,16 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-03-01'
 
 # Import system type stuff
 import os
-from nevow import loaders
-from nevow import athena
 
 # Import PyMh files and modules.
 from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_buttons
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
@@ -32,7 +30,7 @@ templatepath = os.path.join(webpath, 'template')
 LOG = Logger.getLogger('PyHouse.webButton   ')
 
 
-class ButtonsElement(athena.LiveElement):
+class ButtonsElement(Element):
     """ a 'live' login element containing a username and password.
     """
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'buttonsElement.html'))

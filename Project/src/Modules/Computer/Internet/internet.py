@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_internet -*-
-
-@Name:      PyHouse/src/Modules/Computer/Internet/internet.py
+@Name:      Modules/Computer/Internet/internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2012-2017 by D. Brian Kimmel
+@copyright: (c) 2012-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 20, 2012
 @summary:   This module determines the IP address of the ISP connection.
@@ -21,7 +19,7 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2017-01-20'
+__updated__ = '2019-07-10'
 
 #  Import system type stuff
 
@@ -29,7 +27,7 @@ __updated__ = '2017-01-20'
 from Modules.Computer.Internet.internet_xml import API as internetAPI
 from Modules.Computer.Internet.inet_find_external_ip import API as findAPI
 from Modules.Computer.Internet.inet_update_dyn_dns import API as updateAPI
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Internet       ')
 INITIAL_DELAY = 5
@@ -44,7 +42,7 @@ class Utility(object):
     def _internet_loop(p_pyhouse_obj):
         # API.FindExternalIp(p_pyhouse_obj)
         # API.UpdateDynDnsSites(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callLater(REPEAT_DELAY, Utility._internet_loop, p_pyhouse_obj)
+        p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, Utility._internet_loop, p_pyhouse_obj)
 
     @staticmethod
     def _read_xml_configuration(p_pyhouse_obj):
@@ -60,21 +58,20 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def LoadXml(self, p_pyhouse_obj):
-        Utility._read_xml_configuration(p_pyhouse_obj)
+    def LoadConfig(self):
+        Utility._read_xml_configuration(self.m_pyhouse_obj)
+        LOG.info('Loaded Internet Config')
 
     def Start(self):
         """
         Start async operation of the Internet module.
         """
-        self.m_pyhouse_obj.Twisted.Reactor.callLater(INITIAL_DELAY, Utility._internet_loop, self.m_pyhouse_obj)
-        LOG.info("Started.")
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility._internet_loop, self.m_pyhouse_obj)
+        LOG.info("Started Internet.")
 
-    def SaveXml(self, p_xml):
-        l_xml = internetAPI().write_internet_xml(self.m_pyhouse_obj)
-        p_xml.append(l_xml)
-        LOG.info('Saved XML')
-        return p_xml
+    def SaveConfig(self):
+        internetAPI().write_internet_xml(self.m_pyhouse_obj)
+        LOG.info('Saved Internet Config')
 
     def Stop(self):
         """
@@ -87,6 +84,7 @@ class API(object):
         """
         Async find our external IP address
         """
+
         def cb_find_external_ip(p_ip):
             LOG.info('Found External IP - {}'.format(p_ip))
 
@@ -103,6 +101,7 @@ class API(object):
     def UpdateDynDnsSites(p_pyhouse_obj):
         """
         """
+
         def cb_done_updating(p_ip):
             LOG.info('Updated all to IP: {}'.format(p_ip))
 

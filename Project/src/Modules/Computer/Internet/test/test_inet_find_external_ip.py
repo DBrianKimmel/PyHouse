@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Internet/test/test_inet_find_external_ip.py
+@name:      PyHouse/src/Modules/Computer/Internet/_test/test_inet_find_external_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2017 by D. Brian Kimmel
@@ -11,7 +11,7 @@ Passed all 4 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2016-11-22'
+__updated__ = '2019-06-25'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -34,8 +34,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_inet_find_external_ip')
 
@@ -44,7 +46,7 @@ class C1_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_reactor = self.m_pyhouse_obj.Twisted.Reactor
+        self.m_reactor = self.m_pyhouse_obj._Twisted.Reactor
         self.m_api = inet_find_external_ip.API()
 
     def test_01_IPv4_addr(self):

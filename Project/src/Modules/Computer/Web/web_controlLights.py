@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_controlLights -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_controlLights -*-
 
 @name:      PyHouse/src/Modules/web/web_controlLights.py
 @author:    D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-02-06'
+__updated__ = '2019-07-07'
 
 # Import system type stuff
 import os
@@ -21,7 +21,7 @@ from nevow import loaders
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LightData
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webCtlLigt  ')
@@ -62,8 +62,8 @@ class ControlLightsElement(athena.LiveElement):
         l_light_obj.BrightnessPct = l_brightness = l_json['BrightnessPct']
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {} device to Brightness {}'.format(l_light_obj.Name, l_light_obj.BrightnessPct))
-        l_topic = 'lighting/web/{}/control'.format(l_light_obj.Name)
-        self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
-        self.m_pyhouse_obj.APIs.House.LightingAPI.AbstractControlLight(l_light_obj, 'web', l_brightness)
+        l_topic = 'house/lighting/web/{}/control'.format(l_light_obj.Name)
+        self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
+        self.m_pyhouse_obj._APIs.House.LightingAPI.AbstractControlLight(l_light_obj, 'web', l_brightness)
 
 # ## END DBK

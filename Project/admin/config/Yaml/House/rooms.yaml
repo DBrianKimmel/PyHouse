@@ -1,0 +1,237 @@
+# Name:      PyHouse/Project/admin/config/Yaml/rooms.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   May 27, 2019
+# Updated:   Jun 21, 2019
+# License:   MIT License
+# Summary:   This is for all the rooms in a house.
+
+#   Rooms are consistant on all nodes within a house.
+#   Outside is always present and must be first.
+
+Rooms:
+   - Name: Outside
+     Active: 'True'
+     Comment: Things outside the house
+     LastUpdate: 2010-01-01 01:02:03
+     UUID: 'df694bf8-2dda-11e6-953b-74da3859e09a'
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 0
+     Size: [0.0, 0.0, 0.0]
+     RoomType: OutsideType
+     Trigger: None
+
+   - Name: Pool
+     Active: 'True'
+     Comment: The swimming pool
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 0
+     Size: [0.0, 0.0, 0.0]
+     RoomType: OutsideType
+     Trigger: None
+
+   - Name: Lanai
+     Active: 'True'
+     Comment: The area around the pool inside the cage.
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 0
+     Size: [0.0, 0.0, 0.0]
+     RoomType: OutsideType
+     Trigger: None
+
+   - Name: Garage
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Laundry
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Game Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Foyer
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: Motion
+
+   - Name: Misic Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Master Bath Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Dining Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Front Hall
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: MBR Closet
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Master Bed Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Living Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: MBR Sitting
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: None
+
+   - Name: Kitchen
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Breakfast Nook
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Front Guest Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Guest Bath Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Rear Guest Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Back Hall
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Office
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+   - Name: Back Bath Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+
+### END DBK

@@ -1,0 +1,24 @@
+---
+# Name:      Module/House/Controllers/_test/Yaml/controllers.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Aug  4, 2019
+# Updated:   Aug  4, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Controllers:  # Devices, Hubs, Bridges, Servers
+
+   - Name: TestPlm
+     Comment: Portable, Goes where I do.
+     Type: Local
+     Family:
+        Name: Insteon
+        Address: 49.F9.E7
+     Interface:
+        Type: Serial
+        Baud: 19200
+        Port: /dev/ttyUSB0
+
+### END DBK

@@ -9,18 +9,21 @@
 #
 # pip3 install -r venv/PyHouse/Project/requirements.txt
 
-twisted >= 18.0.0
-service-identity >= 17.0.0                                                                                                                                                                                          
-astral >= 1.6.1
+twisted >= 19.2.0
+service-identity >= 18.0.0                                                                                                                                                                                          
+astral >= 1.9.1
 netaddr >= 0.7.19
 netifaces >= 0.10.7
-jsonpickle >= 1.0
-python-dateutil >= 2.7.3
-aniso8601 >= 3.0.2
+jsonpickle >= 1.1
+python-dateutil >= 2.8.0
+aniso8601 >= 6.0.0
 pyudev >= 0.21.0
 pyserial >= 3.4.0
-klein
-pyopenssl
+PyYAML >= 5.1
+ruamel.yaml >= 0.15.97
+klein >= 17.0.0
+pyopenssl >= 19.0.0
+wheel
 
 ### END DBK
                                                                                                                                                                                       

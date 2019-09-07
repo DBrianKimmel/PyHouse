@@ -1,24 +1,23 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Web.test.test_web_utils -*-
-
 @name:      PyHouse/src/Modules/Computer/Web/web_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on May 30, 2013
 @summary:   Test handling the information for a house.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-07-15'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import JsonHouseData, LightingData, CoordinateData
+from Modules.Core.data_objects import JsonHouseData
 from Modules.Core.Utilities import json_tools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Housing.Lighting.lighting import LightingInformation
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webUtils       ')
 
 #  Web States defined
@@ -41,14 +40,13 @@ WS_CONTROLLERS = 502
 WS_LIGHTS = 503
 
 
-
 class UtilJson(object):
     """
     """
 
     @staticmethod
     def _get_Lighting(p_pyhouse_obj):
-        l_ret = LightingData()
+        l_ret = LightingInformation()
         l_ret.Buttons = p_pyhouse_obj.House.Lighting.Buttons
         l_ret.Controllers = p_pyhouse_obj.House.Lighting.Controllers
         l_ret.GarageDoors = p_pyhouse_obj.House.Security.GarageDoors
@@ -92,6 +90,7 @@ def GetJSONComputerInfo(p_pyhouse_obj):
 class State(object):
     """Used by various web_ modules to keep the state of the web server.
     """
+
     def __init__(self):
         self.State = WS_IDLE
 
@@ -103,12 +102,13 @@ def get_base_info(p_obj, p_json_decoded):
         p_obj.UUID = p_json_decoded['UUID']
         return p_obj
 
+
 def get_room_info(p_obj, p_json_decoded):
-        l_coords = CoordinateData()
-        l_coords.X_Easting = p_json_decoded['RoomCoords'][0]
-        l_coords.Y_Northing = p_json_decoded['RoomCoords'][1]
-        l_coords.Z_Height = p_json_decoded['RoomCoords'][2]
-        p_obj.RoomCoords = l_coords
+        # l_coords = CoordinateInformation()
+        # l_coords.X_Easting = p_json_decoded['RoomCoords'][0]
+        # l_coords.Y_Northing = p_json_decoded['RoomCoords'][1]
+        # l_coords.Z_Height = p_json_decoded['RoomCoords'][2]
+        # p_obj.RoomCoords = l_coords
         p_obj.RoomName = p_json_decoded['RoomName']
         p_obj.RoomUUID = p_json_decoded['RoomUUID']
         return p_obj

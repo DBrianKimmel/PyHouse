@@ -1,0 +1,24 @@
+---
+# Name:      PyHouse/Project/admin/config/Yaml/house/floors.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 21, 2019
+# Updated:   Jul 01, 2019
+# License:   MIT License
+# Summary:   This is for all the floors in a house.
+
+#   Outside is always present and must be first.
+
+Floors:
+   - Name: Outide
+     Active: 'True'
+     Comment: Outside
+     LastUpdate: 2010-01-01 01:02:03
+
+   - Name: 1st Floor
+     Active: 'True'
+     Comment: The first floor
+     LastUpdate: 2010-01-01 01:02:03
+
+### END DBK

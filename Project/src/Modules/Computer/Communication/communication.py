@@ -1,23 +1,21 @@
 """
--*- test-case-name: Pyhouse.src.Modules.Communication.test.test-communication -*-
-
-@name:      Pyhouse/src/Modules/Communication/communication.py
+@name:      Modules/Communication/communication.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Jan 9, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-03-26'
+__updated__ = '2019-07-10'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Communication  ')
 
 
@@ -40,10 +38,10 @@ class API(object):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """
         """
-        LOG.info('Loaded XML.')
+        LOG.info('Loaded Communication Config.')
 
     def Start(self):
         pass
@@ -51,10 +49,7 @@ class API(object):
     def Stop(self):
         pass
 
-    def SaveXml(self, p_xml):
-        l_xml = ET.Element('CommunicationSection')
-        p_xml.append(l_xml)
-        LOG.info("Saved XML.")
-        return p_xml
+    def SaveConfig(self):
+        LOG.info("Saved Communication Config.")
 
 # ## END DBK

@@ -1,0 +1,67 @@
+# Name:      PyHouse/Project/admin/config/Yaml/rooms.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 23, 2019
+# Updated:   Jun 23, 2019
+# License:   MIT License
+# Summary:   This is for all the rooms in a house.
+#   Rooms are consistant on all nodes within a house.
+---
+
+# Outside is always present and must be first.
+
+Rooms:
+   - Name: Outside
+     Active: 'True'
+     Comment: The initial comment
+     LastUpdate: 2010-01-01 01:02:03
+     UUID: 'room....-0001-11e6-953b-74da3859e09a'
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 0
+     Size: [0.0, 0.0, 0.0]
+     RoomType: OutsideType
+     Trigger: None
+
+   - Name: Pool
+     Active: 'True'
+     Comment: The swimming pool
+     LastUpdate: 2010-01-01 01:02:03
+     UUID: 'room....-0002-11e6-953b-74da3859e09a'
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 0
+     Size: [0.0, 0.0, 0.0]
+     RoomType: OutsideType
+     Trigger: None
+
+   - Name: Garage
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+ 
+   - Name: Living Room
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     UUID: 'room....-0004-11e6-953b-74da3859e09a'
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: Occupied
+
+   - Name: Foyer
+     Active: 'True'
+     Comment: The
+     LastUpdate: 2010-01-01 01:02:03
+     Corner: [0.0, 0.0, 0.0]
+     Floor: 1
+     Size: [0.0, 0.0, 0.0]
+     RoomType: Room
+     Trigger: Motion
+
+### END DBK

@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_schedules -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_schedules -*-
 
 @name:      PyHouse/src/Modules/web/web_schedules.py
 @author:    D. Brian Kimmel
@@ -12,17 +12,17 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-06-24'
 
 #  Import system type stuff
 import os
-from nevow import athena
-from nevow import loaders
+# from nevow import athena
+# from nevow import loaders
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import ScheduleBaseData
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 #  Handy helper for finding external resources nearby.
@@ -71,7 +71,7 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj.ScheduleType = l_json['ScheduleType']
         l_obj.Time = l_json['Time']
-        l_obj.DOW = l_json['DOW']
+        l_obj.DayOfWeek = l_json['DayOfWeek']
         l_obj.ScheduleMode = l_json['ScheduleMode']
         #
         if l_obj.ScheduleType == 'Lighting':
@@ -81,7 +81,7 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.Schedules[l_schedule_ix] = l_obj
-        self.m_pyhouse_obj.APIs.House.ScheduleAPI.RestartSchedule()
+        self.m_pyhouse_obj._APIs.House.ScheduleAPI.RestartSchedule()
 
     def _save_light(self, p_obj, p_json):
         LOG.info(PrettyFormatAny.form(p_json, 'JSON'))

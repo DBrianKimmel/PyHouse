@@ -1,0 +1,23 @@
+---
+# Name:      PyHouse/Project/admin/config/Yaml/interfaces.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jun 24, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+#
+
+Interfaces:
+   - Name: Null
+
+   - Name: Serial
+     Comment: Using serial protocol even if usb adapter.
+
+   - Name: Usb
+
+   - Name: Ethernet
+
+### END DBK

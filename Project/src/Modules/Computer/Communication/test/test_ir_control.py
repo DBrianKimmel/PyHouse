@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/communication/test/test_ir_control.py
+@name:      PyHouse/src/communication/_test/test_ir_control.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2018 by D. Brian Kimmel

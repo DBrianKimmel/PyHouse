@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.Modules.Web.test.test_web_xml -*-
+-*- _test-case-name: PyHouse.Modules.Web._test.test_web_xml -*-
 
 @name:      PyHouse/src/Modules/Web/web_xml.py
 @author:    D. Brian Kimmel
@@ -17,14 +17,14 @@ PyHouse.Computer.Web
             SecurePort
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-07-05'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
-from Modules.Core.data_objects import LoginData, WebData
+from Modules.Core import logging_pyh as Logger
+from Modules.Core.data_objects import LoginData, WebInformation
 from Modules.Core.Utilities.uuid_tools import Uuid
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
 LOG = Logger.getLogger('PyHouse.WebXml         ')
@@ -148,15 +148,12 @@ class Xml(object):
 
         @param p_pyhouse_xml: is the entire PyHouse Object
         """
-        l_obj = WebData()
+        l_obj = WebInformation()
         l_obj.Logins = Xml._add_default_login()
         l_obj.WebPort = 8580
         l_obj.SecurePort = 8588
         l_obj.WebSocketPort = 8581
-        l_xml = p_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision')
-        if l_xml == None:
-            return l_obj
-        l_xml = l_xml.find('WebSection')
+        l_xml = XmlConfigTools.find_xml_section(p_pyhouse_obj, 'ComputerDivision/WebSection')
         if l_xml == None:
             return l_obj
         l_obj.Logins, l_count = Xml._read_all_logins(l_xml)

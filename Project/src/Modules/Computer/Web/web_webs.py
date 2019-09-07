@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_webs -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_webs -*-
 
 @name:      PyHouse/src/Modules/web/web_webs.py
 @author:    D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import os
@@ -19,8 +19,8 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import WebData
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core.data_objects import WebInformation
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
@@ -54,8 +54,8 @@ class WebsElement(athena.LiveElement):
         """A new/changed web is returned.  Process it and update the internal data via ???.py
         """
         l_json = json_tools.decode_json_unicode(p_json)
-        l_obj = WebData()
+        l_obj = WebInformation()
         l_obj.Port = l_json['Port']
-        self.m_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(l_obj)
+        self.m_pyhouse_obj._APIs.Computer.WebAPI.SaveXml(l_obj)
 
 # ## END DBK

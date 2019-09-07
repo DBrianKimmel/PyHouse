@@ -1,6 +1,5 @@
 """
-
-@name:      PyHouse/src/Modules/Web/web_mainpage.py
+@name:      PyHouse/Project/src/Modules/Web/web_mainpage.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -13,124 +12,74 @@ Since internet access is possible, a login screen is presented first and authent
 Then a menu is presented that allows non house things to be selected or a the user may select to work with a house,
 the house select screen also allows for a house to be added so starting with no houses is possible.
 
-
-
 This module creates a main page and a workspace.
-The mainpage is an athena Live page and the workspace is a live element.
-This allows ajax/comet actions and also allows other live element pages to be added dynamically.
-
-
-Note - A big hunk of the Core was derived from code kindly sent to me by Werner Thie.
-This portion involves the creation of a mainpage and within it a workspace.
-All the rest of the web page are segments that appear when needed and are deleted
-when finished.
-
-Here is Werner's opening comment:
-mainpage.py - this is the place where everything is happening, the user will never
-              ever see a page change during the whole visit. Everything the user is
-              shown is injected as a LiveElement into the page and deleted after it
-              has served its purpose.
-
-              The main element which resides in this page and handles all aspects of
-              user interaction is the workspace. It has a first go at the arguments
-              and then injects whatever is needed.
-
-              Due to the fact that webapps are highly user driven, the main interaction
-              points are usually triggered from the client, whereas things such as status
-              updates or realtime data delivery is handled by the server at its own pace
-
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-05-23'
 
 #  Import system type stuff
 import gc
-import os
-import time
-from twisted.python import util
-from nevow import loaders
-from nevow import athena
-#  from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-
-try:
-    from twisted.web import http
-except ImportError:
-    from twisted.protocols import http
-
-from zope.interface import implements
-from nevow import rend
-from nevow import static
-from nevow import url
-from nevow import inevow
-from nevow import guard
-from nevow.compression import parseAcceptEncoding
-from nevow.inevow import IRequest
-from twisted.internet import defer
+from twisted.web.template import Element, XMLFile
+from twisted.python.filepath import FilePath
+from twisted.web._element import renderer
 
 #  Import PyMh files and modules.
-from Modules.Computer.Web import web_buttons
-from Modules.Computer.Web import web_clock
-from Modules.Computer.Web import web_computerMenu
-from Modules.Computer.Web import web_configMenu
-from Modules.Computer.Web import web_controllers
-from Modules.Computer.Web import web_controlLights
-from Modules.Computer.Web import web_garageDoors
-from Modules.Computer.Web import web_house
-from Modules.Computer.Web import web_houseMenu
-from Modules.Computer.Web import web_internet
-from Modules.Computer.Web import web_irrigation
-from Modules.Computer.Web import web_lights
+# from Modules.Computer.Web import web_buttons
+# from Modules.Computer.Web import web_clock
+# from Modules.Computer.Web import web_computerMenu
+# from Modules.Computer.Web import web_configMenu
+# from Modules.Computer.Web import web_controllers
+# from Modules.Computer.Web import web_controlLights
+# from Modules.Computer.Web import web_garageDoors
+# from Modules.Computer.Web import web_house
+# from Modules.Computer.Web import web_houseMenu
+# from Modules.Computer.Web import web_internet
+# from Modules.Computer.Web import web_irrigation
+# from Modules.Computer.Web import web_lights
 from Modules.Computer.Web import web_login
-from Modules.Computer.Web import web_motionSensors
-from Modules.Computer.Web import web_mqtt
-from Modules.Computer.Web import web_nodes
+# from Modules.Computer.Web import web_motionSensors
+# from Modules.Computer.Web import web_mqtt
+# from Modules.Computer.Web import web_nodes
 from Modules.Computer.Web import web_rootMenu
-from Modules.Computer.Web import web_rooms
-from Modules.Computer.Web import web_schedules
-from Modules.Computer.Web import web_thermostats
-from Modules.Computer.Web import web_update
-from Modules.Computer.Web import web_users
-from Modules.Computer.Web import web_webs
+# from Modules.Computer.Web import web_rooms
+# from Modules.Computer.Web import web_schedules
+# from Modules.Computer.Web import web_thermostats
+# from Modules.Computer.Web import web_update
+# from Modules.Computer.Web import web_users
+# from Modules.Computer.Web import web_webs
 
-from Modules.Computer import logging_pyh as Logger
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.WebMainpage    ')
 
 #  Handy helper for finding external resources nearby.
-modulepath = os.path.join(os.path.split(__file__)[0], '..')
-webpath = os.path.join(os.path.split(__file__)[0])
-csspath = os.path.join(webpath, 'css')
-imagepath = os.path.join(webpath, 'images')
-jspath = os.path.join(webpath, 'js')
-templatepath = os.path.join(webpath, 'template')
+modulepath = FilePath('Modules/Computer/Web/')
+templatepath = modulepath.child('template')
+imagepath = modulepath.child('images')
+csspath = modulepath.child('css')
 
 
-class FileNoListDir(static.File):
+class FileNoListDir(object):
 
     def directoryListing(self):
         print("ERROR - web_mainpage.directoryListing() - Forbidden resource")
         #  return error.ForbiddenResource()
 
 
-class FourOfour(athena.LiveElement):
-    jsClass = u'mainPage.FourOfour'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, '404Element.html'))
-
-
-class TheRoot(rend.Page):
+class TheRoot(Element):
     """This is the root - given to the app server!
     """
 
-    def __init__(self, staticpath, p_pyhouse_obj, *args, **kw):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        if staticpath == None:
-            l_jspath = util.sibpath(jspath, 'js')
-            staticpath = os.path.join(l_jspath, '', 'resource')
+    def __init__(self, p_pyhouse_obj, *args, **kw):
         super(TheRoot, self).__init__(*args, **kw)
+        self.m_pyhouse_obj = p_pyhouse_obj
         self.children = {
-          'resource'          : FileNoListDir(os.path.join(staticpath)),
-          'Line.png'          : FileNoListDir(os.path.join(imagepath, 'Line.png')),
-          'favicon.ico'       : FileNoListDir(os.path.join(imagepath, 'favicon.ico')),
-          'waitroller.gif'    : FileNoListDir(os.path.join(imagepath, 'waitroller.gif'))
+          'resource'        : modulepath,
+          'lcars.css'       : templatepath.child('lcars.css'),
+          'Line.png'        : imagepath.child('Line.png'),
+          'favicon.ico'     : imagepath.child('favicon.ico'),
+          'waitroller.gif'  : imagepath.child('waitroller.gif')
         }
 
     def locateChild(self, ctx, segments):
@@ -152,10 +101,6 @@ class mainPageFactory:
         The final trick was to update the module global mapping in jsDeps with my collections.
         """
         self.Clients = {}
-        l_siteJSPackage = athena.AutoJSPackage(jspath)
-        _l_siteCSSPackage = athena.AutoCSSPackage(csspath)
-        #  LOG.warn('CSS - {}'.format(_l_siteCSSPackage))
-        athena.jsDeps.mapping.update(l_siteJSPackage.mapping)
 
     def addClient(self, client):
         l_clientID = self._newClientID()
@@ -176,7 +121,7 @@ class mainPageFactory:
     def _newClientID(self):
         """Get a new UUID type id (dynamic) for the client.
         """
-        return guard._sessionCookie()
+        return  # guard._sessionCookie()
 
 
 #  This instance is built once
@@ -184,124 +129,19 @@ _mainPageFactory = mainPageFactory()
 
 #==============================================================================
 
-"""
-mainpage.py - this is the place where everything is happening, the user will never
-              ever see a page change during the whole visit. Everything the user is
-              shown is injected as a LiveElement into the page and deleted after it
-              has served its purpose.
-
-              The main element which resides in this page and handles all aspects of
-              user interaction is the workspace. It has a first go at the arguments
-              and then injects whatever is needed.
-
-              Due to the fact that webapps are highly user driven, the main interaction
-              points are usually triggered from the client, whereas things such as status
-              updates or realtime data delivery is handled by the server at its own pace
-
-author   : Werner Thie, wth
-last edit: wth, 20.01.2011
-modhistory:
-  20.01.2011 - wth, pruned for minimal demo app
-"""
-
-COOKIEKEY = 'minimal'
+# COOKIEKEY = 'minimal'
 
 
-class MappingCompressedResource(athena.MappingResource):
-    """
-    L{inevow.IResource} which looks up segments in a mapping between symbolic
-    names and the files they correspond to. Additionally if a compressed version
-    is present and content negotiation allows zipped resources, the zipped
-    file is preferred
+class MainPage(Element):
+    loader = XMLFile(templatepath.child('mainpage.html'))
+    extraContent = XMLFile(csspath.child('lcars.css'))
 
-    @type mapping: C{dict}
-    @ivar mapping: A map between symbolic, requestable names (eg,
-    'Nevow.Athena') and C{str} instances which name files containing data
-    which should be served in response.
-    """
-    implements(inevow.IResource)
-
-    def __init__(self, mapping):
-        self.mapping = mapping
-
-    def canCompress(self, req):
-        """
-        Check whether the client has negotiated a content encoding we support.
-        """
-        value = req.getHeader('accept-encoding')
-        if value is not None:
-            encodings = parseAcceptEncoding(value)
-            return encodings.get('gzip', 0.0) > 0.0
-        return False
-
-    def resourceFactory(self, fileName):
-        """
-        Retrieve a possibly  L{inevow.IResource} which will render the contents of
-        C{fileName}.
-        """
-        f = open(fileName, 'rb')
-        js = f.read()
-        return static.Data(js, 'text/javascript')
-
-    def locateChild(self, ctx, segments):
-        try:
-            impl = self.mapping[segments[0]]
-        except KeyError:
-            return rend.NotFound
-        else:
-            req = IRequest(ctx)
-        implgz = impl + '.gz'
-        if self.canCompress(req) and os.path.exists(implgz):
-            impl = implgz
-            req.setHeader('content-encoding', 'gzip')
-        return self.resourceFactory(impl), []
-
-#==============================================================================
-
-
-class MainPage(athena.LivePage):
-    addSlash = True
-    factory = _mainPageFactory
-    jsClass = u'mainPage.mainPage'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'mainpage.html'))
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        super(MainPage, self).__init__()
-        #  LOG.info('Main Page Initializing')
-
-    def child_jsmodule(self, _ctx):
-        return MappingCompressedResource(self.jsModules.mapping)
-
-    def data_title(self, _ctx, _data):
-        return self.pageTitle
-
-    def beforeRender(self, _ctx):
-        """If you need a place where to keep things during the livePage being up, please do it here and only here.
-        Storing states someplace deeper in the hierarchy makes it extremely difficult to release memory properly due to circular object references.
-        """
-        self.page.lang = 0
-        self.uid = None
-        self.username = ''
-        self.pageTitle = 'PyHouse Access'
-        self.selectedHouse = -1
-        #  LOG.warn('Connection {}'.format(PrettyFormatAny.form(_ctx, 'Context', 160)))
-        #  LOG.warn('Connection {}'.format(PrettyFormatAny.form(_ctx.tag, 'Context.tag', 160)))
-        l_defer = self.notifyOnDisconnect()
-        l_defer.addErrback(self.eb_disconnect)
-
-    def render_workspace(self, ctx, _data):
-        f = Workspace(self.m_pyhouse_obj, self.uid)
-        f.setFragmentParent(self)
-        #  LOG.warn('Rendering {}'.format(PrettyFormatAny.form(f, 'Workspace', 160)))
-        return ctx.tag[f]
-
-    def eb_disconnect(self, reason):
-        """
-        We will be called back when the client disconnects.
-        Clean up whatever needs cleaning serverside.
-        """
-        pass
+    @renderer
+    def css_spec(self, _request, tag):
+        LOG.debug('In css_spec renderer')
+        l_path = csspath.child('Simple.css')
+        tag.fillSlots(css_filespec=l_path)
+        return tag
 
 #==============================================================================
 
@@ -311,26 +151,13 @@ REQ_ROOT = 0
 REQ_WITHID = 2
 
 
-class Workspace(athena.LiveElement):
-    """WARNING:
+class Workspace(Element):
+    """
+    WARNING:
         The names of the @athena.expose methods seem to have to match the js file name.
         They are called from browser when elements are attached to the workspace.
     """
-    jsClass = u'workspace.Workspace'
-    docFactory = loaders.xmlfile(os.path.join(templatepath, 'workspaceElement.html'))
-    PG_UNKNOWN = -1
-    PG_INITED = 0
-
-    def __init__(self, p_pyhouse_obj, uid=None):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        super(Workspace, self).__init__()
-        LOG.warn('Workspace initialized.')
-        self.state = self.PG_INITED
-        self.uid = uid
-
-    def detached(self):
-        #  clean up whatever needs cleaning...
-        LOG.info('workspace object was detached cleanly')
+    loader = XMLFile(templatepath.child('workspaceElement.html'))
 
 #-----------------
 #  Calls from browser JS to load an element (fragment)
@@ -339,14 +166,25 @@ class Workspace(athena.LiveElement):
     #  NOTE!  Tne name of the def MUST be the same as the widget name as used in workspace.js attachWidget's first argument.
     """
 
-    @athena.expose
     def inject_404(self):
         LOG.info("404 called from browser")
-        f = FourOfour()
-        f.setFragmentParent(self)
-        return f
+        # f = FourOfour()
+        # f.setFragmentParent(self)
+        # return f
 
-    @athena.expose
+    @renderer
+    def login(self, _p_params):
+        l_element = web_login.LoginElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+    @renderer
+    def rootMenu(self, _p_params):
+        l_element = web_rootMenu.RootMenuElement(self)
+        l_element.setFragmentParent(self)
+        return l_element
+
+"""
     def buttons(self, p_params):
         l_element = web_buttons.ButtonsElement(self, p_params)
         l_element.setFragmentParent(self)
@@ -420,24 +258,18 @@ class Workspace(athena.LiveElement):
 
     @athena.expose
     def login(self, _p_params):
-        """ Place and display the login widget.
-        """
         l_element = web_login.LoginElement(self)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def motionSensors(self, p_params):
-        """ Place and display the Motion Sensor widget.
-        """
         l_element = web_motionSensors.MotionSensorsElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
 
     @athena.expose
     def mqtt(self, p_params):
-        """ Place and display the mqtt widget.
-        """
         l_element = web_mqtt.MqttElement(self, p_params)
         l_element.setFragmentParent(self)
         return l_element
@@ -490,54 +322,11 @@ class Workspace(athena.LiveElement):
         l_element.setFragmentParent(self)
         return l_element
 
-#-----------------
-
-    @athena.expose
-    def guiready(self):
-
-        def cb_usermatch(p_user):  #  select usually returns a list, knowing that we have unique results
-            reqtype = REQ_404  #  the result is unpacked already and a single item returned
-            udata = {}
-            if len(p_user) > 0:
-                self.page.userid = p_user['id']
-                reqtype = REQ_WITHID
-                for k in p_user.keys():
-                    if type(p_user[k]) == type(''):
-                        udata[uc(k)] = uc(p_user[k])
-                    else:
-                        udata[uc(k)] = p_user[k]
-            return reqtype, udata
-
-        def cb_rootmatch(_res):  #  select usually returns a list, knowing that we have unique results
-            reqtype = REQ_ROOT  #  the result is unpacked already and a single item returned
-            udata = {}
-            user = {}
-            user['id'] = self.page.username
-            for k in user.keys():
-                if type(user[k]) == type(''):
-                    udata[uc(k)] = uc(user[k])
-                else:
-                    udata[uc(k)] = user[k]
-            return reqtype, udata
-
-        def eb_nomatch():
-            pass
-
-        #  LOG.info('GuiReady called')
-        if self.uid and len(self.uid) == 32:
-            l_defer = self.page.userstore.getUserWithUID(self.uid)
-            l_defer.addCallback(cb_usermatch)
-            l_defer.addErrback(eb_nomatch)
-        else:
-            l_defer = defer.succeed(0)
-            l_defer.addCallback(cb_rootmatch)
-            l_defer.addErrback(eb_nomatch)
-        return l_defer
-
+"""
 #==============================================================================
 
 
-def factory(ctx, segments, p_pyhouse_obj):
+def factory(_ctx, segments, p_pyhouse_obj):
     """ If segments contains a liveID (len = 32) the page stored in self.Clients will be returned.
     Status of the given page is stored in the page object itself and nowhere else.
     """
@@ -550,8 +339,9 @@ def factory(ctx, segments, p_pyhouse_obj):
         return _mainPageFactory.Clients[seg0], segments[1:]
     elif len(seg0) == 32:
         #  We have a liveID
-        IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
-        return url.URL.fromString('/'), ()
+        # IRequest(ctx).addCookie(COOKIEKEY, seg0, http.datetimeToString(time.time() + 30.0))
+        # return url.URL.fromString('/'), ()
+        pass
     else:
         #
         return None, segments
@@ -570,7 +360,7 @@ modhistory:
 
 def uc(msg):
     if type(msg) == type(''):
-        return unicode(msg, 'iso-8859-1')
+        return msg.encode('iso-8859-1')
     else:
         return msg
 

@@ -1,0 +1,23 @@
+---
+# Name:      PyHouse/Project/src/Modules/Housing/test/Yaml/location.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 25, 2019
+# Updated:   Jun 25, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Location:
+   Street: 1600 Pennsylvania Ave NW
+   City: Washington
+   State: DC
+   ZipCode: 20500
+   Country: USA
+   Phone: (888) 555-1212
+   TimeZoneName: America/New_York
+   Latitude: 38.897789
+   Longitude: -77.036619
+   Elevation: 30.0
+   
+### END DBK

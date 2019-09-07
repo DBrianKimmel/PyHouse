@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_xml_tools -*-
-
-@name:      PyHouse/src/Modules.Core.Utilities.xml_tools.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/xml_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-01-30'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -21,10 +19,11 @@ import dateutil.parser as dparser
 # import uuid
 
 #  Import PyMh files
-from Modules.Core.data_objects import CoordinateData
+from Modules.House.house_data import CoordinateInformation
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities.uuid_tools import Uuid
-from Modules.Computer import logging_pyh as Logger
+
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.XmlTools       ')
 
 
@@ -233,7 +232,7 @@ class PutGetXML(object):
         if l_xml is None or len(l_xml) != 36:
             l_xml_bad = l_xml
             l_xml = Uuid.create_uuid()
-            LOG.error("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
+            LOG.warn("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
         return l_xml
 
     @staticmethod
@@ -290,7 +289,7 @@ class PutGetXML(object):
             # print('aaa ', str(l_str_time))
             l_ret = datetime.time(l_str_time.tm_hour, l_str_time.tm_min, l_str_time.tm_sec)
             # print('bbb ', l_str_time, l_ret)
-        except Exception as e_err:
+        except Exception as _e_err:
             # print('parse failed: ', str(l_field), ' -- ', e_err)
             l_ret = datetime.time(0, 0, 0)
         return l_ret
@@ -304,10 +303,16 @@ class PutGetXML(object):
 # -----
     @staticmethod
     def get_date_time_from_xml(p_xml, p_name):
+        """
+        @return: a datetime.now() object
+        """
         l_field = XML.get_any_field(p_xml, p_name)
         if l_field is None:
             l_field = str(datetime.datetime.now())
-        l_ret = dparser.parse(l_field, fuzzy=True)
+        try:
+            l_ret = dparser.parse(l_field, fuzzy=True)
+        except ValueError:
+            l_ret = datetime.datetime.now()
         return l_ret
 
     @staticmethod
@@ -325,7 +330,7 @@ class PutGetXML(object):
             l_flt = float(l_fld)
             return l_flt
 
-        l_ret = CoordinateData()
+        l_ret = CoordinateInformation()
         l_raw = XML.get_any_field(p_xml, p_name)
         #  LOG.info('Name:{};  Field:{}'.format(p_name, l_raw))
         try:
@@ -364,7 +369,7 @@ class XmlConfigTools:
         return l_name
 
     @staticmethod
-    def find_section(p_pyhouse_obj, p_name):
+    def find_xml_section(p_pyhouse_obj, p_name):
         """ Find the element within the path.
 
         @param p_name: 'HouseDivision/EntertainmentSection/OnkyoSection' will find the section
@@ -372,8 +377,9 @@ class XmlConfigTools:
         """
         # Be sure something was passed in
         if len(p_name) == 0:
+            LOG.warning('Trying to find an XML section with no name given.')
             return None
-        l_xml = p_pyhouse_obj.Xml.XmlRoot
+        l_xml = p_pyhouse_obj._Config.XmlRoot
         l_name = p_name.split('/')
         if len(l_name) == 1:
             l_xml = l_xml.find(l_name[0])
@@ -381,6 +387,7 @@ class XmlConfigTools:
         for l_part in l_name:
             l_xml = l_xml.find(l_part)
             if l_xml == None:
+                LOG.warning('No section "{}" found in looking for "{}".'.format(l_part, p_name))
                 return l_xml
         return l_xml
 

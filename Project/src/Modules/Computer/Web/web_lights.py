@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.web.test.test_web_lights -*-
+-*- _test-case-name: PyHouse.src.Modules.web._test.test_web_lights -*-
 
 @name:      PyHouse/src/Modules/web/web_lights.py
 @author:    D. Brian Kimmel
@@ -24,7 +24,7 @@ from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Housing.Lighting import lighting_lights
 from Modules.Core.Utilities import json_tools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webLight    ')
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

@@ -1,10 +1,8 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_tools -*-
-
-@name:      PyHouse/src/Modules.Core.Utilities.tools.py
+@name:      PyHouse/Project/src/Modules/Core/Utilities/tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @note:      Created on Apr 11, 2013
 @license:   MIT License
 @summary:   Various functions and utility methods.
@@ -13,8 +11,7 @@ Various tools that can be imported.  Named differently for recognition.
 
 """
 
-__updated__ = '2017-04-26'
-
+__updated__ = '2019-06-09'
 
 # Import system type stuff
 from xml.etree import ElementTree as ET
@@ -29,8 +26,8 @@ def truncstring(s, maxlen=2000):
     else:
         return s
 
-
 # ======================================================================
+
 
 def PrettyPrintCols(strings, widths, split=' '):
     """
@@ -50,16 +47,19 @@ def PrettyPrintCols(strings, widths, split=' '):
         cols[i] = _format_line(strings[i], widths[i], split)
     # prepare a format line
     l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
+
     def formatline(*cols):
         return l_format % tuple(map(lambda s: (s or ''), cols))
+
     # generate the formatted text
     return '\n'.join(map(formatline, *cols))
 
-
 #######################################
+
 
 def PrettyPrint(p_title, p_str, maxlen=150):
     print('Title: {}\n'.format(p_title), '\n'.join(_format_line(str(p_str), maxlen, ' ')))
+
 
 def PrintObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
     """Print a nicely formatted overview of an object.
@@ -185,6 +185,7 @@ def PrintObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspe
         print(PrettyPrintCols(('', attr, truncstring(str(val), maxspew)), tabbedwidths, ' '))
     print('====================\n')
 
+
 def _format_line(string, maxlen=175, split=' '):
     """Pretty prints the given string to break at an occurrence of
     split where necessary to avoid lines longer than maxlen.
@@ -207,6 +208,7 @@ def _format_line(string, maxlen=175, split=' '):
 #    return l_lines
 #    return '--'.join(l_line for l_line in l_lines)
 
+
 def _nukenewlines(string):
     """
     Strip newlines and any trailing/following whitespace;
@@ -217,6 +219,7 @@ def _nukenewlines(string):
     if not string: return ''
     lines = string.splitlines()
     return ' '.join([line.strip() for line in lines])
+
 
 def _delchars(p_str, chars):
     """Returns a string for which all occurrences of characters in
@@ -247,6 +250,5 @@ __all__ = [
            'PrettyPrintObject',
            'PrettyPrintXML'
            ]
-
 
 # ## END DBK

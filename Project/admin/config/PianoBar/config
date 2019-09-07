@@ -1,0 +1,10 @@
+# This goes in the users directory that will run pandora
+# ~/.config/pianobar/config
+#
+user = "Your pandora login username"
+password = "Your pandora password"
+autostart_station = "Youre pandora station ID"
+volume = 7
+tls_fingerprint = "Your Pandora TLS fingerprint"
+
+### END DBK

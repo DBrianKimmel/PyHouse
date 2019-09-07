@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_thermostats -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_thermostats -*-
 
 @name:      PyHouse/src/Modules/Web/web_thermostats.py
 @author:    D. Brian Kimmel
@@ -23,7 +23,7 @@ from Modules.Core.data_objects import ThermostatData
 from Modules.Computer.Web import web_family, web_utils
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Core.Utilities import json_tools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webThermost ')
 
 #  Handy helper for finding external resources nearby.

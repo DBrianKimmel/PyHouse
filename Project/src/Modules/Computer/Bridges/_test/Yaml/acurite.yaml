@@ -1,0 +1,25 @@
+---
+# Name:      Module/Computer/Bridges/_test/Yaml/acurite.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 26, 2019
+# Updated:   Aug  2, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+AcuRite:
+   Name: Acurite Hub
+   Comment: Weather Station Hub
+   FamilyName: AcuRite
+   Connection:
+      Type: Ethernet
+      HostName: weather-sta-ct
+      Port: None
+      Protocol: TCP
+   Security:
+      ApiKey: None
+      UserName: None
+      Password: None
+
+### END DBK

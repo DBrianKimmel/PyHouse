@@ -1,24 +1,22 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_device_tools -*-
-
-@name:      PyHouse/src/Modules.Core.Utilities.device_tools.py
+@name:      Modules/Core/Utilities/device_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 26, 2015
 @Summary:   Routines to load and save basic Device Data
 
 """
 
-__updated__ = '2019-01-22'
+__updated__ = '2019-07-31'
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Housing import utils
+from Modules.House import utils
 from Modules.Core.Utilities.xml_tools import PutGetXML, XmlConfigTools
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.DeviceTools    ')
 
@@ -38,8 +36,8 @@ class XML(object):
         try:
             # p_obj.Comment = PutGetXML.get_text_from_xml(p_xml, 'Comment')
             p_obj.DeviceFamily = PutGetXML.get_text_from_xml(p_xml, 'DeviceFamily')
-            p_obj.DeviceType = PutGetXML.get_int_from_xml(p_xml, 'DeviceType')
-            p_obj.DeviceSubType = PutGetXML.get_int_from_xml(p_xml, 'DeviceSubType')
+            p_obj.DeviceType = PutGetXML.get_text_from_xml(p_xml, 'DeviceType')
+            p_obj.DeviceSubType = PutGetXML.get_text_from_xml(p_xml, 'DeviceSubType')
             utils.read_room_reference_xml(p_obj, p_xml)
         except Exception as e_err:
             LOG.error('ERROR in xml_tools.read_base_obj_xml() - {}'.format(e_err))
@@ -54,8 +52,8 @@ class XML(object):
         """
         l_elem = XmlConfigTools.write_base_UUID_object_xml(p_element_tag, p_obj)
         PutGetXML.put_text_element(l_elem, 'DeviceFamily', p_obj.DeviceFamily)
-        PutGetXML.put_int_element(l_elem, 'DeviceType', p_obj.DeviceType)
-        PutGetXML.put_int_element(l_elem, 'DeviceSubType', p_obj.DeviceSubType)
+        PutGetXML.put_text_element(l_elem, 'DeviceType', p_obj.DeviceType)
+        PutGetXML.put_text_element(l_elem, 'DeviceSubType', p_obj.DeviceSubType)
         PutGetXML.put_coords_element(l_elem, 'RoomCoords', p_obj.RoomCoords)
         PutGetXML.put_text_element(l_elem, 'RoomName', p_obj.RoomName)
         PutGetXML.put_text_element(l_elem, 'RoomUUID', p_obj.RoomUUID)

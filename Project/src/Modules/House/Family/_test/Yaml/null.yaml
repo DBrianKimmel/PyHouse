@@ -1,0 +1,17 @@
+---
+# Name:      Module/Families/test/Yaml/null.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jun 24, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Null:
+   - Name: Null
+     Comment: The default family, used when no family matches.
+     Active: True
+     LastUpdated: 2010-01-02 03:04_05
+
+### END DBK

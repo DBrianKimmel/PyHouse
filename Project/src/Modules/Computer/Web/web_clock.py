@@ -1,37 +1,35 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Web.test.test_web_clock -*-
+-*- _test-case-name: PyHouse.src.Modules.Computer.Web._test.test_web_clock -*-
 
-@name:      PyHouse/src/Modules/Computer/Web/web_clock.py
+@name:      PyHouse/Project/src/Modules/Computer/Web/web_clock.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Sep 5, 2013
 @summary:   Display a clock on the web page.
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-03-02'
 
 #  Import system type stuff
 import os
 import time
-from nevow import loaders
-from nevow import athena
+from twisted.web._element import Element
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
-#  Handy helper for finding external resources nearby.
-webpath = os.path.join(os.path.split(__file__)[0])
-templatepath = os.path.join(webpath, 'template')
-
-g_debug = 0
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.webClock    ')
 
+#  Handy helper for finding external resources nearby.
+modulepath = FilePath('Modules/Computer/Web/')
+templatepath = modulepath.child('template')
 
-class ClockElement(athena.LiveElement):
+
+class ClockElement(Element):
     jsClass = u'clock.ClockWidget'
     docFactory = loaders.xmlfile(os.path.join(templatepath, 'clockElement.html'))
 
@@ -57,7 +55,6 @@ class ClockElement(athena.LiveElement):
 def uc(msg):
     if type(msg) == type(''):
         return unicode(msg, 'iso-8859-1')
-    else:
         return msg
 
 #  ## EBD DBK

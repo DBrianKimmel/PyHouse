@@ -1,0 +1,35 @@
+---
+# Name:      Modules/Housing/Entertainment/Pioneer/test/Yaml/pioneer.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 29, 2019
+# Updated:   Jun 29, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Pioneer:
+  Name: Pioneer Devices
+  Comment: Part of the Living Room entertainment cluster
+
+  Device:
+
+  - Name: Pioneer A/V Receiver
+    Comment: Main Receiver
+    Host:
+      Name: pioneer-ct
+      Port: 8102
+    Type: Receiver
+    Model: VSX-822-K
+
+  - Name: BluRay
+    Comment: Disk Player
+    Host:
+      Name: br-ct
+      Port: 8102
+    Login:
+      Username: None
+      Password: None
+    Type: DiskPlayer
+
+### END DBK

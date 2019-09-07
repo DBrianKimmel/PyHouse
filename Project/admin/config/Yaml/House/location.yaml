@@ -1,0 +1,23 @@
+---
+# Name:      PyHouse/Project/admin/config/Yaml/house/location.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 10, 2019
+# Updated:   Jun 13, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Location:
+   Street: 5191 N Pink Poppy Dr yaml
+   City: Beverly Hills
+   State: Fl
+   ZipCode: 34465
+   Country: USA
+   Phone: (352) 270-8096
+   TimeZoneName: America/New_York
+   Latitude: 28.938448
+   Longitude: 82.517208
+   Elevation: 30.0
+   
+### END DBK

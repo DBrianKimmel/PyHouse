@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.Utilities.test.test_uuid_tools -*-
+-*- _test-case-name: PyHouse.src.Modules.Core.Utilities._test.test_uuid_tools -*-
 
 @name:      PyHouse/src/Modules.Core.Utilities.uuid_tools.py
 @author:    D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-15'
+__updated__ = '2019-06-25'
 
 #  Import system type stuff
 import os
@@ -19,15 +19,16 @@ import uuid
 
 #  Import PyMh files
 # from Modules.Core.data_objects import UuidData
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UuidTools      ')
 
 
 def _file_name(p_pyhouse_obj, p_file_name):
     """ Find the name of the file we will be using.
     """
-    l_file = os.path.join(p_pyhouse_obj.Xml.XmlConfigDir, p_file_name)
+    l_file = os.path.join(p_pyhouse_obj._Config.ConfigDir, p_file_name)
     return l_file
+
 
 def get_uuid_file(p_pyhouse_obj, p_file_name):
     """ get the uuid for the file if it exists OR create the file with a persistent UUID if needed.
@@ -74,10 +75,10 @@ class Uuid(object):
         """ Add the given UuidData() object to PyHouse.
         """
         l_uuid = p_uuid_obj.UUID
-        if l_uuid in p_pyhouse_obj.Uuids.All:
+        if l_uuid in p_pyhouse_obj._Uuids.All:
             LOG.info('Duplicate UUIDs Detected.  Old:{}  New:{}'.format(
-                        p_pyhouse_obj.Uuids.All[l_uuid].UuidType, p_uuid_obj.UuidType))
-        p_pyhouse_obj.Uuids.All[l_uuid] = p_uuid_obj
+                        p_pyhouse_obj._Uuids.All[l_uuid].UuidType, p_uuid_obj.UuidType))
+        p_pyhouse_obj._Uuids.All[l_uuid] = p_uuid_obj
 
 
 class FileUuid(object):

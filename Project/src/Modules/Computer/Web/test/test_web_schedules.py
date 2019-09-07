@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Web/test/test_web_schedules.py
+@name:      PyHouse/src/Modules/Computer/Web/_test/test_web_schedules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-05-23'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -29,9 +29,8 @@ from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_UUID
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-
 JSON = '{ Active : false, \
-DOW : 127, \
+DayOfWeek : 127, \
 Key : 5, \
 Level : 50, \
 LightName : "MBR Rope", \
@@ -54,12 +53,13 @@ JSON2 = {"Add":"false",
          "Active":"true",
          "ScheduleType":"Lighting",
          "Time":"13:34",
-         "DOW":"127",
+         "DayOfWeek":"127",
          "ScheduleMode":"Home",
          "Level":"100",
          "Rate":"0",
          "RoomName":"Master Bath",
          "LightName":"Light, Insteon (xml_lights)"}
+
 
 class SetupMixin(object):
 
@@ -85,6 +85,7 @@ class SmartDummyRequest(DummyRequest):
 
 
 class DummySite(server.Site):
+
     def get(self, url, args=None, headers=None):
         return self._request("GET", url, args, headers)
 
@@ -112,8 +113,10 @@ class DummySite(server.Site):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_schedules')
 
@@ -133,7 +136,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
 
 class A2_XML(SetupMixin, unittest.TestCase):
-    """ Now we test that the xml_xxxxx have set up the XML_LONG tree properly.
+    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
     """
 
     def setUp(self):
@@ -156,7 +159,7 @@ class B01_JSON(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
     def test_01_xxx(self):
-        l_dev = 1
+        _l_dev = 1
 
 
 class C02_XML(SetupMixin, unittest.TestCase):
@@ -174,7 +177,7 @@ class C02_XML(SetupMixin, unittest.TestCase):
         self.assertEqual(l_web.WebPort, 8580)
 
     def test_21_WriteXML(self):
-        l_web = webXml.read_web_xml(self.m_pyhouse_obj)
-        l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
+        _l_web = webXml.read_web_xml(self.m_pyhouse_obj)
+        _l_xml = webXml.write_web_xml(self.m_pyhouse_obj)
 
 # ## END DBK

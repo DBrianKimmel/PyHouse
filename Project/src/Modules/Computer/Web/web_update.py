@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Web/web_update.py
+@name:      PyHouse/Project/src/Modules/Web/web_update.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel
@@ -9,17 +9,13 @@
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import os
-from nevow import athena
-from nevow import loaders
 
 # Import PyMh files and modules.
-# from Modules.Core.data_objects import WebData
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
@@ -55,7 +51,6 @@ class UpdateElement(athena.LiveElement):
         l_json = json_tools.decode_json_unicode(p_json)
         # l_obj = UpdateData()
         # l_obj.Port = l_json['Port']
-        # self.m_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(l_obj)
-
+        # self.m_pyhouse_obj._APIs.Computer.WebAPI.SaveXml(l_obj)
 
 # ## END DBK

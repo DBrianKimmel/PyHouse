@@ -1,0 +1,19 @@
+%YAML 1.2
+---
+Floors:
+  - Name: Outside
+    Floor: 0
+    Comment: Anything outside the house
+
+  - Name: Basement
+    Floor: B
+    Comment: The basement
+
+  - Name: 1st
+    Floor: 1
+    Comment: The first floor
+
+  - Name: 2nd
+    Floor: 2
+
+### END DBK

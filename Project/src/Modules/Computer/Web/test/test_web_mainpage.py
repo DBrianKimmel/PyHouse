@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Computer/Web/test/test_web_mainpage.py
+@name:      PyHouse/src/Modules/Computer/Web/_test/test_web_mainpage.py
 @author:    D Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-03-01'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -17,8 +17,9 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 # from Modules.Web import web_mainpage
-from test import xml_data
 from test.testing_mixin import SetupPyHouseObj
+from Modules.Computer.Web.web_mainpage import modulepath, webpath
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -37,12 +38,14 @@ class A0(unittest.TestCase):
         print('Id: test_web_mainpage')
 
 
-class Test_02_XML(SetupMixin, unittest.TestCase):
+class B1_Path(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(xml_data.XML_LONG))
+        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
 
-    def testName(self):
-        pass
+    def test_01_Modulepath(self):
+        print(PrettyFormatAny.form(modulepath.path, 'B01-01-A - modulepath'))
+        print(PrettyFormatAny.form(webpath.path, 'B01-01-A - modulepath'))
+        self.assertEqual(modulepath.path, '/home/briank/workspace/PyHouse/Project/src/Modules/Computer/Web')
 
 # ## END DBK

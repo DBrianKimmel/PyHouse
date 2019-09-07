@@ -1,0 +1,28 @@
+---
+# Name:      Module/House/Family/_test/Yaml/insteon.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jun 24, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Insteon:
+   Hub:
+      Model: 2245-222
+      Address: 44.55.66
+      Mac: 11:22:33:44:55:66
+      User: Fireflan
+      Password: VZN6Hf2B
+      Port: 25105
+      Rev: 3.3
+      Date: 2219
+      Interface:
+         Type: Ethernet
+         Host: insteon-ct
+
+   Plm:
+   Smartlink:
+
+### END DBK

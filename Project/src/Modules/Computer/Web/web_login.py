@@ -1,7 +1,7 @@
 """
--*- test-case-name: PyHouse.src.Modules.Core.test.test_data_objects -*-
+-*- _test-case-name: PyHouse.src.Modules.Core._test.test_data_objects -*-
 
-@name:      PyHouse/src/Modules/Web/web_login.py
+@name:      PyHouse/Project/src/Modules/Computer/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-02-04'
+__updated__ = '2019-07-29'
 
 #  Import system type stuff
 import os
@@ -40,8 +40,8 @@ from Modules.Housing.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
 from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
 from Modules.Housing import VALID_FLOORS
 from Modules.Housing.Lighting import VALID_LIGHTING_TYPE
-from Modules.Housing.Scheduling import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
-from Modules.Computer import logging_pyh as Logger
+from Modules.Housing.Schedules import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Web.web_users import VALID_USER_ROLES
 from Modules.Core.Utilities import json_tools
@@ -95,12 +95,13 @@ class LoginElement(Element):
             }
         </style>
     </head>
-        <body>
-            <p xmlns:t="http://pyhouse.org/ns/twisted.web.template/0.1" >
-                User: <span t:render="username"></span>
-                password: <span t:render="password"></span>
-            </p>
-        </body>
+    <body>
+        <h1>Login</h1>
+        <p xmlns:t="http://pyhouse.org/ns/twisted.web.template/0.1" >
+            User: <span t:render="username"></span>
+            password: <span t:render="password"></span>
+        </p>
+    </body>
 </html>
 <!-- ### END DBK -->
 """))
@@ -112,8 +113,9 @@ class LoginElement(Element):
         self.m_password = 'adminpassword'
 
     @renderer
-    def username(self, _request, _tag):
-        return self.m_username
+    def username(self, _request, tag):
+        return tag('User Name')
+        # return self.m_username
 
     @renderer
     def password(self, _request, _tag):
@@ -194,8 +196,8 @@ class LoginHelper:
                     l_login_obj.IsLoggedIn = True
                     l_login_obj.LoginRole = l_user.LoginRole
                     l_login_obj.LoginFullName = l_user.LoginFullName
-                    l_topic = 'comouter/browser/login'
-                    self.m_pyhouse_obj.APIs.Computer.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
+                    l_topic = 'computer/browser/login'
+                    self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_login_obj)  #  lighting/web/{}/control
                 return l_login_obj
         return l_login_obj
 
@@ -268,8 +270,6 @@ class UnixChecker(object):
             checked = self.checkSpwd(spwd, username, password)
             if checked is not None:
                 return checked
-        #  TODO: check_pam?
-        #  TODO: check_shadow?
         return defer.fail(UnauthorizedLogin())
 
 

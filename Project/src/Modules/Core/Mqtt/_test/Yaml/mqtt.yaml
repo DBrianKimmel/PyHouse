@@ -1,0 +1,42 @@
+---
+# Name:      PyHouse/Project/src/Module/Computer/Mqtt/_test/Yaml/mqtt.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jun 26, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Mqtt:
+   - Broker:
+      Name: Test Broker 1
+      Active: 'true'
+      Comment: For Cannon Trail (if reachable)
+      LastUpdate: 2019-05-18 12:41:20.061260
+      UUID: 92c6466-5852-11e7-8389-801f02b5e4e6
+      Class: Local
+      Host:
+        Name: mqtt-ct
+        Port: 1883
+        IPv4: None
+        IPv6: None
+      Login:
+        UserName: None
+        Password: None
+
+   - Broker:
+      Name: Local Laptop Backup
+      Active: 'false'
+      Comment: For testing so we have a local broker
+      LastUpdate: 2019-05-18 12:41:20.061260
+      UUID: 392c6466-5852-11e7-8389-801f02b5e4e6
+      Class: Local
+      Host:
+        Name: localhost
+        Port: 1883
+      Login:
+        UserName: None
+        Password: None
+
+### END DBK

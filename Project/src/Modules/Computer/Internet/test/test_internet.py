@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Computer/Internet/test/test_internet.py
+@name:      PyHouse/src/Computer/Internet/_test/test_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2017 by D. Brian Kimmel
@@ -10,14 +10,14 @@
 Passed all 5 tests - DBK - 2015-09-12
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from Modules.Core.data_objects import InternetConnectionData
+from Modules.Core.data_objects import InternetConnectionInformation
 from Modules.Computer.Internet.internet import API as internetAPI
 from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4_0
 from Modules.Core.Utilities import convert
@@ -33,8 +33,10 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_internet')
 
@@ -45,7 +47,7 @@ class C01_Util(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_internet_obj = InternetConnectionData()
+        self.m_internet_obj = InternetConnectionInformation()
         self.m_api = internetAPI(self.m_pyhouse_obj)
 
     def test_01_Config(self):

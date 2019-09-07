@@ -1,0 +1,20 @@
+%YAML 1.2
+---
+Street: 1600 Pennsylvania Ave NW
+City: Washington
+State: DC
+Login:
+  UserName: My Name
+  Password: My Password
+Host:
+  Name: Host-name-xxx
+  IPv4: 192.168.2.3
+  IPv6: 2003:12:456::24
+  Port: 12345
+Lights:
+  - Name: Front Hall
+    Comment: Ceiling light
+  - Name: Living Room
+  - Name: Foyer
+Include1: !include abc.yaml
+AddOn2:

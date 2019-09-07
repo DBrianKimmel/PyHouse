@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules.Core.Utilities.debug_tools.py
+@name:      Modules/Core/Utilities/debug_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2017 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-10-01'
+__updated__ = '2019-08-20'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -30,19 +30,21 @@ def _nuke_newlines(p_string):
     """
     Strip newlines and any trailing/following whitespace;
     rejoin with a single space where the newlines were.
+    Trailing newlines are converted to spaces.
 
     Bug: This routine will completely butcher any whitespace-formatted text.
+
+    @param p_string: A string with embedded newline chars.
     """
     if not p_string:
         return ''
     l_lines = p_string.splitlines()
-    return ' '.join([line.strip() for line in l_lines])
+    return ' '.join([l_line.strip() for l_line in l_lines])
 
 
 def _format_line(string, maxlen=175, split=' '):
     """
-    Pretty prints the given string to break at an occurrence of
-    split where necessary to avoid lines longer than maxlen.
+    Pretty prints the given string to break at an occurrence of split where necessary to avoid lines longer than maxlen.
 
     This will overflow the line if no convenient occurrence of split is found.
     @param string: is a string that will be broken up into several strings if needed.
@@ -62,47 +64,45 @@ def _format_line(string, maxlen=175, split=' '):
     return linelist
 
 
-def _format_cols(strings, widths, split=' '):
+def _format_cols(p_strings, p_widths, split=' '):
     """
     Pretty prints text in columns, with each string breaking at split according to _format_line.
     Margins gives the corresponding right breaking point.
 
     The first string is the title which is usually ''.
 
-    The number of strings must match the number of widths.
+    The number of p_strings must match the number of p_widths.
     Each width is the width of a column with the last number is the total width.
-    @param strings: is a tuple of strings
-    @param widths: is a tuple of integer column widths.  There must be the same number of widths as strings
+
+    @param p_strings: is a tuple of strings
+    @param p_widths: is a tuple of integer column p_widths.  There must be the same number of p_widths as p_strings
     @return: the line of output with the strings left justified in the column width specified
     """
-    assert len(strings) == len(widths)
-    stringlist = list(map(_nuke_newlines, strings))
-    #  pretty Print each column
-    cols = [''] * len(stringlist)
-    for i in range(len(stringlist)):
-        cols[i] = _format_line(stringlist[i], widths[i], split)
-    #  prepare a format line
-    l_format = ''.join(["%%-%ds" % width for width in widths[0:-1]]) + "%s"
 
     def formatline(*cols):
         return l_format % tuple(map(lambda s: (s or ''), cols))
 
-    #  generate the formatted text
-    return '\n'.join(map(formatline, *cols))
+    assert len(p_strings) == len(p_widths)
+    stringlist = list(map(_nuke_newlines, p_strings))
+    #  pretty Print each column
+    cols = [''] * len(stringlist)
+    for i in range(len(stringlist)):
+        cols[i] = _format_line(stringlist[i], p_widths[i], split)
+    #  prepare a format line
+    l_format = ''.join(["%%-%ds" % width for width in p_widths[0:-1]]) + "%s"
+    l_ret = '\n'.join(map(formatline, *cols))
+    return l_ret.rstrip()
 
 
 def _formatObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
     """Print a nicely formatted overview of an object.
 
-    The output lines will be wrapped at maxlen, with lindent of space
-    for names of attributes.  A maximum of maxspew characters will be
-    printed for each attribute value.
+    The output lines will be wrapped at maxlen, with lindent of space for names of attributes.
+    A maximum of maxspew characters will be printed for each attribute value.
 
-    You can hand formatObj any data type -- a module, class, instance,
-    new class.
+    You can hand formatObj any data type -- a module, class, instance, new class.
 
-    Note that in reformatting for compactness the routine trashes any
-    formatting in the docstrings it prints.
+    Note that in reformatting for compactness the routine trashes any formatting in the docstrings it prints.
 
     Example:
        >>> class Foo(object):
@@ -217,7 +217,7 @@ def _formatObject(p_title, p_obj, suppressdoc=True, maxlen=180, lindent=24, maxs
 
 
 def PrettyFormatObject(p_obj, p_title, suppressdoc=True, maxlen=180, lindent=24, maxspew=2000):
-    _formatObject(p_title, p_obj, suppressdoc, maxlen, lindent, maxspew)
+    return _formatObject(p_title, p_obj, suppressdoc, maxlen, lindent, maxspew)
 
 
 class PrettyFormatAny(object):
@@ -225,7 +225,7 @@ class PrettyFormatAny(object):
     """
 
     @staticmethod
-    def form(p_any, title='No Title Given', maxlen=120):
+    def form(p_any, title='No Title Given', maxlen=190):
         """ Top level call PrettyFormatAmy(form(obj, Title, MaxLineLen)
         """
         l_indent = 0
@@ -283,14 +283,13 @@ class PrettyFormatAny(object):
     def _format_dict(p_dict, maxlen, indent):
         l_ret = ''
         l_tabbedwidths = [indent, 30, maxlen - 30]
-        # l_tabbedwidths = [indent, maxlen - 30]
         for l_key, l_val in p_dict.items():
             if isinstance(l_val, dict):
-                # l_ret += '_d_' + _format_cols(('\t', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
-                l_ret += ' ' + _format_cols(('> ', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)), l_tabbedwidths, ' ') + '\n'
+                l_ret += ' ' + _format_cols(
+                    ('> ', str(l_key), PrettyFormatAny._type_dispatcher(l_val, maxlen, indent + 4)),
+                    l_tabbedwidths,
+                    ' ') + '\n'
             else:
-                # l_ret += '_ _' + _format_cols(('\t', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
-                # l_ret += '_'   + _format_cols((str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
                 l_ret += ' ' + _format_cols(('. ', str(l_key), str(l_val)), l_tabbedwidths, ' ') + '\n'
         return l_ret
 

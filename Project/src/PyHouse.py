@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 """
--*- test-case-name: PyHouse.src.test.test_PyHouse -*-
-
-@name:      PyHouse/Project/src/Pyhouse.py
+@name:      Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2019 by D. Brian Kimmel
@@ -30,7 +28,7 @@
 
 
 PyHouse.
-        APIs            Internal
+        _APIs           Internal
         Computer        Configuration File
         House           Configuration File
         Services        Internal
@@ -57,18 +55,14 @@ See those modules to find out what each does.
 @TODO:
         Find proper ports for controllers
         set proper permissions on controller devices
-        Add interfaces, move interface code out of controllers
-        Setup to allow house add rooms lights etc
-        Save house info for 'new' house.
 
 Idea Links:
   https://github.com/TheThingSystem/home-controller forked from automategreen/home-controller
   https://github.com/zonyl/pytomation
   https://github.com/king-dopey/pytomation forked from zonyl/pytomation
   http://leftovercode.info/smartlinc.php
-  http://misterhouse.sourceforge.net/lib/Insteon/AllLinkDatabase.html
   https://github.com/hollie/misterhouse/
-
+  https://github.com/hollie/misterhouse/blob/master/lib/Insteon/AllLinkDatabase.pm
 
     SmartHome Wiki: Using Custom Commands in SmartLinc
     SmartHome Forum: SmartLinc Direct Command for Light Status?
@@ -82,8 +76,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-01-05'
-__version_info__ = (19, 1, 0)
+__updated__ = '2019-08-20'
+__version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -93,25 +87,23 @@ import os
 import platform
 import signal
 import sys
-#  from twisted.application.service import Application
-from twisted.internet import reactor
 
-from Modules.Computer import logging_pyh as Logger
-from Modules.Core import setup_pyhouse
-from Modules.Core.data_objects import \
-    PyHouseData, \
-    PyHouseAPIs, \
-    UuidData, \
-    TwistedInformation, \
-    XmlInformation, AllUuids
+#  Import PyHouse files and modules.
+from Modules.Core.setup_config import CheckInitialSetup
+from Modules.Core import core
 
-#  Import PyMh files and modules.
-g_API = None
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse                ')
+
 LOCK_PATH = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "lock")
+g_API = None
 
 
 class Singleton:
+    """ Set up the singleton pattern.
+    This prevents more than one instance of PyHouse running on this computer.
+    It is the very first action taken when starting PyHouse to run.
+    """
 
     def __init__(self):
         self.fh = None
@@ -129,7 +121,6 @@ class Singleton:
                 raise
 
     def clean_up(self):
-        # this is not really needed
         try:
             if self.fh is not None:
                 fcntl.lockf(self.fh, fcntl.LOCK_UN)
@@ -208,28 +199,6 @@ def SigKillHandler(signum, _stackframe):
     exit
 
 
-class Utilities(object):
-    """
-    """
-
-    @staticmethod
-    def _nor_create_pyhouse_obj():
-        """ This creates the master PyHouse_Obj from scratch.
-
-        Everything is initialized from the empty definitions.
-        Computer and house components are initialized later on.
-        The reactor is not yet running.
-        """
-        l_pyhouse_obj = PyHouseData()
-        l_pyhouse_obj.APIs = PyHouseAPIs()
-        l_pyhouse_obj.Twisted = TwistedInformation()
-        l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Uuids = AllUuids()
-        l_pyhouse_obj.Uuids.All = UuidData()
-        l_pyhouse_obj.Xml = XmlInformation()
-        return l_pyhouse_obj
-
-
 class API:
     """
     """
@@ -246,37 +215,29 @@ class API:
         """
         global g_API
         g_API = self
+        # self.m_pyhouse_obj
+        LOG.info('Initialized.\n==================================================================\n')
 
-    def LoadXml(self, p_pyhouse_obj):
-        """LoadXml loads all the XML configuration.
-
-         This is automatically invoked when the reactor starts from API().__init__{}.
+    def LoadConfig(self):
+        """ This loads all the configuration.
         """
-        LOG.info('Loading XML - Reactor is now running!')
-        p_pyhouse_obj.APIs.CoreSetupAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.Twisted.Reactor.callLater(10, self.Start)
-        LOG.info('Loaded XML\n-----------------------------------------\n')
+        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.LoadConfig()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
+        LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
+        pass
 
     def Start(self):
         """ This is automatically invoked when the reactor starts from API().
         """
         print('Reactor is now running.')
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Start()
+        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
-
-    def SaveXml(self, _p_pyhouse_obj):
-        """Update XML file with current info.
-        Keep on running after the snapshot.
-        """
-        LOG.info("Saving XML")
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.SaveXml()
-        LOG.info("Saved XML.\n")
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        self.m_pyhouse_obj.APIs.CoreSetupAPI.Stop()
+        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.Stop()
         LOG.info("Stopped.\n")
 
     def Quit(self):
@@ -284,26 +245,24 @@ class API:
         """
         LOG.debug('Running Quit now.')
         self.Stop()
-        self.m_pyhouse_obj.Twisted.Reactor.stop()
+        self.m_pyhouse_obj._Twisted.Reactor.stop()
 
 
-class NoReactorAPI(API):
+class BeforeReactor(API):
     """ This class is for initialization before the reactor starts.
+    It is run right after Singleton protection is invoked.
     """
 
-    def __init__(self):
+    m_pyhouse_obj = None
+
+    def start_setup(self):
         """
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        self.m_pyhouse_obj = self._nor_create_pyhouse_obj()
-        print('PyHouse.NoReactorAPI()')  # For development - so we can see when we get to this point...
-        self.m_pyhouse_obj.APIs.PyHouseMainAPI = self
-        self.m_pyhouse_obj.APIs.CoreSetupAPI = setup_pyhouse.API(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Twisted.Reactor.callWhenRunning(self.LoadXml, self.m_pyhouse_obj)
-        LOG.info("Initialized - Version:{}".format(__version__))
-        LOG.info('Starting Reactor...')
-        self.m_pyhouse_obj.Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
+        print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
+        CheckInitialSetup()
+        core.API()
         #
         #  When the reactor stops we continue here
         #
@@ -311,29 +270,13 @@ class NoReactorAPI(API):
         print('PyHouse is exiting.')
         raise SystemExit("PyHouse says Bye Now.")
 
-    def _nor_create_pyhouse_obj(self):
-        """ This creates the master PyHouse_Obj from scratch.
-
-        Everything is initialized from the empty definitions.
-        Computer and house components are initialized later on.
-        The reactor is not yet running.
-        """
-        l_pyhouse_obj = PyHouseData()
-        l_pyhouse_obj.APIs = PyHouseAPIs()
-        l_pyhouse_obj.Twisted = TwistedInformation()
-        l_pyhouse_obj.Twisted.Reactor = reactor
-        l_pyhouse_obj.Uuids = AllUuids()
-        l_pyhouse_obj.Uuids.All = UuidData()
-        l_pyhouse_obj.Xml = XmlInformation()
-        return l_pyhouse_obj
-
 
 if __name__ == "__main__":
     si = Singleton()
     try:
         if si.is_running:
             sys.exit("This app is already running!")
-        NoReactorAPI()
+        BeforeReactor().start_setup()
     finally:
         si.clean_up()
 

@@ -1,7 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.test.test_computer -*-
-
-@name:      PyHouse/src/Modules/Computer/computer.py
+@name:      Modules/Computer/computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -11,61 +9,84 @@
 
 This handles the Computer part of the node.  (The other part is "House").
 
-This takes care of starting all the computer modules (In Order).
-    Logging
-    Mqtt Broker(s)
-    Bridges
-    Nodes
-    Internet Connection(s)
-    Web Server(s)
-
-PyHouse.Computer.
-            Communication
-            Internet
-            Mqtt
-            Nodes
-            Weather
-            Web
-
 """
 
-__updated__ = '2019-01-30'
-__version_info__ = (18, 10, 0)
+__updated__ = '2019-08-10'
+__version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+from datetime import datetime
 import platform
+import importlib
 
 #  Import PyHouse files
-from Modules.Core.data_objects import ComputerAPIs, ComputerInformation
-from Modules.Core.Utilities import extract_tools, uuid_tools
-from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Computer.Bridges.bridges import API as bridgesAPI
-from Modules.Computer.Communication.communication import API as communicationAPI
-from Modules.Computer.Internet.internet import API as internetAPI
-from Modules.Computer.Mqtt.mqtt import API as mqttAPI
-from Modules.Computer.Nodes.nodes import API as nodesAPI
-from Modules.Computer.Nodes.node_sync import API as syncAPI
-from Modules.Computer.weather import API as weatherAPI
-from Modules.Computer.Web.web import API as webAPI
-from Modules.Computer.Web.websocket_server import API as websocketAPI
+from Modules.Core.Utilities import extract_tools, uuid_tools, config_tools
+from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
 
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Computer       ')
 
 COMPUTER_DIVISION = 'ComputerDivision'
 UUID_FILE_NAME = 'Computer.uuid'
+CONFIG_FILE_NAME = 'computer.yaml'
 
-# MODULES = ['Communication', 'Email', 'Internet' , 'Mqtt', 'Node', 'Weather', 'Web']
+MODULES = [
+    'Bridges',
+    'Communication',
+    'Internet',
+    'Node',
+    'Pi',
+    # 'Weather',
+    'Web'
+    ]
 
 
-class UuidFile(object):
+class ComputerInformation:
+    """
+    ==> PyHouse.Computer.xxx - as in the def below.
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None
+        self.UUID = None
+        self.Primary = False
+        self.Priority = 99
+        self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridge_data
+        self.Communication = {}  # CommunicationInformation()
+        self.InternetConnection = {}  # InternetConnectionInformation()
+        self.Nodes = {}  # NodeInformation()
+        self.Weather = {}  # WeatherInformation()
+        self.Web = {}  # WebInformation()
+
+
+class ComputerAPIs:
+    """
+    ==> PyHouse._APIs.Computer.xxx as in the def below.
+
+    """
+
+    def __init__(self):
+        pass
+        # self.BridgesAPI = None
+        # self.ComputerAPI = None
+        # self.CommAPIs = None  # CommunicationAPIs()
+        # self.InternetAPI = None
+        # self.NodesAPI = None
+        # self.WeatherAPI = None
+        # self.WebAPI = None
+        # self.WebSocketAPI = None
+
+
+class UuidFile:
     """
     """
 
 
-class MqttActions(object):
+class MqttActions:
     """
     """
 
@@ -79,10 +100,10 @@ class MqttActions(object):
         @param p_message: is the payload that is JSON
         """
         l_logmsg = '\tComputer:\n'
-        #  computer/browser/***
-        if p_topic[1] == 'browser':
-            _l_name = 'unknown'
+        if p_topic[0] == 'browser':
             l_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        elif p_topic[0] == 'node' or p_topic[0] == 'nodes':
+            l_logmsg += nodesMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         #  computer/ip
         elif p_topic[1] == 'ip':
             l_ip = extract_tools.get_mqtt_field(p_message, 'ExternalIPv4Address')
@@ -99,147 +120,197 @@ class MqttActions(object):
         elif p_topic[1] == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
             l_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        #  computer/node/???
-        elif p_topic[1] == 'node':
-            l_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic, p_message)
         #  computer/***
         else:
             l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
         return l_logmsg
 
 
-class Xml(object):
-
-    @staticmethod
-    def create_computer_xml(p_pyhouse_obj):
-        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
-        return l_xml
-
-    @staticmethod
-    def read_computer_xml(p_pyhouse_obj):
-        l_xml = XmlConfigTools.read_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
-        return l_xml
-
-    @staticmethod
-    def write_computer_xml(p_pyhouse_obj):
-        l_xml = XmlConfigTools.write_base_UUID_object_xml(COMPUTER_DIVISION, p_pyhouse_obj.Computer)
-        return l_xml
-
-
-class Utility(object):
+class Config:
+    """
+    """
 
     m_pyhouse_obj = None
 
-    @staticmethod
-    def _init_component_apis(p_pyhouse_obj, p_api):
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _extract_computer_info(self, _p_config):
+        """ The cpmputer.yamll file only contains module names to force load.
+
+        @param p_pyhouse_obj: is the entire house object
+        @param p_config: is the modules to force load.
+        """
+        l_modules = []
+        # for l_ix, l_config in enumerate(p_config):
+        #    pass
+        return l_modules  # For testing.
+
+    def load_yaml_config(self):
+        """ Read the computer.yaml file.
+        """
+        try:
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        except:
+            return None
+        try:
+            l_yaml = l_node.Yaml['Computer']
+        except:
+            LOG.warn('The computer.yaml file does not start with "Computer:"')
+            return None
+        _l_computer = self._extract_computer_info(l_yaml)
+        # self.m_pyhouse_obj.House.Name = l_house.Name
+        # l_obj = self.m_pyhouse_obj.Computer
+        # LOG.debug('Computer.Yaml - {}'.format(l_yaml.Yaml))
+        return l_node  # for testing purposes
+
+
+class Utility:
+    """
+    There are currently (2019) 8 components - be sure all are in every method.
+    """
+
+    m_module_needed = ['Nodes']
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def find_all_configed_modules(self):
+        """ Find all house modules that have a "module".yaml config file in /etc/pyhouse.
+        Build the m_module_needed list.
+        """
+        for l_module in MODULES:
+            l_filename = l_module.lower() + '.yaml'
+            l_node = config_tools.Yaml.find_config_node(self, l_filename)
+            if l_node != None:
+                self.m_module_needed.append(l_module)
+        LOG.info('Found config files for: {}'.format(self.m_module_needed))
+
+    def _import_all_found_modules(self):
+        """
+        """
+        for l_module in self.m_module_needed:
+            l_package = 'Modules.Computer.' + l_module.capitalize()  # p_family_obj.PackageName  # contains e.g. 'Modules.Families.Insteon'
+            l_name = l_package + '.' + l_module.lower()
+            try:
+                l_ret = importlib.import_module(l_name, package=l_package)
+            except ImportError as e_err:
+                l_msg = 'ERROR importing module: {}\n\tErr:{}.'.format(l_module, e_err)
+                LOG.error(l_msg)
+                l_ret = None
+            try:
+                l_api = l_ret.API(self.m_pyhouse_obj)
+            except Exception as e_err:
+                LOG.error('ERROR - Module: {}\n\t{}'.format(l_module, e_err))
+                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef', 190)))
+                l_api = None
+            l_api_name = l_module.capitalize() + 'API'
+            l_computer = self.m_pyhouse_obj._APIs.Computer
+            setattr(l_computer, l_api_name, l_api)
+        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
+
+    def _init_component_apis(self, p_pyhouse_obj, _p_computer_api):
         """
         Initialize all the computer division APIs
         """
-        p_pyhouse_obj.APIs.Computer = ComputerAPIs()
-        p_pyhouse_obj.APIs.Computer.ComputerAPI = p_api
-        p_pyhouse_obj.APIs.Computer.BridgesAPI = bridgesAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI = communicationAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.InternetAPI = internetAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.MqttAPI = mqttAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.NodesAPI = nodesAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WeatherAPI = weatherAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebAPI = webAPI(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI = websocketAPI(p_pyhouse_obj)
+        p_pyhouse_obj._APIs.Computer = ComputerAPIs()
 
-    @staticmethod
-    def _load_component_xml(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.MqttAPI.LoadXml(p_pyhouse_obj)  # Start this first so we can send messages.
-        p_pyhouse_obj.APIs.Computer.NodesAPI.LoadXml(p_pyhouse_obj)  # Nodes are sent in Mqtt open
-        #
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.InternetAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebAPI.LoadXml(p_pyhouse_obj)
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.LoadXml(p_pyhouse_obj)
+    def _load_component_config(self):
+        l_obj = self.m_pyhouse_obj._APIs.Computer
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'ComputerAPI':
+                continue
+            l_a.LoadConfig()
 
-    @staticmethod
-    def _start_component_apis(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.MqttAPI.Start()  # Start this first so we can send messages/
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.Start()
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Start()
-        p_pyhouse_obj.APIs.Computer.InternetAPI.Start()
-        p_pyhouse_obj.APIs.Computer.NodesAPI.Start()
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.Start()
-        p_pyhouse_obj.APIs.Computer.WebAPI.Start()
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Start()
+    def _start_component_apis(self):
+        l_obj = self.m_pyhouse_obj._APIs.Computer
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'ComputerAPI':
+                continue
+            l_a.Start()
 
-    @staticmethod
-    def _stop_component_apis(p_pyhouse_obj):
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.InternetAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.MqttAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.NodesAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WebAPI.Stop()
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.Stop()
+    def _stop_component_apis(self):
+        l_obj = self.m_pyhouse_obj._APIs.Computer
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'ComputerAPI':
+                continue
+            l_a.Stop()
 
-    @staticmethod
-    def _save_component_apis(p_pyhouse_obj, p_xml):
-        """ Save the XML for each of the components of the Computer
-        """
-        p_pyhouse_obj.APIs.Computer.BridgesAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.CommunicationsAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.InternetAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.MqttAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.NodesAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.WeatherAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.WebAPI.SaveXml(p_xml)
-        p_pyhouse_obj.APIs.Computer.WebSocketAPI.SaveXml(p_xml)
-        return p_xml
+    def _save_component_apis(self):
+        l_obj = self.m_pyhouse_obj._APIs.Computer
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'ComputerAPI':
+                continue
+            l_a.SaveConfig()
 
 
-class API(Utility):
+class API:
+    """
+    """
+
+    m_config = None
+    m_pyhouse_obj = None
+    m_utility = None
 
     def __init__(self, p_pyhouse_obj):
         """ Initialize the computer section of PyHouse.
         """
         LOG.info("Initializing - Version:{}".format(__version__))
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = Config(p_pyhouse_obj)
+        self.m_utility = Utility(p_pyhouse_obj)
+        # This overrides any config saved so we can start Logging and MQTT messages early on.
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
-        p_pyhouse_obj.Key = 0
-        p_pyhouse_obj.Active = True
+        p_pyhouse_obj.Computer.Key = 0
+        # p_pyhouse_obj.Computer.Active = True
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
-        Utility._init_component_apis(p_pyhouse_obj, self)
-        self.m_pyhouse_obj = p_pyhouse_obj
+        p_pyhouse_obj.Computer.Comment = ''
+        p_pyhouse_obj.Computer.LastUpdate = datetime.now()
+        self.m_utility._init_component_apis(p_pyhouse_obj, self)
+
+        self.m_utility.find_all_configed_modules()
+        self.m_utility._import_all_found_modules()
+
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """
         """
-        # LOG.info('Loading XML')
-        Utility._load_component_xml(p_pyhouse_obj)
-        LOG.info('Loaded XML.')
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_config.load_yaml_config()
+        self.m_utility._load_component_config()
+        LOG.info('Loaded Config.')
 
     def Start(self):
         """
         Start processing
         """
         LOG.info('Starting')
-        Utility._start_component_apis(self.m_pyhouse_obj)
+        self.m_utility._start_component_apis()
         LOG.info('Started.')
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        l_xml = Xml.write_computer_xml(self.m_pyhouse_obj)
-        Utility._save_component_apis(self.m_pyhouse_obj, l_xml)
-        p_xml.append(l_xml)
-        LOG.info("Saved Computer XML.")
-        return p_xml
+        self.m_utility._save_component_apis()
+        LOG.info("Saved Computer XML Config.")
+        return
 
     def Stop(self):
         """
         Append the house XML to the passed in xlm tree.
         """
-        Utility._stop_component_apis(self.m_pyhouse_obj)
+        self.m_utility._stop_component_apis()
         LOG.info("Stopped.")
 
     def DecodeMqtt(self, p_topic, p_message):

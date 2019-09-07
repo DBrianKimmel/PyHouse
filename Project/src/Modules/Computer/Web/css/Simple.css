@@ -1,0 +1,19 @@
+/*
+ * Simple.css
+ */
+
+body {
+	background-color: #d0e4fe;
+}
+
+h1 {
+	color: blue;
+	text-align: center;
+}
+
+h2 {
+	color: blue;
+	text-align: left;
+}
+
+/* ### END */

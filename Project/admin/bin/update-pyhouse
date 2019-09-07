@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# @name:      ~/bin/update-pyhouse
+# @author:    D. Brian Kimmel
+# @contact:   D.BrianKimmel@gmail.com
+# @copyright: (c) 2015-2019 by D. Brian Kimmel
+# @license:   MIT License
+# @note:      Created on Oct 19, 2015
+# @Summary:   This updates PyHouse
+
+HOME=/home/pyhouse/
+VENV=${HOME}venv/
+WORK=${VENV}PyHouse/
+
+cd
+#if [ -d venv ] ; then
+	
+
+source ${VENV}bin/activate
+cd ${WORK}
+${HOME}bin/stop-pyhouse
+git pull
+${HOME}bin/start-pyhouse
+
+### END DBK

@@ -1,0 +1,17 @@
+---
+# Name:      Module/Families/test/Yaml/families.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Jun 24, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Families:
+# These are the families that will be loaded.
+# Do not include the 'Null' family.
+   - Insteon: !include insteon.yaml
+   - UPB: !include upb.yaml
+
+### END DBK

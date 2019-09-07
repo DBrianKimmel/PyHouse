@@ -1,7 +1,5 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/Web/websocket_server.py -*-
-
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Web/websocket_server.py
+@name:      Modules/Computer/Web/websocket_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2019-07-10'
 
 #  Import system type stuff
 import json
@@ -24,7 +22,7 @@ from twisted.web.server import Site
 # from autobahn.twisted.resource import WebSocketResource
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 WEBSOCKET_PORT = 8586
@@ -191,7 +189,7 @@ class Utility(ClientConnections):
         l_root = File('.')
         # l_root.putChild(u"ws", l_resource)
         l_site = Site(l_root)
-        self.m_pyhouse_obj.Twisted.Reactor.listenTCP(l_port, l_site)
+        self.m_pyhouse_obj._Twisted.Reactor.listenTCP(l_port, l_site)
         l_site_dir = None
         l_msg = "Port:{}, Path:{}".format(l_port, l_site_dir)
         LOG.info("Started - {}".format(l_msg))
@@ -199,7 +197,7 @@ class Utility(ClientConnections):
     def start_non_tls(self, p_pyhouse_obj, p_site, p_port):
         """ Start a non-encrypted websocket server.
         """
-        p_pyhouse_obj.Twisted.Reactor.listenTCP(p_port, p_site)
+        p_pyhouse_obj._Twisted.Reactor.listenTCP(p_port, p_site)
 
     def start_tls(self, p_pyhouse_obj):
         """ Start an encrypted websocket server.
@@ -207,7 +205,7 @@ class Utility(ClientConnections):
         # l_certData = getModule(__name__).filePath.sibling('server.pem').getContent()
         # l_certificate = ssl.PrivateCertificate.loadPEM(l_certData)
         # l_factory = protocol.Factory.forProtocol(echoserv.Echo)
-        # p_pyhouse_obj.Twisted.Reactor.listenSSL(WEBSOCKET_PORT, l_factory, l_certificate.options())
+        # p_pyhouse_obj._Twisted.Reactor.listenSSL(WEBSOCKET_PORT, l_factory, l_certificate.options())
         # return defer.Deferred()
         pass
 
@@ -225,7 +223,7 @@ class API(Utility):
             LOG.warn("SSL not available.")
             self.m_contextFactory = None
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         pass
 
     def Start(self):
@@ -233,7 +231,7 @@ class API(Utility):
         self.start_websocket_server(self.m_pyhouse_obj)
         LOG.info('Started.')
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self):
         pass
 
     def Stop(self):

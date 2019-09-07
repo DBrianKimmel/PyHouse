@@ -19,7 +19,7 @@ from twisted.web.template import Element
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.

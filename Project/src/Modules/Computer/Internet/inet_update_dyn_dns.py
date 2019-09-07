@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Computer.Internet.test.test_inet_update_dyn_dns-*-
+-*- _test-case-name: PyHouse.src.Modules.Computer.Internet._test.test_inet_update_dyn_dns-*-
 
 @Name:      PyHouse/src/Modules/Computer/Internet/inet_update_dyn_dns.py
 @author:    D. Brian Kimmel
@@ -11,16 +11,16 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-07-30'
 
 # Import system type stuff
 from twisted.web.client import getPage
 from twisted.internet.defer import Deferred
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh
+from Modules.Core import logging_pyh as Logger
 
-LOG = logging_pyh.getLogger('PyHouse.Internet    ')
+LOG = Logger.getLogger('PyHouse.Internet    ')
 INITIAL_DELAY = 1 * 60
 
 
@@ -94,7 +94,7 @@ class API(DynDnsAPI):
 
     def Start(self, p_pyhouse_obj, p_ix):
         self.m_internet_obj = p_pyhouse_obj.Computer.InternetConnection[p_ix]
-        self.m_reactor = p_pyhouse_obj.Twisted.Reactor
+        self.m_reactor = p_pyhouse_obj._Twisted.Reactor
         self.m_dyn_loop = DynDnsAPI(self.m_internet_obj, self.m_reactor)
 
     def Stop(self, _ignore1, _ignore2):

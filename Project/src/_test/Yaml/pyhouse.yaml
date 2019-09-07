@@ -1,0 +1,18 @@
+---
+# Name:      PyHouse/Project/src/_test/Yaml/main.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 24, 2019
+# Updated:   Aug 16, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+# It never gets rewritten
+
+PyHouse:
+   Name: CannonTrail
+   Computer: Laptop-04
+   UnitSystem: metric
+   ConfigVersion: 2.0
+
+### END DBK

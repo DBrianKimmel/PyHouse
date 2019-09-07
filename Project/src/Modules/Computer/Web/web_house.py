@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_house -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_house -*-
 
 @name:      PyHouse/src/Modules/Web/web_house.py
 @author:    D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-06-17'
 
 # Import system type stuff
 import os
@@ -20,7 +20,7 @@ from nevow import loaders
 
 # Import PyMh files and modules.
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 LOG = Logger.getLogger('PyHouse.webHouse    ')
@@ -67,12 +67,12 @@ class HouseElement(athena.LiveElement):
         l_obj.City = l_json['Location']['City']
         l_obj.State = l_json['Location']['State']
         l_obj.ZipCode = l_json['Location']['ZipCode']
-        l_obj.Region = l_json['Location']['Region']
+        # l_obj.Region = l_json['Location']['Region']
         l_obj.Phone = l_json['Location']['Phone']
         l_obj.Latitude = l_json['Location']['Latitude']
         l_obj.Longitude = l_json['Location']['Longitude']
         l_obj.Elevation = l_json['Location']['Elevation']
         l_obj.TimeZoneName = l_json['Location']['TimeZoneName']
-        self.m_pyhouse_obj.House.Location = l_obj
+        # ##self.m_pyhouse_obj.House.Location = l_obj
 
 # ## END DBK

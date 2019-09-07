@@ -15,12 +15,19 @@ minimal
 doc/html
 
 ### Dirs
-admin/config/*.xml
+admin/config/Xml/
+admin/config/Entity/
 build/
 dist/
 html/
 */Ideas/
 latex/
 .settings/
+_trial_temp/
+.mypy_cache/
+__pycache__/
+
+### Private Info
+Laptop*
 
 ### END DBK

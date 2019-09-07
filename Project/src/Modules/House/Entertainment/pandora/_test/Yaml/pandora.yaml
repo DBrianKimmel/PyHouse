@@ -1,0 +1,61 @@
+---
+# Name:      Modules/Housing/Entertainment/pandora/test/Yaml/pandora.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 29, 2019
+# Updated:   Jun 30, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+#	<Type>Service</Type>
+#	<Service Active="True" Key="0" Name="PandoraOnPi">
+#		<Comment>Running on pi-06-ct</Comment>
+#		<LastUpdate>2019-05-12 12:25:34.228837</LastUpdate>
+#		<Host>None</Host>
+#		<ConnectionFamily>Pioneer</ConnectionFamily>
+#		<ConnectionName>VSX-822-K</ConnectionName>
+#		<InputName>CD</InputName>
+#		<InputCode />
+#		<MaxPlayTime>0</MaxPlayTime>
+#		<Type>Receiver</Type>
+#		<Volume>53</Volume>
+#	</Service>
+
+Pandora:
+  Name: Pandora service
+  Active: 'True'
+  Comment: The Pandora music service
+  LastActive: 2001-01-01 01:02:03
+
+  Service:
+
+    - Name: Primary
+      Comment: main connection
+      Host:
+        Name: pandora-ct
+        Port: None
+      Connection:
+        # The pandora computer is connected to this device
+        Type: wire
+        Family: Pioneer
+        Model: VSX-833-K
+        Input: CD
+      Login:
+        Name: !secret EncryptedName1
+        Password: !secret EncriptedPassword1
+
+    - Name: Downstairs
+      Comment: for music downstairs
+      Host:
+        Name: pi-02-ct
+      Connection:
+        Type: bluetooth
+        Family: Onkyo
+        Model: ABC-1234-YZ
+        InputName: bluetooth
+      Login:
+        Name: !secret EncryptedName2
+        Password: !secret EncryptedPassword2
+
+### END DBK

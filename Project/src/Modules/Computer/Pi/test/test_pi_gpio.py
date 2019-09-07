@@ -1,7 +1,7 @@
 """
--*- test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/Pi/test/test_pi_gpio.py -*-
+-*- _test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/Pi/_test/test_pi_gpio.py -*-
 
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Pi/test/test_pi_gpio.py
+@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/Pi/_test/test_pi_gpio.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel

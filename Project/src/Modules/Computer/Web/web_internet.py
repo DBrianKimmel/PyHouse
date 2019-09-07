@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_internet -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_internet -*-
 
 @name:      PyHouse/src/Modules/Web/web_internet.py
 @author:    D. Brian Kimmel
@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-07-05'
 
 # Import system type stuff
 from datetime import datetime
@@ -20,9 +20,9 @@ from nevow import loaders
 import os
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import InternetConnectionData
+from Modules.Core.data_objects import InternetConnectionInformation
 from Modules.Computer.Web.web_utils import GetJSONComputerInfo
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 
 # Handy helper for finding external resources nearby.
@@ -57,7 +57,7 @@ class InternetElement(athena.LiveElement):
         try:
             l_obj = self.m_pyhouse_obj.Computer.InternetConnection
         except KeyError:
-            l_obj = InternetConnectionData()
+            l_obj = InternetConnectionInformation()
         l_obj.LastChanged = datetime.now()
         l_obj.LocateUrls = l_json['LocateUrls']
         l_obj.UpdateUrls = l_json['UpdateUrls']

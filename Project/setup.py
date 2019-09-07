@@ -1,12 +1,10 @@
 #! /usr/bin/env python3
 #  -*- coding: utf-8 -*-
 """
--*- test-case-name: PyHouse.src.test.test_setup -*-
-
 @name:      PyHouse/src/setup.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2019 by D. Brian Kimmel
 @note:      Created on Aug 3, 2013
 @license:   MIT License
 @summary:   This module is for Insteon
@@ -53,15 +51,13 @@ apt install:
     python-dev
 """
 
-__updated__ = '2017-06-23'
-
+__updated__ = '2019-07-12'
 
 #  Import system type stuff
 import sys
 from setuptools import setup
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "src"))
-
 
 #  Requirements for the PyHouse application
 INSTALL_REQUIRES = [
@@ -104,7 +100,6 @@ CLASSIFIERS = [
     'Programming Language :: JavaScript',
     'Topic :: Home Automation'
 ]
-
 
 setup(
     name='PyHouse',

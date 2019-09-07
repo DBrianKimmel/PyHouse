@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_computerMenu -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_computerMenu -*-
 
 @name:      PyHouse/src/Modules/Web/web_computerMenu.py
 @author:    D. Brian Kimmel
@@ -19,7 +19,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 # Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])

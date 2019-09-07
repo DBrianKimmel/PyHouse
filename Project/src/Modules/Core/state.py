@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Core/Mqtt/state.py
+@name:      Modules/Core/state.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -9,24 +9,27 @@
 
 """
 
-__updated__ = '2019-01-07'
+__updated__ = '2019-08-20'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
-
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.State          ')
 
 
 class State(object):
     UNKNOWN = 'unknown'
+
     OCCUPIED = 'occupied'
     VACANT = 'vacant'
+
     ON = 'on'
     OFF = 'off'
+
     MOTION = 'motion'
     STILL = 'still'
+
     OPEN = 'open'
     CLOSED = 'closed'
 

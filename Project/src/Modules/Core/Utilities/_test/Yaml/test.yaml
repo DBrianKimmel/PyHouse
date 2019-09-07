@@ -1,0 +1,31 @@
+---
+# Name:      PyHouse/Project/src/Modules/Core/Utility/test/Yaml/test.yaml
+# Author:    D. Brian Kimmel
+# Contact:   D.BrianKimmel@gmail.com
+# Copyright: (c)2019-2019 by D. Brian Kimmel
+# Created:   Jun 28, 2019
+# Updated:   Jun 28, 2019
+# License:   MIT License
+# Summary:   This is for PyHouse
+
+Testing:
+   Street: 1600 Pennsylvania Ave NW
+   City: Washington
+   State: DC
+   Login:
+     UserName: My Name
+     Password: My Password
+   Host:
+     Name: Host-name-xxx
+     IPv4: 192.168.2.3
+     IPv6: 2003:12:456::24
+     Port: 12345
+   Lights:
+     - Name: Front Hall
+       Comment: Ceiling light
+     - Name: Living Room
+     - Name: Foyer
+   Include1: !include abc.yaml
+   AddOn2:
+   
+### END DBK

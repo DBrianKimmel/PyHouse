@@ -1,5 +1,5 @@
 """
--*- test-case-name: PyHouse.src.Modules.Web.test.test_web_houseMenu -*-
+-*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_houseMenu -*-
 
 @name:      PyHouse/src/Modules/Web/web_houseMenu.py
 @author:    D. Brian Kimmel
@@ -17,7 +17,7 @@ from nevow import loaders
 from nevow import athena
 
 # Import PyMh files and modules.
-from Modules.Computer import logging_pyh as Logger
+from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.webHMenu    ')
 
