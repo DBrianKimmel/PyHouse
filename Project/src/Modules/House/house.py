@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-09-06'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,7 +21,8 @@ import importlib
 
 #  Import PyMh files
 from Modules.Core.data_objects import HouseAPIs
-from Modules.Core.Utilities import uuid_tools, config_tools
+from Modules.Core.Config import config_tools
+from Modules.Core.Utilities import uuid_tools
 from Modules.House import location, rooms, floors
 from Modules.House.rooms import Mqtt as roomsMqtt
 
@@ -37,48 +38,31 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 
-CONFIG_FILE_NAME = 'house.yaml'
-UUID_FILE_NAME = 'House.uuid'
-
+CONFIG_NAME = 'house'
 # Note that the following are in the order needed to sequence the startup
-MODULES = [
-        'Lighting',
-        'Hvac',
-        'Security',
-        'Irrigation',
-        'Pool',
-        'Rules',
-        'Schedule',
-        'Sync',
-        'Entertainment',
-        'Family'
-        ]
+MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
+    'Lighting',
+    'Hvac',
+    'Security',
+    'Irrigation',
+    'Pool',
+    'Rules',
+    'Schedule',
+    'Sync',
+    'Entertainment',
+    'Family'
+    ]
+PARTS = [
+    'Location',
+    'Floors',
+    'Rooms'
+    ]
 
 
 class HouseInformation:
-    """ The collection of information about a house.
-    Causes JSON errors due to API type data methinks.
-
-    ==> PyHouse.House.xxx as in the def below.
-    """
 
     def __init__(self):
-        # self.HouseMode = 'Home'  # Home, Away, Vacation,
-        #
         self.Name = None
-        self.Comment = None
-        self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
-        self.Family = {}
-        self.Hvac = {}  # HvacData()
-        self.Irrigation = {}  # IrrigationData()
-        self.Lighting = {}  # LightingInformation()
-        self.Location = {}  # house.location.LocationInformation() - one location per house.
-        self.Pools = {}  # PoolData()
-        self.Rooms = {}  # RoomInformation()
-        self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleInformation()
-        self.Security = {}  # SecurityData()
-        self._Commands = {}  # Module dependent
 
 
 class MqttActions:
@@ -155,7 +139,7 @@ class Config:
         """
         # LOG.deb('Loading Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             return None
         try:
@@ -167,30 +151,12 @@ class Config:
         self.m_pyhouse_obj.House.Name = l_house.Name
         return l_node  # for testing purposes
 
-# ----------
-
-    def _copy_to_yaml(self):
-        """
-        """
-        l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
-        l_config = l_node.Yaml['House']
-        self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['House'] = l_config
-        l_ret = {'House': l_config}
-        return l_ret
-
-    def save_yaml_config(self):
-        """
-        """
-        LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml()
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
-        return l_config
-
 
 class Utility:
     """
     """
 
+    m_config_tools = None
     m_module_needed = []
     m_pyhouse_obj = None
     m_debugging_skip = []
@@ -199,15 +165,16 @@ class Utility:
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
-    def find_all_configed_modules(self):
+    def _find_all_configed_modules(self):
         """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
         """
         for l_module in MODULES:
-            l_filename = l_module.lower() + '.yaml'
-            l_node = config_tools.Yaml.find_config_node(self, l_filename)
-            if l_node != None:
+            l_path = self.m_config_tools.find_config_file(l_module.lower())
+            if l_path != None:
                 self.m_module_needed.append(l_module)
+                LOG.debug('Found House config file "{}"'.format(l_path))
         # Add family - It is not configured but is derived from things configured.
         if 'Family' not in self.m_module_needed:
             self.m_module_needed.append('Family')
@@ -241,8 +208,15 @@ class Utility:
             l_house = self.m_pyhouse_obj._APIs.House
             setattr(l_house, l_api_name, l_api)
             # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
-        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+            # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
         LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
+
+    def _load_parts_config(self):
+        """
+        """
+        LOG.info('Loading parts config files')
+        for l_key in PARTS:
+            pass
 
     def _load_component_config(self):
         """ Load the config file for all the components of the house.
@@ -308,6 +282,7 @@ class API:
     """
     """
     m_config = None
+    m_config_tools = None
     m_location_api = None
     m_rooms_api = None
     m_utility = None
@@ -320,6 +295,7 @@ class API:
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
         self.m_utility = Utility(p_pyhouse_obj)
         #
         p_pyhouse_obj.House = HouseInformation()
@@ -330,14 +306,14 @@ class API:
         p_pyhouse_obj.House.Name = p_pyhouse_obj._Parameters.Name
         p_pyhouse_obj.House.Key = 0
         # p_pyhouse_obj.House.Active = True
-        p_pyhouse_obj.House.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
+        p_pyhouse_obj.House.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, CONFIG_NAME)
         p_pyhouse_obj.House.Comment = ''
         p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
         p_pyhouse_obj._APIs.House = HouseAPIs()
         p_pyhouse_obj._APIs.House.HouseAPI = self
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House', 190))
         #
-        self.m_utility.find_all_configed_modules()
+        self.m_utility._find_all_configed_modules()
         self.m_utility._import_all_found_modules()
 
         LOG.info("Initialized - Version:{}".format(__version__))
@@ -370,8 +346,8 @@ class API:
         # self.m_config.save_yaml_config()
         # self.m_location_api.SaveConfig()
         # self.m_floor_api.SaveConfig()
-        self.m_rooms_api.SaveConfig()
-        self.m_utility._save_component_apis()  # All the house submodules.
+        # self.m_rooms_api.SaveConfig()
+        # self.m_utility._save_component_apis()  # All the house submodules.
         LOG.info("Saved House Config.")
         return
 

@@ -18,7 +18,7 @@ serial_port
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -178,7 +178,7 @@ class API:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        p_pyhouse_obj.House._Commands['insteon'] = {}
+        # p_pyhouse_obj.House._Commands['insteon'] = {}
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Created an instance of Insteon_device.')
 

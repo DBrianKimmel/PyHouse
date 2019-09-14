@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-04'
+__updated__ = '2019-09-12'
 
 # Import system type stuff
 
@@ -21,7 +21,7 @@ from Modules.House.Security.camera import API as cameraApi
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
-CONFIG_FILE_NAME = 'security.yaml'
+CONFIG_NAME = 'security'
 # LOCATION = House.Security
 
 

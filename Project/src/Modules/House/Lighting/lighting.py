@@ -14,14 +14,14 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-09-05'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 from Modules.House.Lighting.buttons import API as buttonsApi
 from Modules.House.Lighting.controllers import API as controllersApi, MqttActions as controllerMqtt
 from Modules.House.Lighting.lights import API as lightsApi, MqttActions as lightMqtt
@@ -32,7 +32,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
-CONFIG_FILE_NAME = 'lighting.yaml'
+CONFIG_NAME = 'lighting'
 
 
 class LightingInformation:
@@ -107,7 +107,7 @@ class Config:
         """ Read the lighting.yaml file.
         It contains lighting data for the house.
         """
-        l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_NAME)
         return l_node  # for testing purposes
 
 # ----------
@@ -121,7 +121,7 @@ class Config:
         @return: the updated yaml ready information.
         """
         try:
-            l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+            l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
             l_config = l_node.Yaml['Lighting']
         except:
             l_node = config_tools.Yaml(p_pyhouse_obj).create_yaml_node('Lighting')
@@ -131,7 +131,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             setattr(l_config, l_key, l_val)
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Lighting'] = l_config
+        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Lighting'] = l_config
         l_ret = {'Lighting': l_config}
         return l_ret
 
@@ -139,7 +139,7 @@ class Config:
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        # config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        # config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_NAME, addnew=True)
         # return l_config
 
 
@@ -165,7 +165,7 @@ class API:
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
-        """ Load the Lighting xml info.
+        """ Load the Lighting config info.
         """
         LOG.info('Loading all Lighting config files.')
         Config().load_yaml_config(self.m_pyhouse_obj)

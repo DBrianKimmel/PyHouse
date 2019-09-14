@@ -17,7 +17,6 @@ from Modules.House.house import HouseInformation
 __updated__ = '2019-09-07'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
@@ -25,11 +24,10 @@ from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
-class SetupMixin(object):
+class SetupMixin:
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_xml = SetupPyHouseObj().BuildXml()
 
     def setUpObj(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
@@ -38,6 +36,7 @@ class SetupMixin(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_testing_mixin')
 
 
@@ -51,22 +50,15 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_BuildObjs(self):
         """ Be sure that the PyHouse obj is built correctly
         """
-        l_root = None
         l_obj = SetupPyHouseObj().BuildPyHouseObj()
         print(PrettyFormatAny.form(l_obj, 'A1-02-A - PyHouseObj', 90))
         self.assertIsInstance(l_obj, PyHouseInformation)
         self.assertIsInstance(l_obj.Computer, ComputerInformation)
         self.assertIsInstance(l_obj.House, HouseInformation)
 
-    def test_02_XML(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        pass
-
     def test_03_YAML(self):
         """ Be sure that the YAML contains the right stuff.
         """
-        l_root = None
         l_obj = SetupPyHouseObj().BuildPyHouseObj()
         # print(PrettyFormatAny.form(l_obj, 'A1-03-A - PyHouseObj', 90))
         print(PrettyFormatAny.form(l_obj._Config, 'A1-03-B - _Config', 90))
@@ -130,25 +122,12 @@ class C1_Build(SetupMixin, unittest.TestCase):
         self.m_api = SetupPyHouseObj()
 
     def test_01_Computer(self):
-        l_pyhouse = self.m_pyhouse_obj
-        l_config = self.m_api._build_computer(self.m_pyhouse_obj)
+        l_config = self.m_api._build_computer()
         # print(PrettyFormatAny.form(l_config, 'C1-01-A - Config'))
         # self.assertDictEqual(l_config.Email, {})
         # self.assertDictEqual(l_config.InternetConnection, {})
         # self.assertDictEqual(l_config.Nodes, {})
         # self.assertDictEqual(l_config.Web, {})
-        pass
-
-    def test_02_House(self):
-        l_obj = {}
-        l_config = self.m_api._build_house(l_obj)
-        # print(PrettyFormatAny.form(l_config, 'C1-02-A - Config'))
-        self.assertEqual(l_config.Key, 0)
-
-    def test_03_PyHouse(self):
-        l_root = None
-        l_config = self.m_api.BuildPyHouseObj()
-        # #print(PrettyFormatAny.form(l_root, 'C1-04-A - Root'))
         pass
 
 # ## END DBK

@@ -11,18 +11,17 @@ Passed all 13 tests - DBK - 2019-07-29
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2019-09-09'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing import location
-from Modules.Core.data_objects import PyHouseInformation, HouseInformation
-from Modules.Core.Utilities import config_tools
-from Modules.Housing.location import \
-    LocationInformationPrivate, \
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.house import HouseInformation
+from Modules.House import location
+from Modules.Core.data_objects import PyHouseInformation
+from Modules.House.location import \
     Api as locationApi, \
     Config as locationConfig
 
@@ -60,7 +59,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-01-C - Location', 190))
         self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
-        self.assertIsInstance(self.m_pyhouse_obj.House.Location, LocationInformationPrivate)
 
 
 class A3_SetupYaml(SetupMixin, unittest.TestCase):

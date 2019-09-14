@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,14 +35,14 @@ from datetime import datetime
 # from PIL import Image
 
 # Import PyMh files
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 from Modules.House.Family.family import Config as familyConfig
 from Modules.House.rooms import Config as roomConfig
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Camera         ')
 
-CONFIG_FILE_NAME = 'camera.yaml'
+CONFIG_NAME = 'camera'
 
 FRAME_INTERVAL = 1000  # mili-seconds
 MIN_PIXELS = 25
@@ -206,7 +206,7 @@ class Config:
         """
         LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Lighting.Buttons = None
             return None

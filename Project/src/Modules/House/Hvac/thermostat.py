@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-09-04'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 from Modules.House.rooms import Config as roomConfig
 from Modules.House.Family.family import Config as familyConfig
 
@@ -25,7 +25,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Thermostat    ')
 
-CONFIG_FILE_NAME = 'thermostat.yaml'
+CONFIG_NAME = 'thermostat'
 
 
 class ThermostatInformation:
@@ -86,7 +86,7 @@ class Config:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('"{}" is missing an entry for "{}"'.format(CONFIG_FILE_NAME, l_key))
+                LOG.warn('"{}" is missing an entry for "{}"'.format(CONFIG_NAME, l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
@@ -109,14 +109,14 @@ class Config:
         LOG.info('Loading _Config - Version:{}'.format(__version__))
         l_obj = None
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Hvac.Thermostats = l_obj
             return l_obj
         try:
             l_yaml = l_node.Yaml['Thermostat']
         except:
-            LOG.warn('The "{}" file does not start with "Thermostat"'.format(CONFIG_FILE_NAME))
+            LOG.warn('The "{}" file does not start with "Thermostat"'.format(CONFIG_NAME))
             self.m_pyhouse_obj.House.Hvac.Thermostats = None
             return None
         l_obj = self._extract_all_button_sets(l_yaml)

@@ -17,7 +17,7 @@
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2019-09-09'
 
 # Import system type stuff
 import datetime
@@ -103,7 +103,7 @@ class Utility(object):
                 p_pyhouse_obj.House.Location.Country,
                 p_pyhouse_obj.House.Location.Latitude,
                 p_pyhouse_obj.House.Location.Longitude,
-                p_pyhouse_obj.House.Location.TimeZoneName,
+                p_pyhouse_obj.House.Location.TimeZone,
                 p_pyhouse_obj.House.Location.Elevation
                 )
             )

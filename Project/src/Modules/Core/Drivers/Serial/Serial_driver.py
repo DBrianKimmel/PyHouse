@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -290,14 +290,14 @@ class API(SerialAPI):
         self.m_active = l_ret
         if l_ret:
             p_controller_obj.Interface._DriverApi = self
-            LOG.info('Started Serial controller "{}"'.format(self.m_controller_obj.Name))
+            LOG.info('Started Serial driver for controller "{}"'.format(self.m_controller_obj.Name))
         else:
-            LOG.error('ERROR - failed to start Serial controller "{}"'.format(self.m_controller_obj.Name))
+            LOG.error('ERROR - failed to start Serial Driver for  controller "{}"'.format(self.m_controller_obj.Name))
         return l_ret
 
     def Stop(self):
         self.close_device(self.m_controller_obj)
-        LOG.info('Stopped controller "{}"'.format(self.m_controller_obj.Name))
+        LOG.info('Stopped Sedrial Driver for controller "{}"'.format(self.m_controller_obj.Name))
 
     def Read(self):
         """

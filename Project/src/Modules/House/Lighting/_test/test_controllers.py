@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Lighting/_test/test_lighting_controllers.py
+@name:      Modules/House/Lighting/_test/test_lighting_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -7,24 +7,22 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 6 tests - DBK - 2019-07-20
+Passed all 7 tests - DBK - 2019-07-20
 """
 
-__updated__ = '2019-07-21'
+__updated__ = '2019-09-07'
 
 #  Import system type stuff
 from twisted.trial import unittest
-import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from _test.testing_mixin import SetupPyHouseObj
 
 # from Modules.Core.data_objects import ControllerInformation
 from Modules.Core.Utilities import config_tools
 from Modules.Core.Utilities.config_tools import Yaml as configYaml
-from Modules.Families.family import API as familyAPI
-from Modules.Housing.Lighting.lighting_controllers import \
+from Modules.House.Family.family import API as familyAPI
+from Modules.House.Lighting.controllers import \
     Config as controllerConfig, \
     CONFIG_FILE_NAME
 
@@ -34,8 +32,8 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 #  Import PyMh files and modules.
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_yaml = SetupPyHouseObj().BuildYaml(None)
         #
         self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
@@ -54,12 +52,17 @@ class A0(unittest.TestCase):
 class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
         self.assertEqual(self.m_pyhouse_obj.House.Irrigation, {})
+
+    def test_02_File(self):
+        """ Be sure that the XML contains the right stuff.
+        """
+        self.assertEqual(CONFIG_FILE_NAME, 'controllers.yaml')
 
 
 class C1_ConfigRead(SetupMixin, unittest.TestCase):
@@ -67,23 +70,19 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        # self.m_controllers = controllerXML().read_all_controllers_xml(self.m_pyhouse_obj)
-        # self.m_working_controllers = self.m_pyhouse_obj.House.Lighting.Controllers
+        SetupMixin.setUp(self)
 
     def test_01_Build(self):
         """ The basic read info as set up
         """
-        # print(PrettyFormatAny.form(self.m_working_controllers, 'C1-01-A - WorkingControllers'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-01-B - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'C1-01-C - Lighting'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Controllers, 'C1-01-C - Controllers'))
+        # print('C1-01')
         self.assertEqual(self.m_pyhouse_obj.House.Lighting.Controllers, None)
 
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        # print('C1-02')
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
         l_yaml = l_node.Yaml
         l_yamlcontrollers = l_yaml['Controllers']
         # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
@@ -93,16 +92,20 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
         self.assertEqual(len(l_yamlcontrollers), 3)
 
     def test_03_Load(self):
-        """ Read the rooms.yaml config file
+        """ Read the controller.yaml config file
         """
-        controllerConfig().load_yaml_config(self.m_pyhouse_obj)
+        # print('C1-03')
+        _l_ret = controllerConfig(self.m_pyhouse_obj).load_yaml_config()
+        # print(PrettyFormatAny.form(l_ret, 'C1-03-A - ret'))
         l_test = self.m_pyhouse_obj.House.Lighting.Controllers
-        # print(PrettyFormatAny.form(l_test, 'C1-03-A - Controllers'))
-        # print(PrettyFormatAny.form(l_test[0], 'C1-03-B - Controllers'))
-        # print(PrettyFormatAny.form(l_test[0].Family, 'C1-03-C - Controllers'))
+        # print(PrettyFormatAny.form(l_test, 'C1-03-B - Controllers'))
+        # print(PrettyFormatAny.form(l_test, 'C1-03-C - Controllers'))
+        # print(PrettyFormatAny.form(l_test.Family, 'C1-03-D - Controllers'))
         self.assertEqual(l_test[0].Name, 'Plm-1')
-        self.assertEqual(l_test[0].Comment, 'A comment')
-        self.assertEqual(l_test[0].Family.Name, 'Insteon')
+        self.assertEqual(l_test[1].Name, 'TestPlm')
+        self.assertEqual(l_test[2].Name, 'InsteonHub')
+        # self.assertEqual(l_test.Comment, 'A comment')
+        # self.assertEqual(l_test.Family.Name, 'Insteon')
 
 
 class C2_YamlWrite(SetupMixin, unittest.TestCase):
@@ -110,11 +113,12 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         # self.m_controllers = controllerXML().read_all_controllers_xml(self.m_pyhouse_obj)
 
     def test_01_CreateJson(self):
         """ Create a JSON object for Location.
         """
+        print('C2-01')
 
 #  ## END DBK

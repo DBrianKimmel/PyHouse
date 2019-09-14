@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-08-10'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,7 +21,8 @@ import platform
 import importlib
 
 #  Import PyHouse files
-from Modules.Core.Utilities import extract_tools, uuid_tools, config_tools
+from Modules.Core.Config import config_tools
+from Modules.Core.Utilities import extract_tools, uuid_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -29,11 +30,8 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Computer       ')
 
-COMPUTER_DIVISION = 'ComputerDivision'
-UUID_FILE_NAME = 'Computer.uuid'
-CONFIG_FILE_NAME = 'computer.yaml'
-
-MODULES = [
+CONFIG_NAME = 'computer'
+MODULES = [  # All modules for the computer must be listed here.  They will be loaded if configured.
     'Bridges',
     'Communication',
     'Internet',
@@ -41,6 +39,8 @@ MODULES = [
     'Pi',
     # 'Weather',
     'Web'
+    ]
+PARTS = [
     ]
 
 
@@ -79,11 +79,6 @@ class ComputerAPIs:
         # self.WeatherAPI = None
         # self.WebAPI = None
         # self.WebSocketAPI = None
-
-
-class UuidFile:
-    """
-    """
 
 
 class MqttActions:
@@ -130,10 +125,13 @@ class Config:
     """
     """
 
+    m_config_tools = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        # LOG.debug('Config - Progress')
 
     def _extract_computer_info(self, _p_config):
         """ The cpmputer.yamll file only contains module names to force load.
@@ -147,10 +145,14 @@ class Config:
         return l_modules  # For testing.
 
     def load_yaml_config(self):
-        """ Read the computer.yaml file.
+        """ Read the config file.
         """
+        LOG.debug('Starting ')
+        self.m_config_tools.find_config_file(CONFIG_NAME)
+
+        LOG.debug('New start of config loading...')
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             return None
         try:
@@ -170,6 +172,7 @@ class Utility:
     There are currently (2019) 8 components - be sure all are in every method.
     """
 
+    m_config_tools = None
     m_module_needed = ['Nodes']
     m_pyhouse_obj = None
 
@@ -177,17 +180,20 @@ class Utility:
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
-    def find_all_configed_modules(self):
-        """ Find all house modules that have a "module".yaml config file in /etc/pyhouse.
+    def _find_all_configed_modules(self):
+        """ Find all computer modules that have a "module".yaml config file in /etc/pyhouse.
         Build the m_module_needed list.
         """
+        # LOG.debug('Progress')
         for l_module in MODULES:
-            l_filename = l_module.lower() + '.yaml'
-            l_node = config_tools.Yaml.find_config_node(self, l_filename)
-            if l_node != None:
+            l_path = self.m_config_tools.find_config_file(l_module.lower())
+            if l_path != None:
                 self.m_module_needed.append(l_module)
+                LOG.debug('Found Computer config file "{}"'.format(l_path))
         LOG.info('Found config files for: {}'.format(self.m_module_needed))
+        return self.m_module_needed  # for debugging
 
     def _import_all_found_modules(self):
         """
@@ -257,6 +263,7 @@ class API:
     """
 
     m_config = None
+    m_config_tools = None
     m_pyhouse_obj = None
     m_utility = None
 
@@ -266,18 +273,19 @@ class API:
         LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
         self.m_utility = Utility(p_pyhouse_obj)
+
         # This overrides any config saved so we can start Logging and MQTT messages early on.
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Computer.Key = 0
-        # p_pyhouse_obj.Computer.Active = True
-        p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, UUID_FILE_NAME)
+        p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, CONFIG_NAME)
         p_pyhouse_obj.Computer.Comment = ''
         p_pyhouse_obj.Computer.LastUpdate = datetime.now()
         self.m_utility._init_component_apis(p_pyhouse_obj, self)
 
-        self.m_utility.find_all_configed_modules()
+        self.m_utility._find_all_configed_modules()
         self.m_utility._import_all_found_modules()
 
         LOG.info("Initialized - Version:{}".format(__version__))

@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-09-01'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 from Modules.House.rooms import Config as roomConfig
 from Modules.House.Family.family import Config as familyConfig
 
@@ -25,7 +25,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightingButton ')
 
-CONFIG_FILE_NAME = 'buttons.yaml'
+CONFIG_NAME = 'buttons'
 
 
 class ButtonInformation:
@@ -109,7 +109,7 @@ class Config:
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Lighting.Buttons = None
             return None

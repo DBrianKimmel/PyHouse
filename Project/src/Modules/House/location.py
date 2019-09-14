@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,16 +20,31 @@ __version__ = '.'.join(map(str, __version_info__))
 # from mypy.main import config_types
 
 #  Import PyMh files
-from Modules.Core.data_objects import RiseSetData
-from Modules.Core.Utilities import config_tools
-from Modules.House.house_data import LocationInformationPrivate, LocationInformation
+from Modules.Core.Config import config_tools
+from Modules.House.house_data import LocationInformation
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Location       ')
 
-CONFIG_FILE_NAME = 'location.yaml'
+CONFIG_NAME = 'location'
+REQUIRED_FIELDS = [
+    'Latitude',
+    'Longitude',
+    'Elevation',
+    'TimeZone'
+    ]
+ALLOWED_FIELDS = [
+    'Street',
+    'City',
+    'State',
+    'ZipCode',
+    'PostalCode',
+    'Phone',
+    'Telephone',
+    'Country'
+    ]
 
 
 class Config:
@@ -52,7 +67,7 @@ class Config:
         @param p_config: is the yaml fragment containing location information.
         @return: a LocattionInformation() obj filled in.
         """
-        l_required = ['Latitude', 'Longitude']
+        l_required = ['Latitude', 'Longitude', 'Elevation', 'TimeZone']
         l_obj = LocationInformation()
         for l_key, l_value in p_config.items():
             # print('Location Key:  {}'.format(l_key))
@@ -72,7 +87,7 @@ class Config:
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             LOG.error('Location config file is missing.')
             self.m_pyhouse_obj.House.Location = None
@@ -89,7 +104,7 @@ class Config:
 
 # ----------
 
-    def _copy_to_yaml(self, p_pyhouse_obj):
+    def XXX_copy_to_yaml(self, p_pyhouse_obj):
         """ Update the yaml information.
         The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
 
@@ -97,7 +112,7 @@ class Config:
 
         @return: the updated yaml ready information.
         """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
         l_config = l_node.Yaml['Location']
         # LOG.debug(PrettyFormatAny.form(l_config, 'Location', 190))
         l_working = p_pyhouse_obj.House.Location
@@ -105,18 +120,10 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             l_config[l_key] = l_val
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Location'] = l_config
+        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Location'] = l_config
         # LOG.debug(PrettyFormatAny.form(l_node, 'Updated', 190))
         l_ret = {'Location': l_config}
         return l_ret
-
-    def save_yaml_config(self):
-        """
-        """
-        # LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml(self.m_pyhouse_obj)
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
-        return l_config
 
 
 class Api:
@@ -131,7 +138,8 @@ class Api:
         """
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
-        p_pyhouse_obj.House.Location = LocationInformationPrivate()
+        self.m_config = Config(self.m_pyhouse_obj)
+        p_pyhouse_obj.House.Location = LocationInformation()
 
     def LoadConfig(self):
         """ Load the Yaml config file into the system.
@@ -144,6 +152,6 @@ class Api:
         """ Take a snapshot of the running system and save it in Yaml to be loaded on restart.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_config.save_yaml_config()
+        # self.m_config.save_yaml_config()
 
 #  ## END DBK

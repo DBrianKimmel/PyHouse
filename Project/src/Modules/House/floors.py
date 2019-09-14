@@ -9,23 +9,22 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Core.Config import config_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Core.Utilities import \
-    extract_tools, \
-    config_tools
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.data_objects import BaseObject
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Floors         ')
 
-CONFIG_FILE_NAME = 'floors.yaml'
+CONFIG_NAME = 'floors'
 
 
 class FloorsInformation:
@@ -97,7 +96,7 @@ class Config:
         """ Read the floors.yaml file.
         """
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Floors = None
             return None
@@ -116,7 +115,7 @@ class Config:
     def _copy_floors_to_yaml(self):
         """ Prepare floors to export to yaml config file
         """
-        l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
         l_config = l_node.Yaml['Floors']
         l_working = self.m_pyhouse_obj.House.Floors
         try:
@@ -125,7 +124,7 @@ class Config:
                 l_config[l_key] = l_val
         except Exception as e_err:
             LOG.error('Error - Key: {}; Val: {}; Err: {}'.format(l_key, l_val, e_err))
-        self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Floors'] = l_config
+        self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Floors'] = l_config
         l_ret = {'Floors': l_config}
         return l_ret
 
@@ -134,7 +133,7 @@ class Config:
         """
         # LOG.debug('Saving Config - Version:{}'.format(__version__))
         l_yaml = self._copy_floors_to_yaml()
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_yaml, CONFIG_FILE_NAME, addnew=True)
+        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_yaml, CONFIG_NAME, addnew=True)
 
 
 class Mqtt:
@@ -155,7 +154,7 @@ class Mqtt:
         elif p_topic[1] == 'update':
             p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Floors msg', 160))
         return p_logmsg
 
     def dispatch(self, p_topic, p_message):

@@ -10,21 +10,21 @@
 Passed all 18 tests - DBK 2019-06-2
 
 """
-__updated__ = '2019-07-29'
+
+__updated__ = '2019-09-07'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from datetime import datetime
 
 # Import PyMh files
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.rooms import \
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import PyHouseInformation
+from Modules.Core.Utilities import config_tools
+from Modules.House.house import HouseInformation
+from Modules.House.rooms import \
     Api as roomsApi, \
     Config as roomsConfig
-from Modules.Core.data_objects import HouseInformation, PyHouseInformation
-from Modules.Core.Utilities import config_tools
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -49,7 +49,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly.
@@ -62,68 +62,12 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(self.m_pyhouse_obj.House.Rooms.Room, {})
 
 
-class A2_XML(SetupMixin, unittest.TestCase):
-    """ Now we _test that the xml_xxxxx have set up the XML_LONG tree properly.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_HouseDiv(self):
-        """ Test
-        """
-        l_xml = self.m_xml.house_div
-
-
-class B1_XmlRead(SetupMixin, unittest.TestCase):
-    """ Test that we read in the Test XML config properly.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_OneRoom(self):
-        """ Read the xml and fill in the first room's dict
-        """
-        l_xml = roomsXml().LoadXmlConfig(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'B1-01-A - Room Xml'))
-        _l_room = l_xml[0]
-        # print(PrettyFormatAny.form(_l_room, 'B1-01-B - Room Xml'))
-
-    def test_02_AllRooms(self):
-        """ Read the xml and fill in the first room's dict
-        """
-        l_rooms = roomsXml().LoadXmlConfig(self.m_pyhouse_obj)
-        # print(json_tools.encode_json(l_rooms[0]))
-        # print(PrettyFormatAny.form(l_rooms, 'B1-2-A - All Rooms'))
-        # print(PrettyFormatAny.form(l_rooms[0], 'B1-2-A - All Rooms'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-2-b - PyHouse_Obj'))
-        self.assertEqual(len(l_rooms), 4)
-        # print(l_rooms[0].Name)
-
-
-class B2_XMLWrite(SetupMixin, unittest.TestCase):
-    """ Test that we write out the XML config properly.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_OneRoom(self):
-        """ Write out the XML file for the location section
-        """
-        l_filename = 'rooms.yaml'
-        _l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(l_filename)
-        _l_xml = self.m_xml.room
-        # print(PrettyFormatAny.form(_l_node, 'B2-01-A - Room Xml'))
-
-
 class C1_YamlRead(SetupMixin, unittest.TestCase):
     """ Read the YAML config files.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_yaml = roomsConfig()
         self.m_working_rooms = self.m_pyhouse_obj.House.Rooms
 
@@ -189,8 +133,8 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_yaml = roomscinfig()
+        SetupMixin.setUp(self)
+        self.m_yaml = roomsConfig()
         self.m_rooms = self.m_yaml.load_yaml_config(self.m_pyhouse_obj)
         self.m_working_rooms = self.m_pyhouse_obj.House.Rooms
 
@@ -227,7 +171,7 @@ class D1_Maint(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def _print(self, p_rooms):
         # for l_obj in p_rooms.values():
@@ -245,7 +189,7 @@ class D1_Maint(SetupMixin, unittest.TestCase):
 class F1_Match(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_ByName(self):
         """ Create a JSON object for Rooms.
@@ -259,7 +203,7 @@ class F1_Match(SetupMixin, unittest.TestCase):
 class Y1_Yaml(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_ByName(self):
         """ Create a JSON object for Rooms.

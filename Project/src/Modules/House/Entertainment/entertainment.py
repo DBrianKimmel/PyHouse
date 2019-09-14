@@ -24,67 +24,26 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-08-30'
-__version_info__ = (18, 10, 2)
+__updated__ = '2019-09-14'
+__version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 import importlib
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import config_tools
-from Modules.House.Entertainment.entertainment_data import \
-        EntertainmentDeviceControl
+from Modules.Core.Config import config_tools
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentPluginInformation, EntertainmentInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Entertainment.pandora.pandora import PandoraServiceInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
 
-CONFIG_FILE_NAME = 'entertainment.yaml'
+CONFIG_NAME = 'entertainment'
 
 
-class EntertainmentInformation():
-    """
-    This is the PyHouse.House.Entertainment node of the master object.
-    It is a dynamic structure for the various entertainment devices in a house.
-
-    Top level
-
-    ==> PyHouse.House.Entertainment.xxx as in the def below.
-    """
-
-    def __init__(self):
-        self.PluginCount = 0
-        # Plugins are indexed by the entertainment-family name (always lower cased).
-        self.Plugins = {}  # EntertainmentPluginInformation()
-
-
-class EntertainmentPluginInformation():
-    """ This is filled in for every xxxSection under the Entertainment entry of the config file
-
-    ==> PyHouse.House.Entertainment.Plugins[PluginName].xxx
-    The family is the PluginName - onkyo, pandora, etc. - Always lower case.
-
-    Valid Types:
-        Service is a provided service such as Pandora, Netflix, Hulu, etc.
-        Device is a Component such as a TV, DVD Player, A/V Receiver, etc.
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Type = 'Missing Type'  # Service: Component (a device):
-        # Devices are indexed by the device number 0..x
-        self.DeviceCount = 0
-        self.Devices = {}  # EntertainmentDeviceInformation()
-        # Services are indexed by the service number 0..x
-        self.ServiceCount = 0
-        self.Services = {}  # EntertainmentServiceInformation()
-        self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
-        self._Module = None
-        self._OpenSessions = 0
-
-
-class MqttActions():
+class MqttActions:
     """ Mqtt section
     """
 
@@ -111,15 +70,16 @@ class MqttActions():
             l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
         except:
             l_msg = 'The entertainment module {} does not exist, skipping'.format(l_module)
-            # LOG.info(l_msg)
+            LOG.warn(l_msg)
             return l_msg
         try:
+            LOG.debug(PrettyFormatAny.form(l_module_obj, 'Entertain Module'))
             l_module_api = l_module_obj._API
             p_logmsg += l_module_api.decode(p_topic[1:], p_message)
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
             p_logmsg += 'Module {} not defined {}'.format(l_module, e_err)
-            LOG.error('Error in calling decode {}'.format(e_err))
+            LOG.error('Error in calling decode {}\n\tTopic: {}\n\tMessage: {}'.format(e_err, p_topic, p_message))
         return p_logmsg
 
 
@@ -127,6 +87,7 @@ class Config:
     """
     """
 
+    m_modules_needed = []
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
@@ -139,11 +100,14 @@ class Config:
         Load the modules and their configs.
         """
         for l_name, l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.items():
+            LOG.debug('Loading Plugin "{}"'.format(l_name))
             l_plugin_name = 'Modules.House.Entertainment.' + l_name + '.' + l_name
+            LOG.debug('Importing Plugin Module "{}"'.format(l_plugin_name))
             l_module = importlib.import_module(l_plugin_name)
             l_plugin._Module = l_module
             # Initialize Plugin
             l_plugin._API = l_module.API(self.m_pyhouse_obj)
+            LOG.debug(PrettyFormatAny.form(l_plugin, 'Plugin'))
             l_plugin._API.LoadConfig()
             LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
 
@@ -151,31 +115,38 @@ class Config:
         """ Get all service loaded
         """
         # LOG.debug('Services:\n\t{}'.format(p_yaml))
+        l_count = 0
         for l_service in p_yaml:
-            # LOG.debug('Key:\n\t{}'.format(l_service))
             l_obj = EntertainmentPluginInformation()
             l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_service)
-            l_ix = l_name.lower()
+            l_name_lower = l_name.lower()
+            LOG.debug('Key: {}'.format(l_name))
+            self.m_modules_needed.append(l_name_lower)
             l_obj.Name = l_name
             l_obj.Type = 'Service'
-            p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
-            p_pyhouse_obj.House.Entertainment.PluginCount += 1
-        # LOG.debug('Services: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment)))
+            self.m_pyhouse_obj.House.Entertainment.Plugins[l_name_lower] = l_obj
+            self.m_pyhouse_obj.House.Entertainment.PluginCount += 1
+            # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
+            # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
+            l_count += 1
         return l_obj
 
     def _extract_devices(self, p_pyhouse_obj, p_yaml):
         """ Get all devices loaded.
         """
         # LOG.debug('Devices:\n\t{}'.format(p_yaml))
+        l_count = 0
         for l_device in p_yaml:
-            # LOG.debug('Key:\n\t{}'.format(l_device))
             l_obj = EntertainmentPluginInformation()
             l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_device)
-            l_ix = l_name.lower()
+            l_name_lower = l_name.lower()
+            LOG.debug('Key: {}'.format(l_name))
+            self.m_modules_needed.append(l_name_lower)
             l_obj.Name = l_name
             l_obj.Type = 'Device'
-            p_pyhouse_obj.House.Entertainment.Plugins[l_ix] = l_obj
-            p_pyhouse_obj.House.Entertainment.PluginCount += 1
+            self.m_pyhouse_obj.House.Entertainment.Plugins[l_name_lower] = l_obj
+            self.m_pyhouse_obj.House.Entertainment.PluginCount += 1
+            l_count += 1
         # LOG.debug('Devices: {}'.format(PrettyFormatAny.form(p_pyhouse_obj.House.Entertainment)))
         return l_obj
 
@@ -184,11 +155,14 @@ class Config:
         This iterates thru the entertainment config file and finds the names of all components that we will need to load as plugins.
         """
         # Extract all the services (if any).
+        l_entertain = EntertainmentInformation()
+        # self.m_pyhouse_obj.House.Entertainment = l_entertain
         try:
             l_services = p_config['Services']
             self._extract_services(self.m_pyhouse_obj, l_services)
         except Exception as e_err:
             LOG.warn('There is no "Services" section in the entertainment.yaml file!\n\t{}'.format(e_err))
+
         # Extract all the devices.
         try:
             l_devices = p_config['Devices']
@@ -196,17 +170,20 @@ class Config:
         except Exception as e_err:
             LOG.warn('There is no "Devices" section in the entertainment.yaml file\n\t{}'.format(e_err))
         #
-        # LOG.debug('Plugins Requested: {}'.format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins)))
+        LOG.debug('Plugins Requested: {}'.format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins)))
+        return l_entertain
 
     def load_yaml_config(self):
         """ Read the Entertainment.Yaml file.
-        This config file will contain all the service and device names to load.
+        This config file will contain the names of all the service and device names to load.
+        It does not contail any information about the services or devices.
+
+        Here we gather the information about which plugins we will load.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Entertinment = None
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
-            self.m_pyhouse_obj.House.Entertinment = None
             return None
         try:
             l_yaml = l_node.Yaml['Entertainment']
@@ -214,23 +191,10 @@ class Config:
             LOG.warn('The entertainment.yaml file does not start with "Entertainment:"')
             self.m_pyhouse_obj.House.Entertinment = None
             return None
+        self.m_pyhouse_obj.House.Entertinment = EntertainmentInformation()
         l_entertain = self._extract_all_entertainment(l_yaml)
         self.load_defined_plugins()
         return l_entertain  # for testing purposes
-
-# ----------
-
-    def _copy_to_yaml(self):
-        """
-        """
-
-    def save_yaml_config(self):
-        """
-        """
-        LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml()
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
-        return l_config
 
 
 class API:
@@ -257,26 +221,59 @@ class API:
         """
         LOG.info("Config Loading - Version:{}".format(__version__))
         self.m_config.load_yaml_config()
-        return
+
+    def _service_start(self, p_service):
+        """
+        """
+        LOG.debug('Service {}'.format(p_service.Name))
+        LOG.debug(PrettyFormatAny.form(p_service, 'Service'))
+        l_topic = 'house/entertainment/{}/status'.format(p_service)
+        l_obj = PandoraServiceInformation()
+        l_obj.Model = p_service.Name
+        l_obj.HostName = self.m_pyhouse_obj.Computer.Name
+        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+
+    def _device_start(self, p_device):
+        """
+        """
+        LOG.debug('Sevice {}'.format(p_device.Name))
+        LOG.debug(PrettyFormatAny.form(p_device, 'Device'))
+        l_topic = 'house/entertainment/{}/status'.format(p_device.Name)
+        l_obj = EntertainmentDeviceControl()
+        l_obj.Model = p_device.Name
+        l_obj.HostName = self.m_pyhouse_obj.Computer.Name
+        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _module_start_loop(self, p_plugin):
         """
         """
         l_name = p_plugin.Name
         # Start Plugin
-        p_plugin._API.Start()
-        l_topic = 'house/entertainment/{}/status'.format(l_name)
-        l_obj = EntertainmentDeviceControl()
-        l_obj.Model = l_name
-        l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
+        LOG.debug('Starting {}'.format(l_name))
+        LOG.debug(PrettyFormatAny.form(p_plugin, 'Plugin'))
+        if p_plugin.ServiceCount > 0:
+            for l_service in p_plugin.Services.values():
+                self._service_start(l_service)
+        if p_plugin.DeviceCount > 0:
+            for l_device in p_plugin.Devices.values():
+                self._device_start(l_device)
+
+        # p_plugin._API.Start()
+        # l_topic = 'house/entertainment/{}/status'.format(p_device.Name)
+        # l_obj = EntertainmentDeviceControl()
+        # l_obj.Model = l_name
+        # l_obj.HostName = self.m_pyhouse_obj.Computer.Name
+        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
         # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def Start(self):
         LOG.info("Starting - Version:{}".format(__version__))
         l_count = 0
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins', 190))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
         for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
+            # LOG.debug('Starting "{}"'.format(l_plugin.Name))
             self._module_start_loop(l_plugin)
             l_count += 1
         LOG.info("Started {} plugin(s)- Version:{}".format(l_count, __version__))

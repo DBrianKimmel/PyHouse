@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-26'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,7 @@ import platform
 from Modules.Core.data_objects import NodeInformation, HostInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
@@ -32,7 +32,7 @@ from Modules.Computer.computer import MqttActions as computerMqtt
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
-CONFIG_FILE_NAME = 'mqtt.yaml'
+CONFIG_NAME = 'mqtt'
 
 
 class MqttInformation:
@@ -163,10 +163,10 @@ class Config:
     def load_yaml_config(self, p_api):
         """ Read the Mqtt.Yaml file.
         """
-        # LOG.info('Reading mqtt config file "{}".'.format(CONFIG_FILE_NAME))
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        LOG.info('Reading mqtt config file "{}".'.format(CONFIG_NAME))
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         if l_node == None:
-            LOG.error('Mossing {}'.format(CONFIG_FILE_NAME))
+            LOG.error('Missing {}'.format(CONFIG_NAME))
             return None
         l_yaml = l_node.Yaml
         l_obj = MqttInformation()

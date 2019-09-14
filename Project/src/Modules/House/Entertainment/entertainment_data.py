@@ -9,12 +9,53 @@
 
 """
 
-__updated__ = '2019-08-30'
+__updated__ = '2019-09-14'
 
 # Import system type stuff
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import BaseObject
+
+
+class EntertainmentInformation:
+    """
+    This is the PyHouse.House.Entertainment node of the master object.
+    It is a dynamic structure for the various entertainment devices in a house.
+
+    Top level
+
+    ==> PyHouse.House.Entertainment.xxx as in the def below.
+    """
+
+    def __init__(self):
+        self.PluginCount = 0
+        # Plugins are indexed by the entertainment-family name (always lower cased).
+        self.Plugins = {}  # EntertainmentPluginInformation()
+
+
+class EntertainmentPluginInformation:
+    """ This is filled in for every xxxSection under the Entertainment entry of the config file
+
+    ==> PyHouse.House.Entertainment.Plugins[PluginName].xxx
+    The family is the PluginName - onkyo, pandora, etc. - Always lower case.
+
+    Valid Types:
+        Service is a provided service such as Pandora, Netflix, Hulu, etc.
+        Device is a Component such as a TV, DVD Player, A/V Receiver, etc.
+    """
+
+    def __init__(self):
+        self.Name = None  # Name of the plugin
+        self.Type = 'Missing Type'  # Service: Component (a device):
+        # Devices are indexed by the device number 0..x
+        self.DeviceCount = 0
+        self.Devices = {}  # EntertainmentDeviceInformation()
+        # Services are indexed by the service number 0..x
+        self.ServiceCount = 0
+        self.Services = {}  # EntertainmentServiceInformation()
+        self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
+        self._Module = None
+        self._OpenSessions = 0
 
 
 class EntertainmentDeviceInformation(BaseObject):

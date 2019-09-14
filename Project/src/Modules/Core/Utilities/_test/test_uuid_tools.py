@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-12
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-09-10'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -99,7 +99,7 @@ class B1_Defs(SetupMixin, unittest.TestCase):
         self.assertEqual(l_file, '/etc/pyhouse/Computer.uuid')
 
     def test_02_Uuid(self):
-        l_uuid = uuid_tools.get_uuid_file(self.m_pyhouse_obj, 'Computer.uuid')
+        l_uuid = uuid_tools.get_uuid_file(self.m_pyhouse_obj, 'Computer')
         print('B1-02-A - UUID:{}'.format(l_uuid))
         self.assertEqual(len(l_uuid), 36)
         self.assertEqual(l_uuid[8:9], '-')

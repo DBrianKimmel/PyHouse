@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-09-10'
 
 #  Import system type stuff
 import os
@@ -33,7 +33,7 @@ def _file_name(p_pyhouse_obj, p_file_name):
 def get_uuid_file(p_pyhouse_obj, p_file_name):
     """ get the uuid for the file if it exists OR create the file with a persistent UUID if needed.
     """
-    l_file_name = _file_name(p_pyhouse_obj, p_file_name)
+    l_file_name = _file_name(p_pyhouse_obj, p_file_name + '.uuid')
     try:
         l_file = open(l_file_name, mode='r')
         l_uuid = l_file.read()

@@ -32,7 +32,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-09-06'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -45,7 +45,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Family         ')
 
-CONFIG_FILE_NAME = 'families.yaml'
+CONFIG_NAME = 'families'
 
 
 class FamilyModuleInformation:
@@ -96,6 +96,7 @@ class Utility:
             l_msg = 'ERROR importing family:{};  Module:{}\n\tErr:{}.'.format(p_family_obj.Name, p_module_name, e_err)
             LOG.error(l_msg)
             l_ret = None
+        LOG.debug('Imported "{}"'.format(p_module_name))
         return l_ret
 
     def _create_api_instance(self, p_pyhouse_obj, p_module_name, p_module_ref):

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-01'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,10 +17,11 @@ __version__ = '.'.join(map(str, __version_info__))
 import datetime
 
 #  Import PyMh files
-from Modules.Core.Utilities import extract_tools, config_tools
+from Modules.Core.Config import config_tools
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.coordinate_tools import Coords
 from Modules.Core.Utilities.json_tools import encode_json
-from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
+from Modules.Core.Config.config_tools import ConfigYamlNodeInformation
 from Modules.House.house_data import \
     RoomInformation, \
     RoomsInformationPrivate
@@ -30,7 +31,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 
-CONFIG_FILE_NAME = 'rooms.yaml'
+CONFIG_NAME = 'rooms'
 
 
 class RoomInformation:
@@ -87,7 +88,7 @@ class Config:
             try:
                 _l_x = getattr(l_obj, l_key)
             except AttributeError:
-                LOG.warn('rooms.yaml contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_value))
+                LOG.warn('rooms config file contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_value))
                 continue
             setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
@@ -116,14 +117,14 @@ class Config:
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Rooms = None
             return None
         try:
             l_yaml = l_node.Yaml['Rooms']
         except:
-            LOG.warn('The rooms.yaml file does not start with "Rooms:"')
+            LOG.warn('The rooms config file does not start with "Rooms:"')
             self.m_pyhouse_obj.House.Rooms = None
             return None
         l_rooms = self._extract_all_rooms(l_yaml)
@@ -140,13 +141,13 @@ class Config:
 
         @return: the updated yaml ready information.
         """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
         l_config = l_node.Yaml['Rooms']
         l_working = p_pyhouse_obj.House.Rooms
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             setattr(l_config, l_key, l_val)
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
+        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Rooms'] = l_config
         l_ret = {'Rooms': l_config}
         return l_ret
 
@@ -155,7 +156,7 @@ class Config:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         l_config = self._copy_to_yaml(self.m_pyhouse_obj)
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_NAME, addnew=True)
         return l_config
 
 
@@ -299,7 +300,7 @@ class Api:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
         p_pyhouse_obj.House.Rooms = RoomsInformationPrivate()
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME] = ConfigYamlNodeInformation()
+        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME] = ConfigYamlNodeInformation()
 
     def LoadConfig(self):
         """

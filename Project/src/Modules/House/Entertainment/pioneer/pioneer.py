@@ -18,8 +18,9 @@ Listen to Mqtt message to control device
     <value> = on, off, 0-100, zone#, input#
 
 """
+from Modules.Core.Config import config_tools
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-09-14'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,7 +32,7 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 from queue import Queue
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import extract_tools, config_tools
+from Modules.Core.Utilities import extract_tools
 from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceStatus
 from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
 
@@ -42,7 +43,7 @@ LOG = Logger.getLogger('PyHouse.Pioneer        ')
 
 SECTION = 'pioneer'
 DISCONNECT_TIMER = 30  # Seconds
-CONFIG_FILE_NAME = 'pioneer.yaml'
+CONFIG_NAME = 'pioneer'
 
 # See https://tylerwatt12.com/vsx-822k-telnet-interface/
 CONTROL_COMMANDS = {
@@ -229,12 +230,13 @@ class Config:
             l_dict[l_ix] = l_device
         return l_dict
 
-    def _extract_all_pioneer(self, p_config):
+    def _extract_all_pioneer(self, p_config, p_api):
         """
         """
         # self.dump_struct()
         l_required = ['Name']
         l_obj = PioneerPluginInformation()
+        l_obj._API = p_api
         l_old = self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer']
         l_obj._API = l_old._API
         l_obj._Module = l_old._Module
@@ -251,12 +253,12 @@ class Config:
                 LOG.warn('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
-    def load_yaml_config(self):
+    def load_yaml_config(self, p_api):
         """ Read the pioneer.yaml file.
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             return None
         try:
@@ -264,7 +266,7 @@ class Config:
         except:
             LOG.warn('The pioneer.yaml file does not start with "Pioneer:"')
             return None
-        l_pioneer = self._extract_all_pioneer(l_yaml)
+        l_pioneer = self._extract_all_pioneer(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_pioneer
         # self.dump_struct()
         return l_pioneer  # for testing purposes
@@ -517,7 +519,7 @@ class API(MqttActions, PioneerClient):
     def LoadConfig(self):
         """ Read the XML for all Pioneer devices.
         """
-        self.m_config.load_yaml_config()
+        self.m_config.load_yaml_config(self)
         LOG.info("Loaded Pioneer Device(s) - Version:{}".format(__version__))
 
     def Start(self):

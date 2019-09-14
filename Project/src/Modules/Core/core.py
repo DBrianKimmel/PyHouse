@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-09-06'
+__updated__ = '2019-09-13'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,7 +33,8 @@ from twisted.internet import reactor
 #  Import PyMh files and modules.
 # These 3 must be the first so logging is running as the rest of PyHouse starts up.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import ConfigInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
     PyHouseAPIs, \
@@ -43,9 +44,6 @@ from Modules.Core.data_objects import \
     TwistedInformation, \
     UuidData
 from Modules.Core.Mqtt.mqtt import API as mqttAPI, MqttInformation
-from Modules.Core.Utilities.config_tools import \
-    API as configAPI, \
-    ConfigInformation
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 from Modules.Computer.computer import API as computerAPI, ComputerInformation
 from Modules.House.house import API as houseAPI, HouseInformation
@@ -60,8 +58,7 @@ HOURS = 60 * MINUTES
 INITIAL_DELAY = 1 * MINUTES
 XML_SAVE_DELAY = 3 * HOURS  # 2 hours
 CONFIG_DIR = '/etc/pyhouse/'
-XML_FILE_NAME = 'master.xml'
-CONFIG_FILE_NAME = 'pyhouse.yaml'
+CONFIG_NAME = 'pyhouse'
 MIN_CONFIG_VERSION = 2.0
 
 
@@ -120,12 +117,12 @@ class Utility:
     def _extract_pyhouse_info(self, p_config):
         """
         """
-        l_required = ['Name', 'Computer', 'UnitSystem', 'ConfigVersion']
+        l_required = ['name', 'computer', 'units', 'version']
         l_obj = ParameterInformation()
         for l_key, l_value in p_config.items():
-            if l_key == 'UnitSystem':
+            if l_key == 'units':
                 l_value = l_value.lower()
-            elif l_key == 'ConfigVersion':
+            elif l_key == 'version':
                 if l_value < MIN_CONFIG_VERSION:
                     LOG.warn('Configuration version is too low.  Some things may have changed.')
             setattr(l_obj, l_key, l_value)
@@ -138,14 +135,14 @@ class Utility:
         """ Read the computer.yaml file.
         """
         try:
-            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             LOG.error('The main config file (pyhouse.yaml) is missing!')
             return None
         try:
-            l_yaml = l_node.Yaml['PyHouse']
+            l_yaml = l_node.Yaml['pyhouse']
         except:
-            LOG.warn('The pyhouse.yaml file does not start with "PyHouse:"')
+            LOG.warn('The pyhouse.yaml file does not start with "pyhouse:"')
             return None
         l_parameter = self._extract_pyhouse_info(l_yaml)
         p_pyhouse_obj._Parameters = l_parameter
@@ -182,6 +179,7 @@ class Utility:
 
     def _setup_Config(self):
         """
+        ==> PyHouseObj._Config.
         """
         l_obj = ConfigInformation()
         if l_obj.ConfigDir is None:
@@ -302,7 +300,7 @@ class API(Utility):
         The Yaml config is broken down into many smaller files and written by each component.
         """
         LOG.info('\n======================== Saving Config Files ========================\n')
-        configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
+        # configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.SaveConfig()
         self.m_pyhouse_obj._APIs.House.HouseAPI.SaveConfig()
         LOG.info("\n======================== Saved Config Files ==========================\n")

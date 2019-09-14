@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-09-05'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,7 +47,8 @@ import datetime
 import aniso8601
 
 #  Import PyMh files
-from Modules.Core.Utilities import convert, extract_tools, config_tools
+from Modules.Core.Config import config_tools
+from Modules.Core.Utilities import convert, extract_tools
 from Modules.House.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.House.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.House.Lighting.lighting import ScheduleLightingInformation
@@ -68,7 +69,7 @@ SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
-CONFIG_FILE_NAME = 'schedule.yaml'
+CONFIG_NAME = 'schedule'
 
 
 class ScheduleInformation:
@@ -603,7 +604,7 @@ class Config:
         """
         self.m_pyhouse_obj.House.Schedules = None
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             return None
         try:

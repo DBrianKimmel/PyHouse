@@ -17,17 +17,18 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-09-05'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyHouse files
+from Modules.Core.Config import config_tools
 from Modules.Core.data_objects import CoreLightingData
 from Modules.House.Family.family import Config as familyConfig
 from Modules.House.Family.family_utils import FamUtil
-from Modules.Core.Utilities import extract_tools, config_tools
+from Modules.Core.Utilities import extract_tools
 from Modules.House.Lighting.utility import Utility as lightingUtility
 from Modules.House.rooms import Config as roomConfig
 from Modules.Core.state import State
@@ -36,7 +37,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny, PrettyFormatObje
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightingLights ')
 
-CONFIG_FILE_NAME = 'lights.yaml'
+CONFIG_NAME = 'lights'
 
 
 class LightInformation:
@@ -170,7 +171,7 @@ class Config:
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Lighting.Lights = None
             return None
@@ -220,12 +221,12 @@ class Config:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         try:
-            l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+            l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
             l_config = l_node.Yaml['Lights']
         except Exception as e_err:
             LOG.info('No Lights yaml file - creating a new file - {}'.format(e_err))
             l_node = config_tools.Yaml(self.m_pyhouse_obj).create_yaml_node('Lights')
-            self.m_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME] = l_node
+            self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME] = l_node
             l_config = l_node.Yaml['Lights']
         # l_config = self._save_all_lights(l_config)
         # config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)

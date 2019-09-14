@@ -1,5 +1,5 @@
 """
-@name:      Modules/Core/Utilities/config_tools.py
+@name:      Modules/Core/Config/config_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -9,27 +9,28 @@
 
 """
 
-__updated__ = '2019-08-27'
-__version_info__ = (19, 6, 0)
+__updated__ = '2019-09-14'
+__version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import os
-from xml.etree import ElementTree as ET
 from ruamel.yaml import YAML
+from ruamel.yaml.compat import StringIO
 # from ruamel.yaml.comments import CommentedSeq as cs
 # from ruamel.yaml.comments import TaggedScalar as ts
 # from ruamel.yaml.scalarstring import SingleQuotedScalarString as sq
 # from ruamel.yaml.comments import CommentedMap as ordereddict
 
 #  Import PyMh files
-from Modules.Core.Utilities.xml_tools import PutGetXML
 from Modules.Core.data_objects import HostInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
+
+CONFIG_SUFFIX = '.yaml'
 
 
 class ConfigInformation:
@@ -39,9 +40,7 @@ class ConfigInformation:
     """
 
     def __init__(self):
-        self.ConfigDir = None
-        # self.XmlRoot = None
-        # self.XmlTree = None
+        self.ConfigDir = '/etc/pyhouse'  # This could be overwritten in some future version
         self.YamlFileName = None
         self.YamlTree = {}  # ConfigYamlNodeInformation()
 
@@ -68,9 +67,75 @@ class SecurityInformation:
         self.AccessKey = None
 
 
+class MyYAML(YAML):
+
+    def dump(self, data, stream=None, **kw):
+        inefficient = False
+        if stream is None:
+            inefficient = True
+            stream = StringIO()
+        YAML.dump(self, data, stream, **kw)
+        if inefficient:
+            return stream.getvalue()
+
+
+yaml = MyYAML()  # or typ='safe'/'unsafe' etc
+
+
 class Tools:
     """
     """
+
+    m_pyhouse_obj = None
+
+    def XXX__init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _get_config_dir(self):
+        """
+        @return: The configuration Directory ('/etc/pyhouse' is the default)
+        """
+        return self.m_pyhouse_obj._Config.ConfigDir
+
+    def _find_file(self, p_name, p_dir):
+        """
+        @param p_name: is the file to find
+        @param p_dir: is the dir tree to search for the file
+        @return: the entire path of the file or None if not found.
+        """
+        # LOG.debug('Finding file:"{}" In dir:"{}"'.format(p_name, p_dir))
+        # print('Looking for:{}; in Dir:{}'.format(p_name, p_dir))
+        for l_root, _l_dirs, l_files in os.walk(p_dir):
+            # print('Root:{}; Dirs:{}; Files:{}'.format(l_root, _l_dirs, l_files))
+            if p_name in l_files:
+                l_path = os.path.join(l_root, p_name)
+                return l_path
+        LOG.warn('Not Found "{}"'.format(p_name))
+        return None
+
+    def find_config_file(self, p_name):
+        """ Given a name like 'computer' or 'Computer', find any config file 'computer.yaml'.
+        """
+        # LOG.debug('Finding Config file:"{}"'.format(p_name))
+        l_filename = p_name + CONFIG_SUFFIX
+        l_ret = self._find_file(l_filename, self._get_config_dir())
+        return l_ret
+
+    def load_module_config(self, p_list):
+        """ Config a module
+        @param p_list: is a list of module names.
+        """
+        LOG.debug('Finding Modules:"{}"'.format(p_list))
+        l_node = ConfigYamlNodeInformation()
+        for l_key in p_list:
+            l_filename = l_key.capitalize() + '.yaml'
+            l_node.FileName = l_filename
+            for l_root, _l_dirs, l_files in os.walk(self._get_config_dir()):
+                if l_filename in l_files:
+                    l_path = os.path.join(l_root, l_filename)
+                    l_node.YamlPath = l_path
+                    return l_node
+        return None  # Not Found
 
     def read_coords(self, p_yaml):
         """ Read a set of room co-ordinates
@@ -79,6 +144,34 @@ class Tools:
         l_coord = []
         _l_x = p_yaml
         return l_coord
+
+    def extract_fields(self, p_obj, p_config, required_list=None, allowed_list=None, subfield_list=[]):
+        """
+        @param p_obj: is the python object that will contain the config information
+        @param p_config: is the yaml(json) fragment that contains the data
+        @param required_list: is a list of fields that must be in the config data
+        @param allowed_list: additional fields that may be in the config data.
+        @param subfield_list: are fields that have sub-entries
+        """
+        for l_key, l_value in p_config.items():
+            if l_key in subfield_list:
+                l_extr = 'extract_' + l_key
+                print('Extracting ', l_extr)
+                # l_value = self._extract_family(l_value)
+                continue
+                #
+            setattr(p_obj, l_key, l_value)
+        #
+        for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_') and not callable(getattr(p_obj, l_attr))]:
+            # if required_list != None:
+            if getattr(p_obj, l_key) == None and l_key in required_list:
+                LOG.warn('Config entry "{}" is missing.'.format(l_key))
+                continue
+            # if allowed_list != None:
+            if getattr(p_obj, l_key) == None and l_key not in allowed_list:
+                LOG.warn('Config entry "{}" is not permitted.'.format(l_key))
+                continue
+        return p_obj
 
 
 class YamlCreate:
@@ -98,7 +191,7 @@ class YamlCreate:
             LOG.error('Create requires a concrete tag (not "None") "ERROR_TAG" is used as the tag instead !')
             p_tag = 'ERROR_TAG'
         YAML_STR = p_tag + ':'
-        l_yaml = YAML()
+        l_yaml = MyYAML()
         l_yaml.indent(mapping=2, sequence=4, offset=2)
         l_data = l_yaml.load(YAML_STR)
         return l_data
@@ -169,17 +262,18 @@ class YamlCreate:
             # setattr(l_config, l_key, l_val)
 
 
-class YamlFetch:
+class YamlFetch(Tools):
     """
     """
 
-    def fetch_host_info(self, p_yaml):
+    def fetch_host_info(self, p_config):
         """
         @param p_yaml: is the 'Host' ordereddict
         """
         l_obj = HostInformation()
-        for l_key, l_val in p_yaml.items():
-            setattr(l_obj, l_key, l_val)
+        l_required = ['Name', 'Port']
+        l_allowed = ['IPv4', 'IPv6']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
     def fetch_security_info(self, p_yaml):
@@ -195,12 +289,13 @@ class YamlFetch:
         return l_obj
 
 
-class Yaml(YamlCreate, YamlFetch):
+class Yaml(YamlCreate, YamlFetch, Tools):
 
     def __init__(self, p_pyhouse_obj):
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        # LOG.debug('Yaml - Progress')
 
     def create_yaml_node(self, p_tag):
         """ Create a node for a yaml config file
@@ -211,7 +306,7 @@ class Yaml(YamlCreate, YamlFetch):
         l_node = ConfigYamlNodeInformation()
         l_node._Error = None
         l_node.FileName = l_filename
-        l_node.YamlPath = self.m_pyhouse_obj._Config.ConfigDir + '/' + l_filename
+        l_node.YamlPath = self._get_config_dir() + '/' + l_filename
         l_node.Yaml = self.create_yaml(p_tag)
         self.m_pyhouse_obj._Config.YamlTree[l_filename] = l_node
         return l_node
@@ -256,21 +351,17 @@ class Yaml(YamlCreate, YamlFetch):
             return None
         return l_node
 
-    def find_config_node(self, p_filename):
+    def _find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
         If unit testing, we must find the file in the source tree.
 
         @return: a ConfigYamlNodeInformation() filled in.
         """
+        # LOG.debug('Progress')
         l_node = ConfigYamlNodeInformation()
         l_node.FileName = p_filename
-        l_dir = self.m_pyhouse_obj._Config.ConfigDir
-        for l_root, _l_dirs, l_files in os.walk(l_dir):
-            if p_filename in l_files:
-                l_path = os.path.join(l_root, p_filename)
-                l_node.YamlPath = l_path
-                return l_node
-        return None  # Not Found
+        l_node.YamlPath = self.find_config_file(p_filename)
+        return l_node
 
     def read_yaml(self, p_filename):
         """ Find the Yaml file and read it in.
@@ -278,11 +369,11 @@ class Yaml(YamlCreate, YamlFetch):
 
         @return: a ConfigYamlNodeInformation() filled in
         """
-        l_node = self.find_config_node(p_filename)
+        l_node = self._find_config_node(p_filename)
         if l_node == None:
-            LOG.info('Config file "{}" not found.'.format(p_filename))
+            LOG.warn('Config file "{}" not found.'.format(p_filename))
             return None
-        l_yaml = YAML(typ='rt')
+        l_yaml = MyYAML(typ='rt')
         l_yaml.allow_duplicate_keys = True
         with open(l_node.YamlPath, 'r') as l_file:
             l_data = l_yaml.load(l_file)
@@ -304,7 +395,7 @@ class Yaml(YamlCreate, YamlFetch):
         l_node.Yaml.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
         if addnew:
             l_filename += '-new'
-        l_yaml = YAML(typ='rt')
+        l_yaml = MyYAML(typ='rt')
         l_yaml.indent(mapping=2, sequence=4, offset=2)
         l_yaml.version = (1, 2)
         with open(l_filename, 'w+') as l_file:
@@ -314,47 +405,19 @@ class Yaml(YamlCreate, YamlFetch):
     def dump_string(self, p_data):
         """
         """
-        l_yaml = YAML(typ='rt')
+        l_yaml = MyYAML(typ='rt')
         l_data = l_yaml.dump(p_data, None, transform=print)
         return l_data
 
 
 class API:
 
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    @staticmethod
-    def create_xml_config_foundation(p_pyhouse_obj):
-        """
-        Create the "PyHouse" top element of the XML config file.
-        The other divisions are appended to this foundation.
-        """
-        l_xml = ET.Element("PyHouse")  # The root element.
-        # PutGetXML.put_text_attribute(l_xml, 'Version', p_pyhouse_obj.Xml.XmlVersion)
-        PutGetXML.put_text_attribute(l_xml, 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance')
-        PutGetXML.put_text_attribute(l_xml, 'xsi:schemaLocation', 'http://PyHouse.org schemas/PyHouse.xsd')
-        PutGetXML.put_text_attribute(l_xml, 'xmlns:comp', 'http://PyHouse.Org/ComputerDiv')
-        l_xml.append(ET.Comment(' Updated by PyHouse {} '.format(datetime.datetime.now())))
-        p_pyhouse_obj._Config.XmlTree = l_xml
-        return
+    def _x(self):
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy'))
 
-    @staticmethod
-    def write_xml_config_file(p_pyhouse_obj):
-        """
-        Note!
-        @param p_xml_tree: is the tree body part to write
-        """
-        l_file = p_pyhouse_obj._Config.ConfigDir + 'master.xml'
-        try:
-            l_tree = ET.ElementTree()
-            l_tree._setroot(p_pyhouse_obj._Config.XmlTree)
-            l_tree.write(l_file, xml_declaration=True)
-            l_size = os.stat(l_file).st_size
-            LOG.info('Wrote config File - XML={}-bytes'.format(l_size))
-        except AttributeError as e_err:
-            LOG.error('Err:{}'.format(e_err))
-
-    def _Stop(self):
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy', 190))
 #  ## END DBK

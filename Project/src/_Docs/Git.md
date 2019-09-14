@@ -8,6 +8,12 @@
 
 # Git
 
-All development is done in the "develop" branch.
+All development is done in the permanent "develop" branch.
+The permanent "master" branch contains the latest released sofrware.
+
+There is a local repository on each developmant computer.
+There is a remote master repository on https://github.com/DBrianKimmel/PyHouse.
+
+
 
 ### END DBK

@@ -12,7 +12,7 @@ Passed all 7 tests - DBK - 2019-08-15
 """
 from Modules.House.Lighting.lighting import ScheduleLightingInformation
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-09-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -21,7 +21,7 @@ from twisted.internet import reactor
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House.Lighting.controllers import ControllerInformation
-from Modules.House.house_data import LocationInformationPrivate
+from Modules.House.house_data import LocationInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Mqtt.mqtt import _make_message, MqttBrokerInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -109,7 +109,7 @@ class D1_Tools(SetupMixin, unittest.TestCase):
     def test_02_Obj(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_obj = LocationInformationPrivate()
+        l_obj = LocationInformation()
         l_obj.Street = '123 Test Street'
         l_obj.City = 'Beverly Hills'
         l_obj.State = 'Confusion'

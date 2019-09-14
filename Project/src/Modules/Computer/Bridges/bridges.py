@@ -13,19 +13,19 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-09-06'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Bridges        ')
 
-CONFIG_FILE_NAME = 'bridges.yaml'
+CONFIG_NAME = 'bridges'
 
 BridgeList = []
 
@@ -95,7 +95,7 @@ class Config:
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             return None
         try:
@@ -117,13 +117,13 @@ class Config:
 
         @return: the updated yaml ready information.
         """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
+        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
         l_config = l_node.Yaml['Bridges']
         l_working = p_pyhouse_obj.Computer.Bridges
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             l_config[l_key] = l_val
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Bridges'] = l_config
+        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Bridges'] = l_config
         l_ret = {'Bridges': l_config}
         return l_ret
 
@@ -132,7 +132,7 @@ class Config:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         l_config = self._copy_to_yaml(self.m_pyhouse_obj)
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_NAME, addnew=True)
         return l_config
 
 

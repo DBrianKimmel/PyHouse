@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-08-27'
+__updated__ = '2019-09-09'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,30 +25,6 @@ from Modules.Core.data_objects import BaseUUIDObject, RiseSetData
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House_data     ')
-
-
-class XXXHouseInformation(BaseUUIDObject):
-    """ The collection of information about a house.
-    Causes JSON errors due to API type data methinks.
-
-    ==> PyHouse.House.xxx as in the def below.
-    """
-
-    def __init__(self):
-        super(XXXHouseInformation, self).__init__()
-        self.HouseMode = 'Home'  # Home, Away, Vacation,
-        self.Entertainment = {}  # EntertainmentInformation() in Entertainment/entertainment_data.py
-        self.Floors = {}  # FloorsInformation()
-        self.Hvac = {}  # HvacData()
-        self.Irrigation = {}  # IrrigationData()
-        self.Lighting = {}  # LightingInformation()
-        self.Location = {}  # house.location.LocationInformation() - one location per house.
-        self.Pools = {}  # PoolData()
-        self.Rooms = {}  # RoomInformation()
-        self.Rules = {}  # RulesData()
-        self.Schedules = {}  # ScheduleInformation()
-        self.Security = {}  # SecurityData()
-        self._Commands = {}  # Module dependent
 
 
 class LocationInformation:
@@ -66,21 +42,7 @@ class LocationInformation:
         self.Latitude = None
         self.Longitude = None
         self.Elevation = None
-        self.TimeZoneName = None
-
-
-class LocationInformationPrivate(LocationInformation):
-    """ Location of the houses
-    Latitude and Longitude allow the computation of local sunrise and sunset
-    """
-
-    def __init__(self):
-        # type: (Any) -> None
-        super(LocationInformationPrivate, self).__init__()
-        self._RiseSet = RiseSetData()  # RiseSetData()
-        self._Yaml = None
-        self._TimeZoneOffset = '-5:00'
-        self._IsDaylightSavingsTime = False
+        self.TimeZone = None
 
 
 class RoomsInformation:

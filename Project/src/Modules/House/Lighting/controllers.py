@@ -17,14 +17,14 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-12'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.Utilities import config_tools
+from Modules.Core.Config import config_tools
 from Modules.Core.Drivers.interface import Config as interfaceConfig
 from Modules.House.Family.family import Config as familyConfig
 from Modules.House.Security.login import Config as loginConfig
@@ -34,7 +34,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightController')
 
-CONFIG_FILE_NAME = 'controllers.yaml'
+CONFIG_NAME = 'controllers'
 
 
 class ControllerInformation:
@@ -120,6 +120,8 @@ class Config:
         """
         l_obj = ControllerInformation()
         l_required = ['Name', 'Family', 'Interface']
+        _l_msg = 'One Controller {}'.format(p_config)
+        # LOG.debug(_l_msg)
         try:
             for l_key, l_value in p_config.items():
                 # print('Controller Key: {}; Value: {}'.format(l_key, l_value))
@@ -134,17 +136,17 @@ class Config:
                     l_ret = self._extract_security(l_value)
                     l_obj.Interface = l_ret
                 else:
-                    # LOG.debug('Extracting {}: {}'.format(l_key, l_value))
+                    LOG.debug('Extracting {}: {}'.format(l_key, l_value))
                     setattr(l_obj, l_key, l_value)
         except:
-            LOG.warn('Invalid entry of some type in {}'.format(CONFIG_FILE_NAME))
+            LOG.warn('Invalid entry of some type in {}'.format(CONFIG_NAME))
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.error('The Controller "{}" is missing a rquired entry for "{}"'.format(l_obj.Name, l_key))
+                LOG.error('The Controller "{}" is missing a required entry for "{}"'.format(l_obj.Name, l_key))
                 LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
                 return None
-        # LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
+        LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
         LOG.info('Extracted controller "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -152,11 +154,12 @@ class Config:
         """
         PyHouse.House.Lighting.Controllers
         """
-        # LOG.debug('All controllers.')
+        _l_msg = 'All controllers. {}'.format(p_config)
+        # LOG.debug(_l_msg)
         l_dict = {}
-        for l_ix, l_key in enumerate(p_config):
-            l_obj = self._extract_one_controller(l_key)
-            l_dict[l_ix] = l_obj
+        for l_key, l_value in enumerate(p_config):
+            l_obj = self._extract_one_controller(l_value)
+            l_dict[l_key] = l_obj
         # LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers', 190))
         return l_dict
 
@@ -165,7 +168,7 @@ class Config:
         It contains Controllers data for the house.
         """
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Lighting.Controllers = None
             LOG.warn('No controllers config found')
