@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-09-14'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -622,11 +622,12 @@ class PandoraControl(A_V_Control):
         try:
             self.m_transport.write(b'q')
             self.m_transport.closeStdin()
-        except:
+        except Exception as e_err:
+            LOG.warn('Could not close pianobar - {}'.format(e_err))
             pass
         LOG.info('Service Stopped')
         for l_service in l_pandora_plugin_obj.Services.values():
-            l_service_control_obj = PandoraServiceControlData()
+            l_service_control_obj = PandoraDeviceControlData()
             l_service_control_obj.Family = l_family = l_service.Connection.Family
             l_service_control_obj.Device = l_name = l_service.Connection.Model
             l_service_control_obj.From = CONFIG_NAME
@@ -673,12 +674,6 @@ class Config:
             if hasattr(l_service, 'Login'):
                 LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login'))
 
-    def _extract_host(self, p_config):
-        """
-        """
-        l_ret = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(p_config)
-        return l_ret
-
     def _extract_connection(self, p_config):
         """
         """
@@ -707,8 +702,7 @@ class Config:
         l_obj = PandoraServiceInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
-                l_ret = self._extract_host(l_value)
-                l_obj.Host = l_ret
+                l_obj.Host = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(p_config)
             elif l_key == 'Connection':
                 l_ret = self._extract_connection(l_value)
                 l_obj.Connection = l_ret

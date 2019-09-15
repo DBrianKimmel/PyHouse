@@ -1,30 +1,26 @@
 ---
-# Name:      Module/Families/Insteon/test/Yaml/insteon.yaml
+# Name:      Module/House/Family/insteon/_test/Yaml/insteon.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
 # Created:   Jul  2, 2019
-# Updated:   Jul 19, 2019
+# Updated:   Sep 14, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
 Insteon:
-   Controllers:
-      Insteon-Hub:
-         Host: insteon-hub-ct
-         Port: 25105  # Zenmap 443, 25105 only tcp ports open
-         Type: Hub
-         Interface: Tcp
-      Plm-1:
-         Node: pi-01-ct
-         Type: Plm
-      Plm-2:
-         Node: pi-11-ct
-         Type: Plm
-   Devices:
-      - Switch
-      - Thermostat
-      - Camera
-      - Outlet
+    Hub:
+        Model: 2245-222
+        Address: 53.54.55
+        Mac: 00:01:02:53:54:55
+        Rev: 3.3
+        Date: 2219
+        Interface:
+            Type: Ethernet
+            Host: insteon-ct
+            Port: from the label
+        Security:
+            User: !user from the label
+            Password: !password from the label
 
 ### END DBK

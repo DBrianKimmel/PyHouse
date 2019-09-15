@@ -17,7 +17,7 @@ And we also have information about the controller class of devices.
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -132,7 +132,7 @@ class Config:
                     l_obj.Interface = l_ret
                     if l_ret.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
                         l_obj._isLocal = True
-                elif l_key == 'Security':
+                elif l_key == 'Access':
                     l_ret = self._extract_security(l_value)
                     l_obj.Interface = l_ret
                 else:

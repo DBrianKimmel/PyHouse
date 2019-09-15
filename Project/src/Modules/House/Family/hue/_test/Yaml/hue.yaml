@@ -18,7 +18,7 @@ Hue:
       Name: hue-ct
       Port: None
    Security:
-      ApiKey: 9nR8rIGRYNKBlROabMWuAlhGfAgSjBS2EWHoFYy3
+      Apikey: 9nR8rIGRYNKBlROabMWuAlhGfAgSjBS2EWHoFYy3
       Password: !secret EncriptedPassword1
 
 ### END DBK

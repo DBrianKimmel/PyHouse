@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-14'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -62,7 +62,7 @@ class SecurityInformation:
         """
         """
         self.Name = None  # Username
-        self.Passwoed = None
+        self.Password = None
         self.ApiKey = None
         self.AccessKey = None
 
@@ -276,16 +276,22 @@ class YamlFetch(Tools):
         self.extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
-    def fetch_security_info(self, p_yaml):
+    def fetch_access_info(self, p_config):
         """
         """
         l_obj = SecurityInformation()
-        for l_key, l_val in p_yaml.items():
-            setattr(l_obj, l_key, l_val)
-        if l_obj.Name == None:
-            l_obj.Name = l_obj.UserName
-        else:
-            l_obj.UserName = l_obj.Name
+        l_required = ['Name', 'Password']
+        l_allowed = ['ApiKey', 'AccessKey']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        return l_obj
+
+    def fetch_interface_info(self, p_config):
+        """
+        """
+        l_obj = SecurityInformation()
+        l_required = ['Type', 'Host', 'Port']
+        l_allowed = ['ApiKey', 'AccessKey']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
 

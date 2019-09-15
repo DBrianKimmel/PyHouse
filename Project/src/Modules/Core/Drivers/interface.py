@@ -18,7 +18,7 @@ There are several different interfaces at this point (2013-10-29):
 This module reads and writes the Config for those controllers.
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -26,7 +26,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 # Import PyMh files
 from Modules.Core.Drivers.Serial import Serial_driver
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Interface      ')

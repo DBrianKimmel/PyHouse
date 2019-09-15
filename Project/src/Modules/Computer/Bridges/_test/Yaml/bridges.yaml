@@ -1,14 +1,15 @@
 ---
-# Name:      PyHouse/Project/src/Module/Computer/Bridges/test/Yaml/bridges.yaml
+# Name:      PyHouse/Project/src/Module/Computer/Bridges/_test/Yaml/bridges.yaml
 # Author:    D. Brian Kimmel
 # Contact:   D.BrianKimmel@gmail.com
 # Copyright: (c)2019-2019 by D. Brian Kimmel
 # Created:   Jun 24, 2019
-# Updated:   Jun 26, 2019
+# Updated:   Sep 14, 2019
 # License:   MIT License
 # Summary:   This is for PyHouse
 
 # This is where we include the actual devices in this house.
+# These entries only cause the loading of the actual config for the bridge device.
 
 Bridges:
    Insteon: !include insteon.yaml

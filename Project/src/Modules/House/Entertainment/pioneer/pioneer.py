@@ -18,9 +18,8 @@ Listen to Mqtt message to control device
     <value> = on, off, 0-100, zone#, input#
 
 """
-from Modules.Core.Config import config_tools
 
-__updated__ = '2019-09-14'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,6 +31,7 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 from queue import Queue
 
 #  Import PyMh files and modules.
+from Modules.Core.Config import config_tools
 from Modules.Core.Utilities import extract_tools
 from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceStatus
 from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
@@ -197,12 +197,6 @@ class Config:
             if hasattr(l_service, 'Login'):
                 LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login'))
 
-    def _extract_host(self, p_config):
-        """
-        """
-        l_ret = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(p_config)
-        return l_ret
-
     def _extract_one_device(self, p_config):
         """
         """
@@ -211,8 +205,7 @@ class Config:
         l_obj = PioneerDeviceInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
-                l_ret = self._extract_host(l_value)
-                l_obj.Host = l_ret
+                l_obj.Host = config_tools.YAML(self.m_pyhouse_obj).fetch_host_info(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
