@@ -173,10 +173,12 @@ class Config:
     """
     """
 
+    m_config_tools = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
     def dump_struct(self):
         """
@@ -194,8 +196,8 @@ class Config:
                 LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
             if hasattr(l_service, 'Host'):
                 LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host'))
-            if hasattr(l_service, 'Login'):
-                LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login'))
+            if hasattr(l_service, 'Access'):
+                LOG.debug(PrettyFormatAny.form(l_service.Access, 'Access'))
 
     def _extract_one_device(self, p_config):
         """
@@ -205,7 +207,7 @@ class Config:
         l_obj = PioneerDeviceInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
-                l_obj.Host = config_tools.YAML(self.m_pyhouse_obj).fetch_host_info(l_value)
+                l_obj.Host = self.m_config_tools.fetch_host_info(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
@@ -251,7 +253,7 @@ class Config:
         """
         # LOG.info('Loading _Config - Version:{}'.format(__version__))
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
+            l_node = self.m_config_tools.read_yaml(CONFIG_NAME)
         except:
             return None
         try:

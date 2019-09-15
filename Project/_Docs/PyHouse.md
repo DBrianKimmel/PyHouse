@@ -31,7 +31,4 @@ and then turning on the electric tea kettle, turning down the volume on the tv, 
 
 Then there was voice.
 
-
-
-
 ### END DBK

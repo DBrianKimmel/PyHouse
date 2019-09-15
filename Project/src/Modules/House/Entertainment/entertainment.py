@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-09-14'
+__updated__ = '2019-09-15'
 __version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -87,11 +87,13 @@ class Config:
     """
     """
 
+    m_config_tools = None
     m_modules_needed = []
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
     def load_defined_plugins(self):
         """ Load the plugins called for in the config file.
@@ -118,7 +120,7 @@ class Config:
         l_count = 0
         for l_service in p_yaml:
             l_obj = EntertainmentPluginInformation()
-            l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_service)
+            l_name = self.m_config_tools.find_first_element(l_service)
             l_name_lower = l_name.lower()
             LOG.debug('Key: {}'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
@@ -138,7 +140,7 @@ class Config:
         l_count = 0
         for l_device in p_yaml:
             l_obj = EntertainmentPluginInformation()
-            l_name = config_tools.Yaml(p_pyhouse_obj).find_first_element(l_device)
+            l_name = self.m_config_tools.find_first_element(l_device)
             l_name_lower = l_name.lower()
             LOG.debug('Key: {}'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
@@ -182,7 +184,7 @@ class Config:
         """
         self.m_pyhouse_obj.House.Entertinment = None
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
+            l_node = self.m_config_tools.read_yaml(CONFIG_NAME)
         except:
             return None
         try:

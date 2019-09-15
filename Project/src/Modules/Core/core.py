@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-09-13'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -140,9 +140,9 @@ class Utility:
             LOG.error('The main config file (pyhouse.yaml) is missing!')
             return None
         try:
-            l_yaml = l_node.Yaml['pyhouse']
+            l_yaml = l_node.Yaml['PyHouse']
         except:
-            LOG.warn('The pyhouse.yaml file does not start with "pyhouse:"')
+            LOG.warn('The pyhouse.yaml file does not start with "PyHouse:"')
             return None
         l_parameter = self._extract_pyhouse_info(l_yaml)
         p_pyhouse_obj._Parameters = l_parameter

@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -282,7 +282,6 @@ class API:
     """
     """
     m_config = None
-    m_config_tools = None
     m_location_api = None
     m_rooms_api = None
     m_utility = None
@@ -295,7 +294,6 @@ class API:
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
         self.m_utility = Utility(p_pyhouse_obj)
         #
         p_pyhouse_obj.House = HouseInformation()

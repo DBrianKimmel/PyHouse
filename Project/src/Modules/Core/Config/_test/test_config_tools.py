@@ -11,7 +11,7 @@ Passed all 21 tests - DBK - 2019-09-08
 
 """
 
-__updated__ = '2019-09-14'
+__updated__ = '2019-09-15'
 
 # Import system type stuff
 import os
@@ -402,7 +402,7 @@ class C3_Fetch(SetupMixin, unittest.TestCase):
         """
         """
         l_yaml = self.m_node.Yaml['Testing']
-        l_login = l_yaml['Login']
+        l_login = l_yaml['Access']
         _l_obj = configYaml(self.m_pyhouse_obj).fetch_login_info(l_login)
         # print('C3-02-A - Yaml: {}'.format(l_yaml))
         # print(PrettyFormatAny.form(l_login, 'C2-02-B - Yaml', 190))

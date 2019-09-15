@@ -66,7 +66,7 @@ class PandoraServiceInformation:
         self.Comment = None
         self.Connection = None  # PandoraServiceConnectionInformation()
         self.Host = None  # HostInformation()
-        self.Security = None  # SecurityInformation()
+        self.Access = None  # SecurityInformation()
         #
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None
@@ -671,8 +671,8 @@ class Config:
                 LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
             if hasattr(l_service, 'Host'):
                 LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host'))
-            if hasattr(l_service, 'Login'):
-                LOG.debug(PrettyFormatAny.form(l_service.Login, 'Login'))
+            if hasattr(l_service, 'Access'):
+                LOG.debug(PrettyFormatAny.form(l_service.Access, 'Access'))
 
     def _extract_connection(self, p_config):
         """
@@ -698,7 +698,7 @@ class Config:
         """
         """
         # self.dump_struct()
-        l_required = ['Name', 'Host', 'Connection', 'Login']
+        l_required = ['Name', 'Host', 'Connection', 'Access']
         l_obj = PandoraServiceInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
@@ -706,9 +706,9 @@ class Config:
             elif l_key == 'Connection':
                 l_ret = self._extract_connection(l_value)
                 l_obj.Connection = l_ret
-            elif l_key == 'Login':
+            elif l_key == 'Access':
                 l_ret = self._extract_login(l_value)
-                l_obj.Login = l_ret
+                l_obj.Access = l_ret
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.

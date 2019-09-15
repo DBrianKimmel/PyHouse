@@ -27,7 +27,7 @@ Pioneer:
     Host:
       Name: br-ct
       Port: 8102
-    Login:
+    Access:
       Username: None
       Password: None
     Type: DiskPlayer

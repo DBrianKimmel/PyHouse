@@ -21,7 +21,7 @@ Mqtt:
         Port: 1883
         IPv4: None
         IPv6: None
-      Login:
+      Access:
         UserName: None
         Password: None
 
@@ -35,7 +35,7 @@ Mqtt:
       Host:
         Name: localhost
         Port: 1883
-      Login:
+      Access:
         UserName: None
         Password: None
 

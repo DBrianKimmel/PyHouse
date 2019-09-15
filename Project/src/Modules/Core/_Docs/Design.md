@@ -1,4 +1,4 @@
-* Name:      PyHouse/Project/src/Modules/Core/Docs/Design
+* Name:      PyHouse/Project/src/Modules/Core/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -8,11 +8,18 @@
 * Summary:   This is the design documentation for the Core Module of PyHouse.
 
 
-# Design
+# Core
 
-## setup_pyhouse.py
+This module contains "Core" components.
+They are always resident, loaded at the initialization of the system.
 
-The PyHouse.py singleton first calls setup_pyhouse.py to initialize everything.
+## core.py
+
+The PyHouse.py singleton first calls core.py to initialize everything.
+
+## Config
+
+The config package is responsible for configuring the entire system.
 
 ## Utilities/config_file.py
 

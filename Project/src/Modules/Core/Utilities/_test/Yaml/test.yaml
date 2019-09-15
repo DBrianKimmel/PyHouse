@@ -12,7 +12,7 @@ Testing:
    Street: 1600 Pennsylvania Ave NW
    City: Washington
    State: DC
-   Login:
+   Access:
      UserName: My Name
      Password: My Password
    Host:

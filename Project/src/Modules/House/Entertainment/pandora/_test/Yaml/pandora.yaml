@@ -41,7 +41,7 @@ Pandora:
         Family: Pioneer
         Model: VSX-833-K
         Input: CD
-      Login:
+      Access:
         Name: !secret EncryptedName1
         Password: !secret EncriptedPassword1
 
@@ -54,7 +54,7 @@ Pandora:
         Family: Onkyo
         Model: ABC-1234-YZ
         InputName: bluetooth
-      Login:
+      Access:
         Name: !secret EncryptedName2
         Password: !secret EncryptedPassword2
 

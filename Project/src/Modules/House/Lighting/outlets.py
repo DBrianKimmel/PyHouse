@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-15'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -64,6 +64,8 @@ class MqttActions:
                 elif p_topic[0] == 'RESULT':
                     p_logmsg += '\tResult:\n'
                 elif p_topic[0] == 'POWER':
+                    p_logmsg += '\tResult:\n'
+                elif p_topic[0] == 'LWT':
                     p_logmsg += '\tResult:\n'
                 else:
                     p_logmsg += '\tUnknown house/outlet sub-topic: {}; - {}'.format(p_topic, p_message)
