@@ -20,7 +20,7 @@ from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.lighting_controllers import XML as controllerXML
 from Modules.Housing.Lighting.lighting_lights import XML as lightXML
-from Modules.Housing.Lighting.lighting_utility import Utility
+from Modules.Housing.Lighting.lighting_utility import lightingUtility
 from Modules.Housing.Lighting.test.xml_lights import \
     XML_LIGHT_SECTION, \
     TESTING_LIGHT_SECTION, \
@@ -96,7 +96,7 @@ class B1_Lights_by_id(SetupMixin, unittest.TestCase):
         """
         l_obj = self.m_lights[0]
         # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Light'))
-        l_ret = Utility()._test_object_by_id(l_obj, name=TESTING_LIGHT_NAME_0)
+        l_ret = lightingUtility()._test_object_by_id(l_obj, name=TESTING_LIGHT_NAME_0)
         # print(PrettyFormatAny.form(l_ret, 'B1-01-B - Light'))
         self.assertEqual(l_ret.UUID, TESTING_LIGHT_UUID_0)
 
@@ -105,7 +105,7 @@ class B1_Lights_by_id(SetupMixin, unittest.TestCase):
         """
         l_obj = self.m_lights[1]
         # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Light'))
-        l_ret = Utility()._test_object_by_id(l_obj, UUID=TESTING_LIGHT_UUID_1)
+        l_ret = lightingUtility()._test_object_by_id(l_obj, UUID=TESTING_LIGHT_UUID_1)
         # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Light'))
         self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_1)
 
@@ -114,7 +114,7 @@ class B1_Lights_by_id(SetupMixin, unittest.TestCase):
         """
         l_obj = self.m_lights[2]
         # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Light'))
-        l_ret = Utility()._test_object_by_id(l_obj, key=2)
+        l_ret = lightingUtility()._test_object_by_id(l_obj, key=2)
         # print(PrettyFormatAny.form(l_ret, 'B1-03-B - Light'))
         self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_2)
 
@@ -123,7 +123,7 @@ class B1_Lights_by_id(SetupMixin, unittest.TestCase):
         """
         l_obj = self.m_lights[0]
         # print(PrettyFormatAny.form(l_obj, 'B1-04-A - Light'))
-        l_ret = Utility()._test_object_by_id(l_obj, name=None)
+        l_ret = lightingUtility()._test_object_by_id(l_obj, name=None)
         # print(PrettyFormatAny.form(l_ret, 'B1-04-B - Light'))
         self.assertIsNone(l_ret)
 
@@ -141,7 +141,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = Utility().get_object_by_id(l_objs, name=TESTING_LIGHT_NAME_0)
+        l_ret = lightingUtility().get_object_by_id(l_objs, name=TESTING_LIGHT_NAME_0)
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
         self.assertEqual(l_ret.UUID, TESTING_LIGHT_UUID_0)
 
@@ -150,7 +150,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-02-A - Lights'))
-        l_ret = Utility().get_object_by_id(l_objs, UUID=TESTING_LIGHT_UUID_2)
+        l_ret = lightingUtility().get_object_by_id(l_objs, UUID=TESTING_LIGHT_UUID_2)
         # print(PrettyFormatAny.form(l_ret, 'B2-02-B - Light'))
         self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_2)
 
@@ -160,7 +160,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_lights
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = Utility().get_object_by_id(l_objs, key=7777)
+        l_ret = lightingUtility().get_object_by_id(l_objs, key=7777)
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
         self.assertIsNone(l_ret)
 
@@ -178,7 +178,7 @@ class C1_ByFamuly(SetupMixin, unittest.TestCase):
         """
         l_objs = self.m_controllers
         # print(PrettyFormatAny.form(l_objs, 'C1-01-A - Controllers'))
-        l_ret = Utility().get_controller_objs_by_family(l_objs, 'Insteon')
+        l_ret = lightingUtility().get_controller_objs_by_family(l_objs, 'Insteon')
         # print(PrettyFormatAny.form(l_ret, 'C1-01-B - Controller'))
         # self.assertEqual(l_ret.Name, TESTING_CONTROLLER_NAME_0)
 

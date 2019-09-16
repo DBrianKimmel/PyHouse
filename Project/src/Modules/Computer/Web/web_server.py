@@ -70,7 +70,7 @@ class ClientConnections(object):
         LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
-class Utility(ClientConnections):
+class lightingUtility(ClientConnections):
 
     def start_webservers(self, p_pyhouse_obj):
         """ Start Kline web server()
@@ -161,7 +161,7 @@ class Utility(ClientConnections):
         return
 
 
-class API(Utility):
+class API(lightingUtility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

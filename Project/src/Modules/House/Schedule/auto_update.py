@@ -180,7 +180,7 @@ class FindRepositoryVersion(object):
     # d.addBoth(println)
 
 
-class Utility(object):
+class lightingUtility(object):
     """
     """
 
@@ -217,7 +217,7 @@ class EchoClientFactory(ClientFactory):
         self.done.callback(None)
 
 
-class API(Utility):
+class API(lightingUtility):
     """
     """
 

@@ -17,7 +17,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files
 from Modules.House.Family.family_utils import FamUtil
-from Modules.House.Lighting.lighting_utility import Utility
+from Modules.House.Lighting.lighting_utility import lightingUtility
 from Modules.House.Lighting.lighting_lights import LightData
 
 from Modules.Core import logging_pyh as Logger
@@ -62,9 +62,9 @@ class API():
         """
         l_light_name = p_schedule_obj.LightName
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        l_light_obj = Utility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
+        l_light_obj = lightingUtility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
         #
-        l_controller_objs = Utility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
+        l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
         l_control = LightData()
         l_control.BrightnessPct = p_schedule_obj.Level
         l_control.TransitionTime = p_schedule_obj.Rate

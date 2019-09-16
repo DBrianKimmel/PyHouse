@@ -175,7 +175,7 @@ class ClientConnections(object):
         LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
-class Utility(ClientConnections):
+class lightingUtility(ClientConnections):
 
     def start_websocket_server(self, _p_pyhouse_obj):
         """ Setup for starting a web socket server (encrypted or not).
@@ -210,7 +210,7 @@ class Utility(ClientConnections):
         pass
 
 
-class API(Utility):
+class API(lightingUtility):
 
     m_contextFactory = None
 

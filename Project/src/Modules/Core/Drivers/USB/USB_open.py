@@ -36,7 +36,7 @@ LOG = Logger.getLogger('PyHouse.USBDriver_Open ')
 RECEIVE_TIMEOUT = 0.3
 
 
-class Utility(object):
+class lightingUtility(object):
 
     @staticmethod
     def format_names(p_USB_obj):
@@ -60,7 +60,7 @@ class API(object):
     def _save_find_device(p_USB_obj, p_device):
         p_USB_obj.UsbDevice = p_device
         p_USB_obj.num_configs = p_device.bNumConfigurations
-        p_USB_obj.hid_device = True  # Utility.is_hid(p_device)
+        p_USB_obj.hid_device = True  # lightingUtility.is_hid(p_device)
         p_USB_obj.configs = {}
         return p_USB_obj
 
@@ -69,7 +69,7 @@ class API(object):
         """First step in opening a USB device.
         @return:  None if no such device or a pyusb device object
         """
-        l_vpn = Utility.format_names(p_USB_obj)
+        l_vpn = lightingUtility.format_names(p_USB_obj)
         l_device = None
         try:
             l_device = usb.core.find(idVendor=p_USB_obj.Vendor, idProduct=p_USB_obj.Product)
@@ -169,7 +169,7 @@ class API(object):
     @staticmethod
     def open_device(p_USB_obj):
         p_USB_obj.message = bytearray()
-        l_vpn = Utility.format_names(p_USB_obj)
+        l_vpn = lightingUtility.format_names(p_USB_obj)
         LOG.info("Opening USB device - {}".format(l_vpn))
         p_USB_obj.UsbDevice = API._open_find_device(p_USB_obj)
         if p_USB_obj.UsbDevice == None:
@@ -180,7 +180,7 @@ class API(object):
         API._setup_interfaces(p_USB_obj)
         API._setup_endpoints(p_USB_obj)
         _l_control = usb5500API.Setup()
-        # _l_msg = Utility.setup_hid_17DD_5500(p_USB_obj)
+        # _l_msg = lightingUtility.setup_hid_17DD_5500(p_USB_obj)
         return True
 
     @staticmethod

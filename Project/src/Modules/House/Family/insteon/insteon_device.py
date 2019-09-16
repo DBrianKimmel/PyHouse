@@ -81,7 +81,7 @@ class Config:
         return l_obj
 
 
-class Utility:
+class lightingUtility:
     """
     """
 
@@ -102,7 +102,7 @@ class Utility:
 
     @staticmethod
     def _is_valid_controller(p_controller_obj):
-        return Utility._is_insteon(p_controller_obj)  # and Utility._is_active(p_controller_obj)
+        return lightingUtility._is_insteon(p_controller_obj)  # and lightingUtility._is_active(p_controller_obj)
 
     @staticmethod
     def _start_plm(p_pyhouse_obj, p_controller_obj):
@@ -147,11 +147,11 @@ class Utility:
                 LOG.info('Controller "{}" is not local'.format(l_controller_obj.Name))
                 continue
             LOG.info('Starting Controller "{}"'.format(l_controller_obj.Name))
-            if Utility._is_valid_controller(l_controller_obj):
+            if lightingUtility._is_valid_controller(l_controller_obj):
                 # LOG.debug('Insteon Controller: "{}" - will be started.'.format(l_controller_obj.Name))
-                l_ret = Utility._start_plm(p_pyhouse_obj, l_controller_obj)
+                l_ret = lightingUtility._start_plm(p_pyhouse_obj, l_controller_obj)
                 l_list.append(l_ret)
-            elif Utility._is_insteon(l_controller_obj):
+            elif lightingUtility._is_insteon(l_controller_obj):
                 LOG.warn('Insteon Controller: "{}" - will NOT be started per config file.'.format(l_controller_obj.Name))
             else:
                 LOG.warn('Not an insteon controller')
@@ -165,7 +165,7 @@ class Utility:
         if l_controllers == None:
             return
         for l_controller_obj in l_controllers.values():
-            if Utility._is_valid_controller(l_controller_obj):
+            if lightingUtility._is_valid_controller(l_controller_obj):
                 l_controller_obj._HandlerAPI.Stop(l_controller_obj)
 
 
@@ -192,7 +192,7 @@ class API:
         """
         LOG.info('Starting all the Insteon Controllers.')
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Pypouse_obj.House.Lighting', 190))
-        self.m_plm_list = Utility()._start_all_controllers(self.m_pyhouse_obj)
+        self.m_plm_list = lightingUtility()._start_all_controllers(self.m_pyhouse_obj)
         LOG.info('Started {} Insteon Controllers.'.format(len(self.m_plm_list)))
 
     def SaveConfig(self):
@@ -203,7 +203,7 @@ class API:
     def Stop(self):
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'pyhouse')
         try:
-            Utility._stop_all_controllers(self.m_pyhouse_obj)
+            lightingUtility._stop_all_controllers(self.m_pyhouse_obj)
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 

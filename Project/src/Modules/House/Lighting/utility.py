@@ -8,8 +8,9 @@
 @summary:
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-08-10'
+__updated__ = '2019-09-16'
 
 #  Import system type stuff
 
@@ -20,7 +21,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightUtility   ')
 
 
-class Utility:
+class lightingUtility:
     """
     """
 
@@ -69,6 +70,8 @@ class Utility:
             l_family = l_obj.Family.Name.lower()
             if l_family == p_family.lower():
                 l_ret.append(l_obj)
+                LOG.debug('Found Controller {}'.format(l_obj.Name))
+                LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
         if l_ret == []:
             LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
         else:

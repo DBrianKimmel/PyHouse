@@ -29,7 +29,7 @@ from Modules.Core.data_objects import CoreLightingData
 from Modules.House.Family.family import Config as familyConfig
 from Modules.House.Family.family_utils import FamUtil
 from Modules.Core.Utilities import extract_tools
-from Modules.House.Lighting.utility import Utility as lightingUtility
+from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.House.rooms import Config as roomConfig
 from Modules.Core.state import State
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny, PrettyFormatObject

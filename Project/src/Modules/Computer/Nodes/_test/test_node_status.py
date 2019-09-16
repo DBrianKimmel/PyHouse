@@ -2,31 +2,29 @@
 @name:      Modules/Computer/Nodes/_test/test_node_status.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2018 by D. Brian Kimmel
+@copyright: (c) 2016-2019 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 22, 2016
 @summary:   Test
 
-Passed all 4 tests - DBK - 2017-01-11
+Passed all 1 tests - DBK - 2019-09-17
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-09-16'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class A0(unittest.TestCase):
@@ -35,43 +33,7 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title')  # so it is defined when printing is cleaned up.
         print('Id: test_node_status')
-
-    def XXX_test_01_Print(self):
-        print(XML_LONG)
-        pass
-
-
-class A1_Setup(SetupMixin, unittest.TestCase):
-    """
-    This section tests the setup of the _test
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_PyHouseObj(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-01-A - PyHouse.Xml'))
-        self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
-
-    def test_02_Tags(self):
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
-
-
-class A2_Xml(SetupMixin, unittest.TestCase):
-    """
-    This section tests the setup of the _test
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_Nodes(self):
-        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
-        # print(PrettyFormatAny.form(l_xml, 'A2-01-A - Nodes Xml'))
-        self.assertEqual(len(l_xml), 2)
 
 # ## END DBK

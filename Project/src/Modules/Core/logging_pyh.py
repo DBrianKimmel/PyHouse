@@ -28,7 +28,7 @@ def addHandler(p_handler):
     logging.Logger.addHandler(p_handler)
 
 
-class Utility(object):
+class lightingUtility(object):
     """
     """
 
@@ -39,7 +39,7 @@ class Utility(object):
         self.m_tw_log.stop()
 
 
-class API(Utility):
+class API(lightingUtility):
 
     m_pyhouse_obj = None
 

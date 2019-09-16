@@ -152,7 +152,7 @@ class Config:
         return l_node  # for testing purposes
 
 
-class Utility:
+class lightingUtility:
     """
     """
 
@@ -294,7 +294,7 @@ class API:
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
-        self.m_utility = Utility(p_pyhouse_obj)
+        self.m_utility = lightingUtility(p_pyhouse_obj)
         #
         p_pyhouse_obj.House = HouseInformation()
         self.m_location_api = location.Api(p_pyhouse_obj)

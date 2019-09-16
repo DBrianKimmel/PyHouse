@@ -56,7 +56,7 @@ class FindExternalIpAddress(object):
         return l_ret
 
 
-class Utility(FindExternalIpAddress):
+class lightingUtility(FindExternalIpAddress):
     """
     """
 
@@ -104,14 +104,14 @@ class Utility(FindExternalIpAddress):
         l_defer = l_agent.request(
             'GET',
             l_url)
-#            Headers({'User-Agent': ['PyHouse.Computer.Internet.inet_find_external_ip.Utility.get_public_ip']}),
+#            Headers({'User-Agent': ['PyHouse.Computer.Internet.inet_find_external_ip.lightingUtility.get_public_ip']}),
 #            None)
         l_defer.addCallback(cb_response)
         l_defer.addErrback(eb_response)
         return l_defer
 
 
-class API(Utility):
+class API(lightingUtility):
 
     def FindExternalIP(self, p_pyhouse_obj):
         """
@@ -124,7 +124,7 @@ class API(Utility):
         for l_test in l_internet.values():
             if l_test.Active:
                 for l_url in l_test.LocateUrls:
-                    l_ret = Utility.get_public_ip(l_url)
+                    l_ret = lightingUtility.get_public_ip(l_url)
                     LOG.info('Get ip addr {}'.format(l_ret))
         return l_defer
 

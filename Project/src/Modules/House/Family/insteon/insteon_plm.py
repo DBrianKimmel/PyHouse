@@ -402,7 +402,7 @@ class LightHandlerAPI:
         #            self._get_obj_info(p_controller_obj, l_obj)
 
 
-class Utility(LightHandlerAPI):
+class lightingUtility(LightHandlerAPI):
     """
     """
 
@@ -441,7 +441,7 @@ class Utility(LightHandlerAPI):
         return l_ret
 
 
-class API(Utility):
+class API(lightingUtility):
 
     m_controller_obj = None
     m_pyhouse_obj = None

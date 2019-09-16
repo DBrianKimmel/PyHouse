@@ -23,7 +23,7 @@ from math import pi
 # Import PyMh files
 from Modules.Housing.location import LocationInformation
 from Modules.Housing.Schedules import sunrisesunset
-from Modules.Housing.Schedules.sunrisesunset import Utility as astralUtil
+from Modules.Housing.Schedules.sunrisesunset import lightingUtility as astralUtil
 from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG
 from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME

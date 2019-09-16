@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Hue/Hue_hub.py
+@name:      Modules/House/Family/hue/hue_hub.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-09-16'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -44,7 +44,7 @@ from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Family.hue.hue_data import HueLightData
-from Modules.House.Lighting.utility import Utility as lightingUtility
+from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_Hub        ')
@@ -733,10 +733,11 @@ class HueHub:
         @param p_bridge_obj: is PyHouse_Obj.Computers.Bridges.xxx with xxx being a HueHub
 
         """
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse', 190))
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Computer', 190))
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House', 190))
-        for l_bridge_obj in self.m_pyhouse_obj:
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Computer'))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House'))
+        for l_bridge_obj in self.m_pyhouse_obj.Computer.Bridges.values():
+            LOG.debug(PrettyFormatAny.form(l_bridge_obj, 'Bridge'))
             l_bridge_obj._Queue = Queue(32)
             self.m_bridge_obj = l_bridge_obj
             self._get_all_config()

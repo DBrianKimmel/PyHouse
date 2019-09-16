@@ -32,7 +32,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-16'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,7 +72,7 @@ class FamilyConfigInformation:
         self.Name = None
 
 
-class Utility:
+class lightingUtility:
     """
     This will go thru every valid family and build a family entry for each one.
     It also imports the _device and _xml for each family and stores their API reference in the family object.
@@ -154,8 +154,8 @@ class Utility:
         p_pyhouse_obj.House.Family[l_key] = l_family_obj
         # Now import the family python package
         importlib.import_module(l_family_obj.PackageName)
-        l_device_ref = Utility()._do_import(l_family_obj, l_family_obj.DeviceName)
-        l_family_obj.DeviceAPI = Utility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
+        l_device_ref = lightingUtility()._do_import(l_family_obj, l_family_obj.DeviceName)
+        l_family_obj.DeviceAPI = lightingUtility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
         # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
         return l_family_obj
 
@@ -218,7 +218,9 @@ class API:
         """
         Build p_pyhouse_obj House Family
         """
-        # LOG.debug('Reloading Families')
+        LOG.debug('Reloading Families')
+        for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
+            LOG.info('Loading Family "{}"'.format(l_family_obj.Name))
         # self.m_pyhouse_obj.House.Family = self.m_family
         pass
 
@@ -229,7 +231,7 @@ class API:
         for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
             LOG.info('Starting Family "{}"'.format(l_family_obj.Name))
             # LOG.debug(PrettyFormatAny.form(l_family_obj, 'PyHouse Family'))
-            l_family_obj = Utility()._build_one_family_data(self.m_pyhouse_obj, l_family_obj.Name)
+            l_family_obj = lightingUtility()._build_one_family_data(self.m_pyhouse_obj, l_family_obj.Name)
             self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
             l_family_obj.DeviceAPI.Start()
         LOG.info('Started {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
@@ -245,7 +247,7 @@ class API:
         """
         Load all the families for testing.
         """
-        # return Utility()._init_family_component_apis(self.m_pyhouse_obj)
+        # return lightingUtility()._init_family_component_apis(self.m_pyhouse_obj)
         pass
 
 # ## END DBK

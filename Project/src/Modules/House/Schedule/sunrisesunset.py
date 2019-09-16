@@ -59,7 +59,7 @@ class LocatTzinfo(datetime.tzinfo):
         pass
 
 
-class Utility(object):
+class lightingUtility(object):
 
     def __init__(self):
         self.m_tz = pytz.timezone('America/New_York')
@@ -124,7 +124,7 @@ class Utility(object):
         return l_ret
 
 
-class API(Utility):
+class API(lightingUtility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

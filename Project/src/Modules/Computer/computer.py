@@ -167,7 +167,7 @@ class Config:
         return l_node  # for testing purposes
 
 
-class Utility:
+class lightingUtility:
     """
     There are currently (2019) 8 components - be sure all are in every method.
     """
@@ -274,7 +274,7 @@ class API:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = Config(p_pyhouse_obj)
         self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
-        self.m_utility = Utility(p_pyhouse_obj)
+        self.m_utility = lightingUtility(p_pyhouse_obj)
 
         # This overrides any config saved so we can start Logging and MQTT messages early on.
         p_pyhouse_obj.Computer = ComputerInformation()

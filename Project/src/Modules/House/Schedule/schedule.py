@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-16'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -53,7 +53,7 @@ from Modules.House.Hvac.hvac_actions import API as hvacActionsAPI
 from Modules.House.Irrigation.irrigation_action import API as irrigationActionsAPI
 from Modules.House.Lighting.lighting import ScheduleLightingInformation
 from Modules.House.Lighting.actions import API as lightActionsAPI
-from Modules.House.Lighting.utility import Utility as lightingUtility
+from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.House.Schedule import sunrisesunset
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -355,13 +355,14 @@ class ScheduleExecution:
     def dispatch_one_schedule(self, p_pyhouse_obj, p_schedule_obj):
         """
         Send information to one device to execute a schedule.
+        @param p_schedule_obj: ==> ScheduleInformation()
         """
         l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
         p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         #
-        if p_schedule_obj.Sched.Type == 'Lighting':
-            LOG.info('Execute_one_schedule type = Lighting')
+        if p_schedule_obj.Sched.Type == 'Light':
+            LOG.info('Execute_one_schedule type = Light')
             lightActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'Hvac':
@@ -395,10 +396,10 @@ class ScheduleExecution:
         for l_slot in p_key_list:
             l_schedule_obj = p_pyhouse_obj.House.Schedules[l_slot]
             ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
-        Utility.schedule_next_event(p_pyhouse_obj)
+        lightingUtility.schedule_next_event(p_pyhouse_obj)
 
 
-class Utility:
+class lightingUtility:
     """
     """
 
@@ -424,7 +425,7 @@ class Utility:
         """
         l_schedule_key_list = []
         l_min_seconds = SECONDS_IN_WEEK
-        l_riseset = Utility.fetch_sunrise_set(p_pyhouse_obj)
+        l_riseset = lightingUtility.fetch_sunrise_set(p_pyhouse_obj)
         # Loop through the possible scheduled events.
         for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
@@ -465,10 +466,10 @@ class Utility:
         @param p_delay: is the (forced) delay time for the timer.
         """
         l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
-        l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, l_now)
+        l_delay, l_list = lightingUtility.find_next_scheduled_events(p_pyhouse_obj, l_now)
         if p_delay != 0:
             l_delay = p_delay
-        Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
+        lightingUtility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
 
     def find_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
         """ Find all the schedule entry using any of several criteria.
@@ -664,6 +665,6 @@ class API:
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtility.schedule_next_event, self.m_pyhouse_obj)
 
 # ## END DBK

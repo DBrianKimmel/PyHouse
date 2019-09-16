@@ -27,7 +27,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hvac_xml       ')
 
 
-class Utility(object):
+class lightingUtility(object):
 
     @staticmethod
     def _read_base(_p_pyhouse_obj, p_xml):
@@ -37,7 +37,7 @@ class Utility(object):
 
     @staticmethod
     def _read_thermostat_base(p_pyhouse_obj, p_xml):
-        l_obj = Utility._read_base(p_pyhouse_obj, p_xml)
+        l_obj = lightingUtility._read_base(p_pyhouse_obj, p_xml)
         l_obj.DeviceType = 'Hvac'
         l_obj.DeviceSubType = 'Thermostat'
         return l_obj
@@ -65,9 +65,9 @@ class Utility(object):
         """
         @return: a ThermostatData object
         """
-        l_thermostat_obj = Utility._read_thermostat_base(p_pyhouse_obj, p_xml)
-        Utility._read_thermostat_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
-        Utility._read_family_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
+        l_thermostat_obj = lightingUtility._read_thermostat_base(p_pyhouse_obj, p_xml)
+        lightingUtility._read_thermostat_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
+        lightingUtility._read_family_data(p_pyhouse_obj, l_thermostat_obj, p_xml)
         return l_thermostat_obj
 
     @staticmethod
@@ -76,7 +76,7 @@ class Utility(object):
         l_count = 0
         try:
             for l_xml in p_xml.iterfind('Thermostat'):
-                l_obj = Utility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
+                l_obj = lightingUtility._read_one_thermostat_xml(p_pyhouse_obj, l_xml)
                 l_obj.Key = l_count
                 l_dict[l_count] = l_obj
                 l_uuid_obj = UuidData()
@@ -114,9 +114,9 @@ class Utility(object):
 
     @staticmethod
     def _write_one_thermostat_xml(p_pyhouse_obj, p_obj):
-        l_xml = Utility._write_thermostat_base('Thermostat', p_obj)
-        Utility._write_thermostat_data(l_xml, p_obj)
-        Utility._write_family_data(p_pyhouse_obj, p_obj, l_xml)
+        l_xml = lightingUtility._write_thermostat_base('Thermostat', p_obj)
+        lightingUtility._write_thermostat_data(l_xml, p_obj)
+        lightingUtility._write_family_data(p_pyhouse_obj, p_obj, l_xml)
         return l_xml
 
     @staticmethod
@@ -128,7 +128,7 @@ class Utility(object):
         l_xml = ET.Element('ThermostatSection')
         try:
             for l_obj in l_thermostats.values():
-                l_entry = Utility._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
+                l_entry = lightingUtility._write_one_thermostat_xml(p_pyhouse_obj, l_obj)
                 l_xml.append(l_entry)
                 l_count += 1
         except:
@@ -146,7 +146,7 @@ class XML(object):
             l_xml = p_pyhouse_obj._Config.XmlRoot.find('HouseDivision')
             l_xml = l_xml.find('HvacSection')
             l_xml = l_xml.find('ThermostatSection')
-            l_obj.Thermostats = Utility._read_all_thermostats_xml(p_pyhouse_obj, l_xml)
+            l_obj.Thermostats = lightingUtility._read_all_thermostats_xml(p_pyhouse_obj, l_xml)
         except AttributeError:
             pass
         return l_obj
@@ -158,7 +158,7 @@ class XML(object):
         @return: a sub tree ready to be appended to an element.
         """
         l_xml = ET.Element('HvacSection')  # HvacSection
-        l_xml.append(Utility._write_all_thermostats_xml(p_pyhouse_obj))
+        l_xml.append(lightingUtility._write_all_thermostats_xml(p_pyhouse_obj))
         return l_xml
 
 #  ## END DBK

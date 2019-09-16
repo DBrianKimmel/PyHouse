@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2019-09-16'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -650,10 +650,12 @@ class Config:
     """
     """
 
+    m_config_tools = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
     def dump_struct(self):
         """
@@ -688,12 +690,6 @@ class Config:
         l_ret = None
         return l_ret
 
-    def _extract_login(self, p_config):
-        """
-        """
-        l_ret = loginConfig(self.m_pyhouse_obj).load_name_password(p_config)
-        return  l_ret
-
     def _extract_one_service(self, p_config):
         """
         """
@@ -702,13 +698,12 @@ class Config:
         l_obj = PandoraServiceInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
-                l_obj.Host = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(p_config)
+                l_obj.Host = self.m_config_tools.fetch_host_info(l_value)
             elif l_key == 'Connection':
                 l_ret = self._extract_connection(l_value)
                 l_obj.Connection = l_ret
             elif l_key == 'Access':
-                l_ret = self._extract_login(l_value)
-                l_obj.Access = l_ret
+                l_obj.Access = self.m_config_tools.fetch_access_info(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
@@ -750,7 +745,7 @@ class Config:
         """ Read the pandora.yaml file.
         """
         try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
+            l_node = self.m_config_tools.read_yaml(CONFIG_NAME)
         except:
             self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = None
             LOG.warn('No Pandora config found')

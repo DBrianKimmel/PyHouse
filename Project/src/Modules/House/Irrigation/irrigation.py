@@ -54,7 +54,7 @@ class MqttActions():
         return l_logmsg
 
 
-class Utility(object):
+class lightingUtility(object):
     """
     """
 
@@ -65,7 +65,7 @@ class Utility(object):
         pass
 
 
-class API(Utility):
+class API(lightingUtility):
 
     m_pyhouse_obj = None
 

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Core/_test/test_node_local.py
+@name:      Modules/Computer/Nodes/_test/test_node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -7,31 +7,25 @@
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 26 tests - DBK - 2019-01-19
+Passed all 19 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-07-05'
+__updated__ = '2019-09-16'
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 import netifaces
 from netifaces import *
 
 #  Import PyMh files and modules.
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
-from Modules.Computer.Nodes import nodes_xml
 from Modules.Computer.Nodes.node_local import \
     Interfaces, \
     API as localApi, \
     Devices as localDevices, \
     Util as localUtil
-from Modules.Computer.Nodes.test.xml_nodes import \
-    XML_NODES, \
-    TESTING_NODE_SECTION
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 """ The following definitions are fake in order to keep eclipse errors from coming up on the netifaces module.
@@ -47,9 +41,8 @@ INTERFACE_wL = 'wlp2s0'
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class FakeNetiface(object):
@@ -60,65 +53,8 @@ class FakeNetiface(object):
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_node_local')
-
-
-class A1_Setup(SetupMixin, unittest.TestCase):
-    """
-    This section tests the setup of the _test
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeInformation()
-
-    def test_01_PyHouseObj(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Xml, 'A1-01-A - PyHouse.Xml'))
-        self.assertNotEqual(self.m_pyhouse_obj.Xml, None)
-
-    def test_02_Tags(self):
-        # print(PrettyFormatAny.form(self.m_xml, 'A1-02-A - Tags'))
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.computer_div.tag, 'ComputerDivision')
-        self.assertEqual(self.m_xml.node_sect.tag, 'NodeSection')
-
-
-class A2_Xml(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-
-    def test_01_Raw(self):
-        l_raw = XML_NODES
-        # print('A2-01-A - Raw', l_raw)
-        self.assertEqual(l_raw[:13], '<NodeSection>')
-
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_NODES)
-        # print('A2-02-A - Parsed', PrettyFormatAny.form(l_xml, 'A2-02-A Parsed'))
-        self.assertEqual(l_xml.tag, TESTING_NODE_SECTION)
-
-
-class A3_Xml(SetupMixin, unittest.TestCase):
-    """
-    This section tests the setup of the _test
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_interface_obj = NodeInterfaceData()
-        self.m_node_obj = NodeInformation()
-
-    def test_01_Nodes(self):
-        l_xml = self.m_pyhouse_obj.Xml.XmlRoot.find('ComputerDivision').find('NodeSection')
-        # print(PrettyFormatAny.form(l_xml, 'A3-01-A - Nodes Xml'))
-        self.assertEqual(len(l_xml), 2)
-
-    def test_02_Nodes(self):
-        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Nodes, 'A3-02-A - PyHouse Computer'))
-        self.assertEqual(len(self.m_pyhouse_obj.Computer.Nodes), 2)
 
 
 class B1_Netiface(SetupMixin, unittest.TestCase):
@@ -127,7 +63,7 @@ class B1_Netiface(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_interface_obj = NodeInterfaceData()
         self.m_node_obj = NodeInformation()
 
@@ -217,8 +153,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
         self.m_node = NodeInformation()
         self.m_iface_api = Interfaces()
 
@@ -307,8 +242,7 @@ class B2_Iface(SetupMixin, unittest.TestCase):
 class B3_Node(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.Computer.Nodes = nodes_xml.Xml.read_all_nodes_xml(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
 
     def test_01_Node(self):
         """
@@ -323,7 +257,7 @@ class B3_Node(SetupMixin, unittest.TestCase):
 class C1_Api(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Api(self):
         _l_api = localApi(self.m_pyhouse_obj)
@@ -338,11 +272,6 @@ class C1_Api(SetupMixin, unittest.TestCase):
         #  self.m_api.Start(self.m_pyhouse_obj)
         pass
 
-    def test_04_SaveXml(self):
-        l_xml = ET.Element('NodeSection')
-        localApi(self.m_pyhouse_obj).SaveXml(l_xml)
-        pass
-
     def test_05_Stop(self):
         localApi(self.m_pyhouse_obj).Stop()
         pass
@@ -351,7 +280,7 @@ class C1_Api(SetupMixin, unittest.TestCase):
 class D1_Devices(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_lsusb(self):
         l_usb = localDevices()._lsusb()

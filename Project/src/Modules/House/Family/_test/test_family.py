@@ -24,7 +24,7 @@ from test.testing_mixin import SetupPyHouseObj
 
 from Modules.Families import family
 from Modules.Families.family import \
-    Utility as familyUtil, \
+    lightingUtility as familyUtil, \
     FamilyModuleInformation
 from Modules.Families.test.xml_family import \
     TESTING_FAMILY_NAME_0, \
@@ -134,7 +134,7 @@ class A4_ValidFamily(SetupMixin, unittest.TestCase):
 
 
 class B1_One(SetupMixin, unittest.TestCase):
-    """ This section tests the "Utility" class
+    """ This section tests the "lightingUtility" class
     """
 
     def setUp(self):
@@ -166,7 +166,7 @@ class B1_One(SetupMixin, unittest.TestCase):
 
 
 class B2_One(SetupMixin, unittest.TestCase):
-    """ This section tests the "Utility" class
+    """ This section tests the "lightingUtility" class
     """
 
     def setUp(self):

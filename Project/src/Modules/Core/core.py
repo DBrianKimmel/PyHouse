@@ -87,7 +87,7 @@ class Config:
         self.m_pyhouse_obj = p_pyhouse_obj
 
 
-class Utility:
+class lightingUtility:
     """
     """
 
@@ -221,7 +221,7 @@ class Utility:
         return l_obj
 
 
-class API(Utility):
+class API(lightingUtility):
     """
     Called from PyHouse.py
     """

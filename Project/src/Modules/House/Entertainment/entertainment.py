@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2019-09-16'
 __version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -109,7 +109,7 @@ class Config:
             l_plugin._Module = l_module
             # Initialize Plugin
             l_plugin._API = l_module.API(self.m_pyhouse_obj)
-            LOG.debug(PrettyFormatAny.form(l_plugin, 'Plugin'))
+            # LOG.debug(PrettyFormatAny.form(l_plugin, 'Plugin'))
             l_plugin._API.LoadConfig()
             LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
 
@@ -172,7 +172,7 @@ class Config:
         except Exception as e_err:
             LOG.warn('There is no "Devices" section in the entertainment.yaml file\n\t{}'.format(e_err))
         #
-        LOG.debug('Plugins Requested: {}'.format(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins)))
+        LOG.info('Plugins Requested: {}'.format(self.m_modules_needed))
         return l_entertain
 
     def load_yaml_config(self):

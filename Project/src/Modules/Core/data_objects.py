@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-09-02'
+__updated__ = '2019-09-16'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -422,7 +422,7 @@ class LoginData(BaseUUIDObject):
         self.ServerState = None
 
 
-class NodeInformation(BaseUUIDObject):
+class NodeInformation:
     """ Information about a single node.
     Name is the Node's HostName
     The interface info is only for the local node.
@@ -431,7 +431,8 @@ class NodeInformation(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(NodeInformation, self).__init__()
+        self.Name = None
+        self.Comment = None
         self.ConnectionAddr_IPv4 = None
         self.ConnectionAddr_IPv6 = None
         self.ControllerTypes = []  # A list of devce controller types attached to this node

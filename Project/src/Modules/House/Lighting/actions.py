@@ -13,13 +13,13 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-09-04'
+__updated__ = '2019-09-16'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.House.Family.family_utils import FamUtil
-from Modules.House.Lighting.utility import Utility
+from Modules.House.Lighting.utility import lightingUtility
 from Modules.House.Lighting.lights import LightData
 
 from Modules.Core import logging_pyh as Logger
@@ -34,14 +34,14 @@ class API:
         """ A schedule action has been called for on a Light
 
         @param p_pyhouse_obj: The entire data set.
-        @param p_schedule_obj: the schedule event being executed.
+        @param p_schedule_obj: the schedule event being executed.  ==> ScheduleInformation()
 
         """
-        l_light_name = p_schedule_obj.sched.Name
+        l_light_name = p_schedule_obj.Sched.Name
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        l_light_obj = Utility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
+        l_light_obj = lightingUtility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
         #
-        l_controller_objs = Utility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
+        l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
         l_control = LightData()
         l_control.BrightnessPct = p_schedule_obj.Sched.Brightness
         l_control.TransitionTime = p_schedule_obj.Sched.Rate
@@ -49,7 +49,7 @@ class API:
             LOG.warn('No controllers on this server for Light: {}'.format(l_light_obj.Name))
             return
         for l_controller_obj in l_controller_objs:
-            if not l_controller_obj.isLocal:
+            if not l_controller_obj._isLocal:
                 continue
             LOG.info("\n\tSchedLightName:{}; Level:{}; LightName:{}; Controller:{}".format(
                     l_light_name, l_control.BrightnessPct, l_light_obj.Name, l_controller_obj.Name))

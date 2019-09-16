@@ -34,7 +34,7 @@ INITIAL_DELAY = 5
 REPEAT_DELAY = 2 * 60 * 60
 
 
-class Utility(object):
+class lightingUtility(object):
     """
     """
 
@@ -42,7 +42,7 @@ class Utility(object):
     def _internet_loop(p_pyhouse_obj):
         # API.FindExternalIp(p_pyhouse_obj)
         # API.UpdateDynDnsSites(p_pyhouse_obj)
-        p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, Utility._internet_loop, p_pyhouse_obj)
+        p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, lightingUtility._internet_loop, p_pyhouse_obj)
 
     @staticmethod
     def _read_xml_configuration(p_pyhouse_obj):
@@ -59,14 +59,14 @@ class API(object):
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def LoadConfig(self):
-        Utility._read_xml_configuration(self.m_pyhouse_obj)
+        lightingUtility._read_xml_configuration(self.m_pyhouse_obj)
         LOG.info('Loaded Internet Config')
 
     def Start(self):
         """
         Start async operation of the Internet module.
         """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility._internet_loop, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtility._internet_loop, self.m_pyhouse_obj)
         LOG.info("Started Internet.")
 
     def SaveConfig(self):

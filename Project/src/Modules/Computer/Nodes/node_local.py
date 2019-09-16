@@ -19,7 +19,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-09-16'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,7 +34,6 @@ import subprocess
 
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
-# from Modules.Communication import ir_control
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 
 from Modules.Core import logging_pyh as Logger

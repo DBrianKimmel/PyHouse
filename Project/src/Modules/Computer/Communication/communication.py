@@ -19,7 +19,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Communication  ')
 
 
-class Utility(object):
+class lightingUtility(object):
 
     def read_xml(self, p_pyhouse_obj):
         """Read all the information.

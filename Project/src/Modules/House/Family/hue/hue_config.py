@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/Hue/Hue_config.py
+@name:      Modules/House/Family/hue/hue_config.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-11'
+__updated__ = '2019-09-16'
 
 # Import system type stuff
 

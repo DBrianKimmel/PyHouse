@@ -19,7 +19,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import GarageDoorData
-from Modules.House.Security.security import Utility, API as securityAPI
+from Modules.House.Security.security import lightingUtility, API as securityAPI
 from Modules.House.Family.family import API as familyAPI
 from Modules.Core.Utilities import convert, json_tools
 from _test.testing_mixin import SetupPyHouseObj
@@ -82,7 +82,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_DoorBaseData(self):
         """ Read in the xml file and fill in the lights
         """
-        l_door = Utility._read_base_device(self.m_pyhouse_obj, self.m_xml.garagedoor)
+        l_door = lightingUtility._read_base_device(self.m_pyhouse_obj, self.m_xml.garagedoor)
         # print(PrettyFormatAny.form(l_door, 'B1-01-A - Gafrage Door'))
         self.assertEqual(str(l_door.Name), TESTING_GARAGE_DOOR_NAME_0)
         self.assertEqual(str(l_door.Active), TESTING_GARAGE_DOOR_ACTIVE_0)
@@ -98,7 +98,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_02_OneDoor(self):
         """ Read in the xml file and fill in the lights
         """
-        l_door = Utility._read_one_door_xml(self.m_pyhouse_obj, self.m_xml.garagedoor)
+        l_door = lightingUtility._read_one_door_xml(self.m_pyhouse_obj, self.m_xml.garagedoor)
         # print(PrettyFormatAny.form(l_door, 'B1-02-A - Button'))
         self.assertEqual(str(l_door.Name), TESTING_GARAGE_DOOR_NAME_0)
         self.assertEqual(str(l_door.Active), TESTING_GARAGE_DOOR_ACTIVE_0)
@@ -115,7 +115,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_04_MotionBaseData(self):
         """ Read in the xml file and fill in the lights
         """
-        l_door = Utility._read_base_motion_device(self.m_pyhouse_obj, self.m_xml.motiondetector)
+        l_door = lightingUtility._read_base_motion_device(self.m_pyhouse_obj, self.m_xml.motiondetector)
         # print(PrettyFormatAny.form(l_door, 'B1-01-A - Motion Detector'))
         self.assertEqual(str(l_door.Name), TESTING_MOTION_SENSOR_NAME_0)
         self.assertEqual(str(l_door.Active), TESTING_MOTION_SENSOR_ACTIVE_0)
@@ -131,7 +131,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_05_OneMotion(self):
         """ Read in the xml file and fill in the lights
         """
-        l_dev = Utility._read_one_motion_xml(self.m_pyhouse_obj, self.m_xml.motiondetector)
+        l_dev = lightingUtility._read_one_motion_xml(self.m_pyhouse_obj, self.m_xml.motiondetector)
         # print(PrettyFormatAny.form(l_dev, 'B1-05-A - Motion Detector'))
         self.assertEqual(str(l_dev.Name), TESTING_MOTION_SENSOR_NAME_0)
         self.assertEqual(str(l_dev.Active), TESTING_MOTION_SENSOR_ACTIVE_0)
@@ -158,7 +158,7 @@ class B2_Write(SetupMixin, unittest.TestCase):
     def test_01_OneDoor(self):
         """ Write out the XML file for the button section
         """
-        l_xml = Utility._write_one_door_xml(self.m_pyhouse_obj, self.m_pyhouse_obj.House.Security.GarageDoors[0])
+        l_xml = lightingUtility._write_one_door_xml(self.m_pyhouse_obj, self.m_pyhouse_obj.House.Security.GarageDoors[0])
         # print(PrettyFormatAny.form(l_xml, 'B2-01-A - One Door'))
         self.assertEqual(l_xml.attrib['Name'], TESTING_GARAGE_DOOR_NAME_0)
         self.assertEqual(str(l_xml.attrib['Active']), TESTING_GARAGE_DOOR_ACTIVE_0)

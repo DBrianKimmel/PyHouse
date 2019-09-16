@@ -7,22 +7,22 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
-Passed all 16 tests - DBK - 2019-05-11
+Passed 3 of 9 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-07-28'
+__updated__ = '2019-09-16'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import HouseInformation, PyHouseInformation
-from Modules.Housing.house import \
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import PyHouseInformation
+from Modules.House.house import \
     API as houseAPI, \
     Config as houseConfig, \
-    Utility as houseUtil
+    lightingUtility as houseUtil, HouseInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

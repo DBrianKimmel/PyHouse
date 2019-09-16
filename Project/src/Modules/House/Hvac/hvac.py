@@ -40,7 +40,7 @@ class HvacInformation:
         self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
-class Utility(object):
+class lightingUtility(object):
     """
     """
 
@@ -78,7 +78,7 @@ class MqttActions():
         return p_logmsg
 
 
-class API(Utility):
+class API(lightingUtility):
 
     m_pyhouse_obj = None
 

@@ -27,7 +27,7 @@ from Modules.Families.Insteon import Insteon_decoder
 # from Modules.Families.Insteon.Insteon_utils import Util
 from Modules.Families.family import API as familyAPI
 from Modules.Housing.Hvac.hvac_xml import XML as hvacXML
-from Modules.Housing.Lighting.lighting import Utility as lightingUtility
+from Modules.Housing.Lighting.lighting import lightingUtility as lightingUtility
 from Modules.Housing.Lighting.test.xml_controllers import TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Security.security import XML as securityXML
 # from Modules.Core.Utilities.tools import PrintBytes

@@ -29,7 +29,7 @@ from Modules.House.Schedule.schedule import \
     Config as scheduleConfig, \
     SchedTime, \
     API as scheduleAPI, \
-    Utility as scheduleUtility, \
+    lightingUtility as scheduleUtility, \
     TimeField, CONFIG_FILE_NAME
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny

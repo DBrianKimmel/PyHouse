@@ -27,7 +27,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.UPB_device     ')
 
 
-class Utility(object):
+class lightingUtility(object):
 
     @staticmethod
     def _is_upb_active(p_controller_obj):
@@ -49,7 +49,7 @@ class API(object):
         """
         l_count = 0
         for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.values():
-            if Utility._is_upb_active(l_controller_obj):
+            if lightingUtility._is_upb_active(l_controller_obj):
                 l_controller_prefix = 'house/lighting/controller/{}'.format(l_controller_obj.Name)
                 l_controller_obj._HandlerAPI = upbPimAPI(self.m_pyhouse_obj)
                 if l_controller_obj._HandlerAPI.Start(self.m_pyhouse_obj, l_controller_obj):
@@ -65,7 +65,7 @@ class API(object):
     def Stop(self):
         try:
             for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.values():
-                if Utility._is_upb_active(l_controller_obj):
+                if lightingUtility._is_upb_active(l_controller_obj):
                     l_controller_obj._HandlerAPI.Stop(l_controller_obj)
         except AttributeError as e_err:
             LOG.error('Stop ERROR {}'.format(e_err))
