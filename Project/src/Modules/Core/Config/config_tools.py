@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2019-09-23'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -88,8 +88,9 @@ class Tools:
 
     m_pyhouse_obj = None
 
-    def XXX__init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        # print('Tools')
 
     def _get_config_dir(self):
         """
@@ -145,21 +146,21 @@ class Tools:
         _l_x = p_yaml
         return l_coord
 
-    def extract_fields(self, p_obj, p_config, required_list=None, allowed_list=None, subfield_list=[]):
+    def extract_fields(self, p_obj, p_config, required_list=None, allowed_list=None, groupfield_list=[]):
         """
         @param p_obj: is the python object that will contain the config information
         @param p_config: is the yaml(json) fragment that contains the data
         @param required_list: is a list of fields that must be in the config data
         @param allowed_list: additional fields that may be in the config data.
-        @param subfield_list: are fields that have sub-entries
+        @param groupfield_list: are fields that have sub-entries
         """
+        # print('ExtractFields')
         for l_key, l_value in p_config.items():
-            if l_key in subfield_list:
+            if l_key in groupfield_list:
                 l_extr = 'extract_' + l_key
-                print('Extracting ', l_extr)
-                # l_value = self._extract_family(l_value)
+                LOG.debug('Groupfield Extracting ', l_extr)
                 continue
-                #
+            LOG.debug('Extract - Key:"{}"; Value:"{}" '.format(l_key, l_value))
             setattr(p_obj, l_key, l_value)
         #
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_') and not callable(getattr(p_obj, l_attr))]:
@@ -268,7 +269,7 @@ class YamlFetch(Tools):
 
     def fetch_host_info(self, p_config):
         """
-        @param p_yaml: is the 'Host' ordereddict
+        @param p_config: is the 'Host' ordereddict
         """
         l_obj = HostInformation()
         l_required = ['Name', 'Port']
@@ -276,7 +277,7 @@ class YamlFetch(Tools):
         self.extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
-    def fetch_access_info(self, p_config):
+    def extract_access_group(self, p_config):
         """
         """
         l_obj = SecurityInformation()

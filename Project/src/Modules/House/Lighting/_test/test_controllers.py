@@ -7,39 +7,70 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 7 tests - DBK - 2019-07-20
+Passed all 7 tests - DBK - 2019-09-17
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-23'
 
 #  Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-
-# from Modules.Core.data_objects import ControllerInformation
-from Modules.Core.Utilities import config_tools
-from Modules.Core.Utilities.config_tools import Yaml as configYaml
-from Modules.House.Family.family import API as familyAPI
-from Modules.House.Lighting.controllers import \
-    Config as controllerConfig, \
-    CONFIG_FILE_NAME
+from Modules.House.Lighting.controllers import Config as controllerConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+TEST_YAML = """\
+Controllers:
+   # A list of all controllers follows
 
-#  Import PyMh files and modules.
+   - Name: TestPlm
+     Comment: Portable, Goes where I do.
+     Family:
+        Name: insteon
+        Type: Plm
+        Address: 44.FF.11
+     Interface:
+        Type: Serial
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB0
+        Host: Laptop-01
+
+   - Name: LaundryPlm
+     Comment: Laundry Room Computers
+     Family:
+        Name: insteon
+        Type: Plm
+        Address: 44.EE.22
+     Interface:
+        Type: Serial
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB0
+        Host: pi-01
+
+   - Name: Hue
+     Comment: For philips hue lights
+     Family:
+        Name: hue
+        Type: Hub
+     Interface:
+        Type: Ethernet
+        Host: philios-hue
+        Port: 443
+     Access:
+        Name: ABCDEFIGRYNKBlROabMWuABCDEFGSjBS2EWHoFYyz
+        Password: !secret EncriptedPassword1
+"""
+
+
 class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_yaml = SetupPyHouseObj().BuildYaml(None)
-        #
-        self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj._Families = self.m_family
-        self.m_filename = CONFIG_FILE_NAME
-        self.m_yamlconf = configYaml(self.m_pyhouse_obj)
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
@@ -54,15 +85,17 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
 
-    def test_01_PyHouse(self):
-        """ Be sure that the XML contains the right stuff.
+    def test_01_Config(self):
+        """ Be sure that the config contains the right stuff.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, {})
+        # print(PrettyFormatAny.form(self.m_test_config, 'A1-01-A - Config'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
+        self.assertIsNotNone(self.m_test_config['Controllers'])
 
-    def test_02_File(self):
+    def test_02_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(CONFIG_FILE_NAME, 'controllers.yaml')
+        self.assertEqual(self.m_pyhouse_obj.House.Lighting.Controllers, None)
 
 
 class C1_ConfigRead(SetupMixin, unittest.TestCase):
@@ -72,29 +105,33 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
 
-    def test_01_Build(self):
+    def test_01_Controller0(self):
+        """ Test reading the device portion of the config.
+        """
+        print('C1-01')
+        l_yaml = self.m_test_config['Controllers'][0]
+        # print('C1-01-A - Yaml: ', l_yaml)
+        l_ret = controllerConfig(self.m_pyhouse_obj)._extract_one_controller(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C1-01-B - Light'))
+        self.assertEqual(l_ret.Name, 'TestPlm')
+        self.assertEqual(l_ret.Comment, 'Portable, Goes where I do.')
+        self.assertEqual(l_ret.DeviceType, 'Lighting')
+        self.assertEqual(l_ret.DeviceSubType, 'Controller')
+        self.assertEqual(l_ret.Family.Name, 'insteon')
+        self.assertEqual(l_ret.Family.Address, '44.FF.11')
+
+    def test_02_Interface(self):
         """ The basic read info as set up
         """
-        # print('C1-01')
+        print('C1-02')
+        l_yaml = self.m_test_config['Controllers'][0]['Interface']
+        print('C1-02-A - Yaml: ', l_yaml)
         self.assertEqual(self.m_pyhouse_obj.House.Lighting.Controllers, None)
-
-    def test_02_ReadFile(self):
-        """ Read the rooms.yaml config file
-        """
-        # print('C1-02')
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        l_yaml = l_node.Yaml
-        l_yamlcontrollers = l_yaml['Controllers']
-        # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
-        # print('C1-02-B - Yaml {}'.format(l_yaml['Controllers']))
-        # print(PrettyFormatAny.form(l_yamlcontrollers, 'C1-02-C - YamlRooms'))
-        self.assertEqual(l_yamlcontrollers[0]['Name'], 'Plm-1')
-        self.assertEqual(len(l_yamlcontrollers), 3)
 
     def test_03_Load(self):
         """ Read the controller.yaml config file
         """
-        # print('C1-03')
+        print('C1-03')
         _l_ret = controllerConfig(self.m_pyhouse_obj).load_yaml_config()
         # print(PrettyFormatAny.form(l_ret, 'C1-03-A - ret'))
         l_test = self.m_pyhouse_obj.House.Lighting.Controllers

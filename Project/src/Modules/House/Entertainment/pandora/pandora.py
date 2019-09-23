@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-09-18'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -703,7 +703,7 @@ class Config:
                 l_ret = self._extract_connection(l_value)
                 l_obj.Connection = l_ret
             elif l_key == 'Access':
-                l_obj.Access = self.m_config_tools.fetch_access_info(l_value)
+                l_obj.Access = self.m_config_tools.extract_access_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.

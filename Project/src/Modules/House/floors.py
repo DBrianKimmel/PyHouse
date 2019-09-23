@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/f.py
+@name:      Modules/House/floors.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-20'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -79,6 +79,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+        LOG.info('Extracted floor "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_floors(self, p_config):
@@ -90,6 +91,7 @@ class Config:
         for l_ix, l_floor in enumerate(p_config):
             l_floors[l_ix] = self._extract_one_floor(l_floor)
         self.m_pyhouse_obj.House.Floors = l_floors
+        LOG.info('Extracted {} Floors'.format(len(l_floors)))
         return l_floors  # For testing.
 
     def load_yaml_config(self):
@@ -190,10 +192,16 @@ class Api:
         self.m_config.load_yaml_config()
         LOG.info('Loaded {} Floors'.format(len(self.m_pyhouse_obj.House.Floors)))
 
+    def Start(self):
+        pass
+
     def SaveConfig(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         self.m_config.save_yaml_config()
+
+    def Stop(self):
+        pass
 
 #  ## END DBK

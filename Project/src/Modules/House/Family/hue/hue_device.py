@@ -10,7 +10,7 @@
 """
 from Modules.Core.Config import config_tools
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-09-18'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -68,7 +68,7 @@ class Config:
         l_obj = HueInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Access':
-                l_obj.Access = self.m_config_tools.fetch_access_info(l_value)
+                l_obj.Access = self.m_config_tools.extract_access_group(l_value)
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:

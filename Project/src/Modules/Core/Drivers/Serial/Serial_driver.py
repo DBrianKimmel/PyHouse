@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-22'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -206,7 +206,8 @@ class SerialAPI:
         if l_host != l_computer:
             LOG.warn('Device "{}" is on another computer "{}". This is "{}"  - Ignored.'.format(l_name, l_host, l_computer))
             return False
-        # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller', 160)))
+        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller')))
+        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface')))
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
@@ -215,9 +216,6 @@ class SerialAPI:
                     baudrate=l_baud)
             p_controller_obj.Interface._DriverApi = self
             # LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
-            # LOG.debug('Serial:{}'.format(l_serial))
-            # LOG.debug(PrettyFormatAny.form(l_serial, 'Serial'))
-            # LOG.debug('Baud:{}'.format(l_baud))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))
@@ -276,7 +274,7 @@ class API(SerialAPI):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # LOG.info('Initialize Serial Driver')
+        LOG.info('Initialize Serial Driver')
 
     def Start(self, p_controller_obj):
         """

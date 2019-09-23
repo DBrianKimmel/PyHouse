@@ -7,17 +7,14 @@
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
 
-Reading and writing XML to save controller information is fairly complete.
 First we have the basic information about the controller.
 Then we have the Lighting system information.
 Then we have the information specific to the family of the controller (Insteon, USB, Zigbee, etc.).
 Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
-
-
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2019-09-23'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,7 +29,7 @@ from Modules.House.Security.login import Config as loginConfig
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.LightController')
+LOG = Logger.getLogger('PyHouse.Controllers    ')
 
 CONFIG_NAME = 'controllers'
 
@@ -48,7 +45,8 @@ class ControllerInformation:
         self.DeviceSubType = 'Controller'
         self.Family = None  # LightFamilyInformation()
         self.Interface = None  # Interface module specific  InterfaceInformation()
-        self.Security = None  # Optional ==> SecurityInformation()
+        self.Access = None  # Optional ==> SecurityInformation()
+        #
         self._Message = bytearray()
         self._Queue = None
         self._isLocal = False
@@ -91,62 +89,39 @@ class Config:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _extract_family(self, p_config):
-        """
-        """
-        # LOG.debug('Extracting Family next')
-        l_ret = familyConfig().load_family_config(p_config, self.m_pyhouse_obj)
-        return l_ret
-
-    def _extract_interface(self, p_config):
-        """ Get the controller interface config.
-        @return: ==> DriverInterfaceInformation()
-        """
-        # LOG.debug('Extracting Interface next')
-        l_ret = interfaceConfig().load_interface(p_config)
-        return l_ret
-
-    def _extract_security(self, p_config):
-        """
-        """
-        # LOG.debug('Extracting Security next')
-        l_ret = loginConfig(self.m_pyhouse_obj).load_name_password(p_config)
-        return  l_ret
-
     def _extract_one_controller(self, p_config):
         """ Extract the config info for one Controller.
 
-        @return: ==> ControllerInformation
+        @return: ==> ControllerInformation()
         """
         l_obj = ControllerInformation()
+        l_obj.DeviceType = 'Lighting'
+        l_obj.DeviceSubType = 'Controller'
         l_required = ['Name', 'Family', 'Interface']
-        _l_msg = 'One Controller {}'.format(p_config)
-        # LOG.debug(_l_msg)
         try:
             for l_key, l_value in p_config.items():
-                # print('Controller Key: {}; Value: {}'.format(l_key, l_value))
+                LOG.debug('Controller Key "{}"; Value: "{}"'.format(l_key, l_value))
                 if l_key == 'Family':
-                    l_obj.Family = self._extract_family(l_value)
-                elif l_key == 'Interface':
-                    l_ret = self._extract_interface(l_value)
-                    l_obj.Interface = l_ret
-                    if l_ret.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
-                        l_obj._isLocal = True
+                    l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
+                    # self.m_pyhouse_obj.House.Family[l_obj.Family.Name] = l_obj.Family
                 elif l_key == 'Access':
-                    l_ret = self._extract_security(l_value)
-                    l_obj.Interface = l_ret
+                    l_obj.Access = loginConfig(self.m_pyhouse_obj).load_name_password(l_value)
+                elif l_key == 'Interface':
+                    l_obj.Interface = interfaceConfig(self.m_pyhouse_obj).extract_interface_group(l_value)
+                    # if l_obj.Interface.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
+                    #    l_obj._isLocal = True
                 else:
-                    LOG.debug('Extracting {}: {}'.format(l_key, l_value))
+                    LOG.debug('Extracting Key: "{}"; Value: "{}"'.format(l_key, l_value))
                     setattr(l_obj, l_key, l_value)
-        except:
-            LOG.warn('Invalid entry of some type in {}'.format(CONFIG_NAME))
+        except Exception as e_err:
+            LOG.warn('Invalid entry of some type in "{}.yaml"\n\t{}'.format(CONFIG_NAME, e_err))
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.error('The Controller "{}" is missing a required entry for "{}"'.format(l_obj.Name, l_key))
-                LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
-                return None
-        LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
+                LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
+                return l_obj
+        # LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
         LOG.info('Extracted controller "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -154,33 +129,32 @@ class Config:
         """
         PyHouse.House.Lighting.Controllers
         """
-        _l_msg = 'All controllers. {}'.format(p_config)
-        # LOG.debug(_l_msg)
         l_dict = {}
         for l_key, l_value in enumerate(p_config):
             l_obj = self._extract_one_controller(l_value)
             l_dict[l_key] = l_obj
-        # LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers', 190))
+        LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers'))
+        LOG.info('Loaded {} controllers'.format(len(l_dict)))
         return l_dict
 
     def load_yaml_config(self):
         """ Read the controllers.yaml file if it exists.
         It contains Controllers data for the house.
         """
+        self.m_pyhouse_obj.House.Lighting.Controllers = None
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
-            self.m_pyhouse_obj.House.Lighting.Controllers = None
             LOG.warn('No controllers config found')
             return None
         try:
             l_yaml = l_node.Yaml['Controllers']
         except:
             LOG.warn('The controllers.yaml file does not start with "Controllers:"')
-            self.m_pyhouse_obj.House.Lighting.Controllers = None
             return None
         l_controllers = self._extract_all_controllers(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
+        LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
         return l_controllers  # for testing purposes
 
 

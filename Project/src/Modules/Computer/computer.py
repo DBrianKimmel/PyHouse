@@ -11,8 +11,8 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-09-12'
-__version_info__ = (19, 5, 1)
+__updated__ = '2019-09-23'
+__version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -147,10 +147,9 @@ class Config:
     def load_yaml_config(self):
         """ Read the config file.
         """
-        LOG.debug('Starting ')
+        LOG.info('Starting ')
         self.m_config_tools.find_config_file(CONFIG_NAME)
-
-        LOG.debug('New start of config loading...')
+        # LOG.debug('New start of config loading...')
         try:
             l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         except:
@@ -191,7 +190,7 @@ class lightingUtility:
             l_path = self.m_config_tools.find_config_file(l_module.lower())
             if l_path != None:
                 self.m_module_needed.append(l_module)
-                LOG.debug('Found Computer config file "{}"'.format(l_path))
+                LOG.info('Found Computer config file "{}"'.format(l_path))
         LOG.info('Found config files for: {}'.format(self.m_module_needed))
         return self.m_module_needed  # for debugging
 
@@ -296,7 +295,7 @@ class API:
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_config.load_yaml_config()
         self.m_utility._load_component_config()
-        LOG.info('Loaded Config.')
+        LOG.info('Loaded all computer Configs.')
 
     def Start(self):
         """

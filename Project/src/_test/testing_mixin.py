@@ -8,8 +8,9 @@
 @summary:   Test handling the information for a house.
 
 """
+from Modules.Core.core import ParameterInformation
 
-__updated__ = '2019-09-09'
+__updated__ = '2019-09-19'
 
 #  Import system type stuff
 import os
@@ -74,6 +75,11 @@ class SetupPyHouseObj:
         l_ret.ConfigDir = TEST_PATH
         return l_ret
 
+    def build_params(self):
+        l_ret = ParameterInformation()
+        l_ret.Name = 'Test'
+        return l_ret
+
     def _build_yaml(self, p_root):
         l_ret = YamlData()
         l_ret.YamlRoot = p_root
@@ -124,12 +130,13 @@ class SetupPyHouseObj:
         """ This will create the pyhpuse_obj structure.
         """
         l_pyhouse_obj = PyHouseInformation()
-        l_pyhouse_obj.Core = SetupPyHouseObj()._build_core()
         l_pyhouse_obj.Computer = SetupPyHouseObj()._build_computer()
         l_pyhouse_obj.House = SetupPyHouseObj()._build_house_data()
         #
+
         l_pyhouse_obj._APIs = self._build_apis()
         l_pyhouse_obj._Config = self._build_config()
+        l_pyhouse_obj._Parameters = self.build_params()
         l_pyhouse_obj._Twisted = self._build_twisted()
         l_pyhouse_obj._Uuids = UuidInformation()
         l_pyhouse_obj._Uuids.All = {}

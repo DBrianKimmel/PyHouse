@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-22'
 
 #  Import system type stuff
 
@@ -27,7 +27,7 @@ class InsteonData(object):
         self.FirmwareVersion = 0
         self.GroupList = ''
         self.GroupNumber = 0
-        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
+        self.InsteonAddress = None  # 3 byte
         self.ProductKey = ''  # 3 bytes
         self.Links = {}
 

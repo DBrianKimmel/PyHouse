@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-09-21'
 __version_info__ = (18, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -70,7 +70,7 @@ class MqttActions:
             l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
         except:
             l_msg = 'The entertainment module {} does not exist, skipping'.format(l_module)
-            LOG.warn(l_msg)
+            # No need to clutter the log - LOG.warn(l_msg)
             return l_msg
         try:
             LOG.debug(PrettyFormatAny.form(l_module_obj, 'Entertain Module'))
@@ -102,9 +102,9 @@ class Config:
         Load the modules and their configs.
         """
         for l_name, l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.items():
-            LOG.debug('Loading Plugin "{}"'.format(l_name))
+            LOG.info('Loading Plugin "{}"'.format(l_name))
             l_plugin_name = 'Modules.House.Entertainment.' + l_name + '.' + l_name
-            LOG.debug('Importing Plugin Module "{}"'.format(l_plugin_name))
+            # LOG.debug('Importing Plugin Module "{}"'.format(l_plugin_name))
             l_module = importlib.import_module(l_plugin_name)
             l_plugin._Module = l_module
             # Initialize Plugin
@@ -122,7 +122,7 @@ class Config:
             l_obj = EntertainmentPluginInformation()
             l_name = self.m_config_tools.find_first_element(l_service)
             l_name_lower = l_name.lower()
-            LOG.debug('Key: {}'.format(l_name))
+            LOG.Info('Service "{}"'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
             l_obj.Name = l_name
             l_obj.Type = 'Service'
@@ -142,7 +142,7 @@ class Config:
             l_obj = EntertainmentPluginInformation()
             l_name = self.m_config_tools.find_first_element(l_device)
             l_name_lower = l_name.lower()
-            LOG.debug('Key: {}'.format(l_name))
+            LOG.info('Device "{}"'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
             l_obj.Name = l_name
             l_obj.Type = 'Device'

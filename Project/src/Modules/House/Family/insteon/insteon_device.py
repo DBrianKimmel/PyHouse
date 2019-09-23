@@ -7,18 +7,12 @@
 @license:   MIT License
 @summary:   This module is for Insteon
 
-This is the main module for the Insteon family of devices.
-It provides the single interface into the family.
-Several other Insteon modules are included by this and are invisible to the other families.
-
-This module loads the information about all the Insteon devices.
-
-InsteonControllers
-serial_port
+This is the main module for the Insteon family of device controllers.
+It is imported once and instantiated for each local controller
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-22'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -86,36 +80,26 @@ class lightingUtility:
     """
 
     @staticmethod
-    def _is_insteon(p_controller_obj):
-        try:
-            return p_controller_obj.Family.Name == 'insteon'
-        except AttributeError:
-            return False
-
-    @staticmethod
-    def _is_active(p_controller_obj):
-        return True
-        try:
-            return p_controller_obj.Active == True
-        except AttributeError:
-            return False
-
-    @staticmethod
     def _is_valid_controller(p_controller_obj):
-        return lightingUtility._is_insteon(p_controller_obj)  # and lightingUtility._is_active(p_controller_obj)
+        if p_controller_obj.Family.Name.lower() == 'insteon':
+            LOG.debug('Insteon')
+            return True
+        else:
+            LOG.debug(PrettyFormatAny.form(p_controller_obj.Family, 'Family'))
+            LOG.debug('Not Insteon')
+            return False
 
     @staticmethod
-    def _start_plm(p_pyhouse_obj, p_controller_obj):
+    def _start_one_plm(p_pyhouse_obj, p_controller_obj):
         """
         import PLM module when we run this otherwise we will get a circular import
         @param p_controller_obj: ==> ControllerInformation(CoreLightingData)
         @return: None if no PLM, API Pointer if OK
         """
         from Modules.House.Family.insteon import insteon_plm
-        l_plmAPI = insteon_plm.API(p_pyhouse_obj)
-        # l_uuid = p_pyhouse_obj.Computer.UUID
+        l_plmAPI = insteon_plm.API(p_pyhouse_obj, p_controller_obj)
         p_controller_obj._HandlerAPI = l_plmAPI
-        if l_plmAPI.Start(p_controller_obj):
+        if l_plmAPI.Start():
             LOG.info('Successfully started Insteon controller "{}"'.format(p_controller_obj.Name))
             # p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerCount += 1
             # p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerTypes.append('insteon')
@@ -133,9 +117,8 @@ class lightingUtility:
         @return: a list of the Insteon_PLM API references
         """
         l_list = []
-        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting.Controllers, 'Lighting.API.Controllers', 190))
         l_controllers = p_pyhouse_obj.House.Lighting.Controllers
-        # LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
+        LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
         if l_controllers == None:
             return l_list
         for l_controller_obj in l_controllers.values():
@@ -148,15 +131,13 @@ class lightingUtility:
                 continue
             LOG.info('Starting Controller "{}"'.format(l_controller_obj.Name))
             if lightingUtility._is_valid_controller(l_controller_obj):
-                # LOG.debug('Insteon Controller: "{}" - will be started.'.format(l_controller_obj.Name))
-                l_ret = lightingUtility._start_plm(p_pyhouse_obj, l_controller_obj)
+                LOG.debug('Insteon Controller: "{}" - will be started.'.format(l_controller_obj.Name))
+                l_ret = lightingUtility._start_one_plm(p_pyhouse_obj, l_controller_obj)
                 l_list.append(l_ret)
-            elif lightingUtility._is_insteon(l_controller_obj):
-                LOG.warn('Insteon Controller: "{}" - will NOT be started per config file.'.format(l_controller_obj.Name))
             else:
-                LOG.warn('Not an insteon controller')
+                LOG.warn('Not an insteon controller "{}"'.format(l_controller_obj.Name))
                 pass  #  Not interested in this controller. (Non-Insteon)
-        LOG.info('Found the following insteon controllers: ')
+        LOG.info('Found the following insteon controllers: {}'.format(l_list))
         return l_list
 
     @staticmethod
@@ -190,8 +171,7 @@ class API:
     def Start(self):
         """ Note that some controllers may not be available on this node.
         """
-        LOG.info('Starting all the Insteon Controllers.')
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'Pypouse_obj.House.Lighting', 190))
+        LOG.info('Starting the Insteon Controller.')
         self.m_plm_list = lightingUtility()._start_all_controllers(self.m_pyhouse_obj)
         LOG.info('Started {} Insteon Controllers.'.format(len(self.m_plm_list)))
 

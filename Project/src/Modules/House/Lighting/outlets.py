@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2019-09-18'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -90,7 +90,7 @@ class Config:
     def _extract_family(self, p_config):
         """
         """
-        l_ret = familyConfig().load_family_config(p_config, self.m_pyhouse_obj)
+        l_ret = familyConfig().extract_family_group(p_config, self.m_pyhouse_obj)
         return l_ret
 
     def _extract_one_outlet(self, p_config) -> dict:

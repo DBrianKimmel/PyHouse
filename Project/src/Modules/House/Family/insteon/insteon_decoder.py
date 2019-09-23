@@ -22,8 +22,8 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-08-13'
-__version_info__ = (18, 10, 1)
+__updated__ = '2019-09-22'
+__version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -43,7 +43,7 @@ LOG = Logger.getLogger('PyHouse.insteon_decode ')
 #  OBJ_LIST = [Lights, Controllers, Buttons, Thermostats, Irrigation, Pool]
 
 
-class DecodeResponses(object):
+class DecodeResponses:
 
     m_pyhouse_obj = None
     m_idex = 0

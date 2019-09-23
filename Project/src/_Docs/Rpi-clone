@@ -1,0 +1,52 @@
+* Name:      PyHouse/Project/src/Docs/Git.md
+* Author:    D. Brian Kimmel
+* Contact:   D.BrianKimmel@gmail.com
+* Copyright: (c) 2019-2019 by D. Brian Kimmel
+* Created:   2019-09-07
+* Updated:   2019-09-07
+* License:   MIT License
+
+# Rpi-Clone
+
+https://github.com/billw2/rpi-clone
+
+## Install
+
+rpi-clone is on github and is downloaded by cloning the repository.
+It is a standalone script and the install is a simple copy to a bin directory.
+When run it checks its program dependencies and offers to install needed packages.
+But currently rpi-clone knows how to install only Debian packages with apt-get.
+
+On a Raspberry Pi:
+
+```
+git clone https://github.com/billw2/rpi-clone.git 
+cd rpi-clone
+sudo cp rpi-clone rpi-clone-setup /usr/local/sbin
+```
+
+Make sure /usr/local/sbin is in your $PATH and then run rpi-clone or rpi-clone-setup with no args to print usage.
+
+rpi-clone-setup is for setting the hostname in /etc/hostname and /etc/hosts files.
+It is run automatically by rpi-clone if -s args are given, but before your first clone using a -s option,
+ test run rpi-clone-setup with:
+
+```
+sudo rpi-clone-setup -t testhostname
+```
+
+And check the files under /tmp/clone-test to be sure the files have been edited correctly.
+If you need additional customizations to a clone, add them to the rpi-clone-setup script.
+
+## Usage
+
+The examples below show a /boot partition smaller than recommended for the recent Rasbian Buster release.
+rpi-clone version 2.0.21 adds the -p option so the /boot partition can be resized at the same time the root partition is resized to the end of the disk.
+If you upgraded Stretch to Buster and are running with a small /boot, then for the clone to have a resized /boot, run:
+
+```
+rpi-clone -f -p 256M sda
+```
+
+
+### END DBK

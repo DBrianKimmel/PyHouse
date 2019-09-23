@@ -32,7 +32,7 @@ An Insteon_device module is used to read and write information to an Insteon con
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-09-23'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -40,6 +40,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import importlib
 
 # Import PyHouse files
+from Modules.Core.Config import config_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
@@ -70,6 +71,7 @@ class FamilyConfigInformation:
 
     def __init__(self):
         self.Name = None
+        self.Address = None
 
 
 class lightingUtility:
@@ -131,12 +133,11 @@ class lightingUtility:
     def _build_module_names(self, p_name):
         """
         """
-        l_name = p_name.lower()
-        # LOG.debug('Building names for "{}"'.format(l_name))
         l_obj = FamilyModuleInformation()
-        l_obj.Name = l_name
+        l_obj.Name = l_name = p_name.lower()
         l_obj.PackageName = 'Modules.House.Family.' + l_name
         l_obj.DeviceName = l_name + '_device'
+        # LOG.debug('Building names for "{}"'.format(l_name))
         return l_obj
 
     def _build_one_family_data(self, p_pyhouse_obj, p_name):
@@ -164,6 +165,23 @@ class Config:
     """
     """
 
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def extract_family_group(self, p_config):
+        """
+        @param p_config: is the 'Family' ordereddict
+        """
+        l_obj = FamilyConfigInformation()
+        l_required = ['Name', 'Address']
+        l_allowed = ['Type']
+        config_tools.Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
+        LOG.debug('Family "{}"'.format(l_obj.Name))
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
+        return l_obj
+
     def load_family_config(self, p_config, p_pyhouse_obj):
         """ Get the yaml config information.
 
@@ -182,6 +200,7 @@ class Config:
         # Load specific family information dispatched from here
         #
         for l_key, l_value in p_config.items():
+            print('Family Key {}'.format(l_key))
             if l_key == 'Name':
                 l_value = l_value.lower()
                 p_pyhouse_obj.House.Family[l_value] = l_obj
@@ -218,21 +237,23 @@ class API:
         """
         Build p_pyhouse_obj House Family
         """
-        LOG.debug('Reloading Families')
-        for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
+        LOG.debug('Loading Families')
+        for l_family_obj in self.m_pyhouse_obj.House.Family.values():
             LOG.info('Loading Family "{}"'.format(l_family_obj.Name))
         # self.m_pyhouse_obj.House.Family = self.m_family
-        pass
+        LOG.info('Loaded {} Families'.format(len(self.m_pyhouse_obj.House.Family)))
 
     def Start(self):
-        """
+        """ Start each family we have registered.
+
+        This will import the the family_device and start the family device.
         """
         LOG.info('Starting {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
         for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
-            LOG.info('Starting Family "{}"'.format(l_family_obj.Name))
+            LOG.info('Starting Family "{}"'.format(l_key))
             # LOG.debug(PrettyFormatAny.form(l_family_obj, 'PyHouse Family'))
-            l_family_obj = lightingUtility()._build_one_family_data(self.m_pyhouse_obj, l_family_obj.Name)
-            self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
+            # l_family_obj = lightingUtility()._build_one_family_data(self.m_pyhouse_obj, l_key)
+            # self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
             l_family_obj.DeviceAPI.Start()
         LOG.info('Started {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
         return self.m_family

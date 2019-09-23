@@ -21,8 +21,8 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-09-15'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-09-23'
+__version_info__ = (19, 9, 23)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -273,7 +273,7 @@ class API(lightingUtility):
         LOG.info("\n======================== Loading Config Files ======================== Version: {}\n".format(__version__))
         self.m_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig()
         self.m_pyhouse_obj._APIs.House.HouseAPI.LoadConfig()
-        LOG.info("Loaded Config - Version:{}".format(__version__))
+        LOG.info("Loaded Config")
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("\n======================== Loaded Config Files ======================== Version: {}\n".format(__version__))
         # self.Start()

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-20'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -95,6 +95,7 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+        LOG.info('Extracted room "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_rooms(self, p_config):
@@ -109,6 +110,7 @@ class Config:
             l_obj = self._extract_one_room(l_value)
             l_rooms.update({l_ix:l_obj})
         self.m_pyhouse_obj.House.Rooms = l_rooms
+        LOG.info('Extracted {} rooms'.format(len(l_rooms)))
         return l_rooms  # For testing.
 
     def load_yaml_config(self):
@@ -309,10 +311,16 @@ class Api:
         self.m_config.load_yaml_config()
         LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
 
+    def Start(self):
+        pass
+
     def SaveConfig(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         # self.m_config.save_yaml_config()
+
+    def Stop(self):
+        pass
 
 #  ## END DBK

@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-09-06'
+__updated__ = '2019-09-23'
 
 #  Import system type stuff.
 
@@ -53,7 +53,7 @@ class FamUtil(object):
         return l_family_obj
 
     @staticmethod
-    def get_device_driver_API(p_pyhouse_obj, p_controller_obj):
+    def XXXget_device_driver_API(p_pyhouse_obj, p_controller_obj):
         """
         Based on the InterfaceType of the controller, load the appropriate driver and get its API().
         @return: a pointer to the device driver or None

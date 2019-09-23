@@ -7,22 +7,68 @@
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 21 tests - DBK - 2019-07-19
+Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-09-17'
 
 #  Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 #  Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.Utilities.config_tools import Yaml as configYaml
-from Modules.House.Lighting.lights import Config as lightsConfig, CONFIG_FILE_NAME
-from Modules.House.Family.family import API as familyAPI
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Lighting.lights import Config as lightsConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+TEST_YAML = """\
+Lights:
+
+   - Name: Front Door
+     Comment: Upstairs, Outside
+     Dimmable: true
+     Room: Outside
+     Family:
+         Name: Insteon
+         Address: 11.22.33
+   #
+   - Name: Garage
+     Comment: Outside, Downstairs
+     Dimmable: true
+     Family:
+         Name: Insteon
+         Address: 12.34.56
+
+   - Name: Dining Room
+     Family:
+         Name: Insteon
+         Address: 11.33.AA
+     Room: Dining Room
+
+   - Name: Fireplace
+     Comment: This is the fireplace mantle lighting
+     Family:
+         Name: Insteon
+         Address: 44.33.22
+     Dimmable: true  # Optional
+     Room: Living Room
+
+   # New
+   - Name: TV Lights
+     Comment: Bedroom
+     Dimmable: true
+     Family:
+         Name: Insteon
+         Address: 55.00.22
+   # New
+   - Name: Pond Pump
+     Comment: New
+     Family:
+         Name: Insteon
+         Address: 00.01.02
+"""
 
 
 class SetupMixin(object):
@@ -31,16 +77,14 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_yaml = SetupPyHouseObj().BuildYaml(None)
-        self.m_yamlconf = configYaml(self.m_pyhouse_obj)
-        self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj._Families = self.m_family
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_x', 'title')  # so it is defined when printing is cleaned up.
         print('Id: test_lights')
 
 
@@ -52,51 +96,83 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
 
-    def test_02_Family(self):
-        """ Be sure that the XML contains the right stuff.
+    def test_01_Config(self):
+        """ Be sure that the config contains the right stuff.
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-02-A -PyHouse'))
-        # # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
-        self.assertNotEqual(self.m_pyhouse_obj, None)
-        # self.assertEqual(self.m_pyhouse_obj.House.Name, TESTING_HOUSE_NAME)
+        # print(PrettyFormatAny.form(self.m_test_config, 'A1-01-A - Config'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
+        self.assertIsNotNone(self.m_test_config['Lights'])
 
 
 class C1_YamlRead(SetupMixin, unittest.TestCase):
     """
-    This section tests the reading and writing of XML used by lighting_lights.
+    This section tests the reading and writing of config used by lighting_lights.
     """
 
     def setUp(self):
-        self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
+        SetupMixin.setUp(self)
 
-    def Xtest_01_LightFamily(self):
+    def test_01_LightFamily(self):
         """ Test reading the family portion of the light config
         """
-        l_yaml = self.m_node.Yaml['Lights'][0]
-        l_device = l_yaml['Device']
-        l_family = l_device['Family']
-        # print(PrettyFormatAny.form(l_yaml, 'C1-01-A - Yaml'))
-        # print('C1-01-B - Device: ', l_device)
-        # print('C1-01-C - Family: ', l_family)
-        l_obj = lightsConfig()._extract_device_config(l_family)
-        # print(PrettyFormatAny.form(l_obj, 'C1-01-E - Light'))
-        self.assertEqual(l_obj.Name, 'Insteon')
-        self.assertEqual(l_obj.Address, '12.34.56')
-        self.assertEqual(l_obj.Dimmable, True)
+        l_yaml = self.m_test_config['Lights'][0]['Family']
+        # print('C1-01-A - Yaml: ', l_yaml)
+        l_family = lightsConfig(self.m_pyhouse_obj)._extract_family(l_yaml)
+        # print(PrettyFormatAny.form(l_family, 'C1-01-B - Family'))
+        self.assertEqual(l_family.Name, 'insteon')
+        self.assertEqual(l_family.Address, '11.22.33')
 
-    def Xtest_02_LightDevice(self):
+    def test_02_LightDevice(self):
         """ Test reading the device portion of the config.
         """
-        l_yaml = self.m_node.Yaml['Lights'][0]
-        l_device = l_yaml['Device']
-        l_family = l_device['Family']
-        # print('C1-02-A - Yaml {}'.format(l_family))
-        # print('C1-02-B - Device: ', l_device)
-        # print('C1-02-C - Family: ', l_family)
-        l_obj = lightsConfig()._extract_device_config(l_family)
-        # print(PrettyFormatAny.form(l_obj, 'C1-02-E - Light'))
+        l_yaml = self.m_test_config['Lights'][1]
+        # print('C1-02-A - Yaml: ', l_yaml)
+        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        # print(PrettyFormatAny.form(l_light, 'C1-02-B - Light'))
+        self.assertEqual(l_light.Name, 'Garage')
+        self.assertEqual(l_light.Comment, 'Outside, Downstairs')
+        self.assertEqual(l_light.DeviceType, 'Lighting')
+        self.assertEqual(l_light.DeviceSubType, 'Light')
+        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Address, '12.34.56')
 
-    def Xtest_03_LightRoom(self):
+    def test_03_LightDevice(self):
+        """ Test reading the device portion of the config.
+        """
+        l_yaml = self.m_test_config['Lights'][2]
+        print('C1-03-A - Yaml: ', l_yaml)
+        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        print(PrettyFormatAny.form(l_light, 'C1-03-B - Light'))
+        self.assertEqual(l_light.Name, 'Dining Room')
+        self.assertEqual(l_light.Comment, None)
+        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Address, '11.33.AA')
+
+    def test_04_LightDevice(self):
+        """ Test reading the device portion of the config.
+        """
+        l_yaml = self.m_test_config['Lights'][3]
+        print('C1-04-A - Yaml: ', l_yaml)
+        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        print(PrettyFormatAny.form(l_light, 'C1-04-B - Light'))
+        self.assertEqual(l_light.Name, 'Fireplace')
+        self.assertEqual(l_light.Comment, 'This is the fireplace mantle lighting')
+        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Address, '44.33.22')
+
+    def test_05_LightDevice(self):
+        """ Test reading the device portion of the config.
+        """
+        l_yaml = self.m_test_config['Lights'][4]
+        print('C1-05-A - Yaml: ', l_yaml)
+        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        print(PrettyFormatAny.form(l_light, 'C1-05-B - Light'))
+        self.assertEqual(l_light.Name, 'TV Lights')
+        self.assertIsNone(l_light.Comment)
+        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Address, '11.33.AA')
+
+    def Xtest_06_LightRoom(self):
         """ Test reading the Room portion of the config.
         """
         l_yaml = self.m_node.Yaml['Lights'][0]['Room']
@@ -107,7 +183,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_obj, 'C1-03-E - Room'))
         self.assertEqual(l_obj.Name, 'Living Room')
 
-    def Xtest_04_LightController(self):
+    def Xtest_07_LightController(self):
         """ Test reading the Controller portion of the config.
         """
         l_yaml = self.m_node.Yaml['Lights'][0]['Controller']
@@ -116,7 +192,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_obj = lightsConfig()._extract_controller_config(l_yaml)
         # print(PrettyFormatAny.form(l_obj, 'C1-04-E - Node'))
 
-    def test_05_Light(self):
+    def test_08_Light(self):
         """ Test reading one light portion of the config.
         """
         l_yaml = self.m_node.Yaml['Lights'][0]
@@ -127,7 +203,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         self.assertEqual(l_obj.Name, 'Light 1')
         self.assertEqual(l_obj.Comment, 'This is _test light 1')
 
-    def test_06_Lights(self):
+    def test_09_Lights(self):
         """ Test reading of the Lights config file.
         """
         l_yaml = self.m_node.Yaml['Lights']
@@ -135,7 +211,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_obj = lightsConfig()._load_all_lights(l_yaml)
         print(PrettyFormatAny.form(l_obj, 'C1-06-E - Node'))
 
-    def test_07_Load(self):
+    def test_10_Load(self):
         """ Test reading of the Lights config file.
         """
         l_lights = lightsConfig().load_yaml_config(self.m_pyhouse_obj)

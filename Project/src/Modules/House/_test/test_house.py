@@ -11,7 +11,7 @@ Passed 3 of 9 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-09-19'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -51,11 +51,27 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly.
         """
-        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'A1-01-C - Rooms'))
         self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
+
+
+class B1_Init(SetupMixin, unittest.TestCase):
+    """
+    This section will verify the XML in the 'Modules.text.xml_data' file is correct and what the node_local
+        module can read/write.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = houseAPI(self.m_pyhouse_obj)
+
+    def test_01_Parts(self):
+        """
+        """
+        l_ret = self.m_api.initialize_parts()
+        print('Parts.init {}'.format(l_ret))
 
 
 class C1_Read(SetupMixin, unittest.TestCase):

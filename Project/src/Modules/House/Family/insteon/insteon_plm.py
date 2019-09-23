@@ -14,7 +14,7 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-23'
 
 #  Import system type stuff
 import datetime
@@ -24,7 +24,7 @@ import queue as Queue
 from Modules.Core.Drivers import interface
 from Modules.House.Family.insteon import insteon_decoder, insteon_utils, insteon_link
 from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.insteon.insteon_data import InsteonData, InsteonQueueInformation
+from Modules.House.Family.insteon.insteon_data import InsteonData
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 # from Modules.House.Family.family_utils import FamUtil
 
@@ -235,6 +235,7 @@ class PlmDriverProtocol(Commands):
 
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
+        LOG.debug('ReceiveLoop ')
         self.m_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj.Interface._DriverApi:
             self._append_message(p_controller_obj)
@@ -296,10 +297,7 @@ class LightHandlerAPI:
             l_msg += "Family.Name:{}, ".format(p_controller_obj.Family.Name)
             l_msg += "InterfaceType:{}".format(p_controller_obj.Interface.Type)
             LOG.info('Start Controller - {}'.format(l_msg))
-            interface.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
-            # l_ret = l_driver.Start(p_pyhouse_obj, p_controller_obj)
-            # p_controller_obj.Interface._DriverApi = l_driver
-            # return l_ret
+            # interface.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
         else:
             LOG.warn('Can not config a remote controller.')
         return True
@@ -319,16 +317,7 @@ class LightHandlerAPI:
         """Get the status of a light.
         We will (apparently) get back a 62-ACK followed by a 50 with the level in the response.
         """
-        # LOG.info('Request Status from device: {} - {}'.format(p_obj.Room.Name, p_obj.Name))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['status_request'], 0, 'Device Status')  #  0x19
-
-    @staticmethod
-    def _get_one_thermostat_status(p_controller_obj, p_obj):
-        """
-        Get the status of a thermostat.
-        """
-        LOG.info('Request Status from thermostat device: {}'.format(p_obj.Name))
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['thermostat_status'], 0, 'T-Stat Status')  #  0x6A
 
     @staticmethod
     def _get_engine_version(p_controller_obj, p_obj):
@@ -337,8 +326,6 @@ class LightHandlerAPI:
             i2cs = 2012 add checksums + new commands.
         """
         LOG.info('Request Engine version from device: {}'.format(p_obj.Name))
-        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller', 190))
-        # LOG.debug(PrettyFormatAny.form(p_obj, 'Device', 190))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['engine_version'], 0, 'Engine Version')  #  0x0D
 
     @staticmethod
@@ -346,8 +333,6 @@ class LightHandlerAPI:
         """Get the device DevCat
         """
         LOG.info('Request ID(devCat) from device: {}'.format(p_obj.Name))
-        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller', 190))
-        # LOG.debug(PrettyFormatAny.form(p_obj, 'Device', 190))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0, 'ID Request')  #  0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
@@ -386,105 +371,67 @@ class LightHandlerAPI:
         if l_house.Lighting.Outlets != None:
             pass
 
-        # if l_house.Hvac.Thermostats != None:
-        #    for l_obj in p_pyhouse_obj.House.Hvac.Thermostats.values():
-        #        if l_obj.DeviceFamily == 'insteon':  # and l_obj.Active:
-        #            self._get_obj_info(p_controller_obj, l_obj)
 
-        # if l_house.Security.GarageDoors != None:
-        #    for l_obj in p_pyhouse_obj.House.Security.GarageDoors.values():
-        #        if l_obj.DeviceFamily == 'insteon':  # and l_obj.Active:
-        #            self._get_obj_info(p_controller_obj, l_obj)
-
-        # if l_house.Security.MotionSensors != None:
-        #    for l_obj in p_pyhouse_obj.House.Security.MotionSensors.values():
-        #        if l_obj.DeviceFamily == 'insteon':  # and l_obj.Active:
-        #            self._get_obj_info(p_controller_obj, l_obj)
-
-
-class lightingUtility(LightHandlerAPI):
-    """
-    """
-
-    def start_controller_and_driver(self, p_pyhouse_obj, p_controller_obj):
-        """
-        @param p_pyhouse_obj: is the master obj
-        @param p_controller_obj: is the particular controller that we will be starting
-        @return: True if the driver opened OK and is usable
-                 False if the driver is not functional for any reason.
-        """
-        LOG.info('Starting Controller: "{}"'.format(p_controller_obj.Name))
-        l_ret = self.start_controller_driver(p_pyhouse_obj, p_controller_obj)
-        if True:
-            p_controller_obj.Node = p_pyhouse_obj.Computer.Name
-            p_controller_obj.LastUsed = datetime.datetime.now()
-            LOG.info('Controller Driver Start was OK for "{}".'.format(p_controller_obj.Name))
-            self.m_protocol = PlmDriverProtocol(p_pyhouse_obj, p_controller_obj)
-            self.set_plm_mode(p_controller_obj)
-            self.get_all_device_information(p_pyhouse_obj, p_controller_obj)
-        else:
-            LOG.error('Insteon Controller start failed for "{}"'.format(p_controller_obj.Name))
-        # l_topic = 'house/lighting/controller/status'
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
-        return l_ret
-
-    def get_plm_info(self, _p_pyhouse_obj, p_controller_obj):
-        """
-        """
-        LOG.info('Get Plm Info')
-        if p_controller_obj.Interface._DriverApi:
-            insteon_link.Send().read_aldb_v2(p_controller_obj)
-
-    @staticmethod
-    def _format_address(p_addr):
-        l_ret = 'Address:({:x}.{:x}.{:x})'.format(p_addr[0], p_addr[1], p_addr[2])
-        return l_ret
-
-
-class API(lightingUtility):
+class API(LightHandlerAPI):
 
     m_controller_obj = None
     m_pyhouse_obj = None
 
-    def __init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def _put_controller(self, p_controller_obj):
-        """ used in testing to load the controller info to be used in testing.
-        """
         self.m_controller_obj = p_controller_obj
+
+    def _get_plm_info(self):
+        """
+        """
+        LOG.info('Get Plm Info')
+        if self.m_controller_obj.Interface._DriverApi:
+            insteon_link.Send().read_aldb_v2(self.m_controller_obj)
 
     def _get_controller(self):
         """ used in testing to load the controller info to be used in testing.
         """
         return self.m_controller_obj
 
-    def Start(self, p_controller_obj):
+    def _start_controller_and_driver(self):
         """
-        Comes from Insteon_device.API.Start()
-        Note that not all insteon devices are known when we start.
-
-        @param p_controller_obj: is the controller we are starting
-
+        @param p_pyhouse_obj: is the master obj
+        @param p_controller_obj: is the particular controller that we will be starting
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
-        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-        self.m_pyhouse_obj = self.m_pyhouse_obj
-        self.m_controller_obj = p_controller_obj
-        l_ret = self.start_controller_and_driver(self.m_pyhouse_obj, p_controller_obj)
-        self.get_plm_info(self.m_pyhouse_obj, p_controller_obj)
-
+        LOG.info('Starting Controller: "{}"'.format(self.m_controller_obj.Name))
+        l_ret = self.start_controller_driver(self.m_pyhouse_obj, self.m_controller_obj)
+        if True:
+            self.m_controller_obj.Node = self.m_pyhouse_obj.Computer.Name
+            self.m_controller_obj.LastUsed = datetime.datetime.now()
+            LOG.info('Controller Driver Start was OK for "{}".'.format(self.m_controller_obj.Name))
+            self.m_protocol = PlmDriverProtocol(self.m_pyhouse_obj, self.m_controller_obj)
+            self.set_plm_mode(self.m_controller_obj)
+            self.get_all_device_information(self.m_pyhouse_obj, self.m_controller_obj)
+        else:
+            LOG.error('Insteon Controller start failed for "{}"'.format(self.m_controller_obj.Name))
         # l_topic = 'house/lighting/controller/status'
-        # l_msg = p_controller_obj
-        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_msg)
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
+        return l_ret
 
+    def Start(self):
+        """
+        Comes from Insteon_device.API.Start()
+
+        @param p_controller_obj: is the controller we are starting
+        @return: True if the driver opened OK and is usable
+                 False if the driver is not functional for any reason.
+        """
+        LOG.debug(PrettyFormatAny.form(self.m_controller_obj, 'Controller'))
+        l_ret = self._start_controller_and_driver()
+        self._get_plm_info(self.m_pyhouse_obj, self.m_controller_obj)
         LOG.info('Started.')
         return l_ret
 
-    def Stop(self, p_controller_obj):
+    def Stop(self):
         self.m_protocol.driver_loop_stop()
-        self.stop_controller_driver(p_controller_obj)
+        self.stop_controller_driver(self.m_controller_obj)
         LOG.info('Stopped.')
 
     def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):

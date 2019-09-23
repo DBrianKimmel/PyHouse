@@ -25,6 +25,24 @@ It is also a daemon.
 
 It calls on Modules/Core to set up everything.
 
+## Core
 
+Here is where the nitty-gritty begins.
+
+The first thing that happens is called initializing.
+
+### Initialize
+
+This is the first phase of startup.
+
+### Loading
+
+This is the second phase of startup.
+
+### Start
+
+This is the third phase of startup.
+At the very beginning of this step, the twisted reactor is run.
+This begins the event loop processing and PyHouse becomes an async, event driven, home control process.
 
 ### END DBK

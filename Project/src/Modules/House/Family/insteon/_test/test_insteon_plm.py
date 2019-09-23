@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-09-22'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -118,7 +118,6 @@ class C02_Cmds(SetupMixin, unittest.TestCase):
 
     def test_03_63Cmd(self):
         l_obj = self.m_pyhouse_obj.House.Lighting.Controllers
-        # insteonPlmAPI._put_controller(l_obj)
         # l_cmd = self.m_api._queue_62_command(l_obj, 0x02, 0x04)
         pass
 

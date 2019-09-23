@@ -26,6 +26,7 @@ latex/
 _trial_temp/
 .mypy_cache/
 __pycache__/
+Uuid/
 
 ### Private Info
 Laptop*

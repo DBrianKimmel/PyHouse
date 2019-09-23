@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-20'
 __version_info__ = (19, 6, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -148,10 +148,16 @@ class Api:
         self.m_config = Config(self.m_pyhouse_obj)
         self.m_config.load_yaml_config()
 
+    def Start(self):
+        pass
+
     def SaveConfig(self):
         """ Take a snapshot of the running system and save it in Yaml to be loaded on restart.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
+
         # self.m_config.save_yaml_config()
+    def Stop(self):
+        pass
 
 #  ## END DBK

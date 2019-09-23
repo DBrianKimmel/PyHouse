@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-18'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -173,7 +173,7 @@ class Config:
         l_required = ['Name', 'Family']
         for l_key, l_value in p_config.items():
             if l_key == 'Family':
-                l_obj.Family = familyConfig().load_family_config(l_value, self.m_pyhouse_obj)
+                l_obj.Family = familyConfig().extract_family_group(l_value, self.m_pyhouse_obj)
             elif l_key == 'Room':
                 l_obj.Room = roomConfig(self.m_pyhouse_obj).load_room_config(l_value)
                 pass

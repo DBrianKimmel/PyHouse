@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-21'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,10 +32,10 @@ from Modules.Core.Utilities import extract_tools
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.House.rooms import Config as roomConfig
 from Modules.Core.state import State
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny, PrettyFormatObject
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.LightingLights ')
+LOG = Logger.getLogger('PyHouse.Lights         ')
 
 CONFIG_NAME = 'lights'
 
@@ -49,8 +49,6 @@ class LightInformation:
         self.Comment = None  # Optional
         self.DeviceType = 'Lighting'
         self.DeviceSubType = 'Light'
-        self.LastUpdate = None  # Not user entered but maintained
-        self.Uuid = None  # Not user entered but maintained
         self.Family = None  # LightFamilyInformation()
         self.Room = None  # LightRoomInformation() Optional
 
@@ -104,10 +102,13 @@ class LightData(CoreLightingData):
 class Config:
     """ The major work here is to load and save the information about a light switch.
     """
+
+    m_config_tools = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
     def _extract_room(self, p_config):
         """ Get the room and position within the room of the device.
@@ -118,7 +119,7 @@ class Config:
     def _extract_family(self, p_config):
         """
         """
-        l_ret = familyConfig().load_family_config(p_config, self.m_pyhouse_obj)
+        l_ret = familyConfig(self.m_pyhouse_obj).extract_family_group(p_config)
         return l_ret
 
     def _extract_one_light(self, p_config) -> dict:
@@ -159,9 +160,10 @@ class Config:
         """
         l_dict = {}
         for l_ix, l_light in enumerate(p_config):
-            # print('Light: {}'.format(l_light))
             l_light_obj = self._extract_one_light(l_light)
             l_dict[l_ix] = l_light_obj
+        self.m_pyhouse_obj.House.Lighting.Lights = l_dict
+        LOG.info('Extracted {} lights'.format(len(l_dict)))
         return l_dict
 
     def load_yaml_config(self):
