@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-09-23'
+__updated__ = '2019-09-25'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -100,18 +100,19 @@ class Config:
         l_required = ['Name', 'Family', 'Interface']
         try:
             for l_key, l_value in p_config.items():
-                LOG.debug('Controller Key "{}"; Value: "{}"'.format(l_key, l_value))
+                # LOG.debug('Controller Key "{}"; Value: "{}"'.format(l_key, l_value))
                 if l_key == 'Family':
                     l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
-                    # self.m_pyhouse_obj.House.Family[l_obj.Family.Name] = l_obj.Family
+                    self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = l_obj.Family
                 elif l_key == 'Access':
                     l_obj.Access = loginConfig(self.m_pyhouse_obj).load_name_password(l_value)
                 elif l_key == 'Interface':
                     l_obj.Interface = interfaceConfig(self.m_pyhouse_obj).extract_interface_group(l_value)
-                    # if l_obj.Interface.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
-                    #    l_obj._isLocal = True
+                    if l_obj.Interface.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
+                        l_obj._isLocal = True
+                    # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
+                    # LOG.debug(PrettyFormatAny.form(l_obj.Interface, 'Interface'))
                 else:
-                    LOG.debug('Extracting Key: "{}"; Value: "{}"'.format(l_key, l_value))
                     setattr(l_obj, l_key, l_value)
         except Exception as e_err:
             LOG.warn('Invalid entry of some type in "{}.yaml"\n\t{}'.format(CONFIG_NAME, e_err))
@@ -133,7 +134,7 @@ class Config:
         for l_key, l_value in enumerate(p_config):
             l_obj = self._extract_one_controller(l_value)
             l_dict[l_key] = l_obj
-        LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers'))
+        # LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers'))
         LOG.info('Loaded {} controllers'.format(len(l_dict)))
         return l_dict
 
@@ -154,7 +155,7 @@ class Config:
             return None
         l_controllers = self._extract_all_controllers(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
-        LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
+        # LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
         return l_controllers  # for testing purposes
 
 
@@ -176,6 +177,16 @@ class API:
         LOG.info('Loading config.')
         self.m_config.load_yaml_config()
         LOG.info('Loaded {} Controllers.'.format(len(self.m_pyhouse_obj.House.Lighting.Controllers)))
+
+    def Start(self):
+        """
+        """
+        LOG.info('Starting.')
+        l_controllers = self.m_pyhouse_obj.House.Lighting.Controllers
+        for l_controller in l_controllers.values():
+            if l_controller._isLocal:
+                LOG.info('Starting controller "{}"'.format(l_controller.Name))
+            pass
 
     def SaveConfig(self):
         """

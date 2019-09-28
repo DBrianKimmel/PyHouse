@@ -9,20 +9,20 @@
 
 """
 
-__updated__ = '2019-09-22'
+__updated__ = '2019-09-26'
 
 #  Import system type stuff
 
 #  Import PyMh files
 
 
-class InsteonData(object):
+class XXXInsteonData:
     """ This is the Insteon specific data.
     It will be added into device objects that are Insteon.
     """
 
     def __init__(self):
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
+        self.DevCat = 0  # Dev-Cat and Sub-Cat (2 bytes)
         self.EngineVersion = 2
         self.FirmwareVersion = 0
         self.GroupList = ''

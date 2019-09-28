@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-09-24'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -200,7 +200,7 @@ class API:
         #  self.m_pyhouse_obj._APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
-    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+    def Control(self, p_device_obj, p_controller_obj, p_control):
         """
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
@@ -213,6 +213,6 @@ class API:
             LOG.info('No PLM was defined - Quitting.')
             return
         # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
-        self.m_plm.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
+        self.m_plm.Control(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

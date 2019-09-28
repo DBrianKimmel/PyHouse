@@ -11,16 +11,15 @@ This is a bunch of routines to deal with Insteon devices.
 Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
-from Modules.Computer.Communication.test.xml_communications import L_EMAIL_END
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-26'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
-from Modules.House.Family.insteon.insteon_data import InsteonData
+from Modules.House.Family.insteon.insteon_device import InsteonInformation
 from Modules.House.Family.insteon.insteon_constants import \
     MESSAGE_LENGTH, \
     COMMAND_LENGTH, \
@@ -28,7 +27,7 @@ from Modules.House.Family.insteon.insteon_constants import \
     STX
 from Modules.House.Family.insteon.insteon_data import InsteonQueueInformation
 
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
@@ -153,7 +152,7 @@ def extract_address_from_message(p_message, offset=0):
     return l_ret
 
 
-class Util(object):
+class Util:
 
     @staticmethod
     def get_json_data(p_obj, p_json):
@@ -172,7 +171,7 @@ class Util(object):
         return p_obj
 
 
-class Decode(object):
+class Decode:
 
     @staticmethod
     def decode_insteon_light_brightness(p_byte):
@@ -229,7 +228,7 @@ class Decode(object):
 
     @staticmethod
     def _devcat(p_message, p_obj):
-        """ Decode the DevCat and DevSubCat from a message.
+        """ Decode the Dev-Cat and Dev-Sub-Cat from a message.
         @param p_message: is the message where the Devcat 2 bytes are located
             0x00    Generalized Controllers        ControLinc, RemoteLinc, SignaLinc, etc.
             0x01    Dimmable Lighting Control      Dimmable Light Switches, Dimmable Plug-In Modules
@@ -263,11 +262,11 @@ class Decode(object):
             l_sub = int(p_message[1])
         l_devcat = int(l_cat) * 256 + int(l_sub)
         p_obj.DevCat = l_devcat
-        l_debug_msg = " DevCat={:#x}, ".format(l_devcat)
+        l_debug_msg = " Dev-Cat={:#x}, ".format(l_devcat)
         return l_debug_msg
 
     @staticmethod
-    def _find_addr_one_class(_sp_pyhouse_obj, p_class, p_addr):
+    def _find_addr_one_class(p_class, p_addr):
         """
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.Lighting.Controllers that we will look thru to find the object.
@@ -281,7 +280,7 @@ class Decode(object):
             for l_obj in p_class.values():
                 # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
                 # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Object.Family'))
-                if l_obj.Family.Name != 'insteon':
+                if l_obj.Family.Name.lower() != 'insteon':
                     continue  #  ignore any non-Insteon devices in the class
                 if l_obj.Family.Address == p_addr:
                     # LOG.debug(PrettyFormatAny.form(l_obj, 'Object'))
@@ -299,30 +298,34 @@ class Decode(object):
         """
         l_ret = None
         l_house = p_pyhouse_obj.House
+        # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
         if hasattr(l_house, 'Lighting'):
+            # LOG.debug(PrettyFormatAny.form(l_house.Lighting, 'Lighting'))
             if l_ret == None and l_house.Lighting.Lights != None:
-                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Lights, p_address)
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Lights, p_address)
             if l_ret == None and l_house.Lighting.Controllers != None:
-                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Controllers, p_address)
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Controllers, p_address)
             if l_ret == None and l_house.Lighting.Buttons != None:
-                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Buttons, p_address)
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Buttons, p_address)
             if l_ret == None and l_house.Lighting.Outlets != None:
-                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Lighting.Outlets, p_address)
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Outlets, p_address)
         if hasattr(l_house, 'Hvac') and hasattr(l_house.Hvac, 'Thermostats'):
             if l_ret == None and l_house.Hvac.Thermostats != None:
-                l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Hvac.Thermostats, p_address)
+                l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Hvac.Thermostats, p_address)
         if hasattr(l_house, 'Security'):
             if hasattr(l_house.Security, 'GarageDoors'):
                 if l_ret == None and l_house.Security.GarageDoors != None:
-                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.GarageDoors, p_address)
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.GarageDoors, p_address)
             if hasattr(l_house.Security, 'MotionSensors'):
                 if l_ret == None and l_house.Security.MotionSensors != None:
-                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj, p_pyhouse_obj.House.Security.MotionSensors, p_address)
-        #  Add additional classes in here
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.MotionSensors, p_address)
+        #
+        #  Add additional insteon classes in here
+        #
         if l_ret == None:
             LOG.info("WARNING - Address {} *NOT* found.".format(p_address))
             l_ret = CoreLightingData()
-            stuff_new_attrs(l_ret, InsteonData())  #  an empty new object
+            stuff_new_attrs(l_ret, InsteonInformation())  #  an empty new object
             l_ret.Name = '**NoName-' + p_address + '-**'
         return l_ret
 
@@ -338,7 +341,7 @@ class Decode(object):
         if l_address.startswith('00'):  #  First byte zero ?
             l_dotted = str(l_address)
             l_device_obj = CoreLightingData()
-            stuff_new_attrs(l_device_obj, InsteonData())  #  an empty new object
+            stuff_new_attrs(l_device_obj, InsteonInformation())  #  an empty new object
             l_device_obj.Name = '**Group: ' + l_dotted + ' **'
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)

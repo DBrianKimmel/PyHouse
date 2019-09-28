@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-09-26'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,7 +41,6 @@ class PyHouseInformation:
         # The rest are "Core" components
         self._APIs = None  # PyHouseAPIs()
         self._Config = None  # ConfigInformation()
-        # self._Families = None  # FamilyInformation()
         self._Parameters = None  # ParameterInformation()
         self._Twisted = None  # TwistedInformation()
         self._Uuids = None  # UuidInformation()

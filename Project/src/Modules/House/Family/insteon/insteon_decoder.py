@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-09-22'
+__updated__ = '2019-09-26'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -46,7 +46,6 @@ LOG = Logger.getLogger('PyHouse.insteon_decode ')
 class DecodeResponses:
 
     m_pyhouse_obj = None
-    m_idex = 0
 
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -186,7 +185,7 @@ class DecodeResponses:
         if l_cmd1 == 0x03 and l_cmd2 == 0:  # Product Data request response
             l_product_key = self._get_addr_from_message(l_message, 12)
             l_devcat = l_message[15] * 256 + l_message[16]
-            LOG.info('ProdData Fm:"{}"; ProductID:"{}"; DevCat:"{}"; Data:"{}"'.format(l_obj_from.Name, l_product_key, l_devcat, l_extended))
+            LOG.info('ProdData Fm:"{}"; ProductID:"{}"; Dev-Cat:"{}"; Data:"{}"'.format(l_obj_from.Name, l_product_key, l_devcat, l_extended))
             l_obj_from.ProductKey = l_product_key
             l_obj_from.DevCat = l_devcat
         p_controller_obj.Ret = True
@@ -238,7 +237,7 @@ class DecodeResponses:
         l_devcat = l_message[5]
         l_devsubcat = l_message[6]
         l_firmver = l_message[7]
-        LOG.info("== 60 - Insteon Modem Info - DevCat={}, DevSubCat={}, Firmware={} - Name={}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
+        LOG.info("== 60 - Insteon Modem Info - Dev-Cat={}, DevSubCat={}, Firmware={} - Name={}".format(l_devcat, l_devsubcat, l_firmver, l_obj.Name))
         if l_message[8] == ACK:
             insteon_utils.update_insteon_obj(self.m_pyhouse_obj, l_obj)
             p_controller_obj.Ret = True

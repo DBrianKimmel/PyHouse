@@ -9,6 +9,43 @@
 
 """
 
-__updated__ = '2019-08-28'
+__updated__ = '2019-09-24'
+
+#  Import system type stuff
+
+#  Import PyMh files
+
+from Modules.Core import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.insteon_hub    ')
+
+
+class API:
+
+    m_controller_obj = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_controller_obj = p_controller_obj
+
+    def LoadConfig(self):
+        LOG.info('Loaded.')
+
+    def Start(self):
+        LOG.info('Started.')
+
+    def SaveConfig(self):
+        LOG.info('Saved Config')
+
+    def Stop(self):
+        LOG.info('Stopped.')
+
+    def Control(self, p_device_obj, p_controller_obj, p_control):
+        """
+        @param p_controller_obj: optional
+        @param p_device_obj: the device being controlled
+        @param p_control: the idealized light control params ==> Modules.House.Lighting.lights.LightData()
+        """
+        LOG.info('Controlled.')
 
 # ## END DBK

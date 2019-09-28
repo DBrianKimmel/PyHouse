@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-09-22'
+__updated__ = '2019-09-26'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -122,6 +122,7 @@ class Config:
         @param p_obj: is the DriverInterfaceInformation() with Type, Host and Port already filled in.
         @return: The info with Baud filled in
         """
+        LOG.debug('Extract')
         l_obj = p_obj  # SerialInterfaceInformation()
         l_required = ['Baud']
         for l_key, l_value in p_config.items():
@@ -206,8 +207,8 @@ class SerialAPI:
         if l_host != l_computer:
             LOG.warn('Device "{}" is on another computer "{}". This is "{}"  - Ignored.'.format(l_name, l_host, l_computer))
             return False
-        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller')))
-        LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface')))
+        # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller')))
+        # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface')))
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
@@ -215,11 +216,12 @@ class SerialAPI:
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
             p_controller_obj.Interface._DriverApi = self
-            # LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
+            LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))
-            LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+            # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+            l_serial = None
         self.m_serial = l_serial
         return l_serial
 
@@ -279,19 +281,19 @@ class API(SerialAPI):
     def Start(self, p_controller_obj):
         """
         @param p_controller_obj: is the ControllerInformation() object for a serial device to open.
-        @return: a oointer to the xxx or None
+        @return: a pointer to the xxx or None
         """
         LOG.info('Starting serial driver for Controller "{}"'.format(p_controller_obj.Name))
         self.m_controller_obj = p_controller_obj
         FindPort()
         l_ret = self.open_serial_driver(self.m_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
-        if l_ret:
+        if l_ret != None:
             p_controller_obj.Interface._DriverApi = self
             LOG.info('Started Serial driver for controller "{}"'.format(self.m_controller_obj.Name))
         else:
             LOG.error('ERROR - failed to start Serial Driver for  controller "{}"'.format(self.m_controller_obj.Name))
-        return l_ret
+        return None
 
     def Stop(self):
         self.close_device(self.m_controller_obj)

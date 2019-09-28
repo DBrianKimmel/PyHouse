@@ -12,7 +12,7 @@ It is imported once and instantiated for each local controller
 
 """
 
-__updated__ = '2019-09-22'
+__updated__ = '2019-09-26'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,6 +25,20 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_device ')
 
 
+class InsteonInformation:
+    """
+    """
+
+    def __init__(self):
+        self.Family = None
+        self.Address = None  # '1A.B3.3C'
+        self._DevCat = 0  # Dev-Cat and Sub-Cat (2 bytes)
+        self._EngineVersion = 2
+        self._FirmwareVersion = 0
+        self._ProductKey = ''  # 3 bytes
+        self._Links = {}
+
+
 class InsteonCommandData:
     """ This holds the outstanding Insteon commands.
     """
@@ -33,22 +47,6 @@ class InsteonCommandData:
         """
         """
         self.Device = None  # InsteonID as a key
-
-
-class InsteonInformation:
-    """
-    """
-
-    def __init__(self):
-        self.Family = None
-        self.Address = None  # '1A.B3.3C'
-        self._DevCat = 0  # DevCat and SubCat (2 bytes)
-        self._EngineVersion = 2
-        self._FirmwareVersion = 0
-        self._GroupList = ''
-        self._GroupNumber = 0
-        self._ProductKey = ''  # 3 bytes
-        self._Links = {}
 
 
 class Config:
@@ -82,7 +80,7 @@ class lightingUtility:
     @staticmethod
     def _is_valid_controller(p_controller_obj):
         if p_controller_obj.Family.Name.lower() == 'insteon':
-            LOG.debug('Insteon')
+            # LOG.debug('Insteon')
             return True
         else:
             LOG.debug(PrettyFormatAny.form(p_controller_obj.Family, 'Family'))
@@ -109,6 +107,22 @@ class lightingUtility:
             p_controller_obj._isFunctional = False
             return None
 
+    def _start_all_plms(self, p_pyhouse_obj):
+        """
+        Run thru all the controllers and find the first active Insteon controller.
+        Start the controller and its driver.
+
+        @return: a list of the Insteon_PLM API references
+        """
+
+    def _start_all_hubs(self, p_pyhouse_obj):
+        """
+        Run thru all the controllers and find the first active Insteon controller.
+        Start the controller and its driver.
+
+        @return: a list of the Insteon_PLM API references
+        """
+
     def _start_all_controllers(self, p_pyhouse_obj):
         """
         Run thru all the controllers and find the first active Insteon controller.
@@ -118,7 +132,7 @@ class lightingUtility:
         """
         l_list = []
         l_controllers = p_pyhouse_obj.House.Lighting.Controllers
-        LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
+        # LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
         if l_controllers == None:
             return l_list
         for l_controller_obj in l_controllers.values():
@@ -137,7 +151,7 @@ class lightingUtility:
             else:
                 LOG.warn('Not an insteon controller "{}"'.format(l_controller_obj.Name))
                 pass  #  Not interested in this controller. (Non-Insteon)
-        LOG.info('Found the following insteon controllers: {}'.format(l_list))
+        # LOG.info('Found the following insteon controllers: {}'.format(l_list))
         return l_list
 
     @staticmethod
@@ -169,7 +183,8 @@ class API:
         LOG.info('Loading Config')
 
     def Start(self):
-        """ Note that some controllers may not be available on this node.
+        """
+        Note that some controllers may not be available on this node.
         """
         LOG.info('Starting the Insteon Controller.')
         self.m_plm_list = lightingUtility()._start_all_controllers(self.m_pyhouse_obj)
@@ -187,7 +202,7 @@ class API:
         except AttributeError as e_err:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
-    def AbstractControlLight(self, _p_pyhouse_obj, p_device_obj, p_controller_obj, p_control):
+    def Control(self, _p_pyhouse_obj, p_device_obj, p_controller_obj, p_control):
         """
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
@@ -202,6 +217,6 @@ class API:
         # l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
         # [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]
         for l_ctlr in self.m_plm_list:
-            l_ctlr.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
+            l_ctlr.Control(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

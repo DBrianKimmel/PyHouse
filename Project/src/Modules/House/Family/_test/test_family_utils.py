@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-09-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -468,7 +468,6 @@ class C3_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-        self.assertEqual(l_light.DevCat, convert.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
         self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
@@ -535,7 +534,6 @@ class C4_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
         self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-        self.assertEqual(l_light.DevCat, convert.dotted_hex2int(TESTING_INSTEON_DEVCAT_0))
         self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 # ## END DBK

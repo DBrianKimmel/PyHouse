@@ -12,7 +12,7 @@ Passed all 6 tests - DBK - 2019-01-22
 """
 from Modules.Core.test.xml_device import TESTING_DEVICE_FAMILY_UPB
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-09-26'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -146,48 +146,5 @@ class C1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light, 'C1-05-A - Insteon Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_1)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_UPB)
-
-
-from Modules.Families.Insteon.Insteon_xml import Xml as insteonXml
-
-
-class C2_Write(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by node_local.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_light = self.m_api.read_base_device_object_xml(self.m_device, self.m_xml.light)
-        upbXML.ReadXml(self.m_light, self.m_xml.light)
-
-    def test_01_setup(self):
-        # print(PrettyFormatAny.form(self.m_light, 'C2-01-A - Light Device 2'))
-        self.assertEqual(self.m_light.Name, TESTING_LIGHT_NAME_1)
-        self.assertEqual(self.m_light.DeviceFamily, TESTING_DEVICE_FAMILY_UPB)
-
-    def test_02_Core(self):
-        l_xml = self.m_api.write_base_device_object_xml('Light', self.m_light)
-        # print(PrettyFormatAny.form(l_xml, 'C2-02-A - Lights XML'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHT_COMMENT_0)
-        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_LIGHT_DEVICE_FAMILY_0)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHT_ROOM_NAME_0)
-
-    def test_03_UpbLight(self):
-        l_xml = self.m_api.write_base_device_object_xml('Light', self.m_light)
-        insteonXml.WriteXml(l_xml, self.m_light)
-        print(PrettyFormatAny.form(l_xml, 'C2_03-A - Lights XML'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHT_KEY_0)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_LIGHT_ACTIVE_0)
-        self.assertEqual(l_xml.find('DevCat').text, TESTING_INSTEON_DEVCAT_0)
-        self.assertEqual(l_xml.find('EngineVersion').text, TESTING_INSTEON_ENGINE_VERSION_0)
-        self.assertEqual(l_xml.find('FirmwareVersion').text, TESTING_INSTEON_FIRMWARE_VERSION_0)
-        self.assertEqual(l_xml.find('GroupList').text, TESTING_INSTEON_GROUP_LIST_0)
-        self.assertEqual(l_xml.find('GroupNumber').text, TESTING_INSTEON_GROUP_NUM_0)
-        self.assertEqual(l_xml.find('InsteonAddress').text, TESTING_INSTEON_ADDRESS_0)
-        self.assertEqual(l_xml.find('ProductKey').text, TESTING_INSTEON_PRODUCT_KEY_0)
 
 # ## END DBK

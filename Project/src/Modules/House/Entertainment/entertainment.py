@@ -24,8 +24,8 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-09-21'
-__version_info__ = (18, 9, 2)
+__updated__ = '2019-09-26'
+__version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -122,7 +122,7 @@ class Config:
             l_obj = EntertainmentPluginInformation()
             l_name = self.m_config_tools.find_first_element(l_service)
             l_name_lower = l_name.lower()
-            LOG.Info('Service "{}"'.format(l_name))
+            LOG.info('Service "{}"'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
             l_obj.Name = l_name
             l_obj.Type = 'Service'
@@ -273,9 +273,9 @@ class API:
     def Start(self):
         LOG.info("Starting - Version:{}".format(__version__))
         l_count = 0
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
         for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
-            # LOG.debug('Starting "{}"'.format(l_plugin.Name))
+            LOG.debug('Starting "{}"'.format(l_plugin.Name))
             self._module_start_loop(l_plugin)
             l_count += 1
         LOG.info("Started {} plugin(s)- Version:{}".format(l_count, __version__))

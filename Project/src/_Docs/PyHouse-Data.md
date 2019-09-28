@@ -3,24 +3,40 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-09-17
-* Updated:   2019-09-17
+* Updated:   2019-09-26
 * License:   MIT License
 
 # PyHouse
 
-```
-PyHouse_obj.
-    Core.			CoreInformation()
-        Mqtt{}			MqttInformation()
-    Computer.{}
-        Name = None
-        Comment = None
-        self.Primary = False
-        self.Priority = 99
-        self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridge_data
-        self.Communication = {}  # CommunicationInformation()
-        self.Nodes = {}  # NodeInformation()
-    House.
+```python
+pyhouse_obj.					PyHouseInformation()			Modules/Core/data_objects.py
+    Core.						CoreInformation()				Modules/Core/data_objects.py
+        Mqtt.					MqttInformation()
+        	Brokers{}
+    Computer.					ComputerInformation()			Modules/Computer/computer.py
+        Bridges.{}				BridgeInformation()				Modules/Computer/Bridges/bridges.py
+        Communication
+        InternetConnection
+        Nodes.{}				NodeInformation()
+        Weather
+        Web
+        ---
+        Name
+        Comment
+        Primary
+        Priority
+    House.						HouseInformation()				Modules/House/house.py
+    	Family.					FamilyInformation{}				Modules/House/Family/family.py
+        Lighting.				LightingInformation()			Modules/House/Lighting/lighting.py
+        	Buttons.{}
+        	Controllers.{}		ControllerInformation()			Modules/House/Lighting/controllers.py
+        		Access{}
+        		Family{}		FamilyInformation()
+        		Interface{}
+        	Lights.{}
+        	Outlets.{}
+        ---
+        Name
 ```
 
 ### END DBK

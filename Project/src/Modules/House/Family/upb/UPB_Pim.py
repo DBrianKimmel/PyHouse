@@ -13,7 +13,7 @@
 
 """
 
-__updated__ = '2019-09-23'
+__updated__ = '2019-09-24'
 
 # Import system type stuff
 try:
@@ -431,7 +431,7 @@ class API(UpbPimAPI):
     def Stop(self, p_controller_obj):
         pass
 
-    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+    def Control(self, p_device_obj, p_controller_obj, p_control):
         for l_obj in self.m_house_obj.Lights.values():
             # if l_obj.Active == False:
             #    continue

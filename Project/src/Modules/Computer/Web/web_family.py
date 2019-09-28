@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2016-11-15'
+__updated__ = '2019-09-26'
 
 #  Import system type stuff
 
@@ -25,10 +25,6 @@ def _get_insteon_json_data(p_obj, p_json):
         p_obj.InsteonAddress = int(p_json['InsteonAddress'])
     except:
         p_obj.InsteonAddress = 17
-    try:
-        p_obj.DevCat = int(p_json['DevCat'])
-    except:
-        p_obj.DevCat = 0
     try:
         p_obj.GroupList = p_json['GroupList']
     except:
@@ -49,11 +45,13 @@ def _get_insteon_json_data(p_obj, p_json):
         p_obj.FirmwareVersion = 0
     return p_obj
 
+
 def _get_upb_json_data(p_obj, p_json):
     p_obj.UPBAddress = p_json['UPBAddress']
     p_obj.UPBPassword = p_json['UPBPassword']
     p_obj.UPBNetworkID = p_json['UPBNetworkID']
     return p_obj
+
 
 def get_family_json_data(p_obj, p_json):
     if p_obj.DeviceFamily == 'Insteon':

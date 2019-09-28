@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2018 by D. Brian Kimmel
 * Created:   2018-10-01
-* Updated:   2019-04-04
+* Updated:   2019-09-24
 * License:   MIT License
 * Summary:   This is the design documentation for the Mqtt Module of PyHouse.
 
@@ -11,42 +11,11 @@
 
 Mqtt is a messaging system that is used within PyHouse
 
-There are several general and nearly universal topic endings that are in use.
-* /status
-* /control
-* /delete
-* /update
-* /trigger
-
-```xml
-<?xml version="1.0" ?>
-<MqttSection>
-	<Broker Active="True" Key="0" Name="CannonTrail">
-		<UUID>Broker..-0000-0000-0000-0123456789ab</UUID>
-		<BrokerHost>Mqtt-Ct</BrokerHost>
-		<BrokerAddress>192.168.9.10</BrokerAddress>
-		<BrokerPort>8883</BrokerPort>
-		<BrokerUser>pyhouse</BrokerUser>
-		<BrokerPassword>ChangeMe</BrokerPassword>
-		<Class>Local</Class>
-	</Broker>
-	<Broker Active="True" Key="1" Name="PinkPoppy">
-		<UUID>Broker..-0001-0001-0001-0123456789ab</UUID>
-		<BrokerHost>Mqtt-pp</BrokerHost>
-		<BrokerAddress>192.168.1.10</BrokerAddress>
-		<BrokerPort>1883</BrokerPort>
-		<BrokerUser>pyhouse</BrokerUser>
-		<BrokerPassword>ChangeMe</BrokerPassword>
-		<Class>Local</Class>
-	</Broker>
-</MqttSection>
-```
-
 ## Broker
 
 This module connects to a MQTT broker using the 3.1.1 protocol.
 The client name must start with 'PyH-'.
-It uses straight TCP and will soon allow TLS.
+It uses straight TCP and will someday allow TLS.
 
 ## Design
 
@@ -55,24 +24,35 @@ This Mqtt module is accessed by every other module.
 The API is setup from the computer module.
 It initialized as the first thing in the computer setup so it can be called to post and decode messages early on.
 
+## Message
+
+Mqtt messages consist of a Topic and a Payload.
+
 ### Topic
 
-1. The topics all start out with pyhouse
+1. The topics all start out with "pyhouse".
 
-==>pyhouse
+==> pyhouse/
 
-1. The next section is the house name.
+2. The next section is the house name.
 House names must be unique within the realm that the broker and backup brokers serve.
-House names may include spaces
+House names may include spacesand should be capitalized such as "ManorHouse".
 
-==>pyhouse/housename
+==> pyhouse/ManorHouse/
 
-The next section is the message category.
+3. The next section is the message type.
 
-==>pyhouse/housename/category
+==> pyhouse/ManorHouse/type/
+
+Types:
+- computer
+- house
+
+4. The next section is the message category and possibly subcategories.
+
+==> pyhouse/ManorHouse/type/category/
 
 Categories:
-- computer
 - entertainment
 - hvac
 - irrigation
@@ -83,21 +63,25 @@ Categories:
 - schedule
 - security
 
-The next section is the action field.
+4. The next section is the action field.
 
-==>pyhouse/housename/lighting/action
+==> pyhouse/ManorHouse/house/lighting/action
 
 Actions:
 - status
 - control
 - delete
+- update
 - add
 - synchronize
+- trigger
 
 
 ### Payload
 
 The playload is structured to carry the information
+
+## Dispatch
 
 # References
 

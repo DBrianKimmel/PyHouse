@@ -273,12 +273,12 @@ class houseUtility:
         LOG.debug('Starting configured modules: {}'.format(self.m_module_needed))
         l_obj = self.m_pyhouse_obj._APIs.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            LOG.debug('Check module "{}"'.format(l_key))
+            LOG.debug('Start module "{}"'.format(l_key))
             l_a = getattr(l_obj, l_key)
             if l_key == 'HouseAPI':
                 continue
             if l_a == None:
-                LOG.warn('Skipping "{}"'.format(l_key))
+                LOG.warn('Skipping module "{}"'.format(l_key))
                 continue
             l_a.Start()
         return

@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-09-26'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,8 +20,8 @@ from twisted.trial import unittest
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Mqtt import mqtt
-from Modules.Core.Mqtt.mqtt import API as mqttAPI, CONFIG_FILE_NAME, MqttInformation
-from Modules.Core.Utilities import json_tools, config_tools
+from Modules.Core.Mqtt.mqtt import API as mqttAPI, MqttInformation
+from Modules.Core.Utilities import json_tools
 from Modules.Computer.computer import ComputerInformation
 from Modules.House.Lighting.controllers import ControllerInformation
 from Modules.House.Schedule.schedule import ScheduleLightInformation
@@ -29,8 +29,7 @@ from Modules.House.Schedule.schedule import ScheduleLightInformation
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 DICT = {'one': 1, "Two": 'tew'}
-LIGHTING_MSG = \
-{
+LIGHTING_MSG = {
     'Active': True,
     'BaudRate': 19200,
     'ByteSize': 8,

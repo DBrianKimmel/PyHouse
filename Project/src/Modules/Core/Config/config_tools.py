@@ -160,7 +160,7 @@ class Tools:
                 l_extr = 'extract_' + l_key
                 LOG.debug('Groupfield Extracting ', l_extr)
                 continue
-            LOG.debug('Extract - Key:"{}"; Value:"{}" '.format(l_key, l_value))
+            # LOG.debug('Extract - Key:"{}"; Value:"{}" '.format(l_key, l_value))
             setattr(p_obj, l_key, l_value)
         #
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_') and not callable(getattr(p_obj, l_attr))]:

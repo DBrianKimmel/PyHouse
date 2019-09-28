@@ -12,13 +12,13 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-09-26'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert
-from Modules.House.Family.insteon.insteon_data import InsteonData
+from Modules.House.Family.insteon.insteon_device import InsteonInformation
 from Modules.House.Family.insteon.insteon_constants import ACK
 from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
@@ -129,7 +129,7 @@ class Decode:
         [2] = LinkCode - 0=PLM is Responder, 1=PLM is Controller, FF=Deleted
         [3] = LinkGroup
         [4-6] = from address
-        [7-8] = DevCat
+        [7-8] = Dev Cat
         [9] = Firmwear Version
         """
         l_message = p_controller_obj._Message
@@ -325,7 +325,7 @@ class InsteonAllLinks:
         """Delete an all link record.
         """
         #  p_light_obj = LightData()
-        p_light_obj = InsteonData()
+        p_light_obj = InsteonInformation()
         p_light_obj.InsteonAddress = convert.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         #  p_code = 0x00  # Find First

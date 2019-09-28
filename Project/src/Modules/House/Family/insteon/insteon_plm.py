@@ -14,7 +14,7 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-09-23'
+__updated__ = '2019-09-26'
 
 #  Import system type stuff
 import datetime
@@ -24,7 +24,6 @@ import queue as Queue
 from Modules.Core.Drivers import interface
 from Modules.House.Family.insteon import insteon_decoder, insteon_utils, insteon_link
 from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.insteon.insteon_data import InsteonData
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 # from Modules.House.Family.family_utils import FamUtil
 
@@ -51,29 +50,6 @@ FLAG_ACKNOWLEDGEMENT = 0x20
 FLAG_EXTENDED_CMD = 0x10
 FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
-
-
-class InsteonControllerInformation(InsteonData):
-    """Holds statefull information about a single Insteon controller device.
-
-    There are several different control devices - this is 2412x and 2413x
-    where x is 'S' for serial interface and 'U' for a USB interface.
-
-    The USB controller that I have actually uses the Serial protocol so the serial driver
-    is used.
-
-    Although there is a manual for Insteon controllers, much of the development was empirically derived.
-    For this reason, there is a whole lot of debugging code and output.
-    """
-
-    def __init__(self):
-        """
-        Command 1 and 2 hold the values sent to the device.
-        This is so that the return values received later can be correlated to the command we last sent to the device.
-        """
-        super(InsteonControllerInformation, self).__init__()
-        self._Command1 = None
-        self._Command2 = None
 
 
 class Commands:
@@ -202,6 +178,7 @@ class PlmDriverProtocol(Commands):
 
         Uses twisted to get a callback when the timer expires.
         """
+        # LOG.debug('Send')
         self.m_pyhouse_obj._Twisted.Reactor.callLater(SEND_TIMEOUT, self.dequeue_and_send, p_controller_obj)
         try:
             l_entry = p_controller_obj._Queue.get(False)
@@ -235,7 +212,7 @@ class PlmDriverProtocol(Commands):
 
         TODO: instead of fixed time, callback to here from driver when bytes are rx'ed.
         """
-        LOG.debug('ReceiveLoop ')
+        # LOG.debug('ReceiveLoop ')
         self.m_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
         if p_controller_obj.Interface._DriverApi:
             self._append_message(p_controller_obj)
@@ -254,7 +231,7 @@ class InsteonPlmCommands:
 
     @staticmethod
     def scan_one_light(p_controller_obj, p_obj):
-        """Scan a light.  we are looking for DevCat and any other info about the device.
+        """Scan a light.  we are looking for Dev Cat and any other info about the device.
 
         @param p_obj: is the object for the device that we will query.
         """
@@ -288,7 +265,7 @@ class LightHandlerAPI:
 
     def start_controller_driver(self, p_pyhouse_obj, p_controller_obj):
         """
-        @param p_controller_obj: ==> InsteonControllerInformation()
+        @param p_controller_obj: ==>
         """
         # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         if p_controller_obj._isLocal:
@@ -297,10 +274,12 @@ class LightHandlerAPI:
             l_msg += "Family.Name:{}, ".format(p_controller_obj.Family.Name)
             l_msg += "InterfaceType:{}".format(p_controller_obj.Interface.Type)
             LOG.info('Start Controller - {}'.format(l_msg))
-            # interface.get_device_driver_API(p_pyhouse_obj, p_controller_obj)
+            LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+            l_driver = interface.get_device_driver_API(p_pyhouse_obj, p_controller_obj.Interface)
+            l_driver.Start(p_controller_obj)
         else:
             LOG.warn('Can not config a remote controller.')
-        return True
+        return
 
     def stop_controller_driver(self, p_controller_obj):
         if p_controller_obj.Interface._DriverApi:
@@ -330,15 +309,19 @@ class LightHandlerAPI:
 
     @staticmethod
     def _get_id_request(p_controller_obj, p_obj):
-        """Get the device DevCat
+        """Get the device Dev Cat
         """
         LOG.info('Request ID(devCat) from device: {}'.format(p_obj.Name))
         Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['id_request'], 0, 'ID Request')  #  0x10
 
     def _get_obj_info(self, p_controller_obj, p_obj):
-        self._get_engine_version(p_controller_obj, p_obj)
-        self._get_id_request(p_controller_obj, p_obj)
-        self._get_one_device_status(p_controller_obj, p_obj)
+        if p_obj.Family.Name.lower() == 'insteon':
+            self._get_engine_version(p_controller_obj, p_obj)
+            self._get_id_request(p_controller_obj, p_obj)
+            self._get_one_device_status(p_controller_obj, p_obj)
+        else:
+            LOG.warn('Skipping "{}" "{}" device "{}"'.format(p_obj.DeviceType, p_obj.DeviceSubType, p_obj.Name))
+            pass
 
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):
         """Get the status (current level) of all insteon devices.
@@ -346,29 +329,30 @@ class LightHandlerAPI:
         Used at device start up to populate the database.
         """
         LOG.info('Getting information for all Insteon devices.')
-        l_house = p_pyhouse_obj.House
-        if l_house.Lighting.Buttons != None:
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Lighting, 'Lighting'))
+
+        if p_pyhouse_obj.House.Lighting.Buttons != None:
             for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
                 self._get_obj_info(p_controller_obj, l_obj)
+            LOG.debug('got {} Buttons'.format(len(p_pyhouse_obj.House.Lighting.Buttons)))
 
-        if l_house.Lighting.Controllers != None:
-            for l_obj in l_house.Lighting.Controllers.values():
-                if l_obj == None:
-                    LOG.warn('No Controllers configured.')
-                    return
-                if l_obj.Family.Name == 'insteon':  # and l_obj.Active:
-                    self._get_obj_info(p_controller_obj, l_obj)
+        if p_pyhouse_obj.House.Lighting.Controllers != None:
+            for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
+                # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Family'))
+                self._get_obj_info(p_controller_obj, l_obj)
+                if l_obj.Family.Name.lower() == 'insteon':
+                    # self._get_obj_info(p_controller_obj, l_obj)
                     InsteonPlmAPI().get_link_records(p_controller_obj, l_obj)  # Only from controller
+            LOG.debug('got {} Controllers'.format(len(p_pyhouse_obj.House.Lighting.Controllers)))
 
-        if l_house.Lighting.Lights != None:
+        if p_pyhouse_obj.House.Lighting.Lights != None:
             for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
-                if l_obj == None:
-                    LOG.warn('No Lights configured.')
-                    return
-                if l_obj.Family.Name == 'insteon':  # and l_obj.Active:
+                if l_obj.Family.Name.lower() == 'insteon':
                     self._get_obj_info(p_controller_obj, l_obj)
                     # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
-        if l_house.Lighting.Outlets != None:
+            LOG.debug('got {} Lights'.format(len(p_pyhouse_obj.House.Lighting.Lights)))
+
+        if p_pyhouse_obj.House.Lighting.Outlets != None:
             pass
 
 
@@ -388,21 +372,20 @@ class API(LightHandlerAPI):
         if self.m_controller_obj.Interface._DriverApi:
             insteon_link.Send().read_aldb_v2(self.m_controller_obj)
 
-    def _get_controller(self):
+    def XXX_get_controller(self):
         """ used in testing to load the controller info to be used in testing.
         """
         return self.m_controller_obj
 
-    def _start_controller_and_driver(self):
+    def _start_all_controllers(self):
         """
-        @param p_pyhouse_obj: is the master obj
         @param p_controller_obj: is the particular controller that we will be starting
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
-        LOG.info('Starting Controller: "{}"'.format(self.m_controller_obj.Name))
+        LOG.info('Starting all Controllers: "{}"'.format(self.m_controller_obj.Name))
         l_ret = self.start_controller_driver(self.m_pyhouse_obj, self.m_controller_obj)
-        if True:
+        if l_ret != None:
             self.m_controller_obj.Node = self.m_pyhouse_obj.Computer.Name
             self.m_controller_obj.LastUsed = datetime.datetime.now()
             LOG.info('Controller Driver Start was OK for "{}".'.format(self.m_controller_obj.Name))
@@ -423,9 +406,10 @@ class API(LightHandlerAPI):
         @return: True if the driver opened OK and is usable
                  False if the driver is not functional for any reason.
         """
-        LOG.debug(PrettyFormatAny.form(self.m_controller_obj, 'Controller'))
-        l_ret = self._start_controller_and_driver()
-        self._get_plm_info(self.m_pyhouse_obj, self.m_controller_obj)
+        LOG.info('Starting a PLM')
+        # LOG.debug(PrettyFormatAny.form(self.m_controller_obj, 'Controller'))
+        l_ret = self._start_all_controllers()
+        # # self._get_plm_info()
         LOG.info('Started.')
         return l_ret
 
@@ -434,7 +418,7 @@ class API(LightHandlerAPI):
         self.stop_controller_driver(self.m_controller_obj)
         LOG.info('Stopped.')
 
-    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+    def Control(self, p_device_obj, p_controller_obj, p_control):
         """
         Insteon PLM specific version of control light
         All that Insteon can control is Brightness and Fade Rate.

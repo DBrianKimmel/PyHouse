@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-04'
+__updated__ = '2019-09-24'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -90,8 +90,8 @@ class API():
             LOG.info('Turn Light: "{}" to level: "{}", Family: "{}"; Controller: {}'.format(
                     p_light_obj.Name, p_control.BrightnessPct, p_light_obj.Family.Name, p_controller_obj.Name))
             l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
-            # print(PrettyFormatAny.form(l_family_api.AbstractControlLight, 'Family API'))
-            l_family_api.AbstractControlLight(p_pyhouse_obj, p_light_obj, p_controller_obj, p_control)
+            # print(PrettyFormatAny.form(l_family_api.Control, 'Family API'))
+            l_family_api.Control(p_pyhouse_obj, p_light_obj, p_controller_obj, p_control)
         except Exception as e_err:
             LOG.error('ERROR - {}'.format(e_err))
 

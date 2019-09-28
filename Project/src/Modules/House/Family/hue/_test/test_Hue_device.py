@@ -1,5 +1,5 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/_test/test_Hue_device.py
+@name:      Modules/House/Family/Hue/_test/test_Hue_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2018 by D. Brian Kimmel
@@ -11,17 +11,15 @@ Passed all 2 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2018-01-27'
+__updated__ = '2019-09-26'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from Modules.Families.Insteon.Insteon_data import InsteonData
-from Modules.Families.Insteon import Insteon_device
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Family.hue.hue_config import HueInformation
 
 
 class SetupMixin(object):
@@ -47,7 +45,7 @@ class C01_API(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = Insteon_device.API(self.m_pyhouse_obj)
-        self.m_device = InsteonData()
+        self.m_device = HueInformation()
 
     def test_01_Init(self):
         """ Be sure that the XML contains the right stuff.

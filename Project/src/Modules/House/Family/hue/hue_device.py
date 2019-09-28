@@ -10,8 +10,8 @@
 """
 from Modules.Core.Config import config_tools
 
-__updated__ = '2019-09-18'
-__version_info__ = (19, 9, 2)
+__updated__ = '2019-09-26'
+__version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -102,10 +102,11 @@ class API:
     m_hue_hub = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         Config(p_pyhouse_obj).load_yaml_config()
         self.m_hue_hub = HueHub(p_pyhouse_obj)
-        LOG.info('Initialized')
+        LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """

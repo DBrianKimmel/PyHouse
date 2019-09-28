@@ -11,7 +11,7 @@ Passed all 23 tests - DBK - 2017-04-29
 
 """
 
-__updated__ = '2019-09-02'
+__updated__ = '2019-09-26'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -134,14 +134,6 @@ class D1_Decode(SetupMixin, unittest.TestCase):
     def test_01_Devcat(self):
         l_dev = b'\x02\x04'
         _l_ret = utilDecode._devcat(l_dev, self.m_obj)
-        # print(PrettyFormatAny.form(_l_ret, 'D1-01-A - xxx'))
-        self.assertEqual(self.m_obj.DevCat, 0x0204)
-        #
-        l_dev = MSG_50
-        # l_c = l_dev[5:7]
-        # print(FormatBytes(l_c))
-        _l_ret = utilDecode._devcat(l_dev[5:7], self.m_obj)
-        self.assertEqual(self.m_obj.DevCat, 0x0204)
 
 
 class D2_Decode(SetupMixin, unittest.TestCase):

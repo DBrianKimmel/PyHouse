@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-09-21'
+__updated__ = '2019-09-24'
 __version_info__ = (19, 7, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -116,12 +116,6 @@ class Config:
         l_ret = roomConfig(self.m_pyhouse_obj).load_room_config(p_config)
         return l_ret
 
-    def _extract_family(self, p_config):
-        """
-        """
-        l_ret = familyConfig(self.m_pyhouse_obj).extract_family_group(p_config)
-        return l_ret
-
     def _extract_one_light(self, p_config) -> dict:
         """ Extract the config info for one Light.
         - Name: Light 1
@@ -138,10 +132,10 @@ class Config:
         l_obj = LightInformation()
         l_required = ['Name', 'Family']
         for l_key, l_value in p_config.items():
-            # print('Light Key: {}; Val: {}'.format(l_key, l_val))
+            # LOG.debug('Light Key: {}; Val: {}'.format(l_key, l_value))
             if l_key == 'Family':
-                l_ret = self._extract_family(l_value)
-                l_obj.Family = l_ret
+                l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
+                self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = None  # define the family as used
             elif l_key == 'Room':
                 l_ret = self._extract_room(l_value)
                 l_obj.Room = l_ret
@@ -268,7 +262,7 @@ class MqttActions:
             l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
             if l_api == None:
                 return
-            l_api.AbstractControlLight(self.m_pyhouse_obj, l_light_obj, l_controller_obj[0], l_control)
+            l_api.Control(self.m_pyhouse_obj, l_light_obj, l_controller_obj[0], l_control)
 
     def decode(self, p_topic, p_message):
         """ Decode Mqtt message
@@ -323,7 +317,7 @@ class API(MqttActions):
         LOG.info('Save Config')
         self.m_config.save_yaml_config()
 
-    def AbstractControlLight(self, p_device_obj, p_controller_obj, p_control):
+    def Control(self, p_device_obj, p_controller_obj, p_control):
         """
         Insteon specific version of control light
         All that Insteon can control is Brightness and Fade Rate.
@@ -336,6 +330,6 @@ class API(MqttActions):
             LOG.info('No PLM was defined - Quitting.')
             return
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
-        l_api.AbstractControlLight(p_device_obj, p_controller_obj, p_control)
+        l_api.Control(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

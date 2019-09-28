@@ -21,20 +21,7 @@ Then came the Insteon Hub which is/was a cloud type device with perhaps some loc
 There will only be one active PLM per node.
 
 
-```python
-class InsteonData:
-    def __init__(self):
-        self.DevCat = 0  # DevCat and SubCat (2 bytes)
-        self.EngineVersion = 2
-        self.FirmwareVersion = 0
-        self.GroupList = ''
-        self.GroupNumber = 0
-        self.InsteonAddress = 0  # Long integer internally - '1A.B3.3C' for external reaability
-        self.ProductKey = ''  # 3 bytes
-        self.Links = {}
-```
-
-## Types
+## Device Types
 
 Insteon devices are of many different types
 
@@ -48,5 +35,24 @@ Insteon devices are of many different types
 - camera
 - door sensor
 - waterleak detectors
+
+## Controller Types
+
+### PLM
+
+This was the first device to be coded in PyHouse.
+
+It is connected as a serial device which nowdays is a USB connection emulating a serial port.
+
+
+### Link
+
+This has not yet (and may never be) been coded in PyHouse.
+
+
+### Hub
+
+This is just beginning to be coded (2019) in PyHouse.
+
 
 ### END DBK
