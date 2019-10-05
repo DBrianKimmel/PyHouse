@@ -38,8 +38,8 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-09-16'
-__version_info__ = (19, 8, 1)
+__updated__ = '2019-10-04'
+__version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -47,12 +47,12 @@ import datetime
 import aniso8601
 
 #  Import PyMh files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import convert, extract_tools
-from Modules.House.Hvac.hvac_actions import API as hvacActionsAPI
-from Modules.House.Irrigation.irrigation_action import API as irrigationActionsAPI
+from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
+from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
 from Modules.House.Lighting.lighting import ScheduleLightingInformation
-from Modules.House.Lighting.actions import API as lightActionsAPI
+from Modules.House.Lighting.actions import Api as lightActionsApi
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.House.Schedule import sunrisesunset
 
@@ -517,14 +517,17 @@ class Timers:
         return l_runID
 
 
-class Config:
+class LocalConfig:
     """Read in and possibly save the scheduling data.
     """
+
+    m_config = None
     m_pyhouse_obj = None
     m_schedule_altered = False
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
         self.m_schedule_altered = False
 
     def _extract_entertainment_schedule(self):
@@ -603,19 +606,20 @@ class Config:
     def load_yaml_config(self):
         """
         """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Schedules = None
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Schedules']
+            l_yaml = l_yaml['Schedules']
         except:
-            LOG.warn('The schedules.yaml file does not start with "Schedules:"')
+            LOG.warn('The config file does not start with "Schedules:"')
             return None
         l_scheds = self._extract_all_schedules(l_yaml)
         self.m_pyhouse_obj.House.Schedules = l_scheds
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]'))
         return l_scheds  # for testing purposes
 
 # ----------
@@ -625,21 +629,21 @@ class Config:
         """
 
 
-class API:
+class Api:
 
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """ Load the Schedule from the Config info.
         """
         self.m_pyhouse_obj.House.Schedules = {}
-        l_schedules = self.m_config.load_yaml_config()
+        l_schedules = self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Schedules.'.format(len(self.m_pyhouse_obj.House.Schedules)))
         return l_schedules  # for testing
 
@@ -659,7 +663,7 @@ class API:
     def SaveConfig(self):
         """
         """
-        self.m_config.save_yaml_config()
+        self.m_local_config.save_yaml_config()
         LOG.info('Saved Schedules Config.')
 
     def RestartSchedule(self):

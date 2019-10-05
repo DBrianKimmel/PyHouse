@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-10-04'
 
 # Import system type stuff
 
@@ -19,7 +19,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.HvacAction  ')
 
 
-class API:
+class Api:
     """
     """
 

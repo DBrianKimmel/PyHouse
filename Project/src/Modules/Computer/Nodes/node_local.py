@@ -19,7 +19,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -445,7 +445,7 @@ class Util(object):
         return l_node
 
 
-class API(Util):
+class Api(Util):
 
     m_pyhouse_obj = None
 

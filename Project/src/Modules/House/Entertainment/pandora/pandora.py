@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-09-18'
+__updated__ = '2019-10-04'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,11 +29,11 @@ from _datetime import datetime  # , time
 from pathlib import Path
 
 #  Import PyMh files and modules.
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.Core.Config.login import Config as loginConfig
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
-from Modules.House.Security.login import Config as loginConfig
 from Modules.House.Entertainment.entertainment_data import \
         EntertainmentDeviceControl, \
         EntertainmentServiceControl, \
@@ -646,7 +646,7 @@ class PandoraControl(A_V_Control):
         """
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -655,7 +655,6 @@ class Config:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
 
     def dump_struct(self):
         """
@@ -744,17 +743,16 @@ class Config:
     def load_yaml_config(self, p_api):
         """ Read the pandora.yaml file.
         """
-        try:
-            l_node = self.m_config_tools.read_yaml(CONFIG_NAME)
-        except:
-            self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = None
-            LOG.warn('No Pandora config found')
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Pandora']
+            l_yaml = l_yaml['Pandora']
         except:
-            LOG.warn('The pandora.yaml file does not start with "Pandora:"')
-            self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = None
+            LOG.warn('The config file does not start with "Pandora:"')
             return None
         l_pandora = self._extract_all_pandora(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = l_pandora
@@ -765,14 +763,14 @@ class Config:
 class API(MqttActions):
 
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         """ Do the housekeeping for the Pandora plugin.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_api = self
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("API Initialized - Version:{}".format(__version__))
         self.m_pandora_control_api = PandoraControl(p_pyhouse_obj)
 
@@ -782,7 +780,7 @@ class API(MqttActions):
         LOG.info("Loading Config - Version:{}".format(__version__))
         if self.m_pandora_control_api.is_pianobar_installed(self.m_pyhouse_obj):
             LOG.info('Pianobar present')
-            self.m_config.load_yaml_config(self)
+            self.m_local_config.load_yaml_config(self)
         else:
             LOG.warn('Pianobar Missing')
 
@@ -795,7 +793,7 @@ class API(MqttActions):
         self.m_pandora_control_api.issue_pandora_stopped_status()
         LOG.info("Started - Version:{}".format(__version__))
 
-    def SaveXml(self, _p_xml):
+    def SaveConfig(self, _p_xml):
         """
         """
 

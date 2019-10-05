@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-04'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -465,7 +465,7 @@ class NodeInterfaceData(BaseUUIDObject):
         self.V6Address = []
 
 
-class RoomInformation(BaseUUIDObject):
+class XXXRoomInformation(BaseUUIDObject):
     """ A room of the house.
     Used to draw pictures of the house
     Used to define the location of switches, lights etc.
@@ -474,7 +474,7 @@ class RoomInformation(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(RoomInformation, self).__init__()
+        super(XXXRoomInformation, self).__init__()
         self.Corner = ''  # CoordinateInformation()
         self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         # self.LastUpdate = None

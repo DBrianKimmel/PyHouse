@@ -9,15 +9,15 @@
 
 """
 
-__updated__ = '2019-09-21'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Core.Config import config_tools
-from Modules.House.rooms import Config as roomConfig
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.House.rooms import Api as roomsApi
 from Modules.House.Family.family import Config as familyConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -51,14 +51,16 @@ class ButtonFamilyInformation:
         self.Address = None
 
 
-class Config:
+class LocalConfig:
     """
     """
 
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_one_button_set(self, p_config) -> dict:
         """ Extract the config info for one button.
@@ -79,7 +81,7 @@ class Config:
             if l_key == 'Family':
                 l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
             elif l_key == 'Room':
-                l_obj.Room = roomConfig(self.m_pyhouse_obj).load_room_config(l_value)
+                l_obj.Room = roomsApi.getRoomConfig(l_value)
                 pass
             else:
                 setattr(l_obj, l_key, l_value)
@@ -107,39 +109,38 @@ class Config:
     def load_yaml_config(self):
         """ Read the buttons.yaml file if it exists.  No file = no buttons.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Lighting.Buttons = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Buttons']
+            l_yaml = l_yaml['Buttons']
         except:
-            LOG.warn('The buttons.yaml file does not start with "Buttons:"')
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+            LOG.warn('The config file does not start with "Buttons:"')
             return None
         l_buttons = self._extract_all_button_sets(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons
         return l_buttons  # for testing purposes
 
 
-class API:
+class Api:
     """
     """
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """
         """
         LOG.info('Load Config')
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
         return {}
 

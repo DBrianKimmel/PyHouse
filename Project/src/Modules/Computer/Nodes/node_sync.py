@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -98,7 +98,7 @@ class Util(object):
         LOG.info('Contains {} Nodes - {}'.format(len(p_pyhouse_obj.Computer.Nodes), l_list))
 
 
-class API(object):
+class Api(object):
     """
     """
 

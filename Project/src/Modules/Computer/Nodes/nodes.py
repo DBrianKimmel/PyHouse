@@ -15,15 +15,15 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-08-14'
+__updated__ = '2019-10-05'
 __version_info__ = (18, 10, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Computer.Nodes.node_local import API as localAPI
-from Modules.Computer.Nodes.node_sync import API as syncAPI
+from Modules.Computer.Nodes.node_local import Api as localApi
+from Modules.Computer.Nodes.node_sync import Api as syncApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities import extract_tools
 
@@ -63,12 +63,12 @@ class MqttActions:
         #  computer/shutdown
         elif l_topic == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
-            p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+            p_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg'))
         #
         elif l_topic == 'sync':
-            p_logmsg += syncAPI(self.m_pyhouse_obj).DecodeMqttMessage(p_topic[1:], p_message)
+            p_logmsg += syncApi(self.m_pyhouse_obj).DecodeMqttMessage(p_topic[1:], p_message)
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg'))
             LOG.warn('Unknown Node sub-topic: {}\n\tMsg: {}'.format(l_topic, p_message))
         return p_logmsg
 
@@ -86,13 +86,13 @@ class Yaml:
         pass
 
 
-class API():
+class Api():
 
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        self.m_local = localAPI(p_pyhouse_obj)
-        self.m_sync = syncAPI(p_pyhouse_obj)
+        self.m_local = localApi(p_pyhouse_obj)
+        self.m_sync = syncApi(p_pyhouse_obj)
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized - Version:{}'.format(__version__))
 

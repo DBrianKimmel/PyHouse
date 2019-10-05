@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,7 +32,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import importlib
 
 #  Import PyMh files and modules.
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentPluginInformation, EntertainmentInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Entertainment.pandora.pandora import PandoraServiceInformation
@@ -41,6 +41,17 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
 
 CONFIG_NAME = 'entertainment'
+
+MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
+    'Firestick',
+    'Onkyo',
+    'Panasonic',
+    'Pandora',
+    'Pioneer',
+    'Samsung',
+    'Sharp',
+    'Sony'
+    ]
 
 
 class MqttActions:
@@ -83,17 +94,17 @@ class MqttActions:
         return p_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
 
-    m_config_tools = None
+    m_config = None
     m_modules_needed = []
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_config = configApi(p_pyhouse_obj)
 
     def load_defined_plugins(self):
         """ Load the plugins called for in the config file.
@@ -199,21 +210,21 @@ class Config:
         return l_entertain  # for testing purposes
 
 
-class API:
+class Api:
     """ Entertainment is a core module.
     However, there are a large number of subsystems possible.
     We do not want to load all the modules so we implement a load if Defined/Enabled in XML here.
     """
 
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         """ Create all the empty structures needed to load, run and save the entertainment information.
         """
         p_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Create empty entertainment plugin section
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
@@ -222,7 +233,7 @@ class API:
         @return: the Entertainment object of PyHouse_obj
         """
         LOG.info("Config Loading - Version:{}".format(__version__))
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
 
     def _service_start(self, p_service):
         """
@@ -284,7 +295,7 @@ class API:
         """ Stick in the entertainment section
         """
         LOG.info("Saving Config.")
-        self.m_config.save_yaml_config()
+        self.m_local_config.save_yaml_config()
         LOG.info("Saved Config.")
 
     def Stop(self):

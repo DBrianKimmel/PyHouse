@@ -12,18 +12,19 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-09-20'
-__version_info__ = (19, 6, 1)
+__updated__ = '2019-10-04'
+__version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 # from mypy.main import config_types
 
 #  Import PyMh files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.Core.Utilities import extract_tools
 from Modules.House.house_data import LocationInformation
 
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Location       ')
@@ -47,30 +48,58 @@ ALLOWED_FIELDS = [
     ]
 
 
-class Config:
-    """ Update the Yaml config files.
-    This will handle the location.yaml file
-    ==> PyHouseObj._Config.YamlTree{'location.yaml'}.xxx
-    --> xxx = {Yaml, YamlPath, Filename}
+class Mqtt:
+    """
     """
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj - p_pyhouse_obj
+
+    def decode(self, p_topic, p_message, p_logmsg):
+        p_logmsg += '\tLocation:\n'
+        if p_topic[1] == 'add':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+
+        elif p_topic[1] == 'delete':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+
+        elif p_topic[1] == 'update':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+
+        elif p_topic[1] == 'request':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg'))
+        return p_logmsg
+
+    def dispatch(self, p_topic, p_message):
+        pass
+
+    def send_message(self, p_pyhouse_obj, p_topic, _p_location_obj):
+        l_topic = 'house/ocation/' + p_topic
+        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic)
+
+
+class LocalConfig:
+    """ Update the Yaml config files.
+    """
+
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_location(self, p_config) -> dict:
         """ Extract the config info for location.
-        Warn if there are extra attributes in the config.
-        Warn if there are missing attributes in the config.
-
         @param p_config: is the yaml fragment containing location information.
         @return: a LocattionInformation() obj filled in.
         """
         l_required = ['Latitude', 'Longitude', 'Elevation', 'TimeZone']
         l_obj = LocationInformation()
         for l_key, l_value in p_config.items():
-            # print('Location Key:  {}'.format(l_key))
             if not hasattr(l_obj, l_key):
                 LOG.warn('location.yaml contains an extra entry "{}" = {} - Ignored.'.format(l_key, l_value))
                 continue
@@ -79,32 +108,31 @@ class Config:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
         self.m_pyhouse_obj.House.Location = l_obj
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Location'))
         return l_obj  # For testing
 
     def load_yaml_config(self):
         """ Read the location.yaml file.
         It contains Location data for the house.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            LOG.error('Location config file is missing.')
-            self.m_pyhouse_obj.House.Location = None
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Location = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Location']
+            l_yaml = l_yaml['Location']
         except:
-            LOG.warn('The location.yaml file does not start with "Location:"')
-            self.m_pyhouse_obj.House.Location = None
+            LOG.warn('The config file does not start with "Location:"')
             return None
         l_locat = self._extract_location(l_yaml)
-        # self.m_pyhouse_obj.House.Location = l_locat
+        self.m_pyhouse_obj.House.Location = l_locat
         return l_locat  # for testing purposes
 
 # ----------
 
-    def XXX_copy_to_yaml(self, p_pyhouse_obj):
+    def _copy_to_yaml(self):
         """ Update the yaml information.
         The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
 
@@ -112,25 +140,33 @@ class Config:
 
         @return: the updated yaml ready information.
         """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
+        l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
         l_config = l_node.Yaml['Location']
-        # LOG.debug(PrettyFormatAny.form(l_config, 'Location', 190))
-        l_working = p_pyhouse_obj.House.Location
-        # LOG.debug(PrettyFormatAny.form(l_working, 'House', 190))
+        # LOG.debug(PrettyFormatAny.form(l_config, 'Location'))
+        l_working = self.m_pyhouse_obj.House.Location
+        # LOG.debug(PrettyFormatAny.form(l_working, 'House'))
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             l_config[l_key] = l_val
-        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Location'] = l_config
-        # LOG.debug(PrettyFormatAny.form(l_node, 'Updated', 190))
+        self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Location'] = l_config
+        # LOG.debug(PrettyFormatAny.form(l_node, 'Updated'))
         l_ret = {'Location': l_config}
         return l_ret
+
+    def save_yaml_config(self):
+        """
+        """
+        LOG.info('Saving Config')
+        l_data = self._copy_to_yaml()
+        self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
+        # return l_config
 
 
 class Api:
     """ Location sub-module of a house.
     """
 
-    m_config = None
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
@@ -138,15 +174,14 @@ class Api:
         """
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(self.m_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         p_pyhouse_obj.House.Location = LocationInformation()
 
     def LoadConfig(self):
         """ Load the Yaml config file into the system.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config = Config(self.m_pyhouse_obj)
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
 
     def Start(self):
         pass
@@ -155,9 +190,10 @@ class Api:
         """ Take a snapshot of the running system and save it in Yaml to be loaded on restart.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
+        self.m_local_config.save_yaml_config()
 
         # self.m_config.save_yaml_config()
     def Stop(self):
-        pass
+        _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 
 #  ## END DBK

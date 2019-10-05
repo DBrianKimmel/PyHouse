@@ -7,11 +7,11 @@
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 15 tests - DBK - 2019-09-18
+Passed all 15 tests - DBK - 2019-10-01
 
 """
 
-__updated__ = '2019-09-18'
+__updated__ = '2019-10-01'
 
 # Import system type stuff
 import os

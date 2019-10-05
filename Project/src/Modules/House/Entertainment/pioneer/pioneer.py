@@ -19,8 +19,8 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-09-15'
-__version_info__ = (19, 5, 1)
+__updated__ = '2019-10-04'
+__version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -31,7 +31,7 @@ from twisted.conch.telnet import StatefulTelnetProtocol
 from queue import Queue
 
 #  Import PyMh files and modules.
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
 from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceStatus
 from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
@@ -169,7 +169,7 @@ class MqttActions:
         return l_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -178,7 +178,7 @@ class Config:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_config = configAPI(p_pyhouse_obj)
 
     def dump_struct(self):
         """
@@ -457,12 +457,12 @@ class API(MqttActions, PioneerClient):
     """This interfaces to all of PyHouse.
     """
 
-    m_config = None
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("API Initialized - Version:{}".format(__version__))
 
     def _pioneer_power(self, p_family, p_model, p_power):
@@ -514,7 +514,7 @@ class API(MqttActions, PioneerClient):
     def LoadConfig(self):
         """ Read the XML for all Pioneer devices.
         """
-        self.m_config.load_yaml_config(self)
+        self.m_local_config.load_yaml_config(self)
         LOG.info("Loaded Pioneer Device(s) - Version:{}".format(__version__))
 
     def Start(self):
@@ -534,9 +534,7 @@ class API(MqttActions, PioneerClient):
         LOG.info("Started {} Pioneer device(s).".format(l_count))
 
     def SaveConfig(self):
-        # l_xml = XML().write_pioneer_section_xml(self.m_pyhouse_obj)
         LOG.info("Saved Pioneer Config.")
-        # return l_xml
 
     def Stop(self):
         LOG.info("Stopped.")

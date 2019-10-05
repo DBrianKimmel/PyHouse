@@ -11,8 +11,8 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-09-23'
-__version_info__ = (19, 9, 23)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -22,10 +22,13 @@ import importlib
 #  Import PyMh files
 from Modules.Core.data_objects import HouseAPIs
 from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import uuid_tools
-# from Modules.House import location, rooms, floors
+# Parts
+from Modules.House.floors import Mqtt as floorsMqtt
+from Modules.House.location import Mqtt as locationMqtt
 from Modules.House.rooms import Mqtt as roomsMqtt
-
+# Modules
 from Modules.House.Entertainment.entertainment import MqttActions as entertainmentMqtt
 from Modules.House.Hvac.hvac import MqttActions as hvacMqtt
 from Modules.House.Irrigation.irrigation import MqttActions as irrigationMqtt
@@ -88,8 +91,15 @@ class MqttActions:
         """
         l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
         # LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
-        if p_topic[0] == 'room':
-            l_logmsg += roomsMqtt(self.m_pyhouse_obj)._decode_room(p_topic, p_message, l_logmsg)
+        if p_topic[0] == 'floor':
+            l_logmsg += floorsMqtt(self.m_pyhouse_obj).decode(p_topic, p_message, l_logmsg)
+
+        elif p_topic[0] == 'location':
+            l_logmsg += locationMqtt(self.m_pyhouse_obj).decode(p_topic, p_message, l_logmsg)
+
+        elif p_topic[0] == 'room':
+            l_logmsg += roomsMqtt(self.m_pyhouse_obj).decode(p_topic, p_message, l_logmsg)
+
         elif p_topic[0] == 'entertainment':
             l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
         elif p_topic[0] == 'hvac':
@@ -108,12 +118,15 @@ class MqttActions:
         return l_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
+    m_config = None
+    m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_modules_info(self, p_yaml):
         """
@@ -146,19 +159,20 @@ class Config:
     def load_yaml_config(self):
         """ Read the house.yaml file.
          """
-        # LOG.deb('Loading Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Name = 'Unknown House Name'
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['House']
+            l_yaml = l_yaml['House']
         except:
-            LOG.warn('The house.yaml file does not start with "House:"')
+            LOG.warn('The config file does not start with "House:"')
             return None
         l_house = self._extract_house_info(l_yaml)
         self.m_pyhouse_obj.House.Name = l_house.Name
-        return l_node  # for testing purposes
+        return l_house  # for testing purposes
 
 
 class houseUtility:
@@ -215,13 +229,13 @@ class houseUtility:
             # LOG.debug('Starting import of Module: "{}"'.format(l_module))
             l_ret = self._do_import(l_module, submodule='.' + l_module)
             try:
-                l_api = l_ret.API(self.m_pyhouse_obj)
+                l_api = l_ret.Api(self.m_pyhouse_obj)
             except Exception as e_err:
                 LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(l_module, e_err))
                 LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef', 190)))
                 l_api = None
             # LOG.debug('Imported: {}'.format(l_ret))
-            l_api_name = l_module.capitalize() + 'API'
+            l_api_name = l_module.capitalize() + 'Api'
             l_house = self.m_pyhouse_obj._APIs.House
             setattr(l_house, l_api_name, l_api)
             # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
@@ -305,6 +319,7 @@ class houseUtility:
         """
         l_dict = {}
         for l_part in PARTS:
+            LOG.debug('Working on part {}'.format(l_part))
             self.m_parts_needed.append(l_part)
             l_obj = HousePartInformation()
             l_ret = self._do_import(l_part)
@@ -344,10 +359,10 @@ class houseUtility:
             l_value.Api.Stop()
 
 
-class API:
+class Api:
     """
     """
-    m_config = None
+    m_local_config = None
     m_parts = {}
     m_modules = {}
     m_utility = None
@@ -359,7 +374,7 @@ class API:
         """
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_utility = houseUtility(p_pyhouse_obj)
         #
         p_pyhouse_obj.House = HouseInformation()
@@ -377,7 +392,7 @@ class API:
         """ The house is always present but the components of the house are plugins and not always present.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         self.m_utility._load_house_parts(self.m_parts)
         self.m_utility._load_modules_config()
         LOG.info('Loaded Config')
@@ -411,5 +426,6 @@ class API:
         self.m_utility._stop_house_parts(self.m_parts)
         self.m_utility._stop_house_modules()
         LOG.info("Stopped.")
+        _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 
 #  ##  END DBK

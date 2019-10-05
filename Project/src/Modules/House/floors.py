@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-09-20'
-__version_info__ = (19, 6, 1)
+__updated__ = '2019-10-04'
+__version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.data_objects import BaseObject
@@ -54,14 +54,52 @@ class FloorInformation(BaseObject):
         self.Description = None
 
 
-class Config:
+class Mqtt:
     """
     """
 
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj - p_pyhouse_obj
+
+    def decode(self, p_topic, p_message, p_logmsg):
+        p_logmsg += '\tFloors:\n'
+        if p_topic[1] == 'add':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        elif p_topic[1] == 'delete':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        elif p_topic[1] == 'update':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        elif p_topic[1] == 'request':
+            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        else:
+            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
+        return p_logmsg
+
+    def dispatch(self, p_topic, p_message):
+        pass
+
+    def send_message(self, p_pyhouse_obj, p_topic, p_room_obj):
+        """ Messages are:
+                room/add - to add a new room to the database.
+                room/delete - to delete a room from all nodes
+                room/sync - to keep all nodes in sync periodically.
+                room/update - to add or modify a room
+        """
+        # l_json = encode_json(p_room_obj)
+        # l_topic = 'house/room/' + p_topic
+        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_json)
+
+
+class LocalConfig:
+    """
+    """
+
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_one_floor(self, p_config):
         """
@@ -88,6 +126,7 @@ class Config:
         """
         # LOG.debug(PrettyFormatAny.form(l_yaml, 'Yaml'))
         l_floors = {}
+        LOG.debug('')
         for l_ix, l_floor in enumerate(p_config):
             l_floors[l_ix] = self._extract_one_floor(l_floor)
         self.m_pyhouse_obj.House.Floors = l_floors
@@ -95,17 +134,16 @@ class Config:
         return l_floors  # For testing.
 
     def load_yaml_config(self):
-        """ Read the floors.yaml file.
-        """
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             self.m_pyhouse_obj.House.Floors = None
             return None
         try:
-            l_yaml = l_node.Yaml['Floors']
+            l_yaml = l_yaml['Floors']
         except:
-            LOG.warn('The floors.yaml file does not start with "Floors:"')
+            LOG.warn('The config file does not start with "Floors:"')
             self.m_pyhouse_obj.House.Floors = None
             return None
         l_floors = self._extract_all_floors(l_yaml)
@@ -135,42 +173,7 @@ class Config:
         """
         # LOG.debug('Saving Config - Version:{}'.format(__version__))
         l_yaml = self._copy_floors_to_yaml()
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_yaml, CONFIG_NAME, addnew=True)
-
-
-class Mqtt:
-    """
-    """
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj - p_pyhouse_obj
-
-    def _decode_room(self, p_topic, p_message, p_logmsg):
-        p_logmsg += '\tRooms:\n'
-        if p_topic[1] == 'add':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        elif p_topic[1] == 'delete':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        elif p_topic[1] == 'sync':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        elif p_topic[1] == 'update':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Floors msg', 160))
-        return p_logmsg
-
-    def dispatch(self, p_topic, p_message):
-        pass
-
-    def send_message(self, p_pyhouse_obj, p_topic, p_room_obj):
-        """ Messages are:
-                room/add - to add a new room to the database.
-                room/delete - to delete a room from all nodes
-                room/sync - to keep all nodes in sync periodically.
-                room/update - to add or modify a room
-        """
-        l_topic = 'house/room/' + p_topic
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_room_obj)
+        self.m_config.write_config(CONFIG_NAME, l_yaml, addnew=True)
 
 
 class Api:
@@ -178,18 +181,18 @@ class Api:
     """
 
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         p_pyhouse_obj.House.Floors = FloorsInformation()
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Floors'.format(len(self.m_pyhouse_obj.House.Floors)))
 
     def Start(self):
@@ -199,9 +202,9 @@ class Api:
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_config.save_yaml_config()
+        self.m_local_config.save_yaml_config()
 
     def Stop(self):
-        pass
+        _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 
 #  ## END DBK

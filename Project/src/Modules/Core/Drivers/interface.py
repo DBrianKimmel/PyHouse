@@ -13,7 +13,7 @@ The necessary interfaces are discovered when loading the "devices" that are cont
 Controllers, which are attached to the server, communicate with the server via an interface.
 """
 
-__updated__ = '2019-09-25'
+__updated__ = '2019-10-04'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -37,7 +37,7 @@ class DriverInterfaceInformation:
         self.Type = None  # Null, Ethernet, Serial, USB, HTML, Websockets,  ...
         self.Host = None
         self.Port = None
-        self._DriverApi = None  # Serial_driver.API()
+        self._DriverAPI = None  # Serial_driver.API()
         # Type specific information follows
 
 
@@ -70,7 +70,7 @@ def get_device_driver_API(p_pyhouse_obj, p_interface_obj):
         from Modules.Core.Drivers.Null import Null_driver
         l_driver = Null_driver.API(p_pyhouse_obj)
 
-    p_interface_obj._DriverApi = l_driver
+    p_interface_obj._DriverAPI = l_driver
     # l_driver.Start(p_controller_obj)
     return l_driver
 
@@ -94,7 +94,7 @@ class Config:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def extract_interface_group(self, p_config):
+    def XXXextract_interface_group(self, p_config):
         """ Get the Interface sub-fields
         """
         LOG.debug('Getting interface')
@@ -105,7 +105,7 @@ class Config:
         #
         LOG.debug('Getting driver API')
         l_driver = get_device_driver_API(self.m_pyhouse_obj, l_obj)
-        l_obj._DriverApi = l_driver
+        l_obj._DriverAPI = l_driver
         LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
         return l_obj
 

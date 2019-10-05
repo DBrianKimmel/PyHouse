@@ -76,8 +76,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-08-20'
-__version_info__ = (19, 8, 0)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -199,7 +199,7 @@ def SigKillHandler(signum, _stackframe):
     exit
 
 
-class API:
+class Api:
     """
     """
 
@@ -248,7 +248,7 @@ class API:
         self.m_pyhouse_obj._Twisted.Reactor.stop()
 
 
-class BeforeReactor(API):
+class BeforeReactor(Api):
     """ This class is for initialization before the reactor starts.
     It is run right after Singleton protection is invoked.
     """
@@ -262,7 +262,7 @@ class BeforeReactor(API):
         """
         print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
         CheckInitialSetup()
-        core.API()
+        core.Api()
         #
         #  When the reactor stops we continue here
         #

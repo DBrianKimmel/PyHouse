@@ -12,7 +12,7 @@ It is used during import to set up the logging name used for each module that wi
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-10-04'
 
 # Import system type stuff
 import logging
@@ -39,7 +39,7 @@ class lightingUtility(object):
         self.m_tw_log.stop()
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
 
     m_pyhouse_obj = None
 

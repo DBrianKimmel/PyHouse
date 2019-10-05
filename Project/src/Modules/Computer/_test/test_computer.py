@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2019-03-16
 
 """
-__updated__ = "2019-09-10"
+__updated__ = "2019-10-05"
 
 # Import system type stuff
 # import platform
@@ -18,7 +18,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Computer.computer import API as computerAPI
+from Modules.Computer.computer import Api as computerAPI
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

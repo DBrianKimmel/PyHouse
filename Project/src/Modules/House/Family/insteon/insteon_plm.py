@@ -14,7 +14,7 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-02'
 
 #  Import system type stuff
 import datetime
@@ -186,11 +186,11 @@ class PlmDriverProtocol(Commands):
             l_text = l_entry.Text
         except Queue.Empty:
             return
-        if p_controller_obj.Interface._DriverApi:
+        if p_controller_obj.Interface._DriverAPI:
             _l_name = self._find_to_name(l_command)
             LOG.info("To: {}, Message: {}".format(_l_name, l_text))
             p_controller_obj._Command1 = l_command
-            p_controller_obj.Interface._DriverApi.Write(l_command)
+            p_controller_obj.Interface._DriverAPI.Write(l_command)
         else:
             LOG.error('UhOh - No driver for {}'.format(p_controller_obj.Name))
 
@@ -199,7 +199,7 @@ class PlmDriverProtocol(Commands):
         Accumulate data received
         """
         # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-        l_msg = p_controller_obj.Interface._DriverApi.Read()
+        l_msg = p_controller_obj.Interface._DriverAPI.Read()
         # LOG.debug('Read Data: {}'.format(l_msg))
         p_controller_obj._Message.extend(l_msg)
         return p_controller_obj._Message  #  For debugging
@@ -214,7 +214,7 @@ class PlmDriverProtocol(Commands):
         """
         # LOG.debug('ReceiveLoop ')
         self.m_pyhouse_obj._Twisted.Reactor.callLater(RECEIVE_TIMEOUT, self.receive_loop, p_controller_obj)
-        if p_controller_obj.Interface._DriverApi:
+        if p_controller_obj.Interface._DriverAPI:
             self._append_message(p_controller_obj)
             l_cur_len = len(p_controller_obj._Message)
             if l_cur_len < 2:
@@ -282,8 +282,8 @@ class LightHandlerAPI:
         return
 
     def stop_controller_driver(self, p_controller_obj):
-        if p_controller_obj.Interface._DriverApi:
-            p_controller_obj.Interface._DriverApi.Stop()
+        if p_controller_obj.Interface._DriverAPI:
+            p_controller_obj.Interface._DriverAPI.Stop()
 
     def set_plm_mode(self, p_controller_obj):
         """Set the PLM to a mode
@@ -369,7 +369,7 @@ class API(LightHandlerAPI):
         """
         """
         LOG.info('Get Plm Info')
-        if self.m_controller_obj.Interface._DriverApi:
+        if self.m_controller_obj.Interface._DriverAPI:
             insteon_link.Send().read_aldb_v2(self.m_controller_obj)
 
     def XXX_get_controller(self):

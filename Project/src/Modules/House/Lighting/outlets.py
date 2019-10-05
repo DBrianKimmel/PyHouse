@@ -10,16 +10,16 @@
 
 """
 
-__updated__ = '2019-09-18'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.House.rooms import Api as roomsApi
 from Modules.House.Family.family import Config as familyConfig
-from Modules.House.rooms import Config as roomsConfig
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Outlets        ')
@@ -73,24 +73,21 @@ class MqttActions:
         return p_logmsg
 
 
-class Config:
+class LocalConfig:
     """ The major work here is to load and save the information about a light switch.
     """
+
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def _extract_room(self, p_config):
-        """ Get the room and position within the room of the device.
-        """
-        l_ret = roomsConfig(self.m_pyhouse_obj).load_room_config(p_config)
-        return l_ret
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_family(self, p_config):
         """
         """
-        l_ret = familyConfig().extract_family_group(p_config, self.m_pyhouse_obj)
+        l_ret = familyConfig(self.m_pyhouse_obj).extract_family_group(p_config)
         return l_ret
 
     def _extract_one_outlet(self, p_config) -> dict:
@@ -114,8 +111,7 @@ class Config:
                 l_ret = self._extract_family(l_value)
                 l_obj.Family = l_ret
             elif l_key == 'Room':
-                l_ret = self._extract_room(l_value)
-                l_obj.Room = l_ret
+                l_obj.Room = roomsApi(self.m_pyhouse_obj).getRoomConfig(l_value)
                 pass
             else:
                 setattr(l_obj, l_key, l_value)
@@ -138,34 +134,39 @@ class Config:
     def load_yaml_config(self):
         """ Read the outlets.yaml file if it exists.
         """
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            self.m_pyhouse_obj.House.Lighting.Outlets = None
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Lighting.Outlets = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Outlets']
+            l_yaml = l_yaml['Outlets']
         except:
-            LOG.warn('The outlets.yaml file does not start with "Outlets:"')
-            self.m_pyhouse_obj.House.Lighting.Outlets = None
+            LOG.warn('The config file does not start with "Outlets:"')
             return None
         l_outlets = self._extract_all_outlets(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Outlets = l_outlets
         return l_outlets  # for testing purposes
 
 
-class API:
+class Api:
     """
     """
 
+    m_local_config = None
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_local_config.load_yaml_config()
 
     def SaveConfig(self):
         """

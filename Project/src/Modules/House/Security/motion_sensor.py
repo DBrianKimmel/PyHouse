@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-18'
+__updated__ = '2019-10-03'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,21 +52,15 @@ class Config:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _extract_one_button_set(self, p_config) -> dict:
+    def _extract_one_motion_sensor(self, p_config) -> dict:
         """ Extract the config info for one button.
-        - Name: Button 1
-          Comment: This is _test button 1
-          Family:
-             Name: Insteon
-             Address: 11.44.33
-          Dimmable: true  # Optional
-          Room:
-             Name: Living Room
         @param p_config: is the config fragment containing one button's information.
         @return: a ButtonInformation() obj filled in.
         """
         l_obj = MotionSensorInformation()
         l_required = ['Name', 'Family']
+        l_allowed = ['Room']
+        l_groupfields = ['Family', 'Room']
         for l_key, l_value in p_config.items():
             if l_key == 'Family':
                 l_obj.Family = familyConfig().extract_family_group(l_value, self.m_pyhouse_obj)
@@ -83,16 +77,15 @@ class Config:
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
 
-    def _extract_all_button_sets(self, p_config):
+    def _extract_all_motion_sensors(self, p_config):
         """ Get all of the button sets configured
         A Button set is a (mini-remote) with 4 or 8 buttons in the set
         The set has one insteon address and each button is in a group
         """
         l_dict = {}
-        for l_ix, l_button in enumerate(p_config):
-            # print('Light: {}'.format(l_light))
-            l_button_obj = self._extract_one_button_set(l_button)
-            l_dict[l_ix] = l_button_obj
+        for l_ix, l_sensor in enumerate(p_config):
+            l_sensor_obj = self._extract_one_motion_sensor(l_sensor)
+            l_dict[l_ix] = l_sensor_obj
         return l_dict
 
     def load_yaml_config(self):
@@ -100,21 +93,20 @@ class Config:
         It must contain 'Lights:'
         All the lights are a list.
         """
-        LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            self.m_pyhouse_obj.House.Security.GarageDoors = None
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Security.MotionSensors = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['GarageDoors']
+            l_yaml = l_yaml['MotionSensors']
         except:
-            LOG.warn('The xxx.yaml file does not start with "GarageDoors:"')
-            self.m_pyhouse_obj.House.Security.GarageDoors = None
+            LOG.warn('The config file does not start with "MotionSensors:"')
             return None
-        l_gdo = self._extract_all_button_sets(l_yaml)
-        self.m_pyhouse_obj.House.Security.GarageDoors = l_gdo
-        return l_gdo  # for testing purposes
+        l_motion = self._extract_all_motion_sensors(l_yaml)
+        self.m_pyhouse_obj.House.Security.MotionSensors = l_motion
+        return l_motion  # for testing purposes
 
 
 class API:

@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-05'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Mqtt import mqtt
-from Modules.Core.Mqtt.mqtt import API as mqttAPI, MqttInformation
+from Modules.Core.Mqtt.mqtt import Api as mqttApi, MqttInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Computer.computer import ComputerInformation
 from Modules.House.Lighting.controllers import ControllerInformation
@@ -96,7 +96,7 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_api = mqttAPI(self.m_pyhouse_obj, self)
+        self.m_api = mqttApi(self.m_pyhouse_obj, self)
 
     def jsonPair(self, p_json, p_key):
         """ Extract key, value from json
@@ -140,7 +140,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
         l_yaml = l_node.Yaml
         l_first = config_tools.Yaml(self.m_pyhouse_obj).find_first_element(l_yaml)
         l_yaml_top = l_yaml['Mqtt']

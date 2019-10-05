@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Schedules/sunrisesunset.py
+@name:      Modules/House/Schedules/sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2019 by D. Brian Kimmel
@@ -17,7 +17,7 @@
 
 """
 
-__updated__ = '2019-09-09'
+__updated__ = '2019-09-28'
 
 # Import system type stuff
 import datetime

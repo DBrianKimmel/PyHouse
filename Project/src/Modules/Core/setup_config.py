@@ -9,12 +9,11 @@
 
 """
 
-__updated__ = '2019-08-26'
-__version_info__ = (19, 8, 1)
+__updated__ = '2019-10-04'
+__version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import os
 import pathlib
 
 #  Import PyMh files and modules.

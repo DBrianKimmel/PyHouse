@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-09-09'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -65,7 +65,7 @@ class RoomsInformationPrivate(RoomsInformation):
         # self._Yaml = None
 
 
-class RoomInformation(BaseUUIDObject):
+class XXCRoomInformation(BaseUUIDObject):
     """ A room of the house.
     Used to draw pictures of the house
     Used to define the location of switches, lights etc.
@@ -74,15 +74,15 @@ class RoomInformation(BaseUUIDObject):
     """
 
     def __init__(self):
-        super(RoomInformation, self).__init__()
-        self.Corner = None  # CoordinateInformation()
+        super(XXCRoomInformation, self).__init__()
+        self.CXXCorner = None  # CoordinateInformation()
         self.Floor = None  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.RoomType = None
         self.Size = None  # CoordinateInformation()
         self.Trigger = None
 
 
-class RoomLocationInformation:
+class XXDRoomLocationInformation:
     """ This allows an object to be located within a room.
     """
 

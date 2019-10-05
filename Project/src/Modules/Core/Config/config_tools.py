@@ -9,8 +9,8 @@
 
 """
 
-__updated__ = '2019-09-23'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -18,14 +18,14 @@ import datetime
 import os
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
-# from ruamel.yaml.comments import CommentedSeq as cs
-# from ruamel.yaml.comments import TaggedScalar as ts
-# from ruamel.yaml.scalarstring import SingleQuotedScalarString as sq
-# from ruamel.yaml.comments import CommentedMap as ordereddict
 
 #  Import PyMh files
+from Modules.Core.Config.login import LoginInformation
 from Modules.Core.data_objects import HostInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Family.family import DeviceFamilyInformation
+
+from Modules.Core.Drivers.interface import DriverInterfaceInformation, get_device_driver_API
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
@@ -52,6 +52,14 @@ class ConfigYamlNodeInformation:
         self.Yaml = None
         self.YamlPath = '/etc/pyhouse/'
         self._Error = None
+
+
+class RoomLocationInformation:
+    """
+    """
+
+    def __init__(self):
+        self.Name = None
 
 
 class SecurityInformation:
@@ -82,6 +90,95 @@ class MyYAML(YAML):
 yaml = MyYAML()  # or typ='safe'/'unsafe' etc
 
 
+class SubFields:
+    """ Get config sub-fields such as Hosts:, Access:, Rooms: etc.
+    """
+
+    def _get_name_password(self, p_config):
+        """
+        """
+        l_required = ['Name', 'Password']
+        l_obj = LoginInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Pandora Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+    def extract_access_group(self, p_config):
+        """
+        """
+        l_obj = SecurityInformation()
+        l_required = ['Name', 'Password']
+        l_allowed = ['ApiKey', 'AccessKey']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        return l_obj
+
+    def extract_family_group(self, p_config):
+        """
+        Yaml:
+           - Name: TestPlm
+             Family:
+                Name: Insteon
+                Type: Plm
+                Address: 49.F9.E7
+        @param p_config: is the 'Family' ordereddict
+        """
+        l_obj = DeviceFamilyInformation()
+        l_required = ['Name', 'Address']
+        l_allowed = ['Type']
+        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
+        # LOG.debug('Family "{}"'.format(l_obj.Name))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
+        return l_obj
+
+    def extract_host_group(self, p_config):
+        """
+        @param p_config: is the 'Host' ordereddict
+        """
+        l_obj = HostInformation()
+        l_required = ['Name', 'Port']
+        l_allowed = ['IPv4', 'IPv6']
+        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
+        return l_obj
+
+    def extract_interface_group(self, p_config):
+        """ Get the Interface sub-fields
+        Yaml:
+           - Name: TestPlm
+             Interface:
+                Type: Serial
+                Baud: 19200  # ,8,N,1
+                Port: /dev/ttyUSB0
+                Host: Laptop-05
+        """
+        LOG.debug('Getting interface')
+        l_obj = DriverInterfaceInformation()
+        l_required = ['Type', 'Host', 'Port']
+        l_allowed = ['ApiKey', 'AccessKey']
+        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
+        #
+        LOG.debug('Getting driver Api')
+        l_driver = get_device_driver_API(self.m_pyhouse_obj, l_obj)
+        l_obj._DriverAPI = l_driver
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
+        return l_obj
+
+    def extract_room_group(self, p_config):
+        """
+        """
+        l_obj = RoomLocationInformation()
+        try:
+            for l_key, l_value in p_config.items():
+                # print('RoomKey:{}; Value:{}'.format(l_key, l_value))
+                setattr(l_obj, l_key, l_value)
+            return l_obj
+        except:
+            l_obj.Name = p_config
+        return l_obj
+
+
 class Tools:
     """
     """
@@ -90,7 +187,6 @@ class Tools:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        # print('Tools')
 
     def _get_config_dir(self):
         """
@@ -118,11 +214,11 @@ class Tools:
         """ Given a name like 'computer' or 'Computer', find any config file 'computer.yaml'.
         """
         # LOG.debug('Finding Config file:"{}"'.format(p_name))
-        l_filename = p_name + CONFIG_SUFFIX
+        l_filename = p_name.lower() + CONFIG_SUFFIX
         l_ret = self._find_file(l_filename, self._get_config_dir())
         return l_ret
 
-    def load_module_config(self, p_list):
+    def XXXload_module_config(self, p_list):
         """ Config a module
         @param p_list: is a list of module names.
         """
@@ -138,7 +234,7 @@ class Tools:
                     return l_node
         return None  # Not Found
 
-    def read_coords(self, p_yaml):
+    def XXXread_coords(self, p_yaml):
         """ Read a set of room co-ordinates
         Written as "[1.2, 3.4, 5.6]"
         """
@@ -154,8 +250,8 @@ class Tools:
         @param allowed_list: additional fields that may be in the config data.
         @param groupfield_list: are fields that have sub-entries
         """
-        # print('ExtractFields')
         for l_key, l_value in p_config.items():
+            # LOG.debug('Key: {}; Value: {}'.format(l_key, l_value))
             if l_key in groupfield_list:
                 l_extr = 'extract_' + l_key
                 LOG.debug('Groupfield Extracting ', l_extr)
@@ -164,15 +260,18 @@ class Tools:
             setattr(p_obj, l_key, l_value)
         #
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_') and not callable(getattr(p_obj, l_attr))]:
-            # if required_list != None:
-            if getattr(p_obj, l_key) == None and l_key in required_list:
-                LOG.warn('Config entry "{}" is missing.'.format(l_key))
-                continue
-            # if allowed_list != None:
-            if getattr(p_obj, l_key) == None and l_key not in allowed_list:
-                LOG.warn('Config entry "{}" is not permitted.'.format(l_key))
-                continue
-        return p_obj
+            # LOG.debug('Now checking key: {}'.format(l_key))
+            if getattr(p_obj, l_key) == None:  # Key is missing
+                # LOG.debug('No key defined: {}'.format(l_key))
+                if l_key in required_list:
+                    LOG.warn('Config entry "{}" is missing.'.format(l_key))
+                    continue
+            else:  # Key is Present
+                # LOG.debug('Key defined: {}; Value: {}'.format(l_key, l_value))
+                if l_key in allowed_list:
+                    LOG.warn('Config entry "{}" is not permitted.'.format(l_key))
+                    continue
+            return p_obj
 
 
 class YamlCreate:
@@ -253,7 +352,7 @@ class YamlCreate:
             # setattr(l_config, l_key, l_val)
         pass
 
-    def add_to_obj(self, p_yaml, p_key, p_obj):
+    def XXXadd_to_obj(self, p_yaml, p_key, p_obj):
         """
         """
         l_working = p_yaml[p_key]
@@ -267,17 +366,7 @@ class YamlFetch(Tools):
     """
     """
 
-    def fetch_host_info(self, p_config):
-        """
-        @param p_config: is the 'Host' ordereddict
-        """
-        l_obj = HostInformation()
-        l_required = ['Name', 'Port']
-        l_allowed = ['IPv4', 'IPv6']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
-        return l_obj
-
-    def extract_access_group(self, p_config):
+    def XXXextract_access_group(self, p_config):
         """
         """
         l_obj = SecurityInformation()
@@ -286,7 +375,7 @@ class YamlFetch(Tools):
         self.extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
-    def fetch_interface_info(self, p_config):
+    def XXXfetch_interface_info(self, p_config):
         """
         """
         l_obj = SecurityInformation()
@@ -295,6 +384,39 @@ class YamlFetch(Tools):
         self.extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
+    def XXXvalidate_yaml_in_main(self, p_info_obj, p_yaml_def):
+        """
+        @param p_info_obj: is the xxxInformation() object we are getting the config data for.
+        @param p_yaml_def: is the yaml from the config file that we are extracting for the info_obj.
+        """
+        for l_yaml_key, l_yaml_value in p_yaml_def.items():
+            try:
+                _l_x = getattr(p_info_obj, l_yaml_key)
+            except AttributeError:
+                LOG.warn('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_yaml_key, l_yaml_value))
+                continue
+            setattr(p_info_obj, l_yaml_key, l_yaml_value)
+        return p_info_obj  # For testing
+
+    def XXXgenerate_running_key_value(self, p_object):
+        """ get key, value of pyhouse object Iterable.
+
+        This will take a pyhouse object and return each data storage item as a key, value tuple.
+        """
+        l_obj = p_object
+        for l_key in [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]:
+            l_value = getattr(l_obj, l_key)
+            yield (l_key, l_value)
+        return
+
+    def XXXrequire_config_file(self, p_filename):
+        try:
+            l_node = self.read_yaml(p_filename)
+        except:
+            LOG.error('Required YAML config file is missing: "{}"'.format(p_filename))
+            return None
+        return l_node
+
 
 class Yaml(YamlCreate, YamlFetch, Tools):
 
@@ -302,9 +424,8 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-        # LOG.debug('Yaml - Progress')
 
-    def create_yaml_node(self, p_tag):
+    def _create_yaml_node(self, p_tag):
         """ Create a node for a yaml config file
         @param p_tag: is the name to be used
         """
@@ -324,39 +445,6 @@ class Yaml(YamlCreate, YamlFetch, Tools):
            Raise StopIteration if the collection is empty.
         """
         return next(iter(p_ordered))
-
-    def validate_yaml_in_main(self, p_info_obj, p_yaml_def):
-        """
-        @param p_info_obj: is the xxxInformation() object we are getting the config data for.
-        @param p_yaml_def: is the yaml from the config file that we are extracting for the info_obj.
-        """
-        for l_yaml_key, l_yaml_value in p_yaml_def.items():
-            try:
-                _l_x = getattr(p_info_obj, l_yaml_key)
-            except AttributeError:
-                LOG.warn('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_yaml_key, l_yaml_value))
-                continue
-            setattr(p_info_obj, l_yaml_key, l_yaml_value)
-        return p_info_obj  # For testing
-
-    def generate_running_key_value(self, p_object):
-        """ get key, value of pyhouse object Iterable.
-
-        This will take a pyhouse object and return each data storage item as a key, value tuple.
-        """
-        l_obj = p_object
-        for l_key in [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]:
-            l_value = getattr(l_obj, l_key)
-            yield (l_key, l_value)
-        return
-
-    def require_config_file(self, p_filename):
-        try:
-            l_node = self.read_yaml(p_filename)
-        except:
-            LOG.error('Required YAML config file is missing: "{}"'.format(p_filename))
-            return None
-        return l_node
 
     def _find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
@@ -388,9 +476,9 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         self.m_pyhouse_obj._Config.YamlTree[p_filename] = l_node
         # LOG.info('Loaded config file "{}" '.format(p_filename))
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj._Config.YamlTree, 'Tree', 190))
-        return l_node
+        return l_data
 
-    def write_yaml(self, p_data, p_filename, addnew=False):
+    def write_yaml(self, p_filename, p_data, addnew=False):
         """
         @param p_data: is the yaml data to be written.
         @param p_filename: is the name of the read in yaml file 'rooms.yaml'
@@ -409,20 +497,32 @@ class Yaml(YamlCreate, YamlFetch, Tools):
             l_yaml.dump(p_data, l_file)
         LOG.debug('Saved Yaml file "{}"'.format(p_filename))
 
-    def dump_string(self, p_data):
-        """
-        """
-        l_yaml = MyYAML(typ='rt')
-        l_data = l_yaml.dump(p_data, None, transform=print)
-        return l_data
 
-
-class API:
+class Api(SubFields):
+    """ This is the interface to the config system.
+    """
 
     m_pyhouse_obj = None
+    m_yaml = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_yaml = Yaml(p_pyhouse_obj)
+
+    def read_config(self, p_filename):
+        """ Main config file read routine
+        @param  p_filename: is the name of the config file to read (without .yaml)
+        @return: the yaml file string or None if no such config file
+        """
+        l_ret = self.m_yaml.read_yaml(p_filename.lower())
+        LOG.debug(PrettyFormatAny.form(l_ret, 'Config'))
+        return l_ret
+
+    def write_config(self, p_filename, p_data, addnew=False):
+        """ Main config file write routine
+        """
+        l_ret = self.m_yaml.write_yaml(p_filename, p_data, addnew)
+        return l_ret
 
     def _x(self):
         LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy'))

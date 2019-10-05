@@ -9,8 +9,8 @@
 
 """
 
-__updated__ = '2019-09-15'
-__version_info__ = (19, 5, 0)
+__updated__ = '2019-10-04'
+__version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -19,10 +19,10 @@ import datetime
 import platform
 
 #  Import PyMh files and modules.
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.data_objects import NodeInformation, HostInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
-from Modules.Core.Config import config_tools
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
@@ -107,14 +107,16 @@ def _make_message(p_pyhouse_obj, p_message=None):
     return l_json
 
 
-class Config:
+class LocalConfig:
     """ Extract the config info from the config file "mqtt.yaml"
     """
 
+    m_config = None
     m_pyH = house_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_one_broker(self, p_broker, p_api):
         """ Extract one broker information
@@ -129,10 +131,10 @@ class Config:
         except:
             LOG.warn('No Broker: in mqtt.yaml')
             return None
-        for l_key, l_val in l_broker.items():
+        for l_key, l_value in l_broker.items():
             if l_key == 'Host':
-                l_val = config_tools.Yaml(self.m_pyhouse_obj).fetch_host_info(l_val)
-            setattr(l_obj, l_key, l_val)
+                l_value = self.m_config.extract_host_group(l_value)
+            setattr(l_obj, l_key, l_value)
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker'))
         LOG.info('Loaded broker: {}'.format(l_obj.Name))
         return l_obj
@@ -161,11 +163,11 @@ class Config:
         """ Read the Mqtt.Yaml file.
         """
         LOG.info('Reading mqtt config file "{}".'.format(CONFIG_NAME))
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
+        l_node = self.m_config.read_config(CONFIG_NAME)
         if l_node == None:
             LOG.error('Missing {}'.format(CONFIG_NAME))
             return None
-        l_yaml = l_node.Yaml
+        l_yaml = l_node  # .Yaml
         l_obj = MqttInformation()
         l_obj.Brokers = self._extract_all_brokers(l_yaml, p_api)
         l_obj.ClientID = 'PyH-Comp-' + platform.node()
@@ -174,17 +176,17 @@ class Config:
         return l_obj  # for testing purposes
 
 
-class API:
+class Api:
     """ This interfaces to all of PyHouse.
     """
 
     m_actions = None
-    m_config = None
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj, p_parent):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_parent = p_parent
         p_pyhouse_obj.Core.Mqtt = MqttInformation()
         p_pyhouse_obj.Core.Mqtt.Prefix = 'ReSeT'
@@ -195,7 +197,7 @@ class API:
         """ Load the Mqtt Config info.
         """
         LOG.info("Loading Config - Version:{}".format(__version__))
-        self.m_config.load_yaml_config(self)
+        self.m_local_config.load_yaml_config(self)
 
     def Start(self):
         """

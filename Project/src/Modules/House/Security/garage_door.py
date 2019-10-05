@@ -9,16 +9,16 @@
 
 """
 
-__updated__ = '2019-09-18'
-__version_info__ = (19, 8, 1)
+__updated__ = '2019-10-02'
+__version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import API as configAPI
 from Modules.House.Family.family import Config as familyConfig
-from Modules.House.rooms import Config as roomConfig
+from Modules.House.rooms import API as roomsAPI
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.GarageDoor     ')
@@ -42,7 +42,7 @@ class GarageDoorInformation:
         self.Status = None  # Open | Closed
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -70,7 +70,7 @@ class Config:
             if l_key == 'Family':
                 l_obj.Family = familyConfig().extract_family_group(l_value, self.m_pyhouse_obj)
             elif l_key == 'Room':
-                l_obj.Room = roomConfig(self.m_pyhouse_obj).load_room_config(l_value)
+                l_obj.Room = roomsAPI(self.m_pyhouse_obj).get_room_config(l_value)
                 pass
             else:
                 setattr(l_obj, l_key, l_value)
@@ -99,17 +99,16 @@ class Config:
         It must contain 'Lights:'
         All the lights are a list.
         """
-        LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            self.m_pyhouse_obj.House.Security.GarageDoors = None
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Security.GarageDoors = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['GarageDoors']
+            l_yaml = l_yaml['GarageDoors']
         except:
-            LOG.warn('The xxx.yaml file does not start with "GarageDoors:"')
-            self.m_pyhouse_obj.House.Security.GarageDoors = None
+            LOG.warn('The config file does not start with "GarageDoors:"')
             return None
         l_gdo = self._extract_all_garage_doors(l_yaml)
         self.m_pyhouse_obj.House.Security.GarageDoors = l_gdo
@@ -120,23 +119,24 @@ class API:
     """
     """
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """
         """
         LOG.info('Load Config')
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
         return {}
 
     def SaveConfig(self):
         """
         """
+        pass
 
 # ## END DBK

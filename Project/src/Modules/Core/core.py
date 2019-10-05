@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-09-23'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 23)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,6 +33,7 @@ from twisted.internet import reactor
 #  Import PyMh files and modules.
 # These 3 must be the first so logging is running as the rest of PyHouse starts up.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
+
 from Modules.Core.Config import config_tools
 from Modules.Core.Config.config_tools import ConfigInformation
 from Modules.Core.data_objects import \
@@ -43,10 +44,10 @@ from Modules.Core.data_objects import \
     UuidInformation, \
     TwistedInformation, \
     UuidData
-from Modules.Core.Mqtt.mqtt import API as mqttAPI, MqttInformation
+from Modules.Core.Mqtt.mqtt import Api as mqttApi, MqttInformation
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
-from Modules.Computer.computer import API as computerAPI, ComputerInformation
-from Modules.House.house import API as houseAPI, HouseInformation
+from Modules.Computer.computer import Api as computerApi, ComputerInformation
+from Modules.House.house import Api as houseApi, HouseInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -221,7 +222,7 @@ class lightingUtility:
         return l_obj
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
     """
     Called from PyHouse.py
     """
@@ -235,7 +236,7 @@ class API(lightingUtility):
         Also note that the reactor is *NOT* yet running.
         """
         LOG.info("\n======================== Initializing ======================== Version: {}\n".format(__version__))
-        setup_logging.API()  # Start up logging
+        setup_logging.Api()  # Start up logging
         LOG.info('Setting up Main Data areas')
         self.m_pyhouse_obj = PyHouseInformation()
         self.m_pyhouse_obj.Core = self._setup_Core()  # First
@@ -249,11 +250,11 @@ class API(lightingUtility):
         #
         self.load_yaml_config(self.m_pyhouse_obj)
         self._sync_startup_logging(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj, self)
+        self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttApi(self.m_pyhouse_obj, self)
         self.m_pyhouse_obj._APIs.Core.MqttAPI.LoadConfig()
         self.m_pyhouse_obj._APIs.Core.MqttAPI.Start()
-        self.m_pyhouse_obj._APIs.Computer.ComputerAPI = computerAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._APIs.House.HouseAPI = houseAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.Computer.ComputerAPI = computerApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._APIs.House.HouseAPI = houseApi(self.m_pyhouse_obj)
         LOG.info('All data has been set up.')
         #
         self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig)

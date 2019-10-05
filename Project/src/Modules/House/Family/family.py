@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _DeviceAPI          will point to Insteon_device.API() to allow API functions to happen.
 """
 
-__updated__ = '2019-09-25'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 23)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -42,6 +42,18 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Family         ')
 
 CONFIG_NAME = 'families'
+
+MODULES = [
+    'Acurite',
+    'Hue',
+    'Insteon',
+    'Lutron',
+    'Sonoff',
+    'Upb',
+    'X10',
+    'Zwave',
+    'Null'
+    ]
 
 
 class FamilyInformation:
@@ -238,7 +250,7 @@ class Config:
         return l_module
 
 
-class API:
+class Api:
 
     m_family = {}
     m_pyhouse_obj = None

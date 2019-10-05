@@ -14,18 +14,19 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-09-24'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyHouse files
-from Modules.Core.Config import config_tools
-from Modules.House.Lighting.buttons import API as buttonsApi
-from Modules.House.Lighting.controllers import API as controllersApi, MqttActions as controllerMqtt
-from Modules.House.Lighting.lights import API as lightsApi, MqttActions as lightMqtt
-from Modules.House.Lighting.outlets import API as outletsApi
+from Modules.Core.Config.config_tools import Api as configApi
+
+from Modules.House.Lighting.buttons import Api as buttonsApi
+from Modules.House.Lighting.controllers import Api as controllersApi, MqttActions as controllerMqtt
+from Modules.House.Lighting.lights import Api as lightsApi, MqttActions as lightMqtt
+from Modules.House.Lighting.outlets import Api as outletsApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -33,6 +34,13 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
 CONFIG_NAME = 'lighting'
+
+MODULES = [
+    'Buttons',
+    'Controllers',
+    'Lights',
+    'Outlets'
+    ]
 
 
 class LightingInformation:
@@ -86,7 +94,7 @@ class MqttActions:
         return p_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -107,8 +115,7 @@ class Config:
         """ Read the lighting.yaml file.
         It contains lighting data for the house.
         """
-        l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_NAME)
-        return l_node  # for testing purposes
+        pass
 
 # ----------
 
@@ -124,16 +131,17 @@ class Config:
             l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
             l_config = l_node.Yaml['Lighting']
         except:
-            l_node = config_tools.Yaml(p_pyhouse_obj).create_yaml_node('Lighting')
-            l_config = l_node.Yaml['Lighting']
+            # l_node = config_tools.Yaml(p_pyhouse_obj).create_yaml_node('Lighting')
+            # l_config = l_node.Yaml['Lighting']
+            pass
         LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'PyHouseObj', 190))
         l_working = p_pyhouse_obj.House.Lighting.Lights
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             setattr(l_config, l_key, l_val)
-        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Lighting'] = l_config
-        l_ret = {'Lighting': l_config}
-        return l_ret
+        # p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Lighting'] = l_config
+        # l_ret = {'Lighting': l_config}
+        # return l_ret
 
     def save_yaml_config(self, _p_pyhouse_obj):
         """
@@ -143,10 +151,11 @@ class Config:
         # return l_config
 
 
-class API:
+class Api:
     """ Handles all the components of the lighting sub-system.
     """
 
+    m_local_config = None
     m_pyhouse_obj = None
     m_buttons = None
     m_controllers = None
@@ -157,6 +166,7 @@ class API:
         LOG.info("Initialing - Version:{}".format(__version__))
         p_pyhouse_obj.House.Lighting = LightingInformation()
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local_config = configApi(p_pyhouse_obj)
         #
         self.m_buttons = buttonsApi(p_pyhouse_obj)
         self.m_controllers = controllersApi(p_pyhouse_obj)
@@ -168,7 +178,7 @@ class API:
         """ Load the Lighting config info.
         """
         LOG.info('Loading all Lighting config files.')
-        Config().load_yaml_config(self.m_pyhouse_obj)
+        self.m_local_config.read_config(CONFIG_NAME)
         self.m_buttons.LoadConfig()
         self.m_controllers.LoadConfig()
         self.m_lights.LoadConfig()
@@ -185,7 +195,7 @@ class API:
         It will contain several sub-sections
         """
         LOG.info('SaveConfig')
-        Config().save_yaml_config(self.m_pyhouse_obj)
+        # self.m_local_config.write_config(CONFIG_NAME, self.m_pyhouse_obj.House.Lighting, addnew=True)
         self.m_buttons.SaveConfig()
         self.m_controllers.SaveConfig()
         self.m_lights.SaveConfig()

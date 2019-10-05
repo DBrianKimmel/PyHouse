@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-09-18'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -35,9 +35,9 @@ from datetime import datetime
 # from PIL import Image
 
 # Import PyMh files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.House.rooms import Api as roomsApi
 from Modules.House.Family.family import Config as familyConfig
-from Modules.House.rooms import Config as roomConfig
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Camera         ')
@@ -147,14 +147,16 @@ class Image:
             buffer1 = buffer2
 
 
-class Config:
+class LocalConfig:
     """
     """
 
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_one_button_set(self, p_config) -> dict:
         """ Extract the config info for one button.
@@ -171,11 +173,12 @@ class Config:
         """
         l_obj = CameraInformation()
         l_required = ['Name', 'Family']
+        l_groupfields = ['Family', 'Room']
         for l_key, l_value in p_config.items():
             if l_key == 'Family':
                 l_obj.Family = familyConfig().extract_family_group(l_value, self.m_pyhouse_obj)
             elif l_key == 'Room':
-                l_obj.Room = roomConfig(self.m_pyhouse_obj).load_room_config(l_value)
+                l_obj.Room = roomsApi(self.m_pyhouse_obj).getRoomConfig(l_value)
                 pass
             else:
                 setattr(l_obj, l_key, l_value)
@@ -187,7 +190,7 @@ class Config:
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
 
-    def _extract_all_button_sets(self, p_config):
+    def _extract_all_cameras(self, p_config):
         """ Get all of the button sets configured
         A Button set is a (mini-remote) with 4 or 8 buttons in the set
         The set has one insteon address and each button is in a group
@@ -204,24 +207,23 @@ class Config:
         It must contain 'Lights:'
         All the lights are a list.
         """
-        LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Security.Cameras = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Buttons']
+            l_yaml = l_yaml['Cameras']
         except:
-            LOG.warn('The buttons.yaml file does not start with "Buttons:"')
-            self.m_pyhouse_obj.House.Lighting.Buttons = None
+            LOG.warn('The config file does not start with "Cameras:"')
             return None
-        l_buttons = self._extract_all_button_sets(l_yaml)
-        self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons
-        return l_buttons  # for testing purposes
+        l_cameras = self._extract_all_cameras(l_yaml)
+        self.m_pyhouse_obj.House.Security.Cameras = l_cameras
+        return l_cameras  # for testing purposes
 
 
-class API:
+class Api:
     """ Initialize the cameras
     """
 
@@ -234,16 +236,15 @@ class API:
         LOG.info('Initialized')
 
     def LoadConfig(self):
-        LOG.info('Loaded XML')
+        pass
 
     def Start(self):
-        LOG.info("Started.")
+        pass
 
     def SaveConfig(self):
-        LOG.info("Saved XML.")
-        return
+        pass
 
     def Stop(self):
-        LOG.info("Stopped.")
+        pass
 
 # ## END DBK

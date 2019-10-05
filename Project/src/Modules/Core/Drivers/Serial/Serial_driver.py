@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-02'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -215,7 +215,7 @@ class SerialAPI:
                     l_port,
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
-            p_controller_obj.Interface._DriverApi = self
+            p_controller_obj.Interface._DriverAPI = self
             LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
@@ -289,7 +289,7 @@ class API(SerialAPI):
         l_ret = self.open_serial_driver(self.m_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret != None:
-            p_controller_obj.Interface._DriverApi = self
+            p_controller_obj.Interface._DriverAPI = self
             LOG.info('Started Serial driver for controller "{}"'.format(self.m_controller_obj.Name))
         else:
             LOG.error('ERROR - failed to start Serial Driver for  controller "{}"'.format(self.m_controller_obj.Name))

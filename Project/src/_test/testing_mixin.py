@@ -10,7 +10,7 @@
 """
 from Modules.Core.core import ParameterInformation
 
-__updated__ = '2019-09-19'
+__updated__ = '2019-10-05'
 
 #  Import system type stuff
 import os
@@ -35,7 +35,7 @@ from Modules.Core.data_objects import \
     UuidInformation, CoreInformation
 from Modules.Core.Config.config_tools import \
     ConfigInformation, SecurityInformation
-from Modules.House.Family.family import API as familyAPI
+from Modules.House.Family.family import Api as familyApi
 from Modules.House.house import HouseInformation
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt import MqttInformation

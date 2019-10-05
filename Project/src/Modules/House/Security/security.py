@@ -9,20 +9,30 @@
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 4)
+__version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Security.camera import API as cameraApi
+from Modules.House.Security.camera import Api as cameraApi
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
 
 CONFIG_NAME = 'security'
 # LOCATION = House.Security
+
+MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
+    'Cameras',
+    'Doorbells',
+    'GarageDoors',
+    'MotionSensors'
+    ]
 
 
 class SecurityData:
@@ -58,19 +68,29 @@ class MqttActions:
         return l_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
 
-
-class API:
-    """ Called from house.
-    """
-
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+
+
+class Api:
+    """ Called from house.
+    """
+
+    m_local_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        LOG.info("Initializing - Version:{}".format(__version__))
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_api = cameraApi(p_pyhouse_obj)
         LOG.info('Initialized')
 

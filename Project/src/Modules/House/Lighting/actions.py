@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-09-24'
+__updated__ = '2019-10-04'
 
 #  Import system type stuff
 
@@ -26,7 +26,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightingAction ')
 
 
-class API:
+class Api:
     """
     """
 

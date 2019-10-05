@@ -10,19 +10,15 @@
 Passed all 9 tests - DBK 2019-06-28
 
 """
-__updated__ = '2019-07-29'
+__updated__ = '2019-10-02'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 from datetime import datetime
 
 # Import PyMh files
 from test.xml_data import XML_LONG
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.floors import \
-    Api as floorsApi, \
-    Config as floorsConfig
 from Modules.Core.data_objects import HouseInformation, PyHouseInformation
 from Modules.Core.Utilities import config_tools
 

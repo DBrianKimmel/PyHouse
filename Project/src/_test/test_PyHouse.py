@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-10-05'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -44,6 +44,6 @@ class Test_01_API(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_0101_Init(self):
-        l_api = PyHouse.API()
+        l_api = PyHouse.Api()
 
 # ## END DBK

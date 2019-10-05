@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-09-23'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -207,15 +207,15 @@ class lightingUtility:
                 LOG.error(l_msg)
                 l_ret = None
             try:
-                l_api = l_ret.API(self.m_pyhouse_obj)
+                l_api = l_ret.Api(self.m_pyhouse_obj)
             except Exception as e_err:
                 LOG.error('ERROR - Module: {}\n\t{}'.format(l_module, e_err))
-                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef', 190)))
+                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
                 l_api = None
-            l_api_name = l_module.capitalize() + 'API'
+            l_api_name = l_module.capitalize() + 'Api'
             l_computer = self.m_pyhouse_obj._APIs.Computer
             setattr(l_computer, l_api_name, l_api)
-        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
         LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
 
     def _init_component_apis(self, p_pyhouse_obj, _p_computer_api):
@@ -257,7 +257,7 @@ class lightingUtility:
             l_a.SaveConfig()
 
 
-class API:
+class Api:
     """
     """
 

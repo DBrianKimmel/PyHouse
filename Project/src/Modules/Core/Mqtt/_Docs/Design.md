@@ -70,16 +70,28 @@ Categories:
 Actions:
 - status
 - control
+- add
 - delete
 - update
-- add
-- synchronize
+- request
 - trigger
+
+Status and control are command and response operation actions.
+Status usually occurs when some external device changes state.
+Control us used when this node wants to change the state of an external device.
+
+Add, delete, update and request are maintenance actions.
+They are meant to keep all the PyHouse nodes synchronized.
+They may happen when a node restarts and once a day during normal operations.
+Add and delete are used when ???
+
+Trigger is a notification action telling all other PyHouse computers something that may require action on their part has happened.
 
 
 ### Payload
 
 The playload is structured to carry the information
+
 
 ## Dispatch
 

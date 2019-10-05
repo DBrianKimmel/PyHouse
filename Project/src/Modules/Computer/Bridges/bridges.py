@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-09-12'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -136,7 +136,7 @@ class Config:
         return l_config
 
 
-class API:
+class Api:
     """This interfaces to all of PyHouse.
     """
 

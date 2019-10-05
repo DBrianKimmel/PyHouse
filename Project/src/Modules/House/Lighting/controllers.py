@@ -14,17 +14,15 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-09-25'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Drivers.interface import Config as interfaceConfig
-from Modules.House.Family.family import Config as familyConfig
-from Modules.House.Security.login import Config as loginConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -80,14 +78,16 @@ class MqttActions:
         return l_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
 
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_one_controller(self, p_config):
         """ Extract the config info for one Controller.
@@ -98,16 +98,17 @@ class Config:
         l_obj.DeviceType = 'Lighting'
         l_obj.DeviceSubType = 'Controller'
         l_required = ['Name', 'Family', 'Interface']
+        l_groupfields = ['Family', 'Interface', 'Access']
         try:
             for l_key, l_value in p_config.items():
                 # LOG.debug('Controller Key "{}"; Value: "{}"'.format(l_key, l_value))
                 if l_key == 'Family':
-                    l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
+                    l_obj.Family = self.m_config.extract_family_group(l_value)
                     self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = l_obj.Family
                 elif l_key == 'Access':
-                    l_obj.Access = loginConfig(self.m_pyhouse_obj).load_name_password(l_value)
+                    l_obj.Access = self.m_config._get_name_password(l_value)
                 elif l_key == 'Interface':
-                    l_obj.Interface = interfaceConfig(self.m_pyhouse_obj).extract_interface_group(l_value)
+                    l_obj.Interface = self.m_config.extract_interface_group(l_value)
                     if l_obj.Interface.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
                         l_obj._isLocal = True
                     # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
@@ -120,10 +121,10 @@ class Config:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.error('The Controller "{}" is missing a required entry for "{}"'.format(l_obj.Name, l_key))
-                LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
+                # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
                 return l_obj
         # LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
-        LOG.info('Extracted controller "{}"'.format(l_obj.Name))
+        # LOG.info('Extracted controller "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_controllers(self, p_config):
@@ -135,23 +136,23 @@ class Config:
             l_obj = self._extract_one_controller(l_value)
             l_dict[l_key] = l_obj
         # LOG.debug(PrettyFormatAny.form(l_dict, 'Controllers'))
-        LOG.info('Loaded {} controllers'.format(len(l_dict)))
+        # LOG.info('Loaded {} controllers'.format(len(l_dict)))
         return l_dict
 
     def load_yaml_config(self):
         """ Read the controllers.yaml file if it exists.
         It contains Controllers data for the house.
         """
+        # LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Lighting.Controllers = None
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            LOG.warn('No controllers config found')
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Controllers']
+            l_yaml = l_yaml['Controllers']
         except:
-            LOG.warn('The controllers.yaml file does not start with "Controllers:"')
+            LOG.warn('The control file does not start with "Controllers:"')
             return None
         l_controllers = self._extract_all_controllers(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
@@ -159,23 +160,23 @@ class Config:
         return l_controllers  # for testing purposes
 
 
-class API:
+class Api:
     """
     """
 
-    m_config = None
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading config.')
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Controllers.'.format(len(self.m_pyhouse_obj.House.Lighting.Controllers)))
 
     def Start(self):
