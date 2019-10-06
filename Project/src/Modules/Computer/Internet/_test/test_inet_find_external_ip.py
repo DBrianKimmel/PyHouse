@@ -11,7 +11,7 @@ Passed all 4 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -47,7 +47,7 @@ class C1_Util(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_reactor = self.m_pyhouse_obj._Twisted.Reactor
-        self.m_api = inet_find_external_ip.API()
+        self.m_api = inet_find_external_ip.Api()
 
     def test_01_IPv4_addr(self):
         pass

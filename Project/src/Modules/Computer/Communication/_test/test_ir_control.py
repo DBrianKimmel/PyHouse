@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -17,8 +17,7 @@ from twisted.trial import unittest
 
 #  Import PyMh files
 # from Modules.Communication import ir_control
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 
 
 class SetupMixin(object):
@@ -33,8 +32,8 @@ class SetupMixin(object):
 class Test_01_Protocol(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = ir_control.API()
+        SetupMixin.setUp(self)
+        self.m_api = ir_control.Api()
 
     def tearDown(self):
         pass
@@ -43,8 +42,8 @@ class Test_01_Protocol(SetupMixin, unittest.TestCase):
 class Test_02_Factory(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = ir_control.API()
+        SetupMixin.setUp(self)
+        self.m_api = ir_control.Api()
 
     def tearDown(self):
         pass
@@ -53,8 +52,8 @@ class Test_02_Factory(SetupMixin, unittest.TestCase):
 class Test_03_Connection(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = ir_control.API()
+        SetupMixin.setUp(self)
+        self.m_api = ir_control.Api()
 
     def tearDown(self):
         pass
@@ -63,8 +62,8 @@ class Test_03_Connection(SetupMixin, unittest.TestCase):
 class Test_04_Dispatch(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = ir_control.API()
+        SetupMixin.setUp(self)
+        self.m_api = ir_control.Api()
 
     def tearDown(self):
         pass
@@ -73,8 +72,8 @@ class Test_04_Dispatch(SetupMixin, unittest.TestCase):
 class Test_05_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = ir_control.API()
+        SetupMixin.setUp(self)
+        self.m_api = ir_control.Api()
 
     def tearDown(self):
         pass
@@ -83,8 +82,8 @@ class Test_05_Utility(SetupMixin, unittest.TestCase):
 class Test_06_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = ir_control.API()
+        SetupMixin.setUp(self)
+        self.m_api = ir_control.Api()
 
     def tearDown(self):
         pass

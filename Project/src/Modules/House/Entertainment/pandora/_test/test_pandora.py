@@ -10,17 +10,15 @@
 Passed all 15 tests - DBK - 2019-08-30
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-10-05'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Entertainment.entertainment import API as entertainmentAPI, EntertainmentPluginInformation
-from Modules.House.Entertainment.pandora.pandora import API as pandoraAPI, \
-    Config as pandoraConfig, \
-    SECTION, \
+from Modules.House.Entertainment.entertainment import Api as entertainmentApi, EntertainmentPluginInformation
+from Modules.House.Entertainment.pandora.pandora import Api as pandoraApi, \
     MqttActions, \
     PandoraServiceData, \
     PandoraServiceStatusData, \
@@ -85,7 +83,7 @@ class C1_Config(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_config = pandoraConfig(self.m_pyhouse_obj)
+        self.m_config = LocalConfig(self.m_pyhouse_obj)
 
     def test_01_Load(self):
         """
@@ -149,14 +147,14 @@ class E1_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
 
     def test_01_Init(self):
         """ Test that the data structure is correct.
         """
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
-        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
         self.assertIsNone(l_base._API)
         self.assertEqual(l_base.Active, False)
         self.assertEqual(l_base.ServiceCount, 0)
@@ -168,9 +166,9 @@ class E2_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
         # self.m_xml_pandora = self.m_xml.entertainment_sect.find('PandoraSection').find('Device')
         # self.m_pandora = pandoraXml.read_pandora_section_xml(self.m_pyhouse_obj)
@@ -179,10 +177,10 @@ class E2_API(SetupMixin, unittest.TestCase):
         """ Test that the data structure is correct.
         """
         self.m_api.LoadConfig()
-        _l_pandora_sect = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_pandora_sect = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
         # print(PrettyFormatAny.form(l_pandora_sect, 'E2-02-A - Section', 180))
         # print(PrettyFormatAny.form(l_pandora_sect.Services, 'E2-02-A - Section', 180))
-        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        l_base = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
         self.assertEqual(l_base.ServiceCount, 1)
 
 
@@ -192,20 +190,20 @@ class E3_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
         self.m_api.LoadConfig()
 
     def test_03_Start(self):
         """ Test that the data structure is correct.
         """
-        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
 
     def test_05_Stop(self):
         """ Test that the data structure is correct.
         """
-        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
 
 
 class F1_Mqtt(SetupMixin, unittest.TestCase):
@@ -214,9 +212,9 @@ class F1_Mqtt(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
         self.m_api.LoadConfig()
         self.m_mqtt = MqttActions(self.m_pyhouse_obj)
 
@@ -231,7 +229,7 @@ class F1_Mqtt(SetupMixin, unittest.TestCase):
     def test_02_Control(self):
         """ Test that the data structure is correct.
         """
-        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION]
+        _l_base = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
 
 
 class F2_Extract(SetupMixin, unittest.TestCase):
@@ -240,9 +238,9 @@ class F2_Extract(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
     def test_01_Time(self):
         """ Test that the data structure is correct.
@@ -250,7 +248,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
         l_obj = PandoraServiceData()
         l_res = ExtractPianobar(self.m_pyhouse_obj)._extract_playtime(l_obj, TIME_LN)
         # print(PrettyFormatAny.form(l_obj, 'F2-01-A - Status', 180))
-        self.assertEqual(l_res.PlayingTime, '03:00')
+        self.assertEqual(l_res.TotalTime, '03:00')
 
     def test_02_Line(self):
         """ Test that the data structure is correct.
@@ -271,9 +269,9 @@ class G1_Extract(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
 
 class G2_Extract(SetupMixin, unittest.TestCase):
@@ -282,8 +280,8 @@ class G2_Extract(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentAPI(self.m_pyhouse_obj)
-        self.m_api = pandoraAPI(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
+        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_api = pandoraApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
 # ## END DBK

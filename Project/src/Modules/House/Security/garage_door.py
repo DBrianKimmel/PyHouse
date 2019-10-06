@@ -9,16 +9,16 @@
 
 """
 
-__updated__ = '2019-10-02'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.Config.config_tools import API as configAPI
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.Family.family import Config as familyConfig
-from Modules.House.rooms import API as roomsAPI
+from Modules.House.rooms import Api as roomsApi
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.GarageDoor     ')
@@ -115,7 +115,7 @@ class LocalConfig:
         return l_gdo  # for testing purposes
 
 
-class API:
+class Api:
     """
     """
     m_pyhouse_obj = None
@@ -131,7 +131,7 @@ class API:
         """
         LOG.info('Load Config')
         self.m_local_config.load_yaml_config()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
         return {}
 
     def SaveConfig(self):

@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-10-04'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -108,7 +108,7 @@ class LocalConfig:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
         self.m_pyhouse_obj.House.Location = l_obj
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Location'))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Location'))
         return l_obj  # For testing
 
     def load_yaml_config(self):

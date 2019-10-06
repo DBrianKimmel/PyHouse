@@ -17,7 +17,7 @@
 
 """
 
-__updated__ = '2019-09-28'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import datetime
@@ -124,7 +124,7 @@ class lightingUtility(object):
         return l_ret
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

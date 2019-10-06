@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-06-25'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -161,7 +161,7 @@ class lightingUtility(ClientConnections):
         return
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

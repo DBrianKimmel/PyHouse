@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-05'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -40,7 +40,7 @@ class Test_02_ReadXML(unittest.TestCase):
         self.m_pyhouse_obj._Config.XmlRoot = ET.fromstring(XML_LONG)
         self.m_pyhouse_obj.Services = CoreServicesInformation()
         self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name] = NodeInformation()
-        self.m_api = node_local.API()
+        self.m_api = node_local.Api()
 
 
 class Test_03_Connect(unittest.TestCase):

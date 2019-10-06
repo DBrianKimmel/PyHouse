@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -124,7 +124,7 @@ class LocalConfig:
                 # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
                 return l_obj
         # LOG.debug('Controller "{}" is Local: {}'.format(l_obj.Name, l_obj._isLocal))
-        # LOG.info('Extracted controller "{}"'.format(l_obj.Name))
+        LOG.info('Extracted controller "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_controllers(self, p_config):

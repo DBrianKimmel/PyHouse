@@ -19,8 +19,8 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-10-04'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-10-05'
+__version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -30,7 +30,6 @@ from pathlib import Path
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.Config.login import Config as loginConfig
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
@@ -97,18 +96,18 @@ class PandoraServiceStatusData(EntertainmentServiceStatus):
 
     def __init__(self):
         super(PandoraServiceStatusData, self).__init__()
-        self.Album = None
-        self.Artist = None
+        self.Album = ''
+        self.Artist = ''
+        self.Song = ''
+        self.Station = ''
+        self.Status = 'Idle'  # Device if service is in use.
+        #
         self.DateTimePlayed = None  # Time the latest song started.
         self.DateTimeStarted = None  # Time service connected to pandora.com
         self.Error = None  # If some error occurred
         self.From = None  # This host id to identify the computer node connecting to pandora.
         self.inUseDevice = None
         self.Likability = None
-        self.PlayingTime = None
-        self.Song = None
-        self.Station = None
-        self.Status = 'Idle'  # Device if service is in use.
         self.TimeTotal = None
         self.TimeLeft = None
 
@@ -175,7 +174,6 @@ class MqttActions:
                     'Sender': 'pi-04-pp',
                     'Status': 'On'}
 
-
         We may need to issue a message to control connected audio devices.
                     Zone:  0,1 ...
                     Power: On, Off
@@ -235,7 +233,6 @@ class MqttActions:
 
         @param p_topic: is the topic after ',,,/pandora/'
         @return: the log message with information stuck in there.
-
         """
         l_logmsg = ' Pandora '
         LOG.debug('{} {}'.format(p_topic, p_message))
@@ -317,7 +314,6 @@ class ExtractPianobar:
             l_left = '06:54'
         p_obj.TimeLeft = l_left
         p_obj.TimeTotal = l_total
-        p_obj.PlayingTime = l_total
         return p_obj
 
     def _extract_errors(self, p_playline):
@@ -505,6 +501,7 @@ class PandoraControl(A_V_Control):
         l_pandora_plugin_obj._OpenSessions += 1
         self.m_processProtocol = PianobarProtocol(self.m_pyhouse_obj)
         self.m_processProtocol.deferred = PianobarProtocol(self.m_pyhouse_obj)
+        #
         l_executable = PIANOBAR_LOCATION
         l_args = ('pianobar',)
         l_env = None  # this will pass <os.environ>
@@ -533,13 +530,7 @@ class PandoraControl(A_V_Control):
         All the fields used in node-red must be defined.
         """
         l_msg = PandoraServiceStatusData()
-        l_msg.Status = ''
-        l_msg.Album = ''
-        l_msg.Artist = ''
-        l_msg.Song = ''
-        l_msg.Station = ''
         l_msg.Likability = ''
-        l_msg.PlayingTime = ''
         l_msg.TimeLeft = ''
         l_msg.TimeTotal = ''
         l_date_time = datetime.now()
@@ -650,11 +641,12 @@ class LocalConfig:
     """
     """
 
-    m_config_tools = None
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def dump_struct(self):
         """
@@ -675,13 +667,13 @@ class LocalConfig:
             if hasattr(l_service, 'Access'):
                 LOG.debug(PrettyFormatAny.form(l_service.Access, 'Access'))
 
-    def _extract_connection(self, p_config):
+    def _extract_connection_group(self, p_config):
         """
         """
         l_obj = PandoraDeviceConnectionInformation()
         try:
             for l_key, l_value in p_config.items():
-                # print('Connection Key:{}; Value:{}'.format(l_key, l_value))
+                # LOG.debug('Connection Key:{}; Value:{}'.format(l_key, l_value))
                 setattr(l_obj, l_key, l_value)
             return l_obj
         except:
@@ -699,7 +691,7 @@ class LocalConfig:
             if l_key == 'Host':
                 l_obj.Host = self.m_config_tools.fetch_host_info(l_value)
             elif l_key == 'Connection':
-                l_ret = self._extract_connection(l_value)
+                l_ret = self._extract_connection_group(l_value)
                 l_obj.Connection = l_ret
             elif l_key == 'Access':
                 l_obj.Access = self.m_config_tools.extract_access_group(l_value)
@@ -760,7 +752,7 @@ class LocalConfig:
         return l_pandora  # for testing purposes
 
 
-class API(MqttActions):
+class Api(MqttActions):
 
     m_pyhouse_obj = None
     m_local_config = None

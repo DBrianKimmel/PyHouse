@@ -19,7 +19,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -42,7 +42,7 @@ LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 __all__ = ['NODE_NOTHING', 'NODE_USB_CONTROLLER',
            'NODE_PANDORA', 'NODE_CAMERA',
            'NODE_PIFACECAD', 'NODE_V6ROUTER',
-           'API'
+           'Api'
            ]
 
 NODE_NOTHING = 0x0000  # a basic node with no special functions
@@ -310,8 +310,6 @@ class HandleNodeType(object):
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
-        # l_ir = ir_control.API()
-        # l_ir.Start(p_pyhouse_obj)
         pass
 
 
@@ -407,8 +405,6 @@ class Util(object):
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
-        # l_ir = ir_control.API()
-        # l_ir.Start(p_pyhouse_obj)
         pass
 
     def insert_node(self, p_node, p_pyhouse_obj):

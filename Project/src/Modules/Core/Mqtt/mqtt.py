@@ -5,11 +5,11 @@
 @copyright: (c) 2017-2019 by D. Brian Kimmel
 @note:      Created on Apr 25, 2017
 @license:   MIT License
-@summary:   This is basically the MQTT API interface that is used by all of pyhouse.
+@summary:   This is basically the MQTT Api interface that is used by all of pyhouse.
 
 """
 
-__updated__ = '2019-10-04'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 

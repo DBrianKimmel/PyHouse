@@ -17,7 +17,7 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2019-07-10'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,13 +33,13 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Web            ')
 
 
-class WorkspaceData(object):
+class WorkspaceData:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
 
-class API(object):
+class Api:
     """
     """
 

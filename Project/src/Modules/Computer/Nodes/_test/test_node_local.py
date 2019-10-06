@@ -11,7 +11,7 @@ Passed all 19 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -23,7 +23,7 @@ from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
 from Modules.Computer.Nodes.node_local import \
     Interfaces, \
-    API as localApi, \
+    Api as localApi, \
     Devices as localDevices, \
     Util as localUtil
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny

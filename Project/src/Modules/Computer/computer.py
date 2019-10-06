@@ -11,8 +11,8 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-10-05'
-__version_info__ = (19, 9, 2)
+__updated__ = '2019-10-06'
+__version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -22,6 +22,7 @@ import importlib
 
 #  Import PyHouse files
 from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools, uuid_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
 
@@ -121,16 +122,16 @@ class MqttActions:
         return l_logmsg
 
 
-class Config:
+class LocalConfig:
     """
     """
 
-    m_config_tools = None
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_config = configApi(p_pyhouse_obj)
         # LOG.debug('Config - Progress')
 
     def _extract_computer_info(self, _p_config):
@@ -147,23 +148,21 @@ class Config:
     def load_yaml_config(self):
         """ Read the config file.
         """
-        LOG.info('Starting ')
-        self.m_config_tools.find_config_file(CONFIG_NAME)
-        # LOG.debug('New start of config loading...')
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # self.m_pyhouse_obj.Computer = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Computer']
+            l_yaml = l_yaml['Computer']
         except:
-            LOG.warn('The computer.yaml file does not start with "Computer:"')
+            LOG.warn('The config file does not start with "Computer:"')
             return None
-        _l_computer = self._extract_computer_info(l_yaml)
-        # self.m_pyhouse_obj.House.Name = l_house.Name
-        # l_obj = self.m_pyhouse_obj.Computer
+        l_computer = self._extract_computer_info(l_yaml)
+        # self.m_pyhouse_obj.Computer = l_computer
         # LOG.debug('Computer.Yaml - {}'.format(l_yaml.Yaml))
-        return l_node  # for testing purposes
+        return l_computer  # for testing purposes
 
 
 class lightingUtility:
@@ -218,7 +217,7 @@ class lightingUtility:
         # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
         LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
 
-    def _init_component_apis(self, p_pyhouse_obj, _p_computer_api):
+    def _init_component_apis(self, p_pyhouse_obj):
         """
         Initialize all the computer division APIs
         """
@@ -261,8 +260,7 @@ class Api:
     """
     """
 
-    m_config = None
-    m_config_tools = None
+    m_local_config = None
     m_pyhouse_obj = None
     m_utility = None
 
@@ -270,9 +268,9 @@ class Api:
         """ Initialize the computer section of PyHouse.
         """
         LOG.info("Initializing - Version:{}".format(__version__))
+        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer, 'Computer'))
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_utility = lightingUtility(p_pyhouse_obj)
 
         # This overrides any config saved so we can start Logging and MQTT messages early on.
@@ -282,7 +280,7 @@ class Api:
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, CONFIG_NAME)
         p_pyhouse_obj.Computer.Comment = ''
         p_pyhouse_obj.Computer.LastUpdate = datetime.now()
-        self.m_utility._init_component_apis(p_pyhouse_obj, self)
+        self.m_utility._init_component_apis(p_pyhouse_obj)
 
         self.m_utility._find_all_configed_modules()
         self.m_utility._import_all_found_modules()
@@ -293,7 +291,7 @@ class Api:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         self.m_utility._load_component_config()
         LOG.info('Loaded all computer Configs.')
 

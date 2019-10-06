@@ -19,7 +19,7 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2019-07-10'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 
@@ -51,7 +51,7 @@ class lightingUtility(object):
         return l_config
 
 
-class API(object):
+class Api:
     """
     """
 

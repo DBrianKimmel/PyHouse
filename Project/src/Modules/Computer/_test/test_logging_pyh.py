@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2016-11-21
 
 """
 
-__updated__ = '2019-05-09'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -48,7 +48,7 @@ class Test_A1_SetupLogging(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Logger.API()
+        self.m_api = Logger.Api()
         self.m_api.read_xml(self.m_pyhouse_obj)
         self.LOG = Logger.getLogger('PyHouse.test_logging_pyh ')
 

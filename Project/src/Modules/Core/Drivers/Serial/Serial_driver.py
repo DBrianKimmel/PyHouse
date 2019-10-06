@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-10-02'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -165,7 +165,7 @@ class SerialProtocol(Protocol):
         We should trigger a restart of the controller connection from here.
         """
         LOG.error('Connection lost for controller {}\n\t{}'.format(self.m_controller_obj.Name, reason))
-        SerialAPI().try_restart(self.m_pyhouse_obj, self.m_controller_obj)
+        SerialApi().try_restart(self.m_pyhouse_obj, self.m_controller_obj)
 
     def connectionMade(self):
         """ Override
@@ -185,7 +185,7 @@ class SerialProtocol(Protocol):
         # LOG.debug('Rxed {} bytes of data {}'.format(_l_len, p_data))
 
 
-class SerialAPI:
+class SerialApi:
     """
     This is a statefull factory for the serial protocol.
     """
@@ -266,7 +266,7 @@ class SerialAPI:
         return
 
 
-class API(SerialAPI):
+class Api(SerialApi):
     """
     This is the standard Device Driver interface.
     """

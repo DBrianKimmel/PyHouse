@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-10-04'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -651,7 +651,7 @@ class Api:
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
-        sunrisesunset.API(self.m_pyhouse_obj).Start()
+        sunrisesunset.Api(self.m_pyhouse_obj).Start()
         self.RestartSchedule()
         LOG.info("Started.")
 

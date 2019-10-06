@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-10-04'
+__updated__ = '2019-10-05'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -173,12 +173,12 @@ class LocalConfig:
     """
     """
 
-    m_config_tools = None
+    m_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = configAPI(p_pyhouse_obj)
+        self.m_config = configApi(p_pyhouse_obj)
 
     def dump_struct(self):
         """
@@ -251,19 +251,19 @@ class LocalConfig:
     def load_yaml_config(self, p_api):
         """ Read the pioneer.yaml file.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = self.m_config_tools.read_yaml(CONFIG_NAME)
-        except:
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Rooms = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Pioneer']
+            l_yaml = l_yaml['Pioneer']
         except:
-            LOG.warn('The pioneer.yaml file does not start with "Pioneer:"')
+            LOG.warn('The config file does not start with "Pioneer:"')
             return None
         l_pioneer = self._extract_all_pioneer(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_pioneer
-        # self.dump_struct()
         return l_pioneer  # for testing purposes
 
 

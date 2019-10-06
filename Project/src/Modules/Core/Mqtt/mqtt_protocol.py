@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-10-06'
 __version_info__ = (18, 9, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -611,7 +611,6 @@ class MQTTClient(MQTTProtocol):
                  ):
         """ At this point all config has been read in and Set-up
         """
-        _l_comp_name = p_pyhouse_obj.Computer.Name
         self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
             l_house_name = p_pyhouse_obj.House.Name + '/'

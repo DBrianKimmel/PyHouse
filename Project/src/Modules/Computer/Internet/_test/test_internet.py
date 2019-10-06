@@ -10,19 +10,17 @@
 Passed all 5 tests - DBK - 2015-09-12
 """
 
-__updated__ = '2019-07-05'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import InternetConnectionInformation
-from Modules.Computer.Internet.internet import API as internetAPI
-from Modules.Computer.Internet.test.xml_internet import TESTING_INTERNET_IPv4_0
+from Modules.Computer.Internet.internet import Api as internetApi
 from Modules.Core.Utilities import convert
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
 
 
 class SetupMixin(object):

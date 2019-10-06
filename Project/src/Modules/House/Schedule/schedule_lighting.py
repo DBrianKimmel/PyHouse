@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-24'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +24,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule_lightn')
 
 
-class API():
+class Api():
 
     m_pyhouse_obj = None
 

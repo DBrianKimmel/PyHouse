@@ -13,14 +13,16 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-10-05'
-__version_info__ = (19, 9, 1)
+__updated__ = '2019-10-06'
+__version_info__ = (19, 10, 6)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Bridges        ')
@@ -58,16 +60,18 @@ class BridgeInformation:
         self._Queue = None
 
 
-class Config:
+class LocalConfig:
     """ Load the bridges.yaml config file.
     If the config file has an !include xxx.yaml, schedule the family to load and set up.
     """
 
+    m_config = None
     m_pyhouse_obj = None
     m_bridges__defined = []
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_one_bridge(self, p_config):
         """
@@ -93,19 +97,20 @@ class Config:
     def load_yaml_config(self):
         """ Read the .Yaml file.
         """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.Computer.Bridges = {}
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Bridges']
+            l_yaml = l_yaml['Bridges']
         except:
-            LOG.warn('The bridges.yaml file does not start with "Bridges"')
+            LOG.warn('The config file does not start with "Bridges:"')
             return None
         l_bridges = self._extract_all_bridges(l_yaml)
         self.m_pyhouse_obj.Computer.Bridges = l_bridges
-        return l_node  # for testing purposes
+        return l_bridges  # for testing purposes
 
 # ----------
 
@@ -132,7 +137,7 @@ class Config:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         l_config = self._copy_to_yaml(self.m_pyhouse_obj)
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_NAME, addnew=True)
+        self.m_config.write_yaml(l_config, CONFIG_NAME, addnew=True)
         return l_config
 
 
@@ -140,19 +145,20 @@ class Api:
     """This interfaces to all of PyHouse.
     """
 
-    m_config = None
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer.Bridges, 'Bridges'))
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """ Load the config info.
         This usually is only !include records
         """
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         LOG.info("Loaded Config - Version:{}".format(__version__))
 
     def Start(self):
@@ -172,7 +178,7 @@ class Api:
         """
         @param p_pyhouse_obj: the master obj
         """
-        # self.m_config.save_yaml_config()
+        # self.m_local_config.save_yaml_config()
         LOG.info("Saved Bridges Config")
 
     def Stop(self):

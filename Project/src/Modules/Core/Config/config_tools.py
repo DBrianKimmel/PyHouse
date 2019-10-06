@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,7 +25,7 @@ from Modules.Core.data_objects import HostInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Family.family import DeviceFamilyInformation
 
-from Modules.Core.Drivers.interface import DriverInterfaceInformation, get_device_driver_API
+from Modules.Core.Drivers.interface import DriverInterfaceInformation, get_device_driver_Api
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
@@ -160,9 +160,9 @@ class SubFields:
         Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
         #
         LOG.debug('Getting driver Api')
-        l_driver = get_device_driver_API(self.m_pyhouse_obj, l_obj)
+        l_driver = get_device_driver_Api(self.m_pyhouse_obj, l_obj)
         l_obj._DriverAPI = l_driver
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
         return l_obj
 
     def extract_room_group(self, p_config):
@@ -171,7 +171,7 @@ class SubFields:
         l_obj = RoomLocationInformation()
         try:
             for l_key, l_value in p_config.items():
-                # print('RoomKey:{}; Value:{}'.format(l_key, l_value))
+                # LOG.debug('RoomKey:{}; Value:{}'.format(l_key, l_value))
                 setattr(l_obj, l_key, l_value)
             return l_obj
         except:
@@ -515,7 +515,7 @@ class Api(SubFields):
         @return: the yaml file string or None if no such config file
         """
         l_ret = self.m_yaml.read_yaml(p_filename.lower())
-        LOG.debug(PrettyFormatAny.form(l_ret, 'Config'))
+        # LOG.debug(PrettyFormatAny.form(l_ret, 'Config'))
         return l_ret
 
     def write_config(self, p_filename, p_data, addnew=False):

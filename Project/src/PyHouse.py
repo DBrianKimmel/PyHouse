@@ -76,7 +76,7 @@ Idea Links:
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -227,7 +227,7 @@ class Api:
         pass
 
     def Start(self):
-        """ This is automatically invoked when the reactor starts from API().
+        """ This is automatically invoked when the reactor starts from Api().
         """
         print('Reactor is now running.')
         LOG.info('Starting - Reactor is now running.')

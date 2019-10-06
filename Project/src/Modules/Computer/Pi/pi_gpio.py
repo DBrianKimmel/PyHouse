@@ -11,7 +11,7 @@ This needs to wait for a new GPIO package that does not require root priveliges.
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 
@@ -39,7 +39,7 @@ while True:
 GPIO.cleanup()
 
 
-class API(object):
+class Api:
     """
     """
 

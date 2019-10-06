@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-10'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 import json
@@ -210,7 +210,7 @@ class lightingUtility(ClientConnections):
         pass
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
 
     m_contextFactory = None
 

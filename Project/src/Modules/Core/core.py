@@ -34,7 +34,7 @@ from twisted.internet import reactor
 # These 3 must be the first so logging is running as the rest of PyHouse starts up.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
 
-from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Config.config_tools import ConfigInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
@@ -135,19 +135,20 @@ class lightingUtility:
     def load_yaml_config(self, p_pyhouse_obj):
         """ Read the computer.yaml file.
         """
-        try:
-            l_node = config_tools.Yaml(p_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
-            LOG.error('The main config file (pyhouse.yaml) is missing!')
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj._Parameters = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['PyHouse']
+            l_yaml = l_yaml['PyHouse']
         except:
-            LOG.warn('The pyhouse.yaml file does not start with "PyHouse:"')
+            LOG.warn('The config file does not start with "PyHouse:"')
             return None
         l_parameter = self._extract_pyhouse_info(l_yaml)
         p_pyhouse_obj._Parameters = l_parameter
-        return l_node  # for testing purposes
+        return l_parameter  # for testing purposes
 
     def _setup_Core(self):
         """
@@ -239,6 +240,7 @@ class Api(lightingUtility):
         setup_logging.Api()  # Start up logging
         LOG.info('Setting up Main Data areas')
         self.m_pyhouse_obj = PyHouseInformation()
+        self.m_config = configApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Core = self._setup_Core()  # First
         self.m_pyhouse_obj._APIs = self._setup_APIs()
         self.m_pyhouse_obj._Config = self._setup_Config()

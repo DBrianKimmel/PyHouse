@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-10'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -33,7 +33,7 @@ class lightingUtility(object):
         return l_dict
 
 
-class API(object):
+class Api(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

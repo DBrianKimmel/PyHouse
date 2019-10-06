@@ -14,7 +14,7 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-10-02'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 import datetime
@@ -275,7 +275,7 @@ class LightHandlerAPI:
             l_msg += "InterfaceType:{}".format(p_controller_obj.Interface.Type)
             LOG.info('Start Controller - {}'.format(l_msg))
             LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-            l_driver = interface.get_device_driver_API(p_pyhouse_obj, p_controller_obj.Interface)
+            l_driver = interface.get_device_driver_Api(p_pyhouse_obj, p_controller_obj.Interface)
             l_driver.Start(p_controller_obj)
         else:
             LOG.warn('Can not config a remote controller.')
