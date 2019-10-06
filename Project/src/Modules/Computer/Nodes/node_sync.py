@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -48,11 +48,11 @@ class Util(object):
             LOG.error('No such node {}'.format(e_err))
             l_node = NodeInformation()
         l_node.NodeInterfaces = None
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)
+        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_node)
 
         # l_topic = 'computer/login/initial'
         # l_message = {}
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_message)
+        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_message)
 
         p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, Util.send_who_is_there, p_pyhouse_obj)
 
@@ -61,7 +61,7 @@ class Util(object):
         l_topic = "computer/node/sync/iam"
         l_uuid = p_pyhouse_obj.Computer.UUID
         l_node = p_pyhouse_obj.Computer.Nodes[l_uuid]
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/iam
+        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_node)  # /computer/node/iam
 
     @staticmethod
     def add_node(p_pyhouse_obj, p_message_obj):

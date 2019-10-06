@@ -11,7 +11,7 @@ Passed 3 of 9 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-09-19'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ from twisted.trial import unittest
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.House.house import \
-    API as houseAPI, \
+    Api as houseApi, \
     Config as houseConfig, \
     lightingUtility as houseUtil, HouseInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -65,7 +65,7 @@ class B1_Init(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = houseAPI(self.m_pyhouse_obj)
+        self.m_api = houseApi(self.m_pyhouse_obj)
 
     def test_01_Parts(self):
         """
@@ -109,7 +109,7 @@ class P1_API(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = houseAPI(self.m_pyhouse_obj)
+        self.m_api = houseApi(self.m_pyhouse_obj)
 
     def test_01_Init(self):
         """ Create a JSON object for Location.

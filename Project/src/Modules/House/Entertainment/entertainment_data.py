@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-14'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 
@@ -53,7 +53,7 @@ class EntertainmentPluginInformation:
         # Services are indexed by the service number 0..x
         self.ServiceCount = 0
         self.Services = {}  # EntertainmentServiceInformation()
-        self._API = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
+        self._Api = None  # The API pointer for this class of plugin (Pioneer, onkyo, ,,,)
         self._Module = None
         self._OpenSessions = 0
 

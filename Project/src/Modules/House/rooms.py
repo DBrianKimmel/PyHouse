@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -79,7 +79,7 @@ class Mqtt:
                 room/update - to add or modify a room
         """
         l_topic = 'house/room/' + p_topic
-        p_pyhouse_obj._APIs.Core.MqttApi.MqttPublish(l_topic, p_room_obj)
+        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_room_obj)
 
 
 class LocalConfig:

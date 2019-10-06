@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-04'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -87,7 +87,7 @@ class Mqtt:
         """
         # l_json = encode_json(p_room_obj)
         # l_topic = 'house/room/' + p_topic
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_json)
+        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_json)
 
 
 class LocalConfig:

@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-10-04'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,7 +39,7 @@ class PyHouseInformation:
         self.Computer = None  # ComputerInformation()
         self.House = None  # HouseInformation()
         # The rest are "Core" components
-        self._APIs = None  # PyHouseAPIs()
+        self._Apis = None  # PyHouseAPIs()
         self._Config = None  # ConfigInformation()
         self._Parameters = None  # ParameterInformation()
         self._Twisted = None  # TwistedInformation()
@@ -58,7 +58,7 @@ class CoreInformation:
 
 class PyHouseAPIs:
     """
-    ==> PyHouse._APIs.xxx
+    ==> PyHouse._Apis.xxx
 
     Most of these have a single entry.
     """
@@ -66,7 +66,7 @@ class PyHouseAPIs:
     def __init__(self):
         self.Core = None  # CoreAPIs()
         self.Computer = None  # ComputerAPIs()
-        self.House = None  # HouseAPIs()
+        self.House = None  # HouseApis()
         # self.CoreSetupAPI = None
         # self.PyHouseMainAPI = None
 
@@ -89,7 +89,7 @@ class BaseObject:
 
 class CommunicationAPIs:
     """
-    ==> PyHouse._APIs.Computer.CommAPIs.xxx as in the def below.
+    ==> PyHouse._Apis.Computer.CommAPIs.xxx as in the def below.
 
     """
 
@@ -163,16 +163,16 @@ class HostInformation:
         self.IPv6 = None
 
 
-class HouseAPIs:
+class HouseApis:
     """ These are all the sub-systems of House.
 
-    ==> PyHouse._APIs.House
+    ==> PyHouse._Apis.House
     """
 
     def __init__(self):
         # self.EntertainmentAPI = None  # Uses Plugins
-        self.FamilyAPI = None  # Uses Plugins
-        self.HouseAPI = None
+        self.FamilyApi = None  # Uses Plugins
+        self.HouseApi = None
         # self.HvacAPI = None
         # self.IrrigationAPI = None
         # self.LightingAPI = None

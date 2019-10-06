@@ -12,7 +12,7 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 import os
@@ -81,7 +81,7 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.Schedules[l_schedule_ix] = l_obj
-        self.m_pyhouse_obj._APIs.House.ScheduleAPI.RestartSchedule()
+        self.m_pyhouse_obj._Apis.House.ScheduleAPI.RestartSchedule()
 
     def _save_light(self, p_obj, p_json):
         LOG.info(PrettyFormatAny.form(p_json, 'JSON'))

@@ -395,7 +395,7 @@ class API(LightHandlerAPI):
         else:
             LOG.error('Insteon Controller start failed for "{}"'.format(self.m_controller_obj.Name))
         # l_topic = 'house/lighting/controller/status'
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
+        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 
     def Start(self):

@@ -10,7 +10,7 @@
 Passed all 15 tests - DBK - 2019-08-30
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -155,7 +155,7 @@ class E1_API(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION], 'E1-01-D - Section', 180))
         l_base = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora']
-        self.assertIsNone(l_base._API)
+        self.assertIsNone(l_base._Api)
         self.assertEqual(l_base.Active, False)
         self.assertEqual(l_base.ServiceCount, 0)
 

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -229,7 +229,7 @@ class Api:
         All publish commands point to here.
         This routine will run thru the list of brokers and publish to each broker.
 
-        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
+        # self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
 
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param p_message : is the message we want to send

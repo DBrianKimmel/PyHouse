@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 9, 23)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -171,7 +171,7 @@ class lightingUtility:
         l_obj = HouseInformation()
         return l_obj
 
-    def _setup_APIs(self):
+    def _setup_Apis(self):
         """
         """
         l_obj = PyHouseAPIs()
@@ -242,7 +242,7 @@ class Api(lightingUtility):
         self.m_pyhouse_obj = PyHouseInformation()
         self.m_config = configApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.Core = self._setup_Core()  # First
-        self.m_pyhouse_obj._APIs = self._setup_APIs()
+        self.m_pyhouse_obj._Apis = self._setup_Apis()
         self.m_pyhouse_obj._Config = self._setup_Config()
         self.m_pyhouse_obj._Parameters = self._setup_Parameters()
         self.m_pyhouse_obj._Twisted = self._setup_Twisted()
@@ -252,11 +252,11 @@ class Api(lightingUtility):
         #
         self.load_yaml_config(self.m_pyhouse_obj)
         self._sync_startup_logging(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttApi(self.m_pyhouse_obj, self)
-        self.m_pyhouse_obj._APIs.Core.MqttAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.Core.MqttAPI.Start()
-        self.m_pyhouse_obj._APIs.Computer.ComputerAPI = computerApi(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._APIs.House.HouseAPI = houseApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Apis.Core.MqttAPI = mqttApi(self.m_pyhouse_obj, self)
+        self.m_pyhouse_obj._Apis.Core.MqttAPI.LoadConfig()
+        self.m_pyhouse_obj._Apis.Core.MqttAPI.Start()
+        self.m_pyhouse_obj._Apis.Computer.ComputerApi = computerApi(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Apis.House.HouseApi = houseApi(self.m_pyhouse_obj)
         LOG.info('All data has been set up.')
         #
         self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig)
@@ -271,27 +271,24 @@ class Api(lightingUtility):
     def LoadConfig(self):
         """ Load in the entire configuration for PyHouse.
         This will fill in pyhouse_obj for all defined features of PyHouse.
-
         """
         LOG.info("\n======================== Loading Config Files ======================== Version: {}\n".format(__version__))
-        self.m_pyhouse_obj._APIs.Computer.ComputerAPI.LoadConfig()
-        self.m_pyhouse_obj._APIs.House.HouseAPI.LoadConfig()
+        self.m_pyhouse_obj._Apis.Computer.ComputerApi.LoadConfig()
+        self.m_pyhouse_obj._Apis.House.HouseApi.LoadConfig()
         LOG.info("Loaded Config")
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("\n======================== Loaded Config Files ======================== Version: {}\n".format(__version__))
-        # self.Start()
 
     def Start(self):
         """
         The reactor is now running.
-
         @param p_pyhouse_obj: is the skeleton Obj filled in some by PyHouse.py.
         """
         print('Reactor is now running.')
         LOG.info("\n======================== Starting ======================== Version: {}\n".format(__version__))
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Start()
-        self.m_pyhouse_obj._APIs.House.HouseAPI.Start()
+        self.m_pyhouse_obj._Apis.Computer.ComputerApi.Start()
+        self.m_pyhouse_obj._Apis.House.HouseApi.Start()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self._config_save_loop, self.m_pyhouse_obj)
         LOG.info("\n======================== Started ======================== Version: {}\n".format(__version__))
         LOG.info("\n======================== Opperational ========================")
@@ -304,16 +301,16 @@ class Api(lightingUtility):
         """
         LOG.info('\n======================== Saving Config Files ========================\n')
         # configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._APIs.Computer.ComputerAPI.SaveConfig()
-        self.m_pyhouse_obj._APIs.House.HouseAPI.SaveConfig()
+        self.m_pyhouse_obj._Apis.Computer.ComputerApi.SaveConfig()
+        self.m_pyhouse_obj._Apis.House.HouseApi.SaveConfig()
         LOG.info("\n======================== Saved Config Files ==========================\n")
 
     def Stop(self):
         l_topic = 'computer/shutdown'
-        self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
         self.SaveConfig()
-        self.m_pyhouse_obj._APIs.Computer.ComputerAPI.Stop()
-        self.m_pyhouse_obj._APIs.House.HouseAPI.Stop()
+        self.m_pyhouse_obj._Apis.Computer.ComputerApi.Stop()
+        self.m_pyhouse_obj._Apis.House.HouseApi.Stop()
         LOG.info("Stopped.\n==========\n")
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 

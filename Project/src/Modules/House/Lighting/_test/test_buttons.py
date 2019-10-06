@@ -10,7 +10,7 @@
 Passed all 12 tests - DBK - 2019-01-22
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -39,7 +39,7 @@ from Modules.Housing.Lighting.test.xml_buttons import \
     TESTING_LIGHTING_BUTTON_UUID_0, \
     TESTING_LIGHTING_BUTTON_ROOM_UUID_0, \
     TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0, TESTING_BUTTON_SECTION, TESTING_BUTTON, XML_BUTTON_SECTION
-from Modules.Families.family import API as familyAPI
+from Modules.Families.family import Api as familyApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -48,7 +48,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_family = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        self.m_family = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj._Families = self.m_family
         # self.m_api = buttonsAPI()
         self.m_button_obj = ButtonData()

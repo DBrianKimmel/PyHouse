@@ -10,7 +10,7 @@
 Passed all 19 tests - DBK - 2019-06-18
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import os
@@ -18,17 +18,15 @@ from twisted.trial import unittest
 import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core import setup_pyhouse
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 from Modules.Core.data_objects import \
-    PyHouseAPIs, \
+    PyHouseApis, \
     ComputerInformation, \
     HouseInformation, \
     TwistedInformation, \
-    ComputerAPIs, \
-    HouseAPIs
+    ComputerApis, \
+    HouseApis
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -137,16 +135,16 @@ class C1_Structures(SetupMixin, unittest.TestCase):
         """ Test every component of PyHouseInformation()
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'C1-1-A PyHouse obj'))
-        self.assertIsInstance(self.m_pyhouse_obj._APIs, PyHouseAPIs)
+        self.assertIsInstance(self.m_pyhouse_obj._Apis, PyHouseAPIs)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj._Twisted, TwistedInformation)
         self.assertEqual(self.m_pyhouse_obj._Uuids.All, {})
 
-    def test_02_APIs(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj._APIs, 'C1-2-A PyHouse APIs'))
-        self.assertIsInstance(self.m_pyhouse_obj._APIs.Computer, ComputerAPIs)
-        self.assertIsInstance(self.m_pyhouse_obj._APIs.House, HouseAPIs)
+    def test_02_Apis(self):
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Apis, 'C1-2-A PyHouse APIs'))
+        self.assertIsInstance(self.m_pyhouse_obj._Apis.Computer, ComputerAPIs)
+        self.assertIsInstance(self.m_pyhouse_obj._Apis.House, HouseAPIs)
 
     def test_03_Computer(self):
         # sprint(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-3-A PyHouse.Computer obj'))

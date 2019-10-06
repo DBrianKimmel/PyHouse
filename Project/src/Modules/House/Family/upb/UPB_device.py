@@ -15,13 +15,13 @@ Start Active UPB Controllers.
 
 """
 
-__updated__ = '2019-09-24'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Families.UPB.UPB_Pim import API as upbPimAPI
-from Modules.Core.Mqtt.mqtt import API as mqttAPI
+from Modules.Families.UPB.UPB_Pim import Api as upbPimApi
+from Modules.Core.Mqtt.mqtt import Api as mqttAPI
 from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.UPB_device     ')
@@ -51,12 +51,12 @@ class API(object):
         for l_controller_obj in self.m_pyhouse_obj.House.Lighting.Controllers.values():
             if lightingUtility._is_upb_active(l_controller_obj):
                 l_controller_prefix = 'house/lighting/controller/{}'.format(l_controller_obj.Name)
-                l_controller_obj._HandlerAPI = upbPimAPI(self.m_pyhouse_obj)
+                l_controller_obj._HandlerAPI = upbPimApi(self.m_pyhouse_obj)
                 if l_controller_obj._HandlerAPI.Start(self.m_pyhouse_obj, l_controller_obj):
                     LOG.info('Controller {} Started.'.format(l_controller_obj.Name))
                     l_count += 1
                     l_topic = 'house/lighting/controller/' + l_controller_prefix + '/start'
-                    self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
+                    self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_controller_obj)  # /start
                 else:
                     LOG.error('Controller {} failed to start.'.format(l_controller_obj.Name))
                     # l_controller_obj.Active = False

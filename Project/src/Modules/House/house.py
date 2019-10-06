@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,7 +20,7 @@ import datetime
 import importlib
 
 #  Import PyMh files
-from Modules.Core.data_objects import HouseAPIs
+from Modules.Core.data_objects import HouseApis
 from Modules.Core.Config import config_tools
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import uuid_tools
@@ -232,24 +232,24 @@ class houseUtility:
                 l_api = l_ret.Api(self.m_pyhouse_obj)
             except Exception as e_err:
                 LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(l_module, e_err))
-                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef', 190)))
+                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
                 l_api = None
             # LOG.debug('Imported: {}'.format(l_ret))
             l_api_name = l_module.capitalize() + 'Api'
-            l_house = self.m_pyhouse_obj._APIs.House
+            l_house = self.m_pyhouse_obj._Apis.House
             setattr(l_house, l_api_name, l_api)
             # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
-            # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules', 190))
+            # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
         LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
 
     def _load_modules_config(self):
         """ Load the config file for all the components of the house.
         """
         LOG.info('Loading configured modules: {}'.format(self.m_module_needed))
-        l_obj = self.m_pyhouse_obj._APIs.House
+        l_obj = self.m_pyhouse_obj._Apis.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseAPI':
+            if l_key == 'HouseApi':
                 continue
             if l_a == None:
                 LOG.warn('Skipping "{}"'.format(l_key))
@@ -262,10 +262,10 @@ class houseUtility:
     def _save_component_apis(self):
         """ These are sub-module parts of the house.
         """
-        l_obj = self.m_pyhouse_obj._APIs.House
+        l_obj = self.m_pyhouse_obj._Apis.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseAPI':
+            if l_key == 'HouseApi':
                 continue
             if l_a == None:
                 LOG.warn('Skipping "{}"'.format(l_key))
@@ -285,11 +285,11 @@ class houseUtility:
         """ Family must start before the other things (that depend on family).
         """
         LOG.debug('Starting configured modules: {}'.format(self.m_module_needed))
-        l_obj = self.m_pyhouse_obj._APIs.House
+        l_obj = self.m_pyhouse_obj._Apis.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             LOG.debug('Start module "{}"'.format(l_key))
             l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseAPI':
+            if l_key == 'HouseApi':
                 continue
             if l_a == None:
                 LOG.warn('Skipping module "{}"'.format(l_key))
@@ -301,18 +301,18 @@ class houseUtility:
         pass
 
     def _stop_house_modules(self):
-        l_obj = self.m_pyhouse_obj._APIs.House
+        l_obj = self.m_pyhouse_obj._Apis.House
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseAPI':
+            if l_key == 'HouseApi':
                 continue
             if l_a == None:
                 LOG.warn('Skipping "{}"'.format(l_key))
                 continue
             l_a.Stop()
         return
-        self.m_pyhouse_obj._APIs.House.EntertainmentAPI.Stop()
-        self.m_pyhouse_obj._APIs.House.ScheduleAPI.Stop()
+        self.m_pyhouse_obj._Apis.House.EntertainmentAPI.Stop()
+        self.m_pyhouse_obj._Apis.House.ScheduleAPI.Stop()
 
     def _init_house_parts(self):
         """
@@ -382,8 +382,8 @@ class Api:
         p_pyhouse_obj.House.Comment = ''
         p_pyhouse_obj.House.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, CONFIG_NAME)
         p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
-        p_pyhouse_obj._APIs.House = HouseAPIs()
-        p_pyhouse_obj._APIs.House.HouseAPI = self
+        p_pyhouse_obj._Apis.House = HouseApis()
+        p_pyhouse_obj._Apis.House.HouseApi = self
         self.m_parts = self.m_utility._init_house_parts()
         self.m_modules = self.m_utility._init_house_modules()
         LOG.info("Initialized ")

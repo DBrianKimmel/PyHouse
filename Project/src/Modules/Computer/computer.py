@@ -66,14 +66,14 @@ class ComputerInformation:
 
 class ComputerAPIs:
     """
-    ==> PyHouse._APIs.Computer.xxx as in the def below.
+    ==> PyHouse._Apis.Computer.xxx as in the def below.
 
     """
 
     def __init__(self):
         pass
         # self.BridgesAPI = None
-        # self.ComputerAPI = None
+        # self.ComputerApi = None
         # self.CommAPIs = None  # CommunicationAPIs()
         # self.InternetAPI = None
         # self.NodesAPI = None
@@ -212,7 +212,7 @@ class lightingUtility:
                 LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
                 l_api = None
             l_api_name = l_module.capitalize() + 'Api'
-            l_computer = self.m_pyhouse_obj._APIs.Computer
+            l_computer = self.m_pyhouse_obj._Apis.Computer
             setattr(l_computer, l_api_name, l_api)
         # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
         LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
@@ -221,37 +221,38 @@ class lightingUtility:
         """
         Initialize all the computer division APIs
         """
-        p_pyhouse_obj._APIs.Computer = ComputerAPIs()
+        p_pyhouse_obj._Apis.Computer = ComputerAPIs()
 
     def _load_component_config(self):
-        l_obj = self.m_pyhouse_obj._APIs.Computer
+        LOG.debug('Loading Componente')
+        l_obj = self.m_pyhouse_obj._Apis.Computer
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerAPI':
+            if l_key == 'ComputerApi':
                 continue
             l_a.LoadConfig()
 
     def _start_component_apis(self):
-        l_obj = self.m_pyhouse_obj._APIs.Computer
+        l_obj = self.m_pyhouse_obj._Apis.Computer
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerAPI':
+            if l_key == 'ComputerApi':
                 continue
             l_a.Start()
 
     def _stop_component_apis(self):
-        l_obj = self.m_pyhouse_obj._APIs.Computer
+        l_obj = self.m_pyhouse_obj._Apis.Computer
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerAPI':
+            if l_key == 'ComputerApi':
                 continue
             l_a.Stop()
 
     def _save_component_apis(self):
-        l_obj = self.m_pyhouse_obj._APIs.Computer
+        l_obj = self.m_pyhouse_obj._Apis.Computer
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerAPI':
+            if l_key == 'ComputerApi':
                 continue
             l_a.SaveConfig()
 
@@ -268,7 +269,7 @@ class Api:
         """ Initialize the computer section of PyHouse.
         """
         LOG.info("Initializing - Version:{}".format(__version__))
-        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer, 'Computer'))
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer, 'Computer'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_utility = lightingUtility(p_pyhouse_obj)

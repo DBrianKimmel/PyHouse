@@ -359,19 +359,19 @@ class ScheduleExecution:
         """
         l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
         #
         if p_schedule_obj.Sched.Type == 'Light':
             LOG.info('Execute_one_schedule type = Light')
-            lightActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            lightActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'Hvac':
             LOG.info('Execute_one_schedule type = Hvac')
-            hvacActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            hvacActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'Irrigation':
             LOG.info('Execute_one_schedule type = Irrigation')
-            irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            irrigationActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
@@ -379,7 +379,7 @@ class ScheduleExecution:
         #
         else:
             LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.Sched.Type))
-            irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            irrigationActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
 
     @staticmethod
     def execute_schedules_list(p_pyhouse_obj, p_key_list=[]):
@@ -402,11 +402,6 @@ class ScheduleExecution:
 class lightingUtility:
     """
     """
-
-    @staticmethod
-    def XXX_setup_components(p_pyhouse_obj):
-        # p_pyhouse_obj.House.Schedules = {}
-        pass
 
     @staticmethod
     def fetch_sunrise_set(p_pyhouse_obj):

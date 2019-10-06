@@ -10,7 +10,7 @@
 """
 from Modules.Core.Config import config_tools
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -37,7 +37,7 @@ class HueInformation:
         self.Access = None
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -79,32 +79,35 @@ class Config:
         """ Read the Rooms.Yaml file.
         It contains Rooms data for all rooms in the house.
         """
-        LOG.debug('Loading Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        except:
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # self.m_pyhouse_obj.
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Hue']
+            l_yaml = l_yaml['Hue']
         except:
-            LOG.warn('The hue.yaml file does not start with "Hue:"')
+            LOG.warn('The config file does not start with "Hue:"')
             return None
-        l_house = self._extract_hue_info(l_yaml)
+        l_hue = self._extract_hue_info(l_yaml)
         # self.m_pyhouse_obj.House.Name = l_house.Name
-        return l_node  # for testing purposes
+        return l_hue  # for testing purposes
 
 
 class API:
     """
     """
 
+    m_local_config = None
     m_pyhouse_obj = None
     m_hue_hub = None
 
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
-        Config(p_pyhouse_obj).load_yaml_config()
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
+        self.m_local_config.load_yaml_config()
         self.m_hue_hub = HueHub(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 

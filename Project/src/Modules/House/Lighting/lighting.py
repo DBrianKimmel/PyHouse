@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -207,7 +207,7 @@ class Api:
         """ Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        #  self.m_pyhouse_obj._APIs.House.FamilyAPI.stop_lighting_families(self.m_pyhouse_obj)
+        #  self.m_pyhouse_obj._Apis.House.FamilyApi.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
     def Control(self, p_device_obj, p_controller_obj, p_control):

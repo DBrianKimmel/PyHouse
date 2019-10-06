@@ -437,7 +437,7 @@ class Util(object):
         l_node.NodeRole = Util.find_node_role()
         l_node.LastUpdate = datetime.now()
         # l_topic = 'computer/local'
-        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)
+        # self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_node)
         return l_node
 
 

@@ -10,7 +10,7 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-07-21'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -41,7 +41,7 @@ class SetupMixin(object):
         # self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_yaml = SetupPyHouseObj().BuildYaml(None)
         self.m_filename = 'families.yaml'
-        # self.m_families = familyAPI(self.m_pyhouse_obj).LoadFamilyTesting()
+        # self.m_families = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
 
     def createFamilyObj(self):
         l_family_obj = FamilyModuleInformation()

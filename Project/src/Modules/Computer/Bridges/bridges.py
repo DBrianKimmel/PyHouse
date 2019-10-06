@@ -149,7 +149,7 @@ class Api:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer.Bridges, 'Bridges'))
+        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer.Bridges, 'Bridges'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))

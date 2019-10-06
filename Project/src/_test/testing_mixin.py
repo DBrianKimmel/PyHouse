@@ -10,7 +10,7 @@
 """
 from Modules.Core.core import ParameterInformation
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 import os
@@ -29,8 +29,8 @@ from Modules.House.Entertainment.entertainment import \
 from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
-    PyHouseAPIs, \
-    HouseAPIs, \
+    PyHouseApis, \
+    HouseApis, \
     TwistedInformation, \
     UuidInformation, CoreInformation
 from Modules.Core.Config.config_tools import \
@@ -115,9 +115,9 @@ class SetupPyHouseObj:
         return l_ret
 
     def _build_apis(self):
-        l_apis = PyHouseAPIs()
-        l_apis.Computer = ComputerAPIs()
-        l_apis.House = HouseAPIs()
+        l_apis = PyHouseApis()
+        l_apis.Computer = ComputerApis()
+        l_apis.House = HouseApis()
         return l_apis
 
     def _computer_yaml(self, p_yaml):
@@ -134,7 +134,7 @@ class SetupPyHouseObj:
         l_pyhouse_obj.House = SetupPyHouseObj()._build_house_data()
         #
 
-        l_pyhouse_obj._APIs = self._build_apis()
+        l_pyhouse_obj._Apis = self._build_apis()
         l_pyhouse_obj._Config = self._build_config()
         l_pyhouse_obj._Parameters = self.build_params()
         l_pyhouse_obj._Twisted = self._build_twisted()
@@ -154,7 +154,7 @@ class SetupPyHouseObj:
         pass
 
     def LoadHouse(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.Family = familyAPI(p_pyhouse_obj).LoadFamilyTesting()
+        p_pyhouse_obj.House.Family = familyApi(p_pyhouse_obj).LoadFamilyTesting()
 
     def setUp(self):
         self.BuildPyHouseObj()

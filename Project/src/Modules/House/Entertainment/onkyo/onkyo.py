@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-12'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -370,7 +370,7 @@ class OnkeoControl:
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
             l_topic = 'house/entertainment/onkyo/status'
-            self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
             p_device_obj._Protocol = None
@@ -378,7 +378,7 @@ class OnkeoControl:
             p_status.Type = 'UnConnected'
             p_status.Connected = False
             l_topic = 'house/entertainment/onkyo/status'
-            self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
 
         p_device_obj._Queue = Queue(32)

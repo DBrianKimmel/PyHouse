@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.API
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -85,7 +85,7 @@ class MqttActions:
             return l_msg
         try:
             LOG.debug(PrettyFormatAny.form(l_module_obj, 'Entertain Module'))
-            l_module_api = l_module_obj._API
+            l_module_api = l_module_obj._Api
             p_logmsg += l_module_api.decode(p_topic[1:], p_message)
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
@@ -119,9 +119,9 @@ class LocalConfig:
             l_module = importlib.import_module(l_plugin_name)
             l_plugin._Module = l_module
             # Initialize Plugin
-            l_plugin._API = l_module.API(self.m_pyhouse_obj)
+            l_plugin._Api = l_module.API(self.m_pyhouse_obj)
             # LOG.debug(PrettyFormatAny.form(l_plugin, 'Plugin'))
-            l_plugin._API.LoadConfig()
+            l_plugin._Api.LoadConfig()
             LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
 
     def _extract_services(self, p_pyhouse_obj, p_yaml):
@@ -245,7 +245,7 @@ class Api:
         l_obj.Model = p_service.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _device_start(self, p_device):
         """
@@ -257,7 +257,7 @@ class Api:
         l_obj.Model = p_device.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def _module_start_loop(self, p_plugin):
         """
@@ -273,13 +273,13 @@ class Api:
             for l_device in p_plugin.Devices.values():
                 self._device_start(l_device)
 
-        # p_plugin._API.Start()
+        # p_plugin._Api.Start()
         # l_topic = 'house/entertainment/{}/status'.format(p_device.Name)
         # l_obj = EntertainmentDeviceControl()
         # l_obj.Model = l_name
         # l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
 
     def Start(self):
         LOG.info("Starting - Version:{}".format(__version__))

@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,46 +21,12 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
-from Modules.Families import VALID_FAMILIES
-from Modules.Families.family import API as familyAPI
-from Modules.Families import family_utils
-from Modules.Families.family_utils import FamUtil
+from Modules.House.Family import VALID_FAMILIES
+from Modules.House.Family.family import Api as familyApi
+from Modules.House.Family import family_utils
+from Modules.House.Family.family_utils import FamUtil
 from Modules.Core.Utilities.device_tools import XML as deviceXML
-from Modules.Housing.Lighting.lighting_lights import LightData
-from Modules.Housing.Lighting.test.xml_lights import \
-    TESTING_LIGHT_NAME_0, \
-    TESTING_LIGHT_ACTIVE_0, \
-    TESTING_LIGHT_KEY_0, \
-    TESTING_LIGHT_CUR_LEVEL_0, \
-    TESTING_LIGHT_DEVICE_FAMILY_0, \
-    TESTING_LIGHT_DEVICE_SUBTYPE_0, \
-    TESTING_LIGHT_DEVICE_TYPE_0, \
-    TESTING_LIGHT_ROOM_NAME_0, \
-    TESTING_LIGHT_NAME_1, \
-    TESTING_LIGHT_KEY_1, \
-    TESTING_LIGHT_ACTIVE_1, \
-    TESTING_LIGHT_ROOM_NAME_1, \
-    TESTING_LIGHT_ROOM_COORDS_0, \
-    TESTING_LIGHT_ROOM_UUID_0, \
-    XML_LIGHT_SECTION, \
-    L_LIGHT_SECTION_START, \
-    TESTING_LIGHT_SECTION
-from Modules.Families.test.xml_family import \
-    TESTING_FAMILY_NAME_1, \
-    TESTING_FAMILY_NAME_0, \
-    TESTING_FAMILY_NAME_2, \
-    TESTING_FAMILY_NAME_3, \
-    TESTING_FAMILY_NAME_4
-from Modules.Families.Insteon.test.xml_insteon import \
-    TESTING_INSTEON_PRODUCT_KEY_0, \
-    TESTING_INSTEON_ADDRESS_0, \
-    TESTING_INSTEON_DEVCAT_0
-from Modules.Core.test.xml_device import \
-    TESTING_DEVICE_FAMILY_INSTEON, \
-    TESTING_DEVICE_COMMENT_0, \
-    TESTING_DEVICE_FAMILY_UPB
-from Modules.Families.UPB.test.xml_upb import \
-    TESTING_UPB_ADDRESS
+from Modules.House.Lighting.lighting_lights import LightData
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -83,7 +49,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).m_family
+        self.m_pyhouse_obj._Families = familyApi(self.m_pyhouse_obj).m_family
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_api = deviceXML()
 
