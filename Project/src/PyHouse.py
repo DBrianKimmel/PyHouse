@@ -96,7 +96,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse                ')
 
 LOCK_PATH = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "lock")
-g_API = None
+g_Api = None
 
 
 class Singleton:
@@ -169,8 +169,8 @@ def SigHupHandler(signum, _stackframe):
     """
     """
     LOG.debug('Hup Signal handler called with signal {}'.format(signum))
-    g_API.Stop()
-    g_API.Start()
+    g_Api.Stop()
+    g_Api.Start()
 
 
 def SigIntHandler(signum, _stackframe):
@@ -179,7 +179,7 @@ def SigIntHandler(signum, _stackframe):
     """
     LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
     LOG.info("Interrupted.\n\n\n")
-    g_API.Quit()
+    g_Api.Quit()
     exit
 
 
@@ -213,15 +213,15 @@ class Api:
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        global g_API
-        g_API = self
+        global g_Api
+        g_Api = self
         # self.m_pyhouse_obj
         LOG.info('Initialized.\n==================================================================\n')
 
     def LoadConfig(self):
         """ This loads all the configuration.
         """
-        self.m_pyhouse_obj._Apis.Core.CoreSetupAPI.LoadConfig()
+        self.m_pyhouse_obj._Apis.Core.CoreSetupApi.LoadConfig()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
         pass
@@ -231,13 +231,13 @@ class Api:
         """
         print('Reactor is now running.')
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj._Apis.Core.CoreSetupAPI.Start()
+        self.m_pyhouse_obj._Apis.Core.CoreSetupApi.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        self.m_pyhouse_obj._Apis.Core.CoreSetupAPI.Stop()
+        self.m_pyhouse_obj._Apis.Core.CoreSetupApi.Stop()
         LOG.info("Stopped.\n")
 
     def Quit(self):

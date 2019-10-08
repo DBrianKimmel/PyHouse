@@ -12,7 +12,7 @@ This may be instanced as many times as there are USB devices to control.
 This should also allow control of many different houses.
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-10-08'
 __author__ = 'D. Brian Kimmel'
 
 # Import system type stuff
@@ -72,7 +72,7 @@ class UsbDeviceData(object):
         return l_ret
 
 
-class UsbDriverAPI(UsbDeviceData):
+class UsbDriverApi(UsbDeviceData):
 
     def _setup_find_device(self, p_usb):
         """First step in opening a USB device.
@@ -235,7 +235,7 @@ class UsbDriverAPI(UsbDeviceData):
         return l_len
 
 
-class API(UsbDriverAPI):
+class Api(UsbDriverApi):
 
     def __init__(self):
         """

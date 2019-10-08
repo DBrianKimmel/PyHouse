@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -215,7 +215,7 @@ class SerialApi:
                     l_port,
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
-            p_controller_obj.Interface._DriverAPI = self
+            p_controller_obj.Interface._DriverApi = self
             LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
@@ -281,7 +281,7 @@ class Api(SerialApi):
     def Start(self, p_controller_obj):
         """
         @param p_controller_obj: is the ControllerInformation() object for a serial device to open.
-        @return: a pointer to the xxx or None
+        @return: a pointer to the serial interface or None
         """
         LOG.info('Starting serial driver for Controller "{}"'.format(p_controller_obj.Name))
         self.m_controller_obj = p_controller_obj
@@ -289,11 +289,12 @@ class Api(SerialApi):
         l_ret = self.open_serial_driver(self.m_pyhouse_obj, p_controller_obj)
         self.m_active = l_ret
         if l_ret != None:
-            p_controller_obj.Interface._DriverAPI = self
+            p_controller_obj.Interface._DriverApi = self
             LOG.info('Started Serial driver for controller "{}"'.format(self.m_controller_obj.Name))
         else:
             LOG.error('ERROR - failed to start Serial Driver for  controller "{}"'.format(self.m_controller_obj.Name))
-        return None
+            l_ret = None
+        return l_ret
 
     def Stop(self):
         self.close_device(self.m_controller_obj)

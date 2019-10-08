@@ -10,7 +10,7 @@
 Passed all 19 tests - DBK - 2019-06-18
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import os
@@ -135,16 +135,16 @@ class C1_Structures(SetupMixin, unittest.TestCase):
         """ Test every component of PyHouseInformation()
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'C1-1-A PyHouse obj'))
-        self.assertIsInstance(self.m_pyhouse_obj._Apis, PyHouseAPIs)
+        self.assertIsInstance(self.m_pyhouse_obj._Apis, PyHouseApis)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj._Twisted, TwistedInformation)
         self.assertEqual(self.m_pyhouse_obj._Uuids.All, {})
 
     def test_02_Apis(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Apis, 'C1-2-A PyHouse APIs'))
-        self.assertIsInstance(self.m_pyhouse_obj._Apis.Computer, ComputerAPIs)
-        self.assertIsInstance(self.m_pyhouse_obj._Apis.House, HouseAPIs)
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj._Apis, 'C1-2-A PyHouse Apis'))
+        self.assertIsInstance(self.m_pyhouse_obj._Apis.Computer, ComputerApis)
+        self.assertIsInstance(self.m_pyhouse_obj._Apis.House, HouseApis)
 
     def test_03_Computer(self):
         # sprint(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-3-A PyHouse.Computer obj'))

@@ -78,7 +78,7 @@ class Mqtt:
 
     def send_message(self, p_pyhouse_obj, p_topic, _p_location_obj):
         l_topic = 'house/ocation/' + p_topic
-        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic)
+        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic)
 
 
 class LocalConfig:

@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-07'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -299,7 +299,7 @@ class PioneerControl:
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
             l_topic = 'house/entertainment/pioneer/status'
-            self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
             p_device_obj._Protocol = None
@@ -307,7 +307,7 @@ class PioneerControl:
             p_status.Type = 'UnConnected'
             p_status.Connected = False
             l_topic = 'house/entertainment/pioneer/status'
-            self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Pioneer device - {}'.format(p_reason))
             LOG.debug(PrettyFormatAny.form(p_device_obj, 'Device'))
             LOG.debug(PrettyFormatAny.form(p_device_obj.Host, 'Host'))
@@ -453,7 +453,7 @@ class PioneerFactory(ClientFactory):
         LOG.warn('makeConnection - Transport: {}'.format(p_transport))
 
 
-class API(MqttActions, PioneerClient):
+class Api(MqttActions, PioneerClient):
     """This interfaces to all of PyHouse.
     """
 
@@ -463,7 +463,7 @@ class API(MqttActions, PioneerClient):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        LOG.info("API Initialized - Version:{}".format(__version__))
+        LOG.info("Api Initialized - Version:{}".format(__version__))
 
     def _pioneer_power(self, p_family, p_model, p_power):
         """
@@ -520,7 +520,7 @@ class API(MqttActions, PioneerClient):
     def Start(self):
         """ Start all the Pioneer factories if we have any Pioneer devices.
         """
-        LOG.info('API Start...')
+        LOG.info('Api Start...')
         l_count = 0
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
         for l_device_obj in l_devices.values():

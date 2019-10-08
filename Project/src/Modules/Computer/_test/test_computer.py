@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK - 2019-03-16
 
 """
-__updated__ = "2019-10-05"
+__updated__ = "2019-10-08"
 
 # Import system type stuff
 # import platform
@@ -18,7 +18,7 @@ from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Computer.computer import Api as computerAPI
+from Modules.Computer.computer import Api as computerApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -29,7 +29,7 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_api = computerAPI(self.m_pyhouse_obj)
+        self.m_api = computerApi(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):

@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Drivers/_test/test_Serial.py
+@name:      Modules/Core/Drivers/_test/test_Serial.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,20 +9,16 @@
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import ControllerInformation
-from Modules.Drivers.interface import Xml as interfaceXml
-from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
-from Modules.Drivers.Serial.test.xml_serial import XML_SERIAL
-from Modules.Drivers.USB.test.xml_usb import XML_USB
+from Modules.Housing.Lighting.lighting_controllers import Api as controllerApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -34,7 +30,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_controller_obj = ControllerInformation()
-        self.m_ctlr_api = controllerAPI()
+        self.m_ctlr_api = controllerApi()
 
 
 class A0(unittest.TestCase):

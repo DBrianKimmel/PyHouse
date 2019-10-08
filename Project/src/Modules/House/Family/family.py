@@ -24,10 +24,10 @@ An Insteon_device module is used to read and write information to an Insteon con
 
     PackageName         Will point to the package directory 'Modules.House.Family.insteon'
     DeviceName          will contain 'Insteon_device'
-    _DeviceAPI          will point to Insteon_device.API() to allow API functions to happen.
+    _DeviceApi          will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 9, 23)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -93,13 +93,13 @@ class FamilyModuleInformation:
         self.Address = None
         self.DeviceName = None  # insteon_device
         self.PackageName = None  # Modules.House.Family.insteon
-        self._DeviceAPI = None  # insteon_device.API()
+        self._DeviceApi = None  # insteon_devicepi()
 
 
 class lightingUtility:
     """
     This will go thru every valid family and build a family entry for each one.
-    It also imports the _device and _xml for each family and stores their API reference in the family object.
+    It also imports the _device and _xml for each family and stores their Api reference in the family object.
 
     This should operate more as a plug-in loader rather than loading everything.
     """
@@ -126,25 +126,25 @@ class lightingUtility:
     def _create_api_instance(self, p_pyhouse_obj, p_module_name, p_module_ref):
         """
         Hopefully, this will catch errors when adding new families.
-        I had a very strange error when one module had a different number of params in the API.__init__ definition.
+        I had a very strange error when one module had a different number of params in the Api.__init__ definition.
 
         @param p_pyhouse_obj: is the entire PyHouse Data
-        @param p_module_name: is the name of the module for which we are creating the API instance.
+        @param p_module_name: is the name of the module for which we are creating the Api instance.
         @param p_module_ref: is a reference to the module we just imported.
         """
         LOG.info('Starting')
         # LOG.debug(PrettyFormatAny.form(p_module_ref, 'Ref'))
         try:
-            l_api = p_module_ref.API(p_pyhouse_obj)
+            l_api = p_module_ref.Api(p_pyhouse_obj)
         except Exception as e_err:
             LOG.error('ERROR - Module: {}\n\t{}'.format(p_module_name, e_err))
-            LOG.error('Ref: {}'.format(PrettyFormatAny.form(p_module_ref, 'ModuleRef', 190)))
+            # LOG.error('Ref: {}'.format(PrettyFormatAny.form(p_module_ref, 'ModuleRef', 190)))
             l_api = None
         return l_api
 
     def _create_config_instance(self, _p_pyhouse_obj, p_module_name, p_module_ref):
         """
-        @param p_module_name: is the name of the module for which we are creating the API instance.
+        @param p_module_name: is the name of the module for which we are creating the Api instance.
         @param p_module_ref: is the module we just imported.
         """
         try:
@@ -180,12 +180,9 @@ class lightingUtility:
 
         # Now import the family python package
         importlib.import_module(l_family_obj.PackageName)
-
         l_device_ref = lightingUtility()._do_import(l_family_obj, l_family_obj.DeviceName)
-
-        l_family_obj._DeviceAPI = lightingUtility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
-
-        LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
+        l_family_obj._DeviceApi = lightingUtility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
+        # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
         return l_family_obj
 
 
@@ -281,8 +278,8 @@ class Api:
             l_family_obj = lightingUtility()._build_one_family_data(self.m_pyhouse_obj, l_key)
 
             # ## FIXME temp test
-            if l_family_obj._DeviceAPI != None:
-                l_family_obj._DeviceAPI.Start()
+            if l_family_obj._DeviceApi != None:
+                l_family_obj._DeviceApi.Start()
         LOG.info('Started {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
         return self.m_family
 

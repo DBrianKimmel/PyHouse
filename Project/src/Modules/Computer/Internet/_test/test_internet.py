@@ -10,7 +10,7 @@
 Passed all 5 tests - DBK - 2015-09-12
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -46,7 +46,7 @@ class C01_Util(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_internet_obj = InternetConnectionInformation()
-        self.m_api = internetAPI(self.m_pyhouse_obj)
+        self.m_api = internetApi(self.m_pyhouse_obj)
 
     def test_01_Config(self):
         # l_config = self.m_api._read_xml_configuration(self.m_pyhouse_obj)

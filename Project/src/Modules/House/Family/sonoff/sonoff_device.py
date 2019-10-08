@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-19'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -56,7 +56,7 @@ class Config:
         return l_obj
 
 
-class API:
+class Api:
     """
     These are the public methods available to use Devices from any family.
     """

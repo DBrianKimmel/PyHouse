@@ -11,7 +11,7 @@ Handle the scenes component of the lighting system.
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-10-06'
 
 Scene_Data = {}
 
@@ -33,7 +33,7 @@ class ScenesData(object):
         return l_ret
 
 
-class ScenesAPI(ScenesData):
+class ScenesApi(ScenesData):
     """
     """
 

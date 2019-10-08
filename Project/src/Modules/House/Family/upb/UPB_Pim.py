@@ -372,7 +372,7 @@ class CreateCommands(UpbPimUtility, PimDriverInterface, BuildCommand):
     #    pass
 
 
-class UpbPimAPI(CreateCommands):
+class UpbPimApi(CreateCommands):
 
     @staticmethod
     def _initilaize_pim(p_controller_obj):
@@ -393,7 +393,7 @@ class UpbPimAPI(CreateCommands):
         """
         p_controller_obj._Queue = Queue.Queue(300)
         LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
-        self.m_pim = UpbPimAPI._initilaize_pim(p_controller_obj)
+        self.m_pim = UpbPimApi._initilaize_pim(p_controller_obj)
         # l_driver = FamUtil.get_device_driver_Api(p_pyhouse_obj, p_controller_obj)
         # p_controller_obj.Interface._DriverApi = l_driver
         # self.m_pim.Interface._DriverApi = l_driver
@@ -409,7 +409,7 @@ class UpbPimAPI(CreateCommands):
         pass
 
 
-class API(UpbPimAPI):
+class Api(UpbPimApi):
     m_pyhouse_obj = None
     m_controller_obj = None
 

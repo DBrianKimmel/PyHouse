@@ -8,15 +8,15 @@
 @summary:
 
 """
-from Modules.Core.Config import config_tools
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyMh files
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.Family.hue.hue_hub import HueHub
 
 from Modules.Core import logging_pyh as Logger
@@ -41,11 +41,11 @@ class LocalConfig:
     """
     """
 
-    m_config_tools = None
+    m_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_modules_info(self, p_yaml):
         """
@@ -61,19 +61,28 @@ class LocalConfig:
             LOG.debug('found Module "{}" in house config file.'.format(l_module))
         return l_obj
 
-    def _extract_hue_info(self, p_config):
+    def _extract_one_hue(self, p_config):
         """
         """
+        LOG.debug('Config: {}'.format(p_config))
         l_required = ['Name', 'Family', 'Host', 'Access']
         l_obj = HueInformation()
         for l_key, l_value in p_config.items():
+            LOG.debug('Key: {}; Value: {}'.format(l_key, l_value))
             if l_key == 'Access':
-                l_obj.Access = self.m_config_tools.extract_access_group(l_value)
+                l_obj.Access = self.m_config.extract_access_group(l_value)
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('house.yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warn('hue.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
+
+    def _extract_all_devices(self, p_config):
+        """
+        """
+        l_hue = {}
+        for l_ix, l_value in enumerate(p_config):
+            l_obj = self._extract_one_hue(l_value)
 
     def load_yaml_config(self):
         """ Read the Rooms.Yaml file.
@@ -90,12 +99,12 @@ class LocalConfig:
         except:
             LOG.warn('The config file does not start with "Hue:"')
             return None
-        l_hue = self._extract_hue_info(l_yaml)
+        l_hue = self._extract_all_devices(l_yaml)
         # self.m_pyhouse_obj.House.Name = l_house.Name
         return l_hue  # for testing purposes
 
 
-class API:
+class Api:
     """
     """
 

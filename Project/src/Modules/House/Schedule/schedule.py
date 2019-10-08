@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-07'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -359,7 +359,7 @@ class ScheduleExecution:
         """
         l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
-        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
         if p_schedule_obj.Sched.Type == 'Light':
             LOG.info('Execute_one_schedule type = Light')
@@ -375,7 +375,7 @@ class ScheduleExecution:
         #
         elif p_schedule_obj.Sched.Type == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
-            #  scheduleActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            #  scheduleActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         else:
             LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.Sched.Type))
@@ -396,7 +396,7 @@ class ScheduleExecution:
         for l_slot in p_key_list:
             l_schedule_obj = p_pyhouse_obj.House.Schedules[l_slot]
             ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
-        lightingUtility.schedule_next_event(p_pyhouse_obj)
+        lightingUtility().schedule_next_event(p_pyhouse_obj)
 
 
 class lightingUtility:
@@ -420,7 +420,7 @@ class lightingUtility:
         """
         l_schedule_key_list = []
         l_min_seconds = SECONDS_IN_WEEK
-        l_riseset = lightingUtility.fetch_sunrise_set(p_pyhouse_obj)
+        l_riseset = lightingUtility().fetch_sunrise_set(p_pyhouse_obj)
         # Loop through the possible scheduled events.
         for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
             l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
@@ -461,10 +461,10 @@ class lightingUtility:
         @param p_delay: is the (forced) delay time for the timer.
         """
         l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
-        l_delay, l_list = lightingUtility.find_next_scheduled_events(p_pyhouse_obj, l_now)
+        l_delay, l_list = lightingUtility().find_next_scheduled_events(p_pyhouse_obj, l_now)
         if p_delay != 0:
             l_delay = p_delay
-        lightingUtility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
+        lightingUtility().run_after_delay(p_pyhouse_obj, l_delay, l_list)
 
     def find_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
         """ Find all the schedule entry using any of several criteria.
@@ -664,6 +664,6 @@ class Api:
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtility.schedule_next_event, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtility().schedule_next_event, self.m_pyhouse_obj)
 
 # ## END DBK

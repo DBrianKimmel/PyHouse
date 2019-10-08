@@ -26,7 +26,10 @@ pyhouse_obj.					PyHouseInformation()			Modules/Core/data_objects.py
         Primary
         Priority
     House.						HouseInformation()				Modules/House/house.py
-    	Family.					FamilyInformation{}				Modules/House/Family/family.py
+    	Location.				LocationInformation{}			Modules/House/Location.py
+    	Floor.					FloorInformation{}				Modules/House/Floor.py
+    	Rooms.					RoomsInformation{}				Modules/House/Rooms.py
+    	-
         Lighting.				LightingInformation()			Modules/House/Lighting/lighting.py
         	Buttons.{}
         	Controllers.{}		ControllerInformation()			Modules/House/Lighting/controllers.py
@@ -35,6 +38,15 @@ pyhouse_obj.					PyHouseInformation()			Modules/Core/data_objects.py
         		Interface{}
         	Lights.{}
         	Outlets.{}
+        Hvac.
+        Security.
+        Irrigation.
+        Pool.
+        Rules.
+        Schedule.
+        Sync.
+        Entertainment.
+    	Family.					FamilyInformation{}				Modules/House/Family/family.py
         ---
         Name
 ```

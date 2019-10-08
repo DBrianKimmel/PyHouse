@@ -10,7 +10,7 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -35,13 +35,13 @@ class A0(unittest.TestCase):
         print('Id: test_Insteon_device')
 
 
-class C01_API(SetupMixin, unittest.TestCase):
+class C01_Api(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = insteon_device.API(self.m_pyhouse_obj)
+        self.m_api = insteon_device.Api(self.m_pyhouse_obj)
 
     def test_01_Init(self):
         """ Be sure that the XML contains the right stuff.
@@ -50,7 +50,7 @@ class C01_API(SetupMixin, unittest.TestCase):
 
 # def suite():
 #    suite = unittest.TestSuite()
-#    # suite.addTest(Test_02_API('test_0202_Init'))
+#    # suite.addTest(Test_02_Api('test_0202_Init'))
 #    return suite
 
 # ## END

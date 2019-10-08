@@ -19,12 +19,12 @@ where <thing> is:
     samsung        to control the Samsung A/V devices
 
 
-House.Entertainment.Plugins{}.API
+House.Entertainment.Plugins{}.Api
                              .Devices{}
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-07'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -119,7 +119,7 @@ class LocalConfig:
             l_module = importlib.import_module(l_plugin_name)
             l_plugin._Module = l_module
             # Initialize Plugin
-            l_plugin._Api = l_module.API(self.m_pyhouse_obj)
+            l_plugin._Api = l_module.Api(self.m_pyhouse_obj)
             # LOG.debug(PrettyFormatAny.form(l_plugin, 'Plugin'))
             l_plugin._Api.LoadConfig()
             LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
@@ -245,7 +245,7 @@ class Api:
         l_obj.Model = p_service.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def _device_start(self, p_device):
         """
@@ -257,7 +257,7 @@ class Api:
         l_obj.Model = p_device.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def _module_start_loop(self, p_plugin):
         """
@@ -279,7 +279,7 @@ class Api:
         # l_obj.Model = l_name
         # l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def Start(self):
         LOG.info("Starting - Version:{}".format(__version__))

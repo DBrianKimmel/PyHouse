@@ -24,11 +24,11 @@ import twisted
 # Import PyMh files and modules.
 from Modules.Core.data_objects import RiseSetData
 from Modules.Core.Utilities import convert, config_tools
-from Modules.Core.Mqtt.mqtt import API as mqttAPI
+from Modules.Core.Mqtt.mqtt import Api as mqttApi
 from Modules.House.Schedule.schedule import \
     Config as scheduleConfig, \
     SchedTime, \
-    API as scheduleAPI, \
+    Api as scheduleApi, \
     lightingUtility as scheduleUtility, \
     TimeField, CONFIG_FILE_NAME
 from _test.testing_mixin import SetupPyHouseObj
@@ -90,7 +90,7 @@ class SetupMixin(object):
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_pyhouse_obj.House.Location._RiseSet = Mock.RiseSet()
-        self.m_api = scheduleAPI(self.m_pyhouse_obj)
+        self.m_api = scheduleApi(self.m_pyhouse_obj)
         self.m_filename = 'schedule.yaml'
 
 
@@ -231,7 +231,7 @@ class C2_List(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_pyhouse_obj._Apis.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Apis.Core.MqttApi = mqttApi(self.m_pyhouse_obj)
         twisted.internet.base.DelayedCall.debug = True
 
     def test_01_BuildSched(self):

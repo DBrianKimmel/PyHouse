@@ -187,7 +187,7 @@ class DecodeResponses(object):
             l_mqtt_message += 'Unknown cmd1 '
 
         LOG.info('HVAC {}'.format(l_mqtt_message))
-        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /temperature
+        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /temperature
         return
 
 #  ## END DBK

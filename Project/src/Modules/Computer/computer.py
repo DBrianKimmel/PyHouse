@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -64,7 +64,7 @@ class ComputerInformation:
         self.Web = {}  # WebInformation()
 
 
-class ComputerAPIs:
+class ComputerApis:
     """
     ==> PyHouse._Apis.Computer.xxx as in the def below.
 
@@ -72,14 +72,6 @@ class ComputerAPIs:
 
     def __init__(self):
         pass
-        # self.BridgesAPI = None
-        # self.ComputerApi = None
-        # self.CommAPIs = None  # CommunicationAPIs()
-        # self.InternetAPI = None
-        # self.NodesAPI = None
-        # self.WeatherAPI = None
-        # self.WebAPI = None
-        # self.WebSocketAPI = None
 
 
 class MqttActions:
@@ -219,9 +211,9 @@ class lightingUtility:
 
     def _init_component_apis(self, p_pyhouse_obj):
         """
-        Initialize all the computer division APIs
+        Initialize all the computer division Apis
         """
-        p_pyhouse_obj._Apis.Computer = ComputerAPIs()
+        p_pyhouse_obj._Apis.Computer = ComputerApis()
 
     def _load_component_config(self):
         LOG.debug('Loading Componente')

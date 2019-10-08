@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 
@@ -344,7 +344,7 @@ class InsteonAllLinks:
         LOG.info(l_debug_msg)
 
 
-class API:
+class Api:
     """
     """
 

@@ -11,8 +11,7 @@
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 
@@ -22,7 +21,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Null_device ')
 
 
-class API(object):
+class Api(object):
     """
     """
 

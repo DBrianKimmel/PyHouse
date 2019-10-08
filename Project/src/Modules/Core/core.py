@@ -38,8 +38,8 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Config.config_tools import ConfigInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
-    PyHouseAPIs, \
-    CoreAPIs, \
+    PyHouseApis, \
+    CoreApis, \
     CoreInformation, \
     UuidInformation, \
     TwistedInformation, \
@@ -111,7 +111,7 @@ class lightingUtility:
         This is sync so that logging is up and running before proceeding with the rest of the initialization.
         The logs are at a fixed place and are not configurable.
         """
-        # l_log = setup_logging.API(p_pyhouse_obj)  # To eliminate Eclipse warning
+        # l_log = setup_logging.Api(p_pyhouse_obj)  # To eliminate Eclipse warning
         # l_log.Start()
         # LOG.info("Starting.")
 
@@ -174,9 +174,9 @@ class lightingUtility:
     def _setup_Apis(self):
         """
         """
-        l_obj = PyHouseAPIs()
-        l_obj.Core = CoreAPIs()
-        l_obj.Core.PyHouseMainAPI = self
+        l_obj = PyHouseApis()
+        l_obj.Core = CoreApis()
+        l_obj.Core.PyHouseMainApi = self
         return l_obj
 
     def _setup_Config(self):
@@ -232,7 +232,7 @@ class Api(lightingUtility):
 
     def __init__(self):
         """ **NOR**
-        This will initialize much (all?) of the API infrastructure.
+        This will initialize much (all?) of the Api infrastructure.
         Note that the Configuration file is NOT read until the following Start() method begins.
         Also note that the reactor is *NOT* yet running.
         """
@@ -252,9 +252,9 @@ class Api(lightingUtility):
         #
         self.load_yaml_config(self.m_pyhouse_obj)
         self._sync_startup_logging(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._Apis.Core.MqttAPI = mqttApi(self.m_pyhouse_obj, self)
-        self.m_pyhouse_obj._Apis.Core.MqttAPI.LoadConfig()
-        self.m_pyhouse_obj._Apis.Core.MqttAPI.Start()
+        self.m_pyhouse_obj._Apis.Core.MqttApi = mqttApi(self.m_pyhouse_obj, self)
+        self.m_pyhouse_obj._Apis.Core.MqttApi.LoadConfig()
+        self.m_pyhouse_obj._Apis.Core.MqttApi.Start()
         self.m_pyhouse_obj._Apis.Computer.ComputerApi = computerApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj._Apis.House.HouseApi = houseApi(self.m_pyhouse_obj)
         LOG.info('All data has been set up.')
@@ -300,14 +300,14 @@ class Api(lightingUtility):
         The Yaml config is broken down into many smaller files and written by each component.
         """
         LOG.info('\n======================== Saving Config Files ========================\n')
-        # configAPI(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
+        # configApi(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
         self.m_pyhouse_obj._Apis.Computer.ComputerApi.SaveConfig()
         self.m_pyhouse_obj._Apis.House.HouseApi.SaveConfig()
         LOG.info("\n======================== Saved Config Files ==========================\n")
 
     def Stop(self):
         l_topic = 'computer/shutdown'
-        self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
         self.SaveConfig()
         self.m_pyhouse_obj._Apis.Computer.ComputerApi.Stop()
         self.m_pyhouse_obj._Apis.House.HouseApi.Stop()

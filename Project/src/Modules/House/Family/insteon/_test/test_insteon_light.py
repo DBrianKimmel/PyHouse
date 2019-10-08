@@ -21,8 +21,8 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import HouseInformation, ControllerInformation
-from Modules.Housing.Lighting.lighting_controllers import API as controllerAPI
-from Modules.Housing.Lighting.lighting_lights import API as lightingAPI
+from Modules.Housing.Lighting.lighting_controllers import Api as controllerApi
+from Modules.Housing.Lighting.lighting_lights import Api as lightingApi
 from Modules.Housing.Lighting.test.xml_controllers import \
     TESTING_CONTROLLER_NAME_0
 from Modules.Housing.Lighting.test.xml_lights import \
@@ -52,8 +52,8 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_cntl_api = controllerAPI()
-        self.m_light_api = lightingAPI()
+        self.m_cntl_api = controllerApi()
+        self.m_light_api = lightingApi()
 
 
 class A0(unittest.TestCase):
@@ -181,7 +181,7 @@ class C1_Light(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj)
         self.m_ctrlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
         # print(PrettyFormatAny.form(self.m_ctrlr, "C1-0Controlelrs"))
-        self.m_pyhouse_obj._Apis.Core.MqttAPI = DummyApi()
+        self.m_pyhouse_obj._Apis.Core.MqttApi = DummyApi()
 
     def test_01_x(self):
         self.m_ctrlr._Message = MSG_50_A

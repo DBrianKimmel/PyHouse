@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -53,7 +53,7 @@ class Util(object):
         LOG.info('Start Connecting via TCP to broker: {}'.format(p_broker_obj.Name))
         if p_broker_obj.Host.Name is None or p_broker_obj.Host.Port is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker_obj.Host.Name, p_broker_obj.Host.Port))
-            p_broker_obj._ProtocolAPI = None
+            p_broker_obj._ProtocolApi = None
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
             _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.Host.Name, p_broker_obj.Host.Port, l_factory)

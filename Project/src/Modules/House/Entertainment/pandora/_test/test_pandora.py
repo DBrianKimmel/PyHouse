@@ -10,7 +10,7 @@
 Passed all 15 tests - DBK - 2019-08-30
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -141,7 +141,7 @@ class D2_PianoBarRxed(SetupMixin, unittest.TestCase):
             print(l_line)
 
 
-class E1_API(SetupMixin, unittest.TestCase):
+class E1_Api(SetupMixin, unittest.TestCase):
     """ Test that we are initializing properly
     """
 
@@ -160,13 +160,13 @@ class E1_API(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ServiceCount, 0)
 
 
-class E2_API(SetupMixin, unittest.TestCase):
+class E2_Api(SetupMixin, unittest.TestCase):
     """ Test that we write XML correctly
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_entApi = entertainmentApi(self.m_pyhouse_obj)
         self.m_api = pandoraApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
@@ -184,13 +184,13 @@ class E2_API(SetupMixin, unittest.TestCase):
         self.assertEqual(l_base.ServiceCount, 1)
 
 
-class E3_API(SetupMixin, unittest.TestCase):
+class E3_Api(SetupMixin, unittest.TestCase):
     """ Test that we write XML correctly
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_entApi = entertainmentApi(self.m_pyhouse_obj)
         self.m_api = pandoraApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
         self.m_api.LoadConfig()
@@ -212,7 +212,7 @@ class F1_Mqtt(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_entApi = entertainmentApi(self.m_pyhouse_obj)
         self.m_api = pandoraApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
         self.m_api.LoadConfig()
@@ -238,7 +238,7 @@ class F2_Extract(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_entApi = entertainmentApi(self.m_pyhouse_obj)
         self.m_api = pandoraApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
@@ -269,7 +269,7 @@ class G1_Extract(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_entApi = entertainmentApi(self.m_pyhouse_obj)
         self.m_api = pandoraApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
@@ -280,7 +280,7 @@ class G2_Extract(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_entAPI = entertainmentApi(self.m_pyhouse_obj)
+        self.m_entApi = entertainmentApi(self.m_pyhouse_obj)
         self.m_api = pandoraApi(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 

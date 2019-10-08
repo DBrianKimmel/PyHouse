@@ -137,7 +137,7 @@ class DecodeResponses:
 
     def _publish(self, p_pyhouse_obj, p_device_obj):
         l_topic = "house/lighting/light/{}/info".format(p_device_obj.Name)
-        p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
+        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
     def _decode_0x50(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)

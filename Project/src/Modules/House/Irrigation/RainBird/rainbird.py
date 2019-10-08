@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,7 +31,7 @@ LOG = Logger.getLogger('PyHouse.Irrg_RainBird  ')
 
 
 class RainbirdController:
-    # COMMAND FILE RAINBIRD API
+    # COMMAND FILE RAINBIRD Api
     jsoncommands = """{
         "ControllerCommands" : {
             "ModelAndVersionRequest" :         {"command" : "02",                                             "response" : "82",  "length" : 1},
@@ -285,7 +285,7 @@ class Connect():
     """
 
 
-class API():
+class Api():
     """
     """
 

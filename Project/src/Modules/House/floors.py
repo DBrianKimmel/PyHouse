@@ -87,7 +87,7 @@ class Mqtt:
         """
         # l_json = encode_json(p_room_obj)
         # l_topic = 'house/room/' + p_topic
-        # p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, l_json)
+        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_json)
 
 
 class LocalConfig:

@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -280,8 +280,8 @@ class B3_Family(SetupMixin, unittest.TestCase):
         self.assertEqual(l_family, TESTING_FAMILY_NAME_2)
 
 
-class B4_FamilyAPI(SetupMixin, unittest.TestCase):
-    """ This section tests family API retrieval
+class B4_FamilyApi(SetupMixin, unittest.TestCase):
+    """ This section tests family Api retrieval
     """
 
     def setUp(self):
@@ -291,35 +291,35 @@ class B4_FamilyAPI(SetupMixin, unittest.TestCase):
     def test_01_GetApi0(self):
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_0
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        print(PrettyFormatAny.form(l_api, 'B4-01-A - API'))
+        print(PrettyFormatAny.form(l_api, 'B4-01-A - Api'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 
     def test_02_GetApi1(self):
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_1
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        print(PrettyFormatAny.form(l_api, 'B4-02-A - API'))
+        print(PrettyFormatAny.form(l_api, 'B4-02-A - Api'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 
     def test_03_GetApi(self):
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_2
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_api, 'B4-03-A - API'))
+        # print(PrettyFormatAny.form(l_api, 'B4-03-A - Api'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 
     def test_04_GetApi(self):
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_3
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_api, 'B4-04-A - API'))
+        # print(PrettyFormatAny.form(l_api, 'B4-04-A - Api'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 
     def test_05_GetApi(self):
         self.m_device_obj.DeviceFamily = TESTING_FAMILY_NAME_4
         l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, self.m_device_obj)
-        # print(PrettyFormatAny.form(l_api, 'B4-05-A - API'))
+        # print(PrettyFormatAny.form(l_api, 'B4-05-A - Api'))
         self.assertNotEqual(l_api, None)
         # Note: We need proper testing here
 

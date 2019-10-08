@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 #  Import system type stuff
 import xml.etree.ElementTree as ET
@@ -79,7 +79,7 @@ class Test_05_Utility(SetupMixin, unittest.TestCase):
         pass
 
 
-class Test_06_API(SetupMixin, unittest.TestCase):
+class Test_06_Api(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)

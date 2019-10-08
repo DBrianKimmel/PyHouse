@@ -31,7 +31,7 @@ class PyHouseInformation:
 
     NOTE that the data entries need to be dicts so json encoding of the data works properly.
 
-    The APIs are kept separate as they should not be a part of the data sent to the browser.
+    The Apis are kept separate as they should not be a part of the data sent to the browser.
     """
 
     def __init__(self):
@@ -39,7 +39,7 @@ class PyHouseInformation:
         self.Computer = None  # ComputerInformation()
         self.House = None  # HouseInformation()
         # The rest are "Core" components
-        self._Apis = None  # PyHouseAPIs()
+        self._Apis = None  # PyHouseApis()
         self._Config = None  # ConfigInformation()
         self._Parameters = None  # ParameterInformation()
         self._Twisted = None  # TwistedInformation()
@@ -56,7 +56,7 @@ class CoreInformation:
         self.Mqtt = {}  # MqttInformation()
 
 
-class PyHouseAPIs:
+class PyHouseApis:
     """
     ==> PyHouse._Apis.xxx
 
@@ -64,11 +64,9 @@ class PyHouseAPIs:
     """
 
     def __init__(self):
-        self.Core = None  # CoreAPIs()
-        self.Computer = None  # ComputerAPIs()
+        self.Core = None  # CoreApis()
+        self.Computer = None  # ComputerApis()
         self.House = None  # HouseApis()
-        # self.CoreSetupAPI = None
-        # self.PyHouseMainAPI = None
 
 
 class BaseObject:
@@ -87,27 +85,27 @@ class BaseObject:
         self.LastUpdate = None
 
 
-class CommunicationAPIs:
+class CommunicationApis:
     """
-    ==> PyHouse._Apis.Computer.CommAPIs.xxx as in the def below.
+    ==> PyHouse._Apis.Computer.CommApis.xxx as in the def below.
 
-    """
-
-    def __init__(self):
-        self.BluetoothAPI = None
-        self.EmailAPI = None
-        self.PhoneAPI = None
-        self.TwitterAPI = None
-
-
-class CoreAPIs:
-    """
     """
 
     def __init__(self):
-        self.MqttAPI = None
-        self.CoreSetupAPI = None
-        self.PyHouseMainAPI = None
+        self.BluetoothApi = None
+        self.EmailApi = None
+        self.PhoneApi = None
+        self.TwitterApi = None
+
+
+class CoreApis:
+    """
+    """
+
+    def __init__(self):
+        self.MqttApi = None
+        self.CoreSetupApi = None
+        self.PyHouseMainApi = None
 
 
 class DriverStatus:
@@ -170,17 +168,8 @@ class HouseApis:
     """
 
     def __init__(self):
-        # self.EntertainmentAPI = None  # Uses Plugins
         self.FamilyApi = None  # Uses Plugins
         self.HouseApi = None
-        # self.HvacAPI = None
-        # self.IrrigationAPI = None
-        # self.LightingAPI = None
-        # self.PoolAPI = None
-        # self.ScheduleAPI = None
-        # self.SecurityAPI = None
-        # self.SunRiseSetAPI = None
-        # self.SyncAPI = None
 
 # class HvacData():
 

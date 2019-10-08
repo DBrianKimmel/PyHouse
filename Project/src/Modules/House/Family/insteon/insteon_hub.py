@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-24'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 
@@ -19,7 +19,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_hub    ')
 
 
-class API:
+class Api:
 
     m_controller_obj = None
     m_pyhouse_obj = None

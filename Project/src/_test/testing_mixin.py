@@ -10,7 +10,7 @@
 """
 from Modules.Core.core import ParameterInformation
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 #  Import system type stuff
 import os
@@ -20,7 +20,7 @@ import sys
 from twisted.internet import reactor
 
 #  Import PyMh files and modules.
-from Modules.Computer.computer import ComputerInformation, ComputerAPIs
+from Modules.Computer.computer import ComputerInformation, ComputerApis
 from Modules.House.house_data import LocationInformation
 from Modules.House.Hvac.hvac import HvacInformation
 from Modules.House.Entertainment.entertainment import \

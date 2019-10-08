@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 from twisted.web.client import getPage
@@ -24,7 +24,7 @@ LOG = Logger.getLogger('PyHouse.Internet    ')
 INITIAL_DELAY = 1 * 60
 
 
-class DynDnsAPI(object):
+class DynDnsApi(object):
     """Update zero or more dynamic DNS sites.
     This is a repeating two stage process.
     First get our current External IP address.
@@ -83,7 +83,7 @@ class DynDnsAPI(object):
         self.m_reactor.callLater(self.m_dyn_obj.UpdateInterval, l_cmd, None)
 
 
-class API(DynDnsAPI):
+class Api(DynDnsApi):
 
     def UpdateAllDynDns(self, p_pyhouse_obj):
         l_defer = Deferred()
@@ -95,7 +95,7 @@ class API(DynDnsAPI):
     def Start(self, p_pyhouse_obj, p_ix):
         self.m_internet_obj = p_pyhouse_obj.Computer.InternetConnection[p_ix]
         self.m_reactor = p_pyhouse_obj._Twisted.Reactor
-        self.m_dyn_loop = DynDnsAPI(self.m_internet_obj, self.m_reactor)
+        self.m_dyn_loop = DynDnsApi(self.m_internet_obj, self.m_reactor)
 
     def Stop(self, _ignore1, _ignore2):
         # self.m_dyn_loop.stop_dyndns_process()

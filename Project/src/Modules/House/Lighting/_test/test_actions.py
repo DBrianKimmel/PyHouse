@@ -10,21 +10,17 @@
 Passed all 5 tests - DBK - 2019-01-20
 
 """
-from Modules.Housing.Lighting.lighting_xml import LightingXML
 
-__updated__ = '2019-01-23'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Housing.Lighting.lighting_controllers import XML as controllerXML
-from Modules.Housing.Lighting.lighting_lights import API as lightAPI, XML as lightXML
-from Modules.Housing.Lighting.test.xml_lights import XML_LIGHT_SECTION, TESTING_LIGHT_SECTION
-from Modules.Housing.Lighting.test.xml_lighting import XML_LIGHTING
+from Modules.Housing.Lighting.lighting_lights import Api as lightApi, XML as lightXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

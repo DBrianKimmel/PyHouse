@@ -16,7 +16,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import re
@@ -111,7 +111,7 @@ class lightingUtility(FindExternalIpAddress):
         return l_defer
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
 
     def FindExternalIP(self, p_pyhouse_obj):
         """

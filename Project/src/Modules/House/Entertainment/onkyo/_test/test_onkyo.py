@@ -13,7 +13,7 @@ Passed all 8 tests - DBK - 2018-11-03
 
 """
 
-__updated__ = '2019-06-29'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from twisted.trial import unittest
 from twisted.internet.protocol import ClientCreator
 
 # Import PyMh files
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Housing.Entertainment.entertainment_data import EntertainmentInformation
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
@@ -31,7 +31,7 @@ from Modules.Housing.Entertainment.onkyo.onkyo import \
         OnkyoClient, \
         MqttActions, \
         OnkyoQueueData, \
-        API as onkyoAPI, \
+        Api as onkyoApi, \
         OnkyoDeviceInformation
 from Modules.Housing.Entertainment.test.xml_entertainment import \
         TESTING_ENTERTAINMENT_SECTION
@@ -159,7 +159,7 @@ class A4_YAML(SetupMixin, unittest.TestCase):
         """
         l_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
         # print('A4-01-A - Device\n{}'.format(PrettyFormatAny.form(l_device, 'Device')))
-        l_yaml = onkyoAPI(self.m_pyhouse_obj)._read_yaml(l_device)
+        l_yaml = onkyoApi(self.m_pyhouse_obj)._read_yaml(l_device)
         # print('A4-01-A - Yaml\n{}'.format(PrettyFormatAny.form(l_yaml, 'Yaml')))
         self.assertEqual(l_yaml['UnitType'], 1)
 
@@ -234,7 +234,7 @@ class B3_Yaml(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         l_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
-        self.m_yaml = onkyoAPI(self.m_pyhouse_obj)._read_yaml(l_device)
+        self.m_yaml = onkyoApi(self.m_pyhouse_obj)._read_yaml(l_device)
 
     def test_00_Yaml(self):
         """ Be sure that the XML contains the right stuff.
@@ -288,7 +288,7 @@ class C3_Command(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         l_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
-        l_yaml = onkyoAPI(self.m_pyhouse_obj)._read_yaml(l_device)
+        l_yaml = onkyoApi(self.m_pyhouse_obj)._read_yaml(l_device)
         l_device._Yaml = l_yaml
 
     def test_01_Zone1(self):
@@ -491,7 +491,7 @@ class F3_Yaml(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         entertainmentXML().read_entertainment_all(self.m_pyhouse_obj)
         self.m_device = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices[0]
-        self.m_yaml = onkyoAPI(self.m_pyhouse_obj)._read_yaml(self.m_device)
+        self.m_yaml = onkyoApi(self.m_pyhouse_obj)._read_yaml(self.m_device)
         self.m_queue = OnkyoQueueData()
         self.m_queue.Zone = 1
         self.m_queue.Command = 'Power'

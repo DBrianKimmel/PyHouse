@@ -12,7 +12,7 @@ It is imported once and instantiated for each local controller
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -92,16 +92,16 @@ class lightingUtility:
         """
         import PLM module when we run this otherwise we will get a circular import
         @param p_controller_obj: ==> ControllerInformation(CoreLightingData)
-        @return: None if no PLM, API Pointer if OK
+        @return: None if no PLM, Api Pointer if OK
         """
         from Modules.House.Family.insteon import insteon_plm
-        l_plmAPI = insteon_plm.API(p_pyhouse_obj, p_controller_obj)
-        p_controller_obj._HandlerAPI = l_plmAPI
-        if l_plmAPI.Start():
+        l_plmApi = insteon_plm.Api(p_pyhouse_obj, p_controller_obj)
+        p_controller_obj._HandlerApi = l_plmApi
+        if l_plmApi.Start():
             LOG.info('Successfully started Insteon controller "{}"'.format(p_controller_obj.Name))
             # p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerCount += 1
             # p_pyhouse_obj.Computer.Nodes[l_uuid].ControllerTypes.append('insteon')
-            return l_plmAPI
+            return l_plmApi
         else:
             LOG.error('Controller {} failed to start.'.format(p_controller_obj.Name))
             p_controller_obj._isFunctional = False
@@ -112,7 +112,7 @@ class lightingUtility:
         Run thru all the controllers and find the first active Insteon controller.
         Start the controller and its driver.
 
-        @return: a list of the Insteon_PLM API references
+        @return: a list of the Insteon_PLM Api references
         """
 
     def _start_all_hubs(self, p_pyhouse_obj):
@@ -120,7 +120,7 @@ class lightingUtility:
         Run thru all the controllers and find the first active Insteon controller.
         Start the controller and its driver.
 
-        @return: a list of the Insteon_PLM API references
+        @return: a list of the Insteon_PLM Api references
         """
 
     def _start_all_controllers(self, p_pyhouse_obj):
@@ -128,7 +128,7 @@ class lightingUtility:
         Run thru all the controllers and find the first active Insteon controller.
         Start the controller and its driver.
 
-        @return: a list of the Insteon_PLM API references
+        @return: a list of the Insteon_PLM Api references
         """
         l_list = []
         l_controllers = p_pyhouse_obj.House.Lighting.Controllers
@@ -143,7 +143,7 @@ class lightingUtility:
             if not l_controller_obj._isLocal:
                 LOG.info('Controller "{}" is not local'.format(l_controller_obj.Name))
                 continue
-            LOG.info('Starting Controller "{}"'.format(l_controller_obj.Name))
+            LOG.info('Checking Controller "{}"'.format(l_controller_obj.Name))
             if lightingUtility._is_valid_controller(l_controller_obj):
                 LOG.debug('Insteon Controller: "{}" - will be started.'.format(l_controller_obj.Name))
                 l_ret = lightingUtility._start_one_plm(p_pyhouse_obj, l_controller_obj)
@@ -161,10 +161,10 @@ class lightingUtility:
             return
         for l_controller_obj in l_controllers.values():
             if lightingUtility._is_valid_controller(l_controller_obj):
-                l_controller_obj._HandlerAPI.Stop(l_controller_obj)
+                l_controller_obj._HandlerApi.Stop(l_controller_obj)
 
 
-class API:
+class Api:
     """
     These are the public methods available to use Devices from any family.
     """
@@ -186,9 +186,9 @@ class API:
         """
         Note that some controllers may not be available on this node.
         """
-        LOG.info('Starting the Insteon Controller.')
+        LOG.info('Starting the Insteon Device.')
         self.m_plm_list = lightingUtility()._start_all_controllers(self.m_pyhouse_obj)
-        LOG.info('Started {} Insteon Controllers.'.format(len(self.m_plm_list)))
+        LOG.info('Started {} Insteon Devices.'.format(len(self.m_plm_list)))
 
     def SaveConfig(self):
         """
@@ -214,7 +214,7 @@ class API:
         LOG.debug('Controlling Insteon device "{}" using "{}"'.format(p_device_obj.Name, p_controller_obj.Name))
         # if not p_controller_obj._isFunctional:
         #    return
-        # l_plm = p_controller_obj._HandlerAPI  # (self.m_pyhouse_obj)
+        # l_plm = p_controller_obj._HandlerApi  # (self.m_pyhouse_obj)
         # [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]
         for l_ctlr in self.m_plm_list:
             l_ctlr.Control(p_device_obj, p_controller_obj, p_control)

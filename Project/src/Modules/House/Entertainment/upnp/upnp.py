@@ -14,7 +14,7 @@ address from some external device and check on the status of the house.
 This module will try to be fully twisted like and totally async (except for read/write of xml).
 """
 
-__updated__ = '2017-03-26'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import netifaces
@@ -47,6 +47,7 @@ callLater = reactor.callLater
 # Data classes for this module
 #
 #======================================
+
 
 class InternetData(object):
     """Check our external IP-v4 address
@@ -103,9 +104,11 @@ class InterfaceIpAddresses(object):
 #
 #======================================
 
+
 class FindAllInterfaceData(object):
     """Loop thru all the interfaces and extract the info
     """
+
     def __init__(self):
         l_interfaces = netifaces.interfaces()
         l_count = 0
@@ -202,12 +205,12 @@ class ReadWriteConfigXml(xml_tools.XmlConfigTools):
             pass
         return l_internet_xml
 
-
 #======================================
 #
 # Now all asynchronous code
 #
 #======================================
+
 
 class MyProtocol(Protocol):
     """
@@ -321,7 +324,7 @@ class FindExternalIpAddress(object):
         callLater(self.m_house_obj.Internet.ExternalDelay, self.get_public_ip)
 
 
-class DynDnsAPI(object):
+class DynDnsApi(object):
     """Update zero or more dynamic DNS sites.
     This is a repeating two stage process.
     First get our current External IP address.
@@ -377,7 +380,7 @@ class DynDnsAPI(object):
         callLater(self.m_dyn_obj.UpdateInterval, l_cmd)
 
 
-class API(ReadWriteConfigXml):
+class Api(ReadWriteConfigXml):
 
     m_house_obj = None
 
@@ -393,7 +396,7 @@ class API(ReadWriteConfigXml):
             LOG.info("Starting for house:{}.".format(p_house_obj.Name))
             FindAllInterfaceData()
             FindExternalIpAddress(p_house_obj)
-            self.m_dyn_loop = DynDnsAPI(p_house_obj)
+            self.m_dyn_loop = DynDnsApi(p_house_obj)
 
     def Stop(self):
         """Stop async operations

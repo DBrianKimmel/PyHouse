@@ -9,10 +9,10 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-10-06'
 
 
-class API:
+class Api:
 
     def Start(self, _p_pyhouse_obj):
         assert('Must be defined')

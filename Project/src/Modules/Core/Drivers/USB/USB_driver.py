@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import usb
@@ -19,7 +19,7 @@ from twisted.internet.protocol import Protocol
 
 # Import PyHouse Modules
 from Modules.Drivers.USB.USB_data import UsbData
-from Modules.Drivers.USB.USB_open import API as usbopenAPI
+from Modules.Drivers.USB.USB_open import Api as usbopenApi
 from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core import logging_pyh as Logger
 
@@ -48,7 +48,7 @@ class SerialProtocol(Protocol):
         self.m_USB_obj.message += p_data
 
 
-class UsbDriverAPI(object):
+class UsbDriverApi(object):
 
     m_controller_obj = None
 
@@ -190,9 +190,9 @@ class UsbDriverAPI(object):
         return l_usb_data_obj
 
 
-class API(UsbDriverAPI):
+class Api(UsbDriverApi):
     """
-    This is the standard Device Driver API.
+    This is the standard Device Driver Api.
     """
 
     def __init__(self, p_pyhouse_obj):
@@ -205,9 +205,9 @@ class API(UsbDriverAPI):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_controller_obj = p_controller_obj
-        self.m_USB_obj = UsbDriverAPI._get_usb_device_data(p_controller_obj)
-        if usbopenAPI.open_device(self.m_USB_obj):
-            self._write_control_device(self.m_USB_obj, usbopenAPI.Setup(self.m_USB_obj))
+        self.m_USB_obj = UsbDriverApi._get_usb_device_data(p_controller_obj)
+        if usbopenApi.open_device(self.m_USB_obj):
+            self._write_control_device(self.m_USB_obj, usbopenApi.Setup(self.m_USB_obj))
             self.read_usb(self.m_pyhouse_obj)
             LOG.info("Opened Controller:{}".format(self.m_USB_obj.Name))
             l_ret = True
@@ -218,7 +218,7 @@ class API(UsbDriverAPI):
         return l_ret
 
     def Stop(self):
-        usbopenAPI.close_device(self.m_USB_obj)
+        usbopenApi.close_device(self.m_USB_obj)
 
     def Read(self):
         l_ret = self.fetch_read_data()

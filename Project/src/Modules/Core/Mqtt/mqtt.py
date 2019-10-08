@@ -45,8 +45,8 @@ class MqttInformation:
         self.Brokers = {}  # MqttBrokerData()
         self.ClientID = 'PyH-'
         self.Prefix = ''
-        self._ClientAPI = None
-        self._ProtocolAPI = None
+        self._ClientApi = None
+        self._ProtocolApi = None
 
 
 class MqttBrokerInformation:
@@ -68,8 +68,8 @@ class MqttBrokerInformation:
         self.WillRetain = False
         self.WillTopic = ''
 
-        self._ClientAPI = None
-        self._ProtocolAPI = None
+        self._ClientApi = None
+        self._ProtocolApi = None
         self._isTLS = False
 
 
@@ -125,7 +125,7 @@ class LocalConfig:
         @return: MqttBrokerInformation if defined, else None
         """
         l_obj = MqttBrokerInformation()
-        l_obj._ClientAPI = p_api
+        l_obj._ClientApi = p_api
         try:
             l_broker = p_broker['Broker']
         except:
@@ -229,7 +229,7 @@ class Api:
         All publish commands point to here.
         This routine will run thru the list of brokers and publish to each broker.
 
-        # self.m_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish("house/schedule/execute", l_schedule)
+        # self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish("house/schedule/execute", l_schedule)
 
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param p_message : is the message we want to send
@@ -240,7 +240,7 @@ class Api:
             # if not l_broker.Active:
             #    continue
             try:
-                l_broker._ProtocolAPI.publish(l_topic, l_message)
+                l_broker._ProtocolApi.publish(l_topic, l_message)
                 # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tFor Broker: {}\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(

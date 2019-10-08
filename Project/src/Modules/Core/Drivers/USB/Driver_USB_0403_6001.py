@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2016-09-23'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 from twisted.internet import reactor
@@ -21,13 +21,13 @@ from Modules.Drivers.USB import USB_driver
 
 callLater = reactor.callLater
 
-
 # Timeouts for send/receive delays
 SEND_TIMEOUT = 0.8
 RECEIVE_TIMEOUT = 0.3  # this is for polling the usb device for data to be added to the rx buffer
 READ_TIMER = 0.100  # Every 100 miliseconds
 
-class UsbDriverAPI(USB_driver.UsbDriverAPI):
+
+class UsbDriverApi(USB_driver.UsbDriverApi):
     """
     """
 
@@ -54,14 +54,14 @@ class UsbDriverAPI(USB_driver.UsbDriverAPI):
             # break
 
 
-class API(UsbDriverAPI):
+class Api(UsbDriverApi):
 
     m_driver = None
 
     def __init__(self):
         """
         """
-        self.m_driver = USB_driver.API()
+        self.m_driver = USB_driver.Api()
 
     def Start(self, p_controller_obj):
         self.m_driver.Start(p_controller_obj, self)

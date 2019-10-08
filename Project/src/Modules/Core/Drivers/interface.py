@@ -13,7 +13,7 @@ The necessary interfaces are discovered when loading the "devices" that are cont
 Controllers, which are attached to the server, communicate with the server via an interface.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -70,7 +70,7 @@ def get_device_driver_Api(p_pyhouse_obj, p_interface_obj):
         from Modules.Core.Drivers.Null import Null_driver
         l_driver = Null_driver.Api(p_pyhouse_obj)
 
-    p_interface_obj._DriverAPI = l_driver
+    p_interface_obj._DriverApi = l_driver
     # l_driver.Start(p_controller_obj)
     return l_driver
 
@@ -103,9 +103,9 @@ class Config:
         l_allowed = ['ApiKey', 'AccessKey']
         config_tools.Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
         #
-        LOG.debug('Getting driver API')
+        LOG.debug('Getting driver Api')
         l_driver = get_device_driver_Api(self.m_pyhouse_obj, l_obj)
-        l_obj._DriverAPI = l_driver
+        l_obj._DriverApi = l_driver
         LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
         return l_obj
 

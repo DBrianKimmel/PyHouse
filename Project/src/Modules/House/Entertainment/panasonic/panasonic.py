@@ -13,7 +13,7 @@ Cannon Trail Blueray Player
 
 """
 
-__updated__ = '2019-06-30'
+__updated__ = '2019-10-06'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -121,7 +121,7 @@ class XML:
         return l_xml
 
 
-class API:
+class Api:
 
     m_started = False
 

@@ -2,7 +2,7 @@
 Insteon Hub Pytomation Interface
 Provides an interface to Insteon Hub tested with 2245-222
 It may work for the Insteon Hub 2242-222, SmartLinc 2414N,
-    or other hub with a HTTP local API.
+    or other hub with a HTTP local Api.
     However, it has not been tested with these hubs
 
 This interface combines code copied from the InsteonPLM insterface and

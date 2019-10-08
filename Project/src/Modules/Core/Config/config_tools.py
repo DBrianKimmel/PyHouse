@@ -9,8 +9,8 @@
 
 """
 
-__updated__ = '2019-10-06'
-__version_info__ = (19, 10, 4)
+__updated__ = '2019-10-08'
+__version_info__ = (19, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -112,7 +112,7 @@ class SubFields:
         l_obj = SecurityInformation()
         l_required = ['Name', 'Password']
         l_allowed = ['ApiKey', 'AccessKey']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
     def extract_family_group(self, p_config):
@@ -161,7 +161,7 @@ class SubFields:
         #
         LOG.debug('Getting driver Api')
         l_driver = get_device_driver_Api(self.m_pyhouse_obj, l_obj)
-        l_obj._DriverAPI = l_driver
+        l_obj._DriverApi = l_driver
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
         return l_obj
 

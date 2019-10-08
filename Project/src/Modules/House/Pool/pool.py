@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -79,7 +79,7 @@ class Xml(object):
         return (l_xml, l_count)
 
 
-class API(object):
+class Api(object):
 
     m_pyhouse_obj = None
 

@@ -11,7 +11,7 @@ Passed 7 of 10 tests - DBK - 2019-09-30
 
 """
 
-__updated__ = '2019-09-30'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 import datetime
@@ -127,7 +127,7 @@ class B1_Astral(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+        self.m_api = sunrisesunset.Api(self.m_pyhouse_obj)
         l_loc, l_dates = SetupMixin().load_earth(self.m_test_config)
         self.m_pyhouse_obj.House.Location = l_loc
 
@@ -197,7 +197,7 @@ class C1_Delay(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
         l_loc, l_dates = SetupMixin().load_earth(self.m_test_config)
         self.m_pyhouse_obj.House.Location = l_loc
-        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+        self.m_api = sunrisesunset.Api(self.m_pyhouse_obj)
 
     def test_01_Loc(self):
         l_delay = astralUtil()._till_next()
@@ -215,7 +215,7 @@ class D1_Now(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
         l_loc, l_dates = SetupMixin().load_earth(self.m_test_config)
         self.m_pyhouse_obj.House.Location = l_loc
-        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+        self.m_api = sunrisesunset.Api(self.m_pyhouse_obj)
 
     def test_01_Loc(self):
         l_now = astralUtil().get_seconds_to_recalc()

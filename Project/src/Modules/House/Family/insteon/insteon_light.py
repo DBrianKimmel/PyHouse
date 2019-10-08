@@ -118,7 +118,7 @@ class DecodeResponses:
         LOG.info('Light: {}, Brightness: {}'.format(p_device_obj.Name, p_device_obj.BrightnessPct))
         if l_mqtt_publish:
             l_topic = 'house/lighting/light/status'
-            p_pyhouse_obj._Apis.Core.MqttAPI.MqttPublish(l_topic, p_device_obj)
+            p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_device_obj)
             pass
         return l_debug_msg
 

@@ -311,8 +311,8 @@ class houseUtility:
                 continue
             l_a.Stop()
         return
-        self.m_pyhouse_obj._Apis.House.EntertainmentAPI.Stop()
-        self.m_pyhouse_obj._Apis.House.ScheduleAPI.Stop()
+        self.m_pyhouse_obj._Apis.House.EntertainmentApi.Stop()
+        self.m_pyhouse_obj._Apis.House.ScheduleApi.Stop()
 
     def _init_house_parts(self):
         """

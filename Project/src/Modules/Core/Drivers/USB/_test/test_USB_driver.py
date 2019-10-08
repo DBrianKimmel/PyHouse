@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -52,7 +52,7 @@ class B1(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = USB_driver.API(self.m_pyhouse_obj)
+        self.m_api = USB_driver.Api(self.m_pyhouse_obj)
 
     def test_01_Extract(self):
         l_ba = self.m_api._extract_hid_report(RAW_01)

@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2019-06-30'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -22,7 +22,7 @@ from test.testing_mixin import SetupPyHouseObj
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities.xml_tools import XmlConfigTools
-from Modules.Housing.Entertainment.entertainment import API as entertainmentAPI
+from Modules.Housing.Entertainment.entertainment import Api as entertainmentApi
 from Modules.Housing.Entertainment.entertainment_xml import XML as entertainmentXML
 from Modules.Housing.test.xml_housing import \
         TESTING_HOUSE_DIVISION, \
@@ -96,7 +96,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_api = entertainmentAPI(self.m_pyhouse_obj)
+        self.m_api = entertainmentApi(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):

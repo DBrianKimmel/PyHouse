@@ -12,7 +12,7 @@ If garage door opens and after sunset and before sunrise, turn on outside garage
 """
 from _ast import Pass
 
-__updated__ = '2019-08-01'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,7 +25,7 @@ LOG = Logger.getLogger('PyHouse.RulesXml       ')
 
 class RulesInformation:
     """ The collection of information about a house.
-    Causes JSON errors due to API type data methinks.
+    Causes JSON errors due to Api type data methinks.
 
     ==> PyHouse.House.xxx as in the def below.
     """
@@ -61,7 +61,7 @@ class Config:
         pass
 
 
-class API:
+class Api:
 
     m_pyhouse_obj = None
     m_config = None

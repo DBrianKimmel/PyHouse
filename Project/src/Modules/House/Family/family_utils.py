@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-09-24'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff.
 
@@ -62,19 +62,19 @@ class FamUtil(object):
 
     @staticmethod
     def _get_family_device_api(p_pyhouse_obj, p_device_obj):
-        """ Get the pointer to the correct family module API class.
+        """ Get the pointer to the correct family module Api class.
 
-        @param p_device_obj: is the device to find the API for.
-        @return: the pointer to the API class of the proper device family
+        @param p_device_obj: is the device to find the Api for.
+        @return: the pointer to the Api class of the proper device family
         """
         l_dev_name = p_device_obj.Name
         try:
             l_family = FamUtil.get_family(p_device_obj)
             l_family_obj = p_pyhouse_obj.House.Family[l_family]
-            l_device_api = l_family_obj._DeviceAPI
-            LOG.info('Got API for "{}"'.format(l_family))
+            l_device_api = l_family_obj._DeviceApi
+            LOG.info('Got Api for "{}"'.format(l_family))
         except Exception as e_err:
-            l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find API info\n\tError: {}'.format(l_dev_name, l_family, e_err)
+            l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find Api info\n\tError: {}'.format(l_dev_name, l_family, e_err)
             LOG.error(l_msg)
             l_device_api = None
         return l_device_api

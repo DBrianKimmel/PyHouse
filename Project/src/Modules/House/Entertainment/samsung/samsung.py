@@ -50,7 +50,7 @@ while True:
 
 """
 
-__updated__ = '2019-08-09'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -124,7 +124,7 @@ class MqttActions:
         """
         if self.m_api == None:
             # LOG.debug('Decoding initializing')
-            self.m_api = API(self.m_pyhouse_obj)
+            self.m_api = Api(self.m_pyhouse_obj)
 
         l_logmsg = ''
         if p_topic[2] == 'control':
@@ -282,7 +282,7 @@ class Connecting:
         pass
 
 
-class API(Connecting):
+class Api(Connecting):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

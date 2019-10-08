@@ -50,7 +50,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
         self.m_family = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj._Families = self.m_family
-        # self.m_api = buttonsAPI()
+        # self.m_api = buttonsApi()
         self.m_button_obj = ButtonData()
         self.m_version = '1.4.0'
 

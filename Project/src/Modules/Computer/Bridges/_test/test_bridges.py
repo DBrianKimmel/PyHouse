@@ -12,7 +12,7 @@ Passed all 6 tests - DBK - 2018-02-12
 """
 # from ruamel.yaml.comments import CommentedMap
 
-__updated__ = '2019-08-02'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -108,7 +108,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_ret = bridgesConfig(self.m_pyhouse_obj)._extract_all_bridges(l_node)
 
 
-class D1_API(SetupMixin, unittest.TestCase):
+class D1_Api(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)

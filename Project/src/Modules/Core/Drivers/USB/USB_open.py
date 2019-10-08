@@ -1,7 +1,7 @@
 """
 -*- _test-case-name: PyHouse.src.Modules.Drivers.USB._test.test_usb_open -*-
 
-@name:      PyHouse/src/Modules/Drivers/USB/usb_open.py
+@name:      Modules/CXore/Drivers/USB/usb_open.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2017 by D. Brian Kimmel
@@ -18,19 +18,18 @@ Instead of using callLater timers, it would be better to use deferred callbacks 
 
 """
 
-__updated__ = '2017-04-26'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import usb.core
 import usb.util
 
 # Import PyHouse modules
-from Modules.Drivers.USB.Driver_USB_17DD_5500 import API as usb5500API
+from Modules.Drivers.USB.Driver_USB_17DD_5500 import Api as usb5500Api
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 LOG = Logger.getLogger('PyHouse.USBDriver_Open ')
-
 
 # Timeouts for send/receive delays
 RECEIVE_TIMEOUT = 0.3
@@ -52,7 +51,7 @@ class lightingUtility(object):
             return True
 
 
-class API(object):
+class Api(object):
 
     m_controller_obj = None
 
@@ -81,7 +80,7 @@ class API(object):
             return None
         LOG.debug(PrettyFormatAny.form(l_device, 'Device'))
         LOG.debug(PrettyFormatAny.form(p_USB_obj, 'pUSB_obj'))
-        p_USB_obj.UsbDevice = API._save_find_device(p_USB_obj, l_device)
+        p_USB_obj.UsbDevice = Api._save_find_device(p_USB_obj, l_device)
         LOG.info('Found a device - HID: {}'.format(l_vpn))
         return l_device
 
@@ -135,7 +134,7 @@ class API(object):
         p_USB_obj.interface = l_interface
         if l_interface_class == 3:
             p_USB_obj.hid_device = True
-            API._setup_reports(p_USB_obj)
+            Api._setup_reports(p_USB_obj)
 
     @staticmethod
     def _setup_endpoints(p_USB_obj):
@@ -171,21 +170,21 @@ class API(object):
         p_USB_obj.message = bytearray()
         l_vpn = lightingUtility.format_names(p_USB_obj)
         LOG.info("Opening USB device - {}".format(l_vpn))
-        p_USB_obj.UsbDevice = API._open_find_device(p_USB_obj)
+        p_USB_obj.UsbDevice = Api._open_find_device(p_USB_obj)
         if p_USB_obj.UsbDevice == None:
             LOG.error('ERROR - Setup Failed')
             return False
-        API._setup_detach_kernel(p_USB_obj)
-        API._setup_configurations(p_USB_obj)
-        API._setup_interfaces(p_USB_obj)
-        API._setup_endpoints(p_USB_obj)
-        _l_control = usb5500API.Setup()
+        Api._setup_detach_kernel(p_USB_obj)
+        Api._setup_configurations(p_USB_obj)
+        Api._setup_interfaces(p_USB_obj)
+        Api._setup_endpoints(p_USB_obj)
+        _l_control = usb5500Api.Setup()
         # _l_msg = lightingUtility.setup_hid_17DD_5500(p_USB_obj)
         return True
 
     @staticmethod
     def Setup(p_USB_obj):
-        l_control = usb5500API.Setup()
+        l_control = usb5500Api.Setup()
         return l_control
 
     @staticmethod

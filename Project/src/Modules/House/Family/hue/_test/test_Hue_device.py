@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2018-01-27
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -38,13 +38,13 @@ class A0(unittest.TestCase):
         print('Id: test_Hue_device')
 
 
-class C01_API(SetupMixin, unittest.TestCase):
+class C01_Api(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Insteon_device.API(self.m_pyhouse_obj)
+        self.m_api = Insteon_device.Api(self.m_pyhouse_obj)
         self.m_device = HueInformation()
 
     def test_01_Init(self):
@@ -55,7 +55,7 @@ class C01_API(SetupMixin, unittest.TestCase):
 
 def suite():
     suite = unittest.TestSuite()
-    # suite.addTest(Test_02_API('test_0202_Init'))
+    # suite.addTest(Test_02_Api('test_0202_Init'))
     return suite
 
 # ## END DBK

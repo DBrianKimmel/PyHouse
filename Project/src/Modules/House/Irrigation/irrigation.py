@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -65,7 +65,7 @@ class lightingUtility(object):
         pass
 
 
-class API(lightingUtility):
+class Api(lightingUtility):
 
     m_pyhouse_obj = None
 

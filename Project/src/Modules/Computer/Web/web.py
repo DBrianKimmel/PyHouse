@@ -17,7 +17,7 @@ PyHouse.Computer.Web
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -26,8 +26,8 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Core.data_objects import LoginData, WebInformation
 from Modules.Computer.Web.web_xml import Xml as webXml
-from Modules.Computer.Web.web_server import API as WebAPI
-# from Modules.Computer.Web.websocket_server import API as WebSocketAPI
+from Modules.Computer.Web.web_server import Api as WebApi
+# from Modules.Computer.Web.websocket_server import Api as WebSocketApi
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Web            ')
@@ -59,8 +59,8 @@ class Api:
     def Start(self):
         #  l_obj = self.LoadXml(self.m_pyhouse_obj)
         #  self.m_pyhouse_obj.Computer.Web = l_obj
-        WebAPI(self.m_pyhouse_obj).Start()
-        # WebSocketAPI(self.m_pyhouse_obj).Start()
+        WebApi(self.m_pyhouse_obj).Start()
+        # WebSocketApi(self.m_pyhouse_obj).Start()
         LOG.info('Started.')
 
     def SaveConfig(self):

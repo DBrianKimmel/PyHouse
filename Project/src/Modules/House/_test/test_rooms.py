@@ -12,7 +12,7 @@ Passed all 10 tests - DBK 2019-09-17
 """
 from Modules.House.house_data import RoomsInformation
 
-__updated__ = '2019-10-02'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ from ruamel.yaml import YAML
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.rooms import API as roomsAPI
+from Modules.House.rooms import Api as roomsApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

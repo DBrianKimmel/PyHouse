@@ -11,8 +11,7 @@ Passed all 1 tests - DBK - 2015-07-28
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -30,7 +29,7 @@ class SetupMixin(object):
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
-class C01_API(SetupMixin, unittest.TestCase):
+class C01_Api(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 

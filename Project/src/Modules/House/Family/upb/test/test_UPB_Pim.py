@@ -11,7 +11,7 @@ Passed all 30 tests - DBK - 2015-08-15
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-10-06'
 
 # Import system type stuff
 try:
@@ -221,7 +221,7 @@ class B5_Create(SetupMixin, unittest.TestCase):
         pass
 
 
-class B6_PimAPI(SetupMixin, unittest.TestCase):
+class B6_PimApi(SetupMixin, unittest.TestCase):
     """
     """
 
@@ -232,7 +232,7 @@ class B6_PimAPI(SetupMixin, unittest.TestCase):
         pass
 
 
-class C1_API(SetupMixin, unittest.TestCase):
+class C1_Api(SetupMixin, unittest.TestCase):
     """
     """
 

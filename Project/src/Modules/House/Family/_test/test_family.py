@@ -10,7 +10,7 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -218,8 +218,8 @@ class C1_Import(SetupMixin, unittest.TestCase):
         self.assertNotEqual(l_obj, None)
 
 
-class C2_API(SetupMixin, unittest.TestCase):
-    """ This section tests the creation of an API reference
+class C2_Api(SetupMixin, unittest.TestCase):
+    """ This section tests the creation of an Api reference
     """
 
     def setUp(self):

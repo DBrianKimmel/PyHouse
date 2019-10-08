@@ -85,8 +85,7 @@ Device Descriptor:
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-10-06'
 
 # import array
 import usb
@@ -100,7 +99,7 @@ from array import array
 LOG = Logger.getLogger('PyHouse.UPB_17DD_5500  ')
 
 
-class API(object):
+class Api(object):
 
     @staticmethod
     def Setup():
@@ -147,6 +146,5 @@ class API(object):
                 LOG.info(" -- Error in USB_driver_17DD_5500.read_device() ".format(e))
                 l_len = 0
                 break
-
 
 # ## END DBK

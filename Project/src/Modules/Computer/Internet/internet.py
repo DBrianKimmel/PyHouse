@@ -19,14 +19,14 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Computer.Internet.internet_xml import API as internetAPI
-from Modules.Computer.Internet.inet_find_external_ip import API as findAPI
-from Modules.Computer.Internet.inet_update_dyn_dns import API as updateAPI
+from Modules.Computer.Internet.internet_xml import Api as internetApi
+from Modules.Computer.Internet.inet_find_external_ip import Api as findApi
+from Modules.Computer.Internet.inet_update_dyn_dns import Api as updateApi
 from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Internet       ')
@@ -40,13 +40,13 @@ class lightingUtility(object):
 
     @staticmethod
     def _internet_loop(p_pyhouse_obj):
-        # API.FindExternalIp(p_pyhouse_obj)
-        # API.UpdateDynDnsSites(p_pyhouse_obj)
+        # Api.FindExternalIp(p_pyhouse_obj)
+        # Api.UpdateDynDnsSites(p_pyhouse_obj)
         p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, lightingUtility._internet_loop, p_pyhouse_obj)
 
     @staticmethod
     def _read_xml_configuration(p_pyhouse_obj):
-        l_config = internetAPI().read_internet_xml(p_pyhouse_obj)
+        l_config = internetApi().read_internet_xml(p_pyhouse_obj)
         p_pyhouse_obj.Computer.InternetConnection = l_config
         return l_config
 
@@ -70,7 +70,7 @@ class Api:
         LOG.info("Started Internet.")
 
     def SaveConfig(self):
-        internetAPI().write_internet_xml(self.m_pyhouse_obj)
+        internetApi().write_internet_xml(self.m_pyhouse_obj)
         LOG.info('Saved Internet Config')
 
     def Stop(self):
@@ -92,7 +92,7 @@ class Api:
             LOG.error('ERROR - No IP found - Reason: {}'.format(p_reason))
 
         LOG.info('Start')
-        l_defer = findAPI().FindExternalIP(p_pyhouse_obj)
+        l_defer = findApi().FindExternalIP(p_pyhouse_obj)
         l_defer.addCallback(cb_find_external_ip)
         l_defer.addErrback(eb_find_external_ip)
         return l_defer
@@ -109,7 +109,7 @@ class Api:
             LOG.error('ERROR - No DynDns sites found - Reason: {}'.format(p_reason))
 
         LOG.info('Start')
-        l_defer = updateAPI().UpdateAllDynDns(p_pyhouse_obj)
+        l_defer = updateApi().UpdateAllDynDns(p_pyhouse_obj)
         l_defer.addCallback(cb_done_updating)
         l_defer.addErrback(eb_error)
         return l_defer

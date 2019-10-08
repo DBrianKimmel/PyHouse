@@ -684,7 +684,7 @@ class MQTTClient(MQTTProtocol):
         """ Override
         Subscribe Ack message
         """
-        self.m_pyhouse_obj._Apis.Core.MqttAPI.doPyHouseLogin(self, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Apis.Core.MqttApi.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         """ Override
@@ -698,7 +698,7 @@ class MQTTClient(MQTTProtocol):
         Call the dispatcher to send them on to the correct place.
         """
         # LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
-        self.m_broker._ClientAPI.MqttDispatch(p_topic, p_message)
+        self.m_broker._ClientApi.MqttDispatch(p_topic, p_message)
 
 ###########################################
 
@@ -721,7 +721,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         l_addr = p_broker.Host.Name
         LOG.info('PyHouseMqttFactory Mqtt Initialized.\n\tBroker Name: {};\n\tClientId: {};\n\tHost: {};'.format(
                 p_broker.Name, p_pyhouse_obj.Core.Mqtt.ClientID, l_addr))
-        p_broker._ProtocolAPI = self
+        p_broker._ProtocolApi = self
 
     def buildProtocol(self, _p_addr):
         """ Override.
@@ -733,7 +733,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         Alternatively, None may be returned to immediately close the new connection.
         """
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
-        self.m_broker._ProtocolAPI = l_client
+        self.m_broker._ProtocolApi = l_client
         self.resetDelay()
         LOG.debug('Building MQTT Protocol - Client:{}'.format(l_client))
         return l_client

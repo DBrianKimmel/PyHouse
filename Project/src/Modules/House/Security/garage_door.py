@@ -70,7 +70,7 @@ class LocalConfig:
             if l_key == 'Family':
                 l_obj.Family = familyConfig().extract_family_group(l_value, self.m_pyhouse_obj)
             elif l_key == 'Room':
-                l_obj.Room = roomsAPI(self.m_pyhouse_obj).get_room_config(l_value)
+                l_obj.Room = roomsApi(self.m_pyhouse_obj).get_room_config(l_value)
                 pass
             else:
                 setattr(l_obj, l_key, l_value)

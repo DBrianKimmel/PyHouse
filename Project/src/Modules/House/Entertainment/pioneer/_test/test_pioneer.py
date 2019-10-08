@@ -11,7 +11,7 @@ Passed all 3 tests - DBK - 2019-08-02
 
 """
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ from twisted.test import proto_helpers
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House.Entertainment.pioneer.pioneer import \
-        API as pioneerAPI, \
+        Api as pioneerApi, \
         PioneerFactory as pioFactory
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -57,13 +57,13 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         pass
 
 
-class E1_API(SetupMixin, unittest.TestCase):
+class E1_Api(SetupMixin, unittest.TestCase):
     """ Test that we write out the xml properly
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = pioneerAPI(self.m_pyhouse_obj)
+        self.m_api = pioneerApi(self.m_pyhouse_obj)
 
     def test_01_Find(self):
         """ Find the correct device obj

@@ -51,7 +51,7 @@ class C1_Find(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_api = GetPyhouse(self.m_pyhouse_obj)
-        self.m_light_api = lightsAPI()
+        self.m_light_api = lightsApi()
         self.m_pyhouse_obj._Families = familyApi(self.m_pyhouse_obj).m_family
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj)
 

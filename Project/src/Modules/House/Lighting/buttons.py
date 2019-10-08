@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -141,7 +141,7 @@ class Api:
         """
         LOG.info('Load Config')
         self.m_local_config.load_yaml_config()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.API.LoadConfig'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
         return {}
 
     def SaveConfig(self):

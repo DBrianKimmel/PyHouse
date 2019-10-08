@@ -11,7 +11,7 @@ Passed 3 of 9 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -88,7 +88,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_node = houseConfig(self.m_pyhouse_obj).load_yaml_config()
         print('C1-01-A - Load: {}'.format(l_node.Yaml))
 
-    def test_09_API(self):
+    def test_09_Api(self):
         houseUtil._init_component_apis(self.m_pyhouse_obj, self)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-1-A - XML'))
         self.assertEqual(self.m_pyhouse_obj._Uuids.All, {})
@@ -103,8 +103,8 @@ class C2_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
 
-class P1_API(SetupMixin, unittest.TestCase):
-    """ Test the major API functions
+class P1_Api(SetupMixin, unittest.TestCase):
+    """ Test the major Api functions
     """
 
     def setUp(self):
@@ -114,12 +114,12 @@ class P1_API(SetupMixin, unittest.TestCase):
     def test_01_Init(self):
         """ Create a JSON object for Location.
         """
-        # print(PrettyFormatAny.form(self.m_api, 'P1-01-A - API'))
+        # print(PrettyFormatAny.form(self.m_api, 'P1-01-A - Api'))
         pass
 
     def test_02_Load(self):
         _l_configl = self.m_api.LoadConfig(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'P1-02-A - API'))
+        # print(PrettyFormatAny.form(l_xml, 'P1-02-A - Api'))
 
     def test_03_Start(self):
         pass
@@ -128,6 +128,6 @@ class P1_API(SetupMixin, unittest.TestCase):
         self.m_api.LoadConfig(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'P1-04-A - House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj._Families, 'P1-04-B - House'))
-        # print(PrettyFormatAny.form(l_xml, 'P1-04-D - API'))
+        # print(PrettyFormatAny.form(l_xml, 'P1-04-D - Api'))
 
 # ## END DBK
