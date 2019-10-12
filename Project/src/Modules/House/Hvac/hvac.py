@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -40,7 +40,7 @@ class HvacInformation:
         self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
-class lightingUtility(object):
+class lightingUtilityHvac:
     """
     """
 
@@ -78,7 +78,7 @@ class MqttActions():
         return p_logmsg
 
 
-class Api(lightingUtility):
+class Api(lightingUtilityHvac):
 
     m_pyhouse_obj = None
 

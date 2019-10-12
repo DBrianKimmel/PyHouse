@@ -11,7 +11,7 @@ We get these .
 
 """
 
-__updated__ = '2019-08-18'
+__updated__ = '2019-10-11'
 
 #  Import system type stuff
 
@@ -22,6 +22,11 @@ LOG = Logger.getLogger('PyHouse.Insteon_Button ')
 
 
 class Config:
+    """
+    """
+
+
+class Discovery:
     """
     """
 

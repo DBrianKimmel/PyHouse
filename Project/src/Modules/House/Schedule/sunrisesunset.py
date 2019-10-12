@@ -17,7 +17,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 
 # Import system type stuff
 import datetime
@@ -59,7 +59,7 @@ class LocatTzinfo(datetime.tzinfo):
         pass
 
 
-class lightingUtility(object):
+class lightingUtilitySun:
 
     def __init__(self):
         self.m_tz = pytz.timezone('America/New_York')
@@ -124,7 +124,7 @@ class lightingUtility(object):
         return l_ret
 
 
-class Api(lightingUtility):
+class Api(lightingUtilitySun):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

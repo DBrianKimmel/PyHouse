@@ -109,6 +109,7 @@ class SubFields:
     def extract_access_group(self, p_config):
         """
         """
+        LOG.debug('Getting Access')
         l_obj = SecurityInformation()
         l_required = ['Name', 'Password']
         l_allowed = ['ApiKey', 'AccessKey']
@@ -125,6 +126,7 @@ class SubFields:
                 Address: 49.F9.E7
         @param p_config: is the 'Family' ordereddict
         """
+        LOG.debug('Getting Family')
         l_obj = DeviceFamilyInformation()
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
@@ -137,6 +139,7 @@ class SubFields:
         """
         @param p_config: is the 'Host' ordereddict
         """
+        LOG.debug('Getting Host')
         l_obj = HostInformation()
         l_required = ['Name', 'Port']
         l_allowed = ['IPv4', 'IPv6']
@@ -153,7 +156,7 @@ class SubFields:
                 Port: /dev/ttyUSB0
                 Host: Laptop-05
         """
-        LOG.debug('Getting interface')
+        LOG.debug('Getting Interface')
         l_obj = DriverInterfaceInformation()
         l_required = ['Type', 'Host', 'Port']
         l_allowed = ['ApiKey', 'AccessKey']
@@ -168,6 +171,7 @@ class SubFields:
     def extract_room_group(self, p_config):
         """
         """
+        LOG.debug('Getting Room')
         l_obj = RoomLocationInformation()
         try:
             for l_key, l_value in p_config.items():

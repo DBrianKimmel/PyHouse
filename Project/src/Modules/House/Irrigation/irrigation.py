@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -54,7 +54,7 @@ class MqttActions():
         return l_logmsg
 
 
-class lightingUtility(object):
+class lightingUtilityIrr:
     """
     """
 
@@ -65,7 +65,7 @@ class lightingUtility(object):
         pass
 
 
-class Api(lightingUtility):
+class Api(lightingUtilityIrr):
 
     m_pyhouse_obj = None
 

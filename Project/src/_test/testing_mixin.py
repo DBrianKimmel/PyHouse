@@ -102,6 +102,7 @@ class SetupPyHouseObj:
         l_ret.Entertainment = self._build_entertainment()
         l_ret.Lighting = LightingInformation()
         l_ret.Hvac = HvacInformation()
+        l_ret.Schedules = {}
         l_ret.Security = SecurityInformation()
         return l_ret
 

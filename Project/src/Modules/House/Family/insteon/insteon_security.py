@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 
 #  Import system type stuff
 
@@ -22,7 +22,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Secure ')
 
 
-class SensorMessage(object):
+class SensorMessage:
     """ This is what will be sent in the mqtt message.
     """
 
@@ -33,7 +33,7 @@ class SensorMessage(object):
         self.Status = None
 
 
-class DecodeResponses(object):
+class DecodeResponses:
 
     m_idex = 0
 

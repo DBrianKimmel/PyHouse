@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,14 +20,14 @@ import platform
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.data_objects import NodeInformation, HostInformation
+from Modules.Core.data_objects import NodeInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
 
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
@@ -58,16 +58,18 @@ class MqttBrokerInformation:
     def __init__(self):
         self.Name = None
         self.Comment = None
-        self.Host = HostInformation()
         self.Class = 'Local'
         self.Keepalive = 60  # seconds
-        self.Password = None
-        self.UserName = None
+        # self.Password = None
+        # self.UserName = None
         self.WillMessage = ''
         self.WillQoS = 0
         self.WillRetain = False
         self.WillTopic = ''
-
+        #
+        self.Access = None  # AccessInformation()
+        self.Host = None  # HostInformation()
+        #
         self._ClientApi = None
         self._ProtocolApi = None
         self._isTLS = False
@@ -118,44 +120,41 @@ class LocalConfig:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
-    def _extract_one_broker(self, p_broker, p_api):
+    def _extract_one_broker(self, p_config, p_api):
         """ Extract one broker information
-        @param p_broker: is a single brokers yaml ordereddict.
+        @param p_config: is a single brokers yaml ordereddict.
         @param p_api: is the Api for ???
         @return: MqttBrokerInformation if defined, else None
         """
         l_obj = MqttBrokerInformation()
+        # LOG.debug('Config: {}'.format(p_config))
         l_obj._ClientApi = p_api
-        try:
-            l_broker = p_broker['Broker']
-        except:
-            LOG.warn('No Broker: in mqtt.yaml')
-            return None
-        for l_key, l_value in l_broker.items():
-            if l_key == 'Host':
-                l_value = self.m_config.extract_host_group(l_value)
-            setattr(l_obj, l_key, l_value)
+        for l_key, l_value in p_config.items():
+            if l_key == 'Access':
+                l_obj.Access = self.m_config.extract_access_group(l_value)
+                l_obj.Access.UserName = None
+                l_obj.Access.Password = None
+            elif l_key == 'Host':
+                l_obj.Host = self.m_config.extract_host_group(l_value)
+            else:
+                setattr(l_obj, l_key, l_value)
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker'))
-        LOG.info('Loaded broker: {}'.format(l_obj.Name))
+        LOG.info('Loaded broker: "{}"'.format(l_obj.Name))
         return l_obj
 
-    def _extract_all_brokers(self, p_yaml, p_api):
+    def _extract_all_brokers(self, p_config, p_api):
         """
         """
-        # LOG.info('Loading Config, Extract Broker info - Version:{}'.format(__version__))
         l_brokers = {}
         l_count = 0
-        try:
-            l_config = p_yaml['Mqtt']
-        except:
-            LOG.error('No Mqtt: in "mqtt.yaml" file!')
-            return None
-        for l_item in l_config:
-            l_broker = self._extract_one_broker(l_item, p_api)
+        # LOG.debug('Config: {}'.format(p_config))
+        for l_key, l_value in enumerate(p_config):
+            # LOG.debug('Config: {}'.format(l_value))
+            l_broker = self._extract_one_broker(l_value, p_api)
             if l_broker != None:
                 l_brokers[l_count] = l_broker
                 l_count += 1
-        # LOG.debug(PrettyFormatAny.form(l_brokers, 'Brokers', 190))
+        # LOG.debug(PrettyFormatAny.form(l_brokers, 'Brokers'))
         LOG.info('Loaded {} Mqtt Brokers.'.format(l_count))
         return l_brokers
 
@@ -163,17 +162,20 @@ class LocalConfig:
         """ Read the Mqtt.Yaml file.
         """
         LOG.info('Reading mqtt config file "{}".'.format(CONFIG_NAME))
+        # self.m_pyhouse_obj.Core.Mqtt = MqttInformation()
         l_node = self.m_config.read_config(CONFIG_NAME)
         if l_node == None:
             LOG.error('Missing {}'.format(CONFIG_NAME))
             return None
-        l_yaml = l_node  # .Yaml
-        l_obj = MqttInformation()
-        l_obj.Brokers = self._extract_all_brokers(l_yaml, p_api)
-        l_obj.ClientID = 'PyH-Comp-' + platform.node()
-        l_obj.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
-        self.m_pyhouse_obj.Core.Mqtt = l_obj
-        return l_obj  # for testing purposes
+        try:
+            l_yaml = l_node['Mqtt']['Brokers']
+        except:
+            LOG.warn('The config file does not start with "Mqtt:"')
+            return None
+        self.m_pyhouse_obj.Core.Mqtt.Brokers = self._extract_all_brokers(l_yaml, p_api)
+        self.m_pyhouse_obj.Core.Mqtt.ClientID = 'PyH-Comp-' + platform.node()
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
+        return
 
 
 class Api:
@@ -190,7 +192,6 @@ class Api:
         self.m_parent = p_parent
         p_pyhouse_obj.Core.Mqtt = MqttInformation()
         p_pyhouse_obj.Core.Mqtt.Prefix = 'ReSeT'
-        # p_pyhouse_obj.Core.Mqtt.Brokers = []
         LOG.info("Initialized - Version:{} == {}".format(__version__, self))
 
     def LoadConfig(self):

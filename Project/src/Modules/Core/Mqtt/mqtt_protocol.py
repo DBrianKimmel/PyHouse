@@ -13,8 +13,8 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-10-06'
-__version_info__ = (18, 9, 0)
+__updated__ = '2019-10-08'
+__version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -25,9 +25,9 @@ from twisted.internet import error
 #  Import PyMh files and modules.
 from Modules.Core.Mqtt.mqtt_util import EncodeDecode
 from Modules.Core.Utilities import json_tools
-from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Protocol  ')
@@ -417,9 +417,9 @@ class MQTTProtocol(Protocol, Packets):
         l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
         l_varHeader.append(4)
         varLogin = 0
-        if p_broker.UserName is not None:
+        if p_broker.Access.UserName is not None:
             varLogin += 2
-        if p_broker.Password is not None:
+        if p_broker.Access.Password is not None:
             varLogin += 1
         if p_broker.WillMessage is None or p_broker.WillMessage == '' or p_broker.WillTopic is None:
             #  Clean start, no will message
@@ -429,16 +429,17 @@ class MQTTProtocol(Protocol, Packets):
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_mqtt.ClientID))
         if (p_broker.WillMessage is not None or p_broker.WillMessage != '') and p_broker.WillTopic is not None:
-            # LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
+            LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillTopic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.WillMessage))
-        if p_broker.UserName is not None and len(p_broker.UserName) > 0:
-            LOG.debug('Adding username "{}"'.format(p_broker.UserName))
-            l_payload.extend(EncodeDecode._encodeString(p_broker.UserName))
-        if p_broker.Password is not None and len(p_broker.Password) > 0:
-            LOG.debug('Adding password "{}"'.format(p_broker.Password))
-            l_payload.extend(EncodeDecode._encodeString(p_broker.Password))
+        if p_broker.Access.UserName is not None and len(p_broker.Access.UserName) > 0:
+            LOG.debug('Adding username "{}"'.format(p_broker.Access.UserName))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.Access.UserName))
+        if p_broker.Access.Password is not None and len(p_broker.Access.Password) > 0:
+            LOG.debug('Adding password "{}"'.format(p_broker.Access.Password))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.Access.Password))
         l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
+        LOG.debug('Connect packet Built...')
         return (l_fixHeader, l_varHeader, l_payload)
 
     def connect(self, p_broker, p_mqtt):
@@ -449,7 +450,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
-        # LOG.warn('Sending connect ack packet')
+        LOG.warn('Sending connect ack packet')
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_payload.append(status)
@@ -457,7 +458,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
-        # LOG.info("Sending publish packet\n\tTopic: {};\n\tHost: {};".format(p_topic, self.m_broker.Host.Name))
+        LOG.info("Sending publish packet\n\tTopic: {};\n\tHost: {};".format(p_topic, self.m_broker.Host.Name))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = publish
@@ -473,7 +474,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def puback(self, messageId):
-        # LOG.warn('Sending puback packet')
+        LOG.warn('Sending puback packet')
         header = bytearray()
         varHeader = bytearray()
         header.append(0x04 << 4)
@@ -483,7 +484,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pubrec(self, messageId):
-        # LOG.info("Sending pubrec packet")
+        LOG.warn("Sending pubrec packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x05 << 4)
@@ -493,7 +494,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pubrel(self, messageId):
-        # LOG.info("Sending pubrel packet")
+        LOG.warn("Sending pubrel packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x06 << 4)
@@ -503,7 +504,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pubcomp(self, messageId):
-        # LOG.warn('Sending pubcomp packet')
+        LOG.warn('Sending pubcomp packet')
         header = bytearray()
         varHeader = bytearray()
         header.append(0x07 << 4)
@@ -517,7 +518,7 @@ class MQTTProtocol(Protocol, Packets):
         Only supports QoS = 0 subscribes
         Only supports one subscription per message
         """
-        # LOG.info("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.Host.Name))
+        LOG.warn("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.Host.Name))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = subscribe, QoS = 1
@@ -531,7 +532,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def suback(self, grantedQos, messageId):
-        # LOG.info("Sending suback packet")
+        LOG.warn("Sending suback packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -545,7 +546,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(payload)
 
     def unsubscribe(self, topic, messageId=None):
-        # LOG.info("Sending unsubscribe packet")
+        LOG.warn("Sending unsubscribe packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -561,7 +562,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(payload)
 
     def unsuback(self, messageId):
-        # LOG.info("Sending unsuback packet")
+        LOG.warn("Sending unsuback packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x0B << 4)
@@ -584,7 +585,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(header)
 
     def disconnect(self):
-        LOG.info("Sending disconnect packet")
+        LOG.warn("Sending disconnect packet")
         header = bytearray()
         header.append(0x0E << 4)
         header.extend(EncodeDecode._encodeLength(0))
@@ -630,11 +631,11 @@ class MQTTClient(MQTTProtocol):
         self.m_willTopic = willTopic
         self.m_willMessage = willMessage
         self.m_willRetain = willRetain
-        self.m_UserName = p_broker.UserName
-        self.m_Password = p_broker.Password
+        self.m_UserName = p_broker.Access.UserName
+        self.m_Password = p_broker.Access.Password
         p_pyhouse_obj.Core.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Core.Mqtt.ClientID)
-        l_msg += "\n\tUser:'{}';\n\tPass:'{}';".format(p_broker.UserName, p_broker.Password)
+        l_msg += "\n\tUser:'{}';\n\tPass:'{}';".format(p_broker.Access.UserName, p_broker.Access.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.Host.Name)
         LOG.info(l_msg)
 
@@ -656,7 +657,7 @@ class MQTTClient(MQTTProtocol):
         PyHouse logic for what happened when the TCP/TLS connection is broken.
         """
         l_msg = reason.check(error.ConnectionClosed)
-        LOG.warn("Disconnected from MQTT Broker:\n\t{}\n\tReason:{}\n\tAddr:{}".format(reason, l_msg, self.m_broker.Host.Name))
+        LOG.warn('Disconnected from MQTT Broker "{}"\n\tReason: {}\n\tMessage:{}'.format(self.m_broker.Name, reason, l_msg))
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
@@ -671,7 +672,7 @@ class MQTTClient(MQTTProtocol):
     def connackReceived(self, p_status):
         """ Override
         """
-        LOG.debug("Received Connack from MQTT Broker\n\tAddr: {}\n\tStatus: {}".format(self.m_broker.Host.Name, p_status))
+        LOG.debug('Received Connack from MQTT Broker "{}"\n\tAddr: {}\n\tStatus: {}'.format(self.m_broker.Name, self.m_broker.Host.Name, p_status))
         if p_status == 0:
             self.mqttConnected()
 
@@ -735,7 +736,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolApi = l_client
         self.resetDelay()
-        LOG.debug('Building MQTT Protocol - Client:{}'.format(l_client))
+        LOG.debug('Building MQTT Protocol for "{}"'.format(self.m_broker.Name))
         return l_client
 
     def startedConnecting(self, p_connector):
@@ -756,8 +757,8 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """ Override.
         Called when an established connection is lost.
         """
-        LOG.warn('Made connection LOST.\n\tHost: {};\n\tReason:{};'.format(self.m_broker.Host.Name, p_reason))
-        LOG.debug(PrettyFormatAny.form(p_reason, 'Reason', 190))
+        LOG.warn('Connection LOST to "{}"\n\tReason:{};'.format(self.m_broker.Name, p_reason))
+        # LOG.debug(PrettyFormatAny.form(p_reason, 'Reason'))
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
         p_reason.printTraceback()
 
@@ -772,5 +773,8 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """
         LOG.warn('makeConnection - Transport: {}'.format(p_transport))
         pass
+
+    def _dummy(self):
+        _x = PrettyFormatAny.form(self.m_broker, 'Broker')
 
 #  ## END DBK

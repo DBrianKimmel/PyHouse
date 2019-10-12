@@ -1,5 +1,5 @@
 """
-@name:      Modules/Communication/communication.py
+@name:      Modules/Computer/Communication/communication.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2019 by D. Brian Kimmel
@@ -9,17 +9,16 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Communication  ')
 
 
-class lightingUtility(object):
+class lightingUtilityComm:
 
     def read_xml(self, p_pyhouse_obj):
         """Read all the information.
@@ -33,7 +32,7 @@ class lightingUtility(object):
         return l_dict
 
 
-class Api(object):
+class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

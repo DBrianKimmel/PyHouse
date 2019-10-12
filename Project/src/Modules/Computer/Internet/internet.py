@@ -19,12 +19,11 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-11'
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
-from Modules.Computer.Internet.internet_xml import Api as internetApi
 from Modules.Computer.Internet.inet_find_external_ip import Api as findApi
 from Modules.Computer.Internet.inet_update_dyn_dns import Api as updateApi
 from Modules.Core import logging_pyh as Logger
@@ -34,7 +33,7 @@ INITIAL_DELAY = 5
 REPEAT_DELAY = 2 * 60 * 60
 
 
-class lightingUtility(object):
+class lightingUtilityInter:
     """
     """
 
@@ -42,13 +41,7 @@ class lightingUtility(object):
     def _internet_loop(p_pyhouse_obj):
         # Api.FindExternalIp(p_pyhouse_obj)
         # Api.UpdateDynDnsSites(p_pyhouse_obj)
-        p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, lightingUtility._internet_loop, p_pyhouse_obj)
-
-    @staticmethod
-    def _read_xml_configuration(p_pyhouse_obj):
-        l_config = internetApi().read_internet_xml(p_pyhouse_obj)
-        p_pyhouse_obj.Computer.InternetConnection = l_config
-        return l_config
+        p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, lightingUtilityInter._internet_loop, p_pyhouse_obj)
 
 
 class Api:
@@ -59,18 +52,16 @@ class Api:
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def LoadConfig(self):
-        lightingUtility._read_xml_configuration(self.m_pyhouse_obj)
         LOG.info('Loaded Internet Config')
 
     def Start(self):
         """
         Start async operation of the Internet module.
         """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtility._internet_loop, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtilityInter._internet_loop, self.m_pyhouse_obj)
         LOG.info("Started Internet.")
 
     def SaveConfig(self):
-        internetApi().write_internet_xml(self.m_pyhouse_obj)
         LOG.info('Saved Internet Config')
 
     def Stop(self):

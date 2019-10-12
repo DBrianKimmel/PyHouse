@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-12'
 
 #  Import system type stuff
 
@@ -34,12 +34,13 @@ class LinkData():
     """
 
     def __init__(self):
-        self.Addess = 12345  #  3 bytes
+        self.Addess = 123456  #  3 bytes
         self.Control = 0x0000  #  2 Bytes
         self.Data = '00.00.00'  #  3 bytes
         self.Flag = 0xC2
         self.Group = 0
-        self.IsController = False
+        self._IsController = False
+        self._InsteonAddres = '12.34.56'
 
 
 class Send():
@@ -208,7 +209,7 @@ class Decode:
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
-            l_link_obj.IsController = True
+            l_link_obj._IsController = True
         LOG.info("All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
 
         # Ask for next record
@@ -347,5 +348,8 @@ class InsteonAllLinks:
 class Api:
     """
     """
+
+    def _x(self):
+        _y = PrettyFormatAny.form(0, '')
 
 #  ## END DBK

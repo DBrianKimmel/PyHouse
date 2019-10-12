@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-10-07'
+__updated__ = '2019-10-11'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -53,7 +53,7 @@ from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
 from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
 from Modules.House.Lighting.lighting import ScheduleLightingInformation
 from Modules.House.Lighting.actions import Api as lightActionsApi
-from Modules.House.Lighting.utility import lightingUtility as lightingUtility
+from Modules.House.Lighting.utility import lightingUtility
 from Modules.House.Schedule import sunrisesunset
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -200,6 +200,11 @@ class MqttActions:
         return p_logmsg
 
 
+class DOW:
+    """ Day of week.
+    """
+
+
 class TimeField:
     """ This class deals with the Time Field parsing.
 
@@ -285,7 +290,7 @@ class TimeField:
         return self.m_seconds
 
 
-class SchedTime:
+class TimeCalcs:
     """
     Get the when scheduled time.  It may be from about a minute to about 1 week.
     If the schedule is not active return a None
@@ -299,8 +304,7 @@ class SchedTime:
         sunrise/sunset/dawn/dusk  +/-  offset HH:MM:SS or HH:MM
     """
 
-    @staticmethod
-    def _extract_days(p_schedule_obj, p_now):
+    def _extract_days(self, p_schedule_obj, p_now):
         """ Get the number of days until the next DayOfWeek in the schedule.
 
         DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
@@ -329,18 +333,16 @@ class SchedTime:
             l_days += 1
         return 10
 
-    @staticmethod
-    def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
+    def extract_time_to_go(self, p_schedule_obj, p_now, p_rise_set):
         """ Compute the seconds to go from now to the next scheduled time.
         May be from 30 seconds to a full week.
 
-        @param p_pyhouse_obj: Not used yet
         @param p_schedule_obj: is the schedule object we are working on.
         @param p_now: is the datetime for now.
         @param p_rise_set: is the sunrise/sunset structure.
         @return: The number of seconds from now to the scheduled time.
         """
-        l_dow_seconds = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
+        l_dow_seconds = TimeCalcs()._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
         l_sched_seconds = TimeField().parse_timefield(p_schedule_obj.Time, p_rise_set)
         l_sched_secs = l_dow_seconds + l_sched_seconds
         l_now_seconds = convert.datetime_to_seconds(p_now)
@@ -396,10 +398,10 @@ class ScheduleExecution:
         for l_slot in p_key_list:
             l_schedule_obj = p_pyhouse_obj.House.Schedules[l_slot]
             ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
-        lightingUtility().schedule_next_event(p_pyhouse_obj)
+        lightingUtilitySch().schedule_next_event(p_pyhouse_obj)
 
 
-class lightingUtility:
+class lightingUtilitySch:
     """
     """
 
@@ -420,10 +422,10 @@ class lightingUtility:
         """
         l_schedule_key_list = []
         l_min_seconds = SECONDS_IN_WEEK
-        l_riseset = lightingUtility().fetch_sunrise_set(p_pyhouse_obj)
+        l_riseset = lightingUtilitySch().fetch_sunrise_set(p_pyhouse_obj)
         # Loop through the possible scheduled events.
         for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
-            l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
+            l_seconds = TimeCalcs().extract_time_to_go(l_schedule_obj, p_now, l_riseset)
             if l_seconds < MINIMUM_TIME:
                 continue
             if l_min_seconds == l_seconds:  # Add to lists for the given time.
@@ -461,10 +463,10 @@ class lightingUtility:
         @param p_delay: is the (forced) delay time for the timer.
         """
         l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
-        l_delay, l_list = lightingUtility().find_next_scheduled_events(p_pyhouse_obj, l_now)
+        l_delay, l_list = lightingUtilitySch().find_next_scheduled_events(p_pyhouse_obj, l_now)
         if p_delay != 0:
             l_delay = p_delay
-        lightingUtility().run_after_delay(p_pyhouse_obj, l_delay, l_list)
+        lightingUtilitySch().run_after_delay(p_pyhouse_obj, l_delay, l_list)
 
     def find_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
         """ Find all the schedule entry using any of several criteria.
@@ -554,9 +556,14 @@ class LocalConfig:
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_DOW_field(self):
+    def _extract_DOW_field(self, p_config):
         """
         """
+        l_dow = p_config.upper()
+        if len(l_dow) != 7:
+            LOG.error('Day of week must be 7 chars long "--TWT--" was "{}"'.format(l_dow))
+            return 127
+        return l_dow
 
     def _extract_one_schedule(self, p_config):
         """
@@ -579,7 +586,7 @@ class LocalConfig:
                 l_ret = self._extract_thermostat_schedule(l_value)
                 l_obj.Sched = l_ret
             elif l_key == 'DOW':
-                pass
+                l_obj.DOW = self._extract_DOW_field(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
@@ -664,6 +671,6 @@ class Api:
     def RestartSchedule(self):
         """ Anything that alters the schedules should call this to cause the new schedules to take effect.
         """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtility().schedule_next_event, self.m_pyhouse_obj)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtilitySch().schedule_next_event, self.m_pyhouse_obj)
 
 # ## END DBK

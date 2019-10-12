@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-08'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -57,7 +57,7 @@ class Util(object):
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
             _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.Host.Name, p_broker_obj.Host.Port, l_factory)
-            LOG.info('TCP Connected to:\n\tBroker: {};\n\tHost: {};\n\tPrefix: {};'.format(
+            LOG.info('Mqtt connected via TCP to "{}"\n\tHost: {};\n\tPrefix: {};'.format(
                 p_broker_obj.Name, p_broker_obj.Host.Name, p_pyhouse_obj.Core.Mqtt.Prefix))
 
     @defer.inlineCallbacks

@@ -64,14 +64,19 @@ class LocalConfig:
     def _extract_one_hue(self, p_config):
         """
         """
-        LOG.debug('Config: {}'.format(p_config))
+        # LOG.debug('Config: {}'.format(p_config))
         l_required = ['Name', 'Family', 'Host', 'Access']
         l_obj = HueInformation()
         for l_key, l_value in p_config.items():
             LOG.debug('Key: {}; Value: {}'.format(l_key, l_value))
             if l_key == 'Access':
                 l_obj.Access = self.m_config.extract_access_group(l_value)
-            setattr(l_obj, l_key, l_value)
+            elif l_key == 'Family':
+                l_obj.Family = self.m_config.extract_family_group(l_value)
+            elif l_key == 'Host':
+                l_obj.Host = self.m_config.extract_host_group(l_value)
+            else:
+                setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warn('hue.yaml is missing an entry for "{}"'.format(l_key))

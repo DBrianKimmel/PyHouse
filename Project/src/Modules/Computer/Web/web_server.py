@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -56,7 +56,7 @@ def root(_request):
     return MainPage()
 
 
-class ClientConnections(object):
+class ClientConnections:
     """This class keeps track of all the connected browsers.
     We can update the browser via COMET when a controlled device changes.
     (Light On/Off, Pool water low, Garage Door open/Close ...)
@@ -70,7 +70,7 @@ class ClientConnections(object):
         LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
-class lightingUtility(ClientConnections):
+class lightingUtilityWs(ClientConnections):
 
     def start_webservers(self, p_pyhouse_obj):
         """ Start Kline web server()
@@ -161,7 +161,7 @@ class lightingUtility(ClientConnections):
         return
 
 
-class Api(lightingUtility):
+class Api(lightingUtilityWs):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

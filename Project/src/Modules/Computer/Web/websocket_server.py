@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-11'
 
 #  Import system type stuff
 import json
@@ -175,7 +175,7 @@ class ClientConnections(object):
         LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
-class lightingUtility(ClientConnections):
+class lightingUtilityWSS(ClientConnections):
 
     def start_websocket_server(self, _p_pyhouse_obj):
         """ Setup for starting a web socket server (encrypted or not).
@@ -210,7 +210,7 @@ class lightingUtility(ClientConnections):
         pass
 
 
-class Api(lightingUtility):
+class Api(lightingUtilityWSS):
 
     m_contextFactory = None
 
