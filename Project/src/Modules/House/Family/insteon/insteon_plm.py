@@ -14,7 +14,7 @@ Responses do not all have to follow the command that caused them.
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-12'
 
 #  Import system type stuff
 import datetime
@@ -410,7 +410,7 @@ class Api(LightHandlerApi):
         LOG.info('Starting a PLM')
         # LOG.debug(PrettyFormatAny.form(self.m_controller_obj, 'Controller'))
         l_ret = self._start_all_controllers()
-        # # self._get_plm_info()
+        self._get_plm_info()
         LOG.info('Started.')
         return l_ret
 
