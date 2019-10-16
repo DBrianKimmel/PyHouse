@@ -15,6 +15,7 @@ pyhouse_obj.					PyHouseInformation()			Modules/Core/data_objects.py
         	Brokers{}
     Computer.					ComputerInformation()			Modules/Computer/computer.py
         Bridges.{}				BridgeInformation()				Modules/Computer/Bridges/bridges.py
+        	xxx
         Communication
         InternetConnection
         Nodes.{}				NodeInformation()

@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-01-20
-* Updated:   2019-01-20
+* Updated:   2019-10-14
 * License:   MIT License
 * Summary:   This is the design for Insteon..
 
@@ -53,6 +53,8 @@ This has not yet (and may never be) been coded in PyHouse.
 ### Hub
 
 This is just beginning to be coded (2019) in PyHouse.
+
+This design must be aware of multiple computer nodes may issue commands and share responses with all the other nodes.
 
 
 ### END DBK

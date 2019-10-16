@@ -11,7 +11,7 @@ Passed 3 of 9 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-13'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -21,8 +21,7 @@ from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.House.house import \
     Api as houseApi, \
-    Config as houseConfig, \
-    lightingUtility as houseUtil, HouseInformation
+    HouseInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

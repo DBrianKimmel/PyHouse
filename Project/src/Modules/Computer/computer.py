@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-14'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -56,7 +56,7 @@ class ComputerInformation:
         self.UUID = None
         self.Primary = False
         self.Priority = 99
-        self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridge_data
+        self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridges.py
         self.Communication = {}  # CommunicationInformation()
         self.InternetConnection = {}  # InternetConnectionInformation()
         self.Nodes = {}  # NodeInformation()

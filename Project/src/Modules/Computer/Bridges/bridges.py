@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-14'
 __version_info__ = (19, 10, 6)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -50,13 +50,11 @@ class BridgeInformation:
     def __init__(self):
         self.Name = None
         self.Comment = None
-        self.UUID = None
-        self.Connection = None  # 'Ethernet, Serial, USB
-        self.FamilyName = None
         self.Type = None  # Insteon, Hue
-        self.IPv4Address = '9.8.7.6'
-        self.Tcp_port = None
-        self.Security = None  # SecurityInformation()
+        self.Access = None  # AccessInformation()
+        self.Connection = None  # ???
+        self.Host = None  # HostInformation()
+        self.Family = None  # FamilyInformation()
         self._Queue = None
 
 
@@ -67,7 +65,7 @@ class LocalConfig:
 
     m_config = None
     m_pyhouse_obj = None
-    m_bridges__defined = []
+    m_bridges_defined = []
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -85,9 +83,8 @@ class LocalConfig:
         """
         # LOG.debug('Bridges: {}'.format(p_config))
         l_dict = {}
-        # for l_ix, l_value in enumerate(p_config):
-        #    LOG.debug('Bridge Key 1: {}; Value: {}'.format(l_ix, l_value))
-        for l_key, l_value in p_config.items():
+        # for l_key, l_value in enumerate(p_config):  # ### List
+        for l_key, l_value in p_config.items():  # ### Mapping
             # LOG.debug('Bridge Key 2: {}; Value: {}'.format(l_key, l_value))
             BridgeList.append(l_key.lower())
             l_obj = self._extract_one_bridge(l_value)
@@ -95,7 +92,7 @@ class LocalConfig:
         return l_dict
 
     def load_yaml_config(self):
-        """ Read the .Yaml file.
+        """ Read the .yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.Computer.Bridges = {}
@@ -165,13 +162,14 @@ class Api:
         l_count = 0
         LOG.info("Starting Bridges")
         for l_bridge in self.m_pyhouse_obj.Computer.Bridges.values():
+            LOG.info('Starting bridge "{}"'.format(l_bridge.Name))
             if l_bridge.Type == 'Hue':
                 # Atempt to not load unless used
                 from Modules.House.Family.hue.hue_hub import HueHub
                 LOG.info('Hue Bridge Active: {}'.format(l_bridge.Name))
                 HueHub(self.m_pyhouse_obj).HubStart(l_bridge)
             else:
-                LOG.info('Other Bridge Active: {}'.format(l_bridge.Name))
+                LOG.info('Other Bridge Active: "{}"'.format(l_bridge.Name))
             l_count += 1
 
     def SaveConfig(self):
@@ -183,5 +181,6 @@ class Api:
 
     def Stop(self):
         LOG.info("Stopped.")
+        _x = PrettyFormatAny.form('x', 'X')
 
 # ## END DBK

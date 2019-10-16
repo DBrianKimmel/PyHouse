@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Security/camera.py
+@name:      Modules/House/Security/cameras.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013_2019 by D. Brian Kimmel
@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-15'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -36,13 +36,11 @@ from datetime import datetime
 
 # Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.rooms import Api as roomsApi
-from Modules.House.Family.family import Config as familyConfig
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Camera         ')
+LOG = Logger.getLogger('PyHouse.Cameras        ')
 
-CONFIG_NAME = 'camera'
+CONFIG_NAME = 'cameras'
 
 FRAME_INTERVAL = 1000  # mili-seconds
 MIN_PIXELS = 25
@@ -113,7 +111,7 @@ class Image:
 
     def main(self):
         # Get first image
-        image1, buffer1 = self.capture_test_image()
+        _image1, buffer1 = self.capture_test_image()
 
         # Reset last capture time
         lastCapture = time.time()
@@ -143,7 +141,7 @@ class Image:
                 self.save_image(saveWidth, saveHeight, diskSpaceToReserve)
 
             # Swap comparison buffers
-            image1 = image2
+            _image1 = image2
             buffer1 = buffer2
 
 
@@ -173,12 +171,12 @@ class LocalConfig:
         """
         l_obj = CameraInformation()
         l_required = ['Name', 'Family']
-        l_groupfields = ['Family', 'Room']
+        _l_groupfields = ['Family', 'Room']
         for l_key, l_value in p_config.items():
             if l_key == 'Family':
-                l_obj.Family = familyConfig().extract_family_group(l_value, self.m_pyhouse_obj)
+                l_obj.Family = self.m_config.extract_family_group(l_value)
             elif l_key == 'Room':
-                l_obj.Room = roomsApi(self.m_pyhouse_obj).getRoomConfig(l_value)
+                l_obj.Room = self.m_config.extract_room_group(l_value)
                 pass
             else:
                 setattr(l_obj, l_key, l_value)

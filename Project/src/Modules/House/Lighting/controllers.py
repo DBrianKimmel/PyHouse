@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-14'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,6 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.Drivers.interface import Config as interfaceConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -42,7 +41,7 @@ class ControllerInformation:
         self.DeviceType = 'Lighting'
         self.DeviceSubType = 'Controller'
         self.Family = None  # LightFamilyInformation()
-        self.Interface = None  # Interface module specific  InterfaceInformation()
+        self.Interface = None  # Interface module specific  DriverInterfaceInformation()
         self.Access = None  # Optional ==> SecurityInformation()
         #
         self._Message = bytearray()
@@ -98,7 +97,7 @@ class LocalConfig:
         l_obj.DeviceType = 'Lighting'
         l_obj.DeviceSubType = 'Controller'
         l_required = ['Name', 'Family', 'Interface']
-        l_groupfields = ['Family', 'Interface', 'Access']
+        # l_groupfields = ['Family', 'Interface', 'Access']
         try:
             for l_key, l_value in p_config.items():
                 # LOG.debug('Controller Key "{}"; Value: "{}"'.format(l_key, l_value))

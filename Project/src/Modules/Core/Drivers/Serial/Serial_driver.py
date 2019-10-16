@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-13'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,14 +72,21 @@ class FindPort:
     """
 
     def __init__(self):
+        """
+        """
         #  l_devices = subprocess.call(['lsusb'])
         #  print l_devices
+
+    def get_port(self):
+        """ This should return the port name of the conroller '/dev/ttyUSB0'
+        """
         l_context = pyudev.Context()
         for l_dev in l_context.list_devices(subsystem='tty'):
             if 'ID_VENDOR' not in l_dev:
                 continue
-            # print(l_dev.device_node)
-            pass
+            print('Device Node', l_dev.device_node)
+            l_device = l_dev.device_node
+        return l_device
 
 
 class Config:
@@ -298,6 +305,7 @@ class Api(SerialApi):
 
     def Stop(self):
         self.close_device(self.m_controller_obj)
+        _x = PrettyFormatAny.form(0, '')
         LOG.info('Stopped Sedrial Driver for controller "{}"'.format(self.m_controller_obj.Name))
 
     def Read(self):

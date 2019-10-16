@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Lighting/_test/test_lighting_controllers.py
+@name:      Modules/House/Lighting/_test/test_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2019 by D. Brian Kimmel
@@ -7,10 +7,10 @@
 @note:      Created on Feb 21, 2014
 @summary:   This module is for testing local node data.
 
-Passed all 7 tests - DBK - 2019-09-17
+Passed all 7 tests - DBK - 2019-10-13
 """
 
-__updated__ = '2019-09-23'
+__updated__ = '2019-10-13'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -18,7 +18,7 @@ from ruamel.yaml import YAML
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Lighting.controllers import Config as controllerConfig
+from Modules.House.Lighting.controllers import Api as controllerApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -69,6 +69,7 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_controlApi = controllerApi(self.m_pyhouse_obj)
         l_yaml = YAML()
         self.m_test_config = l_yaml.load(TEST_YAML)
 
@@ -111,7 +112,7 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
         print('C1-01')
         l_yaml = self.m_test_config['Controllers'][0]
         # print('C1-01-A - Yaml: ', l_yaml)
-        l_ret = controllerConfig(self.m_pyhouse_obj)._extract_one_controller(l_yaml)
+        l_ret = self.m_controlApi.LocalConfig(self.m_pyhouse_obj)._extract_one_controller(l_yaml)
         print(PrettyFormatAny.form(l_ret, 'C1-01-B - Light'))
         self.assertEqual(l_ret.Name, 'TestPlm')
         self.assertEqual(l_ret.Comment, 'Portable, Goes where I do.')
@@ -132,8 +133,8 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
         """ Read the controller.yaml config file
         """
         print('C1-03')
-        _l_ret = controllerConfig(self.m_pyhouse_obj).load_yaml_config()
-        # print(PrettyFormatAny.form(l_ret, 'C1-03-A - ret'))
+        _l_ret = self.m_controlApi.load_yaml_config()
+        print(PrettyFormatAny.form(_l_ret, 'C1-03-A - ret'))
         l_test = self.m_pyhouse_obj.House.Lighting.Controllers
         # print(PrettyFormatAny.form(l_test, 'C1-03-B - Controllers'))
         # print(PrettyFormatAny.form(l_test, 'C1-03-C - Controllers'))

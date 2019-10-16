@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-10-15'
 
 #  Import system type stuff
 
@@ -25,12 +25,18 @@ from Modules.House.Family.insteon.insteon_constants import \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
     STX
-from Modules.House.Family.insteon.insteon_data import InsteonQueueInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Utils  ')
+
+
+class InsteonQueueInformation:
+
+    def __init__(self):
+        self.Command = None
+        self.Text = None
 
 
 def create_command_message(p_command):
@@ -63,6 +69,8 @@ def get_message_length(p_message):
     l_id = p_message[1]
     try:
         l_message_length = MESSAGE_LENGTH[l_id]
+        if l_message_length < 8:
+            return l_message_length
         if len(p_message) > 8:
             if p_message[8] & 0x10 > 0:
                 l_message_length += 14
@@ -346,5 +354,8 @@ class Decode:
         else:
             l_device_obj = Decode.find_address_all_classes(p_pyhouse_obj, l_address)
         return l_device_obj
+
+    def _x(self):
+        PrettyFormatAny.form('', "hold")
 
 #  ## END DBK

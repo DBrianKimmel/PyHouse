@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-13'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -307,7 +307,7 @@ class Api:
     def Stop(self):
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 
-    def getRoomConfig(self, p_config):
+    def getRoomConfig(self, _p_config):
         """
         """
         # l_rooms = self.m_local_config.extract_rooms_group(p_config)

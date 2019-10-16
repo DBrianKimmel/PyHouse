@@ -10,35 +10,28 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 import importlib
 import os
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 
-from Modules.Families import family
-from Modules.Families.family import \
+from Modules.House.Family import family
+from Modules.House.Family.family import \
     lightingUtility as familyUtil, \
     FamilyModuleInformation
-from Modules.Families.test.xml_family import \
-    TESTING_FAMILY_NAME_0, \
-    TESTING_FAMILY_NAME_1, \
-    TESTING_FAMILY_NAME_2, \
-    TESTING_FAMILY_NAME_3
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        # self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        # self.m_xml = SetupPyHouseObj().BuildXml()
         self.m_yaml = SetupPyHouseObj().BuildYaml(None)
         self.m_filename = 'families.yaml'
         # self.m_families = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
@@ -65,7 +58,7 @@ class A1_Validate(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Name(self):
         l_name = 'Insteon'
@@ -74,15 +67,6 @@ class A1_Validate(SetupMixin, unittest.TestCase):
         print('Name-lc: {}'.format(l_lc))
         l_cap = l_lc.capitalize()
         print('Name-cap: {}'.format(l_cap))
-
-    def test_02_ValidFamiliesXml(self):
-        """ Be sure the family names are what we expect later.
-        """
-        # print(PrettyFormatAny.form(family.VALID_FAMILIES, 'A1-02-A - Valid'))
-        self.assertEqual(family.VALID_FAMILIES[0], TESTING_FAMILY_NAME_0)
-        self.assertEqual(family.VALID_FAMILIES[1], TESTING_FAMILY_NAME_1)
-        self.assertEqual(family.VALID_FAMILIES[2], TESTING_FAMILY_NAME_2)
-        self.assertEqual(family.VALID_FAMILIES[3], TESTING_FAMILY_NAME_3)
 
     def test_05_Insteon(self):
         l_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
@@ -114,7 +98,7 @@ class A4_ValidFamily(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Defined(self):
         """ Run thru the directories in the Family section of the source code.
@@ -138,31 +122,7 @@ class B1_One(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_Import(self):
-        """
-        """
-        l_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
-        print(PrettyFormatAny.form(l_obj, 'B1-01-A - Module'))
-        _l_mod = familyUtil()._do_import(l_obj, 'Insteon_xml')
-        self.assertEqual(l_obj.Name, 'Insteon')
-        self.assertEqual(l_obj.Key, 0)
-        self.assertEqual(l_obj.Active, True)
-        self.assertEqual(l_obj.FamilyDevice_ModuleName, 'Insteon_device')
-        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
-        self.assertEqual(l_obj.FamilyXml_ModuleName, 'Insteon_xml')
-
-    def test_02_Import(self):
-        l_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'UPB')
-        _l_mod = familyUtil()._do_import(l_obj, 'UPB_xml')
-        # print(PrettyFormatAny.form(l_mod, 'B1-02-A - Module'))
-        self.assertEqual(l_obj.Name, 'UPB')
-        self.assertEqual(l_obj.Key, 0)
-        self.assertEqual(l_obj.Active, True)
-        self.assertEqual(l_obj.FamilyDevice_ModuleName, 'UPB_device')
-        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.UPB')
-        self.assertEqual(l_obj.FamilyXml_ModuleName, 'UPB_xml')
+        SetupMixin.setUp(self)
 
 
 class B2_One(SetupMixin, unittest.TestCase):
@@ -170,7 +130,7 @@ class B2_One(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_BuildData(self):
@@ -192,7 +152,7 @@ class B3_One(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Import(self):
@@ -206,7 +166,7 @@ class C1_Import(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         # self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Import(self):
@@ -223,7 +183,7 @@ class C2_Api(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Import(self):
@@ -239,7 +199,7 @@ class D1_One(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         # self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Null(self):

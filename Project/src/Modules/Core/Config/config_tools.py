@@ -9,12 +9,13 @@
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-15'
 __version_info__ = (19, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
+import importlib
 import os
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
@@ -192,6 +193,21 @@ class Tools:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
+    def _do_import(self, p_name, module_path=''):
+        """
+        @param p_name: is the name of the module ('pandora')
+        @param submodule: is the relative path to the module ('Modules.House.Entertainment.')
+        """
+        l_package = module_path
+        l_name = l_package + '.' + p_name.lower()
+        try:
+            l_ret = importlib.import_module(l_name, package=l_package)
+        except ImportError as e_err:
+            l_msg = 'ERROR importing module: "{}"\n\tErr:{}.'.format(p_name, e_err)
+            LOG.error(l_msg)
+            l_ret = None
+        return l_ret
+
     def _get_config_dir(self):
         """
         @return: The configuration Directory ('/etc/pyhouse' is the default)
@@ -202,7 +218,7 @@ class Tools:
         """
         @param p_name: is the file to find
         @param p_dir: is the dir tree to search for the file
-        @return: the entire path of the file or None if not found.
+        @return: the absolute path of the file or None if not found.
         """
         # LOG.debug('Finding file:"{}" In dir:"{}"'.format(p_name, p_dir))
         # print('Looking for:{}; in Dir:{}'.format(p_name, p_dir))
@@ -216,35 +232,35 @@ class Tools:
 
     def find_config_file(self, p_name):
         """ Given a name like 'computer' or 'Computer', find any config file 'computer.yaml'.
+        @return: the absolute path of the file or None if not found.
         """
         # LOG.debug('Finding Config file:"{}"'.format(p_name))
         l_filename = p_name.lower() + CONFIG_SUFFIX
         l_ret = self._find_file(l_filename, self._get_config_dir())
         return l_ret
 
-    def XXXload_module_config(self, p_list):
-        """ Config a module
-        @param p_list: is a list of module names.
+    def import_modules(self, p_list, p_path):
         """
-        LOG.debug('Finding Modules:"{}"'.format(p_list))
-        l_node = ConfigYamlNodeInformation()
-        for l_key in p_list:
-            l_filename = l_key.capitalize() + '.yaml'
-            l_node.FileName = l_filename
-            for l_root, _l_dirs, l_files in os.walk(self._get_config_dir()):
-                if l_filename in l_files:
-                    l_path = os.path.join(l_root, l_filename)
-                    l_node.YamlPath = l_path
-                    return l_node
-        return None  # Not Found
-
-    def XXXread_coords(self, p_yaml):
-        """ Read a set of room co-ordinates
-        Written as "[1.2, 3.4, 5.6]"
+        @param p_list: is a list of config files to look for and import their modules
         """
-        l_coord = []
-        _l_x = p_yaml
-        return l_coord
+        for l_module in p_list:
+            l_name = l_module.lower()
+            LOG.debug('Starting import of Module: "{}"'.format(l_name))
+            l_ret = self._do_import(l_name, module_path=p_path)
+            LOG.debug('Found module "{}"'.format(l_ret))
+            try:
+                l_api = l_ret.Api(self.m_pyhouse_obj)
+            except Exception as e_err:
+                LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(l_module, e_err))
+                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
+                l_api = None
+            # LOG.debug('Imported: {}'.format(l_ret))
+            l_api_name = l_module.capitalize() + 'Api'
+            l_house = self.m_pyhouse_obj._Apis.House
+            setattr(l_house, l_api_name, l_api)
+            # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
+            # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
+        LOG.info('Loaded Modules: {}'.format(p_list))
 
     def extract_fields(self, p_obj, p_config, required_list=None, allowed_list=None, groupfield_list=[]):
         """
@@ -370,24 +386,6 @@ class YamlFetch(Tools):
     """
     """
 
-    def XXXextract_access_group(self, p_config):
-        """
-        """
-        l_obj = SecurityInformation()
-        l_required = ['Name', 'Password']
-        l_allowed = ['ApiKey', 'AccessKey']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
-        return l_obj
-
-    def XXXfetch_interface_info(self, p_config):
-        """
-        """
-        l_obj = SecurityInformation()
-        l_required = ['Type', 'Host', 'Port']
-        l_allowed = ['ApiKey', 'AccessKey']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
-        return l_obj
-
     def XXXvalidate_yaml_in_main(self, p_info_obj, p_yaml_def):
         """
         @param p_info_obj: is the xxxInformation() object we are getting the config data for.
@@ -502,7 +500,7 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         LOG.debug('Saved Yaml file "{}"'.format(p_filename))
 
 
-class Api(SubFields):
+class Api(SubFields, Tools):
     """ This is the interface to the config system.
     """
 
@@ -526,6 +524,13 @@ class Api(SubFields):
         """ Main config file write routine
         """
         l_ret = self.m_yaml.write_yaml(p_filename, p_data, addnew)
+        return l_ret
+
+    def find_config(self, p_name):
+        """ Given a name like 'computer' or 'Computer', find any config file 'computer.yaml'.
+        @return: the absolute path of the file or None if not found.
+        """
+        l_ret = Tools(self.m_pyhouse_obj).find_config_file(p_name)
         return l_ret
 
     def _x(self):

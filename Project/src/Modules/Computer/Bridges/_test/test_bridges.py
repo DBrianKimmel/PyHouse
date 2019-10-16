@@ -12,7 +12,7 @@ Passed all 6 tests - DBK - 2018-02-12
 """
 # from ruamel.yaml.comments import CommentedMap
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-14'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,11 +20,18 @@ from twisted.trial import unittest
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.computer import ComputerInformation
-from Modules.Computer.Bridges.bridges import Config as bridgesConfig
+from Modules.Computer.Bridges.bridges import LocalConfig as bridgesConfig
 from Modules.Core.data_objects import PyHouseInformation
-from Modules.Core.Utilities import json_tools, config_tools
+from Modules.Core.Utilities import json_tools
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+TEST_YAML = """\
+Bridges:
+    Insteon: !include insteon.yaml
+    Hue: !include hue.yaml
+    AcuRite: !include acurite.yaml
+"""
 
 
 class SetupMixin(object):

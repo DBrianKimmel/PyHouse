@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-10-07'
+__updated__ = '2019-10-15'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -207,7 +207,7 @@ class LocalConfig:
         l_obj = PioneerDeviceInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
-                l_obj.Host = self.m_config_tools.fetch_host_info(l_value)
+                l_obj.Host = self.m_config.extract_host_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.

@@ -7,11 +7,11 @@
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 15 tests - DBK - 2019-10-01
+Passed all 17 tests - DBK - 2019-10-15
 
 """
 
-__updated__ = '2019-10-01'
+__updated__ = '2019-10-15'
 
 # Import system type stuff
 import os
@@ -25,7 +25,7 @@ from ruamel.yaml import YAML
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Config import config_tools
-from Modules.Core.Config.config_tools import Yaml as configYaml, ConfigYamlNodeInformation
+from Modules.Core.Config.config_tools import Yaml as configYaml, ConfigYamlNodeInformation, Api as configApi
 from Modules.House.Lighting.lights import LightInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -84,6 +84,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj._Config.ConfigDir
         self.m_filename = '_test.yaml'
         self.m_yamlconf = configYaml(self.m_pyhouse_obj)
+        self.m_api = configApi(self.m_pyhouse_obj)
 
     def dump_to_file(self, p_yaml):
         """ For debugging to see a new _test.yaml file.
@@ -190,15 +191,6 @@ class B7_YamlCreate(SetupMixin, unittest.TestCase):
         # self.dump_to_file(l_yaml)
         self.assertIsInstance(l_yaml, OrderedDict)
         self.assertEqual(l_tag, "ERROR_TAG")
-
-    def test_03_CreateNode(self):
-        """ _test the creation of a yaml structure
-        This will create an almost empty yaml config structure
-        """
-        l_node = self.m_yamlconf.create_yaml_node('Test3')
-        # print(PrettyFormatAny.form(l_node, 'B7-03-a - Node', 190))
-        print('B7-03-B - Node: {}'.format(l_node.Yaml))
-        self.assertEqual(l_node.FileName, 'test3.yaml')
 
 
 class B8_YamlLoad(SetupMixin, unittest.TestCase):
@@ -443,7 +435,7 @@ Host:
         l_yaml = YAML()
         l_data = l_yaml.load(self.test_str)
         # print('D1-01-A - {}'.format(l_data))
-        l_ret = self.m_yamlconf.fetch_host_info(l_data['Host'])
+        l_ret = self.m_api.extract_host_group(l_data['Host'])
         # print(PrettyFormatAny.form(l_ret, 'D1-01-B - Host'))
         self.assertEqual(l_ret.Name, 'pandora-ct')
         self.assertEqual(l_ret.Port, 12345)
@@ -482,5 +474,38 @@ class E1_Extract(SetupMixin, unittest.TestCase):
         l_obj = TestInfo()
         _xx = config_tools.Tools().extract_fields(l_obj, l_data, allowed_list=[])
         print(PrettyFormatAny.form(_xx, 'E1-01-A - Test'))
+
+
+class F1_Tools(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_tools = config_tools.Tools(self.m_pyhouse_obj)
+
+    def test_00(self):
+        print('F1-00')
+        pass
+
+    def test_01_FindFile(self):
+        """
+        """
+        l_ret = self.m_tools._find_file('pyhouse.yaml', '/etc/pyhouse')
+        # print('F1-01-A ', l_ret)
+        self.assertEqual(l_ret, '/etc/pyhouse/pyhouse.yaml')
+
+    def test_02_FindConfig(self):
+        """
+        """
+        l_ret = self.m_tools.find_config_file('pyhouse')
+        print('F1-02-A ', l_ret)
+        # self.assertEqual(l_ret, '/etc/pyhouse/pyhouse.yaml')
+        self.assertIsNotNone(l_ret)
+
+    def test_03_Import(self):
+        """
+        """
+        l_ret = self.m_tools.import_modules(['Motion_Sensors', 'Garage_Doors'], 'Modules.House.Security')
 
 # ## END DBK

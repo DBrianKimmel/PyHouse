@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-10-12'
+__updated__ = '2019-10-15'
 
 #  Import system type stuff
 
@@ -23,7 +23,7 @@ from Modules.House.Family.insteon.insteon_constants import ACK
 from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_link   ')
@@ -43,11 +43,31 @@ class LinkData():
         self._InsteonAddres = '12.34.56'
 
 
-class Send():
+class SendCmd():
     """
     """
 
-    def queue_0x67_command(self, p_controller_obj):
+    def queue_0x62_command(self, p_controller_obj):
+        """
+        See p 231(244) of 2009 developers guide.
+        See p 149(162) of 2009 developers guide.
+        """
+        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        l_command = bytearray(22)
+        l_command[0] = 0x02
+        l_command[1] = 0x62
+        insteon_utils.insert_address_into_message(p_controller_obj.Family.Address, l_command, 2)
+        l_command[5] = 0x1F  #  Message Flags - Extended cmd
+        l_command[6] = 0x2F  #  Cmd1
+        l_command[7] = 0x01  #  Cmd2
+        l_command[8] = 0x00  #  D1  Unused
+        l_command[9] = 0x00  #  D2  Record request
+        l_command[10] = 0x0F  # D3  High Byte
+        l_command[11] = 0xF8  # D4  Low Byte
+        l_command[12] = 0x01  # D5  All Records
+        insteon_utils.queue_command(p_controller_obj, l_command, 'Query ALDB')
+
+    def XXXqueue_0x67_command(self, p_controller_obj):
         """Reset the PLM (2 bytes)
         Puts the IM into the factory reset state which clears the All-Link Database.
         See p 255(268) of 2009 developers guide.
@@ -96,24 +116,13 @@ class Send():
 
     def read_aldb_v2(self, p_controller_obj):
         """
+        See p 231(244) of 2009 developers guide.
+        See p 149(162) of 2009 developers guide.
         """
-        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-        l_command = bytearray(22)
-        l_command[0] = 0x02
-        l_command[1] = 0x62
-        insteon_utils.insert_address_into_message(p_controller_obj.Family.Address, l_command, 2)
-        l_command[5] = 0x13
-        l_command[6] = 0x2f  #  Cmd1
-        l_command[7] = 0x00  #  Cmd2
-        l_command[8] = 0x00  #  D1  Unused
-        l_command[9] = 0x00  #  D2  Record request
-        l_command[10] = 0x00  # D3  High Byte
-        l_command[11] = 0x00  # D4  Low Byte
-        l_command[12] = 0x00  # D5  All Records
-        insteon_utils.queue_command(p_controller_obj, l_command, 'Query ALDB')
+        self.queue_0x62_command(p_controller_obj)
 
 
-class Decode:
+class DecodeLnk:
     """
     """
 
@@ -198,22 +207,25 @@ class Decode:
         [8] = Link Data 2
         [9] = Link Data 3
         """
-        l_message = p_controller_obj._Message
-        l_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_message[4:7])
+        l_message = p_controller_obj._Message[:10]
         l_link_obj = LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]
-        l_link_obj.InsteonAddess = l_obj.InsteonAddress
         l_link_obj.Data = l_data = [l_message[7], l_message[8], l_message[9]]
         l_flag_control = l_flags & 0x40
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
             l_link_obj._IsController = True
+        try:
+            l_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_message[4:7])
+            l_link_obj.Address = l_obj.Family.Address
+        except:
+            l_link_obj.Address = FormatBytes(l_message[4:7])
         LOG.info("All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
 
         # Ask for next record
-        Send().queue_0x6A_command(p_controller_obj)
+        SendCmd().queue_0x6A_command(p_controller_obj)
 
         return
 
@@ -264,7 +276,7 @@ class Decode:
         l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ack = 'ACK'
-            Send().queue_0x6A_command(p_controller_obj)
+            SendCmd().queue_0x6A_command(p_controller_obj)
         else:
             LOG.info("All-Link first record - NAK")
             l_ack = 'NAK'
@@ -282,7 +294,7 @@ class Decode:
         l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ack = 'ACK'
-            Send().queue_0x6A_command(p_controller_obj)
+            SendCmd().queue_0x6A_command(p_controller_obj)
         else:
             l_ack = 'NAK'
         LOG.info("All-Link Next record - {}".format(l_ack))
@@ -312,15 +324,27 @@ class InsteonAllLinks:
         """A command to fetch the all-link database from the PLM
         """
         LOG.info("Get all All-Links from controller {}.".format(p_controller_obj.Name))
-        # Send().queue_0x69_command(p_controller_obj)
-        Send().read_aldb_v2(p_controller_obj)
+
+        SendCmd().queue_0x69_command(p_controller_obj)
+
+        # SendCmd().read_aldb_v2(p_controller_obj)
 
         # Send.queue
 
-    def add_link(self, p_link):
-        """Add an all link record.
+
+class Api:
+    """
+    """
+
+    def read_link(self):
         """
-        pass
+        """
+        LOG.info('Reading Link xxx')
+
+    def write_link(self):
+        """
+        """
+        LOG.info('Writing Link xxx')
 
     def delete_link(self, p_controller_obj, p_address, p_group, p_flag):
         """Delete an all link record.
@@ -334,20 +358,8 @@ class InsteonAllLinks:
         #  p_flag = 0xE2
         p_data = bytearray(b'\x00\x00\x00')
         LOG.info("Delete All-link record - Address:{}, Group:{:#02X}".format(p_light_obj.InsteonAddress, p_group))
-        l_ret = Send().queue_0x6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
+        l_ret = SendCmd().queue_0x6F_command(p_controller_obj, p_light_obj, p_code, p_flag, p_data)
         return l_ret
-
-    def Xreset_plm(self, p_controller_obj):
-        """This will clear out the All-Links database.
-        """
-        l_debug_msg = "Resetting PLM - Name:{}".format(p_controller_obj)
-        Send().queue_0x67_command(p_controller_obj)
-        LOG.info(l_debug_msg)
-
-
-class Api:
-    """
-    """
 
     def _x(self):
         _y = PrettyFormatAny.form(0, '')

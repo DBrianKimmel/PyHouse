@@ -10,7 +10,7 @@
 """
 from Modules.Core.core import ParameterInformation
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-13'
 
 #  Import system type stuff
 import os
@@ -134,7 +134,6 @@ class SetupPyHouseObj:
         l_pyhouse_obj.Computer = SetupPyHouseObj()._build_computer()
         l_pyhouse_obj.House = SetupPyHouseObj()._build_house_data()
         #
-
         l_pyhouse_obj._Apis = self._build_apis()
         l_pyhouse_obj._Config = self._build_config()
         l_pyhouse_obj._Parameters = self.build_params()

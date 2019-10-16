@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-15'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -36,24 +36,6 @@ class Config:
     """
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """
-
-    def extract_family_config(self, p_config):
-        """
-        Device:
-           Family:
-              Name: Insteon
-              Address: 12.34.56
-
-        @param p_config: is the yaml fragment containing the family tree.
-        """
-        l_obj = SonoffInformation()
-        l_required = ['Name']
-        for l_key, l_value in p_config.items():  # A map
-            print('Sonoff Family Config Key:{}; Value{}'.format(l_key, l_value))
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.error('Sonoff Family config is missing a required entry for "{}"'.format(l_key))
-        return l_obj
 
 
 class Api:

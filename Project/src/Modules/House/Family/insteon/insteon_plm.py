@@ -12,9 +12,11 @@ This module carries state information about the controller.
 This is necessary since the responses may follow a command at any interval.
 Responses do not all have to follow the command that caused them.
 
+Note that we only communicate with the local PLM.
+
 """
 
-__updated__ = '2019-10-12'
+__updated__ = '2019-10-15'
 
 #  Import system type stuff
 import datetime
@@ -227,31 +229,9 @@ class PlmDriverProtocol(Commands):
             LOG.error('Driver missing for {}'.format(p_controller_obj.Name))
 
 
-class InsteonPlmCommands:
-
-    @staticmethod
-    def scan_one_light(p_controller_obj, p_obj):
-        """Scan a light.  we are looking for Dev Cat and any other info about the device.
-
-        @param p_obj: is the object for the device that we will query.
-        """
-        Commands._queue_62_command(p_controller_obj, p_obj, MESSAGE_TYPES['product_data_request'], 0x00, 'Scan Light')  #  0x03
-
-
 class InsteonPlmApi:
     """
     """
-
-    def get_aldb_record(self, p_addr):
-        pass
-
-    def put_aldb_record(self, p_addr, p_record):
-        pass
-
-    def ping_plm(self, p_controller_obj):
-        """Send a command to the plm and get its response.
-        """
-        return Commands._queue_60_command(p_controller_obj)
 
     def get_link_records(self, p_controller_obj, _p_obj):
         return insteon_link.InsteonAllLinks().get_all_allinks(p_controller_obj)
@@ -288,6 +268,15 @@ class LightHandlerApi:
 
     def set_plm_mode(self, p_controller_obj):
         """Set the PLM to a mode
+
+        Places the PLM into "Monitor Mode."
+        The documentation is a little unclear on what this does.
+        In practice, this enables the PLM to receive B<Broadcast> messages from devices which are in the PLM's link database.
+        So far, I have encountered two important broadcast messages,
+          1) EZFlora (EZRain) can send out broadcast messages whenever a valve changes state,
+          2) Each device will send out a broadcast message whenever you hold down the set button for 10 seconds.
+        Within MisterHouse this message is used to mark a deaf device as awake for 4 minutes.
+        If Monitor Mode is not enabled, PyHouse will not see these messages.
         """
         LOG.info('Setting mode of Insteon controller {}.'.format(p_controller_obj.Name))
         Commands.queue_6B_command(p_controller_obj, MODE_MONITOR)
@@ -335,7 +324,7 @@ class LightHandlerApi:
         if p_pyhouse_obj.House.Lighting.Buttons != None:
             for l_obj in p_pyhouse_obj.House.Lighting.Buttons.values():
                 self._get_obj_info(p_controller_obj, l_obj)
-            LOG.debug('got {} Buttons'.format(len(p_pyhouse_obj.House.Lighting.Buttons)))
+            LOG.info('got {} Buttons'.format(len(p_pyhouse_obj.House.Lighting.Buttons)))
 
         if p_pyhouse_obj.House.Lighting.Controllers != None:
             for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
@@ -344,14 +333,14 @@ class LightHandlerApi:
                 if l_obj.Family.Name.lower() == 'insteon':
                     # self._get_obj_info(p_controller_obj, l_obj)
                     InsteonPlmApi().get_link_records(p_controller_obj, l_obj)  # Only from controller
-            LOG.debug('got {} Controllers'.format(len(p_pyhouse_obj.House.Lighting.Controllers)))
+            LOG.info('got {} Controllers'.format(len(p_pyhouse_obj.House.Lighting.Controllers)))
 
         if p_pyhouse_obj.House.Lighting.Lights != None:
             for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
                 if l_obj.Family.Name.lower() == 'insteon':
                     self._get_obj_info(p_controller_obj, l_obj)
                     # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
-            LOG.debug('got {} Lights'.format(len(p_pyhouse_obj.House.Lighting.Lights)))
+            LOG.info('got {} Lights'.format(len(p_pyhouse_obj.House.Lighting.Lights)))
 
         if p_pyhouse_obj.House.Lighting.Outlets != None:
             pass
@@ -371,7 +360,7 @@ class Api(LightHandlerApi):
         """
         LOG.info('Get Plm Info')
         if self.m_controller_obj.Interface._DriverApi:
-            insteon_link.Send().read_aldb_v2(self.m_controller_obj)
+            insteon_link.SendCmd().read_aldb_v2(self.m_controller_obj)
 
     def XXX_get_controller(self):
         """ used in testing to load the controller info to be used in testing.

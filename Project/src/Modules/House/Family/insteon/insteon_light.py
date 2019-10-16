@@ -11,7 +11,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-14'
 
 #  Import system type stuff
 
@@ -30,8 +30,8 @@ class InsteonLightStatus:
     def __init__(self):
         self.Name = None
         self.Family = 'insteon'
-        self.Type = 1  # 1 = Lighting
-        self.SubType = 1  # 1 = Button
+        self.Type = 'Lighting'
+        self.SubType = 'Light'
         self.BrightnessPct = None
         self.RoomName = None
 
@@ -106,7 +106,7 @@ class DecodeResponses:
                 l_mqtt_publish = True
                 l_debug_msg += 'Status of light:"{}"-level:"{}"; '.format(p_device_obj.Name, l_level)
             else:
-                l_debug_msg += '\n\tUnknown-type:{} - "{}"; '.format(l_cmd1, FormatBytes(l_message))
+                l_debug_msg += '\n\tUnknown-type:{} - "{}"; '.format(l_cmd1, FormatBytes(l_message[:9]))
                 p_device_obj.BrightnessPct = utilDecode.decode_insteon_light_brightness(l_cmd2)
                 l_mqtt_publish = True
         except AttributeError as e_err:

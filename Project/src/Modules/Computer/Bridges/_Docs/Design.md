@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2019-2019 by D. Brian Kimmel
 * Created:   2019-09-14
-* Updated:   2019-09-14
+* Updated:   2019-10-14
 * License:   MIT License
 * Summary:   This is the design for Bridges.
 
@@ -24,24 +24,14 @@ Bridges are configured in "/etc/pyhouse/Computer/bridges.yaml".
 
 ```yaml
 ---
-# Name:      /etc/pyhouse/computer/bridges.yaml
-# Author:    D. Brian Kimmel
-# Contact:   D.BrianKimmel@gmail.com
-# Copyright: (c)2019-2019 by D. Brian Kimmel
-# Created:   Jun 24, 2019
-# Updated:   Jun 26, 2019
-# License:   MIT License
-# Summary:   This is for PyHouse
-
 Bridges:
-   # Insteon: !include insteon.yaml
-   # AcuRite: !include acurite.yaml
+   Insteon: !include insteon.yaml
+   AcuRite: !include acurite.yaml
    Hue: !include hue.yaml
-
-### END DBK
 ```
 
-Note that this file only defines the presence of the bridges.
+Note that this file only defines the presence of the bridge family.
+The actual config is in the Family section and is named "family.yaml" where family is the actual family name as "insteon.yaml".
 
 
 ### END DBK

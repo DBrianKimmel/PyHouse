@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-15'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,7 +33,7 @@ from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_hvac import DecodeResponses as DecodeHvac
 from Modules.House.Family.insteon.insteon_light import DecodeResponses as DecodeLight
 from Modules.House.Family.insteon.insteon_security import DecodeResponses as DecodeSecurity
-from Modules.House.Family.insteon.insteon_link import Decode as linkDecode
+from Modules.House.Family.insteon.insteon_link import DecodeLnk as linkDecode
 from Modules.House.Family.insteon.insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -73,6 +73,7 @@ class DecodeResponses:
                     self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
                     return 'Ok'
                 else:
+                    LOG.debug('Message {:#02X} Needs {}'.format(p_controller_obj._Message[1], l_need_len))
                     LOG.debug('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
@@ -273,9 +274,9 @@ class DecodeResponses:
         [5] = message flags
         [6] = command 1
         [7] = command 2
-        [8] = ACK/NAK
+        [8] = ACK/NAK  (SD)
 
-        [8] = User Data 1
+        [8] = User Data 1  (ED)
         [9] = User Data 2
         [10] = User Data 3
         [11] = User Data 4
@@ -296,10 +297,18 @@ class DecodeResponses:
         l_message = p_controller_obj._Message
         l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         _l_msgflags = utilDecode._decode_insteon_message_flag(l_message[5])
-        l_ack = utilDecode.get_ack_nak(l_message[8])
-        l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
-        if l_ack == 'NAK':
-            LOG.info("Got ACK(62); {}".format(l_debug_msg))
+        l_ext = (l_message[5] & 0x10) >> 4
+        if l_ext:
+            l_message = l_message[:23]
+            l_ack = utilDecode.get_ack_nak(l_message[22])
+            l_debug_msg = FormatBytes(l_message)
+            LOG.debug('Got response(0x62) {}'.format(l_debug_msg))
+        else:
+            l_message = l_message[:9]
+            l_ack = utilDecode.get_ack_nak(l_message[8])
+            l_debug_msg = "Device: {}, {}".format(l_obj.Name, l_ack)
+        if l_ack != 'ACK ':
+            LOG.debug('Got response(0x62) "{}"'.format(l_ack))
         return
 
     def _decode_0x67_record(self, p_controller_obj):

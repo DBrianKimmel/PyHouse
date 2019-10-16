@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-10-15'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -17,10 +17,9 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerInformation
-from Modules.Families.Insteon.Insteon_Link import Decode as linkDecode
+from Modules.House.Family.insteon.Insteon_Link import DecodeLnk as linkDecode
 # from Modules.Families.Insteon.Insteon_utils import Decode
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
+from _test.testing_mixin import SetupPyHouseObj
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
 MSG_50 = bytearray(b'\x02\x50\x16\xc9\xd0\x1b\x47\x81\x27\x09\x00')

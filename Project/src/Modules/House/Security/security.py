@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,7 +19,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Security.camera import Api as cameraApi
+# from Modules.House.Security.cameras import Api as cameraApi
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
@@ -29,9 +29,9 @@ CONFIG_NAME = 'security'
 
 MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
     'Cameras',
-    'Doorbells',
-    'GarageDoors',
-    'MotionSensors'
+    'Door_Bells',
+    'Garage_Doors',
+    'Motion_Sensors'
     ]
 
 
@@ -79,6 +79,12 @@ class LocalConfig:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
+    def import_modules(self):
+        """
+        """
+        self.m_config.import_modules(MODULES, 'Modules.House.Security')
+        pass
+
 
 class Api:
     """ Called from house.
@@ -91,7 +97,7 @@ class Api:
         LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        self.m_api = cameraApi(p_pyhouse_obj)
+        # self.m_api = cameraApi(p_pyhouse_obj)
         LOG.info('Initialized')
 
     def LoadConfig(self):
@@ -99,11 +105,12 @@ class Api:
         """
         LOG.info('Loading Config')
         self.m_pyhouse_obj.House.Security = SecurityData()  # Clear before loading
+        self.m_local_config.import_modules()
         LOG.info('Loaded Config')
         return self.m_pyhouse_obj.House.Security
 
     def Start(self):
-        self.m_api.Start()
+        # self.m_api.Start()
         LOG.info("Started.")
 
     def SaveConfig(self):
