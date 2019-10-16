@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-16'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -421,17 +421,17 @@ class MQTTProtocol(Protocol, Packets):
             varLogin += 2
         if p_broker.Access.Password is not None:
             varLogin += 1
-        if p_broker.WillMessage is None or p_broker.WillMessage == '' or p_broker.WillTopic is None:
+        if p_broker.Will.Message is None or p_broker.Will.Message == '' or p_broker.Will.Topic is None:
             #  Clean start, no will message
             l_varHeader.append(varLogin << 6 | 0 << 2 | 1 << 1)
         else:
-            l_varHeader.append(varLogin << 6 | p_broker.WillRetain << 5 | p_broker.WillQoS << 3 | 1 << 2 | 1 << 1)
+            l_varHeader.append(varLogin << 6 | p_broker.Will.Retain << 5 | p_broker.Will.QoS << 3 | 1 << 2 | 1 << 1)
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_mqtt.ClientID))
-        if (p_broker.WillMessage is not None or p_broker.WillMessage != '') and p_broker.WillTopic is not None:
-            LOG.debug('Adding last will testiment {}'.format(p_broker.WillMessage + p_broker.WillTopic))
-            l_payload.extend(EncodeDecode._encodeString(p_broker.WillTopic))
-            l_payload.extend(EncodeDecode._encodeString(p_broker.WillMessage))
+        if (p_broker.Will.Message is not None or p_broker.Will.Message != '') and p_broker.Will.Topic is not None:
+            LOG.debug('Adding last will testiment {}'.format(p_broker.Will.Message + p_broker.Will.Topic))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.Will.Topic))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.Will.Message))
         if p_broker.Access.UserName is not None and len(p_broker.Access.UserName) > 0:
             LOG.debug('Adding username "{}"'.format(p_broker.Access.UserName))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Access.UserName))

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-07'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -393,7 +393,7 @@ class OnkeoControl:
         # self.m_device_lst.append(p_device_obj)
 
 
-class MqttActions():
+class MqttActions:
     """
     """
 

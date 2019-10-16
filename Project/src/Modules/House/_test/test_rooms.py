@@ -7,12 +7,11 @@
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Passed all 10 tests - DBK 2019-09-17
+Passed all 10 tests - DBK 2019-10-16
 
 """
-from Modules.House.house_data import RoomsInformation
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,14 +19,13 @@ from ruamel.yaml import YAML
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.rooms import Api as roomsApi
+from Modules.House import rooms
+from Modules.House.rooms import Api as roomsApi, RoomInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 TEST_YAML = """\
 Rooms:
-
-   # Everything
    - Name: Outside
      Comment: Things outside the house
      Floor: 0
@@ -38,7 +36,7 @@ Rooms:
    - Name: Garage
 
    - Name: Laundry
-     Comment: The
+     Comment: The Laundry
      Floor: 1
      RoomType: Room
 
@@ -55,7 +53,7 @@ class SetupMixin:
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_api = roomsApi(self.m_pyhouse_obj)
-        self.m_config = roomsConfig(self.m_pyhouse_obj)
+        self.m_local_config = rooms.LocalConfig(self.m_pyhouse_obj)
         l_yaml = YAML()
         self.m_test_config = l_yaml.load(TEST_YAML)
 
@@ -81,18 +79,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_working_rooms, 'A1-01-A - WorkingRooms'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'A1-01-C - Rooms'))
-        self.assertIsInstance(self.m_working_rooms, RoomsInformation)
-
-    def test_02_Config(self):
-        """ Be sure that the config contains the right stuff.
-        """
-        # print(PrettyFormatAny.form(self.m_test_config, 'A1-01-A - Config'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
-        self.assertIsNotNone(self.m_test_config['Rooms'])
+        self.assertIsInstance(self.m_working_rooms, RoomInformation)
 
 
-class C1_YamlRead(SetupMixin, unittest.TestCase):
-    """ Read the YAML config files.
+class C1_ConfigRead(SetupMixin, unittest.TestCase):
+    """ Read the config files.
     """
 
     def setUp(self):
@@ -103,14 +94,12 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         """
         l_yaml = self.m_test_config['Rooms'][0]
         # print('C1-01-A - Yaml: ', l_yaml)
-        l_room = self.m_config._extract_one_room(l_yaml)
+        l_room = self.m_local_config._extract_one_room(l_yaml)
         # print(PrettyFormatAny.form(l_room, 'C1-01-B - Room'))
         self.assertEqual(l_room.Name, 'Outside')
         self.assertEqual(l_room.Comment, 'Things outside the house')
-        # self.assertEqual(l_room.Corner, [0.0, 0.0, 0.0])
         self.assertEqual(l_room.Floor, 0)
         self.assertEqual(l_room.RoomType, 'OutsideType')
-        # self.assertEqual(l_room.Size, [0.0, 0.0, 0.0])
         self.assertEqual(l_room.Trigger, 'None')
 
     def test_02_Room1(self):
@@ -118,7 +107,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         """
         l_yaml = self.m_test_config['Rooms'][1]
         # print('C1-02-A - Yaml: ', l_yaml)
-        l_room = self.m_config._extract_one_room(l_yaml)
+        l_room = self.m_local_config._extract_one_room(l_yaml)
         # print(PrettyFormatAny.form(l_room, 'C1-02-B - Room'))
         self.assertEqual(l_room.Name, 'Garage')
 
@@ -126,10 +115,22 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         """ build the entire rooms structures
         """
         l_yaml = self.m_test_config['Rooms']
-        l_rooms = self.m_config._extract_all_rooms(l_yaml)
+        l_rooms = self.m_local_config._extract_all_rooms(l_yaml)
         # print(PrettyFormatAny.form(l_rooms, 'C1-03-A - Loc'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'C1-04-B - Rooms'))
         self.assertEqual(len(l_rooms), 4)
+
+
+class C2_ConfigWrite(SetupMixin, unittest.TestCase):
+    """ Write the config files.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+
+    def test_01_Room0(self):
+        """ Test reading the device portion of the config.
+        """
 
 
 class D1_Maint(SetupMixin, unittest.TestCase):

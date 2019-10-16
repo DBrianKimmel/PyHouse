@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-10-14'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -216,7 +216,7 @@ class lightingUtility:
         p_pyhouse_obj._Apis.Computer = ComputerApis()
 
     def _load_component_config(self):
-        LOG.debug('Loading Componente')
+        # LOG.debug('Loading Componente')
         l_obj = self.m_pyhouse_obj._Apis.Computer
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             l_a = getattr(l_obj, l_key)

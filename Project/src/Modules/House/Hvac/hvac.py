@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -45,7 +45,7 @@ class lightingUtilityHvac:
     """
 
 
-class MqttActions():
+class MqttActions:
     """
     """
 

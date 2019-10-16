@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -48,7 +48,7 @@ ALLOWED_FIELDS = [
     ]
 
 
-class Mqtt:
+class MqttActions:
     """
     """
 

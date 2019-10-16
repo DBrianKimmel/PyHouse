@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-13'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,7 +47,7 @@ class RoomInformation:
         self.Trigger = None
 
 
-class Mqtt:
+class MqttActions:
     """
     """
 
@@ -56,8 +56,9 @@ class Mqtt:
 
     def decode(self, p_topic, p_message, p_logmsg):
         p_logmsg += '\tRooms:\n'
-        if p_topic[1] == 'add':
+        if p_topic[1] == 'update':
             p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+
         elif p_topic[1] == 'delete':
             p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
         elif p_topic[1] == 'update':
@@ -80,6 +81,10 @@ class Mqtt:
         """
         l_topic = 'house/room/' + p_topic
         p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_room_obj)
+
+    def send_update(self):
+        """ Update rooms to keep the house in sync on all nodes.
+        """
 
 
 class LocalConfig:
@@ -305,7 +310,7 @@ class Api:
         self.m_local_config.save_yaml_config()
 
     def Stop(self):
-        _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
+        _x = PrettyFormatAny.form('', '')
 
     def getRoomConfig(self, _p_config):
         """

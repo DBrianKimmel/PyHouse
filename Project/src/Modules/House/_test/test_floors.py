@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/_test/test_rooms.py
+@name:      Modules/House/_test/test_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -7,20 +7,19 @@
 @note:      Created on Jun 28, 2019
 @summary:   Test handling the rooms information for a house.
 
-Passed all 9 tests - DBK 2019-06-28
+Passed all 10 tests - DBK 2019-06-28
 
 """
-__updated__ = '2019-10-02'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
 from twisted.trial import unittest
-from datetime import datetime
 
 # Import PyMh files
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import HouseInformation, PyHouseInformation
-from Modules.Core.Utilities import config_tools
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.data_objects import PyHouseInformation
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.House.house import HouseInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -29,14 +28,13 @@ class SetupMixin:
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_api = floorsApi(self.m_pyhouse_obj)
-        self.m_filename = 'floors.yaml'
+        self.m_api = configApi(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title')  # so it is defined when printing is cleaned up.
         print('Id: test_floors')
 
 
@@ -65,7 +63,6 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_yaml = floorsConfig(self.m_pyhouse_obj)
         self.m_working_floors = self.m_pyhouse_obj.House.Floors
 
     def test_01_Build(self):
@@ -129,7 +126,6 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_yaml = floorsConfig(self.m_pyhouse_obj)
         self.m_floors = self.m_yaml.load_yaml_config(self.m_pyhouse_obj)
         self.m_working_floors = self.m_pyhouse_obj.House.Floors
 

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +24,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Irrigation     ')
 
 
-class MqttActions():
+class MqttActions:
     """
     """
 

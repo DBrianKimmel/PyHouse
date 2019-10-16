@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2019-06-30'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -142,18 +142,6 @@ class A3_XML(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_xml, 'A3-03-A - Samsung'))
         self.assertEqual(len(l_xml), 1)
         self.assertEqual(l_xml[0].attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
-
-    def test_04_Device0(self):
-        """ Be sure that the XML contains everything in RoomInformation().
-        """
-        l_xml = self.m_xml.samsung_sect.find('Device')
-        # print(PrettyFormatAny.form(l_xml, 'A3-04-A Device'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_SAMSUNG_DEVICE_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_SAMSUNG_DEVICE_KEY_0)
-        self.assertEqual(l_xml.attrib['Active'], TESTING_SAMSUNG_DEVICE_ACTIVE_0)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_SAMSUNG_DEVICE_UUID_0)
-        self.assertEqual(l_xml.find('IPv4').text, TESTING_SAMSUNG_DEVICE_IPV4_0)
-        self.assertEqual(l_xml.find('Port').text, TESTING_SAMSUNG_DEVICE_PORT_0)
 
 
 class C1_Read(SetupMixin, unittest.TestCase):

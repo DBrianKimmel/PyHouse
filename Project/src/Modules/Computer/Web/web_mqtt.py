@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-06'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
 import os
@@ -18,7 +18,7 @@ import os
 
 # Import PyMh files and modules.
 from Modules.Computer.Web.web_utils import GetJSONComputerInfo
-from Modules.Core.Mqtt.mqtt_data import MqttBrokerInformation
+from Modules.Core.Mqtt.mqtt import MqttBrokerInformation
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Utilities.uuid_tools import Uuid

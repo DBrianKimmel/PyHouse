@@ -10,7 +10,7 @@
 """
 from Modules.Core.core import ParameterInformation
 
-__updated__ = '2019-10-13'
+__updated__ = '2019-10-16'
 
 #  Import system type stuff
 import os
@@ -131,6 +131,7 @@ class SetupPyHouseObj:
         """ This will create the pyhpuse_obj structure.
         """
         l_pyhouse_obj = PyHouseInformation()
+        l_pyhouse_obj.Core = SetupPyHouseObj()._build_core()
         l_pyhouse_obj.Computer = SetupPyHouseObj()._build_computer()
         l_pyhouse_obj.House = SetupPyHouseObj()._build_house_data()
         #

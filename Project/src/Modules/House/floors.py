@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -54,7 +54,7 @@ class FloorInformation(BaseObject):
         self.Description = None
 
 
-class Mqtt:
+class MqttActions:
     """
     """
 
@@ -126,7 +126,7 @@ class LocalConfig:
         """
         # LOG.debug(PrettyFormatAny.form(l_yaml, 'Yaml'))
         l_floors = {}
-        LOG.debug('')
+        # LOG.debug('')
         for l_ix, l_floor in enumerate(p_config):
             l_floors[l_ix] = self._extract_one_floor(l_floor)
         self.m_pyhouse_obj.House.Floors = l_floors

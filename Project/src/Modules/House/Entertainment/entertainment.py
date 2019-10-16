@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.Api
 
 """
 
-__updated__ = '2019-10-07'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -189,20 +189,20 @@ class LocalConfig:
     def load_yaml_config(self):
         """ Read the Entertainment.Yaml file.
         This config file will contain the names of all the service and device names to load.
-        It does not contail any information about the services or devices.
+        It does not contain any information about the services or devices.
 
         Here we gather the information about which plugins we will load.
         """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Entertinment = None
-        try:
-            l_node = self.m_config_tools.read_yaml(CONFIG_NAME)
-        except:
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Entertainment']
+            l_yaml = l_yaml['Entertainment']
         except:
-            LOG.warn('The entertainment.yaml file does not start with "Entertainment:"')
-            self.m_pyhouse_obj.House.Entertinment = None
+            LOG.warn('The config file does not start with "Entertainment:"')
             return None
         self.m_pyhouse_obj.House.Entertinment = EntertainmentInformation()
         l_entertain = self._extract_all_entertainment(l_yaml)

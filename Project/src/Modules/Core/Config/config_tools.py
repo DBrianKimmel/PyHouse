@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -110,7 +110,7 @@ class SubFields:
     def extract_access_group(self, p_config):
         """
         """
-        LOG.debug('Getting Access')
+        # LOG.debug('Getting Access')
         l_obj = SecurityInformation()
         l_required = ['Name', 'Password']
         l_allowed = ['ApiKey', 'AccessKey']
@@ -127,7 +127,7 @@ class SubFields:
                 Address: 49.F9.E7
         @param p_config: is the 'Family' ordereddict
         """
-        LOG.debug('Getting Family')
+        # LOG.debug('Getting Family')
         l_obj = DeviceFamilyInformation()
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
@@ -140,7 +140,7 @@ class SubFields:
         """
         @param p_config: is the 'Host' ordereddict
         """
-        LOG.debug('Getting Host')
+        # LOG.debug('Getting Host')
         l_obj = HostInformation()
         l_required = ['Name', 'Port']
         l_allowed = ['IPv4', 'IPv6']
@@ -153,11 +153,11 @@ class SubFields:
            - Name: TestPlm
              Interface:
                 Type: Serial
-                Baud: 19200  # ,8,N,1
+                Baud: 19200,8,N,1
                 Port: /dev/ttyUSB0
                 Host: Laptop-05
         """
-        LOG.debug('Getting Interface')
+        # LOG.debug('Getting Interface')
         l_obj = DriverInterfaceInformation()
         l_required = ['Type', 'Host', 'Port']
         l_allowed = ['ApiKey', 'AccessKey']
@@ -298,7 +298,7 @@ class YamlCreate:
     """ For creating and appending to yaml files.
     """
 
-    def create_yaml(self, p_tag: str):
+    def _create_yaml(self, p_tag: str):
         """ create a yaml structure with a nested-map.
 
         Yaml = ordereddict([('p_tag', None)])
@@ -316,7 +316,7 @@ class YamlCreate:
         l_data = l_yaml.load(YAML_STR)
         return l_data
 
-    def add_key_value_to_map(self, p_yaml, p_key, _p_value):
+    def XXXadd_key_value_to_map(self, p_yaml, p_key, _p_value):
         """ Add a key,Value pair to a map
         Test:
            Key: Value
@@ -328,7 +328,7 @@ class YamlCreate:
         p_yaml.append(p_key)
         # print('Yaml: {}'.format(p_yaml))
 
-    def add_dict(self, p_yaml, _p_key, p_add_dict):
+    def XXXadd_dict(self, p_yaml, _p_key, p_add_dict):
         """ Add a key,Value pair to a map
         Test:
            Key: Value
@@ -343,7 +343,7 @@ class YamlCreate:
             setattr(p_yaml, l_key, l_val)
         return p_yaml
 
-    def add_list(self, p_yaml, p_key, p_add_obj):
+    def XXXadd_list(self, p_yaml, p_key, p_add_obj):
         """
         Insert a list entry into the list fragment that is the surrounding yaml.
 
@@ -358,7 +358,7 @@ class YamlCreate:
             # p_yaml[-1] = p_add_obj
         return p_yaml
 
-    def add_obj(self, p_yaml, p_key, _p_tag):
+    def XXXadd_obj(self, p_yaml, p_key, _p_tag):
         """ Add a new ordereddict to the yaml after the Key location
         @param p_yaml: is the yaml fragment that contains p_key (Rooms)
         @param p_key: is the key we will add a new tag into (Room)
@@ -427,7 +427,7 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         """
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _create_yaml_node(self, p_tag):
+    def XXX_create_yaml_node(self, p_tag):
         """ Create a node for a yaml config file
         @param p_tag: is the name to be used
         """
@@ -437,16 +437,9 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         l_node._Error = None
         l_node.FileName = l_filename
         l_node.YamlPath = self._get_config_dir() + '/' + l_filename
-        l_node.Yaml = self.create_yaml(p_tag)
+        l_node.Yaml = self._create_yaml(p_tag)
         self.m_pyhouse_obj._Config.YamlTree[l_filename] = l_node
         return l_node
-
-    def find_first_element(self, p_ordered):
-        """ Return the first element from an ordered collection
-           or an arbitrary element from an unordered collection.
-           Raise StopIteration if the collection is empty.
-        """
-        return next(iter(p_ordered))
 
     def _find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
@@ -459,6 +452,13 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         l_node.FileName = p_filename
         l_node.YamlPath = self.find_config_file(p_filename)
         return l_node
+
+    def find_first_element(self, p_ordered):
+        """ Return the first element from an ordered collection
+           or an arbitrary element from an unordered collection.
+           Raise StopIteration if the collection is empty.
+        """
+        return next(iter(p_ordered))
 
     def read_yaml(self, p_filename):
         """ Find the Yaml file and read it in.
@@ -480,7 +480,7 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj._Config.YamlTree, 'Tree', 190))
         return l_data
 
-    def write_yaml(self, p_filename, p_data, addnew=False):
+    def _write_yaml(self, p_filename, p_data, addnew=False):
         """
         @param p_data: is the yaml data to be written.
         @param p_filename: is the name of the read in yaml file 'rooms.yaml'
@@ -498,6 +498,9 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         with open(l_filename, 'w+') as l_file:
             l_yaml.dump(p_data, l_file)
         LOG.debug('Saved Yaml file "{}"'.format(p_filename))
+
+    def _x(self):
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy'))
 
 
 class Api(SubFields, Tools):
@@ -523,7 +526,7 @@ class Api(SubFields, Tools):
     def write_config(self, p_filename, p_data, addnew=False):
         """ Main config file write routine
         """
-        l_ret = self.m_yaml.write_yaml(p_filename, p_data, addnew)
+        l_ret = self.m_yaml._write_yaml(p_filename, p_data, addnew)
         return l_ret
 
     def find_config(self, p_name):
@@ -532,8 +535,5 @@ class Api(SubFields, Tools):
         """
         l_ret = Tools(self.m_pyhouse_obj).find_config_file(p_name)
         return l_ret
-
-    def _x(self):
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy'))
 
 #  ## END DBK

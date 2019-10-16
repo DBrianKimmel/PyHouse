@@ -11,10 +11,11 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
@@ -90,6 +91,24 @@ MSG = "{ \
         'Sender': 'pi-01-pp', \
         'UUID': 'd8ec093e-e4a8-11e6-b6ac-74da3859e09a' \
     }"
+TEST_YAML = """\
+Mqtt:
+    Brokers:
+        - Name: Test Broker 1
+          Comment: Primary
+          Class: Local
+          Host:
+              Name: mqtt-ct
+              Port: 1883
+          Access:
+              UserName: pyhouse
+              Password: pyhouse
+          Will:
+              Topic: LWT Topic
+              Message: Going offline
+              Qos: 1
+              Retain: false
+"""
 
 
 class SetupMixin(object):
@@ -97,6 +116,9 @@ class SetupMixin(object):
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_api = mqttApi(self.m_pyhouse_obj, self)
+        l_yaml = YAML()
+        self.m_local_config = mqtt.LocalConfig(self.m_pyhouse_obj)
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
     def jsonPair(self, p_json, p_key):
         """ Extract key, value from json
@@ -115,7 +137,23 @@ class A0(unittest.TestCase):
     def test_00_Print(self):
         print('Id: test_mqtt_util')
         _w = FormatBytes('123')
-        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
+        _x = PrettyFormatAny.form('_test', 'title')  # so it is defined when printing is cleaned up.
+
+
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """Test that we have set up properly for the rest of the testing classes.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+
+    def test_01_Build(self):
+        """ The basic read info as set up
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core, 'A1-01-B - Computer'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt, 'A1-01-C - Mqtt'))
+        self.assertIsInstance(self.m_pyhouse_obj.Core.Mqtt, MqttInformation)
 
 
 class C1_YamlRead(SetupMixin, unittest.TestCase):
@@ -124,44 +162,35 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_config = mqtt.Config(self.m_pyhouse_obj)
-        self.m_working_rooms = self.m_pyhouse_obj.Core.Mqtt
 
     def test_01_Build(self):
         """ The basic read info as set up
         """
-        # print(PrettyFormatAny.form(self.m_working_rooms, 'C1-01-A - WorkingRooms'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'C1-01-A - PyHouse'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-01-A - Computer'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt, 'C1-01-B - Mqtt'))
         self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Core.Mqtt, MqttInformation)
 
-    def test_02_ReadFile(self):
+    def test_02_Broker0(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        l_yaml = l_node.Yaml
-        l_first = config_tools.Yaml(self.m_pyhouse_obj).find_first_element(l_yaml)
-        l_yaml_top = l_yaml['Mqtt']
-        # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
-        # print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
-        # print(PrettyFormatAny.form(l_yaml_top, 'C1-02-C - Yaml_top'))
-        # print(PrettyFormatAny.form(l_yaml_top[0], 'C1-02-D - Yaml_top[0]'))
-        self.assertEqual(l_first, 'Mqtt')
-        self.assertEqual(l_yaml_top[0]['Broker']['Name'], 'Test Broker 1')
-        self.assertEqual(len(l_yaml_top), 2)
-
-    def test_03_Broker(self):
-        """ Extract one broker
-        """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        l_yaml = l_node.Yaml['Mqtt']
-        l_first_broker = config_tools.Yaml(self.m_pyhouse_obj).find_first_element(l_yaml)
-        l_broker = self.m_config._extract_one_broker(l_first_broker, self)
-        # print('C1-03-A - Yaml: {}'.format(l_first_broker))
-        # print(PrettyFormatAny.form(l_broker, 'C1-03-B - Broker'))
-        self.assertEqual(l_broker.Name, 'Test Broker 1')
+        l_yaml = self.m_test_config
+        # print('C1-02-A - Yaml: ', l_yaml)
+        l_mqtt = l_yaml['Mqtt']
+        # print('C1-02-B - Mqtt: ', l_mqtt)
+        l_brokers = l_mqtt['Brokers']
+        # print('C1-02-C - Brokers: ', l_brokers)
+        l_broker = l_brokers[0]
+        # print('C1-02-D - Broker: ', l_broker)
+        l_brk = self.m_local_config._extract_one_broker(l_broker, None)
+        print(PrettyFormatAny.form(l_brk, 'C1-02- L - Broker'))
+        print(PrettyFormatAny.form(l_brk.Access, 'C1-02-M - Access'))
+        print(PrettyFormatAny.form(l_brk.Host, 'C1-02-N - Host'))
+        print(PrettyFormatAny.form(l_brk.Will, 'C1-02-O - Will'))
+        self.assertEqual(l_brk.Name, 'Test Broker 1')
+        self.assertEqual(l_brk.Comment, 'Primary')
 
 
 class F1_Form(SetupMixin, unittest.TestCase):

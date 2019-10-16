@@ -10,9 +10,8 @@
 Passed all 7 tests - DBK - 2019-08-15
 
 """
-from Modules.House.Lighting.lighting import ScheduleLightingInformation
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-16'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -20,10 +19,12 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Lighting.controllers import ControllerInformation
-from Modules.House.house_data import LocationInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Mqtt.mqtt import _make_message, MqttBrokerInformation
+from Modules.House.Lighting.controllers import ControllerInformation
+from Modules.House.house_data import LocationInformation
+from Modules.House.Lighting.lighting import ScheduleLightingInformation
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker

@@ -12,7 +12,7 @@ PyHouse.House.
               Rooms
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 6, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -43,26 +43,6 @@ class LocationInformation:
         self.Longitude = None
         self.Elevation = None
         self.TimeZone = None
-
-
-class RoomsInformation:
-    """ A room of the house.
-    Used to draw pictures of the house
-    Used to define the location of switches, lights etc.
-
-    ==> PyHouse.House.Rooms.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(RoomsInformation, self).__init__()
-        self.Room = {}
-
-
-class RoomsInformationPrivate(RoomsInformation):
-
-    def __init__(self):
-        super(RoomsInformationPrivate, self).__init__()
-        # self._Yaml = None
 
 
 class CoordinateInformation:
