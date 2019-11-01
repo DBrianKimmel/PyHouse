@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,7 +19,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.rooms import Api as roomsApi
-from Modules.House.Family.family import Config as familyConfig
+from Modules.House.Family.family import LocalConfig as familyConfig
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Outlets        ')

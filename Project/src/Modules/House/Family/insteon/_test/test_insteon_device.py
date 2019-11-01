@@ -10,7 +10,7 @@
 Passed all 1 tests - DBK - 2015-07-26
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -33,6 +33,21 @@ class A0(unittest.TestCase):
     def test_00_Print(self):
         _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_Insteon_device')
+
+
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """Test that we have set up properly for the rest of the testing classes.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+
+    def test_01_Build(self):
+        """ The basic read info as set up
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
+        self.assertIsInstance(self.m_pyhouse_obj.House.Family, dict)
 
 
 class C01_Api(SetupMixin, unittest.TestCase):

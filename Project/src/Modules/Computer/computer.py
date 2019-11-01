@@ -11,17 +11,17 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 from datetime import datetime
 import platform
-import importlib
 
 #  Import PyHouse files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config import config_tools, import_tools
+from Modules.Core.Config.import_tools import Tools as importTools
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools, uuid_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
@@ -36,7 +36,7 @@ MODULES = [  # All modules for the computer must be listed here.  They will be l
     'Bridges',
     'Communication',
     'Internet',
-    'Node',
+    'Nodes',
     'Pi',
     # 'Weather',
     'Web'
@@ -66,7 +66,7 @@ class ComputerInformation:
 
 class ComputerApis:
     """
-    ==> PyHouse._Apis.Computer.xxx as in the def below.
+    ==> PyHouse.Computer.xxx as in the def below.
 
     """
 
@@ -114,6 +114,95 @@ class MqttActions:
         return l_logmsg
 
 
+class Utility:
+    """
+    There are currently (2019) 8 components - be sure all are in every method.
+    """
+
+    m_config_tools = None
+    m_import_tools = None
+    m_modules_needed = ['Nodes']
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
+
+    def _initialize_one_module(self, p_module):
+        """
+        """
+        l_module = p_module.lower()
+        l_path = 'Modules.Computer.' + p_module
+        LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
+        l_module = importTools(self.m_pyhouse_obj).import_module_get_api(l_module, l_path)
+        return l_module
+
+    def _find_all_configed_modules(self, p_module_list):
+        """ we don't want to import all modules, just the ones we have config files for.
+        @param p_modules: is a list of possible modules.
+        @return: A list of possible modules that has a config file
+        """
+        l_modules = {}
+        for l_module in p_module_list:
+            # LOG.debug('Finding config for module "{}"'.format(l_module))
+            l_path = self.m_config_tools.find_config_file(l_module.lower())
+            if l_path != None:
+                self.m_modules_needed.append(l_module)
+                LOG.info(' Found  config file for "{}"'.format(l_module))
+            else:
+                LOG.info('Missing config file for "{}"'.format(l_module))
+            l_modules[l_module] = l_path
+        # LOG.debug('Set up modules {}'.format(p_module_list))
+        return self.m_modules_needed
+
+    def _import_all_found_modules(self, p_modules):
+        """
+        @param p_modules: is a list of all needed modules
+        """
+        l_modules = {}
+        l_computer_path = 'Modules.Computer.'
+        LOG.info('Needed Modules {}'.format(p_modules))
+        for l_module in p_modules:
+            l_path = l_computer_path + l_module.capitalize()
+            l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
+            l_modules[l_module] = l_api
+        LOG.info('Loaded Modules: {}'.format(self.m_modules_needed))
+        return l_modules
+
+    def _init_component_apis(self, p_pyhouse_obj):
+        """
+        Initialize all the computer division Apis
+        """
+        p_pyhouse_obj.Computer = ComputerApis()
+
+    def load_module_config(self, p_modules):
+        # LOG.debug('Loading Componente')
+        for l_module in p_modules.values():
+            l_module.LoadConfig()
+
+    def _start_components(self):
+        """
+        """
+        return
+        l_obj = self.m_pyhouse_obj.Computer
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'ComputerApi':
+                continue
+            l_a.Start()
+
+    def _stop_component_apis(self):
+        """
+        """
+
+    def _save_component_apis(self):
+        """
+        """
+
+
 class LocalConfig:
     """
     """
@@ -157,103 +246,13 @@ class LocalConfig:
         return l_computer  # for testing purposes
 
 
-class lightingUtility:
-    """
-    There are currently (2019) 8 components - be sure all are in every method.
-    """
-
-    m_config_tools = None
-    m_module_needed = ['Nodes']
-    m_pyhouse_obj = None
-
-    def __init__(self, p_pyhouse_obj):
-        """
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
-
-    def _find_all_configed_modules(self):
-        """ Find all computer modules that have a "module".yaml config file in /etc/pyhouse.
-        Build the m_module_needed list.
-        """
-        # LOG.debug('Progress')
-        for l_module in MODULES:
-            l_path = self.m_config_tools.find_config_file(l_module.lower())
-            if l_path != None:
-                self.m_module_needed.append(l_module)
-                LOG.info('Found Computer config file "{}"'.format(l_path))
-        LOG.info('Found config files for: {}'.format(self.m_module_needed))
-        return self.m_module_needed  # for debugging
-
-    def _import_all_found_modules(self):
-        """
-        """
-        for l_module in self.m_module_needed:
-            l_package = 'Modules.Computer.' + l_module.capitalize()  # p_family_obj.PackageName  # contains e.g. 'Modules.Families.Insteon'
-            l_name = l_package + '.' + l_module.lower()
-            try:
-                l_ret = importlib.import_module(l_name, package=l_package)
-            except ImportError as e_err:
-                l_msg = 'ERROR importing module: {}\n\tErr:{}.'.format(l_module, e_err)
-                LOG.error(l_msg)
-                l_ret = None
-            try:
-                l_api = l_ret.Api(self.m_pyhouse_obj)
-            except Exception as e_err:
-                LOG.error('ERROR - Module: {}\n\t{}'.format(l_module, e_err))
-                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
-                l_api = None
-            l_api_name = l_module.capitalize() + 'Api'
-            l_computer = self.m_pyhouse_obj._Apis.Computer
-            setattr(l_computer, l_api_name, l_api)
-        # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
-        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
-
-    def _init_component_apis(self, p_pyhouse_obj):
-        """
-        Initialize all the computer division Apis
-        """
-        p_pyhouse_obj._Apis.Computer = ComputerApis()
-
-    def _load_component_config(self):
-        # LOG.debug('Loading Componente')
-        l_obj = self.m_pyhouse_obj._Apis.Computer
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerApi':
-                continue
-            l_a.LoadConfig()
-
-    def _start_component_apis(self):
-        l_obj = self.m_pyhouse_obj._Apis.Computer
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerApi':
-                continue
-            l_a.Start()
-
-    def _stop_component_apis(self):
-        l_obj = self.m_pyhouse_obj._Apis.Computer
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerApi':
-                continue
-            l_a.Stop()
-
-    def _save_component_apis(self):
-        l_obj = self.m_pyhouse_obj._Apis.Computer
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'ComputerApi':
-                continue
-            l_a.SaveConfig()
-
-
 class Api:
     """
     """
 
     m_local_config = None
+    m_modules = {}
+    m_module_list = None
     m_pyhouse_obj = None
     m_utility = None
 
@@ -261,23 +260,19 @@ class Api:
         """ Initialize the computer section of PyHouse.
         """
         LOG.info("Initializing - Version:{}".format(__version__))
-        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Computer, 'Computer'))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        self.m_utility = lightingUtility(p_pyhouse_obj)
-
-        # This overrides any config saved so we can start Logging and MQTT messages early on.
+        self.m_utility = Utility(p_pyhouse_obj)
+        #
         p_pyhouse_obj.Computer = ComputerInformation()
         p_pyhouse_obj.Computer.Name = platform.node()
         p_pyhouse_obj.Computer.Key = 0
         p_pyhouse_obj.Computer.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, CONFIG_NAME)
         p_pyhouse_obj.Computer.Comment = ''
         p_pyhouse_obj.Computer.LastUpdate = datetime.now()
-        self.m_utility._init_component_apis(p_pyhouse_obj)
-
-        self.m_utility._find_all_configed_modules()
-        self.m_utility._import_all_found_modules()
-
+        #
+        l_needed_list = self.m_utility._find_all_configed_modules(MODULES)
+        self.m_modules = self.m_utility._import_all_found_modules(l_needed_list)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
@@ -285,7 +280,7 @@ class Api:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_local_config.load_yaml_config()
-        self.m_utility._load_component_config()
+        self.m_utility.load_module_config(self.m_modules)
         LOG.info('Loaded all computer Configs.')
 
     def Start(self):
@@ -293,7 +288,7 @@ class Api:
         Start processing
         """
         LOG.info('Starting')
-        self.m_utility._start_component_apis()
+        self.m_utility._start_components()
         LOG.info('Started.')
 
     def SaveConfig(self):

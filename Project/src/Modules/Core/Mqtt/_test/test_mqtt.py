@@ -117,8 +117,8 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_api = mqttApi(self.m_pyhouse_obj, self)
         l_yaml = YAML()
-        self.m_local_config = mqtt.LocalConfig(self.m_pyhouse_obj)
         self.m_test_config = l_yaml.load(TEST_YAML)
+        self.m_local_config = mqtt.LocalConfig(self.m_pyhouse_obj)
 
     def jsonPair(self, p_json, p_key):
         """ Extract key, value from json

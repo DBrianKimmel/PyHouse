@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,7 +18,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.rooms import Api as roomsApi
-from Modules.House.Family.family import Config as familyConfig
+from Modules.House.Family.family import LocalConfig as familyConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

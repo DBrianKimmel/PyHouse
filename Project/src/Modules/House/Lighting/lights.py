@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-10-05'
+__updated__ = '2019-10-30'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,7 +29,7 @@ from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.state import State
 from Modules.House.rooms import Api as roomsApi
-from Modules.House.Family.family import Config as familyConfig
+from Modules.House.Family.family import LocalConfig as familyConfig
 from Modules.House.Family.family_utils import FamUtil
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -128,8 +128,8 @@ class LocalConfig:
         for l_key, l_value in p_config.items():
             # LOG.debug('Light Key: {}; Val: {}'.format(l_key, l_value))
             if l_key == 'Family':
-                l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
-                self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = None  # define the family as used
+                l_obj.Family = self.m_config.extract_family_group(l_value)
+                self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = l_obj.Family  # define the family as used
             elif l_key == 'Room':
                 l_obj.Room = roomsApi(self.m_pyhouse_obj).getRoomConfig(l_value)
                 pass
@@ -209,7 +209,7 @@ class LocalConfig:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         try:
-            l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
+            l_node = None  # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
             l_config = l_node.Yaml['Lights']
         except Exception as e_err:
             LOG.info('No Lights yaml file - creating a new file - {}'.format(e_err))

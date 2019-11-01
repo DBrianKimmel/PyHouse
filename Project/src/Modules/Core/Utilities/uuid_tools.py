@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2019-10-24'
 
 #  Import system type stuff
 import os
@@ -24,7 +24,7 @@ LOG = Logger.getLogger('PyHouse.UuidTools      ')
 def _file_name(p_pyhouse_obj, p_file_name):
     """ Find the name of the file we will be using.
     """
-    l_file = os.path.join(p_pyhouse_obj._Config.ConfigDir, 'Uuid', p_file_name)
+    l_file = 'xxx'  # os.path.join(p_pyhouse_obj._Config.ConfigDir, 'Uuid', p_file_name)
     return l_file
 
 

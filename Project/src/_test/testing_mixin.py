@@ -8,9 +8,10 @@
 @summary:   Test handling the information for a house.
 
 """
-from Modules.Core.core import ParameterInformation
+from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
+from Modules.Core.core import PyHouseApiInformation, ParameterInformation
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 
 #  Import system type stuff
 import os
@@ -29,10 +30,8 @@ from Modules.House.Entertainment.entertainment import \
 from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
-    PyHouseApis, \
     HouseApis, \
-    TwistedInformation, \
-    UuidInformation, CoreInformation
+    UuidInformation
 from Modules.Core.Config.config_tools import \
     ConfigInformation, SecurityInformation
 from Modules.House.Family.family import Api as familyApi
@@ -99,6 +98,7 @@ class SetupPyHouseObj:
     def _build_house_data(self):
         l_ret = HouseInformation()
         l_ret.Location = LocationInformation()
+        l_ret.Family = {}
         l_ret.Entertainment = self._build_entertainment()
         l_ret.Lighting = LightingInformation()
         l_ret.Hvac = HvacInformation()
@@ -116,7 +116,7 @@ class SetupPyHouseObj:
         return l_ret
 
     def _build_apis(self):
-        l_apis = PyHouseApis()
+        l_apis = PyHouseApiInformation()
         l_apis.Computer = ComputerApis()
         l_apis.House = HouseApis()
         return l_apis
@@ -135,12 +135,8 @@ class SetupPyHouseObj:
         l_pyhouse_obj.Computer = SetupPyHouseObj()._build_computer()
         l_pyhouse_obj.House = SetupPyHouseObj()._build_house_data()
         #
-        l_pyhouse_obj._Apis = self._build_apis()
-        l_pyhouse_obj._Config = self._build_config()
-        l_pyhouse_obj._Parameters = self.build_params()
+        # l_pyhouse_obj._Parameters = self.build_params()
         l_pyhouse_obj._Twisted = self._build_twisted()
-        l_pyhouse_obj._Uuids = UuidInformation()
-        l_pyhouse_obj._Uuids.All = {}
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj
 

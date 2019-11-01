@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,34 +39,9 @@ class PyHouseInformation:
         self.Computer = None  # ComputerInformation()
         self.House = None  # HouseInformation()
         # The rest are "Core" components
-        self._Apis = None  # PyHouseApis()
         self._Config = None  # ConfigInformation()
         self._Parameters = None  # ParameterInformation()
         self._Twisted = None  # TwistedInformation()
-        self._Uuids = None  # UuidInformation()
-
-
-class CoreInformation:
-    """
-    ==> PyHouse.Core.xxx
-
-    """
-
-    def __init__(self):
-        self.Mqtt = {}  # MqttInformation()
-
-
-class PyHouseApis:
-    """
-    ==> PyHouse._Apis.xxx
-
-    Most of these have a single entry.
-    """
-
-    def __init__(self):
-        self.Core = None  # CoreApis()
-        self.Computer = None  # ComputerApis()
-        self.House = None  # HouseApis()
 
 
 class BaseObject:
@@ -87,7 +62,7 @@ class BaseObject:
 
 class CommunicationApis:
     """
-    ==> PyHouse._Apis.Computer.CommApis.xxx as in the def below.
+    ==> PyHouse.Computer.CommApis.xxx as in the def below.
 
     """
 
@@ -96,16 +71,6 @@ class CommunicationApis:
         self.EmailApi = None
         self.PhoneApi = None
         self.TwitterApi = None
-
-
-class CoreApis:
-    """
-    """
-
-    def __init__(self):
-        self.MqttApi = None
-        self.CoreSetupApi = None
-        self.PyHouseMainApi = None
 
 
 class DriverStatus:
@@ -164,7 +129,7 @@ class HostInformation:
 class HouseApis:
     """ These are all the sub-systems of House.
 
-    ==> PyHouse._Apis.House
+    ==> PyHouse.House
     """
 
     def __init__(self):
@@ -237,16 +202,6 @@ class SerialControllerInformation:
         self.StopBits = 1.0
         self.Timeout = None
         self.XonXoff = False
-
-
-class TwistedInformation:
-    """ Twisted info is kept in this class
-    """
-
-    def __init__(self):
-        self.Application = None  # Application('PyHouse')
-        self.Reactor = None  # reactor
-        self.Site = None
 
 
 class TwitterData:
@@ -489,33 +444,5 @@ class CoreLightingData(DeviceInformation):
         # self. Lighting Type = ''  # VALID_LIGHTING_TYPE = Button | Light | Controller
         self.ControllerNode = None
         self.ControllerName = None
-
-"""
-CoreLightingData dependent.
-"""
-
-
-class XXXGarageDoorData(CoreLightingData):
-    """
-
-    ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(XXXGarageDoorData, self).__init__()
-        self.Status = None  # Open | Closed
-
-
-class XXXMotionSensorData(CoreLightingData):
-    """ This is the motion sensor data
-
-    SubType = 5
-    ==> PyHouse.House.Security.Motion.xxx as in the def below
-    """
-
-    def __init__(self):
-        super(XXXMotionSensorData, self).__init__()
-        self.Motion = None
-        self.Timeout = 0
 
 #  ## END DBK

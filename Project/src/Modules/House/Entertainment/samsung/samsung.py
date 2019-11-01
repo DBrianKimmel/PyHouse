@@ -50,7 +50,7 @@ while True:
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 3, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -62,9 +62,10 @@ from twisted.application.internet import ClientService
 from twisted.internet import error
 
 #  Import PyMh files and modules.
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentPluginInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Samsung        ')
@@ -72,7 +73,29 @@ LOG = Logger.getLogger('PyHouse.Samsung        ')
 SAMSUNG_ADDRESS = '192.168.1.100'
 SAMSUNG_PORT = 55000
 SAMSUNG_PORT2 = 8001
-SECTION = 'samsung'
+CONFIG_NAME = 'samsung'
+
+
+class SamsungPluginInformation(EntertainmentPluginInformation):
+    """
+    """
+
+    def __init__(self):
+        super(SamsungPluginInformation, self).__init__()
+
+
+class SamsungDeviceInformation(EntertainmentDeviceInformation):
+    """ A superet that contains some onkyo specific fields
+    """
+
+    def __init__(self):
+        super(SamsungDeviceInformation, self).__init__()
+        self.CommandSet = None  # Command sets change over the years.
+        self.RoomName = None
+        self.Type = None
+        self.Volume = None
+        self._isControlling = False
+        self._isRunning = False
 
 
 class SamsungDeviceData(EntertainmentDeviceInformation):
@@ -282,6 +305,102 @@ class Connecting:
         pass
 
 
+class LocalConfig:
+    """
+    """
+
+    m_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+
+    def dump_struct(self):
+        """
+        """
+        l_entertain = self.m_pyhouse_obj.House.Entertainment
+        l_onkyo = l_entertain.Plugins['pandora']
+        LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
+        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
+        LOG.debug(PrettyFormatAny.form(l_onkyo, 'Pandora'))
+        LOG.debug(PrettyFormatAny.form(l_onkyo.Services, 'Pandora'))
+        #
+        for _l_key, l_service in l_onkyo.Services.items():
+            LOG.debug(PrettyFormatAny.form(l_service, 'Service'))
+            if hasattr(l_service, 'Connection'):
+                LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
+            if hasattr(l_service, 'Host'):
+                LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host'))
+            if hasattr(l_service, 'Access'):
+                LOG.debug(PrettyFormatAny.form(l_service.Access, 'Access'))
+
+    def _extract_one_device(self, p_config):
+        """
+        """
+        # self.dump_struct()
+        l_required = ['Name', 'Type', 'Host']
+        l_obj = SamsungDeviceInformation()
+        for l_key, l_value in p_config.items():
+            if l_key == 'Host':
+                l_obj.Host = self.m_config.extract_host_group(l_value)
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj  # For testing.
+
+    def _extract_all_devices(self, p_config):
+        """
+        """
+        l_dict = {}
+        for l_ix, l_value in enumerate(p_config):
+            l_device = self._extract_one_device(l_value)
+            l_dict[l_ix] = l_device
+        return l_dict
+
+    def _extract_all_onkyo(self, p_config, p_api):
+        """
+        """
+        # self.dump_struct()
+        l_required = ['Name']
+        l_obj = SamsungPluginInformation()
+        l_obj._Api = p_api
+        for l_key, l_value in p_config.items():
+            if l_key == 'Device':
+                l_devices = self._extract_all_devices(l_value)
+                l_obj.Devices = l_devices
+                l_obj.DeviceCount = len(l_devices)
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj  # For testing.
+
+    def load_yaml_config(self, p_api):
+        """ Read the pandora.yaml file.
+        """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
+            return None
+        try:
+            l_yaml = l_yaml['Onkyo']
+        except:
+            LOG.warn('The config file does not start with "Onkyo:"')
+            return None
+        l_onkyo = self._extract_all_onkyo(l_yaml, p_api)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = l_onkyo
+        # self.dump_struct()
+        return l_onkyo  # for testing purposes
+
+
 class Api(Connecting):
 
     def __init__(self, p_pyhouse_obj):
@@ -299,7 +418,7 @@ class Api(Connecting):
     def Start(self):
         LOG.info("Starting.")
         l_count = 0
-        for l_samsung_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices.values():
+        for l_samsung_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'].Devices.values():
             l_count += 1
             # if not l_samsung_device_obj.Active:
             #    continue

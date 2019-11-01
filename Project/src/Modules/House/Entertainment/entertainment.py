@@ -23,13 +23,13 @@ House.Entertainment.Plugins{}.Api
                              .Devices{}
 
 """
+from Modules.Core.Config import import_tools
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
-import importlib
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
@@ -105,6 +105,7 @@ class LocalConfig:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
+        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
 
     def load_defined_plugins(self):
         """ Load the plugins called for in the config file.
@@ -112,26 +113,34 @@ class LocalConfig:
         All plugins have been read in from entertainment.yaml
         Load the modules and their configs.
         """
-        for l_name, l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.items():
-            LOG.info('Loading Plugin "{}"'.format(l_name))
-            l_plugin_name = 'Modules.House.Entertainment.' + l_name + '.' + l_name
-            # LOG.debug('Importing Plugin Module "{}"'.format(l_plugin_name))
-            l_module = importlib.import_module(l_plugin_name)
+        for l_module, l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.items():
+            LOG.info('Loading Plugin "{}"'.format(l_module))
+            l_path = 'Modules.House.Entertainment.' + l_module  # + '.' + l_module
+            # LOG.debug('Importing Plugin Module "{}"'.format(l_module))
             l_plugin._Module = l_module
+            l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
             # Initialize Plugin
-            l_plugin._Api = l_module.Api(self.m_pyhouse_obj)
+            l_plugin._Api = l_api
             # LOG.debug(PrettyFormatAny.form(l_plugin, 'Plugin'))
             l_plugin._Api.LoadConfig()
-            LOG.info('Loaded Entertainment Plugin "{}".'.format(l_plugin_name))
+            LOG.info('Loaded Entertainment Plugin "{}".'.format(l_module))
 
-    def _extract_services(self, p_pyhouse_obj, p_yaml):
+    def find_first_element(self, p_ordered):
+        """ Return the first element from an ordered collection
+           or an arbitrary element from an unordered collection.
+           Raise StopIteration if the collection is empty.
+        """
+        return next(iter(p_ordered))
+
+    def _extract_services(self, p_config):
         """ Get all service loaded
         """
-        # LOG.debug('Services:\n\t{}'.format(p_yaml))
+        # LOG.debug('Services:\n\t{}'.format(p_config))
         l_count = 0
-        for l_service in p_yaml:
+        for l_service in p_config:
+            # LOG.debug('Services:\n\t{}'.format(l_service))
             l_obj = EntertainmentPluginInformation()
-            l_name = self.m_config_tools.find_first_element(l_service)
+            l_name = self.find_first_element(l_service)  # self.m_config.find_first_element(l_service)
             l_name_lower = l_name.lower()
             LOG.info('Service "{}"'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
@@ -144,14 +153,15 @@ class LocalConfig:
             l_count += 1
         return l_obj
 
-    def _extract_devices(self, p_pyhouse_obj, p_yaml):
+    def _extract_devices(self, p_config):
         """ Get all devices loaded.
         """
-        # LOG.debug('Devices:\n\t{}'.format(p_yaml))
+        LOG.debug('Devices:\n\t{}'.format(p_config))
         l_count = 0
-        for l_device in p_yaml:
+        for l_device in p_config:
+            LOG.debug('Devices:\n\t{}'.format(l_device))
             l_obj = EntertainmentPluginInformation()
-            l_name = self.m_config_tools.find_first_element(l_device)
+            l_name = self.find_first_element(l_device)
             l_name_lower = l_name.lower()
             LOG.info('Device "{}"'.format(l_name))
             self.m_modules_needed.append(l_name_lower)
@@ -169,17 +179,27 @@ class LocalConfig:
         """
         # Extract all the services (if any).
         l_entertain = EntertainmentInformation()
-        # self.m_pyhouse_obj.House.Entertainment = l_entertain
+        # LOG.debug('Yaml: {}'.format(p_config))
+        # LOG.debug(PrettyFormatAny.form(p_config, 'Config'))
+        for l_ix, l_value in p_config.items():
+            # LOG.debug(l_value)
+            if l_ix == 'Services':
+                self._extract_services(l_value)
+            if l_ix == 'Devices':
+                self._extract_devices(l_value)
+        LOG.info('Plugins Requested: {}'.format(self.m_modules_needed))
+        return l_entertain
+        #
         try:
-            l_services = p_config['Services']
-            self._extract_services(self.m_pyhouse_obj, l_services)
+            l_services = p_config.Services
+            self._extract_services(l_services)
         except Exception as e_err:
             LOG.warn('There is no "Services" section in the entertainment.yaml file!\n\t{}'.format(e_err))
 
         # Extract all the devices.
         try:
             l_devices = p_config['Devices']
-            self._extract_devices(self.m_pyhouse_obj, l_devices)
+            self._extract_devices(l_devices)
         except Exception as e_err:
             LOG.warn('There is no "Devices" section in the entertainment.yaml file\n\t{}'.format(e_err))
         #
@@ -222,10 +242,13 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         """ Create all the empty structures needed to load, run and save the entertainment information.
         """
-        p_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Create empty entertainment plugin section
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
+        self._add_storage()
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self):
+        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
 
     def LoadConfig(self):
         """ Read the entertainment config.
@@ -245,7 +268,7 @@ class Api:
         l_obj.Model = p_service.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def _device_start(self, p_device):
         """
@@ -257,7 +280,7 @@ class Api:
         l_obj.Model = p_device.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def _module_start_loop(self, p_plugin):
         """
@@ -279,12 +302,13 @@ class Api:
         # l_obj.Model = l_name
         # l_obj.HostName = self.m_pyhouse_obj.Computer.Name
         # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def Start(self):
-        LOG.info("Starting - Version:{}".format(__version__))
+        LOG.info("Starting")
         l_count = 0
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
         for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
             LOG.debug('Starting "{}"'.format(l_plugin.Name))
             self._module_start_loop(l_plugin)

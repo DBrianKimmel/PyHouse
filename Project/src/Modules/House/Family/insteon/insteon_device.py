@@ -19,10 +19,14 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import system type stuff
 
 #  Import PyMh files
+from Modules.Core.Config.config_tools import Api as configApi
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_device ')
+
+CONFIG_NAME = 'insteon'
 
 
 class InsteonInformation:
@@ -136,6 +140,80 @@ class Utility:
                 l_controller_obj._HandlerApi.Stop(l_controller_obj)
 
 
+class LocalConfig:
+    """
+    """
+
+    m_config = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+
+    def _extract_modules_info(self, p_yaml):
+        """
+        """
+        _l_required = ['Name']
+        l_obj = InsteonInformation()
+        try:
+            l_modules = p_yaml['Modules']
+        except:
+            LOG.warn('No "Modules" list in "house.yaml"')
+            return
+        for l_module in l_modules:
+            LOG.debug('found Module "{}" in house config file.'.format(l_module))
+        return l_obj
+
+    def _extract_one_insteon(self, p_config):
+        """
+        """
+        # LOG.debug('Config: {}'.format(p_config))
+        l_required = ['Name', 'Family', 'Host', 'Access']
+        l_obj = InsteonInformation()
+        for l_key, l_value in p_config.items():
+            LOG.debug('Key: {}; Value: {}'.format(l_key, l_value))
+            if l_key == 'Access':
+                l_obj.Access = self.m_config.extract_access_group(l_value)
+            elif l_key == 'Family':
+                l_obj.Family = self.m_config.extract_family_group(l_value)
+            elif l_key == 'Host':
+                l_obj.Host = self.m_config.extract_host_group(l_value)
+            else:
+                setattr(l_obj, l_key, l_value)
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Insteon config is missing an entry for "{}"'.format(l_key))
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Insteon'))
+        return l_obj
+
+    def _extract_all_devices(self, p_config):
+        """
+        """
+        l_insteon = {}
+        # LOG.debug('Insteon Config: {}'.format(p_config))
+        for l_ix, l_value in enumerate(p_config):
+            l_obj = self._extract_one_insteon(l_value)
+
+    def load_yaml_config(self):
+        """ Read the Rooms.Yaml file.
+        It contains Rooms data for all rooms in the house.
+        """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # self.m_pyhouse_obj.House.Family
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
+            return None
+        try:
+            l_yaml = l_yaml['Insteon']
+        except:
+            LOG.warn('The config file does not start with "Insteon:"')
+            return None
+        l_hue = self._extract_all_devices(l_yaml)
+        # self.m_pyhouse_obj.House.Name = l_house.Name
+        return l_hue  # for testing purposes
+
+
 class Api:
     """
     These are the public methods available to use Devices from any family.
@@ -143,6 +221,7 @@ class Api:
 
     m_plm_list = []
     m_hub_list = []
+    m_local_config = None
     m_pyhouse_obj = None
     m_utility = None
 
@@ -150,11 +229,13 @@ class Api:
         # p_pyhouse_obj.House._Commands['insteon'] = {}
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_utility = Utility(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info('Initialized')
 
     def LoadConfig(self):
         """
         """
+        self.m_local_config.load_yaml_config()
 
     def Start(self):
         """

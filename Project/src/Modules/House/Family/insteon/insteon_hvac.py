@@ -20,7 +20,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-31'
 
 #  Import system type stuff
 
@@ -187,7 +187,7 @@ class DecodeResponses(object):
             l_mqtt_message += 'Unknown cmd1 '
 
         LOG.info('HVAC {}'.format(l_mqtt_message))
-        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /temperature
+        p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /temperature
         return
 
 #  ## END DBK

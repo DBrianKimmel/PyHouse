@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -138,7 +138,7 @@ class DecodeResponses:
 
     def _publish(self, p_pyhouse_obj, p_device_obj):
         l_topic = "house/lighting/light/{}/info".format(p_device_obj.Name)
-        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
+        p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
     def _decode_0x50(self, p_controller_obj):
         """ Insteon Standard Message Received (11 bytes)

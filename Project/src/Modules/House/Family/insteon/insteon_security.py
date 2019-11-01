@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-10-31'
 
 #  Import system type stuff
 
@@ -98,7 +98,7 @@ class DecodeResponses:
             else:
                 l_mqtt_msg += 'Unknown SubType {} for Device; '.format(p_device_obj.DeviceSubType, p_device_obj.Name)
             if ((l_message[8] & 0xE0) >> 5) == 6:
-                p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_device)  #  /security
+                p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_device)  #  /security
 
         elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
             if p_device_obj.DeviceSubType == 'GarageDoorOpener':
@@ -111,7 +111,7 @@ class DecodeResponses:
             else:
                 l_mqtt_msg += 'Unknown SubType {} for Device; '.format(p_device_obj.DeviceSubType, p_device_obj.Name)
             if ((l_message[8] & 0xE0) >> 5) == 6:
-                p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_device)  #  /security
+                p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_device)  #  /security
 
         LOG.info('Security {}'.format(l_mqtt_msg))
         insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)

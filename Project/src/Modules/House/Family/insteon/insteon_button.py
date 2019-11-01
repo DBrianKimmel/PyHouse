@@ -11,7 +11,7 @@ We get these .
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-10-16'
 
 #  Import system type stuff
 
@@ -21,7 +21,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Button ')
 
 
-class Config:
+class LocalConfig:
     """
     """
 

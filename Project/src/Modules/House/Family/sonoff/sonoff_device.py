@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,7 +32,7 @@ class SonoffInformation:
         self.Name = None
 
 
-class Config:
+class LocalConfig:
     """
     This class and methods are pointed to by family.py and must be the same in every Device package.
     """

@@ -9,13 +9,12 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-01'
 __version_info__ = (19, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
-import importlib
 import os
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
@@ -41,18 +40,16 @@ class ConfigInformation:
     """
 
     def __init__(self):
-        self.ConfigDir = '/etc/pyhouse'  # This could be overwritten in some future version
+        # self.ConfigDir = '/etc/pyhouse'  # This could be overwritten in some future version
         self.YamlFileName = None
-        self.YamlTree = {}  # ConfigYamlNodeInformation()
+        # self.YamlTree = {}  # ConfigFileInformation()
 
 
-class ConfigYamlNodeInformation:
+class ConfigFileInformation:
 
     def __init__(self):
-        self.FileName = None
-        self.Yaml = None
-        self.YamlPath = '/etc/pyhouse/'
-        self._Error = None
+        self.Name = None  # LowerCase without .yaml
+        self.Path = None
 
 
 class RoomLocationInformation:
@@ -132,7 +129,6 @@ class SubFields:
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
         Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
-        # LOG.debug('Family "{}"'.format(l_obj.Name))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj
 
@@ -163,7 +159,7 @@ class SubFields:
         l_allowed = ['ApiKey', 'AccessKey']
         Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
         #
-        LOG.debug('Getting driver Api')
+        # LOG.debug('Getting driver Api')
         l_driver = get_device_driver_Api(self.m_pyhouse_obj, l_obj)
         l_obj._DriverApi = l_driver
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
@@ -172,7 +168,7 @@ class SubFields:
     def extract_room_group(self, p_config):
         """
         """
-        LOG.debug('Getting Room')
+        # LOG.debug('Getting Room')
         l_obj = RoomLocationInformation()
         try:
             for l_key, l_value in p_config.items():
@@ -193,26 +189,12 @@ class Tools:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _do_import(self, p_name, module_path=''):
-        """
-        @param p_name: is the name of the module ('pandora')
-        @param submodule: is the relative path to the module ('Modules.House.Entertainment.')
-        """
-        l_package = module_path
-        l_name = l_package + '.' + p_name.lower()
-        try:
-            l_ret = importlib.import_module(l_name, package=l_package)
-        except ImportError as e_err:
-            l_msg = 'ERROR importing module: "{}"\n\tErr:{}.'.format(p_name, e_err)
-            LOG.error(l_msg)
-            l_ret = None
-        return l_ret
-
     def _get_config_dir(self):
         """
         @return: The configuration Directory ('/etc/pyhouse' is the default)
         """
-        return self.m_pyhouse_obj._Config.ConfigDir
+        return '/etc/pyhouse'
+        # return self.m_pyhouse_obj._Config.ConfigDir
 
     def _find_file(self, p_name, p_dir):
         """
@@ -227,7 +209,7 @@ class Tools:
             if p_name in l_files:
                 l_path = os.path.join(l_root, p_name)
                 return l_path
-        LOG.warn('Not Found "{}"'.format(p_name))
+        # LOG.warn('Not Found "{}"'.format(p_name))
         return None
 
     def find_config_file(self, p_name):
@@ -239,28 +221,11 @@ class Tools:
         l_ret = self._find_file(l_filename, self._get_config_dir())
         return l_ret
 
-    def import_modules(self, p_list, p_path):
+    def get_modules_api(self, p_module_list, p_path):
+        """ import a list of modules all within the same path
+        @param p_module_list: is a list of config files to look for and import their modules
+        @param p_path: is the starting point to look for rhe module to import.
         """
-        @param p_list: is a list of config files to look for and import their modules
-        """
-        for l_module in p_list:
-            l_name = l_module.lower()
-            LOG.debug('Starting import of Module: "{}"'.format(l_name))
-            l_ret = self._do_import(l_name, module_path=p_path)
-            LOG.debug('Found module "{}"'.format(l_ret))
-            try:
-                l_api = l_ret.Api(self.m_pyhouse_obj)
-            except Exception as e_err:
-                LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(l_module, e_err))
-                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
-                l_api = None
-            # LOG.debug('Imported: {}'.format(l_ret))
-            l_api_name = l_module.capitalize() + 'Api'
-            l_house = self.m_pyhouse_obj._Apis.House
-            setattr(l_house, l_api_name, l_api)
-            # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
-            # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
-        LOG.info('Loaded Modules: {}'.format(p_list))
 
     def extract_fields(self, p_obj, p_config, required_list=None, allowed_list=None, groupfield_list=[]):
         """
@@ -425,30 +390,17 @@ class Yaml(YamlCreate, YamlFetch, Tools):
     def __init__(self, p_pyhouse_obj):
         """
         """
+        LOG.debug('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def XXX_create_yaml_node(self, p_tag):
-        """ Create a node for a yaml config file
-        @param p_tag: is the name to be used
-        """
-        LOG.debug(self.m_pyhouse_obj)
-        l_filename = p_tag.lower() + '.yaml'
-        l_node = ConfigYamlNodeInformation()
-        l_node._Error = None
-        l_node.FileName = l_filename
-        l_node.YamlPath = self._get_config_dir() + '/' + l_filename
-        l_node.Yaml = self._create_yaml(p_tag)
-        self.m_pyhouse_obj._Config.YamlTree[l_filename] = l_node
-        return l_node
 
     def _find_config_node(self, p_filename):
         """ Search the config dir to find the yaml config file.
         If unit testing, we must find the file in the source tree.
 
-        @return: a ConfigYamlNodeInformation() filled in.
+        @return: a ConfigFileInformation() filled in.
         """
         # LOG.debug('Progress')
-        l_node = ConfigYamlNodeInformation()
+        l_node = ConfigFileInformation()
         l_node.FileName = p_filename
         l_node.YamlPath = self.find_config_file(p_filename)
         return l_node
@@ -464,7 +416,7 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         """ Find the Yaml file and read it in.
         Save file location and source YAML
 
-        @return: a ConfigYamlNodeInformation() filled in
+        @return: a ConfigFileInformation() filled in
         """
         l_node = self._find_config_node(p_filename)
         if l_node == None:
@@ -474,8 +426,8 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         l_yaml.allow_duplicate_keys = True
         with open(l_node.YamlPath, 'r') as l_file:
             l_data = l_yaml.load(l_file)
-            l_node.Yaml = l_data
-        self.m_pyhouse_obj._Config.YamlTree[p_filename] = l_node
+            # l_node.Yaml = l_data
+        # self.m_pyhouse_obj._Config.YamlTree[p_filename] = l_node
         # LOG.info('Loaded config file "{}" '.format(p_filename))
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj._Config.YamlTree, 'Tree', 190))
         return l_data
@@ -487,16 +439,16 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         @param addnew: defaults to false, will add '-new' to the saved filename.
         """
         l_now = datetime.datetime.now()
-        l_node = self.m_pyhouse_obj._Config.YamlTree[p_filename]
-        l_filename = l_node.YamlPath
-        l_node.Yaml.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
-        if addnew:
-            l_filename += '-new'
-        l_yaml = MyYAML(typ='rt')
-        l_yaml.indent(mapping=2, sequence=4, offset=2)
-        l_yaml.version = (1, 2)
-        with open(l_filename, 'w+') as l_file:
-            l_yaml.dump(p_data, l_file)
+        # l_node = self.m_pyhouse_obj._Config.YamlTree[p_filename]
+        # l_filename = l_node.YamlPath
+        # l_node.Yaml.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
+        # if addnew:
+        # #   l_filename += '-new'
+        # l_yaml = MyYAML(typ='rt')
+        # l_yaml.indent(mapping=2, sequence=4, offset=2)
+        # l_yaml.version = (1, 2)
+        # with open(l_filename, 'w+') as l_file:
+        #    l_yaml.dump(p_data, l_file)
         LOG.debug('Saved Yaml file "{}"'.format(p_filename))
 
     def _x(self):
@@ -511,6 +463,7 @@ class Api(SubFields, Tools):
     m_yaml = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.debug('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_yaml = Yaml(p_pyhouse_obj)
 
@@ -535,5 +488,18 @@ class Api(SubFields, Tools):
         """
         l_ret = Tools(self.m_pyhouse_obj).find_config_file(p_name)
         return l_ret
+
+    def look_for_all_configed_modules(self, p_modules):
+        """ Find all modules to find config files for.
+        @param p_modules: is a list of module names to check for.
+        @return: a dict of module names that have config files.
+        """
+        l_modules = {}
+        for l_module in p_modules:
+            l_path = self.find_config_file(l_module.lower())
+            if l_path == None:
+                continue
+            l_modules[l_module] = l_path
+        return l_modules
 
 #  ## END DBK

@@ -11,7 +11,7 @@ Passed all 2 tests - DBK - 2015-07-29
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-31'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -181,7 +181,7 @@ class C1_Light(SetupMixin, unittest.TestCase):
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj)
         self.m_ctrlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]
         # print(PrettyFormatAny.form(self.m_ctrlr, "C1-0Controlelrs"))
-        self.m_pyhouse_obj._Apis.Core.MqttApi = DummyApi()
+        self.m_pyhouse_obj.Core.MqttApi = DummyApi()
 
     def test_01_x(self):
         self.m_ctrlr._Message = MSG_50_A

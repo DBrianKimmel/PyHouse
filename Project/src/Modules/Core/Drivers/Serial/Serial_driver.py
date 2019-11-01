@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-10-13'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -89,7 +89,7 @@ class FindPort:
         return l_device
 
 
-class Config:
+class LocalConfig:
     """
     read the serial config.
 
@@ -223,7 +223,9 @@ class SerialApi:
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
             p_controller_obj.Interface._DriverApi = self
-            LOG.info("Opened Device:{}, Port:{}, Serial:{}".format(p_controller_obj.Name, l_port, l_serial))
+            LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
+            LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+            LOG.debug(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface'))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))

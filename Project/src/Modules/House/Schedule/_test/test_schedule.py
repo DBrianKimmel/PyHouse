@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-31'
 
 # Import system type stuff
 import datetime
@@ -330,7 +330,6 @@ class C2_List(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_pyhouse_obj._Apis.Core.MqttApi = mqttApi(self.m_pyhouse_obj)
         twisted.internet.base.DelayedCall.debug = True
 
     def test_01_BuildSched(self):

@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-31'
 
 #  Import system type stuff.
 
@@ -71,7 +71,7 @@ class FamUtil(object):
         try:
             l_family = FamUtil.get_family(p_device_obj)
             l_family_obj = p_pyhouse_obj.House.Family[l_family]
-            l_device_api = l_family_obj._DeviceApi
+            l_device_api = l_family_obj._Api
             LOG.info('Got Api for "{}"'.format(l_family))
         except Exception as e_err:
             l_msg = 'ERROR - Device:"{}"\n\tFamily:"{}"\n\tCannot find Api info\n\tError: {}'.format(l_dev_name, l_family, e_err)

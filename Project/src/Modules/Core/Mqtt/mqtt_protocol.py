@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -612,11 +612,12 @@ class MQTTClient(MQTTProtocol):
                  ):
         """ At this point all config has been read in and Set-up
         """
+        LOG.debug('Init')
         self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
             l_house_name = p_pyhouse_obj.House.Name + '/'
-        except AttributeError:
-            l_house_name = 'NoName/'
+        except (AttributeError, TypeError):
+            l_house_name = 'NoHouseName/'
         self.m_prefix = 'pyhouse/' + l_house_name
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_broker = p_broker
@@ -685,7 +686,7 @@ class MQTTClient(MQTTProtocol):
         """ Override
         Subscribe Ack message
         """
-        self.m_pyhouse_obj._Apis.Core.MqttApi.doPyHouseLogin(self, self.m_pyhouse_obj)
+        # self.m_pyhouse_obj.Core.Mqtt.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         """ Override

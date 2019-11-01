@@ -20,34 +20,20 @@ The second part is the 'House'.
 This will set up this node and then find all other nodes in the same domain (House).
 Then start the House and all the sub systems.
 """
+from concurrent.futures._base import _yield_finished_futures
 
-__updated__ = '2019-10-06'
-__version_info__ = (19, 9, 23)
+__updated__ = '2019-11-01'
+__version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import os
-import platform
-from twisted.internet import reactor
 
 #  Import PyMh files and modules.
-# These 3 must be the first so logging is running as the rest of PyHouse starts up.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
-
+#
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.Config.config_tools import ConfigInformation
-from Modules.Core.data_objects import \
-    PyHouseInformation, \
-    PyHouseApis, \
-    CoreApis, \
-    CoreInformation, \
-    UuidInformation, \
-    TwistedInformation, \
-    UuidData
-from Modules.Core.Mqtt.mqtt import Api as mqttApi, MqttInformation
-from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
-from Modules.Computer.computer import Api as computerApi, ComputerInformation
-from Modules.House.house import Api as houseApi, HouseInformation
+from Modules.Core.Config.import_tools import Tools as importTools
+from Modules.Core import setup_pyhouse_obj
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -61,6 +47,27 @@ XML_SAVE_DELAY = 3 * HOURS  # 2 hours
 CONFIG_DIR = '/etc/pyhouse/'
 CONFIG_NAME = 'pyhouse'
 MIN_CONFIG_VERSION = 2.0
+
+# These components are required!
+# We will load them whether they are configured or not.
+COMPONENTS = [
+    'Computer',
+    'House'
+    ]
+
+# These modules are required!
+# We will load them whether they are configured or not.
+MODULES = [
+    'Mqtt'
+    ]
+
+
+class CoreApiInformation:
+    """
+    """
+
+    def __init__(self):
+        self.MqttApi = None
 
 
 class ParameterInformation:
@@ -77,48 +84,147 @@ class ParameterInformation:
         self.ConfigVersion = 2.0
 
 
-class Config:
+class PyHouseApiInformation:
+    """
+    ==> PyHouse.xxx
+
+    Most of these have a single entry.
+    """
+
+    def __init__(self):
+        self.Core = None  # CoreApiInformation()
+        self.Computer = None  # ComputerApis()
+        self.House = None  # HouseApis()
+
+
+class Utility:
+    """
+    """
+
+    m_pyhouse_obj = None
+    m_components = {}
+    m_modules = {}
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _initialize_one_module(self, p_module):
+        """
+        """
+        l_module = p_module.lower()
+        l_path = 'Modules.Core.' + p_module
+        LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
+        l_module = importTools(self.m_pyhouse_obj).import_module_get_api(l_module, l_path)
+        LOG.debug('done')
+        return l_module
+
+    def initialize_core_modules(self, p_modules):
+        """ set up all the modules we need
+        @param p_modules: is a list of required modules.
+        """
+        l_modules = {}
+        # LOG.debug('Initializing modules {}'.format(p_modules))
+        for l_module in p_modules:
+            LOG.debug('Initializing module "{}"'.format(l_module))
+            l_api = self._initialize_one_module(l_module)
+            l_modules[l_module] = l_api
+        LOG.info('Set up modules {}'.format(p_modules))
+        self.m_modules = l_module
+        return l_modules
+
+    def load_core_modules(self, p_modules):
+        """
+        @param p_modules: is a dict of modules
+        """
+        for l_key, l_module in p_modules.items():
+            LOG.debug('Loading module "{}"'.format(l_key))
+            # LOG.debug(PrettyFormatAny.form(l_module, 'Module'))
+            l_module.LoadConfig()
+            LOG.debug('Loaded')
+
+    def start_core_modules(self, p_modules):
+        """
+        """
+        for l_module in p_modules.values():
+            LOG.debug('Starting module "{}"'.format(l_module))
+            l_module.Start()
+
+# Components
+
+    def _initialize_one_component(self, p_component):
+        l_path = 'Modules.' + p_component
+        # LOG.debug('Importing: "{}", "{}"'.format(p_component, l_path))
+        l_component = importTools(self.m_pyhouse_obj).import_module_get_api(p_component, l_path)
+        return l_component
+
+    def initialize_all_components(self, p_components):
+        """ Now set up the main components (computer, house)
+        """
+        l_components = {}
+        for l_component in p_components:
+            # LOG.debug('Loading component "{}"'.format(l_component))
+            l_comp = self._initialize_one_component(l_component)
+            l_components[l_component] = l_comp
+        LOG.info('Set up components {}'.format(l_components))
+        self.m_components = l_components
+        return l_components
+
+    def _load_one_component(self, p_component):
+        """
+        """
+        p_component.LoadConfig()
+
+    def load_all_components(self, p_components):
+        """
+        @param p_components: is a dict of components
+        """
+        # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
+        for l_component in p_components.values():
+            # LOG.debug('Loading component "{}"'.format(l_component))
+            _l_comp = self._load_one_component(l_component)
+
+    def _start_one_component(self, p_component):
+        """
+        """
+        p_component.Start()
+
+    def start_all_components(self, p_components):
+        """
+        @param p_components: is a dict of components
+        """
+        LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
+        for l_component in p_components.values():
+            LOG.debug('Starting component "{}"'.format(l_component))
+            _l_comp = self._start_one_component(l_component)
+
+    def save_all_components(self, p_components):
+        """
+        """
+        for l_key, l_component in p_components.items():
+            LOG.info('Saving component "{}"'.format(l_key))
+            l_component.SaveConfig()
+
+    def _config_save_loop(self, p_pyhouse_obj):
+        p_pyhouse_obj._Twisted.Reactor.callLater(XML_SAVE_DELAY, self.save_all_components, self.m_components)
+        # self.SaveConfig()
+
+
+class LocalConfig:
     """
     """
     m_pyhouse_obj = None
+    m_config = None
 
     def __init__(self, p_pyhouse_obj):
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
-
-
-class lightingUtility:
-    """
-    """
-
-    def _config_save_loop(self, p_pyhouse_obj):
-        p_pyhouse_obj._Twisted.Reactor.callLater(XML_SAVE_DELAY, self._config_save_loop, p_pyhouse_obj)
-        self.SaveConfig()
-
-    @staticmethod
-    def save_uuids(p_pyhouse_obj):
-        """be sure to save all the uuid files in /etc/pyhouse
-        Computer.uuid
-        House.uuid
-        Domain.uuid
-        """
-        _l_uuids = p_pyhouse_obj._Uuids.All
-
-    @staticmethod
-    def _sync_startup_logging(p_pyhouse_obj):
-        """Start up the logging system.
-        This is sync so that logging is up and running before proceeding with the rest of the initialization.
-        The logs are at a fixed place and are not configurable.
-        """
-        # l_log = setup_logging.Api(p_pyhouse_obj)  # To eliminate Eclipse warning
-        # l_log.Start()
-        # LOG.info("Starting.")
+        self.m_config = configApi(p_pyhouse_obj)
 
     def _extract_pyhouse_info(self, p_config):
         """
         """
-        l_required = ['name', 'computer', 'units', 'version']
+        l_required = ['Name', 'Units', 'Version']
         l_obj = ParameterInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'units':
@@ -132,11 +238,11 @@ class lightingUtility:
                 LOG.warn('pyhouse.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
-    def load_yaml_config(self, p_pyhouse_obj):
+    def load_yaml_config(self):
         """ Read the computer.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj._Parameters = None
+        self.m_pyhouse_obj._Parameters = ParameterInformation()
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -146,118 +252,38 @@ class lightingUtility:
         except:
             LOG.warn('The config file does not start with "PyHouse:"')
             return None
+        # LOG.debug('Yaml: {}'.format(l_yaml))
         l_parameter = self._extract_pyhouse_info(l_yaml)
-        p_pyhouse_obj._Parameters = l_parameter
+        self.m_pyhouse_obj._Parameters = l_parameter
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
         return l_parameter  # for testing purposes
 
-    def _setup_Core(self):
-        """
-        """
-        LOG.info('Setting up Core modules.')
-        l_obj = CoreInformation()
-        l_obj.Mqtt = MqttInformation()
-        return l_obj
 
-    def _setup_Computer(self):
-        """
-        """
-        l_obj = ComputerInformation()
-        l_obj.Name = platform.node()
-        return l_obj
-
-    def _setup_House(self):
-        """
-        """
-        l_obj = HouseInformation()
-        return l_obj
-
-    def _setup_Apis(self):
-        """
-        """
-        l_obj = PyHouseApis()
-        l_obj.Core = CoreApis()
-        l_obj.Core.PyHouseMainApi = self
-        return l_obj
-
-    def _setup_Config(self):
-        """
-        ==> PyHouseObj._Config.
-        """
-        l_obj = ConfigInformation()
-        if l_obj.ConfigDir is None:
-            l_obj.ConfigDir = CONFIG_DIR
-        return l_obj
-
-    def _setup_Families(self):
-        """
-        """
-        l_obj = {}
-        return l_obj
-
-    def _setup_Parameters(self):
-        """
-        """
-        l_obj = ParameterInformation()
-        return l_obj
-
-    def _setup_Twisted(self):
-        """
-        """
-        l_obj = TwistedInformation()
-        l_obj.Reactor = reactor
-        return l_obj
-
-    def _setup_Uuids(self):
-        """
-        """
-        l_obj = UuidInformation()
-        l_obj.All = UuidData()
-        l_obj.All = {}
-        l_path = os.path.join(CONFIG_DIR, 'Computer.uuid')
-        try:
-            l_file = open(l_path, mode='r')
-            _l_uuid = l_file.read()
-        except IOError:
-            _l_uuid = toolUuid.create_uuid()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'SetupUuids-PyHouse', 190))
-        return l_obj
-
-
-class Api(lightingUtility):
+class Api:
     """
     Called from PyHouse.py
     """
-
+    m_modules = None  # Modules actually installed
+    m_components = None  # Components actually installed
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self):
         """ **NOR**
-        This will initialize much (all?) of the Api infrastructure.
-        Note that the Configuration file is NOT read until the following Start() method begins.
-        Also note that the reactor is *NOT* yet running.
+        Note that the reactor is *NOT* yet running.
         """
         LOG.info("\n======================== Initializing ======================== Version: {}\n".format(__version__))
         setup_logging.Api()  # Start up logging
         LOG.info('Setting up Main Data areas')
-        self.m_pyhouse_obj = PyHouseInformation()
-        self.m_config = configApi(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.Core = self._setup_Core()  # First
-        self.m_pyhouse_obj._Apis = self._setup_Apis()
-        self.m_pyhouse_obj._Config = self._setup_Config()
-        self.m_pyhouse_obj._Parameters = self._setup_Parameters()
-        self.m_pyhouse_obj._Twisted = self._setup_Twisted()
-        self.m_pyhouse_obj._Uuids = self._setup_Uuids()
-        self.m_pyhouse_obj.Computer = self._setup_Computer()
-        # self.m_pyhouse_obj.House = self._setup_House()
+        self.m_pyhouse_obj = setup_pyhouse_obj.setup_pyhouse()
+        self.m_utility = Utility(self.m_pyhouse_obj)
+        self._add_storage()
+        self.m_local_config = LocalConfig(self.m_pyhouse_obj)
         #
-        self.load_yaml_config(self.m_pyhouse_obj)
-        self._sync_startup_logging(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._Apis.Core.MqttApi = mqttApi(self.m_pyhouse_obj, self)
-        self.m_pyhouse_obj._Apis.Core.MqttApi.LoadConfig()
-        self.m_pyhouse_obj._Apis.Core.MqttApi.Start()
-        self.m_pyhouse_obj._Apis.Computer.ComputerApi = computerApi(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._Apis.House.HouseApi = houseApi(self.m_pyhouse_obj)
-        LOG.info('All data has been set up.')
+        self.m_local_config.load_yaml_config()
+        self.m_modules = self.m_utility.initialize_core_modules(MODULES)
+        # LOG.debug('Modules: {}'.format(self.m_modules))
+        self.m_components = self.m_components = self.m_utility.initialize_all_components(COMPONENTS)
         #
         self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig)
         LOG.info("\n======================== Initialized ======================== Version: {}\n".format(__version__))
@@ -268,13 +294,24 @@ class Api(lightingUtility):
         print('PyHouse is exiting.')
         raise SystemExit("PyHouse says Bye Now.")
 
+    def _add_storage(self):
+        self.m_pyhouse_obj.Core.MqttApi = None  # Clear before loading
+
     def LoadConfig(self):
         """ Load in the entire configuration for PyHouse.
         This will fill in pyhouse_obj for all defined features of PyHouse.
         """
         LOG.info("\n======================== Loading Config Files ======================== Version: {}\n".format(__version__))
-        self.m_pyhouse_obj._Apis.Computer.ComputerApi.LoadConfig()
-        self.m_pyhouse_obj._Apis.House.HouseApi.LoadConfig()
+        #
+        self.m_utility.load_core_modules(self.m_modules)
+        self.m_utility.start_core_modules(self.m_modules)
+
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Core, 'Core'))
+        #
+        # LOG.debug(PrettyFormatAny.form(self.m_components, 'Components'))
+        self.m_utility.load_all_components(self.m_components)
+        #
         LOG.info("Loaded Config")
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("\n======================== Loaded Config Files ======================== Version: {}\n".format(__version__))
@@ -287,9 +324,8 @@ class Api(lightingUtility):
         print('Reactor is now running.')
         LOG.info("\n======================== Starting ======================== Version: {}\n".format(__version__))
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj._Apis.Computer.ComputerApi.Start()
-        self.m_pyhouse_obj._Apis.House.HouseApi.Start()
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self._config_save_loop, self.m_pyhouse_obj)
+        self.m_utility.start_all_components(self.m_components)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self.m_utility._config_save_loop, self.m_pyhouse_obj)
         LOG.info("\n======================== Started ======================== Version: {}\n".format(__version__))
         LOG.info("\n======================== Opperational ========================")
 
@@ -300,17 +336,13 @@ class Api(lightingUtility):
         The Yaml config is broken down into many smaller files and written by each component.
         """
         LOG.info('\n======================== Saving Config Files ========================\n')
-        # configApi(self.m_pyhouse_obj).create_xml_config_foundation(self.m_pyhouse_obj)
-        self.m_pyhouse_obj._Apis.Computer.ComputerApi.SaveConfig()
-        self.m_pyhouse_obj._Apis.House.HouseApi.SaveConfig()
+        self.m_utility.save_all_components(self.m_components)
         LOG.info("\n======================== Saved Config Files ==========================\n")
 
     def Stop(self):
         l_topic = 'computer/shutdown'
-        self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
+        self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, self.m_pyhouse_obj.Computer.Nodes[self.m_pyhouse_obj.Computer.Name])
         self.SaveConfig()
-        self.m_pyhouse_obj._Apis.Computer.ComputerApi.Stop()
-        self.m_pyhouse_obj._Apis.House.HouseApi.Stop()
         LOG.info("Stopped.\n==========\n")
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 

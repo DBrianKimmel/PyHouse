@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-31'
 
 #  Import system type stuff
 
@@ -334,7 +334,7 @@ class Decode:
             LOG.info("WARNING - Address {} *NOT* found.".format(p_address))
             l_ret = CoreLightingData()
             stuff_new_attrs(l_ret, InsteonInformation())  #  an empty new object
-            l_ret.Name = '**NoName-' + p_address + '-**'
+            l_ret.Name = '**NoDevName-' + p_address + '-**'
         return l_ret
 
     def get_obj_from_message(self, p_pyhouse_obj, p_message_addr, offset=0):

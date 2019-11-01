@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-31'
 
 # Import system type stuff
 import os
@@ -51,6 +51,6 @@ class UpdateElement(athena.LiveElement):
         l_json = json_tools.decode_json_unicode(p_json)
         # l_obj = UpdateData()
         # l_obj.Port = l_json['Port']
-        # self.m_pyhouse_obj._Apis.Computer.WebApi.SaveXml(l_obj)
+        # self.m_pyhouse_obj.Computer.WebApi.SaveXml(l_obj)
 
 # ## END DBK

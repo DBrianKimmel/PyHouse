@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-31'
 
 #  Import system type stuff
 import datetime
@@ -385,7 +385,7 @@ class Api(LightHandlerApi):
         else:
             LOG.error('Insteon Controller start failed for "{}"'.format(self.m_controller_obj.Name))
         # l_topic = 'house/lighting/controller/status'
-        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_controller_obj)
+        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_controller_obj)
         return l_ret
 
     def Start(self):

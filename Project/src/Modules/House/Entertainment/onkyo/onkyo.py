@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Entertainment/onkyo/onkyo.py
+@name:      Modules/House/Entertainment/onkyo/onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c)2016-2019 by D. Brian Kimmel
@@ -9,13 +9,11 @@
 
 """
 
-__updated__ = '2019-10-16'
-__version_info__ = (19, 5, 0)
+__updated__ = '2019-10-31'
+__version_info__ = (19, 19, 30)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import os
-import yaml
 from twisted.internet.endpoints import TCP4ClientEndpoint
 from twisted.internet.error import ConnectionDone
 from twisted.internet.protocol import Factory
@@ -23,15 +21,25 @@ from twisted.protocols.basic import LineReceiver
 from queue import Queue
 
 #  Import PyMh files and modules.
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities import extract_tools
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceControl, EntertainmentDeviceStatus
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceControl, EntertainmentDeviceStatus, \
+    EntertainmentPluginInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 
-SECTION = 'onkyo'
+CONFIG_NAME = 'onkyo'
+
+
+class OnkyoPluginInformation(EntertainmentPluginInformation):
+    """
+    """
+
+    def __init__(self):
+        super(OnkyoPluginInformation, self).__init__()
 
 
 class OnkyoDeviceInformation(EntertainmentDeviceInformation):
@@ -40,7 +48,12 @@ class OnkyoDeviceInformation(EntertainmentDeviceInformation):
 
     def __init__(self):
         super(OnkyoDeviceInformation, self).__init__()
-        pass
+        self.CommandSet = None  # Command sets change over the years.
+        self.RoomName = None
+        self.Type = None
+        self.Volume = None
+        self._isControlling = False
+        self._isRunning = False
 
 
 class OnkyoDeviceControl(EntertainmentDeviceControl):
@@ -370,7 +383,7 @@ class OnkeoControl:
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
             l_topic = 'house/entertainment/onkyo/status'
-            self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
             p_device_obj._Protocol = None
@@ -378,7 +391,7 @@ class OnkeoControl:
             p_status.Type = 'UnConnected'
             p_status.Connected = False
             l_topic = 'house/entertainment/onkyo/status'
-            self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Onkyo device - {}'.format(p_reason))
 
         p_device_obj._Queue = Queue(32)
@@ -401,8 +414,8 @@ class MqttActions:
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _find_model(self, p_family, p_model):
-        # l_pandora = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
-        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        # l_onkyo = self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Devices
         for l_device in l_devices.values():
             if l_device.Name.lower() == p_model.lower():
                 LOG.info("found device - {} {}".format(p_family, p_model))
@@ -502,35 +515,119 @@ class MqttActions:
         return l_logmsg
 
 
+class LocalConfig:
+    """
+    """
+
+    m_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+
+    def dump_struct(self):
+        """
+        """
+        l_entertain = self.m_pyhouse_obj.House.Entertainment
+        l_onkyo = l_entertain.Plugins['pandora']
+        LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
+        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
+        LOG.debug(PrettyFormatAny.form(l_onkyo, 'Pandora'))
+        LOG.debug(PrettyFormatAny.form(l_onkyo.Services, 'Pandora'))
+        #
+        for _l_key, l_service in l_onkyo.Services.items():
+            LOG.debug(PrettyFormatAny.form(l_service, 'Service'))
+            if hasattr(l_service, 'Connection'):
+                LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
+            if hasattr(l_service, 'Host'):
+                LOG.debug(PrettyFormatAny.form(l_service.Host, 'Host'))
+            if hasattr(l_service, 'Access'):
+                LOG.debug(PrettyFormatAny.form(l_service.Access, 'Access'))
+
+    def _extract_one_device(self, p_config):
+        """
+        """
+        # self.dump_struct()
+        l_required = ['Name', 'Type', 'Host']
+        l_obj = OnkyoDeviceInformation()
+        for l_key, l_value in p_config.items():
+            if l_key == 'Host':
+                l_obj.Host = self.m_config.extract_host_group(l_value)
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj  # For testing.
+
+    def _extract_all_devices(self, p_config):
+        """
+        """
+        l_dict = {}
+        for l_ix, l_value in enumerate(p_config):
+            l_device = self._extract_one_device(l_value)
+            l_dict[l_ix] = l_device
+        return l_dict
+
+    def _extract_all_onkyo(self, p_config, p_api):
+        """
+        """
+        # self.dump_struct()
+        l_required = ['Name']
+        l_obj = OnkyoPluginInformation()
+        l_obj._Api = p_api
+        for l_key, l_value in p_config.items():
+            if l_key == 'Device':
+                l_devices = self._extract_all_devices(l_value)
+                l_obj.Devices = l_devices
+                l_obj.DeviceCount = len(l_devices)
+            else:
+                setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj  # For testing.
+
+    def load_yaml_config(self, p_api):
+        """ Read the pandora.yaml file.
+        """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = None
+        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
+            return None
+        try:
+            l_yaml = l_yaml['Onkyo']
+        except:
+            LOG.warn('The config file does not start with "Onkyo:"')
+            return None
+        l_onkyo = self._extract_all_onkyo(l_yaml, p_api)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = l_onkyo
+        # self.dump_struct()
+        return l_onkyo  # for testing purposes
+
+
 class Api(MqttActions, OnkyoClient, OnkeoControl):
     """This interfaces to all of PyHouse.
     """
 
     m_device_lst = []
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def _read_yaml(self, p_device):
+    def LoadConfig(self):
+        """ Read the Config for all Onkyo devices.
         """
-        This needs to be more generic and for all devices configs.
-        This is the start.
-        """
-        l_name = SECTION + '_' + p_device.Model.lower() + '.yaml'
-        l_filename = os.path.join(self.m_pyhouse_obj._Config.ConfigDir, l_name)
-        with open(l_filename) as l_file:
-            l_yaml = yaml.safe_load(l_file)
-            p_device._Yaml = l_yaml
-        LOG.info('Loaded {} '.format(l_filename))
-        return l_yaml
-
-    def LoadXml(self, p_pyhouse_obj):
-        """ Read the XML for all Onkyo devices.
-        """
-        l_device_obj = p_pyhouse_obj.House.Entertainment.Plugins[SECTION]
-        LOG.info("Loaded Onkyo XML")
-        return l_device_obj
+        LOG.info("Loading Config - Version:{}".format(__version__))
+        self.m_local_config.load_yaml_config(self)
 
     def Start(self):
         """ Start all the Onkyo factories if we have any Onkyo devices.
@@ -542,7 +639,7 @@ class Api(MqttActions, OnkyoClient, OnkeoControl):
 
         """
         LOG.info('Start Onkyo.')
-        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Devices
         l_count = 0
         for l_device_obj in l_devices.values():
             self._read_yaml(l_device_obj)
@@ -554,9 +651,9 @@ class Api(MqttActions, OnkyoClient, OnkeoControl):
             self.m_device_lst.append(l_device_obj)
         LOG.info("Started {} Onkyo devices".format(l_count))
 
-    def SaveXml(self, p_xml):
+    def SaveConfig(self):
         # LOG.info("Saved Onkyo XML.")
-        return p_xml
+        return
 
     def Stop(self):
         LOG.info("Stopped.")

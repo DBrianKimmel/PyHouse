@@ -28,7 +28,6 @@
 
 
 PyHouse.
-        _Apis           Internal
         Computer        Configuration File
         House           Configuration File
         Services        Internal
@@ -41,20 +40,12 @@ see C{Modules.__init__.py} for Core documentation.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
-It is intended to run on everything from a small, low power bare bones system to a server running multiple
- houses in several, widespread locations.
 It now (2013) runs on Raspberry Pi so that is the primary target.
-
-The system is controlled via a browser connecting to a web server that is integrated into PyHouse.
 
 There are two components of this software.
 The first is "computer' and is started first.
 The second is 'house' and is started second.
 See those modules to find out what each does.
-
-@TODO:
-        Find proper ports for controllers
-        set proper permissions on controller devices
 
 Idea Links:
   https://github.com/TheThingSystem/home-controller forked from automategreen/home-controller
@@ -76,8 +67,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-10-06'
-__version_info__ = (19, 10, 5)
+__updated__ = '2019-10-31'
+__version_info__ = (19, 10, 17)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -203,6 +194,7 @@ class Api:
     """
     """
 
+    m_core = None
     m_pyhouse_obj = {}
 
     def __init__(self):
@@ -215,13 +207,13 @@ class Api:
         """
         global g_Api
         g_Api = self
-        # self.m_pyhouse_obj
+        self.m_core = core.Api()
         LOG.info('Initialized.\n==================================================================\n')
 
     def LoadConfig(self):
         """ This loads all the configuration.
         """
-        self.m_pyhouse_obj._Apis.Core.CoreSetupApi.LoadConfig()
+        self.m_core.LoadConfig()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
         pass
@@ -231,13 +223,13 @@ class Api:
         """
         print('Reactor is now running.')
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj._Apis.Core.CoreSetupApi.Start()
+        self.m_core.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        self.m_pyhouse_obj._Apis.Core.CoreSetupApi.Stop()
+        self.m_core.Stop()
         LOG.info("Stopped.\n")
 
     def Quit(self):

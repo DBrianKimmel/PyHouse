@@ -8,8 +8,9 @@
 @summary:
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -64,7 +65,7 @@ class LocalConfig:
     def _extract_one_hue(self, p_config):
         """
         """
-        # LOG.debug('Config: {}'.format(p_config))
+        LOG.debug('Config: {}'.format(p_config))
         l_required = ['Name', 'Family', 'Host', 'Access']
         l_obj = HueInformation()
         for l_key, l_value in p_config.items():
@@ -79,13 +80,15 @@ class LocalConfig:
                 setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('hue.yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warn('Hue config is missing an entry for "{}"'.format(l_key))
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Hue'))
         return l_obj
 
     def _extract_all_devices(self, p_config):
         """
         """
         l_hue = {}
+        LOG.debug('Hue Config: {}'.format(p_config))
         for l_ix, l_value in enumerate(p_config):
             l_obj = self._extract_one_hue(l_value)
 
@@ -94,7 +97,7 @@ class LocalConfig:
         It contains Rooms data for all rooms in the house.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        # self.m_pyhouse_obj.
+        # self.m_pyhouse_obj.House.Family
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -121,7 +124,6 @@ class Api:
         LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        self.m_local_config.load_yaml_config()
         self.m_hue_hub = HueHub(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
@@ -129,6 +131,7 @@ class Api:
         """
         """
         LOG.info('Loading')
+        self.m_local_config.load_yaml_config()
         # HueHub(self.m_pyhouse_obj).Start(p_pyhouse_obj)
 
     def Start(self):

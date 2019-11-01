@@ -10,23 +10,42 @@
 Passed all 2 tests - DBK - 2018-01-27
 
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-10-16'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Family.hue.hue_config import HueInformation
+from Modules.House.Family.hue import hue_device
+from Modules.House.Family.hue.hue_device import HueInformation
+
+TEST_YAML = """\
+Hue:
+    - Name: HueHub
+      Comment: For philips hue lights
+      Family:
+          Name: Hue
+      Host:
+          Name: hue-node
+          Port: None
+      Access:
+          Apikey: 9nR8rI12345678OabMWu12345678jBS2EWHoFYy3
+          Password: !secret EncriptedPassword1
+
+"""
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
+        self.m_local_config = hue_device.LocalConfig(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):
@@ -38,13 +57,28 @@ class A0(unittest.TestCase):
         print('Id: test_Hue_device')
 
 
-class C01_Api(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """Test that we have set up properly for the rest of the testing classes.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+
+    def test_01_Build(self):
+        """ The basic read info as set up
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
+        self.assertIsInstance(self.m_pyhouse_obj.House.Family, dict)
+
+
+class C01_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by node_local.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_api = Insteon_device.Api(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
+        self.m_api = hue_device.Api(self.m_pyhouse_obj)
         self.m_device = HueInformation()
 
     def test_01_Init(self):

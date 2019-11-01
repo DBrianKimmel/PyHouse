@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -87,7 +87,6 @@ class MqttActions:
         """
         # l_json = encode_json(p_room_obj)
         # l_topic = 'house/room/' + p_topic
-        # p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_json)
 
 
 class LocalConfig:
@@ -155,7 +154,7 @@ class LocalConfig:
     def _copy_floors_to_yaml(self):
         """ Prepare floors to export to yaml config file
         """
-        l_node = self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
+        l_node = None  # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
         l_config = l_node.Yaml['Floors']
         l_working = self.m_pyhouse_obj.House.Floors
         try:
@@ -164,7 +163,7 @@ class LocalConfig:
                 l_config[l_key] = l_val
         except Exception as e_err:
             LOG.error('Error - Key: {}; Val: {}; Err: {}'.format(l_key, l_val, e_err))
-        self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Floors'] = l_config
+        # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Floors'] = l_config
         l_ret = {'Floors': l_config}
         return l_ret
 

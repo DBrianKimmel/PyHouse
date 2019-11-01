@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -299,7 +299,7 @@ class PioneerControl:
             p_status.Connected = True
             p_status.ControllingNode = self.m_pyhouse_obj.Computer.Name
             l_topic = 'house/entertainment/pioneer/status'
-            self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_status)
 
         def eb_got_protocol(p_reason, p_device_obj, p_status):
             p_device_obj._Protocol = None
@@ -307,7 +307,7 @@ class PioneerControl:
             p_status.Type = 'UnConnected'
             p_status.Connected = False
             l_topic = 'house/entertainment/pioneer/status'
-            self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, p_status)
+            self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_status)
             LOG.debug('Got an error connecting to Pioneer device - {}'.format(p_reason))
             LOG.debug(PrettyFormatAny.form(p_device_obj, 'Device'))
             LOG.debug(PrettyFormatAny.form(p_device_obj.Host, 'Host'))

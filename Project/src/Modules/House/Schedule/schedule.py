@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -361,7 +361,7 @@ class ScheduleExecution:
         """
         l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
-        p_pyhouse_obj._Apis.Core.MqttApi.MqttPublish(l_topic, l_obj)
+        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
         if p_schedule_obj.Sched.Type == 'Light':
             LOG.info('Execute_one_schedule type = Light')

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-10-16'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,7 +41,7 @@ class MotionSensorInformation:
         self.Timeout = 0
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -113,18 +113,18 @@ class Api:
     """
     """
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
         """
         """
         LOG.info('Load Config')
-        self.m_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
         return {}
 

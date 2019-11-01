@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-10-14'
+__updated__ = '2019-10-24'
 __version_info__ = (19, 10, 6)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -111,31 +111,13 @@ class LocalConfig:
 
 # ----------
 
-    def _copy_to_yaml(self, p_pyhouse_obj):
-        """ Update the yaml information.
-        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
-
-        The running info is a dict and the yaml is a list!
-
-        @return: the updated yaml ready information.
-        """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
-        l_config = l_node.Yaml['Bridges']
-        l_working = p_pyhouse_obj.Computer.Bridges
-        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
-            l_val = getattr(l_working, l_key)
-            l_config[l_key] = l_val
-        p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Bridges'] = l_config
-        l_ret = {'Bridges': l_config}
-        return l_ret
-
     def save_yaml_config(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml(self.m_pyhouse_obj)
-        self.m_config.write_yaml(l_config, CONFIG_NAME, addnew=True)
-        return l_config
+        # l_config = self._copy_to_yaml(self.m_pyhouse_obj)
+        # self.m_config.write_yaml(l_config, CONFIG_NAME, addnew=True)
+        # return l_config
 
 
 class Api:

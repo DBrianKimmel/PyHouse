@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -119,36 +119,10 @@ class LocalConfig:
 
 # ----------
 
-    def _copy_to_yaml(self, p_pyhouse_obj):
-        """ Create or Update the yaml information.
-        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
-
-        The running info is a dict and the yaml is a list!
-
-        @return: the updated yaml ready information.
-        """
-        try:
-            l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
-            l_config = l_node.Yaml['Lighting']
-        except:
-            # l_node = config_tools.Yaml(p_pyhouse_obj).create_yaml_node('Lighting')
-            # l_config = l_node.Yaml['Lighting']
-            pass
-        LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'PyHouseObj', 190))
-        l_working = p_pyhouse_obj.House.Lighting.Lights
-        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
-            l_val = getattr(l_working, l_key)
-            setattr(l_config, l_key, l_val)
-        # p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Lighting'] = l_config
-        # l_ret = {'Lighting': l_config}
-        # return l_ret
-
     def save_yaml_config(self, _p_pyhouse_obj):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        # config_tools.Yaml(p_pyhouse_obj).write_yaml(l_config, CONFIG_NAME, addnew=True)
-        # return l_config
 
 
 class Api:
@@ -156,6 +130,7 @@ class Api:
     """
 
     m_local_config = None
+    m_modules = None
     m_pyhouse_obj = None
     m_buttons = None
     m_controllers = None
@@ -207,7 +182,6 @@ class Api:
         """ Allow cleanup of all drivers.
         """
         LOG.info("Stopping all lighting families.")
-        #  self.m_pyhouse_obj._Apis.House.FamilyApi.stop_lighting_families(self.m_pyhouse_obj)
         LOG.info("Stopped.")
 
     def Control(self, p_device_obj, p_controller_obj, p_control):

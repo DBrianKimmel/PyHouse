@@ -11,19 +11,16 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
-import importlib
 
 #  Import PyMh files
-from Modules.Core.data_objects import HouseApis
-from Modules.Core.Config import config_tools
+from Modules.Core.Config import config_tools, import_tools
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.Utilities import uuid_tools
 # Parts
 from Modules.House.floors import MqttActions as floorsMqtt
 from Modules.House.location import MqttActions as locationMqtt
@@ -42,6 +39,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
 
 CONFIG_NAME = 'house'
+
 # Note that the following are in the order needed to sequence the startup
 MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
     'Lighting',
@@ -66,6 +64,7 @@ class HouseInformation:
 
     def __init__(self):
         self.Name = None
+        self.Family = {}  # indexed by family name (LC)
 
 
 class HousePartInformation:
@@ -117,6 +116,169 @@ class MqttActions:
             l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
             LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_topic[0], p_topic, p_message))
         return l_logmsg
+
+
+class Utility:
+    """
+    """
+
+    m_config_tools = None
+    m_import_tools = None
+    m_part_needed = []
+    m_module_needed = []
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
+
+    def init_all_house_parts(self, p_parts):
+        """
+        """
+        l_dict = {}
+        for l_part in p_parts:
+            # LOG.debug('Working on part {}'.format(l_part))
+            l_obj = HousePartInformation()
+            l_api = self.m_import_tools.import_module_get_api(l_part, 'Modules.House')
+            l_obj.Name = l_part.lower()
+            l_obj.Api = l_api
+            LOG.info('Inported house part "{}"'.format(l_obj.Name))
+            l_dict[l_part] = l_obj
+        LOG.info('Initialized House Parts {}'.format(l_dict))
+        return l_dict
+
+    def _find_all_configed_parts(self, p_parts):
+        """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
+        """
+        for l_part in p_parts:
+            l_path = self.m_config_tools.find_config_file(l_part.lower())
+            if l_path != None:
+                self.m_part_needed.append(l_part)
+                LOG.info(' Found  config file for "{}"'.format(l_part))
+            else:
+                LOG.info('Missing config file for "{}"'.format(l_part))
+        LOG.info('Found config files for: {}'.format(self.m_part_needed))
+        return self.m_part_needed  # for debugging
+
+    def _import_all_found_parts(self, p_parts):
+        """ Now we know what we need, load and run just those modules.
+        """
+        l_parts = {}
+        l_path = 'Modules.House'
+        for l_part in p_parts:
+            # LOG.debug('Starting import of Part: "{}"'.format(l_part))
+            l_api = self.m_import_tools.import_module_get_api(l_part, l_path)
+            l_parts[l_part] = l_api
+        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
+        return l_parts
+
+    def load_all_house_parts(self, p_parts):
+        """
+        """
+        LOG.info('Loading parts config files')
+        for l_key, l_value in p_parts.items():
+            LOG.info('Loading house part "{}"'.format(l_key))
+            l_value.LoadConfig()
+        LOG.info('Loaded all House Parts {}'.format(p_parts))
+
+    def _start_all_house_parts(self, p_parts):
+        """ Family must start before the other things (that depend on family).
+        """
+        LOG.info('Starting parts config files')
+        for l_key, l_value in p_parts.items():
+            LOG.info('Starting house part "{}"'.format(l_key))
+            l_value.Api.Start()
+        LOG.info('Finished loading all house parts config files.')
+
+    def _find_all_configed_modules(self, p_modules):
+        """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
+        """
+        for l_module in p_modules:
+            l_path = self.m_config_tools.find_config_file(l_module.lower())
+            if l_path != None:
+                self.m_module_needed.append(l_module)
+                LOG.info(' Found  config file for "{}"'.format(l_module))
+            else:
+                LOG.info('Missing config file for "{}"'.format(l_module))
+        # Add family - It is not configured but is derived from things configured.
+        if 'Family' not in self.m_module_needed:
+            self.m_module_needed.append('Family')
+        LOG.info('Found config files for: {}'.format(self.m_module_needed))
+        return self.m_module_needed  # for debugging
+
+    def _import_all_found_modules(self, p_modules):
+        """ Now we know what we need, load and run just those modules.
+        """
+        l_modules = {}
+        l_house_path = 'Modules.House.'
+        for l_module in p_modules:
+            LOG.debug('Starting import of Module: "{}"'.format(l_module))
+            l_path = l_house_path + l_module.capitalize()
+            l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
+            l_modules[l_module] = l_api
+        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
+        return l_modules
+
+    def load_all_modules(self, p_modules):
+        """ Load the config file for all the components of the house.
+        """
+        # LOG.debug(PrettyFormatAny.form(p_modules, 'Modules'))
+        for l_module in p_modules.values():
+            l_module.LoadConfig()
+
+    def _save_component_apis(self):
+        """ These are sub-module parts of the house.
+        """
+        l_obj = self.m_pyhouse_obj.House
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'HouseApi':
+                continue
+            if l_a == None:
+                LOG.warn('Skipping "{}"'.format(l_key))
+                continue
+            l_a.SaveConfig()
+        return
+
+    def start_house_modules(self, p_modules):
+        """ Family must start before the other things (that depend on family).
+        """
+        # LOG.debug('Starting configured modules: {}'.format(p_modules))
+        for l_module in p_modules.values():
+            LOG.debug('Starting configured module: {}'.format(l_module))
+            l_module.Start()
+
+    def save_house_modules(self):
+        pass
+
+    def stop_house_modules(self):
+        l_obj = self.m_pyhouse_obj.House
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            l_a = getattr(l_obj, l_key)
+            if l_key == 'HouseApi':
+                continue
+            if l_a == None:
+                LOG.warn('Skipping "{}"'.format(l_key))
+                continue
+            l_a.Stop()
+        return
+        self.m_pyhouse_obj.House.EntertainmentApi.Stop()
+        self.m_pyhouse_obj.House.ScheduleApi.Stop()
+
+    def save_house_parts(self, p_parts_dict):
+        LOG.info('Saving parts config files')
+        for l_key, l_value in p_parts_dict.items():
+            LOG.info('Starting House part "{}"'.format(l_key))
+            l_value.Api.SaveConfig()
+
+    def stop_house_parts(self, p_parts_dict):
+        LOG.info('Stopping parts config files')
+        for l_key, l_value in p_parts_dict.items():
+            LOG.info('Stopping house part "{}"'.format(l_key))
+            l_value.Api.Stop()
 
 
 class LocalConfig:
@@ -176,190 +338,6 @@ class LocalConfig:
         return l_house  # for testing purposes
 
 
-class houseUtility:
-    """
-    """
-
-    m_config_tools = None
-    m_module_needed = []
-    m_parts_needed = []
-    m_pyhouse_obj = None
-    m_debugging_skip = []
-
-    def __init__(self, p_pyhouse_obj):
-        """
-        """
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
-
-    def _do_import(self, p_name, submodule=''):
-        """
-
-        """
-        l_package = 'Modules.House' + submodule
-        l_name = l_package + '.' + p_name.lower()
-        try:
-            l_ret = importlib.import_module(l_name, package=l_package)
-        except ImportError as e_err:
-            l_msg = 'ERROR importing module: "{}"\n\tErr:{}.'.format(p_name, e_err)
-            LOG.error(l_msg)
-            l_ret = None
-        return l_ret
-
-    def _find_all_configed_modules(self):
-        """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
-        """
-        for l_module in MODULES:
-            l_path = self.m_config_tools.find_config_file(l_module.lower())
-            if l_path != None:
-                self.m_module_needed.append(l_module)
-                LOG.info('Found config file for "{}"'.format(l_module))
-        # Add family - It is not configured but is derived from things configured.
-        if 'Family' not in self.m_module_needed:
-            self.m_module_needed.append('Family')
-        LOG.info('Found config files for: {}'.format(self.m_module_needed))
-        return self.m_module_needed  # for debugging
-
-    def _import_all_found_modules(self):
-        """ Now we know what we need, load and run just those modules.
-        """
-        for l_module in self.m_module_needed:
-            if l_module in self.m_debugging_skip:
-                LOG.warn('Skip import (for debugging) of module "{}"'.format(l_module))
-                continue
-            # LOG.debug('Starting import of Module: "{}"'.format(l_module))
-            l_ret = self._do_import(l_module, submodule='.' + l_module)
-            try:
-                l_api = l_ret.Api(self.m_pyhouse_obj)
-            except Exception as e_err:
-                LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(l_module, e_err))
-                LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
-                l_api = None
-            # LOG.debug('Imported: {}'.format(l_ret))
-            l_api_name = l_module.capitalize() + 'Api'
-            l_house = self.m_pyhouse_obj._Apis.House
-            setattr(l_house, l_api_name, l_api)
-            # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
-            # LOG.debug(PrettyFormatAny.form(self.m_module_needed, 'Modules'))
-        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
-
-    def _load_modules_config(self):
-        """ Load the config file for all the components of the house.
-        """
-        LOG.info('Loading configured modules: {}'.format(self.m_module_needed))
-        l_obj = self.m_pyhouse_obj._Apis.House
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseApi':
-                continue
-            if l_a == None:
-                LOG.warn('Skipping "{}"'.format(l_key))
-                continue
-            LOG.info('Loading House Module "{}"'.format(l_key))
-            l_a.LoadConfig()
-        LOG.info('Finished loading all configured modules: {}'.format(self.m_module_needed))
-        return
-
-    def _save_component_apis(self):
-        """ These are sub-module parts of the house.
-        """
-        l_obj = self.m_pyhouse_obj._Apis.House
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseApi':
-                continue
-            if l_a == None:
-                LOG.warn('Skipping "{}"'.format(l_key))
-                continue
-            l_a.SaveConfig()
-        return
-
-    def _init_house_modules(self):
-        self.m_modules = self._find_all_configed_modules()
-        self._import_all_found_modules()
-        return self.m_modules
-
-    def _load_house_modules(self):
-        pass
-
-    def _start_house_modules(self):
-        """ Family must start before the other things (that depend on family).
-        """
-        LOG.debug('Starting configured modules: {}'.format(self.m_module_needed))
-        l_obj = self.m_pyhouse_obj._Apis.House
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            LOG.debug('Start module "{}"'.format(l_key))
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseApi':
-                continue
-            if l_a == None:
-                LOG.warn('Skipping module "{}"'.format(l_key))
-                continue
-            l_a.Start()
-        return
-
-    def _save_house_modules(self):
-        pass
-
-    def _stop_house_modules(self):
-        l_obj = self.m_pyhouse_obj._Apis.House
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseApi':
-                continue
-            if l_a == None:
-                LOG.warn('Skipping "{}"'.format(l_key))
-                continue
-            l_a.Stop()
-        return
-        self.m_pyhouse_obj._Apis.House.EntertainmentApi.Stop()
-        self.m_pyhouse_obj._Apis.House.ScheduleApi.Stop()
-
-    def _init_house_parts(self):
-        """
-        """
-        l_dict = {}
-        for l_part in PARTS:
-            # LOG.debug('Working on part {}'.format(l_part))
-            self.m_parts_needed.append(l_part)
-            l_obj = HousePartInformation()
-            l_ret = self._do_import(l_part)
-            l_obj.Name = l_part.lower()
-            l_obj.Api = l_ret.Api(self.m_pyhouse_obj)
-            LOG.info('Initializing house part "{}"'.format(l_obj.Name))
-            l_dict[l_part] = l_obj
-        return l_dict
-
-    def _load_house_parts(self, p_parts_dict):
-        """
-        """
-        LOG.info('Loading parts config files')
-        for l_key, l_value in p_parts_dict.items():
-            LOG.info('Loading house part "{}"'.format(l_key))
-            l_value.Api.LoadConfig()
-
-    def _start_house_parts(self, p_parts_dict):
-        """ Family must start before the other things (that depend on family).
-        """
-        LOG.info('Starting parts config files')
-        for l_key, l_value in p_parts_dict.items():
-            LOG.info('Starting house part "{}"'.format(l_key))
-            l_value.Api.Start()
-        LOG.info('Finished loading all house parts config files.')
-
-    def _save_house_parts(self, p_parts_dict):
-        LOG.info('Saving parts config files')
-        for l_key, l_value in p_parts_dict.items():
-            LOG.info('Starting House part "{}"'.format(l_key))
-            l_value.Api.SaveConfig()
-
-    def _stop_house_parts(self, p_parts_dict):
-        LOG.info('Stopping parts config files')
-        for l_key, l_value in p_parts_dict.items():
-            LOG.info('Stopping house part "{}"'.format(l_key))
-            l_value.Api.Stop()
-
-
 class Api:
     """
     """
@@ -376,26 +354,26 @@ class Api:
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        self.m_utility = houseUtility(p_pyhouse_obj)
+        self.m_utility = Utility(p_pyhouse_obj)
         #
         p_pyhouse_obj.House = HouseInformation()
-        p_pyhouse_obj.House.Name = p_pyhouse_obj._Parameters.Name
         p_pyhouse_obj.House.Comment = ''
-        p_pyhouse_obj.House.UUID = uuid_tools.get_uuid_file(p_pyhouse_obj, CONFIG_NAME)
         p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
-        p_pyhouse_obj._Apis.House = HouseApis()
-        p_pyhouse_obj._Apis.House.HouseApi = self
-        self.m_parts = self.m_utility._init_house_parts()
-        self.m_modules = self.m_utility._init_house_modules()
+        #
+        l_parts = self.m_utility._find_all_configed_parts(PARTS)
+        self.m_parts = self.m_utility._import_all_found_parts(l_parts)
+        #
+        l_modules = self.m_utility._find_all_configed_modules(MODULES)
+        self.m_modules = self.m_utility._import_all_found_modules(l_modules)
         LOG.info("Initialized ")
 
     def LoadConfig(self):
         """ The house is always present but the components of the house are plugins and not always present.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_local_config.load_yaml_config()
-        self.m_utility._load_house_parts(self.m_parts)
-        self.m_utility._load_modules_config()
+        # self.m_local_config.load_yaml_config()
+        self.m_utility.load_all_house_parts(self.m_parts)
+        self.m_utility.load_all_modules(self.m_modules)
         LOG.info('Loaded Config')
         return
 
@@ -404,8 +382,7 @@ class Api:
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting")
-        self.m_utility._start_house_parts(self.m_parts)
-        self.m_utility._start_house_modules()
+        self.m_utility.start_house_modules(self.m_modules)
         LOG.info('Started House "{}"'.format(self.m_pyhouse_obj.House.Name))
 
     def SaveConfig(self):
@@ -413,10 +390,8 @@ class Api:
         Take a snapshot of the current Configuration/Status and write out the config files.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        # self.m_config.save_yaml_config()
-        self.m_utility._save_house_parts(self.m_parts)
-        self.m_utility._save_house_modules()
-        # self.m_utility._save_component_apis()  # All the house submodules.
+        self.m_utility.save_house_parts(self.m_parts)
+        self.m_utility.save_house_modules(self.m_modules)
         LOG.info("Saved Config.")
         return
 
@@ -424,8 +399,8 @@ class Api:
         """ Stop all house stuff.
         """
         LOG.info("Stopping House.")
-        self.m_utility._stop_house_parts(self.m_parts)
-        self.m_utility._stop_house_modules()
+        self.m_utility.stop_house_parts(self.m_parts)
+        self.m_utility.stop_house_modules()
         LOG.info("Stopped.")
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
 

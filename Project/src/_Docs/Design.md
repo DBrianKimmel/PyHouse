@@ -32,10 +32,8 @@ Others like roggle or brighten by 10% will be wrong if multiple commands are sen
 
 ## PyHouse.py
 
-It starts everything running.
 It follows the singleton pattern so that it is not possible to have two running PyHouse programs competing for resources.
 It is also a daemon.
-
 It calls on Modules/Core to start everything running.
 
 ## Core

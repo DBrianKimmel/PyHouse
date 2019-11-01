@@ -24,18 +24,17 @@ An Insteon_device module is used to read and write information to an Insteon con
 
     PackageName         Will point to the package directory 'Modules.House.Family.insteon'
     DeviceName          will contain 'Insteon_device'
-    _DeviceApi          will point to Insteon_device.Api() to allow Api functions to happen.
+    _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-10-08'
-__version_info__ = (19, 9, 23)
+__updated__ = '2019-10-31'
+__version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
-import importlib
 
 # Import PyHouse files
-from Modules.Core.Config import config_tools
+from Modules.Core.Config import config_tools, import_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
@@ -70,7 +69,7 @@ class FamilyInformation:
 
 
 class DeviceFamilyInformation:
-    """ This is used for things like Lichts
+    """ This is used for things like Lights
     """
 
     def __init__(self):
@@ -93,10 +92,10 @@ class FamilyModuleInformation:
         self.Address = None
         self.DeviceName = None  # insteon_device
         self.PackageName = None  # Modules.House.Family.insteon
-        self._DeviceApi = None  # insteon_devicepi()
+        self._Api = None  # insteon_devicepi()
 
 
-class lightingUtility:
+class Utility:
     """
     This will go thru every valid family and build a family entry for each one.
     It also imports the _device and _xml for each family and stores their Api reference in the family object.
@@ -104,24 +103,9 @@ class lightingUtility:
     This should operate more as a plug-in loader rather than loading everything.
     """
 
-    def _do_import(self, p_family_obj, p_module_name):
-        """
-        Import a module given its name. 'Insteon_device' or 'Hue_config'
-
-        @param p_family_obj: is a family Object.
-        @param p_module_name: is a name of a module that we want to import ('Insteon_device')
-        @return: the imported module object or None
-        """
-        l_package = p_family_obj.PackageName  # contains e.g. 'Modules.House.Family.insteon'
-        l_module = l_package + '.' + p_module_name
-        try:
-            l_ret = importlib.import_module(l_module, package=l_package)
-        except ImportError as e_err:
-            l_msg = 'ERROR importing family:{};  Module:{}\n\tErr:{}.'.format(p_family_obj.Name, p_module_name, e_err)
-            LOG.error(l_msg)
-            l_ret = None
-        LOG.debug('Imported "{}"'.format(p_module_name))
-        return l_ret
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
 
     def _create_api_instance(self, p_pyhouse_obj, p_module_name, p_module_ref):
         """
@@ -136,6 +120,8 @@ class lightingUtility:
         # LOG.debug(PrettyFormatAny.form(p_module_ref, 'Ref'))
         try:
             l_api = p_module_ref.Api(p_pyhouse_obj)
+            l_api.LoadConfig()
+            l_api.Start()
         except Exception as e_err:
             LOG.error('ERROR - Module: {}\n\t{}'.format(p_module_name, e_err))
             # LOG.error('Ref: {}'.format(PrettyFormatAny.form(p_module_ref, 'ModuleRef', 190)))
@@ -160,7 +146,7 @@ class lightingUtility:
         l_obj = FamilyModuleInformation()
         l_obj.Name = l_name = p_name.lower()
         l_obj.PackageName = 'Modules.House.Family.' + l_name
-        l_obj.DeviceName = l_name + '_device'
+        l_obj.DeviceName = l_name + '.' + l_name + '_device'
         LOG.debug('Built names for "{}"'.format(l_name))
         return l_obj
 
@@ -174,19 +160,17 @@ class lightingUtility:
         @param p_name: a Valid Name such as "Insteon"
         """
         LOG.info('Building Family "{}"'.format(p_name))
+        l_path = 'Modules.House.Family'
         l_key = p_name.lower()
+        l_module = l_key + '.' + l_key + '_device'
         l_family_obj = self._build_module_names(p_name)
         p_pyhouse_obj.House.Family[l_key] = l_family_obj
-
-        # Now import the family python package
-        importlib.import_module(l_family_obj.PackageName)
-        l_device_ref = lightingUtility()._do_import(l_family_obj, l_family_obj.DeviceName)
-        l_family_obj._DeviceApi = lightingUtility()._create_api_instance(p_pyhouse_obj, l_family_obj.DeviceName, l_device_ref)
+        l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
         # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
-        return l_family_obj
+        return l_api
 
 
-class Config:
+class LocalConfig:
     """
     """
 
@@ -250,18 +234,24 @@ class Config:
 class Api:
 
     m_family = {}
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        p_pyhouse_obj.House.Family = self.m_family
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
+        self._add_storage()
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self):
+        self.m_pyhouse_obj.House.Family = {}  #
 
     def LoadConfig(self):
         """
         Build p_pyhouse_obj House Family
         """
         LOG.debug('Loading Families')
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Family, 'Families'))
         for l_family_obj in self.m_pyhouse_obj.House.Family.values():
             LOG.info('Loading Family "{}"'.format(l_family_obj.Name))
         LOG.info('Loaded {} Families'.format(len(self.m_pyhouse_obj.House.Family)))
@@ -275,11 +265,11 @@ class Api:
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Family, 'Family'))
         for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
             LOG.info('Starting Family "{}"'.format(l_key))
-            l_family_obj = lightingUtility()._build_one_family_data(self.m_pyhouse_obj, l_key)
+            l_api = Utility(self.m_pyhouse_obj)._build_one_family_data(self.m_pyhouse_obj, l_key)
 
             # ## FIXME temp test
-            if l_family_obj._DeviceApi != None:
-                l_family_obj._DeviceApi.Start()
+            if l_api != None:
+                l_api.Start()
         LOG.info('Started {} families.'.format(len(self.m_pyhouse_obj.House.Family)))
         return self.m_family
 

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-01'
 __version_info__ = (19, 10, 16)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -122,6 +122,7 @@ class LocalConfig:
     m_pyH = house_obj = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.debug('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
@@ -202,11 +203,18 @@ class Api:
     m_local_config = None
     m_pyhouse_obj = None
 
-    def __init__(self, p_pyhouse_obj, p_parent):
+    def __init__(self, p_pyhouse_obj):
+        LOG.info('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
+        # self.Core.MqttApi = self
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        self.m_parent = p_parent
+        self.m_parent = self
         LOG.info("Initialized - Version:{} == {}".format(__version__, self))
+
+    def _add_storage(self):
+        LOG.debug('Adding')
+        setattr(self.m_pyhouse_obj.Core, 'MqttApi', self)  # Clear before loading
 
     def LoadConfig(self):
         """ Load the Mqtt Config info.
@@ -240,12 +248,12 @@ class Api:
 # ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
-        """ Send a topic, message to the broker for it to distribute to the subscription list
+        """ Send a topic, message to all the brokers for it to distribute to the subscription list
 
         All publish commands point to here.
         This routine will run thru the list of brokers and publish to each broker.
 
-        # self.m_pyhouse_obj._Apis.Core.MqttApi.MqttPublish("house/schedule/execute", l_schedule)
+        # self.m_pyhouse_obj.Core.MqttApi.MqttPublish("house/schedule/execute", l_schedule)
 
         @param p_topic: is the partial topic, the prefix will be prepended.
         @param p_message : is the message we want to send

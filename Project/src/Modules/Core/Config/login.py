@@ -25,7 +25,7 @@ class LoginInformation:
         self.Password = None
 
 
-class Config:
+class LocalConfig:
     """
     """
 

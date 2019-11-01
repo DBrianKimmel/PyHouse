@@ -7,11 +7,11 @@
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 17 tests - DBK - 2019-10-15
+Passed all 20 tests - DBK - 2019-10-17
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-28'
 
 # Import system type stuff
 import os
@@ -25,7 +25,7 @@ from ruamel.yaml import YAML
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Config import config_tools
-from Modules.Core.Config.config_tools import Yaml as configYaml, ConfigYamlNodeInformation, Api as configApi
+from Modules.Core.Config.config_tools import Yaml as configYaml, ConfigFileInformation, Api as configApi
 from Modules.House.Lighting.lights import LightInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -49,16 +49,6 @@ ALLOWED_FIELDS = [
     ]
 COMPOUND_FIELDS = [
     ]
-
-
-def read_string(p_config):
-    """
-    """
-    l_yaml = YAML()
-    l_node = ConfigYamlNodeInformation()
-    l_data = l_yaml.load(p_config)
-    l_node.Yaml = l_data
-    return l_node
 
 
 class TestInfo:
@@ -415,6 +405,19 @@ class C4_Add(SetupMixin, unittest.TestCase):
         """
 
 
+class C5_FindConfig(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+
+    def test_01_x(self):
+        """
+        """
+
+
 class D1_Extract(SetupMixin, unittest.TestCase):
     """
     """
@@ -503,9 +506,39 @@ class F1_Tools(SetupMixin, unittest.TestCase):
         # self.assertEqual(l_ret, '/etc/pyhouse/pyhouse.yaml')
         self.assertIsNotNone(l_ret)
 
-    def test_03_Import(self):
+
+class I1_Import(SetupMixin, unittest.TestCase):
+    """ Test the importing of modules
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_tools = config_tools.Tools(self.m_pyhouse_obj)
+
+    def test_00(self):
+        print('I1-00')
+        pass
+
+    def test_01_Do_one(self):
         """
         """
-        l_ret = self.m_tools.import_modules(['Motion_Sensors', 'Garage_Doors'], 'Modules.House.Security')
+        l_module = 'insteon_device'
+        l_path = 'Modules.House.Family.insteon'
+        l_ret = self.m_tools._do_import(l_module, l_path)
+        print(PrettyFormatAny.form(l_ret, 'I1-01-A - path'))
+        self.assertIsNotNone(l_ret)
+
+    def test_02_Do_several2(self):
+        """
+        """
+        l_modules = ['Lighting', 'Hvac']
+        l_path = 'Modules.House'
+        # l_ret = self.m_tools.import_modules(l_modules, l_path)
+        print(PrettyFormatAny.form(l_ret, 'I1-02-A - path'))
+        self.assertIsNone(l_ret)
+
+    def test_99(self):
+        """
+        """
 
 # ## END DBK

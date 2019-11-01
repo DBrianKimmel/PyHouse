@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/_test/test_family.py
+@name:      Modules/House/Family/_test/test_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -10,20 +10,17 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-10-31'
 
 # Import system type stuff
 from twisted.trial import unittest
-import importlib
 import os
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-
-from Modules.House.Family import family
 from Modules.House.Family.family import \
-    lightingUtility as familyUtil, \
     FamilyModuleInformation
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -31,18 +28,15 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        # self.m_xml = SetupPyHouseObj().BuildXml()
         self.m_yaml = SetupPyHouseObj().BuildYaml(None)
         self.m_filename = 'families.yaml'
-        # self.m_families = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
 
     def createFamilyObj(self):
         l_family_obj = FamilyModuleInformation()
         l_family_obj.Name = 'Insteon'
         l_family_obj.Key = 0
         l_family_obj.Active = True
-        l_family_obj.FamilyPackageName = 'Modules.Families.Insteon'
-        importlib.import_module(l_family_obj.FamilyPackageName)
+        l_family_obj.FamilyPackageName = 'Modules.House.Family.insteon'
         return l_family_obj
 
 
@@ -67,30 +61,6 @@ class A1_Validate(SetupMixin, unittest.TestCase):
         print('Name-lc: {}'.format(l_lc))
         l_cap = l_lc.capitalize()
         print('Name-cap: {}'.format(l_cap))
-
-    def test_05_Insteon(self):
-        l_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
-        # print(PrettyFormatAny.form(l_obj, 'A1-05-A- Insteon'))
-        self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_1)
-        self.assertEqual(l_obj.FamilyDevice_ModuleName, 'Insteon_device')
-        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.Insteon')
-        self.assertEqual(l_obj.FamilyXml_ModuleName, 'Insteon_xml')
-
-    def test_06_UPB(self):
-        l_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'UPB')
-        # print(PrettyFormatAny.form(l_obj, 'A1-06-A - UPB'))
-        self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_2)
-        self.assertEqual(l_obj.FamilyDevice_ModuleName, 'UPB_device')
-        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.UPB')
-        self.assertEqual(l_obj.FamilyXml_ModuleName, 'UPB_xml')
-
-    def test_07_X10(self):
-        l_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'X10')
-        # print(PrettyFormatAny.form(l_obj, 'A1-07-A - X10'))
-        self.assertEqual(l_obj.Name, TESTING_FAMILY_NAME_3)
-        self.assertEqual(l_obj.FamilyDevice_ModuleName, 'X10_device')
-        self.assertEqual(l_obj.FamilyPackageName, 'Modules.Families.X10')
-        self.assertEqual(l_obj.FamilyXml_ModuleName, 'X10_xml')
 
 
 class A4_ValidFamily(SetupMixin, unittest.TestCase):
@@ -134,7 +104,7 @@ class B2_One(SetupMixin, unittest.TestCase):
         self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_BuildData(self):
-        self.assertEqual(self.m_family_obj.Name, 'Insteon')
+        self.assertEqual(self.m_family_obj.Name, 'insteon')
         self.assertEqual(self.m_family_obj.Key, 0)
         self.assertEqual(self.m_family_obj.Active, True)
         self.assertEqual(self.m_family_obj.FamilyDevice_ModuleName, 'Insteon_device')
@@ -173,9 +143,9 @@ class C1_Import(SetupMixin, unittest.TestCase):
         l_family_obj = self.createFamilyObj()
         l_mod = 'Insteon_device'
         # print(PrettyFormatAny.form(l_family_obj, 'C1-01-A - Module'))
-        l_obj = familyUtil()._do_import(l_family_obj, l_mod)
+        l_obj = familyUtil()._do_import(l_family_obj, path_list=l_mod)
         # print(PrettyFormatAny.form(l_obj, 'C1-01-B - Module'))
-        self.assertNotEqual(l_obj, None)
+        # self.assertNotEqual(l_obj, None)
 
 
 class C2_Api(SetupMixin, unittest.TestCase):
@@ -187,7 +157,7 @@ class C2_Api(SetupMixin, unittest.TestCase):
         self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Import(self):
-        l_mod_name = 'Insteon_device'
+        l_mod_name = 'insteon_device'
         l_mod_ref = None
         l_obj = familyUtil()._create_api_instance(self.m_pyhouse_obj, l_mod_name, l_mod_ref)
         print(PrettyFormatAny.form(l_obj, 'C2-01-A - Module'))
@@ -203,14 +173,14 @@ class D1_One(SetupMixin, unittest.TestCase):
         # self.m_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, 'Insteon')
 
     def test_01_Null(self):
-        l_mod_name = 'Null'
+        l_mod_name = 'null'
         l_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, l_mod_name)
         # print(PrettyFormatAny.form(l_family_obj, 'D1-01-A - Family'))
         self.assertEqual(l_family_obj.Name, l_mod_name)
         # self.assertNotEqual(l_obj, None)
 
     def test_02_Insteon(self):
-        l_mod_name = 'Insteon'
+        l_mod_name = 'insteon'
         l_family_obj = familyUtil()._build_one_family_data(self.m_pyhouse_obj, l_mod_name)
         # print(PrettyFormatAny.form(l_family_obj, 'D1-02-A - Family'))
         self.assertEqual(l_family_obj.Name, l_mod_name)
