@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-01'
+__updated__ = '2019-11-12'
 __version_info__ = (19, 10, 16)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,6 +33,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
 CONFIG_NAME = 'mqtt'
+MAX_PROTOCOL_VERSION = 5  # this is the hignest protocol version this package can do
 
 
 class MqttInformation:
@@ -42,7 +43,7 @@ class MqttInformation:
     """
 
     def __init__(self):
-        self.Brokers = {}  # MqttBrokerData()
+        self.Brokers = {}  # MqttBrokerInformation()
         self.ClientID = 'PyH-'
         self.Prefix = ''
         self._ProtocolApi = None
@@ -62,6 +63,7 @@ class MqttBrokerInformation:
         self.Access = None  # AccessInformation()
         self.Host = None  # HostInformation()
         self.Will = MqttBrokerWillInformation()  # MqttBrokerWillInformation()
+        self.Version = 5  # We can handle versions 3,4,5 currently
         #
         self._ClientApi = None
         self._ProtocolApi = None
@@ -74,8 +76,8 @@ class MqttBrokerWillInformation:
     """
 
     def __init__(self):
-        self.Topic = ''
-        self.Message = ''
+        self.Topic = None
+        self.Message = None
         self.QoS = 0
         self.Retain = False
 
@@ -142,6 +144,7 @@ class LocalConfig:
         @return: MqttBrokerInformation if defined, else None
         """
         l_obj = MqttBrokerInformation()
+        l_obj.Version = MAX_PROTOCOL_VERSION
         # LOG.debug('Config: {}'.format(p_config))
         l_obj._ClientApi = p_api
         for l_key, l_value in p_config.items():

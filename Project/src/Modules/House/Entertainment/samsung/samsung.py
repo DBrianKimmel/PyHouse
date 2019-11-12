@@ -50,8 +50,8 @@ while True:
 
 """
 
-__updated__ = '2019-10-31'
-__version_info__ = (19, 3, 0)
+__updated__ = '2019-11-02'
+__version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -85,17 +85,14 @@ class SamsungPluginInformation(EntertainmentPluginInformation):
 
 
 class SamsungDeviceInformation(EntertainmentDeviceInformation):
-    """ A superet that contains some onkyo specific fields
+    """ A superet that contains some samsung specific fields
     """
 
     def __init__(self):
         super(SamsungDeviceInformation, self).__init__()
-        self.CommandSet = None  # Command sets change over the years.
-        self.RoomName = None
+        self.Room = None
         self.Type = None
         self.Volume = None
-        self._isControlling = False
-        self._isRunning = False
 
 
 class SamsungDeviceData(EntertainmentDeviceInformation):
@@ -105,8 +102,7 @@ class SamsungDeviceData(EntertainmentDeviceInformation):
         self.IPv4 = None
         self.Model = None
         self.Port = None
-        self.RoomName = None
-        self.RoomUUID = None
+        self.Room = None
         self.Type = None
         self.Volume = None
 
@@ -320,13 +316,13 @@ class LocalConfig:
         """
         """
         l_entertain = self.m_pyhouse_obj.House.Entertainment
-        l_onkyo = l_entertain.Plugins['pandora']
+        l_samsung = l_entertain.Plugins['samsung']
         LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
         LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
-        LOG.debug(PrettyFormatAny.form(l_onkyo, 'Pandora'))
-        LOG.debug(PrettyFormatAny.form(l_onkyo.Services, 'Pandora'))
+        LOG.debug(PrettyFormatAny.form(l_samsung, 'samsung'))
+        LOG.debug(PrettyFormatAny.form(l_samsung.Services, 'samsung'))
         #
-        for _l_key, l_service in l_onkyo.Services.items():
+        for _l_key, l_service in l_samsung.Services.items():
             LOG.debug(PrettyFormatAny.form(l_service, 'Service'))
             if hasattr(l_service, 'Connection'):
                 LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
@@ -349,7 +345,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warn('samsung Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def _extract_all_devices(self, p_config):
@@ -361,7 +357,7 @@ class LocalConfig:
             l_dict[l_ix] = l_device
         return l_dict
 
-    def _extract_all_onkyo(self, p_config, p_api):
+    def _extract_all_samsung(self, p_config, p_api):
         """
         """
         # self.dump_struct()
@@ -378,42 +374,42 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warn('samsung Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def load_yaml_config(self, p_api):
-        """ Read the pandora.yaml file.
+        """ Read the samsung.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = None
+        self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'] = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_yaml['Onkyo']
+            l_yaml = l_yaml['Samsung']
         except:
-            LOG.warn('The config file does not start with "Onkyo:"')
+            LOG.warn('The config file does not start with "Samsung:"')
             return None
-        l_onkyo = self._extract_all_onkyo(l_yaml, p_api)
-        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = l_onkyo
+        l_samsung = self._extract_all_samsung(l_yaml, p_api)
+        self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'] = l_samsung
         # self.dump_struct()
-        return l_onkyo  # for testing purposes
+        return l_samsung  # for testing purposes
 
 
 class Api(Connecting):
 
+    m_pyhouse_obj = None
+    m_local_config = None
+
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def LoadConfig(self):
-        LOG.info('XML Loading')
-        # l_samsung_obj = SamsungDeviceData()
-        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = SamsungDeviceData()  # Clear before loading
-        # l_samsung_obj = XML.read_samsung_section_xml(p_pyhouse_obj)
-        # p_pyhouse_obj.House.Entertainment.Plugins[SECTION] = l_samsung_obj
-        LOG.info('Loaded XML')
+        self.m_local_config.load_yaml_config(self)
+        LOG.info('Loaded Config')
 
     def Start(self):
         LOG.info("Starting.")

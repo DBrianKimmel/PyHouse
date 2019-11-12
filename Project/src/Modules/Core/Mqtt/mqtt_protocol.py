@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-12'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -407,7 +407,7 @@ class MQTTProtocol(Protocol, Packets):
         l_packet += p_payload
         self.transport.write(l_packet)
 
-    def _build_connect(self, p_broker, p_mqtt):
+    def _build_connect(self, p_broker, p_mqtt, protocol_version=0):
         """ Build a Mqtt "Connect" Packet.
         This is the first packet sent after the TCP handshake establishing the network connection.
         This is used to establish the Mqtt Protocol connection and login.
@@ -417,7 +417,7 @@ class MQTTProtocol(Protocol, Packets):
         l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
         l_varHeader.append(4)
         varLogin = 0
-        if p_broker.Access.UserName is not None:
+        if p_broker.Access.Name is not None:
             varLogin += 2
         if p_broker.Access.Password is not None:
             varLogin += 1
@@ -428,13 +428,15 @@ class MQTTProtocol(Protocol, Packets):
             l_varHeader.append(varLogin << 6 | p_broker.Will.Retain << 5 | p_broker.Will.QoS << 3 | 1 << 2 | 1 << 1)
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_mqtt.ClientID))
+
         if (p_broker.Will.Message is not None or p_broker.Will.Message != '') and p_broker.Will.Topic is not None:
             LOG.debug('Adding last will testiment {}'.format(p_broker.Will.Message + p_broker.Will.Topic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Will.Topic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Will.Message))
-        if p_broker.Access.UserName is not None and len(p_broker.Access.UserName) > 0:
-            LOG.debug('Adding username "{}"'.format(p_broker.Access.UserName))
-            l_payload.extend(EncodeDecode._encodeString(p_broker.Access.UserName))
+
+        if p_broker.Access.Name is not None and len(p_broker.Access.Name) > 0:
+            LOG.debug('Adding username "{}"'.format(p_broker.Access.Name))
+            l_payload.extend(EncodeDecode._encodeString(p_broker.Access.Name))
         if p_broker.Access.Password is not None and len(p_broker.Access.Password) > 0:
             LOG.debug('Adding password "{}"'.format(p_broker.Access.Password))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Access.Password))
@@ -636,7 +638,7 @@ class MQTTClient(MQTTProtocol):
         self.m_Password = p_broker.Access.Password
         p_pyhouse_obj.Core.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Core.Mqtt.ClientID)
-        l_msg += "\n\tUser:'{}';\n\tPass:'{}';".format(p_broker.Access.UserName, p_broker.Access.Password)
+        l_msg += '\n\tUser:"{}";\n\tPass:"{}";'.format(p_broker.Access.UserName, p_broker.Access.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.Host.Name)
         LOG.info(l_msg)
 

@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.Api
 """
 from Modules.Core.Config import import_tools
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-02'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -307,8 +307,8 @@ class Api:
     def Start(self):
         LOG.info("Starting")
         l_count = 0
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
         for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
             LOG.debug('Starting "{}"'.format(l_plugin.Name))
             self._module_start_loop(l_plugin)

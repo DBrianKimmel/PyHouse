@@ -11,7 +11,7 @@ Passed all 10 tests - DBK 2019-10-16
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-03'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -31,20 +31,15 @@ Rooms:
      Floor: 0
      RoomType: OutsideType
      Trigger: None
-
-   # Minimum needed
    - Name: Garage
-
    - Name: Laundry
      Comment: The Laundry
      Floor: 1
      RoomType: Room
-
    - Name: Master Bath Room
      Comment: The
      Floor: 2
      RoomType: Room
-
 """
 
 

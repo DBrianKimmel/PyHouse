@@ -9,8 +9,8 @@
 
 """
 
-__updated__ = '2019-10-31'
-__version_info__ = (19, 19, 30)
+__updated__ = '2019-11-02'
+__version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -43,17 +43,14 @@ class OnkyoPluginInformation(EntertainmentPluginInformation):
 
 
 class OnkyoDeviceInformation(EntertainmentDeviceInformation):
-    """ A superet that contains some onkyo specific fields
+    """ A super that contains some onkyo specific fields
     """
 
     def __init__(self):
         super(OnkyoDeviceInformation, self).__init__()
-        self.CommandSet = None  # Command sets change over the years.
-        self.RoomName = None
         self.Type = None
         self.Volume = None
-        self._isControlling = False
-        self._isRunning = False
+        self.Zone = None
 
 
 class OnkyoDeviceControl(EntertainmentDeviceControl):

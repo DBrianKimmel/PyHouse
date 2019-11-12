@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-04'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -65,7 +65,7 @@ class PandoraServiceInformation:
         self.Comment = None
         self.Connection = None  # PandoraServiceConnectionInformation()
         self.Host = None  # HostInformation()
-        self.Access = None  # SecurityInformation()
+        self.Access = None  # AccessInformation()
         #
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section
         self._Transport = None

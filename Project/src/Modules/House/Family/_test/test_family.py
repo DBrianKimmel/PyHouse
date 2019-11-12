@@ -10,7 +10,7 @@
 Passed all 15 tests.  DBK 2019-02-21
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-04'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -143,7 +143,6 @@ class C1_Import(SetupMixin, unittest.TestCase):
         l_family_obj = self.createFamilyObj()
         l_mod = 'Insteon_device'
         # print(PrettyFormatAny.form(l_family_obj, 'C1-01-A - Module'))
-        l_obj = familyUtil()._do_import(l_family_obj, path_list=l_mod)
         # print(PrettyFormatAny.form(l_obj, 'C1-01-B - Module'))
         # self.assertNotEqual(l_obj, None)
 

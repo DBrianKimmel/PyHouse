@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-03'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,11 +32,10 @@ class FloorsInformation:
     Used to draw pictures of the house
     Used to define the location of switches, lights etc.
 
-    ==> PyHouse.House.Rooms.xxx as in the def below
+    ==> PyHouse.House.Floors.xxx as in the def below
     """
 
     def __init__(self):
-        super(FloorsInformation, self).__init__()
         self.Floor = {}  # FloorInformation()
 
 
@@ -185,7 +184,12 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        p_pyhouse_obj.House.Floors = FloorsInformation()
+        self._add_storage()
+
+    def _add_storage(self):
+        """
+        """
+        self.m_pyhouse_obj.House.Floors = FloorsInformation()
 
     def LoadConfig(self):
         """

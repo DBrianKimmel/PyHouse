@@ -11,12 +11,11 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-03'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import datetime
 
 #  Import PyMh files
 from Modules.Core.Config import config_tools, import_tools
@@ -61,20 +60,14 @@ PARTS = [
 
 
 class HouseInformation:
-
-    def __init__(self):
-        self.Name = None
-        self.Family = {}  # indexed by family name (LC)
-
-
-class HousePartInformation:
     """
+    ==> PyHouse_obj.House.xxx
     """
 
     def __init__(self):
         self.Name = None
-        self.Package = None
-        self.Api = None
+        self.Comment = None
+        self.Module = {}  # {modulename: Api}
 
 
 class MqttActions:
@@ -135,18 +128,16 @@ class Utility:
         self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
         self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
 
-    def init_all_house_parts(self, p_parts):
+    def XXXinit_all_house_parts(self, p_parts):
         """
         """
         l_dict = {}
         for l_part in p_parts:
+            l_name = l_part.lower()
             # LOG.debug('Working on part {}'.format(l_part))
-            l_obj = HousePartInformation()
             l_api = self.m_import_tools.import_module_get_api(l_part, 'Modules.House')
-            l_obj.Name = l_part.lower()
-            l_obj.Api = l_api
-            LOG.info('Inported house part "{}"'.format(l_obj.Name))
-            l_dict[l_part] = l_obj
+            LOG.info('Inported house part "{}"'.format(l_part))
+            l_dict[l_name] = l_api
         LOG.info('Initialized House Parts {}'.format(l_dict))
         return l_dict
 
@@ -184,7 +175,7 @@ class Utility:
             l_value.LoadConfig()
         LOG.info('Loaded all House Parts {}'.format(p_parts))
 
-    def _start_all_house_parts(self, p_parts):
+    def XXX_start_all_house_parts(self, p_parts):
         """ Family must start before the other things (that depend on family).
         """
         LOG.info('Starting parts config files')
@@ -195,9 +186,11 @@ class Utility:
 
     def _find_all_configed_modules(self, p_modules):
         """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
+        @return: a list of required modules per the config files
         """
         for l_module in p_modules:
-            l_path = self.m_config_tools.find_config_file(l_module.lower())
+            l_name = l_module.lower()
+            l_path = self.m_config_tools.find_config_file(l_name)
             if l_path != None:
                 self.m_module_needed.append(l_module)
                 LOG.info(' Found  config file for "{}"'.format(l_module))
@@ -219,7 +212,8 @@ class Utility:
             l_path = l_house_path + l_module.capitalize()
             l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
             l_modules[l_module] = l_api
-        LOG.info('Loaded Modules: {}'.format(self.m_module_needed))
+        LOG.info('Found Modules: {}'.format(self.m_module_needed))
+        self.m_pyhouse_obj.House.Module = l_modules
         return l_modules
 
     def load_all_modules(self, p_modules):
@@ -229,7 +223,7 @@ class Utility:
         for l_module in p_modules.values():
             l_module.LoadConfig()
 
-    def _save_component_apis(self):
+    def XXX_save_component_apis(self):
         """ These are sub-module parts of the house.
         """
         l_obj = self.m_pyhouse_obj.House
@@ -342,9 +336,10 @@ class Api:
     """
     """
     m_local_config = None
+    m_pyhouse_obj = None
+    m_utility = None
     m_parts = {}
     m_modules = {}
-    m_utility = None
 
     def __init__(self, p_pyhouse_obj):
         """ **NoReactor**
@@ -356,9 +351,7 @@ class Api:
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_utility = Utility(p_pyhouse_obj)
         #
-        p_pyhouse_obj.House = HouseInformation()
-        p_pyhouse_obj.House.Comment = ''
-        p_pyhouse_obj.House.LastUpdate = datetime.datetime.now()
+        self._add_storage()
         #
         l_parts = self.m_utility._find_all_configed_parts(PARTS)
         self.m_parts = self.m_utility._import_all_found_parts(l_parts)
@@ -366,6 +359,12 @@ class Api:
         l_modules = self.m_utility._find_all_configed_modules(MODULES)
         self.m_modules = self.m_utility._import_all_found_modules(l_modules)
         LOG.info("Initialized ")
+
+    def _add_storage(self):
+        """
+        """
+        self.m_pyhouse_obj.House = HouseInformation()
+        self.m_pyhouse_obj.House.Comment = ''
 
     def LoadConfig(self):
         """ The house is always present but the components of the house are plugins and not always present.

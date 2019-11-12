@@ -13,14 +13,13 @@ The necessary interfaces are discovered when loading the "devices" that are cont
 Controllers, which are attached to the server, communicate with the server via an interface.
 """
 
-__updated__ = '2019-10-16'
-__version_info__ = (19, 9, 22)
+__updated__ = '2019-11-02'
+__version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.Config import config_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Drivers.Serial import Serial_driver
 
@@ -50,7 +49,7 @@ def get_device_driver_Api(p_pyhouse_obj, p_interface_obj):
     Based on the InterfaceType of the controller, load the appropriate driver and get its Api().
     @return: a pointer to the device driver or None
     """
-    LOG.debug(PrettyFormatAny.form(p_interface_obj, 'DriverInterface'))
+    # LOG.debug(PrettyFormatAny.form(p_interface_obj, 'DriverInterface'))
     l_type = p_interface_obj.Type.lower()
     if l_type == 'serial':
         # LOG.debug('Getting Serial Interface')

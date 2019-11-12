@@ -99,4 +99,5 @@ The playload is structured to carry the information
 
 [Certificates](http://www.steves-internet-guide.com/mosquitto-tls/)
 
+https://docs.oasis-open.org/mqtt/mqtt/v5.0/mqtt-v5.0.html
 ### END DBK

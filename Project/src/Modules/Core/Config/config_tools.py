@@ -9,12 +9,11 @@
 
 """
 
-__updated__ = '2019-11-01'
-__version_info__ = (19, 10, 8)
+__updated__ = '2019-11-04'
+__version_info__ = (19, 11, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import datetime
 import os
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
@@ -40,7 +39,6 @@ class ConfigInformation:
     """
 
     def __init__(self):
-        # self.ConfigDir = '/etc/pyhouse'  # This could be overwritten in some future version
         self.YamlFileName = None
         # self.YamlTree = {}  # ConfigFileInformation()
 
@@ -60,7 +58,7 @@ class RoomLocationInformation:
         self.Name = None
 
 
-class SecurityInformation:
+class AccessInformation:
     """
     """
 
@@ -108,7 +106,7 @@ class SubFields:
         """
         """
         # LOG.debug('Getting Access')
-        l_obj = SecurityInformation()
+        l_obj = AccessInformation()
         l_required = ['Name', 'Password']
         l_allowed = ['ApiKey', 'AccessKey']
         Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
@@ -376,21 +374,13 @@ class YamlFetch(Tools):
             yield (l_key, l_value)
         return
 
-    def XXXrequire_config_file(self, p_filename):
-        try:
-            l_node = self.read_yaml(p_filename)
-        except:
-            LOG.error('Required YAML config file is missing: "{}"'.format(p_filename))
-            return None
-        return l_node
-
 
 class Yaml(YamlCreate, YamlFetch, Tools):
 
     def __init__(self, p_pyhouse_obj):
         """
         """
-        LOG.debug('Initializing')
+        # LOG.debug('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _find_config_node(self, p_filename):
@@ -424,12 +414,13 @@ class Yaml(YamlCreate, YamlFetch, Tools):
             return None
         l_yaml = MyYAML(typ='rt')
         l_yaml.allow_duplicate_keys = True
-        with open(l_node.YamlPath, 'r') as l_file:
-            l_data = l_yaml.load(l_file)
-            # l_node.Yaml = l_data
-        # self.m_pyhouse_obj._Config.YamlTree[p_filename] = l_node
+        try:
+            with open(l_node.YamlPath, 'r') as l_file:
+                l_data = l_yaml.load(l_file)
+        except Exception as e_err:
+            LOG.error('Config file read error; {}'.format(e_err))
+            return None
         # LOG.info('Loaded config file "{}" '.format(p_filename))
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj._Config.YamlTree, 'Tree', 190))
         return l_data
 
     def _write_yaml(self, p_filename, p_data, addnew=False):
@@ -438,7 +429,7 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         @param p_filename: is the name of the read in yaml file 'rooms.yaml'
         @param addnew: defaults to false, will add '-new' to the saved filename.
         """
-        l_now = datetime.datetime.now()
+        # l_now = datetime.datetime.now()
         # l_node = self.m_pyhouse_obj._Config.YamlTree[p_filename]
         # l_filename = l_node.YamlPath
         # l_node.Yaml.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
@@ -463,7 +454,7 @@ class Api(SubFields, Tools):
     m_yaml = None
 
     def __init__(self, p_pyhouse_obj):
-        LOG.debug('Initializing')
+        # LOG.debug('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_yaml = Yaml(p_pyhouse_obj)
 

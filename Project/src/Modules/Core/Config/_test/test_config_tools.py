@@ -7,25 +7,22 @@
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 20 tests - DBK - 2019-10-17
+Passed all 18 tests - DBK - 2019-10-17
 
 """
 
-__updated__ = '2019-10-28'
+__updated__ = '2019-11-04'
 
 # Import system type stuff
 import os
 from _collections import OrderedDict
 from twisted.trial import unittest
 from ruamel.yaml import YAML
-# from ruamel.yaml.comments import TaggedScalar
-# from ruamel.yaml.comments import CommentedMap as CM
-# from ruamel.yaml.comments import Format, Comment
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Config import config_tools
-from Modules.Core.Config.config_tools import Yaml as configYaml, ConfigFileInformation, Api as configApi
+from Modules.Core.Config.config_tools import Yaml as configYaml
 from Modules.House.Lighting.lights import LightInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -70,11 +67,6 @@ class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_yaml = SetupPyHouseObj().BuildYaml(None)
-        self.m_pyhouse_obj._Config.ConfigDir
-        self.m_filename = '_test.yaml'
-        self.m_yamlconf = configYaml(self.m_pyhouse_obj)
-        self.m_api = configApi(self.m_pyhouse_obj)
 
     def dump_to_file(self, p_yaml):
         """ For debugging to see a new _test.yaml file.
@@ -88,8 +80,8 @@ class A0(unittest.TestCase):
     """
 
     def test_00_Print(self):
-        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
-        print('Id: test_config_file')
+        _x = PrettyFormatAny.form('_test', 'title')  # so it is defined when printing is cleaned up.
+        print('Id: test_config_tools')
 
 
 class A1_Config(SetupMixin, unittest.TestCase):
@@ -103,10 +95,11 @@ class A1_Config(SetupMixin, unittest.TestCase):
     def test_01_Setup(self):
         """ Be sure pyhouse_obj._Config is properly set up.
         """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         l_config = self.m_pyhouse_obj._Config
-        # print(PrettyFormatAny.form(l_config, 'A1-01-A - _Config'))
-        self.assertIsNotNone(l_config.ConfigDir)
-        self.assertDictEqual(l_config.YamlTree, {})
+        print(PrettyFormatAny.form(l_config, 'A1-01-B - _Config'))
+        # self.assertIsNotNone(l_config.ConfigDir)
+        # self.assertDictEqual(l_config.YamlTree, {})
 
 
 class B1_Tools(SetupMixin, unittest.TestCase):
@@ -505,40 +498,5 @@ class F1_Tools(SetupMixin, unittest.TestCase):
         print('F1-02-A ', l_ret)
         # self.assertEqual(l_ret, '/etc/pyhouse/pyhouse.yaml')
         self.assertIsNotNone(l_ret)
-
-
-class I1_Import(SetupMixin, unittest.TestCase):
-    """ Test the importing of modules
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self)
-        self.m_tools = config_tools.Tools(self.m_pyhouse_obj)
-
-    def test_00(self):
-        print('I1-00')
-        pass
-
-    def test_01_Do_one(self):
-        """
-        """
-        l_module = 'insteon_device'
-        l_path = 'Modules.House.Family.insteon'
-        l_ret = self.m_tools._do_import(l_module, l_path)
-        print(PrettyFormatAny.form(l_ret, 'I1-01-A - path'))
-        self.assertIsNotNone(l_ret)
-
-    def test_02_Do_several2(self):
-        """
-        """
-        l_modules = ['Lighting', 'Hvac']
-        l_path = 'Modules.House'
-        # l_ret = self.m_tools.import_modules(l_modules, l_path)
-        print(PrettyFormatAny.form(l_ret, 'I1-02-A - path'))
-        self.assertIsNone(l_ret)
-
-    def test_99(self):
-        """
-        """
 
 # ## END DBK

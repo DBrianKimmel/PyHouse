@@ -15,7 +15,7 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 """
 
-__updated__ = '2019-11-01'
+__updated__ = '2019-11-02'
 __version_info__ = (19, 10, 21)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -74,8 +74,7 @@ class Tools:
             LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(p_module, e_err))
             # LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
             l_api = None
-        LOG.debug('Imported: {}'.format(l_ret))
-        # l_api_name = p_module.capitalize() + '_Api'
+        # LOG.debug('Imported: {}'.format(l_ret))
         return l_api
 
 # ## END DBK

@@ -10,25 +10,45 @@
 Passed all 10 tests - DBK 2019-06-28
 
 """
-__updated__ = '2019-10-16'
+from Modules.House.floors import FloorsInformation
+from Modules.Core.Config import config_tools
+__updated__ = '2019-11-03'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
+from Modules.House import floors
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.house import HouseInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+TEST_YAML = """\
+Floors:
+   - Name: Outside
+     Floor: 0
+     Comment: Outside
+
+   - Name: 1st
+     Floor: 1
+     Comment: The first floor
+
+"""
+
 
 class SetupMixin:
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_api = configApi(self.m_pyhouse_obj)
+        self.m_api = floors.Api(self.m_pyhouse_obj)
+        self.m_config_api = configApi(self.m_pyhouse_obj)
+        self.m_api._add_storage()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
@@ -44,16 +64,15 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        pass
 
     def test_01_BuildObjects(self):
         """ Test to be sure the compound object was built correctly.
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'A1-01-C - Floors'))
         self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'A1-01-C - Floors'))
         self.assertEqual(self.m_pyhouse_obj.House.Floors.Floor, {})
 
 
@@ -68,7 +87,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_01_Build(self):
         """ The basic read info as set up
         """
-        # print(PrettyFormatAny.form(self.m_working_floors, 'C1-01-A - WorkingRooms'))
+        print(PrettyFormatAny.form(self.m_working_floors, 'C1-01-A - WorkingRooms'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C1-01-B - House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'C1-01-C - Floors'))
 
@@ -78,7 +97,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
         l_yaml = l_node.Yaml
         l_yamlfloors = l_yaml['Floors']
-        # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
+        print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
         # print(PrettyFormatAny.form(l_yaml, 'C1-02-B - Yaml'))
         # print(PrettyFormatAny.form(l_yamlfloors, 'C1-02-C - YamlFloors'))
         # print(PrettyFormatAny.form(l_yamlfloors[0], 'C1-02-J - Floor-0'))

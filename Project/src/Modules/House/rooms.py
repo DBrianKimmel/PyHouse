@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-03'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -242,6 +242,7 @@ class LocalConfig:
         @param p_pyhouse_obj: is the entire house object
         @param p_node_yaml: is
             {'Rooms': [{'Name': 'Outside', 'Active': 'True', 'Comment': 'Things outsi...
+        @return: a dict {index: RoomInformation()}
         """
         l_rooms = {}
         for l_ix, l_value in enumerate(p_config):
@@ -260,15 +261,16 @@ class LocalConfig:
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
-            return None
-        try:
-            l_yaml = l_yaml['Rooms']
-        except:
-            LOG.warn('The config file does not start with "Rooms:"')
-            return None
-        l_rooms = self._extract_all_rooms(l_yaml)
+            l_rooms = {}
+        else:
+            try:
+                l_yaml = l_yaml['Rooms']
+                l_rooms = self._extract_all_rooms(l_yaml)
+            except:
+                LOG.warn('The config file does not start with "Rooms:"')
+                l_rooms = {}
         self.m_pyhouse_obj.House.Rooms = l_rooms
-        return l_rooms  # for testing purposes
+        return l_rooms
 
 # ----------
 
@@ -316,7 +318,8 @@ class Api:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_local_config.load_yaml_config()
+        l_rooms = self.m_local_config.load_yaml_config()
+        self.m_pyhouse_obj.House.Rooms = l_rooms
         LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
 
     def Start(self):

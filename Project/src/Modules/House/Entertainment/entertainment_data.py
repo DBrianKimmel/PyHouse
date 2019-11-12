@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-11-02'
 
 # Import system type stuff
 
@@ -79,8 +79,7 @@ class EntertainmentDeviceInformation(BaseObject):
         self.CommandSet = None  # Command sets change over the years.
         self.Host = None  # HostInformation()  ## See core.data_objects
         self.Model = None
-        self.RoomName = None
-        self.RoomUUID = None
+        self.Room = None  # RoomLoc??
         self.Type = None
         self.Volume = None
         self.ZoneCount = 0

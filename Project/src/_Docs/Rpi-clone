@@ -45,7 +45,7 @@ rpi-clone version 2.0.21 adds the -p option so the /boot partition can be resize
 If you upgraded Stretch to Buster and are running with a small /boot, then for the clone to have a resized /boot, run:
 
 ```
-rpi-clone -f -p 256M sda
+sudo rpi-clone -f -p 256M sda
 ```
 
 

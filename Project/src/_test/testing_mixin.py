@@ -11,7 +11,7 @@
 from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
 from Modules.Core.core import PyHouseApiInformation, ParameterInformation
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-04'
 
 #  Import system type stuff
 import os
@@ -30,10 +30,9 @@ from Modules.House.Entertainment.entertainment import \
 from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import \
     PyHouseInformation, \
-    HouseApis, \
-    UuidInformation
+    HouseApis
 from Modules.Core.Config.config_tools import \
-    ConfigInformation, SecurityInformation
+    ConfigInformation, AccessInformation
 from Modules.House.Family.family import Api as familyApi
 from Modules.House.house import HouseInformation
 from Modules.Core import logging_pyh as Logger
@@ -103,7 +102,7 @@ class SetupPyHouseObj:
         l_ret.Lighting = LightingInformation()
         l_ret.Hvac = HvacInformation()
         l_ret.Schedules = {}
-        l_ret.Security = SecurityInformation()
+        l_ret.Security = AccessInformation()
         return l_ret
 
     def _build_computer(self):

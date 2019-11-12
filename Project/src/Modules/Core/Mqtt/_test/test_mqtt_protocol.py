@@ -7,10 +7,11 @@
 @note:      Created on Jun 3, 2015
 @Summary:
 
-Passed all 4 tests - DBK- 2019-08-015
+Passed all 4 tests - DBK- 2019-08-15
 """
+from Modules.Core.Config.config_tools import AccessInformation
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-12'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -65,7 +66,8 @@ class B2_Packet(SetupMixin, unittest.TestCase):
         self.m_broker.Will.QoS = 0
         self.m_broker.Will.Retain = False
         self.m_broker.CleanStart = True
-        self.m_broker.Access.Username = None
+        self.m_broker.Access = AccessInformation()
+        self.m_broker.Access.Name = None
         self.m_broker.Access.Password = None
 
     def test_01_Fixed(self):

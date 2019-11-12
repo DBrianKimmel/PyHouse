@@ -9,7 +9,13 @@
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2019-11-12'
+
+#  Import system type stuff
+
+#  Import PyMh files and modules.
+from Modules.Core import logging_pyh as Logger
+LOG = Logger.getLogger('PyHouse.mqtt_util      ')
 
 
 class EncodeDecode:
@@ -90,6 +96,23 @@ class EncodeDecode:
         for i in p_valueArray[::-1]:
             l_value += i * l_multiplier
             multiplier = l_multiplier << 8
+        return l_value
+
+
+def decode_variable_byte_integer(p_bytes):
+    """
+    1    0 (0x00)                            127 (0x7F)
+    2    128 (0x80, 0x01)                    16,383 (0xFF, 0x7F)
+    3    16,384 (0x80, 0x80, 0x01)           2,097,151 (0xFF, 0xFF, 0x7F)
+    4    2,097,152 (0x80, 0x80, 0x80, 0x01)  268,435,455 (0xFF, 0xFF, 0xFF, 0x7F)
+    """
+    l_multiplier = 1
+    l_value = 0
+    for l_next_byte in p_bytes[::-1]:
+        l_value += (l_next_byte & 127) * l_multiplier
+        if l_multiplier > 128 * 128 * 128:
+            LOG.error('Malformed Variable Byte Integer')
+        l_multiplier *= 128
         return l_value
 
 #  ## END DBK
