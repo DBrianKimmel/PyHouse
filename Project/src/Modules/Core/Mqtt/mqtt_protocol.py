@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-11-12'
+__updated__ = '2019-11-14'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -198,9 +198,10 @@ class MQTTProtocol(Protocol, Packets):
                 4 = Rejected - Username/Password incorrect
                 5 = Rejected - Not Authorized
         """
+        l_flags = packet[0]
         l_rc = packet[1]
         if l_rc != 0:
-            LOG.error('ProtocolEvent "Conack Packet" received:\n\tStatus: {}; {};\n\tAddr:{}'.format(packet[0], l_rc, self.m_broker.Host.Name))
+            LOG.error('ProtocolEvent "Conack Packet" received:\n\tFlags: {}; Status: {};\n\tBroker:{}'.format(l_flags, l_rc, self.m_broker.Host.Name))
         #  Return the status field
         self.connackReceived(l_rc)
 
@@ -286,7 +287,7 @@ class MQTTProtocol(Protocol, Packets):
     def _event_suback(self, packet, _qos, _dup, _retain):
         messageId = EncodeDecode._decodeValue(packet[:2])
         packet = packet[2:]
-        # LOG.info('Event SubAck received - MsgID:{}  Acks: {} {}\n\tAddr:{}'.format(messageId, len(packet), packet, self.m_broker.Host.Name))
+        LOG.info('Event SubAck received - MsgID:{}  Acks: {} {}\n\tAddr:{}'.format(messageId, len(packet), packet, self.m_broker.Host.Name))
         #  Extract the granted QoS levels
         grantedQos = []
         while len(packet):
@@ -313,11 +314,11 @@ class MQTTProtocol(Protocol, Packets):
         self.unsubackReceived(messageId)
 
     def _event_pingreq(self, _packet, _qos, _dup, _retain):
-        # LOG.info('Event Pingreq received: {} {}'.format(len(packet), packet))
+        LOG.info('Event Pingreq received: {} {}'.format(len(_packet), _packet))
         self.pingreqReceived()
 
     def _event_pingresp(self, _packet, _qos, _dup, _retain):
-        # LOG.debug('Event Pingresp received: {} {}'.format(len(packet), packet))
+        LOG.debug('Event Pingresp received: {} {}'.format(len(_packet), _packet))
         self.pingrespReceived()
 
     def _event_disconnect(self, packet, _qos, _dup, _retain):
@@ -414,13 +415,19 @@ class MQTTProtocol(Protocol, Packets):
         """
         l_varHeader = bytearray()
         l_payload = bytearray()
-        l_varHeader.extend(EncodeDecode._encodeString("MQTT"))
-        l_varHeader.append(4)
+        if protocol_version < 4:
+            l_varHeader.extend(EncodeDecode._encodeString('MQIsdp'))
+        else:
+            l_varHeader.extend(EncodeDecode._encodeString('MQTT'))
+        l_varHeader.append(protocol_version)
+        LOG.debug('Version: {}'.format(protocol_version))
         varLogin = 0
+        # UserName
         if p_broker.Access.Name is not None:
             varLogin += 2
         if p_broker.Access.Password is not None:
             varLogin += 1
+        #
         if p_broker.Will.Message is None or p_broker.Will.Message == '' or p_broker.Will.Topic is None:
             #  Clean start, no will message
             l_varHeader.append(varLogin << 6 | 0 << 2 | 1 << 1)
@@ -441,6 +448,9 @@ class MQTTProtocol(Protocol, Packets):
             LOG.debug('Adding password "{}"'.format(p_broker.Access.Password))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Access.Password))
         l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
+        LOG.debug('Fixed:     {}'.format(FormatBytes(l_fixHeader)))
+        LOG.debug('Variable:  {}'.format(FormatBytes(l_varHeader)))
+        LOG.debug('Payload:   {}'.format(FormatBytes(l_payload)))
         LOG.debug('Connect packet Built...')
         return (l_fixHeader, l_varHeader, l_payload)
 
@@ -448,7 +458,7 @@ class MQTTProtocol(Protocol, Packets):
         """
         DBK - Modified this packet to add username and password flags and fields (2016-01-22)
         """
-        l_fixHeader, l_varHeader, l_payload = self._build_connect(p_broker, p_mqtt)
+        l_fixHeader, l_varHeader, l_payload = self._build_connect(p_broker, p_mqtt, protocol_version=p_broker.Version)
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
@@ -664,7 +674,7 @@ class MQTTClient(MQTTProtocol):
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
-        """ Now that we have a net connection to the broker, Subscribe.
+        """ Now that we have a connection to the broker, Subscribe.
         """
         l_topic = self.m_pyhouse_obj.Core.Mqtt.Prefix + '#'
         LOG.info("Subscribing to MQTT Feed: {}".format(l_topic))
@@ -682,12 +692,13 @@ class MQTTClient(MQTTProtocol):
     def pubackReceived(self, _messageId):
         """ Override
         """
-        pass
+        LOG.debug('')
 
     def subackReceived(self, _grantedQos, _messageId):
         """ Override
         Subscribe Ack message
         """
+        LOG.debug('Received Suback from MQTT Broker "{}"'.format(self.m_broker.Name))
         # self.m_pyhouse_obj.Core.Mqtt.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
@@ -701,7 +712,7 @@ class MQTTClient(MQTTProtocol):
         This is where we receive all the pyhouse messages from the broker.
         Call the dispatcher to send them on to the correct place.
         """
-        # LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
+        LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
         self.m_broker._ClientApi.MqttDispatch(p_topic, p_message)
 
 ###########################################

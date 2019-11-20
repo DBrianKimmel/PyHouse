@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-12'
+__updated__ = '2019-11-13'
 __version_info__ = (19, 10, 16)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -158,7 +158,7 @@ class LocalConfig:
                 l_obj.Will = self._extract_will_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker'))
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Broker'))
         LOG.info('Loaded broker: "{}"'.format(l_obj.Name))
         return l_obj
 
