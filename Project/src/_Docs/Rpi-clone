@@ -46,6 +46,7 @@ If you upgraded Stretch to Buster and are running with a small /boot, then for t
 
 ```
 sudo rpi-clone -f -p 256M sda
+sudo rpi-clone sda
 ```
 
 
