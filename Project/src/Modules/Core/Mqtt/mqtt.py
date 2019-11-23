@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-13'
+__updated__ = '2019-11-23'
 __version_info__ = (19, 10, 16)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -150,8 +150,8 @@ class LocalConfig:
         for l_key, l_value in p_config.items():
             if l_key == 'Access':
                 l_obj.Access = self.m_config.extract_access_group(l_value)
-                l_obj.Access.UserName = None
-                l_obj.Access.Password = None
+                # l_obj.Access.Name = None
+                # l_obj.Access.Password = None
             elif l_key == 'Host':
                 l_obj.Host = self.m_config.extract_host_group(l_value)
             elif l_key == 'Will':

@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-11-14'
+__updated__ = '2019-11-23'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -423,15 +423,20 @@ class MQTTProtocol(Protocol, Packets):
         LOG.debug('Version: {}'.format(protocol_version))
         varLogin = 0
         # UserName
+        LOG.debug(PrettyFormatAny.form(p_broker.Access, 'Access'))
         if p_broker.Access.Name is not None:
+            LOG.debug('Add Username ')
             varLogin += 2
         if p_broker.Access.Password is not None:
+            LOG.debug('Add Password ')
             varLogin += 1
         #
         if p_broker.Will.Message is None or p_broker.Will.Message == '' or p_broker.Will.Topic is None:
             #  Clean start, no will message
+            LOG.debug('No Will ')
             l_varHeader.append(varLogin << 6 | 0 << 2 | 1 << 1)
         else:
+            LOG.debug('Add Will ')
             l_varHeader.append(varLogin << 6 | p_broker.Will.Retain << 5 | p_broker.Will.QoS << 3 | 1 << 2 | 1 << 1)
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_mqtt.ClientID))
