@@ -17,9 +17,9 @@ AcuRite:
       HostName: weather-sta-ct
       Port: None
       Protocol: TCP
-   Security:
+   Access:
       ApiKey: None
-      UserName: None
+      Name: None
       Password: None
 
 ### END DBK

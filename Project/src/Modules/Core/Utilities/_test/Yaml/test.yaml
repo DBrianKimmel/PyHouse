@@ -13,7 +13,7 @@ Testing:
    City: Washington
    State: DC
    Access:
-     UserName: My Name
+     Name: My Name
      Password: My Password
    Host:
      Name: Host-name-xxx

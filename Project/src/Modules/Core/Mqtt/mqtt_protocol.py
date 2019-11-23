@@ -422,7 +422,7 @@ class MQTTProtocol(Protocol, Packets):
         l_varHeader.append(protocol_version)
         LOG.debug('Version: {}'.format(protocol_version))
         varLogin = 0
-        # UserName
+        # User Name
         LOG.debug(PrettyFormatAny.form(p_broker.Access, 'Access'))
         if p_broker.Access.Name is not None:
             LOG.debug('Add Username ')
@@ -649,11 +649,11 @@ class MQTTClient(MQTTProtocol):
         self.m_willTopic = willTopic
         self.m_willMessage = willMessage
         self.m_willRetain = willRetain
-        self.m_UserName = p_broker.Access.UserName
+        self.m_Name = p_broker.Access.Name
         self.m_Password = p_broker.Access.Password
         p_pyhouse_obj.Core.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Core.Mqtt.ClientID)
-        l_msg += '\n\tUser:"{}";\n\tPass:"{}";'.format(p_broker.Access.UserName, p_broker.Access.Password)
+        l_msg += '\n\tUser:"{}";\n\tPass:"{}";'.format(p_broker.Access.Name, p_broker.Access.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.Host.Name)
         LOG.info(l_msg)
 

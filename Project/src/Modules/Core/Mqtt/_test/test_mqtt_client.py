@@ -11,7 +11,7 @@ Passed all 7 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-23'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -89,7 +89,7 @@ class C2_ConnectTLS(SetupMixin, unittest.TestCase):
         self.m_broker.BrokerAddress = BROKER_TLS
         self.m_broker.Host.Port = PORT_TLS
         self.m_broker.Active = True
-        self.m_broker.Access.UserName = 'pyhouse'
+        self.m_broker.Access.Name = 'pyhouse'
         self.m_broker.Access.Password = 'ChangeMe'
         self.m_broker.Name = 'ClientTest'
 
