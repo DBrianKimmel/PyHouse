@@ -10,8 +10,8 @@
 """
 from Modules.Core.Config import config_tools, import_tools
 
-__updated__ = '2019-10-31'
-__version_info__ = (19, 10, 28)
+__updated__ = '2019-11-25'
+__version_info__ = (19, 11, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -20,7 +20,6 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-# from Modules.House.Security.cameras import Api as cameraApi
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
@@ -32,7 +31,7 @@ MODULES = [  # All modules for the House must be listed here.  They will be load
     'Cameras',
     'Door_Bells',
     'Garage_Doors',
-    'Motion_Dectors'
+    'Motion_Detectors'
     ]
 
 
@@ -43,8 +42,10 @@ class SecurityData:
     """
 
     def __init__(self):
-        self.GarageDoors = {}  # DeviceSubtype = 1
-        self.MotionSensors = {}  # DeviceSubtype = 2
+        self.Cameras = {}
+        self.Door_Bells = {}
+        self.Garage_Doors = {}
+        self.Motion_Detectors = {}
 
 
 class MqttActions:
@@ -159,7 +160,6 @@ class Api:
         """ Load the Security Information
         """
         LOG.info('Loading Config')
-        self.m_pyhouse_obj.House.Security = SecurityData()  # Clear before loading
         # self.m_local_config.import_all_modules(self.m_modules)
         LOG.info('Loaded Config')
         return self.m_pyhouse_obj.House.Security

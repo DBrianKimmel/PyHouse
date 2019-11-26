@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-11-25'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -59,7 +59,7 @@ diskSpaceToReserve = 400 * 1024 * 1024  # Keep 400 mb free on disk
 class CameraInformation:
     """
 
-    ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
+    ==> PyHouse.House.Security.Garage_Doors.xxx as in the def below
     """
 
     def __init__(self):

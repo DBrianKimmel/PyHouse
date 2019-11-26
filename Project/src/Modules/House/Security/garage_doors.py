@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-11-25'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -27,14 +27,14 @@ CONFIG_NAME = 'garagedoor'
 class GarageDoorInformation:
     """
 
-    ==> PyHouse.House.Security.GarageDoors.xxx as in the def below
+    ==> PyHouse.House.Security.Garage_Doors.xxx as in the def below
     """
 
     def __init__(self):
         self.Name = None
         self.Comment = None
         self.DeviceType = 'Security'
-        self.DeviceSubType = 'GarageDoor'
+        self.DeviceSubType = 'Garage_Door'
         self.Family = None  # FamilyInformation()
         self.Room = None  # RoomInformation()
         self.Status = None  # Open | Closed
@@ -100,18 +100,18 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Security.GarageDoors = None
+        self.m_pyhouse_obj.House.Security.Garage_Doors = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_yaml['GarageDoors']
+            l_yaml = l_yaml['Garage+Doors']
         except:
-            LOG.warn('The config file does not start with "GarageDoors:"')
+            LOG.warn('The config file does not start with "Garage_Doors:"')
             return None
         l_gdo = self._extract_all_garage_doors(l_yaml)
-        self.m_pyhouse_obj.House.Security.GarageDoors = l_gdo
+        self.m_pyhouse_obj.House.Security.Garage_Doors = l_gdo
         return l_gdo  # for testing purposes
 
 

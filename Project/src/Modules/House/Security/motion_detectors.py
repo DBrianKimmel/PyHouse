@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-25'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -94,18 +94,18 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Security.MotionSensors = None
+        self.m_pyhouse_obj.House.Security.Motion_Detectors = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_yaml['MotionSensors']
+            l_yaml = l_yaml['Motion_Detectors']
         except:
-            LOG.warn('The config file does not start with "MotionSensors:"')
+            LOG.warn('The config file does not start with "Motion_Detectors:"')
             return None
         l_motion = self._extract_all_motion_sensors(l_yaml)
-        self.m_pyhouse_obj.House.Security.MotionSensors = l_motion
+        self.m_pyhouse_obj.House.Security.Motion_Detectors = l_motion
         return l_motion  # for testing purposes
 
 

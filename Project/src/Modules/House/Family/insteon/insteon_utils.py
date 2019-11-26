@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-25'
 
 #  Import system type stuff
 
@@ -132,9 +132,9 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
         elif p_insteon_obj.DeviceType == 'Hvac':
             p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
         elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'Thermostat':
-            p_pyhouse_obj.House.Security.GarageDoors[l_ix] = p_insteon_obj
+            p_pyhouse_obj.House.Security.Garage_Doors[l_ix] = p_insteon_obj
         elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'GarageDoorOpener':
-            p_pyhouse_obj.House.Security.MotionSensors[l_ix] = p_insteon_obj
+            p_pyhouse_obj.House.Security.Motion_Detectors[l_ix] = p_insteon_obj
         else:
             LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
             # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
@@ -321,12 +321,12 @@ class Decode:
             if l_ret == None and l_house.Hvac.Thermostats != None:
                 l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Hvac.Thermostats, p_address)
         if hasattr(l_house, 'Security'):
-            if hasattr(l_house.Security, 'GarageDoors'):
-                if l_ret == None and l_house.Security.GarageDoors != None:
-                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.GarageDoors, p_address)
-            if hasattr(l_house.Security, 'MotionSensors'):
-                if l_ret == None and l_house.Security.MotionSensors != None:
-                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.MotionSensors, p_address)
+            if hasattr(l_house.Security, 'Garage_Doors'):
+                if l_ret == None and l_house.Security.Garage_Doors != None:
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.Garage_Doors, p_address)
+            if hasattr(l_house.Security, 'Motion_Detectors'):
+                if l_ret == None and l_house.Security.Motion_Detectors != None:
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.Motion_Detectors, p_address)
         #
         #  Add additional insteon classes in here
         #

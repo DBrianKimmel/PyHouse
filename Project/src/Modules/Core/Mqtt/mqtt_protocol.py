@@ -318,7 +318,7 @@ class MQTTProtocol(Protocol, Packets):
         self.pingreqReceived()
 
     def _event_pingresp(self, _packet, _qos, _dup, _retain):
-        LOG.debug('Event Pingresp received: {} {}'.format(len(_packet), _packet))
+        # LOG.debug('Event Pingresp received: {} {}'.format(len(_packet), _packet))
         self.pingrespReceived()
 
     def _event_disconnect(self, packet, _qos, _dup, _retain):
