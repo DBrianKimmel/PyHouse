@@ -294,7 +294,7 @@ class Api:
         @return: a message to send to the log detailing the Mqtt message received.
         """
         l_topic_list = p_topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
-        LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
+        # LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
         l_logmsg = 'Dispatch\n\tTopic: {}'.format(l_topic_list)
         # Lwt can be from any device
         if l_topic_list[0] == 'lwt':

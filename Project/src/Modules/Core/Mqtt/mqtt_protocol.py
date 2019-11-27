@@ -720,7 +720,7 @@ class MQTTClient(MQTTProtocol):
         This is where we receive all the pyhouse messages from the broker.
         Call the dispatcher to send them on to the correct place.
         """
-        LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
+        # LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
         self.m_broker._ClientApi.MqttDispatch(p_topic, p_message)
 
 ###########################################

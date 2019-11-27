@@ -8,14 +8,14 @@
 @summary:
 
 """
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-11-26'
 
 #  Import system type stuff
 
 #  Import PyMh files
-# from Modules.Families.family_utils import FamUtil
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
 from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.LightUtility   ')
@@ -69,11 +69,12 @@ class lightingUtility:
         for l_obj in p_objs.values():
             l_family = l_obj.Family.Name.lower()
             if l_family == p_family.lower():
-                l_ret.append(l_obj)
-                LOG.debug('Found Controller {}'.format(l_obj.Name))
-                LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
+                LOG.info('Found Controller {}; Local:{}'.format(l_obj.Name, l_obj._isLocal))
+                if l_obj._isLocal:
+                    l_ret.append(l_obj)
+                # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
         if l_ret == []:
-            LOG.error('Controller Lookup failed - arg error Family:{}'.format(p_family))
+            LOG.warn('Controller Lookup failed - arg error Family:{}'.format(p_family))
         else:
             LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
         return l_ret
