@@ -20,9 +20,8 @@ The second part is the 'House'.
 This will set up this node and then find all other nodes in the same domain (House).
 Then start the House and all the sub systems.
 """
-from concurrent.futures._base import _yield_finished_futures
 
-__updated__ = '2019-11-01'
+__updated__ = '2019-11-26'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 

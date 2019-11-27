@@ -9,8 +9,8 @@
 
 """
 
-__updated__ = '2019-11-23'
-__version_info__ = (19, 10, 16)
+__updated__ = '2019-11-26'
+__version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -207,13 +207,13 @@ class Api:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        LOG.info('Initializing')
+        LOG.info('Intializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self._add_storage()
         # self.Core.MqttApi = self
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_parent = self
-        LOG.info("Initialized - Version:{} == {}".format(__version__, self))
+        LOG.info("Initialized")
 
     def _add_storage(self):
         LOG.debug('Adding')
@@ -294,7 +294,7 @@ class Api:
         @return: a message to send to the log detailing the Mqtt message received.
         """
         l_topic_list = p_topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
-        # LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
+        LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
         l_logmsg = 'Dispatch\n\tTopic: {}'.format(l_topic_list)
         # Lwt can be from any device
         if l_topic_list[0] == 'lwt':

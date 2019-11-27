@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-11-03'
+__updated__ = '2019-11-26'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -370,7 +370,7 @@ class Api:
         """ The house is always present but the components of the house are plugins and not always present.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        # self.m_local_config.load_yaml_config()
+        self.m_local_config.load_yaml_config()
         self.m_utility.load_all_house_parts(self.m_parts)
         self.m_utility.load_all_modules(self.m_modules)
         LOG.info('Loaded Config')

@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-11-23'
+__updated__ = '2019-11-26'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -632,8 +632,11 @@ class MQTTClient(MQTTProtocol):
         LOG.debug('Init')
         self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
-            l_house_name = p_pyhouse_obj.House.Name + '/'
-        except (AttributeError, TypeError):
+            l_house_name = p_pyhouse_obj.House.Name + u'/'
+        except (AttributeError, TypeError) as e_err:
+            LOG.error('No House Name - {}'.format(e_err))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'PyHouse.House'))
             l_house_name = 'NoHouseName/'
         self.m_prefix = 'pyhouse/' + l_house_name
         self.m_pyhouse_obj = p_pyhouse_obj
