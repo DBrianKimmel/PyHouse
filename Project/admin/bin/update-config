@@ -1,4 +1,6 @@
 #!/bin/bash
+#
+# Pull the master config to the local server.
 
 NFS=/NFS/Projects/PyHouse/Houses/PinkPoppy/Config/
 ETC=/etc/pyhouse/

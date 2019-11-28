@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-27'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -111,8 +111,7 @@ class LocalConfig:
                 l_ret = self._extract_family(l_value)
                 l_obj.Family = l_ret
             elif l_key == 'Room':
-                l_obj.Room = roomsApi(self.m_pyhouse_obj).getRoomConfig(l_value)
-                pass
+                l_obj.Room = self.m_config.extract_room_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for required data missing from the config file.

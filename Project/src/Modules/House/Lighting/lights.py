@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-27'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -28,9 +28,6 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.state import State
-from Modules.House.rooms import Api as roomsApi
-from Modules.House.Family.family import LocalConfig as familyConfig
-from Modules.House.Family.family_utils import FamUtil
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -132,8 +129,7 @@ class LocalConfig:
                 l_obj.Family.Type = 'Light'
                 self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = l_obj.Family  # define the family as used
             elif l_key == 'Room':
-                l_obj.Room = roomsApi(self.m_pyhouse_obj).getRoomConfig(l_value)
-                pass
+                l_obj.Room = self.m_config.extract_room_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for required data missing from the config file.
