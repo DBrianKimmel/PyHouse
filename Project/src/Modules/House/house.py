@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-27'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -128,19 +128,6 @@ class Utility:
         self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
         self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
 
-    def XXXinit_all_house_parts(self, p_parts):
-        """
-        """
-        l_dict = {}
-        for l_part in p_parts:
-            l_name = l_part.lower()
-            # LOG.debug('Working on part {}'.format(l_part))
-            l_api = self.m_import_tools.import_module_get_api(l_part, 'Modules.House')
-            LOG.info('Inported house part "{}"'.format(l_part))
-            l_dict[l_name] = l_api
-        LOG.info('Initialized House Parts {}'.format(l_dict))
-        return l_dict
-
     def _find_all_configed_parts(self, p_parts):
         """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
         """
@@ -174,15 +161,6 @@ class Utility:
             LOG.info('Loading house part "{}"'.format(l_key))
             l_value.LoadConfig()
         LOG.info('Loaded all House Parts {}'.format(p_parts))
-
-    def XXX_start_all_house_parts(self, p_parts):
-        """ Family must start before the other things (that depend on family).
-        """
-        LOG.info('Starting parts config files')
-        for l_key, l_value in p_parts.items():
-            LOG.info('Starting house part "{}"'.format(l_key))
-            l_value.Api.Start()
-        LOG.info('Finished loading all house parts config files.')
 
     def _find_all_configed_modules(self, p_modules):
         """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
@@ -223,20 +201,6 @@ class Utility:
         for l_module in p_modules.values():
             l_module.LoadConfig()
 
-    def XXX_save_component_apis(self):
-        """ These are sub-module parts of the house.
-        """
-        l_obj = self.m_pyhouse_obj.House
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            l_a = getattr(l_obj, l_key)
-            if l_key == 'HouseApi':
-                continue
-            if l_a == None:
-                LOG.warn('Skipping "{}"'.format(l_key))
-                continue
-            l_a.SaveConfig()
-        return
-
     def start_house_modules(self, p_modules):
         """ Family must start before the other things (that depend on family).
         """
@@ -245,8 +209,9 @@ class Utility:
             LOG.debug('Starting configured module: {}'.format(l_module))
             l_module.Start()
 
-    def save_house_modules(self):
-        pass
+    def save_all_house_modules(self, p_modules):
+        for l_module in p_modules.values():
+            l_module.SaveConfig()
 
     def stop_house_modules(self):
         l_obj = self.m_pyhouse_obj.House
@@ -262,11 +227,16 @@ class Utility:
         self.m_pyhouse_obj.House.EntertainmentApi.Stop()
         self.m_pyhouse_obj.House.ScheduleApi.Stop()
 
-    def save_house_parts(self, p_parts_dict):
+    def save_all_house_parts(self, p_parts):
         LOG.info('Saving parts config files')
-        for l_key, l_value in p_parts_dict.items():
-            LOG.info('Starting House part "{}"'.format(l_key))
-            l_value.Api.SaveConfig()
+        for l_key, l_value in p_parts.items():
+            LOG.info('Saving house part "{}"'.format(l_key))
+            l_value.SaveConfig()
+        LOG.info('Saved all House Parts {}'.format(p_parts))
+
+        # for l_key, l_value in p_parts.items():
+        #    LOG.info('Saving House part "{}"'.format(l_key))
+        #    l_value.Api.SaveConfig()
 
     def stop_house_parts(self, p_parts_dict):
         LOG.info('Stopping parts config files')
@@ -389,8 +359,8 @@ class Api:
         Take a snapshot of the current Configuration/Status and write out the config files.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        self.m_utility.save_house_parts(self.m_parts)
-        self.m_utility.save_house_modules(self.m_modules)
+        self.m_utility.save_all_house_parts(self.m_parts)
+        self.m_utility.save_all_house_modules(self.m_modules)
         LOG.info("Saved Config.")
         return
 

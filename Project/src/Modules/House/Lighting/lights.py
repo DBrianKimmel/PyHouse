@@ -253,7 +253,7 @@ class MqttActions:
         if len(l_controller_obj) > 0:
             # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
             l_api = l_controller_obj[0]._HandlerApi
-            LOG.debug(PrettyFormatAny.form(l_api, 'API'))
+            # LOG.debug(PrettyFormatAny.form(l_api, 'API'))
             if l_api == None:
                 return
             l_api.Control(l_light_obj, l_controller_obj[0], l_control)
@@ -323,7 +323,8 @@ class Api(MqttActions):
         if self.m_plm == None:
             LOG.info('No PLM was defined - Quitting.')
             return
-        l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
+        # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
+        l_api = p_controller_obj._HandlerApi
         l_api.Control(p_device_obj, p_controller_obj, p_control)
 
 #  ## END DBK

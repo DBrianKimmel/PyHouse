@@ -53,9 +53,9 @@ class Api:
                 continue
             LOG.info("\n\tSchedLightName:{}; Level:{}; LightName:{}; Controller:{}".format(
                     l_light_name, l_control.BrightnessPct, l_light_obj.Name, l_controller_obj.Name))
-            self.ControlLight(p_pyhouse_obj, l_light_obj, l_controller_obj, l_control)
+            self.ControlLight(l_light_obj, l_controller_obj, l_control)
 
-    def ControlLight(self, p_pyhouse_obj, p_light_obj, p_controller_obj, p_control):
+    def ControlLight(self, p_light_obj, p_controller_obj, p_control):
         """
         @param p_pyhouse_obj: The entire data set.
         @param p_light_obj: the device being controlled
@@ -66,7 +66,8 @@ class Api:
         try:
             LOG.info('Turn Light: "{}" to level: "{}", Family: "{}"; Controller: {}'.format(
                     p_light_obj.Name, p_control.BrightnessPct, p_light_obj.Family.Name, p_controller_obj.Name))
-            l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
+            # l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
+            l_family_api = p_controller_obj._HandlerApi
             # print(PrettyFormatAny.form(l_family_api.Control, 'Family Api'))
             l_family_api.Control(p_light_obj, p_controller_obj, p_control)
         except Exception as e_err:

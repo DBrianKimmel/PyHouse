@@ -1,0 +1,8 @@
+#!/bin/bash
+
+NFS=/NFS/Projects/PyHouse/Houses/PinkPoppy/Config/
+ETC=/etc/pyhouse/
+
+cp --archive  ${NFS} ${ETC}
+
+### END DBK

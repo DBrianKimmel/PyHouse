@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-14'
+__updated__ = '2019-11-26'
 
 #  Import system type stuff
 
@@ -28,7 +28,7 @@ class EncodeDecode:
     def _encodeString(p_string):
         """ Convert a string(UTF) into bytes with encoded length
         """
-        LOG.debug('Encoding "{}"'.format(p_string))
+        # LOG.debug('Encoding "{}"'.format(p_string))
         l_len = len(p_string)
         l_str = p_string.encode('utf-8')
         l_encoded = bytearray()

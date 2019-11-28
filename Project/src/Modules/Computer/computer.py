@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-27'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -296,7 +296,7 @@ class Api:
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
         self.m_utility._save_component_apis()
-        LOG.info("Saved Computer XML Config.")
+        LOG.info("Saved Computer Config.")
         return
 
     def Stop(self):
