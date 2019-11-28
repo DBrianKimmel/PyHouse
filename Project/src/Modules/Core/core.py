@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -112,9 +112,9 @@ class Utility:
         """
         l_module = p_module.lower()
         l_path = 'Modules.Core.' + p_module
-        LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
+        # LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
         l_module = importTools(self.m_pyhouse_obj).import_module_get_api(l_module, l_path)
-        LOG.debug('done')
+        # LOG.debug('done')
         return l_module
 
     def initialize_core_modules(self, p_modules):
@@ -124,7 +124,7 @@ class Utility:
         l_modules = {}
         # LOG.debug('Initializing modules {}'.format(p_modules))
         for l_module in p_modules:
-            LOG.debug('Initializing module "{}"'.format(l_module))
+            # LOG.debug('Initializing module "{}"'.format(l_module))
             l_api = self._initialize_one_module(l_module)
             l_modules[l_module] = l_api
         LOG.info('Set up modules {}'.format(p_modules))
@@ -135,17 +135,17 @@ class Utility:
         """
         @param p_modules: is a dict of modules
         """
-        for l_key, l_module in p_modules.items():
-            LOG.debug('Loading module "{}"'.format(l_key))
+        for _l_key, l_module in p_modules.items():
+            # LOG.debug('Loading module "{}"'.format(_l_key))
             # LOG.debug(PrettyFormatAny.form(l_module, 'Module'))
             l_module.LoadConfig()
-            LOG.debug('Loaded')
+            # LOG.debug('Loaded')
 
     def start_core_modules(self, p_modules):
         """
         """
         for l_module in p_modules.values():
-            LOG.debug('Starting module "{}"'.format(l_module))
+            # LOG.debug('Starting module "{}"'.format(l_module))
             l_module.Start()
 
 # Components
@@ -191,9 +191,9 @@ class Utility:
         """
         @param p_components: is a dict of components
         """
-        LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
+        # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
         for l_component in p_components.values():
-            LOG.debug('Starting component "{}"'.format(l_component))
+            # LOG.debug('Starting component "{}"'.format(l_component))
             _l_comp = self._start_one_component(l_component)
 
     def save_all_components(self, p_components):

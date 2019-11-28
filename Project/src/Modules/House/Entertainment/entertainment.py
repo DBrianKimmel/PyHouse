@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.Api
 """
 from Modules.Core.Config import import_tools
 
-__updated__ = '2019-11-02'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -156,10 +156,10 @@ class LocalConfig:
     def _extract_devices(self, p_config):
         """ Get all devices loaded.
         """
-        LOG.debug('Devices:\n\t{}'.format(p_config))
+        # LOG.debug('Devices:\n\t{}'.format(p_config))
         l_count = 0
         for l_device in p_config:
-            LOG.debug('Devices:\n\t{}'.format(l_device))
+            # LOG.debug('Devices:\n\t{}'.format(l_device))
             l_obj = EntertainmentPluginInformation()
             l_name = self.find_first_element(l_device)
             l_name_lower = l_name.lower()
@@ -261,25 +261,25 @@ class Api:
     def _service_start(self, p_service):
         """
         """
-        LOG.debug('Service {}'.format(p_service.Name))
-        LOG.debug(PrettyFormatAny.form(p_service, 'Service'))
+        LOG.info('Service {}'.format(p_service.Name))
+        # LOG.debug(PrettyFormatAny.form(p_service, 'Service'))
         l_topic = 'house/entertainment/{}/status'.format(p_service)
         l_obj = PandoraServiceInformation()
         l_obj.Model = p_service.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
+        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
         # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def _device_start(self, p_device):
         """
         """
-        LOG.debug('Sevice {}'.format(p_device.Name))
-        LOG.debug(PrettyFormatAny.form(p_device, 'Device'))
+        LOG.info('Device {}'.format(p_device.Name))
+        # LOG.debug(PrettyFormatAny.form(p_device, 'Device'))
         l_topic = 'house/entertainment/{}/status'.format(p_device.Name)
         l_obj = EntertainmentDeviceControl()
         l_obj.Model = p_device.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
+        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
         # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
 
     def _module_start_loop(self, p_plugin):
@@ -287,8 +287,8 @@ class Api:
         """
         l_name = p_plugin.Name
         # Start Plugin
-        LOG.debug('Starting {}'.format(l_name))
-        LOG.debug(PrettyFormatAny.form(p_plugin, 'Plugin'))
+        # LOG.debug('Starting {}'.format(l_name))
+        # LOG.debug(PrettyFormatAny.form(p_plugin, 'Plugin'))
         if p_plugin.ServiceCount > 0:
             for l_service in p_plugin.Services.values():
                 self._service_start(l_service)
@@ -310,7 +310,7 @@ class Api:
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
         for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
-            LOG.debug('Starting "{}"'.format(l_plugin.Name))
+            # LOG.debug('Starting "{}"'.format(l_plugin.Name))
             self._module_start_loop(l_plugin)
             l_count += 1
         LOG.info("Started {} plugin(s)- Version:{}".format(l_count, __version__))
@@ -323,7 +323,7 @@ class Api:
         LOG.info("Saved Config.")
 
     def Stop(self):
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House))
         LOG.info("Stopped.")
 
 # ## END DBK

@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-11-27'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -160,7 +160,7 @@ class Utility:
         for l_key, l_value in p_parts.items():
             LOG.info('Loading house part "{}"'.format(l_key))
             l_value.LoadConfig()
-        LOG.info('Loaded all House Parts {}'.format(p_parts))
+        # LOG.debug('Loaded all House Parts {}'.format(p_parts))
 
     def _find_all_configed_modules(self, p_modules):
         """ Find all house modules that have a "module".yaml config file somewhere in /etc/pyhouse.
@@ -186,7 +186,7 @@ class Utility:
         l_modules = {}
         l_house_path = 'Modules.House.'
         for l_module in p_modules:
-            LOG.debug('Starting import of Module: "{}"'.format(l_module))
+            # LOG.debug('Starting import of Module: "{}"'.format(l_module))
             l_path = l_house_path + l_module.capitalize()
             l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
             l_modules[l_module] = l_api
@@ -206,7 +206,7 @@ class Utility:
         """
         # LOG.debug('Starting configured modules: {}'.format(p_modules))
         for l_module in p_modules.values():
-            LOG.debug('Starting configured module: {}'.format(l_module))
+            # LOG.debug('Starting configured module: {}'.format(l_module))
             l_module.Start()
 
     def save_all_house_modules(self, p_modules):

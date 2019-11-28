@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-27'
 
 #  Import system type stuff
 import datetime
@@ -384,6 +384,7 @@ class Api(LightHandlerApi):
             self.get_all_device_information(self.m_pyhouse_obj, self.m_controller_obj)
         else:
             LOG.error('Insteon Controller start failed for "{}"'.format(self.m_controller_obj.Name))
+            l_ret = False
         # l_topic = 'house/lighting/controller/status'
         # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_controller_obj)
         return l_ret
@@ -399,7 +400,8 @@ class Api(LightHandlerApi):
         LOG.info('Starting a PLM')
         # LOG.debug(PrettyFormatAny.form(self.m_controller_obj, 'Controller'))
         l_ret = self._start_all_controllers()
-        self._get_plm_info()
+        if l_ret:
+            self._get_plm_info()
         LOG.info('Started.')
         return l_ret
 

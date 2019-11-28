@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-28'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -420,10 +420,10 @@ class MQTTProtocol(Protocol, Packets):
         else:
             l_varHeader.extend(EncodeDecode._encodeString('MQTT'))
         l_varHeader.append(protocol_version)
-        LOG.debug('Version: {}'.format(protocol_version))
+        # LOG.debug('Version: {}'.format(protocol_version))
         varLogin = 0
         # User Name
-        LOG.debug(PrettyFormatAny.form(p_broker.Access, 'Access'))
+        # LOG.debug(PrettyFormatAny.form(p_broker.Access, 'Access'))
         if p_broker.Access.Name is not None:
             LOG.debug('Add Username ')
             varLogin += 2
@@ -629,7 +629,7 @@ class MQTTClient(MQTTProtocol):
                  ):
         """ At this point all config has been read in and Set-up
         """
-        LOG.debug('Init')
+        # LOG.debug('Init')
         self.m_mqtt = p_pyhouse_obj.Core.Mqtt
         try:
             l_house_name = p_pyhouse_obj.House.Name + u'/'
@@ -667,7 +667,7 @@ class MQTTClient(MQTTProtocol):
 
         Now, send a MQTT connect packet to establish protocol connection.
         """
-        LOG.debug("Client TCP or TLS - KeepAlive: {} seconds;\n\tHost: {};".format(self.m_keepalive / 1000, self.m_broker.Host.Name))
+        LOG.info("Client TCP or TLS - KeepAlive: {} seconds;\n\tHost: {};".format(self.m_keepalive / 1000, self.m_broker.Host.Name))
         self.m_state = MQTT_FACTORY_CONNECTING
         self.connect(self.m_broker, self.m_pyhouse_obj.Core.Mqtt)
         self.m_pyhouse_obj._Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
@@ -758,7 +758,7 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         l_client = MQTTClient(self.m_pyhouse_obj, self.m_broker)
         self.m_broker._ProtocolApi = l_client
         self.resetDelay()
-        LOG.debug('Building MQTT Protocol for "{}"'.format(self.m_broker.Name))
+        # LOG.debug('Building MQTT Protocol for "{}"'.format(self.m_broker.Name))
         return l_client
 
     def startedConnecting(self, p_connector):

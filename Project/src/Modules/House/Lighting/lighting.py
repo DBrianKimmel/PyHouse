@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -26,7 +26,7 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.Lighting.buttons import Api as buttonsApi
 from Modules.House.Lighting.controllers import Api as controllersApi, MqttActions as controllerMqtt
 from Modules.House.Lighting.lights import Api as lightsApi, MqttActions as lightMqtt
-from Modules.House.Lighting.outlets import Api as outletsApi
+from Modules.House.Lighting.outlets import Api as outletsApi, MqttActions as outletMqtt
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -88,6 +88,8 @@ class MqttActions:
             p_logmsg += controllerMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         elif p_topic[0] == 'light':
             p_logmsg += lightMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
+        elif p_topic[0] == 'outlet':
+            p_logmsg += outletMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message)
         else:
             p_logmsg += '\tUnknown Lighting sub-topic {}'.format(p_message)
             LOG.warn('Unknown Lighting Topic: {}'.format(p_topic[0]))

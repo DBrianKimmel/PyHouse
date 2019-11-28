@@ -10,15 +10,14 @@
 
 """
 
-__updated__ = '2019-11-27'
-__version_info__ = (19, 10, 2)
+__updated__ = '2019-11-28'
+__version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.rooms import Api as roomsApi
 from Modules.House.Family.family import LocalConfig as familyConfig
 
 from Modules.Core import logging_pyh as Logger
@@ -56,7 +55,7 @@ class MqttActions:
         p_logmsg += ''
         # l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         if len(p_topic) > 0:
-            l_name = p_topic[0]
+            _l_name = p_topic[0]
             p_topic = p_topic[1:]
             if len(p_topic) > 0:
                 if p_topic[0] == 'STATE':

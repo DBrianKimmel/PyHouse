@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-28'
 
 #  Import system type stuff
 
@@ -17,7 +17,6 @@ __updated__ = '2019-11-26'
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
-
 LOG = Logger.getLogger('PyHouse.LightUtility   ')
 
 
@@ -74,9 +73,10 @@ class lightingUtility:
                     l_ret.append(l_obj)
                 # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
         if l_ret == []:
-            LOG.warn('Controller Lookup failed - arg error Family:{}'.format(p_family))
+            LOG.warning('Controller Lookup failed - arg error Family:{}'.format(p_family))
         else:
-            LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
+            # LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
+            pass
         return l_ret
 
 # ## END DBK

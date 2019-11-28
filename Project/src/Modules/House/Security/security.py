@@ -10,7 +10,7 @@
 """
 from Modules.Core.Config import config_tools, import_tools
 
-__updated__ = '2019-11-25'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 11, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -93,7 +93,7 @@ class Utility:
         @return: A list of possible modules that has a config file
         """
         for l_module in p_module_list:
-            LOG.debug('Finding config for module "{}"'.format(l_module))
+            # LOG.debug('Finding config for module "{}"'.format(l_module))
             l_path = self.m_config_tools.find_config_file(l_module.lower())
             if l_path != None:
                 self.m_modules_needed.append(l_module)
@@ -107,7 +107,7 @@ class Utility:
         """
         l_modules = {}
         l_path = 'Modules.House.Security'
-        LOG.debug('Needed Modules {}'.format(p_modules))
+        # LOG.debug('Needed Modules {}'.format(p_modules))
         for l_module in p_modules:
             l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
             l_modules[l_module] = l_api

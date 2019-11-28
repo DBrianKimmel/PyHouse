@@ -12,7 +12,7 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -122,9 +122,12 @@ class Utility:
                 continue
             LOG.info('Checking Controller "{}"'.format(l_controller_obj.Name))
             if self._is_valid_controller(l_controller_obj):
-                LOG.debug('Insteon Controller: "{}" - will be started.'.format(l_controller_obj.Name))
+                # LOG.debug('Insteon Controller: "{}" - will be started.'.format(l_controller_obj.Name))
                 l_ret = self._start_one_plm(l_controller_obj)
-                l_list.append(l_ret)
+                if l_ret != None:
+                    l_list.append(l_ret)
+                else:
+                    LOG.error('Could not start PLM')
             else:
                 LOG.warn('Not an insteon controller "{}"'.format(l_controller_obj.Name))
                 pass  #  Not interested in this controller. (Non-Insteon)
@@ -189,10 +192,10 @@ class LocalConfig:
     def _extract_all_devices(self, p_config):
         """
         """
-        l_insteon = {}
+        _l_insteon = {}
         # LOG.debug('Insteon Config: {}'.format(p_config))
-        for l_ix, l_value in enumerate(p_config):
-            l_obj = self._extract_one_insteon(l_value)
+        for _l_ix, l_value in enumerate(p_config):
+            _l_obj = self._extract_one_insteon(l_value)
 
     def load_yaml_config(self):
         """ Read the Rooms.Yaml file.

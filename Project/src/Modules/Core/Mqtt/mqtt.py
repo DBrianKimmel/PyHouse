@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -124,16 +124,16 @@ class LocalConfig:
     m_pyH = house_obj = None
 
     def __init__(self, p_pyhouse_obj):
-        LOG.debug('Initializing')
+        # LOG.debug('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
-    def _extract_will_group(self, p_config):
+    def _extract_will_group(self, _p_config):
         """
         """
         l_obj = MqttBrokerWillInformation()
-        l_required = ['Topic', 'Message']
-        l_allowed = ['QoS', 'Retain']
+        _l_required = ['Topic', 'Message']
+        _l_allowed = ['QoS', 'Retain']
         # self.m_config.Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
         return l_obj
 
@@ -158,7 +158,7 @@ class LocalConfig:
                 l_obj.Will = self._extract_will_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Broker'))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Broker'))
         LOG.info('Loaded broker: "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -216,7 +216,7 @@ class Api:
         LOG.info("Initialized")
 
     def _add_storage(self):
-        LOG.debug('Adding')
+        # LOG.debug('Adding')
         setattr(self.m_pyhouse_obj.Core, 'MqttApi', self)  # Clear before loading
 
     def LoadConfig(self):
