@@ -13,7 +13,7 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-10-24'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 10, 6)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -103,7 +103,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Bridges']
         except:
-            LOG.warn('The config file does not start with "Bridges:"')
+            LOG.warning('The config file does not start with "Bridges:"')
             return None
         l_bridges = self._extract_all_bridges(l_yaml)
         self.m_pyhouse_obj.Computer.Bridges = l_bridges

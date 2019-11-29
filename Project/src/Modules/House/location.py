@@ -157,8 +157,8 @@ class LocalConfig:
         """
         """
         LOG.info('Saving Config')
-        l_data = self._copy_to_yaml()
-        self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
+        # l_data = self._copy_to_yaml()
+        # self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
         # return l_config
 
 

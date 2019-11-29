@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-25'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,7 +34,7 @@ class MotionSensorInformation:
         self.Name = None
         self.Comment = None
         self.DeviceType = 'Security'
-        self.DeviceSubType = 'MotionSensor'
+        self.DeviceSubType = 'Motion_Detector'
         self.Family = None  # FamilyInformation()
         self.Room = None  # RoomInformation()
         self.Motion = None
@@ -127,6 +127,11 @@ class Api:
         self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
         return {}
+
+    def SaveConfig(self):
+        """
+        """
+        pass
 
     def Start(self):
         """

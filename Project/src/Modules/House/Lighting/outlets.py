@@ -89,11 +89,10 @@ class LocalConfig:
           Family:
              Name: Insteon
              Address: 11.44.33
-          Dimmable: true  # Optional
           Room:
              Name: Living Room
-        @param p_config: is the config fragment containing one light's information.
-        @return: a LightInformation() obj filled in.
+        @param p_config: is the config fragment containing one outlet's information.
+        @return: an OutletInformation() obj filled in.
         """
         l_obj = OutletInformation()
         l_required = ['Name', 'Family']

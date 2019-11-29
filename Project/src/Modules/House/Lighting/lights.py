@@ -134,7 +134,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         LOG.info('Extracted light "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -163,7 +163,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Lights']
         except:
-            LOG.warn('The config file does not start with "Lights:"')
+            LOG.warning('The config file does not start with "Lights:"')
             return None
         l_lights = self._extract_all_lights(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Lights = l_lights
@@ -239,7 +239,7 @@ class MqttActions:
         #
         l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
         if l_light_obj == None:
-            LOG.warn(' Light "{}" was not found.'.format(l_light_name))
+            LOG.warning(' Light "{}" was not found.'.format(l_light_name))
             return
         LOG.debug(PrettyFormatAny.form(l_light_obj.Family, 'Light.Family'))
         #
@@ -275,7 +275,7 @@ class MqttActions:
             LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_topic, p_message))
         else:
             l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
-            LOG.warn('Unknown Lights Topic: {}'.format(p_topic[0]))
+            LOG.warning('Unknown Lights Topic: {}'.format(p_topic[0]))
         return l_logmsg
 
 

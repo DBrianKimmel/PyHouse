@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -230,11 +230,11 @@ class LocalConfig:
                 l_value = l_value.lower()
             elif l_key == 'version':
                 if l_value < MIN_CONFIG_VERSION:
-                    LOG.warn('Configuration version is too low.  Some things may have changed.')
+                    LOG.warning('Configuration version is too low.  Some things may have changed.')
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('pyhouse.yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('pyhouse.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
     def load_yaml_config(self):
@@ -249,7 +249,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['PyHouse']
         except:
-            LOG.warn('The config file does not start with "PyHouse:"')
+            LOG.warning('The config file does not start with "PyHouse:"')
             return None
         # LOG.debug('Yaml: {}'.format(l_yaml))
         l_parameter = self._extract_pyhouse_info(l_yaml)

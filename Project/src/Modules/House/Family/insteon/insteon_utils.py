@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-11-25'
+__updated__ = '2019-11-29'
 
 #  Import system type stuff
 
@@ -136,7 +136,7 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
         elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'GarageDoorOpener':
             p_pyhouse_obj.House.Security.Motion_Detectors[l_ix] = p_insteon_obj
         else:
-            LOG.warn('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
+            LOG.warning('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
             # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
     except AttributeError as e_err:
         LOG.error('ERROR {}'.format(e_err))
@@ -279,7 +279,7 @@ class Decode:
         Find the address of something Insteon.
         @param p_class: is an OBJ like p_pyhouse_obj.House.Lighting.Controllers that we will look thru to find the object.
         @param p_addr: is the address that we want to find.
-        @return: the object that has the address.  None if not found in the given clss.
+        @return: the object that has the address.  None if not found in the given class.
         """
         # LOG.debug('Looking for address: {}'.format(p_addr))
         if p_class == None:
@@ -317,10 +317,10 @@ class Decode:
                 l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Buttons, p_address)
             if l_ret == None and l_house.Lighting.Outlets != None:
                 l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Outlets, p_address)
-        if hasattr(l_house, 'Hvac') and hasattr(l_house.Hvac, 'Thermostats'):
+        elif hasattr(l_house, 'Hvac') and hasattr(l_house.Hvac, 'Thermostats'):
             if l_ret == None and l_house.Hvac.Thermostats != None:
                 l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Hvac.Thermostats, p_address)
-        if hasattr(l_house, 'Security'):
+        elif hasattr(l_house, 'Security'):
             if hasattr(l_house.Security, 'Garage_Doors'):
                 if l_ret == None and l_house.Security.Garage_Doors != None:
                     l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.Garage_Doors, p_address)
@@ -331,7 +331,10 @@ class Decode:
         #  Add additional insteon classes in here
         #
         if l_ret == None:
-            LOG.info("WARNING - Address {} *NOT* found.".format(p_address))
+            LOG.debug(PrettyFormatAny.form(l_house, 'House'))
+            LOG.debug(PrettyFormatAny.form(l_house.Security, 'Security'))
+            LOG.debug(PrettyFormatAny.form(l_house.Security.Motion_Detectors, 'Security.M_D'))
+            LOG.warning("WARNING - Address {} *NOT* found.".format(p_address))
             l_ret = CoreLightingData()
             stuff_new_attrs(l_ret, InsteonInformation())  #  an empty new object
             l_ret.Name = '**NoDevName-' + p_address + '-**'

@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-29'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -24,50 +24,12 @@ from Modules.House.Lighting.lights import LocalConfig as lightsConfig
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 TEST_YAML = """\
-Lights:
-
-   - Name: Front Door
-     Comment: Upstairs, Outside
-     Dimmable: true
-     Room: Outside
+MotionDetector:
+   - Name: MotionLiving
+     Comment: Living Room
      Family:
-         Name: Insteon
-         Address: 11.22.33
-   #
-   - Name: Garage
-     Comment: Outside, Downstairs
-     Dimmable: true
-     Family:
-         Name: Insteon
-         Address: 12.34.56
-
-   - Name: Dining Room
-     Family:
-         Name: Insteon
-         Address: 11.33.AA
-     Room: Dining Room
-
-   - Name: Fireplace
-     Comment: This is the fireplace mantle lighting
-     Family:
-         Name: Insteon
-         Address: 44.33.22
-     Dimmable: true  # Optional
-     Room: Living Room
-
-   # New
-   - Name: TV Lights
-     Comment: Bedroom
-     Dimmable: true
-     Family:
-         Name: Insteon
-         Address: 55.00.22
-   # New
-   - Name: Pond Pump
-     Comment: New
-     Family:
-         Name: Insteon
-         Address: 00.01.02
+        Name: Insteon
+        Address: 31.75.85
 """
 
 
