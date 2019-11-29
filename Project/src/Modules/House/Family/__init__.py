@@ -49,11 +49,25 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 """
 
-__updated__ = '2019-08-11'
-__version_info__ = (1, 6, 0)
+__updated__ = '2019-11-28'
+__version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
 VALID_FAMILIES = ['Null', 'insteon', 'upb', 'x10', 'hue']  # Keep null first
 VALID_DEVICE_TYPES = ['Light', 'Thermostat', 'Irrigation', 'Pool']
+
+CONFIG_NAME = 'families'
+
+MODULES = [
+    'Acurite',
+    'Hue',
+    'Insteon',
+    'Lutron',
+    'Sonoff',
+    'Upb',
+    'X10',
+    'Zwave',
+    'Null'
+    ]
 
 # ## END DBK

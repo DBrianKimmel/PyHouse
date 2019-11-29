@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,7 +18,6 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.Family.family import LocalConfig as familyConfig
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Outlets        ')
@@ -83,12 +82,6 @@ class LocalConfig:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
-    def _extract_family(self, p_config):
-        """
-        """
-        l_ret = familyConfig(self.m_pyhouse_obj).extract_family_group(p_config)
-        return l_ret
-
     def _extract_one_outlet(self, p_config) -> dict:
         """ Extract the config info for one Light.
         - Name: Light 1
@@ -107,8 +100,7 @@ class LocalConfig:
         for l_key, l_value in p_config.items():
             # print('Light Key: {}; Val: {}'.format(l_key, l_val))
             if l_key == 'Family':
-                l_ret = self._extract_family(l_value)
-                l_obj.Family = l_ret
+                l_obj.Family = self.m_config.extract_family_group(l_value)
             elif l_key == 'Room':
                 l_obj.Room = self.m_config.extract_room_group(l_value)
             else:

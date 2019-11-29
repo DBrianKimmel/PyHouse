@@ -10,8 +10,8 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-10-16'
-__version_info__ = (19, 9, 26)
+__updated__ = '2019-11-28'
+__version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -87,10 +87,10 @@ class LocalConfig:
     def _extract_all_devices(self, p_config):
         """
         """
-        l_hue = {}
+        _l_hue = {}
         LOG.debug('Hue Config: {}'.format(p_config))
-        for l_ix, l_value in enumerate(p_config):
-            l_obj = self._extract_one_hue(l_value)
+        for _l_ix, l_value in enumerate(p_config):
+            _l_obj = self._extract_one_hue(l_value)
 
     def load_yaml_config(self):
         """ Read the Rooms.Yaml file.
@@ -126,6 +126,10 @@ class Api:
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_hue_hub = HueHub(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self):
+        """
+        """
 
     def LoadConfig(self):
         """

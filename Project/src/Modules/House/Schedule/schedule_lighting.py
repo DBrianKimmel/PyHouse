@@ -9,16 +9,15 @@
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.family_utils import FamUtil
-from Modules.House.Lighting.lighting_utility import lightingUtility
-from Modules.House.Lighting.lighting_lights import LightData
+from Modules.House.Lighting.utility import lightingUtility
+from Modules.House.Lighting.lights import LightData
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule_lightn')

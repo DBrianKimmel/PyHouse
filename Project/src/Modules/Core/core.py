@@ -164,7 +164,7 @@ class Utility:
             # LOG.debug('Loading component "{}"'.format(l_component))
             l_comp = self._initialize_one_component(l_component)
             l_components[l_component] = l_comp
-        LOG.info('Set up components {}'.format(l_components))
+        # LOG.debug('Set up components {}'.format(l_components))
         self.m_components = l_components
         return l_components
 

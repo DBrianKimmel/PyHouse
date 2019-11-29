@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-04'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 11, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,7 @@ from ruamel.yaml.compat import StringIO
 from Modules.Core.Config.login import LoginInformation
 from Modules.Core.data_objects import HostInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Family.family import DeviceFamilyInformation
+from Modules.House.Family.family import DeviceFamilyInformation, FamilyInformation
 
 from Modules.Core.Drivers.interface import DriverInterfaceInformation, get_device_driver_Api
 
@@ -114,21 +114,23 @@ class SubFields:
 
     def extract_family_group(self, p_config):
         """
-        Yaml:
-           - Name: TestPlm
-             Family:
-                Name: Insteon
-                Type: Plm
-                Address: 49.F9.E7
+        Extract the family information when it is given.
+        Also, create a PyHouse_obj.House.Family entry so we can load the families that were defined in the config files.
         @param p_config: is the 'Family' ordereddict
+        @return: the device object
         """
         # LOG.debug('Getting Family')
-        l_obj = DeviceFamilyInformation()
+        l_family_obj = FamilyInformation()
+        l_device_obj = DeviceFamilyInformation()
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
-        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
-        return l_obj
+        Tools(self.m_pyhouse_obj).extract_fields(l_device_obj, p_config, l_required, l_allowed)
+        l_key = l_device_obj.Name.lower()
+        l_family_obj.Name = l_device_obj.Name
+        # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
+        # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
+        self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
+        return l_device_obj
 
     def extract_host_group(self, p_config):
         """

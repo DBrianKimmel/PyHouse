@@ -263,12 +263,12 @@ class Api:
         """
         LOG.info('Service {}'.format(p_service.Name))
         # LOG.debug(PrettyFormatAny.form(p_service, 'Service'))
-        l_topic = 'house/entertainment/{}/status'.format(p_service)
+        _l_topic = 'house/entertainment/{}/status'.format(p_service)
         l_obj = PandoraServiceInformation()
         l_obj.Model = p_service.Name
         l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
+        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(_l_topic, l_obj))
+        # p_pyhouse_obj.Core.MqttApi.MqttPublish(_l_topic, l_obj)
 
     def _device_start(self, p_device):
         """

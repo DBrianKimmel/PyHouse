@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-11-04'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -103,7 +103,6 @@ class LocalConfig:
                 # LOG.debug('Controller Key "{}"; Value: "{}"'.format(l_key, l_value))
                 if l_key == 'Family':
                     l_obj.Family = self.m_config.extract_family_group(l_value)
-                    self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = l_obj.Family
                 elif l_key == 'Access':
                     l_obj.Access = self.m_config._get_name_password(l_value)
                 elif l_key == 'Interface':

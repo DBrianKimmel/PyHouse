@@ -27,8 +27,8 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-11-28'
-__version_info__ = (19, 10, 31)
+__updated__ = '2019-11-29'
+__version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
@@ -65,7 +65,7 @@ class FamilyInformation:
     def __init__(self):
         self.Name = None  # Family Name
         self.Module = None  # FamilyModuleInformation()
-        self._Api = None
+        self._Api = None  # of the family_device.py file
 
 
 class DeviceFamilyInformation:
@@ -88,11 +88,11 @@ class FamilyModuleInformation:
     """
 
     def __init__(self):
-        self.Name = None
-        self.Address = None
+        self.Name = None  # Insteon
+        # self.Address = None
         self.DeviceName = None  # insteon_device
         self.PackageName = None  # Modules.House.Family.insteon
-        self._Api = None  # insteon_devicepi()
+        self._Api = None  # insteon_device()
 
 
 class Utility:
@@ -102,6 +102,9 @@ class Utility:
 
     This should operate more as a plug-in loader rather than loading everything.
     """
+
+    m_pyhouse_obj = None
+    m_import_tools = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -140,35 +143,6 @@ class Utility:
             LOG.error('ERROR - Module:{} - {}'.format(p_module_name, e_err))
         return None
 
-    def _build_module_names(self, p_name):
-        """
-        """
-        l_obj = FamilyModuleInformation()
-        l_obj.Name = l_name = p_name.lower()
-        l_obj.PackageName = 'Modules.House.Family.' + l_name
-        l_obj.DeviceName = l_name + '.' + l_name + '_device'
-        # LOG.debug('Built names for "{}"'.format(l_name))
-        return l_obj
-
-    def _build_one_family_data(self, p_pyhouse_obj, p_name):
-        """Build up the FamilyModuleInformation names portion entry for a single family
-
-        For the Insteon family:
-            insteon_device                   ==> FamilyDevice_ModuleName
-            Modules.House.Family.insteon         ==> PackageName
-
-        @param p_name: a Valid Name such as "Insteon"
-        """
-        LOG.info('Building Family "{}"'.format(p_name))
-        l_path = 'Modules.House.Family'
-        l_key = p_name.lower()
-        l_module = l_key + '.' + l_key + '_device'
-        l_family_obj = self._build_module_names(p_name)
-        p_pyhouse_obj.House.Family[l_key] = l_family_obj
-        l_api = self.m_import_tools.import_module_get_api(l_module, l_path)
-        # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
-        return l_api
-
 
 class LocalConfig:
     """
@@ -191,7 +165,7 @@ class LocalConfig:
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj
 
-    def load_family_config(self, p_config, p_pyhouse_obj):
+    def XXXload_family_config(self, p_config, p_pyhouse_obj):
         """ Get the yaml config information.
 
         This is called from many different modules.
@@ -240,21 +214,48 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
+        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
         self._add_storage()
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def _add_storage(self):
         self.m_pyhouse_obj.House.Family = {}  #
 
+    def _build_one_family_data(self, p_name):
+        """Build up the FamilyModuleInformation names portion entry for a single family
+
+        For the Insteon family:
+            insteon_device                   ==> FamilyDevice_ModuleName
+            Modules.House.Family.insteon         ==> PackageName
+
+        @param p_name: a Valid Name such as "Insteon"
+        """
+        LOG.info('Building Family "{}"'.format(p_name))
+        l_path = 'Modules.House.Family'
+        l_obj = FamilyInformation()
+        l_key = p_name.lower()
+        l_module = l_key + '.' + l_key + '_device'
+        self.m_pyhouse_obj.House.Family[l_key] = l_obj
+        l_obj.Name = p_name
+        l_obj.Module = l_module
+        l_obj._Api = self.m_import_tools.import_module_get_api(l_module, l_path)
+        LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
+        return l_obj
+
     def LoadConfig(self):
         """
-        Build p_pyhouse_obj House Family
+        This is run after all other config files are loaded so we only have the configured familys now.
         """
         # LOG.debug('Loading Families')
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Family, 'Families'))
-        for l_family_obj in self.m_pyhouse_obj.House.Family.values():
-            LOG.info('Loading Family "{}"'.format(l_family_obj.Name))
+        l_dict = {}
+        for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
+            LOG.info('Loading Family "{}"'.format(l_key))
+            # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
+            l_family_obj = self._build_one_family_data(l_key)
+            l_dict[l_key] = l_family_obj
         LOG.info('Loaded {} Families'.format(len(self.m_pyhouse_obj.House.Family)))
+        self.m_pyhouse_obj.House.Family = l_dict
 
     def Start(self):
         """ Start each family we have registered.
@@ -265,9 +266,8 @@ class Api:
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Family, 'Family'))
         for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
             LOG.info('Starting Family "{}"'.format(l_key))
-            l_api = Utility(self.m_pyhouse_obj)._build_one_family_data(self.m_pyhouse_obj, l_key)
-
-            # ## FIXME temp test
+            # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
+            l_api = l_family_obj._Api
             if l_api != None:
                 l_api.Start()
         LOG.info('Started {} families.'.format(len(self.m_pyhouse_obj.House.Family)))

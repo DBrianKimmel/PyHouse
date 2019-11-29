@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -101,12 +101,12 @@ class LocalConfig:
         l_obj = LocationInformation()
         for l_key, l_value in p_config.items():
             if not hasattr(l_obj, l_key):
-                LOG.warn('location.yaml contains an extra entry "{}" = {} - Ignored.'.format(l_key, l_value))
+                LOG.warning('location.yaml contains an extra entry "{}" = {} - Ignored.'.format(l_key, l_value))
                 continue
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warnyng('Location Yaml is missing an entry for "{}"'.format(l_key))
         self.m_pyhouse_obj.House.Location = l_obj
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Location'))
         return l_obj  # For testing
@@ -124,7 +124,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Location']
         except:
-            LOG.warn('The config file does not start with "Location:"')
+            LOG.warning('The config file does not start with "Location:"')
             return None
         l_locat = self._extract_location(l_yaml)
         self.m_pyhouse_obj.House.Location = l_locat

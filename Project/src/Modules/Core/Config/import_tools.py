@@ -1,9 +1,3 @@
-'''
-Created on Oct 19, 2019
-
-@author: briank
-'''
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 """
 @name:      Modules/Core/Config/import_tools.py
 @author:    D. Brian Kimmel
@@ -15,8 +9,8 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 """
 
-__updated__ = '2019-11-02'
-__version_info__ = (19, 10, 21)
+__updated__ = '2019-11-28'
+__version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff

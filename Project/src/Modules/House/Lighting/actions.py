@@ -13,12 +13,11 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2019-11-29'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.family_utils import FamUtil
 from Modules.House.Lighting.utility import lightingUtility
 from Modules.House.Lighting.lights import LightData
 

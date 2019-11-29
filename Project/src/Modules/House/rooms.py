@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-03'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -226,13 +226,13 @@ class LocalConfig:
             try:
                 _l_x = getattr(l_obj, l_key)
             except AttributeError:
-                LOG.warn('rooms config file contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_value))
+                LOG.warning('rooms config file contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_value))
                 continue
             setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         LOG.info('Extracted room "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -267,7 +267,7 @@ class LocalConfig:
                 l_yaml = l_yaml['Rooms']
                 l_rooms = self._extract_all_rooms(l_yaml)
             except:
-                LOG.warn('The config file does not start with "Rooms:"')
+                LOG.warning('The config file does not start with "Rooms:"')
                 l_rooms = {}
         self.m_pyhouse_obj.House.Rooms = l_rooms
         return l_rooms

@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-11-29'
 
 #  Import system type stuff
 
@@ -52,7 +52,7 @@ class SendCmd():
         See p 231(244) of 2009 developers guide.
         See p 149(162) of 2009 developers guide.
         """
-        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         l_command = bytearray(22)
         l_command[0] = 0x02
         l_command[1] = 0x62

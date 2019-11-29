@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-11-27'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -127,7 +127,6 @@ class LocalConfig:
             if l_key == 'Family':
                 l_obj.Family = self.m_config.extract_family_group(l_value)
                 l_obj.Family.Type = 'Light'
-                self.m_pyhouse_obj.House.Family[l_obj.Family.Name.lower()] = l_obj.Family  # define the family as used
             elif l_key == 'Room':
                 l_obj.Room = self.m_config.extract_room_group(l_value)
             else:

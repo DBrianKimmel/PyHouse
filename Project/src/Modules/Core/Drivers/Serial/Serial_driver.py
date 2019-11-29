@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-29'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -129,7 +129,7 @@ class LocalConfig:
         @param p_obj: is the DriverInterfaceInformation() with Type, Host and Port already filled in.
         @return: The info with Baud filled in
         """
-        LOG.debug('Extract')
+        # LOG.debug('Extract')
         l_obj = p_obj  # SerialInterfaceInformation()
         l_required = ['Baud']
         for l_key, l_value in p_config.items():
@@ -141,7 +141,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if hasattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Serial Config is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Serial Config is missing an entry for "{}"'.format(l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Serial config'))
         return l_obj
 
@@ -212,7 +212,7 @@ class SerialApi:
         l_computer = p_pyhouse_obj.Computer.Name.lower()
         l_name = p_controller_obj.Name
         if l_host != l_computer:
-            LOG.warn('Device "{}" is on another computer "{}". This is "{}"  - Ignored.'.format(l_name, l_host, l_computer))
+            LOG.warning('Device "{}" is on another computer "{}". This is "{}"  - Ignored.'.format(l_name, l_host, l_computer))
             return False
         # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj, 'Controller')))
         # LOG.debug('Serial Interface {}'.format(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface')))
@@ -224,8 +224,8 @@ class SerialApi:
                     baudrate=l_baud)
             p_controller_obj.Interface._DriverApi = self
             LOG.info("Opened Device:{}, Port:{}".format(p_controller_obj.Name, l_port))
-            LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-            LOG.debug(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface'))
+            # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+            # LOG.debug(PrettyFormatAny.form(p_controller_obj.Interface, 'Interface'))
         except Exception as e_err:
             LOG.error("ERROR - Open failed for Device:{}, Port:{}\n\t{}".format(
                         p_controller_obj.Name, p_controller_obj.Interface.Port, e_err))

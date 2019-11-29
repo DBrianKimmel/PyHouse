@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2019-11-28'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -530,7 +530,7 @@ class HueDispatch(HueProtocol):
 
     def _add_light(self, p_light_obj):
         l_objs = self.m_pyhouse_obj.House.Lighting.Lights
-        l_light_obj = lightingUtility().get_object_by_id(l_objs, name=p_light_obj.Name)
+        _l_light_obj = lightingUtility().get_object_by_id(l_objs, name=p_light_obj.Name)
         pass
 
     def get_config(self, p_body):
@@ -734,8 +734,8 @@ class HueHub:
 
         """
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Computer'))
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'Computer'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'House'))
         for l_bridge_obj in self.m_pyhouse_obj.Computer.Bridges.values():
             LOG.debug(PrettyFormatAny.form(l_bridge_obj, 'Bridge'))
             l_bridge_obj._Queue = Queue(32)

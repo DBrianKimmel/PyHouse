@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-11-28'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,8 +17,6 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.rooms import Api as roomsApi
-from Modules.House.Family.family import LocalConfig as familyConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -79,10 +77,9 @@ class LocalConfig:
         l_required = ['Name', 'Family']
         for l_key, l_value in p_config.items():
             if l_key == 'Family':
-                l_obj.Family = familyConfig(self.m_pyhouse_obj).extract_family_group(l_value)
+                l_obj.Family = self.m_config.extract_family_group(l_value)
             elif l_key == 'Room':
-                l_obj.Room = roomsApi.getRoomConfig(l_value)
-                pass
+                l_obj.Room = self.m_config.extract_room_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for required data missing from the config file.

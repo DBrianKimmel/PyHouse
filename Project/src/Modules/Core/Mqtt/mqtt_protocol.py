@@ -425,38 +425,38 @@ class MQTTProtocol(Protocol, Packets):
         # User Name
         # LOG.debug(PrettyFormatAny.form(p_broker.Access, 'Access'))
         if p_broker.Access.Name is not None:
-            LOG.debug('Add Username ')
+            # LOG.debug('Add Username ')
             varLogin += 2
         if p_broker.Access.Password is not None:
-            LOG.debug('Add Password ')
+            # LOG.debug('Add Password ')
             varLogin += 1
         #
         if p_broker.Will.Message is None or p_broker.Will.Message == '' or p_broker.Will.Topic is None:
             #  Clean start, no will message
-            LOG.debug('No Will ')
+            # LOG.debug('No Will ')
             l_varHeader.append(varLogin << 6 | 0 << 2 | 1 << 1)
         else:
-            LOG.debug('Add Will ')
+            # LOG.debug('Add Will ')
             l_varHeader.append(varLogin << 6 | p_broker.Will.Retain << 5 | p_broker.Will.QoS << 3 | 1 << 2 | 1 << 1)
         l_varHeader.extend(EncodeDecode._encodeValue(int(p_broker.Keepalive / 1000)))
         l_payload.extend(EncodeDecode._encodeString(p_mqtt.ClientID))
 
         if (p_broker.Will.Message is not None or p_broker.Will.Message != '') and p_broker.Will.Topic is not None:
-            LOG.debug('Adding last will testiment {}'.format(p_broker.Will.Message + p_broker.Will.Topic))
+            # LOG.debug('Adding last will testiment {}'.format(p_broker.Will.Message + p_broker.Will.Topic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Will.Topic))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Will.Message))
 
         if p_broker.Access.Name is not None and len(p_broker.Access.Name) > 0:
-            LOG.debug('Adding username "{}"'.format(p_broker.Access.Name))
+            # LOG.debug('Adding username "{}"'.format(p_broker.Access.Name))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Access.Name))
         if p_broker.Access.Password is not None and len(p_broker.Access.Password) > 0:
-            LOG.debug('Adding password "{}"'.format(p_broker.Access.Password))
+            # LOG.debug('Adding password "{}"'.format(p_broker.Access.Password))
             l_payload.extend(EncodeDecode._encodeString(p_broker.Access.Password))
         l_fixHeader = self._build_fixed_header(0x01, len(l_varHeader) + len(l_payload))
-        LOG.debug('Fixed:     {}'.format(FormatBytes(l_fixHeader)))
-        LOG.debug('Variable:  {}'.format(FormatBytes(l_varHeader)))
-        LOG.debug('Payload:   {}'.format(FormatBytes(l_payload)))
-        LOG.debug('Connect packet Built...')
+        # LOG.debug('Fixed:     {}'.format(FormatBytes(l_fixHeader)))
+        # LOG.debug('Variable:  {}'.format(FormatBytes(l_varHeader)))
+        # LOG.debug('Payload:   {}'.format(FormatBytes(l_payload)))
+        # LOG.debug('Connect packet Built...')
         return (l_fixHeader, l_varHeader, l_payload)
 
     def connect(self, p_broker, p_mqtt):
@@ -656,7 +656,7 @@ class MQTTClient(MQTTProtocol):
         self.m_Password = p_broker.Access.Password
         p_pyhouse_obj.Core.Mqtt.Prefix = self.m_prefix
         l_msg = 'MQTTClient(MQTTProtocol)\n\tPrefix: {};\n\tFrom ClientID: {};'.format(self.m_prefix, self.m_pyhouse_obj.Core.Mqtt.ClientID)
-        l_msg += '\n\tUser:"{}";\n\tPass:"{}";'.format(p_broker.Access.Name, p_broker.Access.Password)
+        # l_msg += '\n\tUser:"{}";\n\tPass:"{}";'.format(p_broker.Access.Name, p_broker.Access.Password)
         l_msg += '\n\tHost: {};'.format(self.m_broker.Host.Name)
         LOG.info(l_msg)
 
