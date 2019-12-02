@@ -10,7 +10,7 @@
 """
 from Modules.Core.Config import config_tools, import_tools
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -55,19 +55,20 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/security/<type>/<Name>
         <type> = garage door, motion sensor, camera
         """
-        l_logmsg = p_logmsg + '\tSecurity:\n'
-        if p_topic[0] == 'garage_door':
-            l_logmsg += '\tGarage Door: {}\n'.format(get_mqtt_field(p_message, 'Name'))
-        elif p_topic[0] == 'motion_detector':
-            l_logmsg += '\tMotion Detector:{}\n\t{}'.format(get_mqtt_field(p_message, 'Name'), get_mqtt_field(p_message, 'Status'))
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tSecurity:\n'
+        if l_topic[0] == 'garage_door':
+            p_msg.LogMessage += '\tGarage Door: {}\n'.format(get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'motion_detector':
+            p_msg.LogMessage += '\tMotion Detector:{}\n\t{}'.format(get_mqtt_field(p_msg.Payload, 'Name'), get_mqtt_field(p_msg.Payload, 'Status'))
         else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Security msg', 160))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Security msg', 160))
 
 
 class Utility:

@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -223,7 +223,7 @@ class MqttActions:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
         return l_logmsg
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """ Decode the Mqtt message
         We currently handle only control messages for Pandora.
         We are not interested in other module's status.
@@ -234,16 +234,17 @@ class MqttActions:
         @param p_topic: is the topic after ',,,/pandora/'
         @return: the log message with information stuck in there.
         """
-        l_logmsg = p_logmsg + ' Pandora '
-        LOG.debug('{} {}'.format(p_topic, p_message))
-        if p_topic[0].lower() == 'control':
-            l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
-        elif p_topic[0].lower() == 'status':
-            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += ' Pandora '
+        LOG.debug('{} {}'.format(l_topic[0], p_msg.Payload))
+        if l_topic[0].lower() == 'control':
+            p_msg.LogMessage += '\tControl: {}\n'.format(self._decode_control(l_topic[0], p_msg.Payload))
+        elif l_topic[0].lower() == 'status':
+            p_msg.LogMessage += '\tStatus: {}\n'.format(self._decode_status(l_topic[0], p_msg.Payload))
         else:
-            l_logmsg += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
-            LOG.warn('Unknown Pandora Topic: {}'.format(p_topic[0]))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Entertainment msg', 160))
+            LOG.warn('Unknown Pandora Topic: {}'.format(l_topic[0]))
 
 
 class ExtractPianobar:

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,18 +39,20 @@ class MqttActions:
         l_logmsg = '\tIrrigation Status'
         return l_logmsg
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """ pyhouse/<HouseName>/irrigation/<action>
         where <action> is control, status
         """
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         l_logmsg = ' Irrigation '
-        if p_topic[0].lower() == 'control':
-            l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
-        elif p_topic[0].lower() == 'status':
-            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
+        if l_topic[0].lower() == 'control':
+            l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0].lower() == 'status':
+            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_msg.Topic, p_msg.Payload))
         else:
-            l_logmsg += '\tUnknown irrigation sub-topic {}'.format(p_message)
-            LOG.warn('Unknown Irrigation Topic: {}'.format(p_topic[0]))
+            l_logmsg += '\tUnknown irrigation sub-topic {}'.format(p_msg.Payload)
+            LOG.warn('Unknown Irrigation Topic: {}'.format(l_topic[0]))
         return l_logmsg
 
 

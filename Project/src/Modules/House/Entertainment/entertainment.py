@@ -63,7 +63,7 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message, _p_logmsg):
+    def decode(self, p_msg):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/entertainment/<device-or-service>/...
 
@@ -74,8 +74,10 @@ class MqttActions:
         @param p_topic: is the topic after 'entertainment'
         @return: a message to be logged as a Mqtt message
         """
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         p_logmsg = '\tEntertainment: '
-        l_module = p_topic[0].lower()
+        l_module = p_msg.UnprocessedTopic[0].lower()
         # Does the called for plugin exist?
         try:
             l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
@@ -86,11 +88,11 @@ class MqttActions:
         try:
             LOG.debug(PrettyFormatAny.form(l_module_obj, 'Entertain Module'))
             l_module_api = l_module_obj._Api
-            p_logmsg += l_module_api.decode(p_topic[1:], p_message)
+            p_logmsg += l_module_api.decode(p_msg)
         except (KeyError, AttributeError) as e_err:
             l_module_api = None
             p_logmsg += 'Module {} not defined {}'.format(l_module, e_err)
-            LOG.error('Error in calling decode {}\n\tTopic: {}\n\tMessage: {}'.format(e_err, p_topic, p_message))
+            LOG.error('Error in calling decode {}\n\tTopic: {}\n\tMessage: {}'.format(e_err, p_msg.Topic, p_msg.Payload))
         return p_logmsg
 
 

@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -109,11 +109,11 @@ class MqttActions:
         LOG.error('No such model as {}'.format(p_model))
         return None
 
-    def _get_power(self, p_message):
+    def _get_power(self, p_msg):
         """
         force power to be None, 'On' or 'Off'
         """
-        l_ret = extract_tools.get_mqtt_field(p_message, 'Power')
+        l_ret = extract_tools.get_mqtt_field(p_msg, 'Power')
         if l_ret == None:
             return l_ret
         if l_ret == 'On':
@@ -151,22 +151,23 @@ class MqttActions:
         #
         return l_logmsg
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/entertainment/pioneer/<type>/<Name>/...
         <type> = ?
 
-        @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
+        @param p_msg.Topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
         """
-        # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
-        l_logmsg = p_logmsg + ' Pioneer-{}'.format(p_topic[0])
-        if p_topic[0].lower() == 'control':
-            l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
-        elif p_topic[0].lower() == 'status':
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_msg.Topic, p_message))
+        p_msg.LogMessage += ' Pioneer-{}'.format(l_topic[0])
+        if l_topic[0].lower() == 'control':
+            p_msg.LogMessage += '\tPioneer: {}\n'.format(self._decode_control(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0].lower() == 'status':
             pass
         else:
-            l_logmsg += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown Pioneer sub-topic: {}  Message: {}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Entertainment msg', 160))
 
 
 class LocalConfig:

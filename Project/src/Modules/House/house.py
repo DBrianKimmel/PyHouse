@@ -94,17 +94,17 @@ class MqttActions:
             roomsMqtt(self.m_pyhouse_obj).decode(p_msg)
 
         elif l_topic == 'entertainment':
-            p_msg.LogMessage += entertainmentMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
+            entertainmentMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'hvac':
-            p_msg.LogMessage += hvacMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
+            hvacMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'irrigation':
-            p_msg.LogMessage += irrigationMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
+            irrigationMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic in ['lighting']:
             lightingMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'schedule':
-            p_msg.LogMessage += scheduleMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
+            scheduleMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'outlet':
-            p_msg.LogMessage += outletMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
+            outletMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
             LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_msg.Topic, p_msg.Topic, p_msg.Payload))

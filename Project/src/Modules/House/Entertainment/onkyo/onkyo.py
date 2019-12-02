@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -488,7 +488,7 @@ class MqttActions:
         # else:
         #    self.m_device._isControlling = False
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/house/entertainment/onkyo/<type>
         <type> = control, status
@@ -496,20 +496,21 @@ class MqttActions:
         @param p_topic: is the topic with pyhouse/housename/entertainment/onkyo stripped off.
         @param p_message: is the body of the json message string.
         """
-        LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
-        l_logmsg = p_logmsg + ' Onkyo-{}'.format(p_topic[0])
-        self.m_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
-        self.m_model = extract_tools.get_mqtt_field(p_message, 'Model')
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_msg.Topic, p_msg.Payload))
+        p_msg.LogMessage += ' Onkyo-{}'.format(l_topic[0])
+        self.m_sender = extract_tools.get_mqtt_field(p_msg.Payload, 'Sender')
+        self.m_model = extract_tools.get_mqtt_field(p_msg.Payload, 'Model')
         # self.m_device = self._find_model(SECTION, self.m_model)
 
-        if p_topic[0].lower() == 'control':
-            l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))
-        elif p_topic[0].lower() == 'status':
-            l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_topic, p_message))
+        if l_topic[0].lower() == 'control':
+            p_msg.LogMessage += '\tControl: {}\n'.format(self._decode_control(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0].lower() == 'status':
+            p_msg.LogMessage += '\tStatus: {}\n'.format(self._decode_status(p_msg.Topic, p_msg.Payload))
         else:
-            l_logmsg += '\tUnknown Onkyo sub-topic: {}  Message: {}'.format(p_topic, PrettyFormatAny.form(p_message, 'Entertainment msg', 160))
-            LOG.warn('Unknown Onkyo Topic: {}'.format(p_topic[0]))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown Onkyo sub-topic: {}  Message: {}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Entertainment msg', 160))
+            LOG.warn('Unknown Onkyo Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:

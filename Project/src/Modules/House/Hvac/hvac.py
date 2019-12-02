@@ -14,7 +14,7 @@ PyHouse.House.Hvac.
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,27 +52,28 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _decode_thermostat(self, _p_topic, p_message, p_logmsg):
+    def _decode_thermostat(self, p_msg):
         """
         """
-        p_logmsg += '\tThermostat: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        return p_logmsg
+        p_msg.LogMessage += '\tThermostat: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/house/hvac/<type>/<Name>/...
         <type> = thermostat, ...
         """
-        p_logmsg += '\tHVAC:\n'
-        if p_topic[0] == 'thermostat':
-            p_logmsg += self._decode_thermostat(p_topic[1:], p_message, p_logmsg)
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tHVAC:\n'
+        if l_topic[0] == 'thermostat':
+            self._decode_thermostat(p_msg)
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Message', 160))
-        return p_logmsg
+            p_msg.Topic += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Message', 160))
+        return p_msg.Topic
 
     def _decode_hvac(self, p_logmsg, _p_topic, p_message):
         p_logmsg += '\tThermostat:\n'
-        p_logmsg += '\tName: {}'.format(self.m_name)
+        # p_logmsg += '\tName: {}'.p_msg.LogMessageelf.m_name)
         p_logmsg += '\tRoom: {}\n'.format(self.m_room_name)
         p_logmsg += '\tTemp: {}'.format(extract_tools.get_mqtt_field(p_message, 'CurrentTemperature'))
         return p_logmsg

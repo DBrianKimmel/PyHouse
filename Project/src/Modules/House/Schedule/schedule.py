@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -168,36 +168,36 @@ class MqttActions:
         l_sched.RoomUUID = extract_tools.get_mqtt_field(p_message, 'RoomUUID')
         LOG.debug('Schedule added locally: {}'.format(PrettyFormatAny.form(l_sched, 'Schedule', 190)))
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """
         --> pyhouse/<housename>/house/schedule/...
         """
-        p_logmsg += ''
-        l_schedule_type = extract_tools.get_mqtt_field(p_message, 'Sched.Type')
-        l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        l_light_level = extract_tools.get_mqtt_field(p_message, 'Level')
-        if len(p_topic) > 0:
-            if p_topic[0] == 'control':
-                p_logmsg += '\tExecute:\n'
-                p_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                p_logmsg += '\tLight: {}\n'.format(l_light_name)
-                p_logmsg += '\tLevel: {}'.format(l_light_level)
-                self._add_schedule(p_message)
-            elif p_topic[0] == 'status':
-                p_logmsg += '\tStatus:\n'
-                p_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                p_logmsg += '\tLight: {}\n'.format(l_light_name)
-                p_logmsg += '\tLevel: {}'.format(l_light_level)
-            elif p_topic[0] == 'control':
-                p_logmsg += '\tControl:\n'
-            elif p_topic[0] == 'delete':
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        l_schedule_type = extract_tools.get_mqtt_field(p_msg.Payload, 'Sched.Type')
+        l_light_name = extract_tools.get_mqtt_field(p_msg.Payload, 'LightName')
+        l_light_level = extract_tools.get_mqtt_field(p_msg.Payload, 'Level')
+        if len(p_msg.Topic) > 0:
+            if l_topic[0] == 'control':
+                p_msg.LogMessage += '\tExecute:\n'
+                p_msg.LogMessage += '\tType: {}\n'.format(l_schedule_type)
+                p_msg.LogMessage += '\tLight: {}\n'.format(l_light_name)
+                p_msg.LogMessage += '\tLevel: {}'.format(l_light_level)
+                self._add_schedule(p_msg.Payload)
+            elif l_topic[0] == 'status':
+                p_msg.LogMessage += '\tStatus:\n'
+                p_msg.LogMessage += '\tType: {}\n'.format(l_schedule_type)
+                p_msg.LogMessage += '\tLight: {}\n'.format(l_light_name)
+                p_msg.LogMessage += '\tLevel: {}'.format(l_light_level)
+            elif l_topic[0] == 'control':
+                p_msg.LogMessage += '\tControl:\n'
+            elif l_topic[0] == 'delete':
                 pass
-            elif p_topic[0] == 'update':
+            elif l_topic[0] == 'update':
                 pass
             else:
-                p_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
-                LOG.warn('Unknown Schedule Topic: {}'.format(p_topic[0]))
-        return p_logmsg
+                p_msg.LogMessage += '\tUnknown sub-topic: {}; - {}'.format(p_msg.Topic, p_msg.Payload)
+                LOG.warn('Unknown Schedule Topic: {}'.format(p_msg.Topic[0]))
 
 
 class DOW:
