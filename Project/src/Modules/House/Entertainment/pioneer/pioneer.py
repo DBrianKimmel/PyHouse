@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-30'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -151,7 +151,7 @@ class MqttActions:
         #
         return l_logmsg
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/entertainment/pioneer/<type>/<Name>/...
         <type> = ?
@@ -159,7 +159,7 @@ class MqttActions:
         @param p_topic: is the topic with pyhouse/housename/entertainment/pioneer stripped off.
         """
         # LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
-        l_logmsg = ' Pioneer-{}'.format(p_topic[0])
+        l_logmsg = p_logmsg + ' Pioneer-{}'.format(p_topic[0])
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tPioneer: {}\n'.format(self._decode_control(p_topic, p_message))
         elif p_topic[0].lower() == 'status':

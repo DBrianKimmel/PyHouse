@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -199,9 +199,11 @@ class Utility:
     def save_all_components(self, p_components):
         """
         """
+        LOG.info('\n======================== Saving Config Files ========================\n')
         for l_key, l_component in p_components.items():
             LOG.info('Saving component "{}"'.format(l_key))
             l_component.SaveConfig()
+        LOG.info('\n======================== Saved Config Files ========================\n')
 
     def _config_save_loop(self, p_pyhouse_obj):
         p_pyhouse_obj._Twisted.Reactor.callLater(XML_SAVE_DELAY, self.save_all_components, self.m_components)
@@ -334,9 +336,7 @@ class Api:
         The XML file is a single large file containing everything.
         The Yaml config is broken down into many smaller files and written by each component.
         """
-        LOG.info('\n======================== Saving Config Files ========================\n')
         self.m_utility.save_all_components(self.m_components)
-        LOG.info("\n======================== Saved Config Files ==========================\n")
 
     def Stop(self):
         l_topic = 'computer/shutdown'

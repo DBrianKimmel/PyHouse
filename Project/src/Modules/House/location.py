@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -55,23 +55,24 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj - p_pyhouse_obj
 
-    def decode(self, p_topic, p_message, p_logmsg):
-        p_logmsg += '\tLocation:\n'
-        if p_topic[1] == 'add':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+    def decode(self, p_msg):
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tLocation:\n'
+        if l_topic[0] == 'add':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
 
-        elif p_topic[1] == 'delete':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        elif l_topic[0] == 'delete':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
 
-        elif p_topic[1] == 'update':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        elif l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
 
-        elif p_topic[1] == 'request':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
+        elif l_topic[0] == 'request':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
 
         else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg'))
-        return p_logmsg
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Rooms msg'))
 
     def dispatch(self, p_topic, p_message):
         pass

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-02'
+__updated__ = '2019-11-30'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -488,7 +488,7 @@ class MqttActions:
         # else:
         #    self.m_device._isControlling = False
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/house/entertainment/onkyo/<type>
         <type> = control, status
@@ -497,7 +497,7 @@ class MqttActions:
         @param p_message: is the body of the json message string.
         """
         LOG.debug('Decode called:\n\tTopic:{}\n\tMessage:{}'.format(p_topic, p_message))
-        l_logmsg = ' Onkyo-{}'.format(p_topic[0])
+        l_logmsg = p_logmsg + ' Onkyo-{}'.format(p_topic[0])
         self.m_sender = extract_tools.get_mqtt_field(p_message, 'Sender')
         self.m_model = extract_tools.get_mqtt_field(p_message, 'Model')
         # self.m_device = self._find_model(SECTION, self.m_model)

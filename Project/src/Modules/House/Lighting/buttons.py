@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,6 +47,35 @@ class ButtonFamilyInformation:
         self.Name = None
         self.Comment = None  # Optional
         self.Address = None
+
+
+class MqttActions:
+    """ Mqtt section
+    """
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def decode(self, p_msg):
+        """ Decode Mqtt message
+        ==> pyhouse/<house name>/house/lighting/controller/<action>
+
+        @param p_msg.Topic: is the topic after 'controller'
+        @return: a message to be logged as a Mqtt message
+        """
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tLighting/Controllers: {}\n\t'.format(p_msg.Topic)
+        if l_topic[0] == 'control':
+            p_msg.LogMessage += 'Controller Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Control'))
+            LOG.debug('MqttLightingControllersDispatch Control Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0] == 'status':
+            # The status is contained in LightData() above.
+            p_msg.LogMessage += 'Controller Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
+            LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
+        else:
+            p_msg.LogMessage += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
+            LOG.warn('Unknown Controllers Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:

@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -56,25 +56,26 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_msg):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/house/lighting/controller/<action>
 
-        @param p_topic: is the topic after 'controller'
+        @param p_msg.Topic: is the topic after 'controller'
         @return: a message to be logged as a Mqtt message
         """
-        l_logmsg = '\tLighting/Controllers: {}\n\t'.format(p_topic)
-        if p_topic[0] == 'control':
-            l_logmsg += 'Controller Control: {}'.format(PrettyFormatAny.form(p_message, 'Controller Control'))
-            LOG.debug('MqttLightingControllersDispatch Control Topic:{}\n\tMsg: {}'.format(p_topic, p_message))
-        elif p_topic[0] == 'status':
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tLighting/Controllers: {}\n\t'.format(p_msg.Topic)
+        if l_topic[0] == 'control':
+            p_msg.LogMessage += 'Controller Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Control'))
+            LOG.debug('MqttLightingControllersDispatch Control Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0] == 'status':
             # The status is contained in LightData() above.
-            l_logmsg += 'Controller Status: {}'.format(PrettyFormatAny.form(p_message, 'Controller Status'))
-            LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_topic, p_message))
+            p_msg.LogMessage += 'Controller Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
+            LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
         else:
-            l_logmsg += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Controller Status'))
-            LOG.warn('Unknown Controllers Topic: {}'.format(p_topic[0]))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
+            LOG.warn('Unknown Controllers Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:

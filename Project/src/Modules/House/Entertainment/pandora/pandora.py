@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-11-04'
+__updated__ = '2019-11-30'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -223,7 +223,7 @@ class MqttActions:
             l_logmsg += ' Unknown Pandora Control Message {} {}'.format(p_topic, p_message)
         return l_logmsg
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode the Mqtt message
         We currently handle only control messages for Pandora.
         We are not interested in other module's status.
@@ -234,7 +234,7 @@ class MqttActions:
         @param p_topic: is the topic after ',,,/pandora/'
         @return: the log message with information stuck in there.
         """
-        l_logmsg = ' Pandora '
+        l_logmsg = p_logmsg + ' Pandora '
         LOG.debug('{} {}'.format(p_topic, p_message))
         if p_topic[0].lower() == 'control':
             l_logmsg += '\tControl: {}\n'.format(self._decode_control(p_topic, p_message))

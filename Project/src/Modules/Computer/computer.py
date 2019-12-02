@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-11-27'
+__updated__ = '2019-12-01'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -81,37 +81,36 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_msg):
         """ Decode the computer specific portions of the message and append them to the log string.
-        @param p-logmsg: is the partially decoded Mqtt message json
-        @param p_topic: is a list of topic part strings ( pyhouse, housename have been dropped
         @param p_message: is the payload that is JSON
         """
-        l_logmsg = '\tComputer:\n'
-        if p_topic[0] == 'browser':
-            l_logmsg += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        elif p_topic[0] == 'node' or p_topic[0] == 'nodes':
-            l_logmsg += nodesMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tComputer:\n'
+        if l_topic[0] == 'browser':
+            p_msg.LogMessage += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
+        elif l_topic[0] == 'node' or l_topic[0] == 'nodes':
+            p_msg.LogMessage += nodesMqtt(self.m_pyhouse_obj).decode(l_topic[1:], p_msg.Payload, p_msg.LogMessage)
         #  computer/ip
-        elif p_topic[1] == 'ip':
-            l_ip = extract_tools.get_mqtt_field(p_message, 'ExternalIPv4Address')
-            l_logmsg += '\tIPv4: {}'.format(l_ip)
+        elif l_topic[1] == 'ip':
+            l_ip = extract_tools.get_mqtt_field(p_msg.Payload, 'ExternalIPv4Address')
+            p_msg.LogMessage += '\tIPv4: {}'.format(l_ip)
         #  computer/startup
-        elif p_topic[1] == 'startup':
-            self._extract_node(p_message)
-            l_logmsg += '\tStartup {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+        elif l_topic[1] == 'startup':
+            self._extract_node(p_msg.Payload)
+            p_msg.LogMessage += '\tStartup {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
             if self.m_myname == self.m_sender:
-                l_logmsg += '\tMy own startup of PyHouse\n'
+                p_msg.LogMessage += '\tMy own startup of PyHouse\n'
             else:
-                l_logmsg += '\tAnother computer started up: {}'.format(self.m_sender)
+                p_msg.LogMessage += '\tAnother computer started up: {}'.format(self.m_sender)
         #  computer/shutdown
-        elif p_topic[1] == 'shutdown':
+        elif l_topic[1] == 'shutdown':
             del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
-            l_logmsg += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
+            p_msg.LogMessage += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
         #  computer/***
         else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Computer msg', 160))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
 
 
 class Utility:
@@ -305,12 +304,5 @@ class Api:
         """
         self.m_utility._stop_component_apis()
         LOG.info("Stopped.")
-
-    def DecodeMqtt(self, p_topic, p_message):
-        """ Decode messages sent to the computer module.
-        """
-        # LOG.debug('\n==Topic: {}\n==Message: {}\n==LogMsg: {}'.format(p_topic, p_message, p_logmsg))
-        l_logmsg = MqttActions(self.m_pyhouse_obj).decode(p_topic, p_message)
-        return l_logmsg
 
 # ## END DBK

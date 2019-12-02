@@ -17,8 +17,8 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-11-29'
-__version_info__ = (19, 10, 2)
+__updated__ = '2019-12-02'
+__version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -214,7 +214,7 @@ class LocalConfig:
             # l_config = l_node.Yaml['Lights']
         # l_config = self._save_all_lights(l_config)
         # config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
-        return l_config
+        # return l_config
 
 
 class MqttActions:
@@ -253,30 +253,29 @@ class MqttActions:
                 return
             l_api.Control(l_light_obj, l_controller_obj[0], l_control)
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_msg):
         """ Decode Mqtt message
         ==> pyhouse/<house name>/house/lighting/light/<action>
 
         @param p_topic: is the topic after 'lighting'
         @return: a message to be logged as a Mqtt message
         """
-        if self.m_pyhouse_obj is None:
-            LOG.error('Missing PyHouse obj')
-        l_logmsg = '\tLighting/Lights: {}\n\t'.format(p_topic)
-        LOG.debug('LightingLightsDispatch Topic:{}\n\t{}'.format(p_topic, p_message))
-        if p_topic[0] == 'control':
-            self._decode_control(p_message)
-            l_logmsg += 'Light Control: {}'.format(PrettyFormatAny.form(p_message, 'Light Control'))
-            LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_topic, p_message))
-        elif p_topic[0] == 'status':
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tLighting/Lights: {}\n\t'.format(p_msg.Topic)
+        LOG.debug('LightingLightsDispatch Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        if l_topic[0] == 'control':
+            self._decode_control(p_msg.Payload)
+            p_msg.LogMessage += 'Light Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Control'))
+            LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0] == 'status':
             # The status is contained in LightData() above.
-            # l_logmsg += 'Light Status: {}'.format(PrettyFormatAny.form(p_message, 'Light Status'))
-            l_logmsg += 'Light Status: {}'.format(p_message)
-            LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_topic, p_message))
+            # p_msg.LogMessage += 'Light Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Status'))
+            p_msg.LogMessage += 'Light Status: {}'.format(p_msg.Payload)
+            LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
         else:
-            l_logmsg += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_topic, PrettyFormatAny.form(p_message, 'Light Status'))
-            LOG.warning('Unknown Lights Topic: {}'.format(p_topic[0]))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Light Status'))
+            LOG.warning('Unknown Lights Topic: {}'.format(l_topic[0]))
 
 
 class Api(MqttActions):

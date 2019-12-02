@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -77,38 +77,37 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_msg):
         """
         --> pyhouse/<housename>/house/topic03...
         """
-        l_logmsg = '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        l_topic = p_topic[0].lower()
-        # LOG.debug('MqttHouseDispatch Topic:{}'.format(p_topic))
+        p_msg.LogMessage += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        l_topic = l_topic[0].lower()
+        # LOG.debug('MqttHouseDispatch Topic:{}'.format(p_msg.Topic))
         if l_topic == 'floor':
-            l_logmsg += floorsMqtt(self.m_pyhouse_obj).decode(p_topic, p_message, l_logmsg)
-
+            floorsMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'location':
-            l_logmsg += locationMqtt(self.m_pyhouse_obj).decode(p_topic, p_message, l_logmsg)
-
+            locationMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'room':
-            l_logmsg += roomsMqtt(self.m_pyhouse_obj).decode(p_topic, p_message, l_logmsg)
+            roomsMqtt(self.m_pyhouse_obj).decode(p_msg)
 
         elif l_topic == 'entertainment':
-            l_logmsg += entertainmentMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+            p_msg.LogMessage += entertainmentMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
         elif l_topic == 'hvac':
-            l_logmsg += hvacMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+            p_msg.LogMessage += hvacMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
         elif l_topic == 'irrigation':
-            l_logmsg += irrigationMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
-        elif l_topic == 'lighting':
-            l_logmsg += lightingMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+            p_msg.LogMessage += irrigationMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
+        elif l_topic in ['lighting']:
+            lightingMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'schedule':
-            l_logmsg = scheduleMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+            p_msg.LogMessage += scheduleMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
         elif l_topic == 'outlet':
-            l_logmsg = outletMqtt(self.m_pyhouse_obj).decode(p_topic[1:], p_message, l_logmsg)
+            p_msg.LogMessage += outletMqtt(self.m_pyhouse_obj).decode(p_msg.Topic[1:], p_msg.Payload, p_msg.LogMessage)
         else:
-            l_logmsg += '\tUnknown sub-topic {}'.format(p_message)
-            LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_topic[0], p_topic, p_message))
-        return l_logmsg
+            p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
+            LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_msg.Topic, p_msg.Topic, p_msg.Payload))
 
 
 class Utility:
@@ -232,7 +231,7 @@ class Utility:
         for l_key, l_value in p_parts.items():
             LOG.info('Saving house part "{}"'.format(l_key))
             l_value.SaveConfig()
-        LOG.info('Saved all House Parts {}'.format(p_parts))
+        LOG.info('Saved all House Parts.')
 
         # for l_key, l_value in p_parts.items():
         #    LOG.info('Saving House part "{}"'.format(l_key))

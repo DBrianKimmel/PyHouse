@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-11-30'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -85,7 +85,7 @@ class ScheduleInformation:
         self.Sched = None  # One of the schedule detail types below.
 
 
-class ScheduleLightInformation:
+class ScheduleLightingInformation:
     """ This is the lighting specific part.
     """
 
@@ -297,7 +297,7 @@ class TimeCalcs:
     This class deals with extracting information from the time and DayOfWeek fields of a schedule.
 
     DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
-    weekday    mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
+    weekday          mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
     The time field may be:
         HH:MM or HH:MM:SS
@@ -308,7 +308,7 @@ class TimeCalcs:
         """ Get the number of days until the next DayOfWeek in the schedule.
 
         DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
-        weekday()  mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
+        weekday()        mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
         @param p_schedule_obj: is the schedule object we are working on
         @param p_now: is a datetime.datetime.now()
@@ -359,8 +359,8 @@ class ScheduleExecution:
         Send information to one device to execute a schedule.
         @param p_schedule_obj: ==> ScheduleInformation()
         """
-        l_topic = 'house/schedule/control'
-        l_obj = p_schedule_obj
+        _l_topic = 'house/schedule/control'
+        _l_obj = p_schedule_obj
         # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
         if p_schedule_obj.Sched.Type == 'Light':
@@ -527,9 +527,13 @@ class LocalConfig:
         self.m_config = configApi(p_pyhouse_obj)
         self.m_schedule_altered = False
 
-    def _extract_entertainment_schedule(self):
+    def _extract_entertainment_schedule(self, p_config):
         """
         """
+        l_obj = ScheduleIrrigationInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        return l_obj
 
     def _extract_irrigation_schedule(self, p_config):
         """
@@ -539,7 +543,7 @@ class LocalConfig:
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_light_schedule(self, p_config):
+    def _extract_lighting_schedule(self, p_config):
         """
         """
         l_obj = ScheduleLightingInformation()
@@ -548,7 +552,7 @@ class LocalConfig:
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_thermostat_schedule(self, p_config):
+    def _extract_hvac_schedule(self, p_config):
         """
         """
         l_obj = ScheduleThermostatInformation()
@@ -560,6 +564,7 @@ class LocalConfig:
         """
         """
         l_dow = p_config.upper()
+        l_ret = 0
         if len(l_dow) != 7:
             LOG.error('Day of week must be 7 chars long "--TWT--" was "{}"'.format(l_dow))
             return 127
@@ -577,16 +582,20 @@ class LocalConfig:
                 l_obj.Type = 'Irrigation'
                 l_ret = self._extract_irrigation_schedule(l_value)
                 l_obj.Sched = l_ret
-            elif l_key == 'Light':
+            elif l_key in ['Lighting', 'Light', 'Outlet']:
                 l_obj.Type = 'Light'
-                l_ret = self._extract_light_schedule(l_value)
+                l_ret = self._extract_lighting_schedule(l_value)
                 l_obj.Sched = l_ret
-            elif l_key == 'Thermostat':
+            elif l_key in ['Hvac', 'Thermostat']:
                 l_obj.Type = 'Thermostat'
-                l_ret = self._extract_thermostat_schedule(l_value)
+                l_ret = self._extract_hvac_schedule(l_value)
                 l_obj.Sched = l_ret
             elif l_key == 'DOW':
                 l_obj.DOW = self._extract_DOW_field(l_value)
+            elif l_key == 'Occupancy':
+                pass
+            elif l_key == 'Room':
+                pass
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.

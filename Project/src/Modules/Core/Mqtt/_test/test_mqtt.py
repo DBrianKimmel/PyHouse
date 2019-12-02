@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-11-12'
+__updated__ = '2019-11-30'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -25,7 +25,7 @@ from Modules.Core.Mqtt.mqtt import Api as mqttApi, MqttInformation
 from Modules.Core.Utilities import json_tools
 from Modules.Computer.computer import ComputerInformation
 from Modules.House.Lighting.controllers import ControllerInformation
-from Modules.House.Schedule.schedule import ScheduleLightInformation
+from Modules.House.Schedule.schedule import ScheduleLightingInformation
 
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
@@ -228,7 +228,7 @@ class F1_Form(SetupMixin, unittest.TestCase):
     def test_06_MessageObj(self):
         """ Add an object.
         """
-        l_data = ScheduleLightInformation()
+        l_data = ScheduleLightingInformation()
         l_data.Name = 'Mqtt Controller Object'
         l_data.RoomName = 'Living Room'
         l_data.Comment = 'The formal Living Room.'

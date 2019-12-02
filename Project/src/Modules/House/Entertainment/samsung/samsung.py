@@ -50,7 +50,7 @@ while True:
 
 """
 
-__updated__ = '2019-11-02'
+__updated__ = '2019-11-30'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -136,7 +136,7 @@ class MqttActions:
             l_logmsg += ' Unknown samsung Control Message {} {}'.format(p_topic, p_message)
         return l_logmsg
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/entertainment/samsung/<type>/<Name>/...
         <type> = ?
@@ -145,7 +145,7 @@ class MqttActions:
             # LOG.debug('Decoding initializing')
             self.m_api = Api(self.m_pyhouse_obj)
 
-        l_logmsg = ''
+        l_logmsg = p_message
         if p_topic[2] == 'control':
             l_logmsg += '\tSamsung: {}\n'.format(self._decode_control(p_topic, p_message))
         else:

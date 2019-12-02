@@ -25,7 +25,7 @@ House.Entertainment.Plugins{}.Api
 """
 from Modules.Core.Config import import_tools
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -319,7 +319,7 @@ class Api:
         """ Stick in the entertainment section
         """
         LOG.info("Saving Config.")
-        self.m_local_config.save_yaml_config()
+        # self.m_local_config.save_yaml_config()
         LOG.info("Saved Config.")
 
     def Stop(self):

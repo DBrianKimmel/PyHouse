@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -26,6 +26,7 @@ from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
+from Modules.Core.Mqtt.mqtt_information import MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -34,62 +35,6 @@ LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
 CONFIG_NAME = 'mqtt'
 MAX_PROTOCOL_VERSION = 5  # this is the hignest protocol version this package can do
-
-
-class MqttInformation:
-    """
-
-    ==> PyHouse.Core.Mqtt.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.Brokers = {}  # MqttBrokerInformation()
-        self.ClientID = 'PyH-'
-        self.Prefix = ''
-        self._ProtocolApi = None
-
-
-class MqttBrokerInformation:
-    """ 0-N
-
-    ==> PyHouse.Core.Mqtt.Brokers.XXX as in the def below
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None
-        self.Keepalive = 60  # seconds
-        #
-        self.Access = None  # AccessInformation()
-        self.Host = None  # HostInformation()
-        self.Will = MqttBrokerWillInformation()  # MqttBrokerWillInformation()
-        self.Version = 5  # We can handle versions 3,4,5 currently
-        #
-        self._ClientApi = None
-        self._ProtocolApi = None
-        self._isTLS = False
-
-
-class MqttBrokerWillInformation:
-    """
-    ==> PyHouse.Core.Mqtt.Brokers.XXX as in the def below
-    """
-
-    def __init__(self):
-        self.Topic = None
-        self.Message = None
-        self.QoS = 0
-        self.Retain = False
-
-
-class MqttJson:
-    """ This is a couple of pieces of information that get added into every MQTT message
-        sent out of this computer.
-    """
-
-    def __init__(self):
-        self.Sender = ''  # The Mqtt name of the sending device.
-        self.DateTime = None  # The time on the sending device
 
 
 def _make_topic(p_pyhouse_obj, p_topic):
@@ -272,51 +217,43 @@ class Api:
                     l_broker.Name, e_err, l_topic, l_message))
                 # LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client', 190)))
 
-    def _decodeLWT(self, _p_topic_list, p_message):
+    def _decodeLWT(self, p_message):
         l_logmsg = '\tLast Will:\n'
         l_logmsg += p_message
         return l_logmsg
 
-    def MqttDispatch(self, p_topic: str, p_message: object):
+    def MqttDispatch(self, p_msg):
         """ Dispatch a received MQTT message according to the topic.
-
-        Handle:
-            computer
-            house
-            login
-            lwt
-        Everything else is an error!
 
         --> pyhouse/<HouseName>/<Division>/topic03/topic04/...
 
-        @param p_topic: is a string of the topic 'pyhouse/<housename>/house/entertainment/pandora/control
-        @param p_message: is the JSON encoded string with all the data of the message
+        @param p_msg: MqttMessageInformation()
         @return: a message to send to the log detailing the Mqtt message received.
+        @attention: Has many side affects
         """
-        l_topic_list = p_topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
+        l_topic_list = p_msg.Topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
         # LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
-        l_logmsg = 'Dispatch\n\tTopic: {}'.format(l_topic_list)
+        p_msg.LogMessage = 'Dispatch\n\tTopic: {}'.format(l_topic_list)
         # Lwt can be from any device
         if l_topic_list[0] == 'lwt':
-            l_logmsg += self._decodeLWT(l_topic_list, p_message)
-            LOG.info(l_logmsg)
+            p_msg.LogMessage += self._decodeLWT(p_msg.Payload)
+            LOG.info(p_msg.LogMessage)
         else:
             # Every other topic will have the following field(s).
-            l_sender = get_required_mqtt_field(p_message, 'Sender')
-            l_logmsg += '\n\tSender: {}\n'.format(l_sender)
+            l_sender = get_required_mqtt_field(p_msg.Payload, 'Sender')
+            p_msg.LogMessage += '\n\tSender: {}\n'.format(l_sender)
         # Branch on the <division> portion of the topic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         if l_topic_list[0] == 'computer':
-            l_logmsg += computerMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
+            computerMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic_list[0] == 'house':
-            l_logmsg += houseMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
-        elif l_topic_list[0] == 'login':
-            l_logmsg += houseMqtt(self.m_pyhouse_obj).decode(l_topic_list[1:], p_message)
+            houseMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
-            l_logmsg += '   OTHER: Unknown topic\n'
-            l_logmsg += '\tTopic: {};\n'.format(l_topic_list[0])
-            l_logmsg += '\tMessage: {};\n'.format(p_message)
-            LOG.warn(l_logmsg)
-        # LOG.info(l_logmsg)
+            p_msg.LogMessage += '   OTHER: Unknown topic\n' + \
+                        '\tTopic: {};\n'.format(l_topic_list[0]) + \
+                        '\tMessage: {};\n'.format(p_msg.Payload)
+            LOG.warn(p_msg.LogMessage)
+        # LOG.info(p_msg.LogMessage)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):
         """ Login to PyHouse via MQTT

@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,28 +47,24 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """
         --> pyhouse/<housename>/house/outlet/<name>/...
         """
-        p_logmsg += ''
-        # l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        if len(p_topic) > 0:
-            _l_name = p_topic[0]
-            p_topic = p_topic[1:]
-            if len(p_topic) > 0:
-                if p_topic[0] == 'STATE':
-                    p_logmsg += '\tState:\n'
-                elif p_topic[0] == 'RESULT':
-                    p_logmsg += '\tResult:\n'
-                elif p_topic[0] == 'POWER':
-                    p_logmsg += '\tResult:\n'
-                elif p_topic[0] == 'LWT':
-                    p_logmsg += '\tResult:\n'
-                else:
-                    p_logmsg += '\tUnknown house/outlet sub-topic: {}; - {}'.format(p_topic, p_message)
-                    LOG.warn('Unknown "house/outlet" sub-topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_topic[0], p_topic, p_message))
-        return p_logmsg
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        # l_light_name = extract_tools.get_mqtt_field(p_msg.Payload, 'LightName')
+        if l_topic[0] == 'STATE':
+            p_msg.LogMessage += '\tState:\n'
+        elif l_topic[0] == 'RESULT':
+            p_msg.LogMessage += '\tResult:\n'
+        elif l_topic[0] == 'POWER':
+            p_msg.LogMessage += '\tResult:\n'
+        elif l_topic[0] == 'LWT':
+            p_msg.LogMessage += '\tResult:\n'
+        else:
+            p_msg.LogMessage += '\tUnknown house/outlet sub-topic: {}; - {}'.format(p_msg.Topic, p_msg.Payload)
+            LOG.warn('Unknown "house/outlet" sub-topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic[0], p_msg.Topic, p_msg.Payload))
 
 
 class LocalConfig:

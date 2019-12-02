@@ -10,7 +10,7 @@
 """
 from Modules.Core.Config import config_tools, import_tools
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-11-30'
 __version_info__ = (19, 11, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -55,12 +55,12 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def decode(self, p_topic, p_message):
+    def decode(self, p_topic, p_message, p_logmsg):
         """ Decode the Mqtt message
         ==> pyhouse/<house name>/security/<type>/<Name>
         <type> = garage door, motion sensor, camera
         """
-        l_logmsg = '\tSecurity:\n'
+        l_logmsg = p_logmsg + '\tSecurity:\n'
         if p_topic[0] == 'garage_door':
             l_logmsg += '\tGarage Door: {}\n'.format(get_mqtt_field(p_message, 'Name'))
         elif p_topic[0] == 'motion_detector':

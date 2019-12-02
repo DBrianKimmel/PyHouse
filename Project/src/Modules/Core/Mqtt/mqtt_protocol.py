@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -23,6 +23,7 @@ from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 from twisted.internet import error
 
 #  Import PyMh files and modules.
+from Modules.Core.Mqtt.mqtt_information import MqttMessageInformation
 from Modules.Core.Mqtt.mqtt_util import EncodeDecode
 from Modules.Core.Utilities import json_tools
 
@@ -721,7 +722,12 @@ class MQTTClient(MQTTProtocol):
         Call the dispatcher to send them on to the correct place.
         """
         # LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
-        self.m_broker._ClientApi.MqttDispatch(p_topic, p_message)
+        l_msg = MqttMessageInformation()
+        l_msg.Topic = p_topic
+        l_msg.Payload = p_message
+        l_msg.UnprocessedTopic = p_topic
+        l_msg.LogMessage = ''
+        self.m_broker._ClientApi.MqttDispatch(l_msg)
 
 ###########################################
 
