@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-03'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -82,10 +82,8 @@ class MqttActions:
         --> pyhouse/<housename>/house/topic03...
         """
         p_msg.LogMessage += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        l_topic = p_msg.UnprocessedTopic
+        l_topic = p_msg.UnprocessedTopic[0].lower()
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        l_topic = l_topic[0].lower()
-        # LOG.debug('MqttHouseDispatch Topic:{}'.format(p_msg.Topic))
         if l_topic == 'floor':
             floorsMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'location':
@@ -107,7 +105,7 @@ class MqttActions:
             outletMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
-            LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(p_msg.Topic, p_msg.Topic, p_msg.Payload))
+            LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
 
 
 class Utility:

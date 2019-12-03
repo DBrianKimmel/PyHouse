@@ -75,7 +75,7 @@ class MqttActions:
             LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
         else:
             p_msg.LogMessage += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
-            LOG.warn('Unknown Controllers Topic: {}'.format(l_topic[0]))
+            LOG.warning('Unknown Controllers Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:
@@ -115,7 +115,7 @@ class LocalConfig:
                 else:
                     setattr(l_obj, l_key, l_value)
         except Exception as e_err:
-            LOG.warn('Invalid entry of some type in "{}.yaml"\n\t{}'.format(CONFIG_NAME, e_err))
+            LOG.warning('Invalid entry of some type in "{}.yaml"\n\t{}'.format(CONFIG_NAME, e_err))
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
@@ -151,7 +151,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Controllers']
         except:
-            LOG.warn('The control file does not start with "Controllers:"')
+            LOG.warning('The control file does not start with "Controllers:"')
             return None
         l_controllers = self._extract_all_controllers(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers

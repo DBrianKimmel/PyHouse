@@ -268,7 +268,7 @@ class Connecting:
             SamsungClient.send_command('1PWRQSTN')
 
         def eb_failed(fail_reason):
-            LOG.warn("initial Samsung connection failed: {}".format(fail_reason))
+            LOG.warning("initial Samsung connection failed: {}".format(fail_reason))
             l_ReconnectingService.stopService()
 
         l_reactor = self.m_pyhouse_obj._Twisted.Reactor
@@ -342,7 +342,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('samsung Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('samsung Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def _extract_all_devices(self, p_config):
@@ -371,7 +371,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('samsung Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('samsung Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def load_yaml_config(self, p_api):
@@ -386,7 +386,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Samsung']
         except:
-            LOG.warn('The config file does not start with "Samsung:"')
+            LOG.warning('The config file does not start with "Samsung:"')
             return None
         l_samsung = self._extract_all_samsung(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'] = l_samsung

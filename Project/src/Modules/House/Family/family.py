@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -190,7 +190,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_module) if not l_attr.startswith('_') and not callable(getattr(l_module, l_attr))]:
             if getattr(l_module, l_key) == None and l_key in l_required:
-                LOG.warn('Controller Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Controller Yaml is missing an entry for "{}"'.format(l_key))
         # Now build the families actually called for in the config files.
         # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'House.Family', 190))
         try:

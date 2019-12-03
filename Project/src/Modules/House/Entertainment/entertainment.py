@@ -83,7 +83,7 @@ class MqttActions:
             l_module_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[l_module]
         except:
             l_msg = 'The entertainment module {} does not exist, skipping'.format(l_module)
-            # No need to clutter the log - LOG.warn(l_msg)
+            # No need to clutter the log - LOG.warning(l_msg)
             return l_msg
         try:
             LOG.debug(PrettyFormatAny.form(l_module_obj, 'Entertain Module'))
@@ -196,14 +196,14 @@ class LocalConfig:
             l_services = p_config.Services
             self._extract_services(l_services)
         except Exception as e_err:
-            LOG.warn('There is no "Services" section in the entertainment.yaml file!\n\t{}'.format(e_err))
+            LOG.warning('There is no "Services" section in the entertainment.yaml file!\n\t{}'.format(e_err))
 
         # Extract all the devices.
         try:
             l_devices = p_config['Devices']
             self._extract_devices(l_devices)
         except Exception as e_err:
-            LOG.warn('There is no "Devices" section in the entertainment.yaml file\n\t{}'.format(e_err))
+            LOG.warning('There is no "Devices" section in the entertainment.yaml file\n\t{}'.format(e_err))
         #
         LOG.info('Plugins Requested: {}'.format(self.m_modules_needed))
         return l_entertain
@@ -224,7 +224,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Entertainment']
         except:
-            LOG.warn('The config file does not start with "Entertainment:"')
+            LOG.warning('The config file does not start with "Entertainment:"')
             return None
         self.m_pyhouse_obj.House.Entertinment = EntertainmentInformation()
         l_entertain = self._extract_all_entertainment(l_yaml)

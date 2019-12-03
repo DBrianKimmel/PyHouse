@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-12-02'
 
 #  Import system type stuff
 import json
@@ -57,7 +57,7 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
 #                    cbtid = cookie['cbtid'].value
 #                    if cbtid in self.factory._cookies:
 #                        self._cbtid = cbtid
-#                        LOG.warn("Cookie already set: %s" % self._cbtid)
+#                        LOG.warning("Cookie already set: %s" % self._cbtid)
         # if no cookie is set, create a new one ..
         if self._cbtid is None:
             # self._cbtid = newid()
@@ -69,7 +69,7 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
             # self.factory._cookies[self._cbtid] = cbtData
             # do NOT add the "secure" cookie attribute! "secure" refers to the scheme of the Web page that triggered the WS, not WS itself!!
             headers['Set-Cookie'] = 'cbtid=%s;max-age=%d' % (self._cbtid, maxAge)
-            LOG.warn("Setting new cookie: %s" % self._cbtid)
+            LOG.warning("Setting new cookie: %s" % self._cbtid)
         # add this WebSocket connection to the set of connections associated with the same cookie
         self.factory._cookies[self._cbtid]['connections'].add(self)
         # accept the WebSocket connection, speaking subprotocol `protocol` and setting HTTP headers `headers`
@@ -96,7 +96,7 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
         self.factory._cookies[self._cbtid]['connections'].remove(self)
         # if list gets empty, possibly do something ..
         if not self.factory._cookies[self._cbtid]['connections']:
-            LOG.warn("All connections for {} gone".format(self._cbtid))
+            LOG.warning("All connections for {} gone".format(self._cbtid))
 
     def onMessage(self, payload, isBinary):
         """
@@ -124,7 +124,7 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
                             method='POST',
                             postdata=None,  # body,
                             headers=headers)
-                LOG.warn("Authentication request sent.")
+                LOG.warning("Authentication request sent.")
 
                 def done(res):
                     res = json.loads(res)
@@ -136,14 +136,14 @@ class WebSockServerProtocol():  # WebSocketServerProtocol):
                         msg = json.dumps({'cmd': 'AUTHENTICATED', 'email': res['email']})
                         for proto in self.factory._cookies[self._cbtid]['connections']:
                             proto.sendMessage(msg)
-                        LOG.warn("Authenticated user {}".format(res['email']))
+                        LOG.warning("Authenticated user {}".format(res['email']))
                     else:
-                        LOG.warn("Authentication failed: {}".format(res.get('reason')))
+                        LOG.warning("Authentication failed: {}".format(res.get('reason')))
                         self.sendMessage(json.dumps({'cmd': 'AUTHENTICATION_FAILED', 'reason': res.get('reason')}))
                         self.sendClose()
 
                 def error(err):
-                    LOG.warn("Authentication request failed: {}".format(err.value))
+                    LOG.warning("Authentication request failed: {}".format(err.value))
                     self.sendMessage(json.dumps({'cmd': 'AUTHENTICATION_FAILED', 'reason': str(err.value)}))
                     self.sendClose()
 
@@ -172,7 +172,7 @@ class ClientConnections(object):
 
     def add_browser(self, p_login):
         self.ConnectedBrowsers.append(p_login)
-        LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
+        LOG.warning('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
 class lightingUtilityWSS(ClientConnections):
@@ -220,7 +220,7 @@ class Api(lightingUtilityWSS):
         try:
             self.m_contextFactory = ssl.DefaultOpenSSLContextFactory('/etc/pyhouse/keys/server.key', '/etc/pyhouse/keys/server.crt')
         except:
-            LOG.warn("SSL not available.")
+            LOG.warning("SSL not available.")
             self.m_contextFactory = None
 
     def LoadConfig(self):

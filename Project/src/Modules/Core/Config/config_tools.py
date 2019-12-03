@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -209,7 +209,7 @@ class Tools:
             if p_name in l_files:
                 l_path = os.path.join(l_root, p_name)
                 return l_path
-        # LOG.warn('Not Found "{}"'.format(p_name))
+        # LOG.warning('Not Found "{}"'.format(p_name))
         return None
 
     def find_config_file(self, p_name):
@@ -249,12 +249,12 @@ class Tools:
             if getattr(p_obj, l_key) == None:  # Key is missing
                 # LOG.debug('No key defined: {}'.format(l_key))
                 if l_key in required_list:
-                    LOG.warn('Config entry "{}" is missing.'.format(l_key))
+                    LOG.warning('Config entry "{}" is missing.'.format(l_key))
                     continue
             else:  # Key is Present
                 # LOG.debug('Key defined: {}; Value: {}'.format(l_key, l_value))
                 if l_key in allowed_list:
-                    LOG.warn('Config entry "{}" is not permitted.'.format(l_key))
+                    LOG.warning('Config entry "{}" is not permitted.'.format(l_key))
                     continue
             return p_obj
 
@@ -360,7 +360,7 @@ class YamlFetch(Tools):
             try:
                 _l_x = getattr(p_info_obj, l_yaml_key)
             except AttributeError:
-                LOG.warn('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_yaml_key, l_yaml_value))
+                LOG.warning('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_yaml_key, l_yaml_value))
                 continue
             setattr(p_info_obj, l_yaml_key, l_yaml_value)
         return p_info_obj  # For testing
@@ -412,7 +412,7 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         """
         l_node = self._find_config_node(p_filename)
         if l_node == None:
-            LOG.warn('Config file "{}" not found.'.format(p_filename))
+            LOG.warning('Config file "{}" not found.'.format(p_filename))
             return None
         l_yaml = MyYAML(typ='rt')
         l_yaml.allow_duplicate_keys = True

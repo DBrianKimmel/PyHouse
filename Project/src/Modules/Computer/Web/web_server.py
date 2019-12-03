@@ -29,7 +29,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-12-02'
 
 #  Import system type stuff
 from twisted.internet import endpoints
@@ -67,7 +67,7 @@ class ClientConnections:
 
     def add_browser(self, p_login):
         self.ConnectedBrowsers.append(p_login)
-        LOG.warn('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
+        LOG.warning('Connected to: {}'.format(PrettyFormatAny.form(p_login, 'Login')))
 
 
 class lightingUtilityWs(ClientConnections):

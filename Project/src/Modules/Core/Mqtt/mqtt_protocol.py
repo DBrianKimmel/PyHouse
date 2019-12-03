@@ -12,6 +12,7 @@ The first is a TCP connection to the Mqtt broker.
 The second is a MQTT connection to the broker that uses the first connection as a transport.
 
 """
+import string
 
 __updated__ = '2019-12-02'
 __version_info__ = (18, 10, 8)
@@ -468,7 +469,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def connack(self, status):
-        LOG.warn('Sending connect ack packet')
+        LOG.warning('Sending connect ack packet')
         l_varHeader = bytearray()
         l_payload = bytearray()
         l_payload.append(status)
@@ -492,7 +493,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def puback(self, messageId):
-        LOG.warn('Sending puback packet')
+        LOG.warning('Sending puback packet')
         header = bytearray()
         varHeader = bytearray()
         header.append(0x04 << 4)
@@ -502,7 +503,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pubrec(self, messageId):
-        LOG.warn("Sending pubrec packet")
+        LOG.warning("Sending pubrec packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x05 << 4)
@@ -512,7 +513,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pubrel(self, messageId):
-        LOG.warn("Sending pubrel packet")
+        LOG.warning("Sending pubrel packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x06 << 4)
@@ -522,7 +523,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pubcomp(self, messageId):
-        LOG.warn('Sending pubcomp packet')
+        LOG.warning('Sending pubcomp packet')
         header = bytearray()
         varHeader = bytearray()
         header.append(0x07 << 4)
@@ -536,7 +537,7 @@ class MQTTProtocol(Protocol, Packets):
         Only supports QoS = 0 subscribes
         Only supports one subscription per message
         """
-        LOG.warn("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.Host.Name))
+        LOG.info("Sending subscribe packet - Topic: {}\n\tAddr: {}".format(p_topic, self.m_broker.Host.Name))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = subscribe, QoS = 1
@@ -550,7 +551,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def suback(self, grantedQos, messageId):
-        LOG.warn("Sending suback packet")
+        LOG.warning("Sending suback packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -564,7 +565,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(payload)
 
     def unsubscribe(self, topic, messageId=None):
-        LOG.warn("Sending unsubscribe packet")
+        LOG.warning("Sending unsubscribe packet")
         header = bytearray()
         varHeader = bytearray()
         payload = bytearray()
@@ -580,7 +581,7 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(payload)
 
     def unsuback(self, messageId):
-        LOG.warn("Sending unsuback packet")
+        LOG.warning("Sending unsuback packet")
         header = bytearray()
         varHeader = bytearray()
         header.append(0x0B << 4)
@@ -590,20 +591,20 @@ class MQTTProtocol(Protocol, Packets):
         self.transport.write(varHeader)
 
     def pingreq(self):
-        # LOG.warn('Sending ping packet')
+        # LOG.warning('Sending ping packet')
         l_empty = bytearray()
         l_fixHeader = self._build_fixed_header(0x0C, 0)
         self._send_transport(l_fixHeader, l_empty, l_empty)
 
     def pingresp(self):
-        LOG.warn('Got ping ack packet')
+        LOG.warning('Got ping ack packet')
         header = bytearray()
         header.append(0x0D << 4)
         header.extend(EncodeDecode._encodeLength(0))
         self.transport.write(header)
 
     def disconnect(self):
-        LOG.warn("Sending disconnect packet")
+        LOG.warning("Sending disconnect packet")
         header = bytearray()
         header.append(0x0E << 4)
         header.extend(EncodeDecode._encodeLength(0))
@@ -679,7 +680,7 @@ class MQTTClient(MQTTProtocol):
         PyHouse logic for what happened when the TCP/TLS connection is broken.
         """
         l_msg = reason.check(error.ConnectionClosed)
-        LOG.warn('Disconnected from MQTT Broker "{}"\n\tReason: {}\n\tMessage:{}'.format(self.m_broker.Name, reason, l_msg))
+        LOG.warning('Disconnected from MQTT Broker "{}"\n\tReason: {}\n\tMessage:{}'.format(self.m_broker.Name, reason, l_msg))
         self.m_state = MQTT_FACTORY_START
 
     def mqttConnected(self):
@@ -715,7 +716,7 @@ class MQTTClient(MQTTProtocol):
         """
         self.m_pyhouse_obj._Twisted.Reactor.callLater(self.m_pingPeriod, self.pingreq)
 
-    def publishReceived(self, p_topic, p_message, _qos=0, _dup=False, _retain=False, _messageId=None):
+    def publishReceived(self, p_topic: str, p_message: str, _qos=0, _dup=False, _retain=False, _messageId=None) -> None:
         """ Override
 
         This is where we receive all the pyhouse messages from the broker.
@@ -725,7 +726,7 @@ class MQTTClient(MQTTProtocol):
         l_msg = MqttMessageInformation()
         l_msg.Topic = p_topic
         l_msg.Payload = p_message
-        l_msg.UnprocessedTopic = p_topic
+        l_msg.UnprocessedTopic = p_topic.split('/')
         l_msg.LogMessage = ''
         self.m_broker._ClientApi.MqttDispatch(l_msg)
 
@@ -778,14 +779,14 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """ Override.
         Called when a connection has failed to connect.
         """
-        LOG.warn('Factory Connection failed to make.\n\tAddr: {};\n\tReason:{};'.format(self.m_broker.Host.Name, p_reason))
+        LOG.warning('Factory Connection failed to make.\n\tAddr: {};\n\tReason:{};'.format(self.m_broker.Host.Name, p_reason))
         ReconnectingClientFactory.clientConnectionFailed(self, p_connector, p_reason)
 
     def clientConnectionLost(self, p_connector, p_reason):
         """ Override.
         Called when an established connection is lost.
         """
-        LOG.warn('Connection LOST to "{}"\n\tReason:{};'.format(self.m_broker.Name, p_reason))
+        LOG.warning('Connection LOST to "{}"\n\tReason:{};'.format(self.m_broker.Name, p_reason))
         # LOG.debug(PrettyFormatAny.form(p_reason, 'Reason'))
         ReconnectingClientFactory.clientConnectionLost(self, p_connector, p_reason)
         p_reason.printTraceback()
@@ -794,12 +795,12 @@ class PyHouseMqttFactory(ReconnectingClientFactory):
         """ Override.
             Required.
         """
-        LOG.warn('Broker: {};  Port: {}\n\tReason:{}'.format(self.m_broker.Host.Name, self.m_broker.Host.Port, p_reason))
+        LOG.warning('Broker: {};  Port: {}\n\tReason:{}'.format(self.m_broker.Host.Name, self.m_broker.Host.Port, p_reason))
 
     def makeConnection(self, p_transport):
         """ This is required.
         """
-        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+        LOG.warning('makeConnection - Transport: {}'.format(p_transport))
         pass
 
     def _dummy(self):

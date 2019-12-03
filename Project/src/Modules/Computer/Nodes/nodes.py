@@ -71,7 +71,7 @@ class MqttActions:
             p_msg.LogMessage += syncApi(self.m_pyhouse_obj).DecodeMqttMessage(p_msg.Topic[1:], p_msg.Payload)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg'))
-            LOG.warn('Unknown Node sub-topic: {}\n\tMsg: {}'.format(l_topic, p_msg.Payload))
+            LOG.warning('Unknown Node sub-topic: {}\n\tMsg: {}'.format(l_topic, p_msg.Payload))
 
 
 class Yaml:

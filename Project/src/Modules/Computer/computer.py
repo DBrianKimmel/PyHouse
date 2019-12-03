@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-12-01'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -237,7 +237,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Computer']
         except:
-            LOG.warn('The config file does not start with "Computer:"')
+            LOG.warning('The config file does not start with "Computer:"')
             return None
         l_computer = self._extract_computer_info(l_yaml)
         # self.m_pyhouse_obj.Computer = l_computer

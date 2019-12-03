@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -265,7 +265,7 @@ class SerialApi:
         """Send the command to the PLM.
         """
         if self.m_active:
-            # LOG.warn(type(p_message))
+            # LOG.warning(type(p_message))
             try:
                 # LOG.debug('Write: {}'.format(p_message))
                 # self.m_serial.writeSomeData(p_message)

@@ -93,7 +93,7 @@ class MqttActions:
             outletMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown Lighting sub-topic {}'.format(p_msg.Payload)
-            LOG.warn('Unknown Lighting Topic: {}'.format(l_topic[0]))
+            LOG.warning('Unknown Lighting Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:

@@ -43,7 +43,7 @@ class LocalConfig:
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Pandora Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Pandora Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
 # ## END DBK

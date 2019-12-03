@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2019-11-27'
+__updated__ = '2019-12-02'
 
 #  Import system type stuff
 import datetime
@@ -258,7 +258,7 @@ class LightHandlerApi:
             l_driver = interface.get_device_driver_Api(p_pyhouse_obj, p_controller_obj.Interface)
             l_ret = l_driver.Start(p_controller_obj)
         else:
-            LOG.warn('Can not config a remote controller.')
+            LOG.warning('Can not config a remote controller.')
             l_ret = None
         return l_ret
 
@@ -310,7 +310,7 @@ class LightHandlerApi:
             self._get_id_request(p_controller_obj, p_obj)
             self._get_one_device_status(p_controller_obj, p_obj)
         else:
-            LOG.warn('Skipping "{}" "{}" device "{}"'.format(p_obj.DeviceType, p_obj.DeviceSubType, p_obj.Name))
+            LOG.warning('Skipping "{}" "{}" device "{}"'.format(p_obj.DeviceType, p_obj.DeviceSubType, p_obj.Name))
             pass
 
     def get_all_device_information(self, p_pyhouse_obj, p_controller_obj):

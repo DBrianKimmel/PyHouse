@@ -8,8 +8,9 @@
 @summary:   This is basically the MQTT Api interface that is used by all of pyhouse.
 
 """
+from Modules.House.Family.insteon.insteon_constants import PLM_COMMANDS
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-03'
 __version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -231,11 +232,24 @@ class Api:
         @return: a message to send to the log detailing the Mqtt message received.
         @attention: Has many side affects
         """
-        l_topic_list = p_msg.Topic.split('/')[2:]  # Drop the pyhouse/<housename>/ as that is all we subscribed to.
-        # LOG.debug('Dispatch:\n\tTopic List: {}'.format(l_topic_list))
-        p_msg.LogMessage = 'Dispatch\n\tTopic: {}'.format(l_topic_list)
+        l_topic = p_msg.UnprocessedTopic[0]
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic != 'pyhouse':
+            LOG.error('Invalid topic string: "{}"'.format(p_msg.Topic))
+            return
+        #
+        l_topic = p_msg.UnprocessedTopic[0]
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic != self.m_pyhouse_obj.House.Name:
+            LOG.error('We got a message for some other house: "{}"'.format(p_msg.UnprocessedTopic[0]))
+            return
+        #
+        l_topic = p_msg.UnprocessedTopic[0]
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        # LOG.debug('Dispatch:\n\tTopic List: {}'.format(p_msg.UnprocessedTopic))
+        p_msg.LogMessage = 'Dispatch\n\tTopic: {}'.format(p_msg.UnprocessedTopic)
         # Lwt can be from any device
-        if l_topic_list[0] == 'lwt':
+        if l_topic == 'lwt':
             p_msg.LogMessage += self._decodeLWT(p_msg.Payload)
             LOG.info(p_msg.LogMessage)
         else:
@@ -243,14 +257,14 @@ class Api:
             l_sender = get_required_mqtt_field(p_msg.Payload, 'Sender')
             p_msg.LogMessage += '\n\tSender: {}\n'.format(l_sender)
         # Branch on the <division> portion of the topic
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        if l_topic_list[0] == 'computer':
+        # p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic == 'computer':
             computerMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic_list[0] == 'house':
+        elif l_topic == 'house':
             houseMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
             p_msg.LogMessage += '   OTHER: Unknown topic\n' + \
-                        '\tTopic: {};\n'.format(l_topic_list[0]) + \
+                        '\tTopic: {};\n'.format(p_msg.UnprocessedTopic[0]) + \
                         '\tMessage: {};\n'.format(p_msg.Payload)
             LOG.warn(p_msg.LogMessage)
         # LOG.info(p_msg.LogMessage)

@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-12-02'
 
 #  Import system type stuff
 
@@ -30,7 +30,7 @@ def is_update_needed(p_local_obj, p_remote_obj):
         else:
             return False
     except Exception:
-        LOG.warn('No LastUpdate found.')
+        LOG.warning('No LastUpdate found.')
         return False
 
 # ## END DBK

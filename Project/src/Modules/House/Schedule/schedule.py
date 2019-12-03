@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-03'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -548,7 +548,15 @@ class LocalConfig:
         """
         l_obj = ScheduleLightingInformation()
         for l_key, l_value in p_config.items():
-            # print('Light Sched Key:{}; Value:{}'.format(l_key, l_value))
+            setattr(l_obj, l_key, l_value)
+        return l_obj
+
+    def _extract_outlet_schedule(self, p_config):
+        """
+        """
+        l_obj = ScheduleLightingInformation()
+        l_obj.Type = 'Outlet'
+        for l_key, l_value in p_config.items():
             setattr(l_obj, l_key, l_value)
         return l_obj
 

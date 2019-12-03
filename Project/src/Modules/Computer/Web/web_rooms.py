@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-04-08'
+__updated__ = '2019-12-02'
 
 # Import system type stuff
 import os
@@ -40,7 +40,7 @@ templatepath = os.path.join(webpath, 'template')
 #        Get a lot of server JSON data and pass it to the client browser.
 #        """
 #        l_json = GetJSONHouseInfo(self.m_pyhouse_obj)
-#        # LOG.warn('Fetched {}'.format(l_json))
+#        # LOG.warning('Fetched {}'.format(l_json))
 #        return l_json
 
 #    @athena.expose

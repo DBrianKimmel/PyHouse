@@ -75,7 +75,7 @@ class MqttActions:
             LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
         else:
             p_msg.LogMessage += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
-            LOG.warn('Unknown Controllers Topic: {}'.format(l_topic[0]))
+            LOG.warning('Unknown Controllers Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:
@@ -114,7 +114,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         LOG.info('Extracted button "{}"'.format(l_obj.Name))
@@ -144,7 +144,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Buttons']
         except:
-            LOG.warn('The config file does not start with "Buttons:"')
+            LOG.warning('The config file does not start with "Buttons:"')
             return None
         l_buttons = self._extract_all_button_sets(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons

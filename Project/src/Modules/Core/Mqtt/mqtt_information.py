@@ -9,6 +9,9 @@
 
 """
 
+#  Import system type stuff
+# from typing import List
+
 
 class MqttInformation:
     """
@@ -16,10 +19,10 @@ class MqttInformation:
     ==> PyHouse.Core.Mqtt.xxx as in the def below
     """
 
-    def __init__(self):
-        self.Brokers = {}  # MqttBrokerInformation()
-        self.ClientID = 'PyH-'
-        self.Prefix = ''
+    def __init__(self) -> None:
+        self.Brokers: MqttBrokerInformation = {}  # MqttBrokerInformation()
+        self.ClientID: str = 'PyH-'
+        self.Prefix: str = ''
         self._ProtocolApi = None
 
 
@@ -70,10 +73,10 @@ class MqttMessageInformation:
     """ An easy to pass message structure
     """
 
-    def __init__(self):
-        self.Topic = None
-        self.Payload = None
-        self.UnprocessedTopic = None
-        self.LogMessage = None
+    def __init__(self) -> None:
+        self.Topic: str = None
+        self.Payload: str = None
+        self.UnprocessedTopic: List[str] = []  # a list of topic parts
+        self.LogMessage: str = None
 
 # ## END DBK

@@ -167,7 +167,7 @@ class OnkyoResponses():
         """
         l_prefix = p_msg[0:4].decode('utf-8')
         if l_prefix != 'ISCP':
-            LOG.warn('error in buffer: {} - {}'.format(l_prefix, PrettyFormatAny.form(self.m_buffer, 'Buffer', 150)))
+            LOG.warning('error in buffer: {} - {}'.format(l_prefix, PrettyFormatAny.form(self.m_buffer, 'Buffer', 150)))
             self.m_buffer = self.m_buffer[1:]
             return
         l_header_size = convert.bigend_2_int(p_msg[4:8])
@@ -241,7 +241,7 @@ class OnkyoProtocol(LineReceiver, OnkyoResponses):
         The reason Failure wraps a twisted.internet.error.ConnectionDone or twisted.internet.error.ConnectionLost instance (or a subclass of one of those).
         """
         # Protocol.connectionLost(self, reason=reason)
-        LOG.warn('Lost connection.\n\tReason:{}'.format(reason))
+        LOG.warning('Lost connection.\n\tReason:{}'.format(reason))
 
 
 class OnkyoFactory(Factory):
@@ -510,7 +510,7 @@ class MqttActions:
             p_msg.LogMessage += '\tStatus: {}\n'.format(self._decode_status(p_msg.Topic, p_msg.Payload))
         else:
             p_msg.LogMessage += '\tUnknown Onkyo sub-topic: {}  Message: {}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Entertainment msg', 160))
-            LOG.warn('Unknown Onkyo Topic: {}'.format(l_topic[0]))
+            LOG.warning('Unknown Onkyo Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:
@@ -557,7 +557,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def _extract_all_devices(self, p_config):
@@ -586,7 +586,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def load_yaml_config(self, p_api):
@@ -601,7 +601,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Onkyo']
         except:
-            LOG.warn('The config file does not start with "Onkyo:"')
+            LOG.warning('The config file does not start with "Onkyo:"')
             return None
         l_onkyo = self._extract_all_onkyo(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = l_onkyo

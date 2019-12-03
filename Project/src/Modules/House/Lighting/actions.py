@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-03'
 
 #  Import system type stuff
 
@@ -37,15 +37,23 @@ class Api:
 
         """
         l_light_name = p_schedule_obj.Sched.Name
+        l_type = p_schedule_obj.Sched.Type
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        l_light_obj = lightingUtility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
+        if l_type == 'Light':
+            l_obj = l_lighting_objs.Lights
+        elif l_type == 'Outlet':
+            l_obj = l_lighting_objs.Outlets
+        else:
+            LOG.error('Schedule type is invalid "{}"'.format(l_type))
+            return
+        l_light_obj = lightingUtility().get_object_by_id(l_obj, name=l_light_name)
         #
         l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
         l_control = LightData()
         l_control.BrightnessPct = p_schedule_obj.Sched.Brightness
         l_control.TransitionTime = p_schedule_obj.Sched.Rate
         if len(l_controller_objs) < 1:
-            LOG.warn('No controllers on this server for Light: {}'.format(l_light_obj.Name))
+            LOG.warning('No controllers on this server for Light: {}'.format(l_light_obj.Name))
             return
         for l_controller_obj in l_controller_objs:
             if not l_controller_obj._isLocal:

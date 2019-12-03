@@ -214,7 +214,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def _extract_all_devices(self, p_config):
@@ -246,7 +246,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Pioneer Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def load_yaml_config(self, p_api):
@@ -261,7 +261,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Pioneer']
         except:
-            LOG.warn('The config file does not start with "Pioneer:"')
+            LOG.warning('The config file does not start with "Pioneer:"')
             return None
         l_pioneer = self._extract_all_pioneer(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_pioneer
@@ -379,7 +379,7 @@ class PioneerProtocol(StatefulTelnetProtocol):
         """ TearDown
         """
         Protocol.connectionLost(self, reason=reason)
-        LOG.warn('Lost connection.\n\tReason:{}'.format(reason))
+        LOG.warning('Lost connection.\n\tReason:{}'.format(reason))
 
 
 class PioneerClient(PioneerProtocol):
@@ -438,7 +438,7 @@ class PioneerFactory(ClientFactory):
         return l_client
 
     def clientConnectionLost(self, p_connector, p_reason):
-        LOG.warn('Lost connection.\n\tReason:{}'.format(p_reason))
+        LOG.warning('Lost connection.\n\tReason:{}'.format(p_reason))
         ClientFactory.clientConnectionLost(self, p_connector, p_reason)
 
     def clientConnectionFailed(self, p_connector, p_reason):
@@ -451,7 +451,7 @@ class PioneerFactory(ClientFactory):
 
     def makeConnection(self, p_transport):
         """ This is required. """
-        LOG.warn('makeConnection - Transport: {}'.format(p_transport))
+        LOG.warning('makeConnection - Transport: {}'.format(p_transport))
 
 
 class Api(MqttActions, PioneerClient):

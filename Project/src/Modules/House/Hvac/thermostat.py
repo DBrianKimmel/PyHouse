@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-15'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 11)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -85,7 +85,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('"{}" is missing an entry for "{}"'.format(CONFIG_NAME, l_key))
+                LOG.warning('"{}" is missing an entry for "{}"'.format(CONFIG_NAME, l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Thermostat'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Thermostat.Family'))
         return l_obj
@@ -114,7 +114,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Thermostats']
         except:
-            LOG.warn('The config file does not start with "Thermostats:"')
+            LOG.warning('The config file does not start with "Thermostats:"')
             return None
         l_obj = self._extract_all_button_sets(l_yaml)
         self.m_pyhouse_obj.House.Hvac.Thermostats = l_obj

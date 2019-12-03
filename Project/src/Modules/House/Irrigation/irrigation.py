@@ -52,7 +52,7 @@ class MqttActions:
             l_logmsg += '\tStatus: {}\n'.format(self._decode_status(p_msg.Topic, p_msg.Payload))
         else:
             l_logmsg += '\tUnknown irrigation sub-topic {}'.format(p_msg.Payload)
-            LOG.warn('Unknown Irrigation Topic: {}'.format(l_topic[0]))
+            LOG.warning('Unknown Irrigation Topic: {}'.format(l_topic[0]))
         return l_logmsg
 
 

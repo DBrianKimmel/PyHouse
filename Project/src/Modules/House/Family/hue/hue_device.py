@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -56,7 +56,7 @@ class LocalConfig:
         try:
             l_modules = p_yaml['Modules']
         except:
-            LOG.warn('No "Modules" list in "house.yaml"')
+            LOG.warning('No "Modules" list in "house.yaml"')
             return
         for l_module in l_modules:
             LOG.debug('found Module "{}" in house config file.'.format(l_module))
@@ -80,7 +80,7 @@ class LocalConfig:
                 setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Hue config is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Hue config is missing an entry for "{}"'.format(l_key))
         LOG.debug(PrettyFormatAny.form(l_obj, 'Hue'))
         return l_obj
 
@@ -105,7 +105,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Hue']
         except:
-            LOG.warn('The config file does not start with "Hue:"')
+            LOG.warning('The config file does not start with "Hue:"')
             return None
         l_hue = self._extract_all_devices(l_yaml)
         # self.m_pyhouse_obj.House.Name = l_house.Name

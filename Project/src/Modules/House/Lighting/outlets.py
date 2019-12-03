@@ -64,7 +64,7 @@ class MqttActions:
             p_msg.LogMessage += '\tResult:\n'
         else:
             p_msg.LogMessage += '\tUnknown house/outlet sub-topic: {}; - {}'.format(p_msg.Topic, p_msg.Payload)
-            LOG.warn('Unknown "house/outlet" sub-topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic[0], p_msg.Topic, p_msg.Payload))
+            LOG.warning('Unknown "house/outlet" sub-topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic[0], p_msg.Topic, p_msg.Payload))
 
 
 class LocalConfig:
@@ -103,7 +103,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         LOG.info('Extracted light "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -128,7 +128,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Outlets']
         except:
-            LOG.warn('The config file does not start with "Outlets:"')
+            LOG.warning('The config file does not start with "Outlets:"')
             return None
         l_outlets = self._extract_all_outlets(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Outlets = l_outlets

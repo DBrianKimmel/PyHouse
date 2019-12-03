@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -77,7 +77,7 @@ class DecodeResponses:
                     LOG.debug('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
-                # LOG.warn("Dropping a leading char {:#x}  {}".format(l_stx, FormatBytes(p_controller_obj._Message)))
+                # LOG.warning("Dropping a leading char {:#x}  {}".format(l_stx, FormatBytes(p_controller_obj._Message)))
                 p_controller_obj._Message = p_controller_obj._Message[1:]
                 return 'Drop'
 

@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -320,7 +320,7 @@ class Server:
                 self.wfile.write(fh.read())
                 fh.close()
             except Exception as e:
-                LOG.warn('Cannot access %s' % icon, e)
+                LOG.warning('Cannot access %s' % icon, e)
 
         elif self.m_path == '/api/' or self.m_path == '/api/%s' % username or self.m_path == '/api/%s/' % username:
             self._set_headers("application/json")
@@ -494,7 +494,7 @@ class HueProtocol(Protocol):
                 HueDispatch(p_pyhouse_obj, p_finished, p_command, p_code).get_sensors(p_body)
 
         def eb_failed(fail_reason):
-            LOG.warn("initial Hue Hub connection failed: {}".format(fail_reason))
+            LOG.warning("initial Hue Hub connection failed: {}".format(fail_reason))
             # l_ReconnectingService.stopService()
 
         l_msg = p_reason.getErrorMessage()  # this gives a tuple of messages (I think)

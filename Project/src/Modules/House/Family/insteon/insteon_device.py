@@ -12,7 +12,7 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-02'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -129,7 +129,7 @@ class Utility:
                 else:
                     LOG.error('Could not start PLM')
             else:
-                LOG.warn('Not an insteon controller "{}"'.format(l_controller_obj.Name))
+                LOG.warning('Not an insteon controller "{}"'.format(l_controller_obj.Name))
                 pass  #  Not interested in this controller. (Non-Insteon)
         LOG.info('Found the following insteon PLMs: {}'.format(l_list))
         return l_list
@@ -161,7 +161,7 @@ class LocalConfig:
         try:
             l_modules = p_yaml['Modules']
         except:
-            LOG.warn('No "Modules" list in "house.yaml"')
+            LOG.warning('No "Modules" list in "house.yaml"')
             return
         for l_module in l_modules:
             LOG.debug('found Module "{}" in house config file.'.format(l_module))
@@ -185,7 +185,7 @@ class LocalConfig:
                 setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Insteon config is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Insteon config is missing an entry for "{}"'.format(l_key))
         LOG.debug(PrettyFormatAny.form(l_obj, 'Insteon'))
         return l_obj
 
@@ -210,7 +210,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Insteon']
         except:
-            LOG.warn('The config file does not start with "Insteon:"')
+            LOG.warning('The config file does not start with "Insteon:"')
             return None
         l_hue = self._extract_all_devices(l_yaml)
         # self.m_pyhouse_obj.House.Name = l_house.Name

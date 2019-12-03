@@ -16,7 +16,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-12-02'
 
 # Import system type stuff
 import re
@@ -97,7 +97,7 @@ class lightingUtilityInt(FindExternalIpAddress):
             return l_body_defer
 
         def eb_response(p_reason):
-            LOG.warn(' failed to fetch Url - {}'.format(p_reason))
+            LOG.warning(' failed to fetch Url - {}'.format(p_reason))
 
         l_agent = Agent(p_pyhouse_obj._Twisted.Reactor)
         l_url = self._get_url(p_key)

@@ -244,7 +244,7 @@ class MqttActions:
             p_msg.LogMessage += '\tStatus: {}\n'.format(self._decode_status(l_topic[0], p_msg.Payload))
         else:
             p_msg.LogMessage += '\tUnknown Pandora sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Entertainment msg', 160))
-            LOG.warn('Unknown Pandora Topic: {}'.format(l_topic[0]))
+            LOG.warning('Unknown Pandora Topic: {}'.format(l_topic[0]))
 
 
 class ExtractPianobar:
@@ -497,7 +497,7 @@ class PandoraControl(A_V_Control):
         LOG.info('Start Pianobar.')
         l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[CONFIG_NAME]
         if l_pandora_plugin_obj._OpenSessions > 0:
-            LOG.warn('multiple pianobar start attempts')
+            LOG.warning('multiple pianobar start attempts')
             return
         l_pandora_plugin_obj._OpenSessions += 1
         self.m_processProtocol = PianobarProtocol(self.m_pyhouse_obj)
@@ -562,11 +562,11 @@ class PandoraControl(A_V_Control):
         """
         LOG.info('Play Pandora - {}'.format(p_message))
         if not self.is_pianobar_installed(self.m_pyhouse_obj):
-            LOG.warn('Pianobar is not installed yet pandora is configured.')
+            LOG.warning('Pianobar is not installed yet pandora is configured.')
             return
         l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[CONFIG_NAME]
         if l_pandora_plugin_obj._OpenSessions > 0:
-            LOG.warn('multiple pianobar start attempts')
+            LOG.warning('multiple pianobar start attempts')
             return
         self._pandora_starting()
         l_pandora_plugin_obj._OpenSessions += 1
@@ -615,7 +615,7 @@ class PandoraControl(A_V_Control):
             self.m_transport.write(b'q')
             self.m_transport.closeStdin()
         except Exception as e_err:
-            LOG.warn('Could not close pianobar - {}'.format(e_err))
+            LOG.warning('Could not close pianobar - {}'.format(e_err))
             pass
         LOG.info('Service Stopped')
         for l_service in l_pandora_plugin_obj.Services.values():
@@ -701,7 +701,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Pandora Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Pandora Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def _extract_all_services(self, p_config):
@@ -730,7 +730,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Pandora Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Pandora Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
     def load_yaml_config(self, p_api):
@@ -745,7 +745,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Pandora']
         except:
-            LOG.warn('The config file does not start with "Pandora:"')
+            LOG.warning('The config file does not start with "Pandora:"')
             return None
         l_pandora = self._extract_all_pandora(l_yaml, p_api)
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = l_pandora
@@ -775,7 +775,7 @@ class Api(MqttActions):
             LOG.info('Pianobar present')
             self.m_local_config.load_yaml_config(self)
         else:
-            LOG.warn('Pianobar Missing')
+            LOG.warning('Pianobar Missing')
 
     def Start(self):
         """ Start the Pandora plugin since we have it configured.

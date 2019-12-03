@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-12-02'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
@@ -232,7 +232,7 @@ class PutGetXML(object):
         if l_xml is None or len(l_xml) != 36:
             l_xml_bad = l_xml
             l_xml = Uuid.create_uuid()
-            LOG.warn("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
+            LOG.warning("A valid UUID was not found for {} - {} generating a new one. {}".format(p_name, l_xml_bad, l_xml))
         return l_xml
 
     @staticmethod
