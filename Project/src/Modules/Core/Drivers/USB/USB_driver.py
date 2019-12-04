@@ -11,15 +11,15 @@
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-12-04'
 
 # Import system type stuff
-import usb
-from twisted.internet.protocol import Protocol
+import usb  # type: ignore
+from twisted.internet.protocol import Protocol  # type:ignore
 
 # Import PyHouse Modules
-from Modules.Drivers.USB.USB_data import UsbData
-from Modules.Drivers.USB.USB_open import Api as usbopenApi
+from Modules.Core.Drivers.USB.USB_data import UsbData
+from Modules.Core.Drivers.USB.USB_open import Api as usbopenApi
 from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core import logging_pyh as Logger
 

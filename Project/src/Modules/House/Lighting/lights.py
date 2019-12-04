@@ -17,11 +17,12 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-04'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+from typing import Union
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -41,11 +42,11 @@ class LightInformation:
     """ This is the information that the user needs to enter to uniquely define a light.
     """
 
-    def __init__(self):
-        self.Name = None
-        self.Comment = None  # Optional
-        self.DeviceType = 'Lighting'
-        self.DeviceSubType = 'Light'
+    def __init__(self) -> None:
+        self.Name: str = ''
+        self.Comment: str = ''  # Optional
+        self.DeviceType: str = 'Lighting'
+        self.DeviceSubType: str = 'Light'
         self.Family = None  # LightFamilyInformation()
         self.Room = None  # LightRoomInformation() Optional
 
@@ -102,6 +103,7 @@ class LocalConfig:
 
     m_config = None
     m_pyhouse_obj = None
+    m_path: str = None  # type: ignore  # the path of the config file
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -125,10 +127,10 @@ class LocalConfig:
         for l_key, l_value in p_config.items():
             # LOG.debug('Light Key: {}; Val: {}'.format(l_key, l_value))
             if l_key == 'Family':
-                l_obj.Family = self.m_config.extract_family_group(l_value)
-                l_obj.Family.Type = 'Light'
+                l_obj.Family = self.m_config.extract_family_group(l_value)  # type: ignore
+                l_obj.Family.Type = 'Light'  # type: ignore
             elif l_key == 'Room':
-                l_obj.Room = self.m_config.extract_room_group(l_value)
+                l_obj.Room = self.m_config.extract_room_group(l_value)  # type: ignore
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for required data missing from the config file.
@@ -136,7 +138,7 @@ class LocalConfig:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         LOG.info('Extracted light "{}"'.format(l_obj.Name))
-        return l_obj
+        return l_obj  # type: ignore
 
     def _extract_all_lights(self, p_config):
         """ Get all of the lights configured
@@ -149,14 +151,14 @@ class LocalConfig:
         LOG.info('Extracted {} lights'.format(len(l_dict)))
         return l_dict
 
-    def load_yaml_config(self):
+    def load_yaml_config(self) -> Union[None, str]:
         """ Read the lights.yaml file if it exists.  No file = no lights.
         It must contain 'Lights:'
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Lighting.Lights = None
-        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        self.m_pyhouse_obj.House.Lighting.Lights = None  # type: ignore
+        l_yaml = self.m_config.read_config(CONFIG_NAME)  # type: ignore
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
@@ -166,7 +168,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Lights:"')
             return None
         l_lights = self._extract_all_lights(l_yaml)
-        self.m_pyhouse_obj.House.Lighting.Lights = l_lights
+        self.m_pyhouse_obj.House.Lighting.Lights = l_lights  # type: ignore
         return l_lights  # for testing purposes
 
 # -------------
@@ -206,7 +208,7 @@ class LocalConfig:
         LOG.info('Saving Config - Version:{}'.format(__version__))
         try:
             l_node = None  # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
-            l_config = l_node.Yaml['Lights']
+            _l_config = l_node.Yaml['Lights']
         except Exception as e_err:
             LOG.info('No Lights yaml file - creating a new file - {}'.format(e_err))
             # l_node = config_tools.Yaml(self.m_pyhouse_obj).create_yaml_node('Lights')
@@ -283,9 +285,9 @@ class Api(MqttActions):
     """
 
     m_pyhouse_obj = None
-    m_local_config = None
+    m_local_config = None  # Points to the one instance of this class
 
-    def __init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj) -> None:
         # p_pyhouse_obj.House.Lighting.Lights = {}
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)

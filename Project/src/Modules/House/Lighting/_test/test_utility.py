@@ -9,37 +9,21 @@
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2019-12-04'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing.Lighting.lighting_controllers import XML as controllerXML
-from Modules.Housing.Lighting.lighting_lights import XML as lightXML
-from Modules.Housing.Lighting.lighting_utility import lightingUtility
-from Modules.Housing.Lighting.test.xml_lights import \
-    XML_LIGHT_SECTION, \
-    TESTING_LIGHT_SECTION, \
-    TESTING_LIGHT_NAME_0, \
-    TESTING_LIGHT_UUID_0, \
-    TESTING_LIGHT_UUID_1, \
-    TESTING_LIGHT_NAME_1, \
-    TESTING_LIGHT_NAME_2, \
-    TESTING_LIGHT_UUID_2
-from Modules.Housing.Lighting.test.xml_lighting import \
-    XML_LIGHTING
+from _test.testing_mixin import SetupPyHouseObj
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_xml = SetupPyHouseObj().BuildXml()
 
 
 class A0(unittest.TestCase):
@@ -57,7 +41,7 @@ class A1_Api(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_DoSchedule(self):
         pass
@@ -66,30 +50,12 @@ class A1_Api(SetupMixin, unittest.TestCase):
         pass
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
-
-    def test_01_Raw(self):
-        l_xml = XML_LIGHTING
-        # print(l_xml)
-        self.assertEqual(l_xml[:17], '<LightingSection>')
-
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_LIGHT_SECTION)
-        # print(PrettyFormatAny.form(l_xml, 'A2-02-A Parsed'))
-        self.assertEqual(l_xml.tag, TESTING_LIGHT_SECTION)
-
-
 class B1_Lights_by_id(SetupMixin, unittest.TestCase):
     """ This section tests lookup
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_lights = lightXML().read_all_lights_xml(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
 
     def test_01_Name(self):
         """ Write out the XML file for the Base controller
@@ -133,8 +99,7 @@ class B2_Object_by_id(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_lights = lightXML().read_all_lights_xml(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
 
     def test_01_Name(self):
         """ Lookup by name
@@ -170,8 +135,7 @@ class C1_ByFamuly(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_controllers = controllerXML().read_all_controllers_xml(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
 
     def test_01_Name(self):
         """ Write out the XML file for the Base controller

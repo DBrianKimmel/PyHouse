@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-04'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -42,7 +42,7 @@ LOG = Logger.getLogger('PyHouse.Core           ')
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
 INITIAL_DELAY = 1 * MINUTES
-XML_SAVE_DELAY = 3 * HOURS  # 2 hours
+SAVE_DELAY = 3 * HOURS
 CONFIG_DIR = '/etc/pyhouse/'
 CONFIG_NAME = 'pyhouse'
 MIN_CONFIG_VERSION = 2.0
@@ -206,7 +206,7 @@ class Utility:
         LOG.info('\n======================== Saved Config Files ========================\n')
 
     def _config_save_loop(self, p_pyhouse_obj):
-        p_pyhouse_obj._Twisted.Reactor.callLater(XML_SAVE_DELAY, self.save_all_components, self.m_components)
+        p_pyhouse_obj._Twisted.Reactor.callLater(SAVE_DELAY, self.save_all_components, self.m_components)
         # self.SaveConfig()
 
 

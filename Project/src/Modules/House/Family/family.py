@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-04'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -207,7 +207,7 @@ class LocalConfig:
 
 class Api:
 
-    m_family = {}
+    m_family = {}  # type: ignore
     m_local_config = None
     m_pyhouse_obj = None
 

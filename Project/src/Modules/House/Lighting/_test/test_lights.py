@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-04'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -24,12 +24,31 @@ from Modules.House.Lighting.lights import LocalConfig as lightsConfig
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 TEST_YAML = """\
-MotionDetector:
-   - Name: MotionLiving
-     Comment: Living Room
-     Family:
-        Name: Insteon
-        Address: 31.75.85
+Lights:
+    - Name: Front Door
+      Room: Outside
+      Family:
+          Name: Insteon
+          Address: 46.09.E7
+    - Name: Garage
+      Room: Outside
+      Dimmable: true
+      Family:
+         Name: Insteon
+         Address: 43.F9.AA
+    - Name: Buffet
+      Comment: x
+      Room: Dining Room
+      Family:
+          Name: Insteon
+          Address: 1D.26.6B
+    - Name: Wet Bar
+      Comment: This is the PP Wet bar in the livingroom
+      Family:
+          Name: Insteon
+          Address: 18.C5.8F
+      Dimmable: true  # Optional
+      Room: Living Room
 """
 
 
@@ -151,7 +170,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         l_yaml = self.m_node.Yaml['Lights'][0]['Controller']
         # print('C1-04-A - Yaml {}'.format(l_yaml))
         # print(PrettyFormatAny.form(l_yaml, 'C1-04-B - Yaml'))
-        l_obj = lightsConfig()._extract_controller_config(l_yaml)
+        _l_obj = lightsConfig()._extract_controller_config(l_yaml)
         # print(PrettyFormatAny.form(l_obj, 'C1-04-E - Node'))
 
     def test_08_Light(self):
@@ -189,11 +208,25 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         # self.m_obj = lightsXML().read_all_lights_xml(self.m_pyhouse_obj)
-        lightsConfig().load_yaml_config(self.m_pyhouse_obj)
 
     def test_01_(self):
         """Test the write for proper XML Base elements
         """
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights, 'C2-01-A - Node'))
+
+
+class Z9_YamlWrite(SetupMixin, unittest.TestCase):
+    """
+    This section tests the reading and writing of the Yaml config file  used by lighting_lights.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+
+    def test_01_(self):
+        """Test the write for proper XML Base elements
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights, 'C2-01-A - Node'))
+        pass
 
 #  ## END DBK

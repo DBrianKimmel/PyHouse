@@ -9,12 +9,13 @@
 
 """
 
-__updated__ = '2019-12-02'
-__version_info__ = (19, 11, 4)
+__updated__ = '2019-12-04'
+__version_info__ = (19, 12, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
+from typing import Union
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 
@@ -45,9 +46,9 @@ class ConfigInformation:
 
 class ConfigFileInformation:
 
-    def __init__(self):
-        self.Name = None  # LowerCase without .yaml
-        self.Path = None
+    def __init__(self) -> None:
+        self.Name: str = ''  # type: ignore  # LowerCase without .yaml
+        self.Path: str = None  # type: ignore
 
 
 class RoomLocationInformation:
@@ -186,17 +187,16 @@ class Tools:
 
     m_pyhouse_obj = None
 
-    def __init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj) -> None:
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _get_config_dir(self):
+    def _get_config_dir(self) -> str:
         """
         @return: The configuration Directory ('/etc/pyhouse' is the default)
         """
         return '/etc/pyhouse'
-        # return self.m_pyhouse_obj._Config.ConfigDir
 
-    def _find_file(self, p_name, p_dir):
+    def _find_file(self, p_name: str, p_dir: str) -> Union[None, str]:
         """
         @param p_name: is the file to find
         @param p_dir: is the dir tree to search for the file
@@ -475,14 +475,14 @@ class Api(SubFields, Tools):
         l_ret = self.m_yaml._write_yaml(p_filename, p_data, addnew)
         return l_ret
 
-    def find_config(self, p_name):
+    def XXXfind_config(self, p_name):
         """ Given a name like 'computer' or 'Computer', find any config file 'computer.yaml'.
         @return: the absolute path of the file or None if not found.
         """
         l_ret = Tools(self.m_pyhouse_obj).find_config_file(p_name)
         return l_ret
 
-    def look_for_all_configed_modules(self, p_modules):
+    def XXXlook_for_all_configed_modules(self, p_modules):
         """ Find all modules to find config files for.
         @param p_modules: is a list of module names to check for.
         @return: a dict of module names that have config files.

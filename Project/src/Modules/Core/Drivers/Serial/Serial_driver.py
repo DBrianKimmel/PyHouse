@@ -23,14 +23,14 @@ The overall logic is that:
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-04'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import pyudev
-from twisted.internet.protocol import Protocol
-from twisted.internet.serialport import SerialPort
+import pyudev  # type:ignore
+from twisted.internet.protocol import Protocol  # type:ignore
+from twisted.internet.serialport import SerialPort  # type:ignore
 
 #  Import PyMh files
 
