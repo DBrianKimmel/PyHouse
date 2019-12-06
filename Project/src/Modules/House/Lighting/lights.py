@@ -265,7 +265,7 @@ class MqttActions:
         l_topic = p_msg.UnprocessedTopic
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         p_msg.LogMessage += '\tLighting/Lights: {}\n\t'.format(p_msg.Topic)
-        LOG.debug('LightingLightsDispatch Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        # LOG.debug('LightingLightsDispatch Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
         if l_topic[0] == 'control':
             self._decode_control(p_msg.Payload)
             p_msg.LogMessage += 'Light Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Control'))
@@ -274,7 +274,7 @@ class MqttActions:
             # The status is contained in LightData() above.
             # p_msg.LogMessage += 'Light Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Status'))
             p_msg.LogMessage += 'Light Status: {}'.format(p_msg.Payload)
-            LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+            # LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
         else:
             p_msg.LogMessage += '\tUnknown Lighting/Light sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Light Status'))
             LOG.warning('Unknown Lights Topic: {}'.format(l_topic[0]))

@@ -11,12 +11,12 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-12-05'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.Utilities.debug_tools import FormatBytes
+from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
@@ -114,12 +114,12 @@ class DecodeResponses:
 
         insteon_utils.update_insteon_obj(p_pyhouse_obj, p_device_obj)
         p_controller_obj.Ret = True
-        LOG.debug('Light Response {}'.format(l_debug_msg))
-        LOG.info('Light: {}, Brightness: {}'.format(p_device_obj.Name, p_device_obj.BrightnessPct))
+        LOG.info('Light: {}, : {}'.format(p_device_obj.Name, l_debug_msg))
+        # LOG.debug(PrettyFormatAny.form(p_device_obj, 'Device'))
         if l_mqtt_publish:
-            l_topic = 'house/lighting/light/status'
+            l_type = p_device_obj.DeviceSubType.lower()  # Light, Outlet ...
+            l_topic = 'house/lighting/{}/status'.format(l_type)
             p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)
-            pass
         return l_debug_msg
 
 # ## END DBK

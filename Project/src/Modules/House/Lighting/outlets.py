@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-04'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,6 +18,9 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
+from Modules.Core.Utilities import extract_tools
+from Modules.House.Lighting.utility import lightingUtility as lightingUtility
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Outlets        ')
@@ -29,7 +32,7 @@ class OutletInformation:
     """ This is the information that the user needs to enter to uniquely define a Outlet.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.Name = None
         self.Comment = None  # Optional
         self.DeviceType = 'Lighting'
@@ -40,12 +43,54 @@ class OutletInformation:
         self.Room = None  # LightRoomInformation() Optional
 
 
+class OutletControlInformation:
+    """ This is the idealized light info.
+    This class contains all the reportable and controllable information a light might have.
+
+    ==> PyHouse.House.Lighting.Lights.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.BrightnessPct = 0  # 0% to 100%
+        self.TransitionTime = 0  # 0 to 65535 ms = time to turn on or off (fade Time or Rate)
+        self.IsDimmable = False
+        self.Trigger = False
+        self.Type: str = 'outlet'
+
+
 class MqttActions:
     """
     """
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _decode_control(self, p_message):
+        """
+        pyhouse/<housename>/house/lighting/light/xxx
+        """
+        l_control = OutletControlInformation()
+        l_control.Name = l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
+        l_control.RoomName = extract_tools.get_mqtt_field(p_message, 'RoomName')
+        l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
+        LOG.info('Mqtt Control "{}"'.format(l_light_name))
+        # LOG.debug(PrettyFormatAny.form(l_control, 'Control'))
+        #
+        l_outlet_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Outlets, name=l_light_name)
+        if l_outlet_obj == None:
+            LOG.warning(' Light "{}" was not found.'.format(l_light_name))
+            return
+        LOG.debug(PrettyFormatAny.form(l_outlet_obj.Family, 'Outlet.Family'))
+        #
+        l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'insteon')
+        # LOG.debug(PrettyFormatAny.form(l_controller_obj[0], 'Controller'))
+        if len(l_controller_obj) > 0:
+            # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
+            l_api = l_controller_obj[0]._HandlerApi
+            # LOG.debug(PrettyFormatAny.form(l_api, 'API'))
+            if l_api == None:
+                return
+            l_api.Control(l_outlet_obj, l_controller_obj[0], l_control)
 
     def decode(self, p_msg):
         """
@@ -62,9 +107,19 @@ class MqttActions:
             p_msg.LogMessage += '\tResult:\n'
         elif l_topic[0] == 'LWT':
             p_msg.LogMessage += '\tResult:\n'
+        #
+        elif l_topic[0] == 'control':
+            self._decode_control(p_msg.Payload)
+            p_msg.LogMessage += 'Outlet Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Outlet Control'))
+            LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        #
+        elif l_topic[0] == 'status':
+            p_msg.LogMessage += 'Outlet Status: {}'.format(p_msg.Payload)
+            LOG.debug('MqttOutletDispatch Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        #
         else:
-            p_msg.LogMessage += '\tUnknown house/outlet sub-topic: {}; - {}'.format(p_msg.Topic, p_msg.Payload)
-            LOG.warning('Unknown "house/outlet" sub-topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic[0], p_msg.Topic, p_msg.Payload))
+            p_msg.LogMessage += '\tUnknown outlet sub-topic: "{}"; - {}'.format(p_msg.Topic, p_msg.Payload)
+            LOG.warning('Unknown "house/outlet" sub-topic: "{}"\n\tTopic: {}\n\tMessge: {}'.format(l_topic[0], p_msg.Topic, p_msg.Payload))
 
 
 class LocalConfig:
@@ -156,5 +211,21 @@ class Api:
     def SaveConfig(self):
         """
         """
+
+    def Control(self, p_device_obj, p_controller_obj, p_control):
+        """
+        Insteon specific version of control light
+        All that Insteon can control is Brightness and Fade Rate.
+
+        @param p_controller_obj: optional  ==> ControllerInformation
+        @param p_device_obj: the device being controlled
+        @param p_control: the idealized control params
+        """
+        if self.m_plm == None:
+            LOG.info('No PLM was defined - Quitting.')
+            return
+        # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
+        l_api = p_controller_obj._HandlerApi  # The family
+        l_api.Control(p_device_obj, p_controller_obj, p_control)
 
 # ## END DBK

@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-04'
 
 #  Import system type stuff
 
@@ -331,7 +331,7 @@ class Decode:
         #  Add additional insteon classes in here
         #
         if l_ret == None:
-            LOG.debug(PrettyFormatAny.form(l_house, 'House'))
+            # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
             LOG.debug(PrettyFormatAny.form(l_house.Security, 'Security'))
             LOG.debug(PrettyFormatAny.form(l_house.Security.Motion_Detectors, 'Security.M_D'))
             LOG.warning("WARNING - Address {} *NOT* found.".format(p_address))

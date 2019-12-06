@@ -12,11 +12,12 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-05'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
+from typing import Optional
 
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -33,13 +34,13 @@ class InsteonInformation:
     """
     """
 
-    def __init__(self):
-        self.Family = None
-        self.Address = None  # '1A.B2.3C'
-        self._DevCat = 0  # Dev-Cat and Sub-Cat (2 bytes)
-        self._EngineVersion = 2
-        self._FirmwareVersion = 0
-        self._ProductKey = ''  # 3 bytes
+    def __init__(self) -> None:
+        self.Family: Optional[str] = None
+        self.Address: Optional[str] = None  # '1A.B2.3C'
+        self._DevCat: int = 0  # Dev-Cat and Sub-Cat (2 bytes)
+        self._EngineVersion: int = 2
+        self._FirmwareVersion: int = 0
+        self._ProductKey: Optional[str] = None  # 3 bytes
         self._Links = {}
 
 
