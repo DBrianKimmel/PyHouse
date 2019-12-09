@@ -20,7 +20,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-12-06'
 
 #  Import system type stuff
 
@@ -77,7 +77,7 @@ class InsteonThermostatStatus:
         self.Mode = None  # Off, Heat, Cool, ManualAuto, Auto
 
 
-class Util(object):
+class Util:
     """
     """
 
@@ -86,7 +86,7 @@ class Util(object):
         return l_ret
 
 
-class DecodeResponses(object):
+class DecodeResponses:
 
     def decode_0x50(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
         """

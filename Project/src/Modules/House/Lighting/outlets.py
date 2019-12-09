@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-08'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -148,7 +148,7 @@ class LocalConfig:
         l_obj = OutletInformation()
         l_required = ['Name', 'Family']
         for l_key, l_value in p_config.items():
-            # print('Light Key: {}; Val: {}'.format(l_key, l_val))
+            # print('Light Key: {}; Val: {}'.format(l_key, l_value))
             if l_key == 'Family':
                 l_obj.Family = self.m_config.extract_family_group(l_value)
             elif l_key == 'Room':

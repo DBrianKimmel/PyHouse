@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-06'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -31,9 +31,9 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_hvac import DecodeResponses as DecodeHvac
-from Modules.House.Family.insteon.insteon_light import DecodeResponses as DecodeLight
+from Modules.House.Family.insteon.insteon_lighting import DecodeResponses as DecodeLighting
 from Modules.House.Family.insteon.insteon_security import DecodeResponses as DecodeSecurity
-from Modules.House.Family.insteon.insteon_link import DecodeLnk as linkDecode
+from Modules.House.Family.insteon.insteon_link import DecodeLink as linkDecode
 from Modules.House.Family.insteon.insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -46,6 +46,8 @@ LOG = Logger.getLogger('PyHouse.insteon_decode ')
 class DecodeResponses:
 
     m_pyhouse_obj = None
+    m_controller_obj = None
+    m_link = None
 
     def __init__(self, p_pyhouse_obj, p_controller_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -70,10 +72,10 @@ class DecodeResponses:
                 l_cur_len = len(p_controller_obj._Message)
                 if l_cur_len >= l_need_len:
                     # LOG.debug('Got response:{}'.format(FormatBytes(p_controller_obj._Message[0:l_need_len])))
-                    self._decode_dispatch(self.m_pyhouse_obj, p_controller_obj)
+                    self._decode_dispatch(p_controller_obj)
                     return 'Ok'
                 else:
-                    LOG.debug('Message {:#02X} Needs {}'.format(p_controller_obj._Message[1], l_need_len))
+                    LOG.debug('Message {:#02X} Needs {} bytes'.format(p_controller_obj._Message[1], l_need_len))
                     LOG.debug('Message was too short - waiting for rest of message. {}'.format(FormatBytes(p_controller_obj._Message)))
                     return 'Short'
             else:
@@ -97,46 +99,43 @@ class DecodeResponses:
             LOG.error(l_msg)
         return l_ret
 
-    def _decode_dispatch(self, p_pyhouse_obj, p_controller_obj):
+    def _decode_dispatch(self, p_controller_obj):
         """ Decode a message that was ACKed / NAked.
         see IDM pages 238-241
 
         @return: a flag that is True for ACK and False for NAK/Invalid response.
         """
         l_message = p_controller_obj._Message
-        l_ret = False
         l_cmd = p_controller_obj._Message[1]
         if l_cmd == 0:
             LOG.warning("Found a '0' record ->{}.".format(FormatBytes(l_message)))
             p_controller_obj._Message = p_controller_obj._Message[1:]
-            return l_ret
-        elif l_cmd == 0x50: l_ret = self._decode_0x50(p_controller_obj)
-        elif l_cmd == 0x51: l_ret = self._decode_0x51(p_controller_obj)
-        elif l_cmd == 0x52: l_ret = self._decode_0x52_record(p_controller_obj)
-        elif l_cmd == 0x53: linkDecode.decode_0x53(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x54: linkDecode.decode_0x54(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x55: linkDecode.decode_0x55(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x56: linkDecode.decode_0x56(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x57: linkDecode.decode_0x57(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x58: linkDecode.decode_0x58(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x60: l_ret = self._decode_0x60_record(p_controller_obj)
-        elif l_cmd == 0x61: l_ret = self._decode_0x61_record(p_controller_obj)
-        elif l_cmd == 0x62: l_ret = self._decode_0x62_record(p_controller_obj)
-        elif l_cmd == 0x64: linkDecode.decode_0x64(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x65: linkDecode.decode_0x65(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x69: linkDecode.decode_0x69(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x6A: linkDecode.decode_0x6A(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x6B: l_ret = self._decode_0x6B_record(p_controller_obj)
-        elif l_cmd == 0x6C: linkDecode.decode_0x6C(p_pyhouse_obj, p_controller_obj)
-        elif l_cmd == 0x6F: l_ret = self._decode_0x6F_record(p_controller_obj)
-        elif l_cmd == 0x73: l_ret = self._decode_0x73_record(p_controller_obj)
+            return
+        elif l_cmd == 0x50: self._decode_0x50(p_controller_obj)
+        elif l_cmd == 0x51: self._decode_0x51(p_controller_obj)
+        elif l_cmd == 0x52: self._decode_0x52_record(p_controller_obj)
+        elif l_cmd == 0x53: self.m_link.decode_0x53(p_controller_obj)
+        elif l_cmd == 0x54: self.m_link.decode_0x54(p_controller_obj)
+        elif l_cmd == 0x55: self.m_link.decode_0x55(p_controller_obj)
+        elif l_cmd == 0x56: self.m_link.decode_0x56(p_controller_obj)
+        elif l_cmd == 0x57: self.m_link.decode_0x57(p_controller_obj)
+        elif l_cmd == 0x58: self.m_link.decode_0x58(p_controller_obj)
+        elif l_cmd == 0x60: self._decode_0x60_record(p_controller_obj)
+        elif l_cmd == 0x61: self._decode_0x61_record(p_controller_obj)
+        elif l_cmd == 0x62: self._decode_0x62_record(p_controller_obj)
+        elif l_cmd == 0x64: self.m_link.decode_0x64(p_controller_obj)
+        elif l_cmd == 0x65: self.m_link.decode_0x65(p_controller_obj)
+        elif l_cmd == 0x69: self.m_link.decode_0x69(p_controller_obj)
+        elif l_cmd == 0x6A: self.m_link.decode_0x6A(p_controller_obj)
+        elif l_cmd == 0x6B: self._decode_0x6B_record(p_controller_obj)
+        elif l_cmd == 0x6C: self.m_link.decode_0x6C(p_controller_obj)
+        elif l_cmd == 0x6F: self._decode_0x6F_record(p_controller_obj)
+        elif l_cmd == 0x73: self._decode_0x73_record(p_controller_obj)
         else:
             LOG.error("Unknown Insteon message {}, Cmd:{}".format(FormatBytes(p_controller_obj._Message), l_cmd))
-            # self.check_for_more_decoding(p_controller_obj, l_ret)
-        self.check_for_more_decoding(p_controller_obj, l_ret)
-        return l_ret
+        self.check_for_more_decoding(p_controller_obj)
 
-    def _publish(self, p_pyhouse_obj, p_device_obj):
+    def XXX_publish(self, p_pyhouse_obj, p_device_obj):
         l_topic = "house/lighting/light/{}/info".format(p_device_obj.Name)
         p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
@@ -158,7 +157,7 @@ class DecodeResponses:
         l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[2:5])
         #
         if l_device_obj.DeviceType == 'Lighting':  # Light Type
-            DecodeLight().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
+            DecodeLighting().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
             return
         elif l_device_obj.DeviceType == 'Hvac':  # HVAC Type
             DecodeHvac().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)

@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/insteon/insteon_light.py
+@name:      Modules/House/Family/insteon/insteon_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2019 by D. Brian Kimmel
@@ -11,15 +11,16 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-12-05'
+__updated__ = '2019-12-06'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 from Modules.House.Family.insteon import insteon_utils
 from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
 from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+
+from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Light  ')

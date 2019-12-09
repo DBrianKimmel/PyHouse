@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Lighting/_test/test_lighting_utility.py
+@name:      Modules/House/Lighting/_test/test_utility.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2019-2019 by D. Brian Kimmel
@@ -9,21 +9,71 @@
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-08'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Lighting.utility import lightingUtility
+from Modules.House.Lighting.lights import LocalConfig as lightsConfig
+from Modules.House.Lighting.outlets import LocalConfig as outletsConfig
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+TEST_LIGHTS = """\
+Lights:
+    - Name: Front Door
+      Room: Outside
+      Family:
+          Name: Insteon
+          Address: 11.11.11
+    - Name: Garage
+      Room: Outside
+      Dimmable: true
+      Family:
+         Name: Insteon
+         Address: 22.22.22
+    - Name: Buffet
+      Comment: x
+      Room: Dining Room
+      Family:
+          Name: Insteon
+          Address: 33.33.33
+"""
+TEST_OUTLETS = """\
+Outlets:
+    - Name: Musicroom Lamp
+      Room: Music
+      Family:
+          Name: Insteon
+          Address: 99.99.99
+
+    - Name: Christmas
+      Comment: ??
+      Family:
+          Name: Insteon
+          Address: 88.88.88
+
+    - Name: Gameroom Lamp
+      Room: Game
+      Comment: Fireplace end
+      Family:
+          Name: Insteon
+          Address: 77.77.77
+
+"""
 
 
 class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
-        self.m_xml = SetupPyHouseObj().BuildXml()
+        l_yaml = YAML()
+        self.m_test_config_lights = l_yaml.load(TEST_LIGHTS)['Lights']
+        self.m_test_config_outlets = l_yaml.load(TEST_OUTLETS)['Outlets']
 
 
 class A0(unittest.TestCase):
@@ -32,102 +82,84 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_x', 'title')  # so it is defined when printing is cleaned up.
         print('Id: test_lighting_utility')
 
 
-class A1_Api(SetupMixin, unittest.TestCase):
-    """
-    Test Staticmethods
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self)
-
-    def test_01_DoSchedule(self):
-        pass
-
-    def test_02_ChangeLight(self):
-        pass
-
-
-class B1_Lights_by_id(SetupMixin, unittest.TestCase):
+class B1_Test(SetupMixin, unittest.TestCase):
     """ This section tests lookup
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_lights = lightsConfig(self.m_pyhouse_obj)._extract_all_lights(self.m_test_config_lights)
 
-    def test_01_Name(self):
-        """ Write out the XML file for the Base controller
+    def test_01_Name0(self):
+        """
         """
         l_obj = self.m_lights[0]
         # print(PrettyFormatAny.form(l_obj, 'B1-01-A - Light'))
-        l_ret = lightingUtility()._test_object_by_id(l_obj, name=TESTING_LIGHT_NAME_0)
+        l_ret = lightingUtility()._test_object_by_id(l_obj, name='Front Door')
         # print(PrettyFormatAny.form(l_ret, 'B1-01-B - Light'))
-        self.assertEqual(l_ret.UUID, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_ret.Name, 'Front Door')
 
-    def test_02_UUID(self):
-        """ Write out the XML file for the Base controller
+    def test_02_Name1(self):
+        """
         """
         l_obj = self.m_lights[1]
         # print(PrettyFormatAny.form(l_obj, 'B1-02-A - Light'))
-        l_ret = lightingUtility()._test_object_by_id(l_obj, UUID=TESTING_LIGHT_UUID_1)
+        l_ret = lightingUtility()._test_object_by_id(l_obj, name='Garage')
         # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Light'))
-        self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_1)
-
-    def test_03_Key(self):
-        """ Write out the XML file for the Base controller
-        """
-        l_obj = self.m_lights[2]
-        # print(PrettyFormatAny.form(l_obj, 'B1-03-A - Light'))
-        l_ret = lightingUtility()._test_object_by_id(l_obj, key=2)
-        # print(PrettyFormatAny.form(l_ret, 'B1-03-B - Light'))
-        self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_2)
-
-    def test_04_None(self):
-        """ Write out the XML file for the Base controller
-        """
-        l_obj = self.m_lights[0]
-        # print(PrettyFormatAny.form(l_obj, 'B1-04-A - Light'))
-        l_ret = lightingUtility()._test_object_by_id(l_obj, name=None)
-        # print(PrettyFormatAny.form(l_ret, 'B1-04-B - Light'))
-        self.assertIsNone(l_ret)
+        self.assertEqual(l_ret.Name, 'Garage')
 
 
-class B2_Object_by_id(SetupMixin, unittest.TestCase):
+class B2_Get(SetupMixin, unittest.TestCase):
     """ This section tests object lookup by some ID
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_lights = lightsConfig(self.m_pyhouse_obj)._extract_all_lights(self.m_test_config_lights)
+        self.m_outlets = outletsConfig(self.m_pyhouse_obj)._extract_all_outlets(self.m_test_config_lights)
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
+        self.m_pyhouse_obj.House.Lighting.Outlets = self.m_outlets
 
-    def test_01_Name(self):
+    def test_01_Light(self):
         """ Lookup by name
         """
-        l_objs = self.m_lights
+        l_objs = self.m_pyhouse_obj.House.Lighting
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = lightingUtility().get_object_by_id(l_objs, name=TESTING_LIGHT_NAME_0)
+        l_ret = lightingUtility().get_object_type_by_id(l_objs, name='Front Door')
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
-        self.assertEqual(l_ret.UUID, TESTING_LIGHT_UUID_0)
+        self.assertEqual(l_ret.Name, 'Front Door')
 
-    def test_02_UUID(self):
+    def test_02_Light(self):
+        """ Lookup by name
+        """
+        l_objs = self.m_pyhouse_obj.House.Lighting
+        # print(PrettyFormatAny.form(l_objs, 'B2-02-A - Lights'))
+        l_ret = lightingUtility().get_object_type_by_id(l_objs, name='Garage')
+        # print(PrettyFormatAny.form(l_ret, 'B2-02-B - Light'))
+        self.assertEqual(l_ret.Name, 'Garage')
+
+    def test_04_Outlet(self):
         """ Lookup by UUID
         """
-        l_objs = self.m_lights
-        # print(PrettyFormatAny.form(l_objs, 'B2-02-A - Lights'))
-        l_ret = lightingUtility().get_object_by_id(l_objs, UUID=TESTING_LIGHT_UUID_2)
-        # print(PrettyFormatAny.form(l_ret, 'B2-02-B - Light'))
-        self.assertEqual(l_ret.Name, TESTING_LIGHT_NAME_2)
+        l_objs = self.m_pyhouse_obj.House.Lighting
+        # print(PrettyFormatAny.form(l_objs, 'B2-04-A - Lights'))
+        l_ret = lightingUtility().get_object_type_by_id(l_objs, name='Musicroom Lamp')
+        # print(PrettyFormatAny.form(l_ret, 'B2-04-B - Light'))
+        self.assertEqual(l_ret.Name, 'Musicroom Lamp')
 
-    def test_03_None(self):
+    def test_05_Outlet(self):
         """ Lookup object by non-existant key (to _test failure
         Logs an error.
         """
-        l_objs = self.m_lights
+        l_objs = self.m_pyhouse_obj.House.Lighting
         # print(PrettyFormatAny.form(l_objs, 'B2-01-A - Lights'))
-        l_ret = lightingUtility().get_object_by_id(l_objs, key=7777)
+        l_ret = lightingUtility().get_object_type_by_id(l_objs, name='')
         # print(PrettyFormatAny.form(l_ret, 'B2-01-B - Light'))
-        self.assertIsNone(l_ret)
+        self.assertEqual(l_ret.Name, 'Musicroom Lamp')
 
 
 class C1_ByFamuly(SetupMixin, unittest.TestCase):

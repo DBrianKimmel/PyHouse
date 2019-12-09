@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-07'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -29,24 +29,24 @@ Lights:
       Room: Outside
       Family:
           Name: Insteon
-          Address: 46.09.E7
+          Address: 11.11.11
     - Name: Garage
       Room: Outside
       Dimmable: true
       Family:
          Name: Insteon
-         Address: 43.F9.AA
+         Address: 22.22.22
     - Name: Buffet
       Comment: x
       Room: Dining Room
       Family:
           Name: Insteon
-          Address: 1D.26.6B
+          Address: 33.33.33
     - Name: Wet Bar
       Comment: This is the PP Wet bar in the livingroom
       Family:
           Name: Insteon
-          Address: 18.C5.8F
+          Address: 44.44.44
       Dimmable: true  # Optional
       Room: Living Room
 """

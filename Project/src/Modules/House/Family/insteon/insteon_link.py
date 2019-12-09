@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-12-05'
+__updated__ = '2019-12-06'
 
 #  Import system type stuff
 
@@ -33,7 +33,7 @@ class LinkData():
     """
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.Addess = 123456  #  3 bytes
         self.Control = 0x0000  #  2 Bytes
         self.Data = '00.00.00'  #  3 bytes
@@ -47,70 +47,66 @@ class Commands:
     """
     """
 
-    """
-Puts the PLM into linking mode as a controller, if p_group is specified the
-controller will be added for this group, otherwise it will be for group 00.
+    def initiate_linking_as_controller(self, p_group=None):
+        """
+        Puts the PLM into linking mode as a controller.
+        If p_group is specified the controller will be added for this group, otherwise it will be for group 00.
+        =cut
 
-=cut
+        sub initiate_linking_as_controller {
+            my ( $self, $group, $success_callback, $failure_callback ) = @_;
+            $group = '00' unless $group;
+            # set up the PLM as the responder
+            my $cmd = '01';    # controller code
+            $cmd .= $group;    # WARN - must be 2 digits and in hex!!
+            my $message = new Insteon::InsteonMessage( 'all_link_start', $self );
+            $message->interface_data($cmd);
+            $message->success_callback($success_callback);
+            $message->failure_callback($failure_callback);
+            $self->queue_message($message);
+        }
+        """
 
-sub initiate_linking_as_controller {
-    my ( $self, $group, $success_callback, $failure_callback ) = @_;
+    def initiate_unlinking_as_controller(self, p_group=None):
+        """
+        Puts the PLM into unlinking mode, if p_group is specified the PLM will try
+        to unlink any devices linked to that group that identify themselves with a set
+        button press.
+        =cut
 
-    $group = '00' unless $group;
+        sub initiate_unlinking_as_controller {
+            my ( $self, $group ) = @_;
+            $group = 'FF' unless $group;
+            # set up the PLM as the responder
+            my $cmd = 'FF';    # controller code
+            $cmd .= $group;    # WARN - must be 2 digits and in hex!!
+            my $message = new Insteon::InsteonMessage( 'all_link_start', $self );
+            $message->interface_data($cmd);
+            $self->queue_message($message);
+        }
+        """
 
-    # set up the PLM as the responder
-    my $cmd = '01';    # controller code
-    $cmd .= $group;    # WARN - must be 2 digits and in hex!!
-    my $message = new Insteon::InsteonMessage( 'all_link_start', $self );
-    $message->interface_data($cmd);
-    $message->success_callback($success_callback);
-    $message->failure_callback($failure_callback);
-    $self->queue_message($message);
-}
-    """
+    def cancel_linking(self):
+        """
+        Cancels any pending linking session that has not completed.
+        =cut
 
-    """
-Puts the PLM into unlinking mode, if p_group is specified the PLM will try
-to unlink any devices linked to that group that identify themselves with a set
-button press.
+        sub cancel_linking {
+            my ($self) = @_;
+            $self->queue_message( new Insteon::InsteonMessage( 'all_link_cancel', $self ) );
+        }
+        """
 
-=cut
+    def _get_aldb(self):
+        """
+        Returns the PLM's aldb object.
+        =cut
 
-sub initiate_unlinking_as_controller {
-    my ( $self, $group ) = @_;
-
-    $group = 'FF' unless $group;
-
-    # set up the PLM as the responder
-    my $cmd = 'FF';    # controller code
-    $cmd .= $group;    # WARN - must be 2 digits and in hex!!
-    my $message = new Insteon::InsteonMessage( 'all_link_start', $self );
-    $message->interface_data($cmd);
-    $self->queue_message($message);
-}
-    """
-
-    """
-Cancels any pending linking session that has not completed.
-
-=cut
-
-sub cancel_linking {
-    my ($self) = @_;
-    $self->queue_message( new Insteon::InsteonMessage( 'all_link_cancel', $self ) );
-}
-    """
-
-    """
-Returns the PLM's aldb object.
-
-=cut
-
-sub _aldb {
-    my ($self) = @_;
-    return $$self{aldb};
-}
-    """
+        sub _aldb {
+            my ($self) = @_;
+            return $$self{aldb};
+        }
+        """
 
 
 class SendCmd():
@@ -192,56 +188,15 @@ class SendCmd():
         self.queue_0x62_command(p_controller_obj)
 
 
-class DecodeLnk:
+class DecodeLink:
     """
     """
+    m_pyhouse_obj = None
+    m_controller_obj = None
 
-    """
-    Handle PLM ALDB Messages (Should these be here???)
-            if (   $record_type eq $prefix{all_link_first_rec}  # 0x69
-                or $record_type eq $prefix{all_link_next_rec} ) {  # 0x6A
-                $$self{_next_link_ok} = 1;
-            }
-
-            elsif ( $record_type eq $prefix{all_link_start} ) {  # 0x64
-                if ( $self->active_message->success_callback ) {
-                    package main;
-                    eval( $self->active_message->success_callback );
-                    &::print_log( "[Insteon_PLM] WARN1: Error encountered during ack callback: " . $@ )
-                      if ( $@
-                        && $self->active_message->can('setby')
-                        && ref $self->active_message->setby
-                        && $self->active_message->setby->debuglevel( 1, 'insteon' ) );
-                    package Insteon_PLM;
-                }
-                # clear the active message because we're done
-                $self->clear_active_message();
-            }
-
-            elsif ( $record_type eq $prefix{all_link_manage_rec} ) {  # 0x6F
-                # Managing the PLM's ALDB
-                $self->clear_active_message();
-                my $callback;
-                if ( $self->_aldb->{_success_callback} ) {
-                    $callback = $self->_aldb->{_success_callback};
-                    $self->_aldb->{_success_callback} = undef;
-                }
-                elsif ( $$self{_mem_callback} ) {
-                    $callback = $pending_message->callback();    #$$self{_mem_callback};
-                    $$self{_mem_callback} = undef;
-                }
-                if ($callback) {
-                    package main;
-                    eval($callback);
-                    &::print_log( "[Insteon_PLM] WARN1: Error encountered during ack callback: " . $@ )
-                      if ( $@
-                        && $self->active_message->can('setby')
-                        && ref $self->active_message->setby
-                        && $self->active_message->setby->debuglevel( 1, 'insteon' ) );
-                    package Insteon_PLM;
-                }
-            }
-    """
+    def __init__(self, p_pyhouse_obj, p_controller_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_controller_obj = p_controller_obj
 
     """
             # More PLM ALDB Messages (Again should these be here???)
@@ -321,12 +276,7 @@ class DecodeLnk:
         }
     """
 
-    def __init__(self, p_pyhouse_obj, p_controller_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_controller_obj = p_controller_obj
-
-    @staticmethod
-    def decode_0x53(p_pyhouse_obj, p_controller_obj):
+    def decode_0x53(self, p_controller_obj):
         """Insteon All-Linking completed (10 bytes).
         See p 247(260) of 2009 developers guide.
         [0] = 0x02
@@ -397,13 +347,12 @@ class DecodeLnk:
         l_msg = insteon_utils.decode_link_code(l_message[2])
         l_link_group = l_message[3]
         l_from_id = l_message[4:7]
-        l_device_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_from_id)
+        l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_from_id)
         utilDecode._devcat(l_message[7:9], p_controller_obj)
         _l_version = l_message[9]
         LOG.info('All-Link completed - Link Code:{}, Group:{}, From:{} '.format(l_msg, l_link_group, l_device_obj.Name))
 
-    @staticmethod
-    def decode_0x54(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x54(self, p_controller_obj):
         """Insteon Button Press event (3 bytes).
         The PLM set button was pressed.
         See p 263(276) of 2009 developers guide.
@@ -415,8 +364,7 @@ class DecodeLnk:
         l_event = l_message[2]
         LOG.info('The Set button was pressed {}'.format(l_event))
 
-    @staticmethod
-    def decode_0x55(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x55(self, p_controller_obj):
         """Insteon Reset Detected. (2 bytes)
         See p 256(269) of 2009 developers guide.
 
@@ -429,8 +377,7 @@ class DecodeLnk:
         _l_message = p_controller_obj._Message
         LOG.info('The Set button was pressed')
 
-    @staticmethod
-    def decode_0x56(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x56(self, p_controller_obj):
         """Insteon All-Link cleanup failure report (7 bytes).
         See p 243(256) of 2009 developers guide.
         [0] = 0x02
@@ -482,8 +429,7 @@ class DecodeLnk:
         l_from_id = l_message[4:7]
         LOG.warning('All-Link-Clean failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
 
-    @staticmethod
-    def decode_0x57(p_pyhouse_obj, p_controller_obj):
+    def decode_0x57(self, p_controller_obj):
         """All-Link Record Response (10 bytes).
         See p 251(264) of 2009 developers guide.
         [0] = 0x02
@@ -524,19 +470,17 @@ class DecodeLnk:
             l_type = 'Controller'
             l_link_obj._IsController = True
         try:
-            l_obj = utilDecode().get_obj_from_message(p_pyhouse_obj, l_message[4:7])
+            l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[4:7])
             l_link_obj.Address = l_obj.Family.Address
         except:
             l_link_obj.Address = FormatBytes(l_message[4:7])
         LOG.info("All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
-
         # Ask for next record
         SendCmd().queue_0x6A_command(p_controller_obj)
 
         return
 
-    @staticmethod
-    def decode_0x58(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x58(self, p_controller_obj):
         """Insteon All-Link cleanup status report (3 bytes).
         See p 242(255) of 2007 developers guide.
 
@@ -578,10 +522,25 @@ class DecodeLnk:
         l_status = l_message[2]
         LOG.info('All-Link-Clean-Status cleanup {}, Group:{}, From:{} '.format(l_status))
 
-    @staticmethod
-    def decode_0x64(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x64(self, p_controller_obj):
         """Start All-Link ACK response (5 bytes).
         See p 243(256) of 2007 developers guide.
+
+
+        elsif ( $record_type eq $prefix{all_link_start} ) {  # 0x64
+            if ( $self->active_message->success_callback ) {
+                package main;
+                eval( $self->active_message->success_callback );
+                &::print_log( "[Insteon_PLM] WARN1: Error encountered during ack callback: " . $@ )
+                  if ( $@
+                    && $self->active_message->can('setby')
+                    && ref $self->active_message->setby
+                    && $self->active_message->setby->debuglevel( 1, 'insteon' ) );
+                package Insteon_PLM;
+            }
+            # clear the active message because we're done
+            $self->clear_active_message();
+        }
         """
         l_message = p_controller_obj._Message
         l_grp = l_message[2]
@@ -595,8 +554,7 @@ class DecodeLnk:
             l_ret = False
         return l_ret
 
-    @staticmethod
-    def decode_0x65(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x65(self, p_controller_obj):
         """All-Link Cancel response (5 bytes).
         See p 244(257) of 2007 developers guide.
         """
@@ -605,43 +563,52 @@ class DecodeLnk:
         LOG.info('All-Link-Cancel {}, Group:{}, From:{} '.format(l_status))
         return False
 
-    @staticmethod
-    def decode_0x69(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x69(self, p_controller_obj):
         """Get All-Link First Record response (5 bytes).
         See p 248(261) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x69
         [2] = ACK/NAK
+
+
+        if (   $record_type eq $prefix{all_link_first_rec}  # 0x69
+            or $record_type eq $prefix{all_link_next_rec} ) {  # 0x6A
+            $$self{_next_link_ok} = 1;
+        }
         """
         l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ack = 'ACK'
-            SendCmd().queue_0x6A_command(p_controller_obj)
+            # SendCmd().queue_0x6A_command(p_controller_obj)
         else:
             LOG.info("All-Link first record - NAK")
             l_ack = 'NAK'
         LOG.info("All-Link first record -{}".format(l_ack))
         return
 
-    @staticmethod
-    def decode_0x6A(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x6A(self, p_controller_obj):
         """All-Link Next Record response (3 bytes).
         See p 249(262) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x6A
         [2] = ACK/NAK
+
+
+        if (   $record_type eq $prefix{all_link_first_rec}  # 0x69
+            or $record_type eq $prefix{all_link_next_rec} ) {  # 0x6A
+            $$self{_next_link_ok} = 1;
+        }
         """
         l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ack = 'ACK'
-            SendCmd().queue_0x6A_command(p_controller_obj)
+            # SendCmd().queue_0x6A_command(p_controller_obj)
         else:
             l_ack = 'NAK'
         LOG.info("All-Link Next record - {}".format(l_ack))
         return
 
-    @staticmethod
-    def decode_0x6C(_p_pyhouse_obj, p_controller_obj):
+    def decode_0x6C(self, p_controller_obj):
         """All-Link Record for sender response (3 bytes).
         See p 250(263) of 2009 developers guide.
         [0] = 0x02
@@ -657,6 +624,33 @@ class DecodeLnk:
             l_ret = False
         return l_ret
 
+    def decode_0x6f(self):
+        """
+        elsif ( $record_type eq $prefix{all_link_manage_rec} ) {  # 0x6F
+            # Managing the PLM's ALDB
+            $self->clear_active_message();
+            my $callback;
+            if ( $self->_aldb->{_success_callback} ) {
+                $callback = $self->_aldb->{_success_callback};
+                $self->_aldb->{_success_callback} = undef;
+            }
+            elsif ( $$self{_mem_callback} ) {
+                $callback = $pending_message->callback();    #$$self{_mem_callback};
+                $$self{_mem_callback} = undef;
+            }
+            if ($callback) {
+                package main;
+                eval($callback);
+                &::print_log( "[Insteon_PLM] WARN1: Error encountered during ack callback: " . $@ )
+                  if ( $@
+                    && $self->active_message->can('setby')
+                    && ref $self->active_message->setby
+                    && $self->active_message->setby->debuglevel( 1, 'insteon' ) );
+                package Insteon_PLM;
+            }
+            }
+        """
+
 
 class InsteonAllLinks:
 
@@ -666,216 +660,239 @@ class InsteonAllLinks:
         LOG.info("Get all All-Links from controller {}.".format(p_controller_obj.Name))
 
         SendCmd().queue_0x69_command(p_controller_obj)
-
         # SendCmd().read_aldb_v2(p_controller_obj)
-
         # Send.queue
 
     """
-Reviews the cached version of all of the ALDBs and based on this review removes
-links from this device which are not present in the mht file, not defined in the
-code, or links which are only half-links..
+    Reviews the cached version of all of the ALDBs and, based on this review, removes
+    links from this device which are not present in the mht file, not defined in the
+    code, or links which are only half-links..
 
-=cut
+    =cut
 
-sub delete_orphan_links {
-    my ( $self, $audit_mode ) = @_;
+    sub delete_orphan_links {
+        my ( $self, $audit_mode ) = @_;
 
-    &::print_log("[Insteon::ALDB_PLM] #### NOW BEGINNING DELETE ORPHAN LINKS ####");
-    @{ $$self{_delete_device_failures} } = ();
-    $self->SUPER::delete_orphan_links($audit_mode);
-    # iterate over all registered objects and compare whether the link tables match defined scene linkages in known Insteon_Links
-    for my $obj ( &Insteon::find_members('Insteon::BaseDevice') ) {
-        #Match on real objects only
-        if ( ( $obj->is_root ) ) {
-            my %delete_req = ( 'root_object' => $obj, 'audit_mode' => $audit_mode );
-            push @{ $$self{delete_queue} }, \%delete_req;
+        &::print_log("[Insteon::ALDB_PLM] #### NOW BEGINNING DELETE ORPHAN LINKS ####");
+        @{ $$self{_delete_device_failures} } = ();
+        $self->SUPER::delete_orphan_links($audit_mode);
+        # iterate over all registered objects and compare whether the link tables match defined scene linkages in known Insteon_Links
+        for my $obj ( &Insteon::find_members('Insteon::BaseDevice') ) {
+            #Match on real objects only
+            if ( ( $obj->is_root ) ) {
+                my %delete_req = ( 'root_object' => $obj, 'audit_mode' => $audit_mode );
+                push @{ $$self{delete_queue} }, \%delete_req;
+            }
         }
+        $self->_process_delete_queue();
     }
-    $self->_process_delete_queue();
-}
     """
 
     """
-sub _process_delete_queue {
-    my ( $self, $p_num_deleted ) = @_;
-    $$self{delete_queue_processed} += $p_num_deleted if $p_num_deleted;
-    my $num_in_queue = @{ $$self{delete_queue} };
-    if ($num_in_queue) {
-        my $delete_req_ptr   = shift( @{ $$self{delete_queue} } );
-        my %delete_req       = %$delete_req_ptr;
-        my $failure_callback = $$self{device}->get_object_name . "->_aldb->_process_delete_queue_failure";
-        # distinguish between deleting PLM links and processing delete orphans for a root item
-        if ( $delete_req{'root_object'} ) {
-            $$self{current_delete_device} = $delete_req{'root_object'}->get_object_name;
-            my $is_batch_mode = 1;
-            $delete_req{'root_object'}->delete_orphan_links( ( $delete_req{'audit_mode'} ) ? 1 : 0, $failure_callback, $is_batch_mode );
+    sub _process_delete_queue {
+        my ( $self, $p_num_deleted ) = @_;
+        $$self{delete_queue_processed} += $p_num_deleted if $p_num_deleted;
+        my $num_in_queue = @{ $$self{delete_queue} };
+        if ($num_in_queue) {
+            my $delete_req_ptr   = shift( @{ $$self{delete_queue} } );
+            my %delete_req       = %$delete_req_ptr;
+            my $failure_callback = $$self{device}->get_object_name . "->_aldb->_process_delete_queue_failure";
+            # distinguish between deleting PLM links and processing delete orphans for a root item
+            if ( $delete_req{'root_object'} ) {
+                $$self{current_delete_device} = $delete_req{'root_object'}->get_object_name;
+                my $is_batch_mode = 1;
+                $delete_req{'root_object'}->delete_orphan_links( ( $delete_req{'audit_mode'} ) ? 1 : 0, $failure_callback, $is_batch_mode );
+            }
+            else {
+                $$self{current_delete_device} = $$self{device}->get_object_name;
+                &::print_log(
+                    "[Insteon::ALDB_PLM] now deleting orphaned link w/ details: "
+                      . (
+                        ( $delete_req{is_controller} ) ? "controller($delete_req{data3})"
+                        : "responder"
+                      )
+                      . ", "
+                      . (
+                        ( $delete_req{object} ) ? "object=" . $delete_req{object}->get_object_name
+                        : "deviceid=$delete_req{deviceid}"
+                      )
+                      . ", group=$delete_req{group}"
+                ) if $self->{device}->debuglevel( 1, 'insteon' );
+                $delete_req{failure_callback} = $failure_callback;
+                $self->delete_link(%delete_req);
+                $$self{delete_queue_processed}++;
+            }
         }
         else {
-            $$self{current_delete_device} = $$self{device}->get_object_name;
-            &::print_log(
-                "[Insteon::ALDB_PLM] now deleting orphaned link w/ details: "
-                  . (
-                    ( $delete_req{is_controller} ) ? "controller($delete_req{data3})"
-                    : "responder"
-                  )
-                  . ", "
-                  . (
-                    ( $delete_req{object} ) ? "object=" . $delete_req{object}->get_object_name
-                    : "deviceid=$delete_req{deviceid}"
-                  )
-                  . ", group=$delete_req{group}"
-            ) if $self->{device}->debuglevel( 1, 'insteon' );
-            $delete_req{failure_callback} = $failure_callback;
-            $self->delete_link(%delete_req);
-            $$self{delete_queue_processed}++;
-        }
-    }
-    else {
-        ::print_log("[Insteon::ALDB_PLM] Delete All Links has Completed.");
-        my $_delete_failure_cnt = scalar $$self{_delete_device_failures};
-        if ($_delete_failure_cnt) {
-            my $obj_list;
-            for my $failed_obj ( @{ $$self{_delete_device_failures} } ) {
-                $obj_list .= $failed_obj . ", ";
+            ::print_log("[Insteon::ALDB_PLM] Delete All Links has Completed.");
+            my $_delete_failure_cnt = scalar $$self{_delete_device_failures};
+            if ($_delete_failure_cnt) {
+                my $obj_list;
+                for my $failed_obj ( @{ $$self{_delete_device_failures} } ) {
+                    $obj_list .= $failed_obj . ", ";
+                }
+                ::print_log( "[Insteon::ALDB_PLM] However, some failures were " . "noted with the following devices: $obj_list" );
             }
-            ::print_log( "[Insteon::ALDB_PLM] However, some failures were " . "noted with the following devices: $obj_list" );
-        }
-        ::print_log("[Insteon::ALDB_PLM] A total of $$self{delete_queue_processed} orphaned link records were deleted.");
-        ::print_log("[Insteon::ALDB_PLM] #### END DELETE ORPHAN LINKS ####");
-    }
-}
-
-sub _process_delete_queue_failure {
-    my ($self) = @_;
-    push @{ $$self{_delete_device_failures} }, $$self{current_delete_device};
-    ::print_log( "[Insteon::ALDB_PLM] WARN: failure occurred when deleting orphan links from: " . $$self{current_delete_device} . ".  Moving on..." );
-    $self->health('changed');
-    $self->_process_delete_queue;
-
-}
-    """
-
-    """
-Deletes a specific link from a device.  Generally called by C<delete_orphan_links()>.
-
-=cut
-
-sub delete_link {
-    # linkkey is concat of: deviceid, group, is_controller
-    my ( $self, $parms_text ) = @_;
-    my %link_parms;
-    if ( @_ > 2 ) {
-        shift @_;
-        %link_parms = @_;
-    }
-    else {
-        %link_parms = &main::parse_func_parms($parms_text);
-    }
-    my $num_deleted    = 0;
-    my $insteon_object = $link_parms{object};
-    my $deviceid       = ($insteon_object) ? $insteon_object->device_id : $link_parms{deviceid};
-    my $group          = $link_parms{group};
-    my $is_controller  = ( $link_parms{is_controller} ) ? 1 : 0;
-    my $subaddress     = ( defined $link_parms{data3} ) ? $link_parms{data3} : '00';
-    my $linkkey        = $self->get_linkkey( $deviceid, $group, $is_controller, $subaddress );
-    if ( defined $$self{aldb}{$linkkey} ) {
-        my $cmd = '80'
-          . $$self{aldb}{$linkkey}{flags}
-          . $$self{aldb}{$linkkey}{group}
-          . $$self{aldb}{$linkkey}{deviceid}
-          . $$self{aldb}{$linkkey}{data1}
-          . $$self{aldb}{$linkkey}{data2}
-          . $$self{aldb}{$linkkey}{data3};
-        delete $$self{aldb}{$linkkey};
-        $num_deleted = 1;
-        my $message = new Insteon::InsteonMessage( 'all_link_manage_rec', $$self{device} );
-        $$self{_success_callback} =
-          ( $link_parms{callback} ) ? $link_parms{callback} : undef;
-        $$self{_failure_callback} =
-          ( $link_parms{failure_callback} )
-          ? $link_parms{failure_callback}
-          : undef;
-        $message->interface_data($cmd);
-        $$self{device}->queue_message($message);
-    }
-    else {
-        &::print_log( "[Insteon::ALDB_PLM] no entry in linktable could be found for: "
-              . "deviceid=$deviceid, group=$group, is_controller=$is_controller, subaddress=$subaddress" );
-        if ( $link_parms{callback} ) {
-            package main;
-            eval( $link_parms{callback} );
-            &::print_log( "[Insteon_PLM] error in add link callback: " . $@ )
-              if $@ and $self->{device}->debuglevel( 1, 'insteon' );
-            package Insteon_PLM;
+            ::print_log("[Insteon::ALDB_PLM] A total of $$self{delete_queue_processed} orphaned link records were deleted.");
+            ::print_log("[Insteon::ALDB_PLM] #### END DELETE ORPHAN LINKS ####");
         }
     }
-    return $num_deleted;
-}
+
+    sub _process_delete_queue_failure {
+        my ($self) = @_;
+        push @{ $$self{_delete_device_failures} }, $$self{current_delete_device};
+        ::print_log( "[Insteon::ALDB_PLM] WARN: failure occurred when deleting orphan links from: " . $$self{current_delete_device} . ".  Moving on..." );
+        $self->health('changed');
+        $self->_process_delete_queue;
+
+    }
     """
 
     """
-Adds the link to the device's ALDB.  Generally called from the "sync links" or
-"link to interface" voice commands.
+    Deletes a specific link from a device.  Generally called by C<delete_orphan_links()>.
 
-=cut
+    =cut
 
-sub add_link {
-    my ( $self, $parms_text ) = @_;
-    my %link_parms;
-    if ( @_ > 2 ) {
-        shift @_;
-        %link_parms = @_;
+    sub delete_link {
+        # linkkey is concat of: deviceid, group, is_controller
+        my ( $self, $parms_text ) = @_;
+        my %link_parms;
+        if ( @_ > 2 ) {
+            shift @_;
+            %link_parms = @_;
+        }
+        else {
+            %link_parms = &main::parse_func_parms($parms_text);
+        }
+        my $num_deleted    = 0;
+        my $insteon_object = $link_parms{object};
+        my $deviceid       = ($insteon_object) ? $insteon_object->device_id : $link_parms{deviceid};
+        my $group          = $link_parms{group};
+        my $is_controller  = ( $link_parms{is_controller} ) ? 1 : 0;
+        my $subaddress     = ( defined $link_parms{data3} ) ? $link_parms{data3} : '00';
+        my $linkkey        = $self->get_linkkey( $deviceid, $group, $is_controller, $subaddress );
+        if ( defined $$self{aldb}{$linkkey} ) {
+            my $cmd = '80'
+              . $$self{aldb}{$linkkey}{flags}
+              . $$self{aldb}{$linkkey}{group}
+              . $$self{aldb}{$linkkey}{deviceid}
+              . $$self{aldb}{$linkkey}{data1}
+              . $$self{aldb}{$linkkey}{data2}
+              . $$self{aldb}{$linkkey}{data3};
+            delete $$self{aldb}{$linkkey};
+            $num_deleted = 1;
+            my $message = new Insteon::InsteonMessage( 'all_link_manage_rec', $$self{device} );
+            $$self{_success_callback} = ( $link_parms{callback} ) ? $link_parms{callback} : undef;
+            $$self{_failure_callback} = ( $link_parms{failure_callback} ) ? $link_parms{failure_callback} : undef;
+            $message->interface_data($cmd);
+            $$self{device}->queue_message($message);
+        }
+        else {
+            &::print_log( "[Insteon::ALDB_PLM] no entry in linktable could be found for: "
+                  . "deviceid=$deviceid, group=$group, is_controller=$is_controller, subaddress=$subaddress" );
+            if ( $link_parms{callback} ) {
+                package main;
+                eval( $link_parms{callback} );
+                &::print_log( "[Insteon_PLM] error in add link callback: " . $@ )
+                  if $@ and $self->{device}->debuglevel( 1, 'insteon' );
+                package Insteon_PLM;
+            }
+        }
+        return $num_deleted;
     }
-    else {
-        %link_parms = &main::parse_func_parms($parms_text);
-    }
-    my $device_id;
-    my $group = ( $link_parms{group} ) ? $link_parms{group} : '01';
-    my $insteon_object = $link_parms{object};
-    if ( !( defined($insteon_object) ) ) {
-        $device_id = lc $link_parms{deviceid};
-        $insteon_object = &Insteon::get_object( $device_id, $group );
-    }
-    else {
-        $device_id = lc $insteon_object->device_id;
-    }
-    my $is_controller = ( $link_parms{is_controller} ) ? 1 : 0;
-    my $subaddress = ( defined $link_parms{data3} ) ? $link_parms{data3} : '00';
-    my $linkkey = $self->get_linkkey( $device_id, $group, $is_controller, $subaddress );
-    if ( defined $$self{aldb}{$linkkey} ) {
-        &::print_log( "[Insteon::ALDB_PLM] WARN: attempt to add link to PLM that already exists! "
-              . "deviceid=$device_id, group=$group, is_controller=$is_controller, subaddress=$subaddress" );
-        if ( $link_parms{callback} ) {
-            package main;
-            eval( $link_parms{callback} );
-            &::print_log( "[Insteon::ALDB_PLM] error in add link callback: " . $@ )
-              if $@ and $self->{device}->debuglevel( 1, 'insteon' );
-            package Insteon_PLM;
+    """
+
+    """
+    Adds the link to the device's ALDB.  Generally called from the "sync links" or "link to interface" voice commands.
+    =cut
+
+    sub add_link {
+        my ( $self, $parms_text ) = @_;
+        my %link_parms;
+        if ( @_ > 2 ) {
+            shift @_;
+            %link_parms = @_;
+        }
+        else {
+            %link_parms = &main::parse_func_parms($parms_text);
+        }
+        my $device_id;
+        my $group = ( $link_parms{group} ) ? $link_parms{group} : '01';
+        my $insteon_object = $link_parms{object};
+        if ( !( defined($insteon_object) ) ) {
+            $device_id = lc $link_parms{deviceid};
+            $insteon_object = &Insteon::get_object( $device_id, $group );
+        }
+        else {
+            $device_id = lc $insteon_object->device_id;
+        }
+        my $is_controller = ( $link_parms{is_controller} ) ? 1 : 0;
+        my $subaddress = ( defined $link_parms{data3} ) ? $link_parms{data3} : '00';
+        my $linkkey = $self->get_linkkey( $device_id, $group, $is_controller, $subaddress );
+        if ( defined $$self{aldb}{$linkkey} ) {
+            &::print_log( "[Insteon::ALDB_PLM] WARN: attempt to add link to PLM that already exists! "
+                  . "deviceid=$device_id, group=$group, is_controller=$is_controller, subaddress=$subaddress" );
+            if ( $link_parms{callback} ) {
+                package main;
+                eval( $link_parms{callback} );
+                &::print_log( "[Insteon::ALDB_PLM] error in add link callback: " . $@ )
+                  if $@ and $self->{device}->debuglevel( 1, 'insteon' );
+                package Insteon_PLM;
+            }
+        }
+        else {
+            # The modem developers guide appears to be wrong regarding control codes.
+            # 40 and 41 will respond with a NACK if a record for that group/device/is_controller combination already exist.
+            # It appears that code 20 can be used to edit existing but not create new records.
+            # However, since data1-3 are consistent for all PLM links we never really need to update a PLM link.
+            # NB prior MH code did not set data3 on control records to the group, however this does not appear to have any adverse effects,
+            #  and the current MH code will not flag these entries as being incorrect or requiring an update.
+            my $control_code = ($is_controller) ? '40' : '41';
+            # flags should be 'a2' for responder and 'e2' for controller
+            my $flags = ($is_controller) ? 'E2' : 'A2';
+            my $data1 =
+              ( defined $link_parms{data1} )
+              ? $link_parms{data1}
+              : ( ($is_controller) ? '01' : '00' );
+            my $data2 = ( defined $link_parms{data2} ) ? $link_parms{data2} : '00';
+            my $data3 = ( defined $link_parms{data3} ) ? $link_parms{data3} : '00';
+            # from looking at manually linked records, data1 and data2 are both 00 for responder records
+            # and, data1 is 01 and usually data2 is 00 for controller records
+            my $cmd = $control_code . $flags . $group . $device_id . $data1 . $data2 . $data3;
+            $$self{aldb}{$linkkey}{flags}         = lc $flags;
+            $$self{aldb}{$linkkey}{group}         = lc $group;
+            $$self{aldb}{$linkkey}{is_controller} = $is_controller;
+            $$self{aldb}{$linkkey}{deviceid}      = lc $device_id;
+            $$self{aldb}{$linkkey}{data1}         = lc $data1;
+            $$self{aldb}{$linkkey}{data2}         = lc $data2;
+            $$self{aldb}{$linkkey}{data3}         = lc $data3;
+            $$self{aldb}{$linkkey}{inuse}         = 1;
+            $self->health('unchanged') if ( $self->health() eq 'empty' );
+            my $message = new Insteon::InsteonMessage( 'all_link_manage_rec', $$self{device} );
+            $message->interface_data($cmd);
+            $$self{_success_callback} =
+              ( $link_parms{callback} ) ? $link_parms{callback} : undef;
+            $$self{_failure_callback} =
+              ( $link_parms{failure_callback} )
+              ? $link_parms{failure_callback}
+              : undef;
+            $message->interface_data($cmd);
+            $$self{device}->queue_message($message);
         }
     }
-    else {
-        # The modem developers guide appears to be wrong regarding control
-        # codes.  40 and 41 will respond with a NACK if a record for that
-        # group/device/is_controller combination already exist.  It appears
-        # that code 20 can be used to edit existing but not create new records.
-        # However, since data1-3 are consistent for all PLM links we never
-        # really need to update a PLM link.  NB prior MH code did not set
-        # data3 on control records to the group, however this does not
-        # appear to have any adverse effects, and the current MH code will
-        # not flag these entries as being incorrect or requiring an update
-        my $control_code = ($is_controller) ? '40' : '41';
-        # flags should be 'a2' for responder and 'e2' for controller
-        my $flags = ($is_controller) ? 'E2' : 'A2';
-        my $data1 =
-          ( defined $link_parms{data1} )
-          ? $link_parms{data1}
-          : ( ($is_controller) ? '01' : '00' );
-        my $data2 = ( defined $link_parms{data2} ) ? $link_parms{data2} : '00';
-        my $data3 = ( defined $link_parms{data3} ) ? $link_parms{data3} : '00';
-        # from looking at manually linked records, data1 and data2 are both 00 for responder records
-        # and, data1 is 01 and usually data2 is 00 for controller records
-        my $cmd = $control_code . $flags . $group . $device_id . $data1 . $data2 . $data3;
+    """
+
+    """
+    This is used in response to an all_link_complete command received by the PLM.
+    This may be from the C<Insteon::BaseInterface::link_to_interface_i2cs> routine, or it may be as a result of a manual link creation
+    This routine manually adds a record to MH's cache of the PLM ALDB.
+    Normally you only want to add records during a scan of the ALDB, so use this routine with caution.
+
+    =cut
+
+    sub add_link_to_hash {
+        my ( $self, $flags, $group, $is_controller, $device_id, $data1, $data2, $data3 ) = @_;
+        my $linkkey = $self->get_linkkey( $device_id, $group, $is_controller, $data3 );
         $$self{aldb}{$linkkey}{flags}         = lc $flags;
         $$self{aldb}{$linkkey}{group}         = lc $group;
         $$self{aldb}{$linkkey}{is_controller} = $is_controller;
@@ -885,58 +902,23 @@ sub add_link {
         $$self{aldb}{$linkkey}{data3}         = lc $data3;
         $$self{aldb}{$linkkey}{inuse}         = 1;
         $self->health('unchanged') if ( $self->health() eq 'empty' );
-        my $message = new Insteon::InsteonMessage( 'all_link_manage_rec', $$self{device} );
-        $message->interface_data($cmd);
-        $$self{_success_callback} =
-          ( $link_parms{callback} ) ? $link_parms{callback} : undef;
-        $$self{_failure_callback} =
-          ( $link_parms{failure_callback} )
-          ? $link_parms{failure_callback}
-          : undef;
-        $message->interface_data($cmd);
-        $$self{device}->queue_message($message);
+        return;
     }
-}
     """
 
     """
-This is used in response to an all_link_complete command received by the PLM.
-This may be from the C<Insteon::BaseInterface::link_to_interface_i2cs> routine,
-or it may be as a result of a manual link creation. This routine manually adds
-a record to MH's cache of the PLM ALDB.  Normally you only want to add records
-during a scan of the ALDB, so use this routine with caution.
+    Checks and returns true if a link with the passed details exists on the device
+    or false if it does not.  Generally called as part of C<delete_orphan_links()>.
 
-=cut
+    =cut
 
-sub add_link_to_hash {
-    my ( $self, $flags, $group, $is_controller, $device_id, $data1, $data2, $data3 ) = @_;
-    my $linkkey = $self->get_linkkey( $device_id, $group, $is_controller, $data3 );
-    $$self{aldb}{$linkkey}{flags}         = lc $flags;
-    $$self{aldb}{$linkkey}{group}         = lc $group;
-    $$self{aldb}{$linkkey}{is_controller} = $is_controller;
-    $$self{aldb}{$linkkey}{deviceid}      = lc $device_id;
-    $$self{aldb}{$linkkey}{data1}         = lc $data1;
-    $$self{aldb}{$linkkey}{data2}         = lc $data2;
-    $$self{aldb}{$linkkey}{data3}         = lc $data3;
-    $$self{aldb}{$linkkey}{inuse}         = 1;
-    $self->health('unchanged') if ( $self->health() eq 'empty' );
-    return;
-}
-    """
-
-    """
-Checks and returns true if a link with the passed details exists on the device
-or false if it does not.  Generally called as part of C<delete_orphan_links()>.
-
-=cut
-
-sub has_link {
-    my ( $self, $insteon_object, $group, $is_controller, $data3 ) = @_;
-    my $key = $self->get_linkkey( $insteon_object->device_id, $group, $is_controller, $data3 );
-    my $found = 0;
-    $found++ if ( defined $$self{aldb}{$key} );
-    return ($found);
-}
+    sub has_link {
+        my ( $self, $insteon_object, $group, $is_controller, $data3 ) = @_;
+        my $key = $self->get_linkkey( $insteon_object->device_id, $group, $is_controller, $data3 );
+        my $found = 0;
+        $found++ if ( defined $$self{aldb}{$key} );
+        return ($found);
+    }
     """
 
     """

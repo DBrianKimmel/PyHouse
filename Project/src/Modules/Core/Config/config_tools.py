@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-08'
 __version_info__ = (19, 12, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -126,6 +126,7 @@ class SubFields:
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
         Tools(self.m_pyhouse_obj).extract_fields(l_device_obj, p_config, l_required, l_allowed)
+        l_device_obj.Name = l_device_obj.Name.lower()
         l_key = l_device_obj.Name.lower()
         l_family_obj.Name = l_device_obj.Name
         # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))

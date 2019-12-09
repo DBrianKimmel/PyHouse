@@ -12,7 +12,7 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2019-12-05'
+__updated__ = '2019-12-06'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -96,7 +96,7 @@ class Utility:
         Run thru all the controllers and find all active Insteon Hubs.
         Start the controller and its driver.
 
-        @return: a list of the Insteon_PLM Api references
+        @return: a list of the Insteon Hub Api references
         """
         l_list = []
         return l_list

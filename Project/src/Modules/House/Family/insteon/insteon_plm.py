@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-06'
 
 #  Import system type stuff
 import datetime
@@ -326,15 +326,6 @@ class LightHandlerApi:
                 self._get_obj_info(p_controller_obj, l_obj)
             LOG.info('got {} Buttons'.format(len(p_pyhouse_obj.House.Lighting.Buttons)))
 
-        if p_pyhouse_obj.House.Lighting.Controllers != None:
-            for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
-                # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Family'))
-                self._get_obj_info(p_controller_obj, l_obj)
-                if l_obj.Family.Name.lower() == 'insteon':
-                    # self._get_obj_info(p_controller_obj, l_obj)
-                    InsteonPlmApi().get_link_records(p_controller_obj, l_obj)  # Only from controller
-            LOG.info('got {} Controllers'.format(len(p_pyhouse_obj.House.Lighting.Controllers)))
-
         if p_pyhouse_obj.House.Lighting.Lights != None:
             for l_obj in p_pyhouse_obj.House.Lighting.Lights.values():
                 if l_obj.Family.Name.lower() == 'insteon':
@@ -343,7 +334,20 @@ class LightHandlerApi:
             LOG.info('got {} Lights'.format(len(p_pyhouse_obj.House.Lighting.Lights)))
 
         if p_pyhouse_obj.House.Lighting.Outlets != None:
-            pass
+            for l_obj in p_pyhouse_obj.House.Lighting.Outlets.values():
+                if l_obj.Family.Name.lower() == 'insteon':
+                    self._get_obj_info(p_controller_obj, l_obj)
+                    # InsteonPlmCommands.scan_one_light(p_controller_obj, l_obj)
+            LOG.info('got {} Outlets'.format(len(p_pyhouse_obj.House.Lighting.Outlets)))
+
+        if p_pyhouse_obj.House.Lighting.Controllers != None:
+            for l_obj in p_pyhouse_obj.House.Lighting.Controllers.values():
+                # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Family'))
+                self._get_obj_info(p_controller_obj, l_obj)
+                if l_obj.Family.Name.lower() == 'insteon':
+                    # self._get_obj_info(p_controller_obj, l_obj)
+                    InsteonPlmApi().get_link_records(p_controller_obj, l_obj)  # Only from controller
+            LOG.info('got {} Controllers'.format(len(p_pyhouse_obj.House.Lighting.Controllers)))
 
 
 class Api(LightHandlerApi):

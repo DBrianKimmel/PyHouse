@@ -17,7 +17,7 @@ import xml.etree.ElementTree as ET
 
 # Import PyMh files and modules.
 from Modules.Core.data_objects import ControllerInformation
-from Modules.House.Family.insteon.Insteon_Link import DecodeLnk as linkDecode
+from Modules.House.Family.insteon.Insteon_Link import DecodeLink as linkDecode
 # from Modules.Families.Insteon.Insteon_utils import Decode
 from _test.testing_mixin import SetupPyHouseObj
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
