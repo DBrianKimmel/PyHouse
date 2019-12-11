@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -61,7 +61,7 @@ class Api():
         """
         l_light_name = p_schedule_obj.LightName
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        l_light_obj = lightingUtility().get_object_by_id(l_lighting_objs.Lights, name=l_light_name)
+        l_light_obj = lightingUtility().get_object_type_by_id(l_lighting_objs.Lights, name=l_light_name)
         #
         l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
         l_control = LightData()

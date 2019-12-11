@@ -11,7 +11,7 @@ We get these .
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-12-11'
 
 #  Import system type stuff
 
@@ -29,5 +29,21 @@ class LocalConfig:
 class Discovery:
     """
     """
+
+
+class ButtonActions:
+    """
+    """
+
+    def initial_button_load(self):
+        """
+        """
+        if p_obj.Family.Name.lower() == 'insteon':
+            self._get_engine_version(p_controller_obj, p_obj)
+            self._get_id_request(p_controller_obj, p_obj)
+            self._get_one_device_status(p_controller_obj, p_obj)
+        else:
+            LOG.warning('Skipping "{}" "{}" device "{}"'.format(p_obj.DeviceType, p_obj.DeviceSubType, p_obj.Name))
+            pass
 
 # ## END DBK

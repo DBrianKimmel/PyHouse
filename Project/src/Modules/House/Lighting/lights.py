@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -239,7 +239,7 @@ class MqttActions:
         LOG.info('Mqtt Control "{}"'.format(l_light_name))
         # LOG.debug(PrettyFormatAny.form(l_control, 'Control'))
         #
-        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
+        l_light_obj = lightingUtility().get_object_type_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_light_name)
         if l_light_obj == None:
             LOG.warning(' Light "{}" was not found.'.format(l_light_name))
             return

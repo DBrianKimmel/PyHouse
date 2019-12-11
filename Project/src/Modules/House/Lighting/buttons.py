@@ -5,11 +5,16 @@
 @copyright: (c) 2010-2019 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
-@summary:   Handle the home lighting system automation.
+@summary:   Handle the home lighting system buttons.
+
+Buttons may be:
+    Remote = Mini remotes (Insteon)
+    Slave = light switches that control another switch load
+    Split = buttons (UPB)
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,6 +38,7 @@ class ButtonInformation:
         self.Comment = None
         self.DeviceType = 'Lighting'
         self.DeviceSubType = 'Button'
+        self.TYpe = None
         self.Family = None  # FamilyInformation()
         self.Room = None  # RoomInformation()
 
@@ -88,6 +94,10 @@ class LocalConfig:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
+
+    def _extract_remote_button(self):
+        """
+        """
 
     def _extract_one_button_set(self, p_config) -> dict:
         """ Extract the config info for one button.

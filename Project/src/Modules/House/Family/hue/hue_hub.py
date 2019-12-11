@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-11'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -530,7 +530,7 @@ class HueDispatch(HueProtocol):
 
     def _add_light(self, p_light_obj):
         l_objs = self.m_pyhouse_obj.House.Lighting.Lights
-        _l_light_obj = lightingUtility().get_object_by_id(l_objs, name=p_light_obj.Name)
+        _l_light_obj = lightingUtility().get_object_type_by_id(l_objs, name=p_light_obj.Name)
         pass
 
     def get_config(self, p_body):

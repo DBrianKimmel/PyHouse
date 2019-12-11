@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-12-03'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,7 +52,7 @@ from Modules.Core.Utilities import convert, extract_tools
 from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
 from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
 from Modules.House.Lighting.lighting import ScheduleLightingInformation
-from Modules.House.Lighting.actions import Api as lightActionsApi
+from Modules.House.Lighting.actions import Api as lightingActionsApi
 from Modules.House.Lighting.utility import lightingUtility
 from Modules.House.Schedule import sunrisesunset
 
@@ -90,7 +90,7 @@ class ScheduleLightingInformation:
     """
 
     def __init__(self):
-        self.Type = 'Light'
+        self.Type = 'Lighting'
         self.Brightness = 0
         self.Name = None  # Light name
         self.Rate = 0
@@ -109,7 +109,7 @@ class ScheduleIrrigationInformation:
         self.Duration = None
 
 
-class ScheduleThermostatInformation:
+class ScheduleHvacInformation:
     """ This is the HVAC Thermostat specific part
     """
 
@@ -145,7 +145,7 @@ class MqttActions:
         if l_sender == self.m_pyhouse_obj.Computer.Name:
             return
         l_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_name)
+        l_light_obj = lightingUtility().get_object_type_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_name)
         if l_light_obj == None:
             return
         l_key = len(self.m_pyhouse_obj.House.Schedules)
@@ -363,9 +363,9 @@ class ScheduleExecution:
         _l_obj = p_schedule_obj
         # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
-        if p_schedule_obj.Sched.Type == 'Light':
-            LOG.info('Execute_one_schedule type = Light')
-            lightActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+        if p_schedule_obj.Sched.Type == 'Lighting':
+            LOG.info('Execute_one_schedule type = Lighting - "{}"'.format(p_schedule_obj.Sched.Name))
+            lightingActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'Hvac':
             LOG.info('Execute_one_schedule type = Hvac')
@@ -563,7 +563,7 @@ class LocalConfig:
     def _extract_hvac_schedule(self, p_config):
         """
         """
-        l_obj = ScheduleThermostatInformation()
+        l_obj = ScheduleHvacInformation()
         for l_key, l_value in p_config.items():
             setattr(l_obj, l_key, l_value)
         return l_obj
@@ -572,7 +572,7 @@ class LocalConfig:
         """
         """
         l_dow = p_config.upper()
-        l_ret = 0
+        _l_ret = 0
         if len(l_dow) != 7:
             LOG.error('Day of week must be 7 chars long "--TWT--" was "{}"'.format(l_dow))
             return 127
@@ -591,7 +591,7 @@ class LocalConfig:
                 l_ret = self._extract_irrigation_schedule(l_value)
                 l_obj.Sched = l_ret
             elif l_key in ['Lighting', 'Light', 'Outlet']:
-                l_obj.Type = 'Light'
+                l_obj.Type = 'Lighting'
                 l_ret = self._extract_lighting_schedule(l_value)
                 l_obj.Sched = l_ret
             elif l_key in ['Hvac', 'Thermostat']:

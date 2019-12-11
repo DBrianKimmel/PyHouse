@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-11'
 
 #  Import system type stuff
 
@@ -30,7 +30,7 @@ class Api:
     """
 
     def DoSchedule(self, p_pyhouse_obj, p_schedule_obj):
-        """ A schedule action has been called for on a Light
+        """ A schedule action has been called for on a Lighting device
 
         @param p_pyhouse_obj: The entire data set.
         @param p_schedule_obj: the schedule event being executed.  ==> ScheduleInformation()
@@ -39,7 +39,7 @@ class Api:
         l_light_name = p_schedule_obj.Sched.Name
         l_type = p_schedule_obj.Sched.Type
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        if l_type == 'Light':
+        if l_type == 'Lighting':
             l_obj = l_lighting_objs.Lights
         elif l_type == 'Outlet':
             l_obj = l_lighting_objs.Outlets
@@ -47,7 +47,7 @@ class Api:
             LOG.error('Schedule type is invalid "{}"'.format(l_type))
             return
         try:
-            l_light_obj = lightingUtility().get_object_by_id(l_obj, name=l_light_name)
+            l_light_obj = lightingUtility().get_object_type_by_id(l_obj, name=l_light_name)
             l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
             l_control = LightData()
             l_control.BrightnessPct = p_schedule_obj.Sched.Brightness

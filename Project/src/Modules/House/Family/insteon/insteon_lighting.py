@@ -11,7 +11,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-12-06'
+__updated__ = '2019-12-10'
 
 #  Import system type stuff
 
@@ -73,16 +73,16 @@ class DecodeResponses:
         #  Break down bits 7(msb), 6, 5 into message type
         #
         if l_message[8] & 0xE0 == 0x80:  #  100 - SB [Broadcast]
-            l_debug_msg += utilDecode._devcat(l_message[5:7], p_device_obj)
+            l_debug_msg += ' (SB) ' + utilDecode._devcat(l_message[5:7], p_device_obj)
         elif l_message[8] & 0xE0 == 0xC0:  #  110 - SA Broadcast = all link broadcast of group id
             l_group = l_message[7]
-            l_debug_msg += 'A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
+            l_debug_msg += ' (SA) A-L-brdcst-Gp:"{}","{}"; '.format(l_group, l_data)
         try:
             # Query responses
             if l_cmd1 == MESSAGE_TYPES['assign_to_group'] and l_message[8] & 0xE0 == 0x80:  # 0x01
-                l_debug_msg += ' Device-Set-Button-Pressed '
+                l_debug_msg += ' (SB) Device-Set-Button-Pressed '
             elif l_cmd1 == MESSAGE_TYPES['delete_from_group'] and l_message[8] & 0xE0 == 0x80:  # 0x02
-                l_debug_msg += ' Controller-Set-Button-Pressed '
+                l_debug_msg += ' (SB) Controller-Set-Button-Pressed '
             elif l_cmd1 == MESSAGE_TYPES['product_data_request']:  #  0x03
                 l_debug_msg += " Product-data-request."
             elif l_cmd1 == MESSAGE_TYPES['cleanup_success']:  #  0x06

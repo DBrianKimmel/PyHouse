@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-12-08'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -76,7 +76,7 @@ class MqttActions:
         LOG.info('Mqtt Control "{}"'.format(l_light_name))
         # LOG.debug(PrettyFormatAny.form(l_control, 'Control'))
         #
-        l_outlet_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Outlets, name=l_light_name)
+        l_outlet_obj = lightingUtility().get_object_type_by_id(self.m_pyhouse_obj.House.Lighting.Outlets, name=l_light_name)
         if l_outlet_obj == None:
             LOG.warning(' Light "{}" was not found.'.format(l_light_name))
             return

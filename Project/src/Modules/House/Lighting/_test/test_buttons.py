@@ -7,52 +7,76 @@
 @note:      Created on May 22, 2014
 @summary:   This module is for testing lighting buttons data.
 
-Passed all 12 tests - DBK - 2019-01-22
+Passed all 7 tests - DBK - 2019-12-11
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-11'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import ButtonData
-from Modules.Core.Utilities import convert, json_tools
-from Modules.Housing.Lighting.lighting_buttons import XML as buttonsXML
-from Modules.Housing.Lighting.lighting_xml import LightingXML
-from Modules.Housing.test.xml_housing import \
-    TESTING_HOUSE_DIVISION
-from Modules.Housing.Lighting.test.xml_lighting import \
-    TESTING_LIGHTING_SECTION
-from Modules.Housing.Lighting.test.xml_buttons import \
-    TESTING_LIGHTING_BUTTON_NAME_0, \
-    TESTING_LIGHTING_BUTTON_COMMENT_0, \
-    TESTING_LIGHTING_BUTTON_FAMILY_0, \
-    TESTING_LIGHTING_BUTTON_ACTIVE_0, \
-    TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0, \
-    TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0, \
-    TESTING_LIGHTING_BUTTON_ROOM_NAME_0, \
-    TESTING_LIGHTING_BUTTON_KEY_0, \
-    TESTING_LIGHTING_BUTTON_UUID_0, \
-    TESTING_LIGHTING_BUTTON_ROOM_UUID_0, \
-    TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0, TESTING_BUTTON_SECTION, TESTING_BUTTON, XML_BUTTON_SECTION
-from Modules.Families.family import Api as familyApi
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Lighting.buttons import LocalConfig as buttonsConfig
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+TEST_YAML = """\
+Buttons:
+    - Name: Living Room mini remote
+      Comment: For Garage Door
+      Type: Remote
+      Family:
+          Name: Insteon
+          Address: 11.11.11
+          # Model: 2342-2
+      Button:
+          - Name: GDO
+            Comment: Garage Door Open/Close
+            Group: 1
+          - Name: B
+            Group: 2
+          - Name: C
+            Group: 3
+          - Name: Test
+            Comment: Test Button
+            Group: 4
+    - Name: Bedside mini remote
+      Type: Remote
+      Family:
+          Name: Insteon
+          Address: 22.22.22
+          # Model: 2343-2
+      Button:
+          - Name: GDO
+            Comment: TV Lights
+            Group: 1
+          - Name: B
+            Comment: His Headboard
+            Group: 2
+          - Name: C
+            Comment: Her Hedboard
+            Group: 3
+          - Name: D
+            Group: 4
+          - Name: E
+            Group: 5
+          - Name: F
+            Group: 6
+          - Name: G
+            Group: 7
+          - Name: H
+            Group: 8
+"""
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_family = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
-        self.m_pyhouse_obj._Families = self.m_family
-        # self.m_api = buttonsApi()
-        self.m_button_obj = ButtonData()
-        self.m_version = '1.4.0'
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
@@ -61,139 +85,74 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
-        print('Id: test_lighting_buttons')
+        _x = PrettyFormatAny.form('_x', 'title')  # so it is defined when printing is cleaned up.
+        print('Id: test_buttons')
 
 
 class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_PyHouse(self):
         """ Be sure that the XML contains the right stuff.
         """
-        self.assertEqual(self.m_pyhouse_obj.House.Irrigation, {})
-
-    def test_02_FindXML(self):
-        """ Be sure that the XML contains the right stuff.
-        """
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.house_div.tag, TESTING_HOUSE_DIVISION)
-        self.assertEqual(self.m_xml.lighting_sect.tag, TESTING_LIGHTING_SECTION)
-        self.assertEqual(self.m_xml.button_sect.tag, TESTING_BUTTON_SECTION)
-        self.assertEqual(self.m_xml.button.tag, TESTING_BUTTON)
+        self.assertEqual(self.m_pyhouse_obj.House.Name, None)
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
+class C1_Load(SetupMixin, unittest.TestCase):
+    """ This section tests loading Button config information
+    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
+        SetupMixin.setUp(self)
 
-    def test_01_Raw(self):
-        l_xml = XML_BUTTON_SECTION
-        # print(l_xml)
-        self.assertEqual(l_xml[:15], '<ButtonSection>')
+    def test_01_Remote0(self):
+        """ Read in the xml file and fill in the lights
+        """
+        l_yaml = self.m_test_config['Buttons'][0]
+        # print('C1-01-A - Yaml: ', l_yaml)
+        l_button = buttonsConfig(self.m_pyhouse_obj)._extract_one_button_set(l_yaml)
+        print(PrettyFormatAny.form(l_button, 'C1-01-B - Remote'))
+        print(PrettyFormatAny.form(l_button.Family, 'C1-01-C - Family'))
+        print(PrettyFormatAny.form(l_button.Button, 'C1-01-C - Buttons'))
+        self.assertEqual(l_button.Name, 'Living Room mini remote')
+        self.assertEqual(l_button.Comment, 'For Garage Door')
+        self.assertEqual(l_button.Type, 'Remote')
+        self.assertEqual(l_button.Family.Address, '11.11.11')
+        self.assertEqual(l_button.DeviceType, 'Lighting')
+        self.assertEqual(l_button.DeviceSubType, 'Button')
 
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_BUTTON_SECTION)
-        # print(l_xml)
-        self.assertEqual(l_xml.tag, TESTING_BUTTON_SECTION)
+    def test_02_Remote1(self):
+        """ Read in the xml file and fill in the lights
+        """
+        l_yaml = self.m_test_config['Buttons'][1]
+        print('C1-02-A - Yaml: ', l_yaml)
+        l_button = buttonsConfig(self.m_pyhouse_obj)._extract_one_button_set(l_yaml)
+        print(PrettyFormatAny.form(l_button, 'C1-02-B - Family'))
+        self.assertEqual(l_button.Name, 'Bedside mini remote')
+        self.assertEqual(l_button.Family.Address, '22.22.22')
 
-    def test_03_Family(self):
-        self.assertEqual(self.m_family['Insteon'].Name, 'Insteon')
+    def test_03_AllRemotes(self):
+        l_yaml = self.m_test_config['Buttons']
+        print('C1-03-A - Yaml: ', l_yaml)
+        l_buttons = buttonsConfig(self.m_pyhouse_obj)._extract_all_button_sets(l_yaml)
+        print(PrettyFormatAny.form(l_buttons, 'C1-03-B - Family'))
 
 
-class B1_Read(SetupMixin, unittest.TestCase):
+class C2_Write(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_01_ReadButtonData(self):
-        """ Read in the xml file and fill in the lights
-        """
-        l_xml = self.m_xml.button_sect[0]
-        # print(PrettyFormatAny.form(l_xml, 'B1-01-A - Button'))
-        l_button = self.m_button_obj
-        l_button = LightingXML()._read_base_device(l_button, l_xml)
-        # print(PrettyFormatAny.form(l_button, 'B1-01-B - Button'))
-        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(str(l_button.Active), TESTING_LIGHTING_BUTTON_ACTIVE_0)
-        self.assertEqual(l_button.Comment, TESTING_LIGHTING_BUTTON_COMMENT_0)
-        self.assertEqual(l_button.DeviceFamily, TESTING_LIGHTING_BUTTON_FAMILY_0)
-        self.assertEqual(str(l_button.DeviceType), TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0)
-        self.assertEqual(str(l_button.DeviceSubType), TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0)
-        self.assertEqual(l_button.RoomName, TESTING_LIGHTING_BUTTON_ROOM_NAME_0)
-        self.assertEqual(l_button.RoomUUID, TESTING_LIGHTING_BUTTON_ROOM_UUID_0)
-
-    def test_02_ReadOneButtonXml(self):
-        """ Read in the xml file and fill in the lights
-        """
-        l_button = buttonsXML()._read_one_button_xml(self.m_pyhouse_obj, self.m_xml.button)
-        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(l_button.Active, True)
-        self.assertEqual(l_button.Key, 0, 'Bad key')
-        self.assertEqual(l_button.Name, TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(l_button.DeviceFamily, TESTING_LIGHTING_BUTTON_FAMILY_0)
-        self.assertEqual(l_button.InsteonAddress, convert.dotted_hex2int(TESTING_LIGHTING_BUTTON_INSTEON_ADDRESS_0))
-
-    def test_03_ReadAllButtonsXml(self):
-        l_buttons = buttonsXML().read_all_buttons_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_buttons, 'B1-03-B - Button'))
-        self.assertEqual(len(l_buttons), 2)
-
-
-class B2_Write(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_controllers.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_OneButton(self):
         """ Write out the XML file for the button section
         """
-        l_button = buttonsXML()._read_one_button_xml(self.m_pyhouse_obj, self.m_xml.button)
-        self.m_pyhouse_obj.House.Lighting.Buttons = l_button
-        l_xml = buttonsXML()._write_one_button_xml(self.m_pyhouse_obj, l_button)
-        # print(PrettyFormatAny.form(l_xml, 'B2-01-A - Button'))
-        self.assertEqual(l_xml.attrib['Name'], TESTING_LIGHTING_BUTTON_NAME_0)
-        self.assertEqual(l_xml.attrib['Key'], TESTING_LIGHTING_BUTTON_KEY_0)
-        self.assertEqual(str(l_xml.attrib['Active']), TESTING_LIGHTING_BUTTON_ACTIVE_0)
-        self.assertEqual(l_xml.find('UUID').text, TESTING_LIGHTING_BUTTON_UUID_0)
-        self.assertEqual(l_xml.find('Comment').text, TESTING_LIGHTING_BUTTON_COMMENT_0)
-        self.assertEqual(l_xml.find('DeviceFamily').text, TESTING_LIGHTING_BUTTON_FAMILY_0)
-        self.assertEqual(l_xml.find('DeviceType').text, TESTING_LIGHTING_BUTTON_DEVICE_TYPE_0)
-        self.assertEqual(l_xml.find('DeviceSubType').text, TESTING_LIGHTING_BUTTON_DEVICE_SUBTYPE_0)
-        self.assertEqual(l_xml.find('RoomName').text, TESTING_LIGHTING_BUTTON_ROOM_NAME_0)
-        self.assertEqual(l_xml.find('RoomUUID').text, TESTING_LIGHTING_BUTTON_ROOM_UUID_0)
 
     def test_02_AllButtons(self):
         """ Write out the XML file for the Buttons section
         """
-        l_buttons = buttonsXML().read_all_buttons_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons
-        l_xml = buttonsXML().write_all_buttons_xml(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'B2-02-A - Button'))
-
-
-class J1_Json(SetupMixin, unittest.TestCase):
-    """ This section tests the reading and writing of XML used by lighting_controllers.
-    """
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-
-    def test_06_CreateJson(self):
-        """ Create a JSON object for Buttons.
-        """
-        l_button = buttonsXML().read_all_buttons_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Lighting.Buttons = l_button
-        # print('Buttons: {}'.format(l_button))
-        # print('Button 0: {}'.format(vars(l_button[0])))
-        l_json = json_tools.encode_json(l_button)
-        # print('JSON: {}'.format(l_json))
 
 # ## END DBK
