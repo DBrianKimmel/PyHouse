@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -72,7 +72,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
@@ -102,7 +102,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Motion_Detectors']
         except:
-            LOG.warn('The config file does not start with "Motion_Detectors:"')
+            LOG.warning('The config file does not start with "Motion_Detectors:"')
             return None
         l_motion = self._extract_all_motion_sensors(l_yaml)
         self.m_pyhouse_obj.House.Security.Motion_Detectors = l_motion

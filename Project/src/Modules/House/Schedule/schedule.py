@@ -197,7 +197,7 @@ class MqttActions:
                 pass
             else:
                 p_msg.LogMessage += '\tUnknown sub-topic: {}; - {}'.format(p_msg.Topic, p_msg.Payload)
-                LOG.warn('Unknown Schedule Topic: {}'.format(p_msg.Topic[0]))
+                LOG.warning('Unknown Schedule Topic: {}'.format(p_msg.Topic[0]))
 
 
 class DOW:
@@ -609,7 +609,7 @@ class LocalConfig:
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Schedule config file is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Schedule config file is missing an entry for "{}"'.format(l_key))
         LOG.info('Loaded Schedule "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -634,7 +634,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Schedules']
         except:
-            LOG.warn('The config file does not start with "Schedules:"')
+            LOG.warning('The config file does not start with "Schedules:"')
             return None
         l_scheds = self._extract_all_schedules(l_yaml)
         self.m_pyhouse_obj.House.Schedules = l_scheds

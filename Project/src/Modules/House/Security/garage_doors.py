@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-25'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -77,7 +77,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
@@ -108,7 +108,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Garage+Doors']
         except:
-            LOG.warn('The config file does not start with "Garage_Doors:"')
+            LOG.warning('The config file does not start with "Garage_Doors:"')
             return None
         l_gdo = self._extract_all_garage_doors(l_yaml)
         self.m_pyhouse_obj.House.Security.Garage_Doors = l_gdo

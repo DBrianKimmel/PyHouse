@@ -10,7 +10,7 @@
 """
 from Modules.House.Family.insteon.insteon_constants import PLM_COMMANDS
 
-__updated__ = '2019-12-03'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -138,7 +138,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Mqtt']
         except:
-            LOG.warn('The config file does not start with "Mqtt:"')
+            LOG.warning('The config file does not start with "Mqtt:"')
             return None
         l_brokers = self.m_pyhouse_obj.Core.Mqtt.Brokers = self._extract_all_brokers(l_yaml, p_api)
         return l_brokers  # For testing purposes
@@ -266,7 +266,7 @@ class Api:
             p_msg.LogMessage += '   OTHER: Unknown topic\n' + \
                         '\tTopic: {};\n'.format(p_msg.UnprocessedTopic[0]) + \
                         '\tMessage: {};\n'.format(p_msg.Payload)
-            LOG.warn(p_msg.LogMessage)
+            LOG.warning(p_msg.LogMessage)
         # LOG.info(p_msg.LogMessage)
 
     def doPyHouseLogin(self, p_client, p_pyhouse_obj):

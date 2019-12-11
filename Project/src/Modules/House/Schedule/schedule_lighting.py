@@ -68,7 +68,7 @@ class Api():
         l_control.BrightnessPct = p_schedule_obj.Level
         l_control.TransitionTime = p_schedule_obj.Rate
         if len(l_controller_objs) < 1:
-            LOG.warn('No controllers on this server for Light: {}'.format(l_light_obj.Name))
+            LOG.warning('No controllers on this server for Light: {}'.format(l_light_obj.Name))
             return
         for l_controller_obj in l_controller_objs:
             # if not l_controller_obj.Active:

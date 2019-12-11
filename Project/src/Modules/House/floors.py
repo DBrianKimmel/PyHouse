@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -110,12 +110,12 @@ class LocalConfig:
             try:
                 _l_x = getattr(l_obj, l_key)
             except AttributeError:
-                LOG.warn('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_key, l_value))
+                LOG.warning('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_key, l_value))
                 continue
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         LOG.info('Extracted floor "{}"'.format(l_obj.Name))
         return l_obj
 
@@ -142,7 +142,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Floors']
         except:
-            LOG.warn('The config file does not start with "Floors:"')
+            LOG.warnng('The config file does not start with "Floors:"')
             self.m_pyhouse_obj.House.Floors = None
             return None
         l_floors = self._extract_all_floors(l_yaml)

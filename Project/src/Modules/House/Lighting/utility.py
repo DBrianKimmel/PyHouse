@@ -8,7 +8,7 @@
 @summary:
 """
 
-__updated__ = '2019-12-07'
+__updated__ = '2019-12-11'
 
 #  Import system type stuff
 
@@ -40,7 +40,7 @@ class lightingUtility:
             return p_obj
         return None
 
-    def get_object_type_by_id(self, p_objs, group=['Outlets', 'Lights', 'Outlets'], name=None, key=None, UUID=None):
+    def get_object_by_id(self, p_objs, name=None, key=None, UUID=None):
         """
         Return the device object from a dict of objects using the given value.
         one of several things may be used for the lookup, a name,a key, or a UUID may be used to identify the object.
@@ -49,16 +49,30 @@ class lightingUtility:
         @param p_objs: is the tree of lighting objects such as lights, buttons or controllers
         @return: the object found or None.
         """
-        # print(PrettyFormatAny.form(p_objs, 'Objs'))
+        # LOG.debug(PrettyFormatAny.form(p_objs, 'Objs'))
+        for l_obj in p_objs.values():
+            # LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
+            l_ret = self._test_object_by_id(l_obj, name, key, UUID)
+            if l_ret != None:
+                return l_obj
+        LOG.error('Light Lookup failed - arg error Name:{}, Key:{}, UUID:{}'.format(name, key, UUID))
+        return None
+
+    def get_object_type_by_id(self, p_objs, group=['Lights', 'Outlets'], name=None, key=None, UUID=None):
+        """
+        Return the device object from a dict of objects using the given value.
+        one of several things may be used for the lookup, a name,a key, or a UUID may be used to identify the object.
+        Only one object is returned.
+
+        @param p_objs: is the tree of lighting objects such as lights, buttons or controllers
+        @return: the object found or None.
+        """
+        # LOG.debug(PrettyFormatAny.form(p_objs, 'Objs'))
         for l_class in group:
-            print('Class: "{}"'.format(l_class))
+            # LOG.debug('Class: "{}"'.format(l_class))
             l_objs = getattr(p_objs, l_class)
-            print(PrettyFormatAny.form(l_objs, 'Objs'))
-            for l_obj in l_objs.values():
-                print(PrettyFormatAny.form(l_obj, 'Obj'))
-                l_ret = self._test_object_by_id(l_obj, name, key, UUID)
-                if l_ret != None:
-                    return l_obj
+            # LOG.debug(PrettyFormatAny.form(l_objs, 'Objs'))
+            self.get_object_by_id(p_objs, name, key, UUID)
         LOG.error('Light Lookup failed - arg error Name:{}, Key:{}, UUID:{}'.format(name, key, UUID))
         return None
 

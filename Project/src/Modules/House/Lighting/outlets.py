@@ -67,7 +67,7 @@ class MqttActions:
 
     def _decode_control(self, p_message):
         """
-        pyhouse/<housename>/house/lighting/light/xxx
+        pyhouse/<housename>/house/lighting/outlet/xxx
         """
         l_control = OutletControlInformation()
         l_control.Name = l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
@@ -76,9 +76,9 @@ class MqttActions:
         LOG.info('Mqtt Control "{}"'.format(l_light_name))
         # LOG.debug(PrettyFormatAny.form(l_control, 'Control'))
         #
-        l_outlet_obj = lightingUtility().get_object_type_by_id(self.m_pyhouse_obj.House.Lighting.Outlets, name=l_light_name)
+        l_outlet_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Outlets, name=l_light_name)
         if l_outlet_obj == None:
-            LOG.warning(' Light "{}" was not found.'.format(l_light_name))
+            LOG.warning(' Outlet "{}" was not found.'.format(l_light_name))
             return
         LOG.debug(PrettyFormatAny.form(l_outlet_obj.Family, 'Outlet.Family'))
         #

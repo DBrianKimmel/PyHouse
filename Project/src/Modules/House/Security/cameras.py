@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-11-25'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -183,7 +183,7 @@ class LocalConfig:
         # Check for required data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
         # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
         return l_obj
@@ -214,7 +214,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['Cameras']
         except:
-            LOG.warn('The config file does not start with "Cameras:"')
+            LOG.warning('The config file does not start with "Cameras:"')
             return None
         l_cameras = self._extract_all_cameras(l_yaml)
         self.m_pyhouse_obj.House.Security.Cameras = l_cameras

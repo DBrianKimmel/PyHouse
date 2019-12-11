@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-12-03'
+__updated__ = '2019-12-11'
 __version_info__ = (19, 10, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -79,7 +79,8 @@ class MqttActions:
 
     def decode(self, p_msg):
         """
-        --> pyhouse/<housename>/house/topic03...
+        ==> pyhouse/<housename>/house/topic03...
+        ==> pyhouse/<housename>/topic
         """
         p_msg.LogMessage += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
         l_topic = p_msg.UnprocessedTopic[0].lower()
@@ -105,7 +106,7 @@ class MqttActions:
             outletMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
-            LOG.warn('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
+            LOG.warning('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
 
 
 class Utility:
@@ -217,7 +218,7 @@ class Utility:
             if l_key == 'HouseApi':
                 continue
             if l_a == None:
-                LOG.warn('Skipping "{}"'.format(l_key))
+                LOG.warning('Skipping "{}"'.format(l_key))
                 continue
             l_a.Stop()
         return
@@ -260,7 +261,7 @@ class LocalConfig:
         try:
             l_modules = p_yaml['Modules']
         except:
-            LOG.warn('No "Modules" list in "house.yaml"')
+            LOG.warning('No "Modules" list in "house.yaml"')
             return
         for l_module in l_modules:
             LOG.debug('found Module "{}" in house config file.'.format(l_module))
@@ -277,7 +278,7 @@ class LocalConfig:
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('house.yaml is missing an entry for "{}"'.format(l_key))
+                LOG.warning('house.yaml is missing an entry for "{}"'.format(l_key))
         return l_obj
 
     def load_yaml_config(self):
@@ -292,7 +293,7 @@ class LocalConfig:
         try:
             l_yaml = l_yaml['House']
         except:
-            LOG.warn('The config file does not start with "House:"')
+            LOG.warning('The config file does not start with "House:"')
             return None
         l_house = self._extract_house_info(l_yaml)
         self.m_pyhouse_obj.House.Name = l_house.Name
