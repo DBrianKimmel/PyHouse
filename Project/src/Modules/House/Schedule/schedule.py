@@ -376,7 +376,7 @@ class ScheduleExecution:
         _l_obj = p_schedule_obj
         # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
-        if p_schedule_obj.Sched.Type == 'Lighting':
+        if p_schedule_obj.Sched.Type in ['Lighting', 'Light', 'Outlet']:
             LOG.info('Execute_one_schedule type = Lighting - "{}"'.format(p_schedule_obj.Sched.Name))
             lightingActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #

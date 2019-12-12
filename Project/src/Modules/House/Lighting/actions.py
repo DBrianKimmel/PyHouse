@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-12'
 
 #  Import system type stuff
 
@@ -39,7 +39,7 @@ class Api:
         l_light_name = p_schedule_obj.Sched.Name
         l_type = p_schedule_obj.Sched.Type
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        if l_type == 'Lighting':
+        if l_type == 'Light':
             l_obj = l_lighting_objs.Lights
         elif l_type == 'Outlet':
             l_obj = l_lighting_objs.Outlets
