@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-12'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -51,7 +51,7 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import convert, extract_tools
 from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
 from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
-from Modules.House.Lighting.lighting import ScheduleLightingInformation
+# from Modules.House.Lighting.lighting import ScheduleLightingInformation
 from Modules.House.Lighting.actions import Api as lightingActionsApi
 from Modules.House.Lighting.utility import lightingUtility
 from Modules.House.Schedule import sunrisesunset
@@ -83,6 +83,19 @@ class ScheduleInformation:
         self.Occupancy = 'Always'  # Always, Home, Away, Vacation, ...
         self.Time = None
         self.Sched = None  # One of the schedule detail types below.
+
+
+class ScheduleEntertainmentInformation:
+    """ This is the lighting specific part.
+    """
+
+    def __init__(self):
+        self.Type = 'Lighting'
+        self.Brightness = 0
+        self.Name = None  # Light name
+        self.Rate = 0
+        self.Duration = None
+        self.Room = None  # Room Name
 
 
 class ScheduleLightingInformation:
@@ -530,7 +543,7 @@ class LocalConfig:
     def _extract_entertainment_schedule(self, p_config):
         """
         """
-        l_obj = ScheduleIrrigationInformation()
+        l_obj = ScheduleEntertainmentInformation()
         for l_key, l_value in p_config.items():
             setattr(l_obj, l_key, l_value)
         return l_obj
@@ -543,11 +556,13 @@ class LocalConfig:
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_lighting_schedule(self, p_config):
+    def _extract_lighting_schedule(self, p_config, p_key):
         """
         """
         l_obj = ScheduleLightingInformation()
+        l_obj.Type = p_key
         for l_key, l_value in p_config.items():
+            LOG.debug('Lighting Key:{}; Value:{}'.format(l_key, l_value))
             setattr(l_obj, l_key, l_value)
         return l_obj
 
@@ -581,36 +596,30 @@ class LocalConfig:
     def _extract_one_schedule(self, p_config):
         """
         """
-        l_required = ['Name', 'Occupancy', 'DOW', 'Time']
+        l_required = ['Name', 'Occupancy', 'DOW', 'Time', 'Sched']
         l_obj = ScheduleInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Entertainment':
                 pass
             elif l_key == 'Irrigation':
-                l_obj.Type = 'Irrigation'
-                l_ret = self._extract_irrigation_schedule(l_value)
-                l_obj.Sched = l_ret
+                l_obj.Sched = self._extract_irrigation_schedule(l_value)
             elif l_key in ['Lighting', 'Light', 'Outlet']:
-                l_obj.Type = 'Lighting'
-                l_ret = self._extract_lighting_schedule(l_value)
-                l_obj.Sched = l_ret
+                l_obj.Sched = self._extract_lighting_schedule(l_value, l_key)
             elif l_key in ['Hvac', 'Thermostat']:
-                l_obj.Type = 'Thermostat'
-                l_ret = self._extract_hvac_schedule(l_value)
-                l_obj.Sched = l_ret
+                l_obj.Sched = self._extract_hvac_schedule(l_value)
             elif l_key == 'DOW':
                 l_obj.DOW = self._extract_DOW_field(l_value)
             elif l_key == 'Occupancy':
                 pass
             elif l_key == 'Room':
-                pass
+                l_obj.Room = self.m_config.extract_room_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warning('Schedule config file is missing an entry for "{}"'.format(l_key))
-        LOG.info('Loaded Schedule "{}"'.format(l_obj.Name))
+        LOG.info('Extracted Schedule "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_schedules(self, p_config):
@@ -620,6 +629,7 @@ class LocalConfig:
         for l_ix, l_value in enumerate(p_config):
             l_obj = self._extract_one_schedule(l_value)
             l_scheds[l_ix] = l_obj
+        LOG.info('Extracted {} Schedules'.format(len(l_scheds)))
         return l_scheds
 
     def load_yaml_config(self):

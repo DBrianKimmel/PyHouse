@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-12'
 
 # Import system type stuff
 import datetime
@@ -31,7 +31,6 @@ from Modules.House.Schedule.schedule import \
     LocalConfig as scheduleConfig, \
     lightingUtility, \
     TimeField, \
-    TimeCalcs, \
     CONFIG_NAME
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -57,49 +56,32 @@ DOW_ALL = 'SMTWTFS'
 
 TEST_YAML_1 = """\
 Schedules:
-    - Name: Evening 0
-      Comment: Test schedule 0
-      # Occupancy: Home  # Away, Vacation, Always
-      Time: 14:00
+    - Name: Livingroom Ceiling On
+      Comment: Test comment
       DOW: SMTWTFS
+      Occupancy: Always
+      Time: sunset - 0:15
+      Sched: Lighting
       Light:
-          Name: Fireplace
-          Brightness: 100
-
-    - Name: Evening 1
-      Time: 14:02
+          Name: LR Ceiling
+          Brightness: 50
+          Room: Living Room
+    - Name: Livingroom Ceiling Off
+      Time: 23:30
       Light:
-          Name: Fireplace
+          Name: LR Ceiling
           Brightness: 0
 
-    - Name: Base 2
-      Occupancy: Home  # Away, Vacation, Off
-      DOW: SMTWTFS
-      Time: sunset - 0:15  # HH:mm
-      Light:  # Light, Thermostat, Irrigation, Entertainment
-          Name: Ceiling  # Light, if present, is ignored
-          Room: Living Room
-          Brightness: 0  # Off, On, %%
-          Duration: 2:00  # HH:mm
-
-    - Name: test 3
-      Occupancy: Vacation
-      DOW: ---W--S
-      Time: 0:15  # HH:mm
-      Irrigation:
-          Name: SystemName
-          Zone: 1
-          Duration: 0:40  # HH:mm
-
-    - Name: Event 4
-      Occupancy: Vacation
-      DOW: -MTWTF-
-      Time: 0:15  # HH:mm
-      Thermostat:
-          Name: Main
-          Room: Hall
-          Heat: 72
-          Cool: 77
+    - Name: Musicroom On
+      Time: sunset - 0:08
+      Outlet:
+          Name: Musicroom Lamp
+          Brightness: 100
+    - Name: Musicroom Off
+      Time: 23:15
+      Outlet:
+          Name: Musicroom Lamp
+          Brightness: 0
 """
 
 
@@ -166,7 +148,7 @@ class B1_Config(SetupMixin, unittest.TestCase):
         # print('B1-01-A C', self.m_sched_config[0])
         l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(self.m_sched_config[0])
         # print(PrettyFormatAny.form(l_ret, 'B1-01-B - Schedule'))
-        self.assertEqual(l_ret.Name, 'Evening 0')
+        self.assertEqual(l_ret.Name, 'Livingroom Ceiling On')
 
     def test_02_Time0(self):
         """
@@ -267,9 +249,57 @@ class C2_Lighting(SetupMixin, unittest.TestCase):
         """
         """
         l_yaml = self.m_test_config['Schedules'][0]
-        print('C2-01-A - Yaml: ', l_yaml)
-        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_lighting_schedule(l_yaml)
+        # print('C2-01-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
         print(PrettyFormatAny.form(l_ret, 'C2-01-B - Sched'))
+        # print(PrettyFormatAny.form(l_ret.Sched, 'C2-01-C - Sched'))
+        # self.assertEqual(l_ret.Name, 'Livingroom Ceiling On')
+
+    def test_02_Sched0(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][0]
+        # print('C2-02-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-02-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-02-C - Light'))
+        self.assertEqual(l_ret.Name, 'Livingroom Ceiling On')
+        self.assertEqual(l_ret.Sched.Name, 'LR Ceiling')
+
+    def test_03_Sched1(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][1]
+        # print('C2-03-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-03-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-03-C - Light'))
+
+    def test_04_Sched2(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][2]
+        # print('C2-04-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-04-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-04-C - Light'))
+
+    def test_05_Sched3(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][3]
+        # print('C2-05-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-05-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-05-C - Light'))
+
+    def test_06_Scheds(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules']
+        print('C2-06-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_all_schedules(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-05-B - Sched'))
 
 
 class C3_Hvac(SetupMixin, unittest.TestCase):
