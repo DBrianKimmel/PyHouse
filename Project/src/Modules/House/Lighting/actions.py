@@ -39,6 +39,7 @@ class Api:
         l_light_name = p_schedule_obj.Sched.Name
         l_type = p_schedule_obj.Sched.Type
         l_lighting_objs = p_pyhouse_obj.House.Lighting
+        LOG.debug('Lighting type {}'.format(l_type))
         if l_type == 'Light':
             l_obj = l_lighting_objs.Lights
         elif l_type == 'Outlet':
@@ -47,7 +48,7 @@ class Api:
             LOG.error('Schedule type is invalid "{}"'.format(l_type))
             return
         try:
-            l_light_obj = lightingUtility().get_object_type_by_id(l_obj, name=l_light_name)
+            l_light_obj = lightingUtility().get_object_by_id(l_obj, name=l_light_name)
             l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
             l_control = LightData()
             l_control.BrightnessPct = p_schedule_obj.Sched.Brightness
@@ -61,8 +62,8 @@ class Api:
                 LOG.info("\n\tSchedLightName:{}; Level:{}; LightName:{}; Controller:{}".format(
                         l_light_name, l_control.BrightnessPct, l_light_obj.Name, l_controller_obj.Name))
                 self.ControlLight(l_light_obj, l_controller_obj, l_control)
-        except:
-            pass
+        except Exception as e_err:
+            LOG.debug('Something failed {}'.format(e_err))
 
     def ControlLight(self, p_light_obj, p_controller_obj, p_control):
         """
