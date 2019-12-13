@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-12-06'
+__updated__ = '2019-12-12'
 
 #  Import system type stuff
 
@@ -430,7 +430,7 @@ class DecodeLink:
         LOG.warning('All-Link-Clean failed {}, Group:{}, From:{} '.format(l_link_code, l_link_group, l_from_id))
 
     def decode_0x57(self, p_controller_obj):
-        """All-Link Record Response (10 bytes).
+        """ All-Link Record Response (10 bytes).
         See p 251(264) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x57
@@ -441,19 +441,17 @@ class DecodeLink:
         [8] = Link Data 2
         [9] = Link Data 3
 
+        @param p_controller_obj: ==> ControllerInformation()
 
-        elsif ( $record_type eq $prefix{all_link_record}  # 0x57 and ( length($data) >= 20 ) ) {
-            #Note Receipt of PLM Response
+        elsif ( $record_type eq $prefix{all_link_record} and ( length($data) >= 20 ) ) {  # 0x57
+            # Note Receipt of PLM Response
             $pending_message->plm_receipt(1);
-            #ALL-Link Record Response
+            # ALL-Link Record Response
             my $message_data = substr( $data, 4, 16 );
-            &::print_log( "[Insteon_PLM] DEBUG4:\n" . Insteon::MessageDecoder::plm_decode($data) )
-              if $self->debuglevel( 4, 'insteon' );
-            &::print_log("[Insteon_PLM] DEBUG2: ALL-Link Record Response:$message_data")
-              if $self->debuglevel( 2, 'insteon' );
+            &::print_log( "[Insteon_PLM] DEBUG4:\n" . Insteon::MessageDecoder::plm_decode($data) ) if $self->debuglevel( 4, 'insteon' );
+            &::print_log("[Insteon_PLM] DEBUG2: ALL-Link Record Response:$message_data") if $self->debuglevel( 2, 'insteon' );
             $self->_aldb->parse_alllink($message_data);
-            # before doing the next, make sure that the pending command
-            #   (if it sitll exists) is pulled from the queue
+            # before doing the next, make sure that the pending command (if it sitll exists) is pulled from the queue
             $self->clear_active_message();
             $self->_aldb->get_next_alllink();
             $data = substr( $data, 20 );
@@ -474,7 +472,9 @@ class DecodeLink:
             l_link_obj.Address = l_obj.Family.Address
         except:
             l_link_obj.Address = FormatBytes(l_message[4:7])
-        LOG.info("All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}".format(l_group, l_obj.Name, l_flags, l_data, l_type))
+        # p_controller_obj._Links.append(l_link_obj)
+        LOG.info('All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}'.format(l_group, l_obj.Name, l_flags, l_data, l_type))
+        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
         # Ask for next record
         SendCmd().queue_0x6A_command(p_controller_obj)
 

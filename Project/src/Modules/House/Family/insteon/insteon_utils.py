@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-12'
 
 #  Import system type stuff
 
@@ -69,6 +69,8 @@ def get_message_length(p_message):
     l_id = p_message[1]
     try:
         l_message_length = MESSAGE_LENGTH[l_id]
+        if l_id in [0x57, 0x57]:
+            return l_message_length
         if l_message_length < 8:
             return l_message_length
         if len(p_message) > 8:
