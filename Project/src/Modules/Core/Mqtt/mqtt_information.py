@@ -10,7 +10,7 @@
 """
 
 #  Import system type stuff
-# from typing import List
+from typing import Optional, List
 
 
 class MqttInformation:
@@ -20,7 +20,7 @@ class MqttInformation:
     """
 
     def __init__(self) -> None:
-        self.Brokers: MqttBrokerInformation = {}  # MqttBrokerInformation()
+        self.Brokers: dict = {}  # MqttBrokerInformation()
         self.ClientID: str = 'PyH-'
         self.Prefix: str = ''
         self._ProtocolApi = None
@@ -74,9 +74,9 @@ class MqttMessageInformation:
     """
 
     def __init__(self) -> None:
-        self.Topic: str = None
-        self.Payload: str = None
+        self.Topic: Optional[str] = None
+        self.Payload: Optional[str] = None
         self.UnprocessedTopic: List[str] = []  # a list of topic parts
-        self.LogMessage: str = None
+        self.LogMessage: Optional[str] = None
 
 # ## END DBK

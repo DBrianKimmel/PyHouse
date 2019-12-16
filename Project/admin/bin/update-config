@@ -1,10 +1,14 @@
 #!/bin/bash
 #
+# @name:      ~/bin/update-config
+# @author:    D. Brian Kimmel
+#
 # Pull the master config to the local server.
 
-NFS=/NFS/Projects/PyHouse/Houses/PinkPoppy/Config/
+HOUSENAME='PinkPoppy'
+NFS=/NFS/Projects/PyHouse/Houses/${HOUSENAME}/Config
 ETC=/etc/pyhouse/
 
-cp --archive  ${NFS} ${ETC}
+cp --archive  ${NFS}/* ${ETC}
 
 ### END DBK

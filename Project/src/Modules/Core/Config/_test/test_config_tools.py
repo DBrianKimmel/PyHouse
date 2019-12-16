@@ -11,7 +11,7 @@ Passed all 18 tests - DBK - 2019-10-17
 
 """
 
-__updated__ = '2019-11-04'
+__updated__ = '2019-12-15'
 
 # Import system type stuff
 import os
@@ -142,7 +142,7 @@ class B7_YamlCreate(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        # self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
+        # self.m_node = self.m_yamlconf.read_config(self.m_filename)
 
     def test_01_create(self):
         """ _test the creation of a yaml structure
@@ -184,7 +184,7 @@ class B8_YamlLoad(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         self.m_filename = 'test.yaml'
-        # self.m_node = self.m_yamlconf.read_yaml(self.m_filename)
+        # self.m_node = self.m_yamlconf.read_config(self.m_filename)
 
     def test_01_load(self):
         """ _test the creation of a yaml structure by reading in a yaml file.
@@ -267,7 +267,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         self.m_filename = 'test.yaml'
-        # self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
 
     def test_01_find(self):
         """ _find_config_node()
@@ -281,9 +281,9 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
         # self.assertIsNotNone(l_node.YamlPath)
 
     def Xtest_02_Load(self):
-        """ read_yaml()
         """
-        l_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        """
+        l_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
         # print(PrettyFormatAny.form(l_node, 'C2-02-A - Find', 190))
         # print(PrettyFormatAny.form(l_node.Yaml, 'C2-02-B - Yaml', 190))
         # print('C2-02-C - Yaml {}'.format(l_node))
@@ -319,7 +319,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
            Key: Value
            New Key: New Value  <== Added
         """
-        l_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_yaml = l_node.Yaml['Testing']
         # print('C2-05-A - Yaml {}'.format(l_yaml))
         l_ret = configYaml(self.m_pyhouse_obj).add_dict(l_yaml, 'Host', {'DictAddition-1': 'Test add dict'})
@@ -331,7 +331,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
     def Xtest_06_AddList(self):
         """
         """
-        l_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_yaml = l_node.Yaml['Testing']
         l_list = [('Adding 1', 'abc'), 'wxyz']
         # print('C2-06-A - Yaml Frag: {}'.format(l_yaml))
@@ -344,7 +344,7 @@ class C2_Yaml(SetupMixin, unittest.TestCase):
     def Xtest_07_addObj(self):
         """
         """
-        l_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_yaml = l_node.Yaml['Testing']
         l_obj = LightInformation()
         # print('C2-07-A - Yaml Frag: {}'.format(l_yaml))
@@ -359,7 +359,7 @@ class C3_Fetch(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        # self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
 
     def test_01_Host(self):
         """
@@ -391,7 +391,7 @@ class C4_Add(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        # self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
 
     def test_01_Host(self):
         """
@@ -404,7 +404,7 @@ class C5_FindConfig(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        # self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
 
     def test_01_x(self):
         """
@@ -422,7 +422,7 @@ Host:
 
     def setUp(self):
         SetupMixin.setUp(self)
-        # self.m_node = configYaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_config(self.m_filename)
 
     def test_01_Host(self):
         """

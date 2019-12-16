@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -184,38 +184,32 @@ class LocalConfig:
         l_ret = p_light_obj.Name
         return l_ret
 
-    def _save_all_lights(self, p_config):
+    def _save_all_lights(self):
         """ Lights are list items
 
         @param p_config: is the yaml['Lights'] structure
         @return: a complete yaml tree ready to save
         """
         # LOG.debug(p_config)
+        l_dict = {}
         l_lights = self.m_pyhouse_obj.House.Lighting.Lights
         for l_light_obj in l_lights.values():
             l_config = self._save_one_light(l_light_obj)
             try:
                 LOG.debug('Inserting one light')
-                p_config.insert(-1, l_config)
+                l_dict[l_light_obj.Name] = l_light_obj
+                # p_config.insert(-1, l_config)
             except:
                 LOG.debug('Create a list of lights')
             # p_config[-1] = l_config
-        return p_config
+        return l_dict
 
     def save_yaml_config(self):
-        """ Save all the lights in a separate yaml file.
+        """ Save all the lights in a separate config file.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        try:
-            l_node = None  # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
-            _l_config = l_node.Yaml['Lights']
-        except Exception as e_err:
-            LOG.info('No Lights yaml file - creating a new file - {}'.format(e_err))
-            # l_node = config_tools.Yaml(self.m_pyhouse_obj).create_yaml_node('Lights')
-            # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME] = l_node
-            # l_config = l_node.Yaml['Lights']
-        # l_config = self._save_all_lights(l_config)
-        # config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
+        l_data = self._save_all_lights()
+        self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
         # return l_config
 
 

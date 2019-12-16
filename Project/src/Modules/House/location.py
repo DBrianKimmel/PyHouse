@@ -12,12 +12,11 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-# from mypy.main import config_types
 
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -141,7 +140,7 @@ class LocalConfig:
 
         @return: the updated yaml ready information.
         """
-        l_node = None  # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
+        l_node = None
         l_config = l_node.Yaml['Location']
         # LOG.debug(PrettyFormatAny.form(l_config, 'Location'))
         l_working = self.m_pyhouse_obj.House.Location
@@ -149,8 +148,6 @@ class LocalConfig:
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             l_val = getattr(l_working, l_key)
             l_config[l_key] = l_val
-        # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Location'] = l_config
-        # LOG.debug(PrettyFormatAny.form(l_node, 'Updated'))
         l_ret = {'Location': l_config}
         return l_ret
 

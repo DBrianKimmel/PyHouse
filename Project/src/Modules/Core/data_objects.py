@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-12-14'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -124,28 +124,6 @@ class HostInformation:
         self.Port = None
         self.IPv4 = None
         self.IPv6 = None
-
-
-class HouseApis:
-    """ These are all the sub-systems of House.
-
-    ==> PyHouse.House
-    """
-
-    def __init__(self):
-        self.FamilyApi = None  # Uses Plugins
-        self.HouseApi = None
-
-# class HvacData():
-
-    """
-    DeviceType = 2
-
-    ==> PyHouse.House.Hvac.xxx as in the def below
-    """
-
-#    def __init__(self):
-#        self.Thermostats = {}  # ThermostatData()  Sub = 1
 
 
 class ModuleObject:

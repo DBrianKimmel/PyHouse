@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-14'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,6 @@ from ruamel.yaml import YAML
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Mqtt import mqtt
 from Modules.Core.Mqtt.mqtt import Api as mqttApi, MqttInformation
 from Modules.Core.Utilities import json_tools
@@ -169,7 +168,6 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'C1-01-A - PyHouse'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-01-A - Computer'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Mqtt, 'C1-01-B - Mqtt'))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Core.Mqtt, MqttInformation)
 

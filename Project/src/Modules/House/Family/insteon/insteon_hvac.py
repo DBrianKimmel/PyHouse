@@ -20,7 +20,7 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-12-06'
+__updated__ = '2019-12-14'
 
 #  Import system type stuff
 
@@ -88,7 +88,7 @@ class Util:
 
 class DecodeResponses:
 
-    def decode_0x50(self, p_pyhouse_obj, p_device_obj, p_controller_obj):
+    def decode_0x50(self, p_pyhouse_obj, p_controller_obj, p_device_obj):
         """
         @param p_device_obj: is the Device (light, thermostat...) we are decoding.
         @param p_controller_obj: The controller sending the response.

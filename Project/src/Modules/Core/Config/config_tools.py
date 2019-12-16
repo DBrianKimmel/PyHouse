@@ -9,12 +9,13 @@
 
 """
 
-__updated__ = '2019-12-08'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 12, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
+import datetime
 from typing import Union
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
@@ -45,10 +46,14 @@ class ConfigInformation:
 
 
 class ConfigFileInformation:
+    """ ==? pyhouse_obj._Config {}
+
+    Used to record where each confile is located so it can be updated.
+    """
 
     def __init__(self) -> None:
-        self.Name: str = ''  # type: ignore  # LowerCase without .yaml
-        self.Path: str = None  # type: ignore
+        self.Name: str = ''  # LowerCase filemane without .yaml
+        self.Path: str = None  # Full path to file
 
 
 class RoomLocationInformation:
@@ -218,7 +223,7 @@ class Tools:
         @return: the absolute path of the file or None if not found.
         """
         # LOG.debug('Finding Config file:"{}"'.format(p_name))
-        l_filename = p_name.lower() + CONFIG_SUFFIX
+        l_filename = p_name + CONFIG_SUFFIX
         l_ret = self._find_file(l_filename, self._get_config_dir())
         return l_ret
 
@@ -393,9 +398,11 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         @return: a ConfigFileInformation() filled in.
         """
         # LOG.debug('Progress')
+        l_filename = p_filename.lower()
         l_node = ConfigFileInformation()
-        l_node.FileName = p_filename
-        l_node.YamlPath = self.find_config_file(p_filename)
+        l_node.Name = l_filename
+        l_node.Path = self.find_config_file(l_filename)
+        self.m_pyhouse_obj._Config[l_filename] = l_node
         return l_node
 
     def find_first_element(self, p_ordered):
@@ -405,20 +412,20 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         """
         return next(iter(p_ordered))
 
-    def read_yaml(self, p_filename):
+    def _read_yaml(self, p_filename):
         """ Find the Yaml file and read it in.
-        Save file location and source YAML
+        Save file location
 
         @return: a ConfigFileInformation() filled in
         """
-        l_node = self._find_config_node(p_filename)
+        l_node = self._find_config_node(p_filename.lower())
         if l_node == None:
             LOG.warning('Config file "{}" not found.'.format(p_filename))
             return None
         l_yaml = MyYAML(typ='rt')
         l_yaml.allow_duplicate_keys = True
         try:
-            with open(l_node.YamlPath, 'r') as l_file:
+            with open(l_node.Path, 'r') as l_file:
                 l_data = l_yaml.load(l_file)
         except Exception as e_err:
             LOG.error('Config file read error; {}'.format(e_err))
@@ -432,18 +439,21 @@ class Yaml(YamlCreate, YamlFetch, Tools):
         @param p_filename: is the name of the read in yaml file 'rooms.yaml'
         @param addnew: defaults to false, will add '-new' to the saved filename.
         """
-        # l_now = datetime.datetime.now()
-        # l_node = self.m_pyhouse_obj._Config.YamlTree[p_filename]
-        # l_filename = l_node.YamlPath
-        # l_node.Yaml.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
-        # if addnew:
-        # #   l_filename += '-new'
-        # l_yaml = MyYAML(typ='rt')
-        # l_yaml.indent(mapping=2, sequence=4, offset=2)
-        # l_yaml.version = (1, 2)
-        # with open(l_filename, 'w+') as l_file:
-        #    l_yaml.dump(p_data, l_file)
-        LOG.debug('Saved Yaml file "{}"'.format(p_filename))
+        try:
+            l_path = self.m_pyhouse_obj._Config[p_filename].Path
+        except Exception as e_err:
+            l_path = '/etc/pyhouse/'
+            LOG.error('Bad file {}'.format(e_err))
+        l_now = datetime.datetime.now()
+        p_data.insert(0, 'Skip', 'x', comment="Updated: " + str(l_now))
+        if addnew:
+            l_path += '-new'
+        l_yaml = MyYAML(typ='rt')
+        l_yaml.indent(mapping=2, sequence=4, offset=2)
+        l_yaml.version = (1, 2)
+        with open(l_path, 'w+') as l_file:
+            l_yaml.dump(p_data, l_file)
+        LOG.debug('Saved Yaml file "{}"'.format(l_path))
 
     def _x(self):
         LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy'))
@@ -466,7 +476,7 @@ class Api(SubFields, Tools):
         @param  p_filename: is the name of the config file to read (without .yaml)
         @return: the yaml file string or None if no such config file
         """
-        l_ret = self.m_yaml.read_yaml(p_filename.lower())
+        l_ret = self.m_yaml._read_yaml(p_filename.lower())
         # LOG.debug(PrettyFormatAny.form(l_ret, 'Config'))
         return l_ret
 
@@ -475,25 +485,5 @@ class Api(SubFields, Tools):
         """
         l_ret = self.m_yaml._write_yaml(p_filename, p_data, addnew)
         return l_ret
-
-    def XXXfind_config(self, p_name):
-        """ Given a name like 'computer' or 'Computer', find any config file 'computer.yaml'.
-        @return: the absolute path of the file or None if not found.
-        """
-        l_ret = Tools(self.m_pyhouse_obj).find_config_file(p_name)
-        return l_ret
-
-    def XXXlook_for_all_configed_modules(self, p_modules):
-        """ Find all modules to find config files for.
-        @param p_modules: is a list of module names to check for.
-        @return: a dict of module names that have config files.
-        """
-        l_modules = {}
-        for l_module in p_modules:
-            l_path = self.find_config_file(l_module.lower())
-            if l_path == None:
-                continue
-            l_modules[l_module] = l_path
-        return l_modules
 
 #  ## END DBK

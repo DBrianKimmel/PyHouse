@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-30
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-15'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,6 @@ from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Config import config_tools
 from Modules.House.house import HouseInformation
 from Modules.House.location import Api as locationApi
@@ -75,7 +74,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - Main', 190))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-B - House', 190))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-01-C - Location', 190))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
 
 
@@ -107,7 +105,7 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the location.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml('location')
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config('location')
         l_config = l_node.Yaml
         # print(PrettyFormatAny.form(l_node, 'C1-02-A'))
         # print(PrettyFormatAny.form(l_config, 'C1-02-B'))
@@ -117,9 +115,9 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_03_extract(self):
         """ Create a JSON object for Location.
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml('location')
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config('location')
         l_obj = self.m_config._extract_location(l_node.Yaml['Location'])
-        l_ret = self.m_pyhouse_obj.House.Location
+        _l_ret = self.m_pyhouse_obj.House.Location
         # print(PrettyFormatAny.form(l_node, 'C1-03-A'))
         # print(PrettyFormatAny.form(l_obj, 'C1-03-B'))
         # print(PrettyFormatAny.form(l_ret, 'C1-03-C'))

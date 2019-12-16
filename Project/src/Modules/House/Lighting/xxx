@@ -1,0 +1,151 @@
+2019-12-13 10:48:35,069 [DEBUG] PyHouse.Controllers    : decode 75: - MqttLightingControllersDispatch Status Topic:pyhouse/PinkPoppy/house/lighting/controller/status
+        Msg: 
+
+{
+	'Access': None,
+	'BrightnessPct': 1,
+	'Comment': 'Office Closet',
+	'ControllerName': 'TestPlm',
+	'ControllerNode': 'Laptop-05', 
+	'DateTime': '2019-12-13 10:48:35.049021', 
+	'DevCat': 789, 
+	'DeviceSubType': 'Controller', 
+	'DeviceType': 'Lighting', 
+	'EngineVersion': 2, 
+	'Family': {
+		'Address': '53.C0.D0', 
+		'Name': 'insteon', 
+		'Type': 'Plm'
+	}, 
+	'FirmwareVersion': 0, 
+	'Interface': {
+		'Baud': 19200, 
+		'Host': 'pi-02-pp', 
+		'Port': '/dev/ttyUSB0', 
+		'Type': 'Serial', 
+		'_DriverApi': {
+			'm_pyhouse_obj': {
+				'Computer': {
+					'Bridges': "{
+						'insteon': <Modules.Computer.Bridges.bridges.BridgeInformation object at 0x7f2af1819a90>, 
+						'hue': <Modules.Computer.Bridges.bridges.BridgeInformation object at 0x7f2af18199e8>
+					}", 
+					'Comment': '', 
+					'Communication': '{}', 
+					'InternetConnection': '{}',
+					'Key': 0, 
+					'LastUpdate': 'datetime.datetime(2019, 12, 13, 10, 47, 26, 331875)', 
+					'Name': 'Laptop-05', 
+					'Nodes': '{}', 
+					'Primary': False, 
+					'Priority': 99, 
+					'UUID': '3e5b1b2e-f6bd-11e9-93c4-802bf968d55b', 
+					'Weather': '{}', 
+					'Web': '{}'
+				}, 
+				'Core': {
+					'Config': "{
+						'pyhouse': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af18562e8>, 
+						'mqtt': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af180cdd8>, 
+						'computer': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af1819470>, 
+						'bridges': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af1819780>, 
+						'house': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af1819ba8>, 
+						'location': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17fa898>, 
+						'rooms': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af1819828>, 
+						'lighting': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af18190f0>, 
+						'buttons': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17abac8>, 
+						'controllers': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17abbe0>, 
+						'lights': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af18191d0>, 
+						'outlets': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17b15f8>, 
+						'schedule': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17b1c50>, 
+						'entertainment': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17ab390>, 
+						'pandora': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af17cdc50>, 
+						'onkyo': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af1760cc0>, 
+						'samsung': <Modules.Core.Config.config_tools.ConfigFileInformation object at 0x7f2af170c4e0>
+					}", 
+					'Mqtt': '<Modules.Core.Mqtt.mqtt_information.MqttInformation object at 0x7f2af180ccc0>', 
+					'MqttApi': '<Modules.Core.Mqtt.mqtt.Api object at 0x7f2af1856d68>'
+				}, 
+				'House': {
+					'Comment': '', 'Entertainment': '<Modules.House.Entertainment.entertainment_data.EntertainmentInformation object at 0x7f2af180cc88>', 
+					'Entertinment': '<Modules.House.Entertainment.entertainment_data.EntertainmentInformation object at 0x7f2af17b8da0>', 
+					'Family': "{
+						'insteon': <Modules.House.Family.family.FamilyInformation object at 0x7f2af17b8cc0>, 
+						'hue': <Modules.House.Family.family.FamilyInformation object at 0x7f2af17cd828>
+					}", 
+					'Floors': '<Modules.House.floors.FloorsInformation object at 0x7f2af17faa90>', 
+					'Lighting': '<Modules.House.Lighting.lighting.LightingInformation object at 0x7f2af17fac88>', 
+					'Location': '<Modules.House.house_data.LocationInformation object at 0x7f2af18194e0>', 
+					'Module': "{
+						'Lighting': <Modules.House.Lighting.lighting.Api object at 0x7f2af17fa828>, 
+						'Security': <Modules.House.Security.security.Api object at 0x7f2af1804048>, 
+						'Schedule': <Modules.House.Schedule.schedule.Api object at 0x7f2af18048d0>, 
+						'Entertainment': <Modules.House.Entertainment.entertainment.Api object at 0x7f2af180cb70>, 
+						'Family': <Modules.House.Family.family.Api object at 0x7f2af180ccf8>
+					}", 
+					'Name': 'PinkPoppy', 
+					'Rooms': '{
+						0: <Modules.House.rooms.RoomInformation object at 0x7f2af1819320>, 
+						1: <Modules.House.rooms.RoomInformation object at 0x7f2af17faba8>, 
+						2: <Modules.House.rooms.RoomInformation object at 0x7f2af17ab908>, 
+						3: <Modules.House.rooms.RoomInformation object at 0x7f2af17ab828>, 
+						4: <Modules.House.rooms.RoomInformation object at 0x7f2af17ab940>, 
+						5: <Modules.House.rooms.RoomInformation object at 0x7f2af17ab9b0>, 
+						6: <Modules.House.rooms.RoomInformation object at 0x7f2af17abe10>, 
+						7: <Modules.House.rooms.RoomInformation object at 0x7f2af17abe48>, 
+						8: <Modules.House.rooms.RoomInformation object at 0x7f2af17abe80>, 
+						9: <Modules.House.rooms.RoomInformation object at 0x7f2af17abeb8>, 
+						10: <Modules.House.rooms.RoomInformation object at 0x7f2af17abef0>, 
+						11: <Modules.House.rooms.RoomInformation object at 0x7f2af17abf28>, 
+						12: <Modules.House.rooms.RoomInformation object at 0x7f2af17abf60>, 
+						13: <Modules.House.rooms.RoomInformation object at 0x7f2af17abf98>, 
+						14: <Modules.House.rooms.RoomInformation object at 0x7f2af17abfd0>, 
+						15: <Modules.House.rooms.RoomInformation object at 0x7f2af17b1048>, 
+						16: <Modules.House.rooms.RoomInformation object at 0x7f2af17b1080>, 
+						17: <Modules.House.rooms.RoomInformation object at 0x7f2af17b10b8>, 
+						18: <Modules.House.rooms.RoomInformation object at 0x7f2af17b10f0>
+					}', 
+					'Schedules': '{
+						0: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17ab780>, 
+						1: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17b8080>, 
+						2: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17b8c88>, 
+						3: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17cdbe0>, 
+						4: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17cd438>, 
+						5: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af175fda0>, 
+						6: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af175fcf8>, 
+						7: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af175fe48>, 
+						8: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17647b8>, 
+						9: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764828>, 
+						10: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764898>, 
+						11: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764908>, 
+						12: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764978>, 
+						13: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af17649e8>, 
+						14: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764a58>, 
+						15: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764ac8>, 
+						16: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764b38>, 
+						17: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764be0>, 
+						18: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764c88>, 
+						19: <Modules.House.Schedule.schedule.ScheduleInformation object at 0x7f2af1764d68>
+					}', 
+					'Security': '<Modules.House.Security.security.SecurityData object at 0x7f2af1804080>'
+				}, 
+				'_Config': None, 
+				'_Parameters': {
+					'Computer': 'Nameless', 
+					'ConfigVersion': 2.0, 
+					'Name': 'PinkPoppy', 
+					'UnitSystem': 'Metric', 
+					'Units': 'metric', 
+					'Version': 2
+				}, 
+				'_Twisted': {
+					'Application': None, 
+					'Reactor': '<twisted.internet.epollreactor.EPollReactor object at 0x7f2af24db0f0>',
+					'Site': None
+				}
+			}
+		}
+	}, 
+	'Name': 'BackupPlm', 
+	'Sender': 'Laptop-05'
+}

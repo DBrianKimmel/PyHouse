@@ -11,14 +11,13 @@ Passed 3 of 9 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-10-13'
+__updated__ = '2019-12-14'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import PyHouseInformation
 from Modules.House.house import \
     Api as houseApi, \
     HouseInformation
@@ -52,7 +51,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
 
 

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -24,7 +24,8 @@ from queue import Queue
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import convert
 from Modules.Core.Utilities import extract_tools
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceControl, EntertainmentDeviceStatus, \
+from Modules.House.Entertainment.entertainment_data import \
+    EntertainmentDeviceInformation, EntertainmentDeviceControl, EntertainmentDeviceStatus, \
     EntertainmentPluginInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -107,12 +108,12 @@ class OnkyoResponses():
         LOG.info('Onkyo sent Eq:{} {} {}'.format(l_eq_type, l_cmd, l_args))
         # Volume - Send feedback to service controlling this device.
         if l_cmd == 'MVL':
-            l_zone = 0
-            l_volume = l_args
+            _l_zone = 0
+            _l_volume = l_args
             LOG.info('MVL Master Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 MVL 36
         elif l_cmd == 'ZVL':
-            l_zone = 1
-            l_volume = l_args
+            _l_zone = 1
+            _l_volume = l_args
             LOG.info('ZVL Zone 2 Volume Level : {}'.format(l_args))  # Onkyo sent EqType:1 ZPW 01
 
         if l_cmd == 'AEQ':
@@ -640,7 +641,7 @@ class Api(MqttActions, OnkyoClient, OnkeoControl):
         l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'].Devices
         l_count = 0
         for l_device_obj in l_devices.values():
-            self._read_yaml(l_device_obj)
+            self.read_config(l_device_obj)
             if l_device_obj._isRunning:
                 LOG.info('Onkyo device {} is already running.'.format(l_device_obj.Name))
                 continue

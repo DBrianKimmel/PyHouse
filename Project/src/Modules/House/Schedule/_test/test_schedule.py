@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-12-12'
+__updated__ = '2019-12-15'
 
 # Import system type stuff
 import datetime
@@ -769,8 +769,7 @@ class F1_Config_Read(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        l_yaml = l_node.Yaml
+        l_yaml = config_tools.Yaml(self.m_pyhouse_obj).read_config(CONFIG_NAME)
         l_yamlsched = l_yaml['Schedules']
         # print(PrettyFormatAny.form(l_node, 'F1-02-A - Node'))
         # print(PrettyFormatAny.form(l_yaml, 'F1-02-B - Yaml'))
@@ -781,8 +780,7 @@ class F1_Config_Read(SetupMixin, unittest.TestCase):
     def test_03_ExtractSched(self):
         """ Extract one room info from the yaml
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_NAME)
-        l_yaml = l_node.Yaml
+        l_yaml = config_tools.Yaml(self.m_pyhouse_obj).read_config(CONFIG_NAME)
         l_sched = self.m_config._extract_light_schedule(l_yaml['Schedules'][0]['Light'])
         print(PrettyFormatAny.form(l_sched, 'F1-03-A - Sched', 190))
 

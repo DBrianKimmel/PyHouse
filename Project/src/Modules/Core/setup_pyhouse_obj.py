@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 10, 10)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,6 +39,7 @@ class CoreInformation:
 
     def __init__(self):
         self.Mqtt = None  # MqttInformation()
+        # self.Config = {}
 
 
 class TwistedInformation:
@@ -80,6 +81,7 @@ def setup_pyhouse():
     l_pyhouse_obj.Core = setup_Core()  # First
     l_pyhouse_obj._Parameters = setup_Parameters()
     l_pyhouse_obj._Twisted = setup_Twisted()
+    l_pyhouse_obj._Config = {}
     # LOG.debug(PrettyFormatAny.form(l_pyhouse_obj, 'PyHouse'))
     return l_pyhouse_obj
 

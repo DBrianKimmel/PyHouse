@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-12-06'
+__updated__ = '2019-12-14'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -160,10 +160,10 @@ class DecodeResponses:
             DecodeLighting().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
             return
         elif l_device_obj.DeviceType == 'Hvac':  # HVAC Type
-            DecodeHvac().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            DecodeHvac().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
             return
         elif l_device_obj.DeviceType == 'Security':  # Security Type
-            DecodeSecurity().decode_0x50(self.m_pyhouse_obj, l_device_obj, p_controller_obj)
+            DecodeSecurity().decode_0x50(self.m_pyhouse_obj, p_controller_obj, l_device_obj)
             return
         else:
             LOG.error('Unknown Device Type:{};'.format(l_device_obj.DeviceType))

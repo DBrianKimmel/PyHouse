@@ -10,9 +10,7 @@
 Passed all 10 tests - DBK 2019-06-28
 
 """
-from Modules.House.floors import FloorsInformation
-from Modules.Core.Config import config_tools
-__updated__ = '2019-11-03'
+__updated__ = '2019-12-15'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -21,9 +19,9 @@ from ruamel.yaml import YAML
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House import floors
-from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.House.house import HouseInformation
+from Modules.Core.Config import config_tools
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -69,7 +67,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         """ Test to be sure the compound object was built correctly.
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'A1-01-C - Floors'))
@@ -94,7 +91,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_yaml = l_node.Yaml
         l_yamlfloors = l_yaml['Floors']
         print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
@@ -111,7 +108,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_03_ExtractFloor(self):
         """ Extract one room info from the yaml
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_yamlfloors = l_node.Yaml['Floors'][2]
         l_obj = self.m_yaml._extract_one_floor(l_yamlfloors)
         # print(PrettyFormatAny.form(l_yamlfloors, 'C1-03-A'))
@@ -123,7 +120,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_04_AllFloors(self):
         """ build the entire rooms structures
         """
-        _l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        _l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
         _l_loc = self.m_yaml._extract_all_floors(self.m_pyhouse_obj, _l_node.Yaml)
         # print(PrettyFormatAny.form(_l_loc, 'C1-04-A - Loc'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'C1-04-B - Floors'))
@@ -160,7 +157,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         """
         """
         self.m_working_floors[0].Comment = 'After mods'
-        l_ret = self.m_yaml._copy_floors_to_yaml(self.m_pyhouse_obj)
+        _l_ret = self.m_yaml._copy_floors_to_yaml(self.m_pyhouse_obj)
         # print(PrettyFormatAny.form(self.m_working_floors[0], 'C2-02-A - Working Obj'))
         # print(PrettyFormatAny.form(l_ret, 'C2-02-B - yaml staging'))
 
@@ -168,7 +165,7 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         """
         """
         self.m_working_floors[0].Comment = 'After mods'
-        l_ret = self.m_yaml._copy_floors_to_yaml(self.m_pyhouse_obj)
+        _l_ret = self.m_yaml._copy_floors_to_yaml(self.m_pyhouse_obj)
         self.m_yaml.save_yaml_config(self.m_pyhouse_obj)
 
 # ## END DBK

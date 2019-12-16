@@ -21,7 +21,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2019-12-15'
 
 #  Import system type stuff
 import os
@@ -38,7 +38,6 @@ from twisted.web.template import Element, XMLString, renderer
 from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
 from Modules.Housing.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
 from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
-from Modules.Housing import VALID_FLOORS
 from Modules.Housing.Lighting import VALID_LIGHTING_TYPE
 from Modules.Housing.Schedules import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Core import logging_pyh as Logger
@@ -149,7 +148,6 @@ class LoginHelper:
         Return via JSON:
             VALID_DEVICE_TYPES
             VALID_FAMILIES
-            VALID_FLOORS
             VALID_INTERFACES
             VALID_LIGHTING_TYPES
             VALID_PROTOCOLS
@@ -161,7 +159,6 @@ class LoginHelper:
         l_obj = dict(
                      Devices=VALID_DEVICE_TYPES,
                      Families=VALID_FAMILIES,
-                     Floors=VALID_FLOORS,
                      InterfaceTypes=VALID_INTERFACES,
                      LightTypes=VALID_LIGHTING_TYPE,
                      ProtocolTypes=VALID_PROTOCOLS,

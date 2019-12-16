@@ -10,18 +10,17 @@
 Passed all 6 tests - DBK - 2018-02-12
 
 """
-# from ruamel.yaml.comments import CommentedMap
 
-__updated__ = '2019-10-14'
+__updated__ = '2019-12-15'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.Config import config_tools
 from Modules.Computer.computer import ComputerInformation
 from Modules.Computer.Bridges.bridges import LocalConfig as bridgesConfig
-from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Utilities import json_tools
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -72,7 +71,6 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'A1-01-B - Computer'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.Computer.Bridges, 'A1-01-C - Bridges'))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertEqual(self.m_pyhouse_obj.Computer.Bridges, {})
 
@@ -97,7 +95,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_yaml = l_node.Yaml
         l_config = l_yaml['Bridges']
         # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
@@ -111,7 +109,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_03_GetIncludes(self):
         """
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
         l_ret = bridgesConfig(self.m_pyhouse_obj)._extract_all_bridges(l_node)
 
 

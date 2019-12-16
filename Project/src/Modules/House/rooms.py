@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -283,15 +283,10 @@ class LocalConfig:
 
         @return: the updated yaml ready information.
         """
-        _l_node = None  # p_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
-        # l_config = l_node.Yaml['Rooms']
+        _l_node = None
         l_working = p_pyhouse_obj.House.Rooms
         for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
             _l_val = getattr(l_working, l_key)
-            # setattr(l_config, l_key, l_val)
-        # p_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Rooms'] = l_config
-        # l_ret = {'Rooms': l_config}
-        # return l_ret
 
     def save_yaml_config(self):
         """

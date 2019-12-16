@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,7 +41,7 @@ LOG = Logger.getLogger('PyHouse.Core           ')
 
 MINUTES = 60  # Seconds in a minute
 HOURS = 60 * MINUTES
-INITIAL_DELAY = 1 * MINUTES
+INITIAL_DELAY = 3 * MINUTES
 SAVE_DELAY = 3 * HOURS
 CONFIG_DIR = '/etc/pyhouse/'
 CONFIG_NAME = 'pyhouse'
@@ -92,8 +92,8 @@ class PyHouseApiInformation:
 
     def __init__(self):
         self.Core = None  # CoreApiInformation()
-        self.Computer = None  # ComputerApis()
-        self.House = None  # HouseApis()
+        self.Computer = None
+        self.House = None
 
 
 class Utility:
@@ -173,12 +173,11 @@ class Utility:
         """
         p_component.LoadConfig()
 
-    def load_all_components(self, p_components):
+    def load_all_components(self):
         """
-        @param p_components: is a dict of components
         """
         # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
-        for l_component in p_components.values():
+        for l_component in self.m_components.values():
             # LOG.debug('Loading component "{}"'.format(l_component))
             _l_comp = self._load_one_component(l_component)
 
@@ -187,27 +186,26 @@ class Utility:
         """
         p_component.Start()
 
-    def start_all_components(self, p_components):
+    def start_all_components(self):
         """
-        @param p_components: is a dict of components
         """
         # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
-        for l_component in p_components.values():
+        for l_component in self.m_components.values():
             # LOG.debug('Starting component "{}"'.format(l_component))
             _l_comp = self._start_one_component(l_component)
 
-    def save_all_components(self, p_components):
+    def save_all_components(self):
         """
         """
         LOG.info('\n======================== Saving Config Files ========================\n')
-        for l_key, l_component in p_components.items():
+        for l_key, l_component in self.m_components.items():
             LOG.info('Saving component "{}"'.format(l_key))
             l_component.SaveConfig()
         LOG.info('\n======================== Saved Config Files ========================\n')
 
     def _config_save_loop(self, p_pyhouse_obj):
-        p_pyhouse_obj._Twisted.Reactor.callLater(SAVE_DELAY, self.save_all_components, self.m_components)
-        # self.SaveConfig()
+        p_pyhouse_obj._Twisted.Reactor.callLater(SAVE_DELAY, self.save_all_components)
+        self.save_all_components()
 
 
 class LocalConfig:
@@ -240,7 +238,7 @@ class LocalConfig:
         return l_obj
 
     def load_yaml_config(self):
-        """ Read the computer.yaml file.
+        """ Read the pyhouse.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj._Parameters = ParameterInformation()
@@ -280,17 +278,13 @@ class Api:
         self.m_utility = Utility(self.m_pyhouse_obj)
         self._add_storage()
         self.m_local_config = LocalConfig(self.m_pyhouse_obj)
-        #
         self.m_local_config.load_yaml_config()
         self.m_modules = self.m_utility.initialize_core_modules(MODULES)
-        # LOG.debug('Modules: {}'.format(self.m_modules))
         self.m_components = self.m_components = self.m_utility.initialize_all_components(COMPONENTS)
-        #
         self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig)
         LOG.info("\n======================== Initialized ======================== Version: {}\n".format(__version__))
         LOG.info('Starting Reactor...')
         self.m_pyhouse_obj._Twisted.Reactor.run()  # reactor never returns so must be last - Event loop will now run
-        #
         LOG.info("PyHouse says Bye Now.\n")
         print('PyHouse is exiting.')
         raise SystemExit("PyHouse says Bye Now.")
@@ -306,15 +300,11 @@ class Api:
         #
         self.m_utility.load_core_modules(self.m_modules)
         self.m_utility.start_core_modules(self.m_modules)
-
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse'))
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Core, 'Core'))
-        #
-        # LOG.debug(PrettyFormatAny.form(self.m_components, 'Components'))
-        self.m_utility.load_all_components(self.m_components)
-        #
+        self.m_utility.load_all_components()
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Config, 'Config'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.Core.Config['schedule']))
         LOG.info("Loaded Config")
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(2, self.Start)
         LOG.info("\n======================== Loaded Config Files ======================== Version: {}\n".format(__version__))
 
     def Start(self):
@@ -325,7 +315,7 @@ class Api:
         print('Reactor is now running.')
         LOG.info("\n======================== Starting ======================== Version: {}\n".format(__version__))
         LOG.info('Starting - Reactor is now running.')
-        self.m_utility.start_all_components(self.m_components)
+        self.m_utility.start_all_components()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, self.m_utility._config_save_loop, self.m_pyhouse_obj)
         LOG.info("\n======================== Started ======================== Version: {}\n".format(__version__))
         LOG.info("\n======================== Opperational ========================")
@@ -336,7 +326,7 @@ class Api:
         The XML file is a single large file containing everything.
         The Yaml config is broken down into many smaller files and written by each component.
         """
-        self.m_utility.save_all_components(self.m_components)
+        self.m_utility.save_all_components()
 
     def Stop(self):
         l_topic = 'computer/shutdown'

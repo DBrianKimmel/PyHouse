@@ -9,13 +9,8 @@
 
 Passed all 19 tests - DBK - 2019-06-18
 """
-from Modules.Computer.computer import ComputerInformation, ComputerApis
-from Modules.House.house import HouseInformation
-from Modules.Core.setup_pyhouse_obj import TwistedInformation
-from Modules.Core.core import PyHouseApiInformation
-from Modules.Core.data_objects import HouseApis
 
-__updated__ = '2019-10-21'
+__updated__ = '2019-12-14'
 
 # Import system type stuff
 import os
@@ -25,6 +20,10 @@ from twisted.trial import unittest
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Computer.computer import ComputerInformation, ComputerApis
+from Modules.House.house import HouseInformation
+from Modules.Core.setup_pyhouse_obj import TwistedInformation
+from Modules.Core.core import PyHouseApiInformation
 
 
 class SetupMixin(object):
@@ -127,7 +126,6 @@ class C1_Structures(SetupMixin, unittest.TestCase):
     def test_02_Apis(self):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj._Apis, 'C1-2-A PyHouse Apis'))
         self.assertIsInstance(self.m_pyhouse_obj._Apis.Computer, ComputerApis)
-        self.assertIsInstance(self.m_pyhouse_obj._Apis.House, HouseApis)
 
     def test_03_Computer(self):
         # sprint(PrettyFormatAny.form(self.m_pyhouse_obj.Computer, 'C1-3-A PyHouse.Computer obj'))

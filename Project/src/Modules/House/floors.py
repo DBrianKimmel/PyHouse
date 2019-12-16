@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-15'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -154,7 +154,7 @@ class LocalConfig:
     def _copy_floors_to_yaml(self):
         """ Prepare floors to export to yaml config file
         """
-        l_node = None  # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME]
+        l_node = None
         l_config = l_node.Yaml['Floors']
         l_working = self.m_pyhouse_obj.House.Floors
         try:
@@ -163,7 +163,6 @@ class LocalConfig:
                 l_config[l_key] = l_val
         except Exception as e_err:
             LOG.error('Error - Key: {}; Val: {}; Err: {}'.format(l_key, l_val, e_err))
-        # self.m_pyhouse_obj._Config.YamlTree[CONFIG_NAME].Yaml['Floors'] = l_config
         l_ret = {'Floors': l_config}
         return l_ret
 
@@ -172,7 +171,7 @@ class LocalConfig:
         """
         # LOG.debug('Saving Config - Version:{}'.format(__version__))
         l_yaml = self._copy_floors_to_yaml()
-        self.m_config.write_config(CONFIG_NAME, l_yaml, addnew=True)
+        # self.m_config.write_config(CONFIG_NAME, l_yaml, addnew=True)
 
 
 class Api:
