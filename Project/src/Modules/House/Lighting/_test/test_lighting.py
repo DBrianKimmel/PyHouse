@@ -7,11 +7,11 @@
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 7 tests.  DBK 2019-01-22
+Passed all 4 tests.  DBK 2019-12-16
 
 """
 
-__updated__ = '2019-09-07'
+__updated__ = '2019-12-16'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -24,10 +24,8 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_yaml = SetupPyHouseObj().BuildYaml(None)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class A0(unittest.TestCase):

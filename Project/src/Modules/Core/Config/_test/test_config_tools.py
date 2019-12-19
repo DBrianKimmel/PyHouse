@@ -11,7 +11,7 @@ Passed all 18 tests - DBK - 2019-10-17
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-16'
 
 # Import system type stuff
 import os
@@ -98,8 +98,6 @@ class A1_Config(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         l_config = self.m_pyhouse_obj._Config
         print(PrettyFormatAny.form(l_config, 'A1-01-B - _Config'))
-        # self.assertIsNotNone(l_config.ConfigDir)
-        # self.assertDictEqual(l_config.YamlTree, {})
 
 
 class B1_Tools(SetupMixin, unittest.TestCase):
@@ -114,7 +112,7 @@ class B1_Tools(SetupMixin, unittest.TestCase):
         """ Test getting the config directory
         """
         l_dir = self.m_config._get_config_dir()
-        print('B1-01-A - ConfigDir: {}'.format(l_dir))
+        # print('B1-01-A - ConfigDir: {}'.format(l_dir))
         self.assertIsNotNone(l_dir)
 
     def test_02_FindFile(self):

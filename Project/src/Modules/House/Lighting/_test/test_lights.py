@@ -101,7 +101,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
         # print(PrettyFormatAny.form(l_light, 'C1-01-B - Light'))
         self.assertEqual(l_light.Name, 'Front Door')
-        self.assertEqual(l_light.Comment, '')
+        self.assertEqual(l_light.Comment, None)
         self.assertEqual(l_light.DeviceType, 'Lighting')
         self.assertEqual(l_light.DeviceSubType, 'Light')
         self.assertEqual(l_light.Family.Name, 'insteon')
@@ -115,7 +115,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
         # print(PrettyFormatAny.form(l_light, 'C1-02-B - Light'))
         self.assertEqual(l_light.Name, 'Garage')
-        self.assertEqual(l_light.Comment, '')
+        self.assertEqual(l_light.Comment, None)
         self.assertEqual(l_light.Family.Name, 'insteon')
         self.assertEqual(l_light.Family.Address, '22.22.22')
 

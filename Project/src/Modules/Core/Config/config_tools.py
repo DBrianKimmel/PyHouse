@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-16'
 __version_info__ = (19, 12, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
 import datetime
-from typing import Union
+from typing import Optional, Union
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 
@@ -52,8 +52,8 @@ class ConfigFileInformation:
     """
 
     def __init__(self) -> None:
-        self.Name: str = ''  # LowerCase filemane without .yaml
-        self.Path: str = None  # Full path to file
+        self.Name: Optional[str] = None  # LowerCase filemane without .yaml
+        self.Path: Optional[str] = None  # Full path to file
 
 
 class RoomLocationInformation:

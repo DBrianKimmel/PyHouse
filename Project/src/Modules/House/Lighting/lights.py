@@ -17,12 +17,12 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-19'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from typing import Union
+from typing import Optional, Union
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -41,13 +41,14 @@ CONFIG_NAME = 'lights'
 class LightInformation:
     """ This is the information that the user needs to enter to uniquely define a light.
     """
+    yaml_tag = u'!light'
 
-    def __init__(self) -> None:
-        self.Name: str = ''
-        self.Comment: str = ''  # Optional
+    def __init__(self, Name=None) -> None:
+        self.Name: Optional[str] = Name
+        self.Comment: Optional[str] = None  # Optional
         self.DeviceType: str = 'Lighting'
         self.DeviceSubType: str = 'Light'
-        self.Family = None  # LightFamilyInformation()
+        self.Family: Optional[LightFamilyInformation] = None  # LightFamilyInformation()
         self.Room = None  # LightRoomInformation() Optional
 
 
@@ -209,7 +210,7 @@ class LocalConfig:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         l_data = self._save_all_lights()
-        self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
+        # self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
         # return l_config
 
 

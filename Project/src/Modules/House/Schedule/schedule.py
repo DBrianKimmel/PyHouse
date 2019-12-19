@@ -38,20 +38,20 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-12-12'
+__updated__ = '2019-12-19'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import aniso8601
+from typing import Optional
 
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import convert, extract_tools
 from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
 from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
-# from Modules.House.Lighting.lighting import ScheduleLightingInformation
 from Modules.House.Lighting.actions import Api as lightingActionsApi
 from Modules.House.Lighting.utility import lightingUtility
 from Modules.House.Schedule import sunrisesunset
@@ -76,11 +76,11 @@ class ScheduleInformation:
     """ This is the basic schedule info
     """
 
-    def __init__(self):
-        self.Name = None
+    def __init__(self) -> None:
+        self.Name: Optional[str] = None
         self.Comment = None
-        self.DOW = 'SMTWTFS'  # DayOfWeek - a dash '-' replaces the day letter if NOT that day
-        self.Occupancy = 'Always'  # Always, Home, Away, Vacation, ...
+        self.DOW: str = 'SMTWTFS'  # DayOfWeek - a dash '-' replaces the day letter if NOT that day
+        self.Occupancy: str = 'Always'  # Always, Home, Away, Vacation, ...
         self.Time = None
         self.Sched = None  # One of the schedule detail types below.
 
@@ -305,8 +305,12 @@ class TimeField:
 
 class TimeCalcs:
     """
-    Get the when scheduled time.  It may be from about a minute to about 1 week.
-    If the schedule is not active return a None
+    Get the when scheduled time.
+    It may be from about a minute to about 1 week.
+    If the schedule is not active return a None.
+
+    The config file caries DOW as a seven charicter string 'SMTWTFS' where the DOW letter is replaced by a dash '-' if inactive.
+    Therefore wednesday only will be represented by '---W---'
     This class deals with extracting information from the time and DayOfWeek fields of a schedule.
 
     DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
@@ -411,57 +415,62 @@ class ScheduleExecution:
         for l_slot in p_key_list:
             l_schedule_obj = p_pyhouse_obj.House.Schedules[l_slot]
             ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
-        lightingUtilitySch().schedule_next_event(p_pyhouse_obj)
+        lightingUtilitySch(p_pyhouse_obj).schedule_next_event()
 
 
 class lightingUtilitySch:
     """
     """
 
-    @staticmethod
-    def fetch_sunrise_set(p_pyhouse_obj):
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _fetch_sunrise_set(self):
         _l_topic = 'house/schedule/sunrise_set'
-        l_riseset = p_pyhouse_obj.House.Location._RiseSet  # RiseSetData()
+        l_riseset = self.m_pyhouse_obj.House.Location._RiseSet  # RiseSetData()
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
 
-    @staticmethod
-    def find_next_scheduled_events(p_pyhouse_obj, p_now):
+    def _find_next_scheduled_events(self):
         """ Go thru all the schedules and find the next schedule list to run.
         Note that there may be several scheduled events for that time
 
-        @param p_now: is a datetime that we are searching for.
         @return: a delay time to the next event chain, and a list of events in the chain.
         """
+        self.m_pyhouse_obj = self.m_pyhouse_obj
+        l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
         l_schedule_key_list = []
-        l_min_seconds = SECONDS_IN_WEEK
-        l_riseset = lightingUtilitySch().fetch_sunrise_set(p_pyhouse_obj)
+        l_current_delay = SECONDS_IN_WEEK  # Start the search with a very long time to go
+        l_riseset = self._fetch_sunrise_set()
         # Loop through the possible scheduled events.
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
-            l_seconds = TimeCalcs().extract_time_to_go(l_schedule_obj, p_now, l_riseset)
+        for l_key, l_schedule_obj in self.m_pyhouse_obj.House.Schedules.items():
+            l_seconds = TimeCalcs().extract_time_to_go(l_schedule_obj, l_now, l_riseset)
+            # Avoid race donditions by having a minimum time.
             if l_seconds < MINIMUM_TIME:
                 continue
-            if l_min_seconds == l_seconds:  # Add to lists for the given time.
+            # If the time is the same as the current list of collected times, add this entry to the list.
+            if l_current_delay == l_seconds:  # Add to lists for the given time.
                 l_schedule_key_list.append(l_key)
-            elif l_seconds < l_min_seconds:  # earlier schedule - start new list
-                l_min_seconds = l_seconds
+            # If we found an earlier time, abandon the old list and start a new list with this time.
+            elif l_seconds < l_current_delay:  # earlier schedule - start new list
+                l_current_delay = l_seconds
                 l_schedule_key_list = []
                 l_schedule_key_list.append(l_key)
-        l_debug_msg = "Delaying {} for list {}".format(l_min_seconds, l_schedule_key_list)
+        l_debug_msg = "Delaying {} for list {}".format(l_current_delay, l_schedule_key_list)
         LOG.info("find next scheduled events complete. {}".format(l_debug_msg))
-        return l_min_seconds, l_schedule_key_list
+        return l_current_delay, l_schedule_key_list
 
-    @staticmethod
-    def run_after_delay(p_pyhouse_obj, p_delay, p_list):
+    def run_after_delay(self, p_delay, p_list):
         """
         """
-        l_runID = p_pyhouse_obj._Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
+        l_runID = self.m_pyhouse_obj._Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, self.m_pyhouse_obj, p_list)
         l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
         LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
         return l_runID
 
-    @staticmethod
-    def schedule_next_event(p_pyhouse_obj, p_delay=0):
+    def schedule_next_event(self, p_delay=0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
 
         This is the main schedule loop.
@@ -472,16 +481,14 @@ class lightingUtilitySch:
         Puts all the events in a list.
         Schedules an execution event on the list of scheduled events.
 
-        @param p_pyhouse_obj: is the grand repository of information
         @param p_delay: is the (forced) delay time for the timer.
         """
-        l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
-        l_delay, l_list = lightingUtilitySch().find_next_scheduled_events(p_pyhouse_obj, l_now)
+        l_delay, l_list = self._find_next_scheduled_events()
         if p_delay != 0:
             l_delay = p_delay
-        lightingUtilitySch().run_after_delay(p_pyhouse_obj, l_delay, l_list)
+        lightingUtilitySch(self.m_pyhouse_obj).run_after_delay(l_delay, l_list)
 
-    def find_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
+    def XXXfind_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
         """ Find all the schedule entry using any of several criteria.
         Type (required)
         Mode (required)
@@ -498,16 +505,6 @@ class lightingUtilitySch:
         if len(l_sched_list) == 0:
             return None
         return l_sched_list
-
-    def find_schedule_entry(self, _p_pyhouse_obj, p_type=None):
-        """ Find the schedule entry using any of several criteria.
-        Type (required)
-        Mode (required)
-
-        @return: a schedule object, None if error
-        """
-        self.find_all_schedule_entries(p_type)
-        return None
 
 
 class Timers:
@@ -528,7 +525,7 @@ class Timers:
 
 
 class LocalConfig:
-    """Read in and possibly save the scheduling data.
+    """ This will handle reading and writing of the schedule.yaml config file.
     """
 
     m_config = None
@@ -594,7 +591,7 @@ class LocalConfig:
         return l_dow
 
     def _extract_one_schedule(self, p_config):
-        """
+        """ Extract a complete schedule configuration entry.
         """
         l_required = ['Name', 'Occupancy', 'DOW', 'Time', 'Sched']
         l_obj = ScheduleInformation()
@@ -681,7 +678,7 @@ class Api:
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
         sunrisesunset.Api(self.m_pyhouse_obj).Start()
-        self.RestartSchedule()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtilitySch(self.m_pyhouse_obj).schedule_next_event)
         LOG.info("Started.")
 
     def Stop(self):
@@ -694,10 +691,5 @@ class Api:
         """
         self.m_local_config.save_yaml_config()
         LOG.info('Saved Schedules Config.')
-
-    def RestartSchedule(self):
-        """ Anything that alters the schedules should call this to cause the new schedules to take effect.
-        """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtilitySch().schedule_next_event, self.m_pyhouse_obj)
 
 # ## END DBK

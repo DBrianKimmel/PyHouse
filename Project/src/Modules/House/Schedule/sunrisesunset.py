@@ -17,7 +17,7 @@
 
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2019-12-19'
 
 # Import system type stuff
 import datetime
@@ -31,33 +31,6 @@ from Modules.Core import logging_pyh as Logger
 
 LOG = Logger.getLogger('PyHouse.Sunrise        ')
 
-CALC_TIME = 11 * 60 * 60  # 10:00:00 AM
-
-
-class Times:
-    """
-    """
-
-    def __init__(self):
-        self.LastUpdate = None
-
-
-class LocatTzinfo(datetime.tzinfo):
-    """
-    """
-
-    def __init__(self):
-        pass
-
-    def utcoffset(self, dt):
-        pass
-
-    def dst(self, dt):
-        pass
-
-    def tzname(self, dt):
-        pass
-
 
 class lightingUtilitySun:
 
@@ -65,37 +38,24 @@ class lightingUtilitySun:
         self.m_tz = pytz.timezone('America/New_York')
 
     def get_seconds_to_recalc(self, p_time=None):
-        """
+        """ Time (in seconds) till next recalc (10:00 AM)
         """
         if p_time is None:
             p_time = datetime.datetime.now(self.m_tz)
         l_now = p_time
         l_ten = datetime.datetime(l_now.year, l_now.month, l_now.day, 10, 0, 0, tzinfo=self.m_tz)
-        l_togo = (l_now - l_ten).total_seconds()
+        l_togo = (l_ten - l_now).total_seconds()
         # print('Now    ', l_now)
         # print('Recalc ', l_ten)
         # print('ToGo   ', l_togo)
         if l_togo < 0:
             l_togo += (24 * 60 * 60)
-            pass
+        LOG.info('Will recalculate sunrise/sunset in {} Seconds'.format(l_togo))
         return l_togo
 
-    def _till_next(self, p_time=datetime.datetime.today()):
-        """
-        Get the number of seconds until we calculate sunrise again
-
-        @param p_time:
-        @return: the number of seconds to go.
-        """
-        l_recalc = datetime.timedelta(days=1, seconds=(12 * 60 + 12)).total_seconds()
-        l_current = p_time
-        l_seconds = (((l_current.hour * 60) + l_current.minute) * 60 + l_current.second)
-        # print('xxx', l_recalc, l_seconds)
-        l_delay = datetime.timedelta(seconds=(l_recalc - l_seconds)).total_seconds()
-        return l_delay
-
     def calc_solar_times(self, p_pyhouse_obj, p_date=datetime.date.today()):
-        """
+        """ Calculate Sunrise / Sunset
+        Store result in ==> pyhouse_obj.House.Location._RiseSet
         @param p_date: is the datetime.date that we want sunrise and sunset for
         """
         l_a = astral.Location(info=(
@@ -120,7 +80,7 @@ class lightingUtilitySun:
         l_ret.SunSet = l_sun['sunset']
         l_ret.Dusk = l_sun['dusk']
         p_pyhouse_obj.House.Location._RiseSet = l_ret
-        LOG.info('Sunrise/Sunset Calculation')
+        LOG.info('Sunrise/Sunset Calculation Updated')
         return l_ret
 
 
@@ -132,13 +92,10 @@ class Api(lightingUtilitySun):
 
     def Start(self):
         self.calc_solar_times(self.m_pyhouse_obj)
-        self._loop()
+        l_delay = self.get_seconds_to_recalc()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(l_delay, self.calc_solar_times, self.m_pyhouse_obj)
 
     def Stop(self):
         pass
-
-    def _loop(self):
-        l_delay = self._till_next()
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(l_delay, self.calc_solar_times, self.m_pyhouse_obj)
 
 # ## END
