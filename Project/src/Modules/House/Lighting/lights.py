@@ -17,12 +17,12 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from typing import Union
+from typing import Optional, Union
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -41,13 +41,14 @@ CONFIG_NAME = 'lights'
 class LightInformation:
     """ This is the information that the user needs to enter to uniquely define a light.
     """
+    yaml_tag = u'!light'
 
-    def __init__(self) -> None:
-        self.Name: str = ''
-        self.Comment: str = ''  # Optional
+    def __init__(self, Name=None) -> None:
+        self.Name: Optional[str] = Name
+        self.Comment: Optional[str] = None  # Optional
         self.DeviceType: str = 'Lighting'
         self.DeviceSubType: str = 'Light'
-        self.Family = None  # LightFamilyInformation()
+        self.Family: Optional[LightFamilyInformation] = None  # LightFamilyInformation()
         self.Room = None  # LightRoomInformation() Optional
 
 
@@ -147,7 +148,6 @@ class LocalConfig:
         for l_ix, l_light in enumerate(p_config):
             l_light_obj = self._extract_one_light(l_light)
             l_dict[l_ix] = l_light_obj
-        self.m_pyhouse_obj.House.Lighting.Lights = l_dict
         LOG.info('Extracted {} lights'.format(len(l_dict)))
         return l_dict
 
@@ -157,7 +157,6 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Lighting.Lights = None  # type: ignore
         l_yaml = self.m_config.read_config(CONFIG_NAME)  # type: ignore
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -168,8 +167,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Lights:"')
             return None
         l_lights = self._extract_all_lights(l_yaml)
-        self.m_pyhouse_obj.House.Lighting.Lights = l_lights  # type: ignore
-        return l_lights  # for testing purposes
+        return l_lights
 
 # -------------
 
@@ -194,7 +192,7 @@ class LocalConfig:
         l_dict = {}
         l_lights = self.m_pyhouse_obj.House.Lighting.Lights
         for l_light_obj in l_lights.values():
-            l_config = self._save_one_light(l_light_obj)
+            _l_config = self._save_one_light(l_light_obj)
             try:
                 LOG.debug('Inserting one light')
                 l_dict[l_light_obj.Name] = l_light_obj
@@ -208,8 +206,8 @@ class LocalConfig:
         """ Save all the lights in a separate config file.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_data = self._save_all_lights()
-        self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
+        _l_data = self._save_all_lights()
+        # self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
         # return l_config
 
 
@@ -282,14 +280,20 @@ class Api(MqttActions):
     def __init__(self, p_pyhouse_obj) -> None:
         # p_pyhouse_obj.House.Lighting.Lights = {}
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Lighting.Lights = {}
 
     def LoadConfig(self):
         """
         """
         LOG.info('Load Config')
-        self.m_local_config.load_yaml_config()
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Lights.'.format(len(self.m_pyhouse_obj.House.Lighting.Lights)))
 
     def SaveConfig(self):

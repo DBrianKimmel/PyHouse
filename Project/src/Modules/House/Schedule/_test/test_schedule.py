@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-20'
 
 # Import system type stuff
 import datetime
@@ -71,7 +71,6 @@ Schedules:
       Light:
           Name: LR Ceiling
           Brightness: 0
-
     - Name: Musicroom On
       Time: sunset - 0:08
       Outlet:
@@ -122,7 +121,6 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_pyhouse_obj.House.Location._RiseSet = Mock.RiseSet()
         self.m_api = scheduleApi(self.m_pyhouse_obj)
-        self.m_filename = 'schedule.yaml'
         l_yaml = YAML()
         self.m_test_config = l_yaml.load(TEST_YAML_1)
 
@@ -385,7 +383,7 @@ class C8_List(SetupMixin, unittest.TestCase):
         We should end up with 2 schedules in the list.
         """
         l_riseset = Mock.RiseSet()
-        l_delay, l_list = lightingUtility.find_next_scheduled_events(self.m_pyhouse_obj, T_TODAY)
+        l_delay, l_list = lightingUtility.find_next_scheduled_events()
         l_now_sec = convert.datetime_to_seconds(T_TODAY)
         l_obj = self.m_pyhouse_obj.House.Schedules[0]
         l_sched_sec = TimeField().parse_timefield(l_obj.Time, l_riseset)

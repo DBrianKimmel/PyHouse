@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-21'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,7 +17,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import datetime
 
 #  Import PyMh files
-from Modules.Core.Config import config_tools, import_tools
+from Modules.Core.Config import config_tools
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.coordinate_tools import Coords
@@ -187,7 +187,6 @@ class Utility:
     """
 
     m_config_tools = None
-    m_import_tools = None
     m_module_needed = []
     m_parts_needed = []
     m_pyhouse_obj = None
@@ -198,7 +197,6 @@ class Utility:
         """
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
-        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
 
 
 class LocalConfig:

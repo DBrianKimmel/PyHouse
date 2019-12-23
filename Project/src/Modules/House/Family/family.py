@@ -27,14 +27,14 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-22'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyHouse files
-from Modules.Core.Config import config_tools, import_tools
+from Modules.Core.Config import config_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
@@ -104,11 +104,9 @@ class Utility:
     """
 
     m_pyhouse_obj = None
-    m_import_tools = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
 
     def _create_api_instance(self, p_pyhouse_obj, p_module_name, p_module_ref):
         """
@@ -207,6 +205,7 @@ class LocalConfig:
 
 class Api:
 
+    m_config_tools = None
     m_family = {}  # type: ignore
     m_local_config = None
     m_pyhouse_obj = None
@@ -214,7 +213,7 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        self.m_import_tools = import_tools.Tools(p_pyhouse_obj)
+        self.m_config_tools = config_tools.Api(p_pyhouse_obj)
         self._add_storage()
         LOG.info("Initialized - Version:{}".format(__version__))
 
@@ -238,7 +237,7 @@ class Api:
         self.m_pyhouse_obj.House.Family[l_key] = l_obj
         l_obj.Name = p_name
         l_obj.Module = l_module
-        l_obj._Api = self.m_import_tools.import_module_get_api(l_module, l_path)
+        l_obj._Api = self.m_config_tools.import_module_get_api(l_module, l_path)
         LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj
 

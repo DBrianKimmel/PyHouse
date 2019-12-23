@@ -50,7 +50,7 @@ while True:
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -378,7 +378,7 @@ class LocalConfig:
         """ Read the samsung.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'] = None
+        self.m_pyhouse_obj.House.Entertainment['samsung'] = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -389,7 +389,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Samsung:"')
             return None
         l_samsung = self._extract_all_samsung(l_yaml, p_api)
-        self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'] = l_samsung
+        self.m_pyhouse_obj.House.Entertainment['samsung'] = l_samsung
         # self.dump_struct()
         return l_samsung  # for testing purposes
 

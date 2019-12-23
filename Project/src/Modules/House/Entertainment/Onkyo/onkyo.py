@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -594,7 +594,7 @@ class LocalConfig:
         """ Read the pandora.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = None
+        self.m_pyhouse_obj.House.Entertainment['onkyo'] = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -605,7 +605,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Onkyo:"')
             return None
         l_onkyo = self._extract_all_onkyo(l_yaml, p_api)
-        self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = l_onkyo
+        self.m_pyhouse_obj.House.Entertainment['onkyo'] = l_onkyo
         # self.dump_struct()
         return l_onkyo  # for testing purposes
 

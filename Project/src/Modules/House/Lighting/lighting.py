@@ -14,8 +14,8 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-12-02'
-__version_info__ = (19, 10, 2)
+__updated__ = '2019-12-23'
+__version_info__ = (19, 12, 20)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -23,10 +23,11 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
 
-from Modules.House.Lighting.buttons import Api as buttonsApi, MqttActions as buttonMqtt
-from Modules.House.Lighting.controllers import Api as controllersApi, MqttActions as controllerMqtt
-from Modules.House.Lighting.lights import Api as lightsApi, MqttActions as lightMqtt
-from Modules.House.Lighting.outlets import Api as outletsApi, MqttActions as outletMqtt
+from Modules.House.Lighting.buttons import MqttActions as buttonMqtt
+from Modules.House.Lighting.controllers import MqttActions as controllerMqtt
+from Modules.House.Lighting.lights import MqttActions as lightMqtt
+from Modules.House.Lighting.outlets import MqttActions as outletMqtt
+from Modules.House.Lighting.__init__ import MODULES
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -34,13 +35,6 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
 
 CONFIG_NAME = 'lighting'
-
-MODULES = [
-    'Buttons',
-    'Controllers',
-    'Lights',
-    'Outlets'
-    ]
 
 
 class LightingInformation:
@@ -73,6 +67,7 @@ class MqttActions:
     """
 
     def __init__(self, p_pyhouse_obj):
+        LOG.debug('Init')
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def decode(self, p_msg):
@@ -99,6 +94,15 @@ class MqttActions:
 class LocalConfig:
     """
     """
+
+    m_config = None
+    m_pyhouse_obj = None
+    m_schedule_altered = False
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+        self.m_schedule_altered = False
 
     def _update_lighting_from_yaml(self, _p_pyhouse_obj, p_node_yaml):
         """
@@ -131,35 +135,40 @@ class Api:
     """ Handles all the components of the lighting sub-system.
     """
 
+    m_config_tools = None
     m_local_config = None
-    m_modules = None
     m_pyhouse_obj = None
-    m_buttons = None
-    m_controllers = None
-    m_lights = None
-    m_outlets = None
+    m_modules = None
+    # m_buttons = None
+    # m_controllers = None
+    # m_lights = None
+    # m_outlets = None
 
-    def __init__(self, p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj) -> None:
         LOG.info("Initialing - Version:{}".format(__version__))
-        p_pyhouse_obj.House.Lighting = LightingInformation()
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_local_config = configApi(p_pyhouse_obj)
+        self._add_storage()
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
+        self.m_config_tools = configApi(p_pyhouse_obj)
         #
-        self.m_buttons = buttonsApi(p_pyhouse_obj)
-        self.m_controllers = controllersApi(p_pyhouse_obj)
-        self.m_lights = lightsApi(p_pyhouse_obj)
-        self.m_outlets = outletsApi(p_pyhouse_obj)
+        l_path = 'Modules.House.Lighting'
+        l_modules = self.m_config_tools.find_module_list(MODULES)
+        self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
+        #
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Lighting = LightingInformation()
 
     def LoadConfig(self):
         """ Load the Lighting config info.
         """
         LOG.info('Loading all Lighting config files.')
-        self.m_local_config.read_config(CONFIG_NAME)
-        self.m_buttons.LoadConfig()
-        self.m_controllers.LoadConfig()
-        self.m_lights.LoadConfig()
-        self.m_outlets.LoadConfig()
+        # self.m_local_config.read_config(CONFIG_NAME)
+        for l_module in self.m_modules.values():
+            l_module.LoadConfig()
         LOG.info('Loaded Lighting config files.')
 
     def Start(self):
@@ -173,10 +182,10 @@ class Api:
         """
         LOG.info('SaveConfig')
         # self.m_local_config.write_config(CONFIG_NAME, self.m_pyhouse_obj.House.Lighting, addnew=True)
-        self.m_buttons.SaveConfig()
-        self.m_controllers.SaveConfig()
-        self.m_lights.SaveConfig()
-        self.m_outlets.SaveConfig()
+        # self.m_buttons.SaveConfig()
+        # self.m_controllers.SaveConfig()
+        # self.m_lights.SaveConfig()
+        # self.m_outlets.SaveConfig()
         LOG.info("Saved Lighting Config.")
         return
 

@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-22'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -187,7 +187,7 @@ class LocalConfig:
             return None
         l_outlets = self._extract_all_outlets(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Outlets = l_outlets
-        return l_outlets  # for testing purposes
+        return l_outlets
 
 
 class Api:
@@ -199,14 +199,21 @@ class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Lighting.Outlets = {}
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_local_config.load_yaml_config()
+        self.m_pyhouse_obj.House.Lighting.Outlets = self.m_local_config.load_yaml_config()
+        LOG.info('Loaded {} Outlets.'.format(len(self.m_pyhouse_obj.House.Lighting.Outlets)))
 
     def SaveConfig(self):
         """

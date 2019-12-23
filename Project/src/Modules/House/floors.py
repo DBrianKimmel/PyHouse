@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-20'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -182,6 +182,7 @@ class Api:
     m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self._add_storage()
@@ -195,8 +196,8 @@ class Api:
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        # self.m_local_config.load_yaml_config()
-        # LOG.info('Loaded {} Floors'.format(len(self.m_pyhouse_obj.House.Floors)))
+        self.m_local_config.load_yaml_config()
+        LOG.info('Loaded {} Floors'.format(len(self.m_pyhouse_obj.House.Floors)))
 
     def Start(self):
         pass

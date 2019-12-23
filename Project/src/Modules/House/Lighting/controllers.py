@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -95,8 +95,6 @@ class LocalConfig:
         @return: ==> ControllerInformation()
         """
         l_obj = ControllerInformation()
-        l_obj.DeviceType = 'Lighting'
-        l_obj.DeviceSubType = 'Controller'
         l_required = ['Name', 'Family', 'Interface']
         # l_groupfields = ['Family', 'Interface', 'Access']
         try:
@@ -143,7 +141,6 @@ class LocalConfig:
         It contains Controllers data for the house.
         """
         # LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Lighting.Controllers = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -154,9 +151,8 @@ class LocalConfig:
             LOG.warning('The control file does not start with "Controllers:"')
             return None
         l_controllers = self._extract_all_controllers(l_yaml)
-        self.m_pyhouse_obj.House.Lighting.Controllers = l_controllers
         # LOG.debug(PrettyFormatAny.form(l_controllers, 'Controllers'))
-        return l_controllers  # for testing purposes
+        return l_controllers
 
 
 class Api:
@@ -168,14 +164,20 @@ class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Lighting.Controllers = {}
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading config.')
-        self.m_local_config.load_yaml_config()
+        self.m_pyhouse_obj.House.Lighting.Controllers = self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Controllers.'.format(len(self.m_pyhouse_obj.House.Lighting.Controllers)))
 
     def Start(self):
