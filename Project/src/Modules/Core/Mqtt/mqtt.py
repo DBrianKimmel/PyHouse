@@ -8,9 +8,8 @@
 @summary:   This is basically the MQTT Api interface that is used by all of pyhouse.
 
 """
-from Modules.House.Family.insteon.insteon_constants import PLM_COMMANDS
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -156,10 +155,8 @@ class Api:
         LOG.info('Intializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self._add_storage()
-        # self.Core.MqttApi = self
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_parent = self
-        LOG.info("Initialized")
 
     def _add_storage(self):
         # LOG.debug('Adding')

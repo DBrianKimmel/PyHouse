@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -737,7 +737,7 @@ class LocalConfig:
         """ Read the pandora.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = None
+        self.m_pyhouse_obj.House.Entertainment['pandora'] = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -748,7 +748,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Pandora:"')
             return None
         l_pandora = self._extract_all_pandora(l_yaml, p_api)
-        self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = l_pandora
+        self.m_pyhouse_obj.House.Entertainment['pandora'] = l_pandora
         # self.dump_struct()
         return l_pandora  # for testing purposes
 

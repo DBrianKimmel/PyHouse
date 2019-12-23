@@ -4,13 +4,19 @@
 
 """
 
-__version_info__ = (1, 6, 0)
+__updated__ = '2019-12-22'
+__version_info__ = (19, 12, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
-VALID_ENTERTAINMENT_MFGRS = [
-    "onkyo",
-    "pioneer",
-    "samsung"
+MODULES = [  # All modules for the Entertainment system must be listed here.  They will be loaded if configured.
+    'Firestick',
+    'Onkyo',
+    'Panasonic',
+    'Pandora',
+    'Pioneer',
+    'Samsung',
+    'Sharp',
+    'Sony'
     ]
 
 # ## END DBK

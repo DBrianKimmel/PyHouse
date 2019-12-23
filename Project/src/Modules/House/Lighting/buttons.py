@@ -14,7 +14,7 @@ Buttons may be:
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 9, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -145,8 +145,7 @@ class LocalConfig:
     def load_yaml_config(self):
         """ Read the buttons.yaml file if it exists.  No file = no buttons.
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Lighting.Buttons = None
+        LOG.info('Load Config')
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -158,7 +157,8 @@ class LocalConfig:
             return None
         l_buttons = self._extract_all_button_sets(l_yaml)
         self.m_pyhouse_obj.House.Lighting.Buttons = l_buttons
-        return l_buttons  # for testing purposes
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'Buttons'))
+        return l_buttons
 
 
 class Api:
@@ -169,16 +169,22 @@ class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Lighting.Buttons = {}
 
     def LoadConfig(self):
         """
         """
-        LOG.info('Load Config')
-        self.m_local_config.load_yaml_config()
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Lighting.Buttons = self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
-        return {}
+        LOG.info('Loaded {} Buttons.'.format(len(self.m_pyhouse_obj.House.Lighting.Buttons)))
 
     def SaveConfig(self):
         """

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2019-12-21'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,7 +17,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import importlib
 
 #  Import PyMh files
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ImportTools    ')
@@ -30,6 +30,7 @@ class Tools:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.debug('Setting up Import_Tools.Tools')
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _do_import(self, p_name, p_path):
@@ -43,7 +44,7 @@ class Tools:
         """
         l_path = p_path + '.' + p_name
         # l_package = p_path + '.'
-        # LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
+        LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
         try:
             l_ret = importlib.import_module(l_path)
         except ImportError as e_err:
@@ -62,6 +63,7 @@ class Tools:
         l_module_name = p_module.lower()
         l_ret = self._do_import(l_module_name, p_path)
         try:
+            LOG.debug('Get Api for "{}"'.format(l_module_name))
             # LOG.debug(PrettyFormatAny.form(l_ret, 'Module'))
             l_api = l_ret.Api(self.m_pyhouse_obj)
         except Exception as e_err:

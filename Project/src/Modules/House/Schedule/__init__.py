@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Schedules/__init__.py
+@name:      Modules/House/Schedules/__init__.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-30'
+__updated__ = '2019-12-20'
 __version_info__ = (19, 11, 30)
 __version__ = '.'.join(map(str, __version_info__))
 

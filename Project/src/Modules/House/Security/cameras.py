@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -66,10 +66,9 @@ class CameraInformation:
         self.Name = None
         self.Comment = None
         self.DeviceType = 'Security'
-        self.DeviceSubType = 'GarageDoor'
+        self.DeviceSubType = 'Camera'
         self.Family = None  # FamilyInformation()
         self.Room = None  # RoomInformation()
-        self.Status = None  # Open | Closed
 
 
 class Image:
@@ -195,9 +194,8 @@ class LocalConfig:
         """
         l_dict = {}
         for l_ix, l_button in enumerate(p_config):
-            # print('Light: {}'.format(l_light))
-            l_button_obj = self._extract_one_button_set(l_button)
-            l_dict[l_ix] = l_button_obj
+            l_camera = self._extract_one_button_set(l_button)
+            l_dict[l_ix] = l_camera
         return l_dict
 
     def load_yaml_config(self):
@@ -206,7 +204,6 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Security.Cameras = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -217,24 +214,34 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Cameras:"')
             return None
         l_cameras = self._extract_all_cameras(l_yaml)
-        self.m_pyhouse_obj.House.Security.Cameras = l_cameras
-        return l_cameras  # for testing purposes
+        return l_cameras
 
 
 class Api:
     """ Initialize the cameras
     """
 
+    m_local_config = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         """
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info('Initialized')
 
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Security.Cameras = {}
+
     def LoadConfig(self):
-        pass
+        """
+        """
+        LOG.info('Load Config')
+        self.m_local_config.load_yaml_config()
 
     def Start(self):
         pass

@@ -38,7 +38,7 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-12-19'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -559,7 +559,7 @@ class LocalConfig:
         l_obj = ScheduleLightingInformation()
         l_obj.Type = p_key
         for l_key, l_value in p_config.items():
-            LOG.debug('Lighting Key:{}; Value:{}'.format(l_key, l_value))
+            # LOG.debug('Lighting Key:{}; Value:{}'.format(l_key, l_value))
             setattr(l_obj, l_key, l_value)
         return l_obj
 
@@ -661,9 +661,15 @@ class Api:
     m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        LOG.info("Initialized - Version:{}".format(__version__))
+        # LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self):
+        """
+        """
+        self.m_pyhouse_obj.House.Schedules = {}
 
     def LoadConfig(self):
         """ Load the Schedule from the Config info.

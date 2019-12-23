@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-12-18'
+__updated__ = '2019-12-20'
 
 # Import system type stuff
 import datetime
@@ -121,7 +121,6 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_pyhouse_obj.House.Location._RiseSet = Mock.RiseSet()
         self.m_api = scheduleApi(self.m_pyhouse_obj)
-        self.m_filename = 'schedule.yaml'
         l_yaml = YAML()
         self.m_test_config = l_yaml.load(TEST_YAML_1)
 

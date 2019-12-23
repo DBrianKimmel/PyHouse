@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-22'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -29,10 +29,8 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files and modules.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
-#
-from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.Config.import_tools import Tools as importTools
 from Modules.Core import setup_pyhouse_obj
+from Modules.Core.Config.config_tools import Api as configApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -100,12 +98,14 @@ class Utility:
     """
     """
 
+    m_config_tools = None
     m_pyhouse_obj = None
     m_components = {}
     m_modules = {}
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = configApi(p_pyhouse_obj)
 
     def _initialize_one_module(self, p_module):
         """
@@ -113,7 +113,7 @@ class Utility:
         l_module = p_module.lower()
         l_path = 'Modules.Core.' + p_module
         # LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
-        l_module = importTools(self.m_pyhouse_obj).import_module_get_api(l_module, l_path)
+        l_module = self.m_config_tools.import_module_get_api(l_module, l_path)
         # LOG.debug('done')
         return l_module
 
@@ -153,7 +153,7 @@ class Utility:
     def _initialize_one_component(self, p_component):
         l_path = 'Modules.' + p_component
         # LOG.debug('Importing: "{}", "{}"'.format(p_component, l_path))
-        l_component = importTools(self.m_pyhouse_obj).import_module_get_api(p_component, l_path)
+        l_component = self.m_config_tools.import_module_get_api(p_component, l_path)
         return l_component
 
     def initialize_all_components(self, p_components):
@@ -178,8 +178,8 @@ class Utility:
         """
         # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
         for l_component in self.m_components.values():
-            # LOG.debug('Loading component "{}"'.format(l_component))
-            _l_comp = self._load_one_component(l_component)
+            LOG.info('Loading core component "{}"'.format(l_component))
+            self._load_one_component(l_component)
 
     def _start_one_component(self, p_component):
         """
@@ -275,8 +275,8 @@ class Api:
         setup_logging.Api()  # Start up logging
         LOG.info('Setting up Main Data areas')
         self.m_pyhouse_obj = setup_pyhouse_obj.setup_pyhouse()
-        self.m_utility = Utility(self.m_pyhouse_obj)
         self._add_storage()
+        self.m_utility = Utility(self.m_pyhouse_obj)
         self.m_local_config = LocalConfig(self.m_pyhouse_obj)
         self.m_local_config.load_yaml_config()
         self.m_modules = self.m_utility.initialize_core_modules(MODULES)

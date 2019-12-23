@@ -9,14 +9,15 @@
 
 """
 
-__updated__ = '2019-12-16'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 12, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
 import datetime
-from typing import Optional, Union
+import importlib
+from typing import Optional, Union, List
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 
@@ -92,101 +93,6 @@ class MyYAML(YAML):
 yaml = MyYAML()  # or typ='safe'/'unsafe' etc
 
 
-class SubFields:
-    """ Get config sub-fields such as Hosts:, Access:, Rooms: etc.
-    """
-
-    def _get_name_password(self, p_config):
-        """
-        """
-        l_required = ['Name', 'Password']
-        l_obj = LoginInformation()
-        for l_key, l_value in p_config.items():
-            setattr(l_obj, l_key, l_value)
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warning('Pandora Yaml is missing an entry for "{}"'.format(l_key))
-        return l_obj
-
-    def extract_access_group(self, p_config):
-        """
-        """
-        # LOG.debug('Getting Access')
-        l_obj = AccessInformation()
-        l_required = ['Name', 'Password']
-        l_allowed = ['ApiKey', 'AccessKey']
-        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
-        return l_obj
-
-    def extract_family_group(self, p_config):
-        """
-        Extract the family information when it is given.
-        Also, create a PyHouse_obj.House.Family entry so we can load the families that were defined in the config files.
-        @param p_config: is the 'Family' ordereddict
-        @return: the device object
-        """
-        # LOG.debug('Getting Family')
-        l_family_obj = FamilyInformation()
-        l_device_obj = DeviceFamilyInformation()
-        l_required = ['Name', 'Address']
-        l_allowed = ['Type']
-        Tools(self.m_pyhouse_obj).extract_fields(l_device_obj, p_config, l_required, l_allowed)
-        l_device_obj.Name = l_device_obj.Name.lower()
-        l_key = l_device_obj.Name.lower()
-        l_family_obj.Name = l_device_obj.Name
-        # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
-        # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
-        self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
-        return l_device_obj
-
-    def extract_host_group(self, p_config):
-        """
-        @param p_config: is the 'Host' ordereddict
-        """
-        # LOG.debug('Getting Host')
-        l_obj = HostInformation()
-        l_required = ['Name', 'Port']
-        l_allowed = ['IPv4', 'IPv6']
-        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
-        return l_obj
-
-    def extract_interface_group(self, p_config):
-        """ Get the Interface sub-fields
-        Yaml:
-           - Name: TestPlm
-             Interface:
-                Type: Serial
-                Baud: 19200,8,N,1
-                Port: /dev/ttyUSB0
-                Host: Laptop-05
-        """
-        # LOG.debug('Getting Interface')
-        l_obj = DriverInterfaceInformation()
-        l_required = ['Type', 'Host', 'Port']
-        l_allowed = ['ApiKey', 'AccessKey']
-        Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
-        #
-        # LOG.debug('Getting driver Api')
-        l_driver = get_device_driver_Api(self.m_pyhouse_obj, l_obj)
-        l_obj._DriverApi = l_driver
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
-        return l_obj
-
-    def extract_room_group(self, p_config):
-        """
-        """
-        # LOG.debug('Getting Room')
-        l_obj = RoomLocationInformation()
-        try:
-            for l_key, l_value in p_config.items():
-                # LOG.debug('RoomKey:{}; Value:{}'.format(l_key, l_value))
-                setattr(l_obj, l_key, l_value)
-            return l_obj
-        except:
-            l_obj.Name = p_config
-        return l_obj
-
-
 class Tools:
     """
     """
@@ -194,6 +100,7 @@ class Tools:
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj) -> None:
+        LOG.debug('Init')
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _get_config_dir(self) -> str:
@@ -263,6 +170,176 @@ class Tools:
                     LOG.warning('Config entry "{}" is not permitted.'.format(l_key))
                     continue
             return p_obj
+
+    def find_module_list(self, p_modules: List) -> List:
+        """ Find python modules (or packages) that have a config file.
+        If it has a config file, it will be imported later, otherwise it is not loaded therefore saving memory.
+        @param p_modules: is a list of Module/Package names to search for config files.
+        """
+        l_list = []
+        LOG.info('Search for config files for: {}'.format(p_modules))
+        for l_part in p_modules:
+            l_path = self.find_config_file(l_part.lower())
+            if l_path != None:
+                l_list.append(l_part)
+                LOG.info(' Found  config file for "{}"'.format(l_part))
+            else:
+                LOG.info('Missing config file for "{}"'.format(l_part))
+        # LOG.debug('Found config files for: {}'.format(l_list))
+        return l_list
+
+    def _do_import(self, p_name, p_path):
+        """ This will import a module.
+        Used when we discover that the module is needed because:
+            It is required
+            Configuration calles for it.
+        @param p_name: is the name of the module ('pandora')
+        @param p_path: is the relative path to the module ('Modules.House.Entertainment')
+        @return: a pointer to the module or None
+        """
+        l_path = p_path + '.' + p_name
+        # LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
+        try:
+            l_ret = importlib.import_module(l_path)
+        except ImportError as e_err:
+            l_msg = 'PROG ERROR importing module: "{}"\n\tErr:{}.'.format(p_name, e_err)
+            LOG.error(l_msg)
+            l_ret = None
+        # LOG.info('Imported "{}" ({})'.format(p_name, l_path))
+        return l_ret
+
+    def import_module_get_api(self, p_module, p_path):
+        """ import a module with a path
+        @param p_module: is a module name ("Cameras")
+        @param p_path: is the starting point to look for the module to import.
+        @return: an initialized Api
+        """
+        l_module_name = p_module.lower()
+        LOG.info('Get Module pointer for "{}"'.format(l_module_name))
+        l_ret = self._do_import(l_module_name, p_path)
+        try:
+            # LOG.debug(PrettyFormatAny.form(l_ret, 'Module'))
+            l_api = l_ret.Api(self.m_pyhouse_obj)
+        except Exception as e_err:
+            LOG.error('ERROR - Initializing Module: "{}"\n\tError: {}'.format(p_module, e_err))
+            # LOG.error('Ref: {}'.format(PrettyFormatAny.form(l_ret, 'ModuleRef')))
+            l_api = None
+        # LOG.debug('Imported: {}'.format(l_ret))
+        return l_api
+
+    def import_module_list(self, p_modules: List, p_module_path: str):
+        """
+        This is seperate from find_module_list because sometimes extra modules have to be imported but have no config file.
+
+        @param p_module_path: the place to find the modules - e.g. 'Modules.House'
+        """
+        l_modules = {}
+        for l_part in p_modules:
+            l_path = p_module_path
+            if l_path.endswith('.'):
+                l_path = p_module_path + l_part
+            # LOG.debug('Starting import of Part: "{}" at "{}"'.format(l_part, l_path))
+            l_api = self.import_module_get_api(l_part, l_path)
+            l_modules[l_part] = l_api
+        LOG.info('Loaded Module: {}'.format(l_modules))
+        return l_modules
+
+
+class SubFields(Tools):
+    """ Get config sub-fields such as Hosts:, Access:, Rooms: etc.
+    """
+
+    def _get_name_password(self, p_config):
+        """
+        """
+        l_required = ['Name', 'Password']
+        l_obj = LoginInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warning('Pandora Yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+    def extract_access_group(self, p_config):
+        """
+        """
+        # LOG.debug('Getting Access')
+        l_obj = AccessInformation()
+        l_required = ['Name', 'Password']
+        l_allowed = ['ApiKey', 'AccessKey']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        return l_obj
+
+    def extract_family_group(self, p_config):
+        """
+        Extract the family information when it is given.
+        Also, create a PyHouse_obj.House.Family entry so we can load the families that were defined in the config files.
+        @param p_config: is the 'Family' ordereddict
+        @return: the device object
+        """
+        # LOG.debug('Getting Family')
+        l_family_obj = FamilyInformation()
+        l_device_obj = DeviceFamilyInformation()
+        l_required = ['Name', 'Address']
+        l_allowed = ['Type']
+        self.extract_fields(l_device_obj, p_config, l_required, l_allowed)
+        l_device_obj.Name = l_device_obj.Name.lower()
+        l_key = l_device_obj.Name.lower()
+        l_family_obj.Name = l_device_obj.Name
+        # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
+        # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
+        self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
+        return l_device_obj
+
+    def extract_host_group(self, p_config):
+        """
+        @param p_config: is the 'Host' ordereddict
+        """
+        # LOG.debug('Getting Host')
+        l_obj = HostInformation()
+        l_required = ['Name', 'Port']
+        l_allowed = ['IPv4', 'IPv6']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        return l_obj
+
+    def extract_interface_group(self, p_config):
+        """ Get the Interface sub-fields
+        Yaml:
+           - Name: TestPlm
+             Interface:
+                Type: Serial
+                Baud: 19200,8,N,1
+                Port: /dev/ttyUSB0
+                Host: Laptop-05
+        """
+        # LOG.debug('Getting Interface')
+        l_obj = DriverInterfaceInformation()
+        l_required = ['Type', 'Host', 'Port']
+        l_allowed = ['ApiKey', 'AccessKey']
+        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        #
+        # LOG.debug('Getting driver Api')
+        if l_obj.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
+            l_obj._isLocal = True
+            l_driver = get_device_driver_Api(self.m_pyhouse_obj, l_obj)
+            l_obj._DriverApi = l_driver
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Interface'))
+        return l_obj
+
+    def extract_room_group(self, p_config):
+        """
+        """
+        # LOG.debug('Getting Room')
+        l_obj = RoomLocationInformation()
+        try:
+            for l_key, l_value in p_config.items():
+                # LOG.debug('RoomKey:{}; Value:{}'.format(l_key, l_value))
+                setattr(l_obj, l_key, l_value)
+            return l_obj
+        except:
+            l_obj.Name = p_config
+        return l_obj
 
 
 class YamlCreate:
@@ -353,37 +430,7 @@ class YamlCreate:
             # setattr(l_config, l_key, l_val)
 
 
-class YamlFetch(Tools):
-    """
-    """
-
-    def XXXvalidate_yaml_in_main(self, p_info_obj, p_yaml_def):
-        """
-        @param p_info_obj: is the xxxInformation() object we are getting the config data for.
-        @param p_yaml_def: is the yaml from the config file that we are extracting for the info_obj.
-        """
-        for l_yaml_key, l_yaml_value in p_yaml_def.items():
-            try:
-                _l_x = getattr(p_info_obj, l_yaml_key)
-            except AttributeError:
-                LOG.warning('floors.yaml contains a bad floor item "{}" = {} - Ignored.'.format(l_yaml_key, l_yaml_value))
-                continue
-            setattr(p_info_obj, l_yaml_key, l_yaml_value)
-        return p_info_obj  # For testing
-
-    def XXXgenerate_running_key_value(self, p_object):
-        """ get key, value of pyhouse object Iterable.
-
-        This will take a pyhouse object and return each data storage item as a key, value tuple.
-        """
-        l_obj = p_object
-        for l_key in [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]:
-            l_value = getattr(l_obj, l_key)
-            yield (l_key, l_value)
-        return
-
-
-class Yaml(YamlCreate, YamlFetch, Tools):
+class Yaml(YamlCreate, Tools):
 
     def __init__(self, p_pyhouse_obj):
         """
@@ -428,7 +475,8 @@ class Yaml(YamlCreate, YamlFetch, Tools):
             with open(l_node.Path, 'r') as l_file:
                 l_data = l_yaml.load(l_file)
         except Exception as e_err:
-            LOG.error('Config file read error; {}'.format(e_err))
+            LOG.error('Config file read error; {}\n\tFile: "{}"'.format(e_err, p_filename))
+            LOG.error(PrettyFormatAny.form(l_node, 'Node'))
             return None
         # LOG.info('Loaded config file "{}" '.format(p_filename))
         return l_data

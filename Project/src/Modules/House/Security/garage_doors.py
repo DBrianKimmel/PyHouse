@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,7 +21,7 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.GarageDoor     ')
 
-CONFIG_NAME = 'garagedoor'
+CONFIG_NAME = 'garagedoors'
 
 
 class GarageDoorInformation:
@@ -99,20 +99,17 @@ class LocalConfig:
         It must contain 'Lights:'
         All the lights are a list.
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Security.Garage_Doors = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_yaml['Garage+Doors']
+            l_yaml = l_yaml['Garage_Doors']
         except:
             LOG.warning('The config file does not start with "Garage_Doors:"')
             return None
         l_gdo = self._extract_all_garage_doors(l_yaml)
-        self.m_pyhouse_obj.House.Security.Garage_Doors = l_gdo
-        return l_gdo  # for testing purposes
+        return l_gdo
 
 
 class Api:
@@ -123,8 +120,14 @@ class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Security.Garage_Doors = {}
 
     def LoadConfig(self):
         """
@@ -132,14 +135,17 @@ class Api:
         LOG.info('Load Config')
         self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
-        return {}
+
+    def Start(self):
+        """
+        """
 
     def SaveConfig(self):
         """
         """
         pass
 
-    def Start(self):
+    def Stop(self):
         """
         """
         pass

@@ -1,7 +1,7 @@
 """
 -*- _test-case-name: /home/briank/PyHouse/src/Modules/Housing/Entertainment/panasonic.py -*-
 
-@name:      src.Modules.House.Entertainment.panasonic
+@name:      src.Modules.House.Entertainment.Panasonic
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel

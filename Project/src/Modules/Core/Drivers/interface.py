@@ -13,7 +13,7 @@ The necessary interfaces are discovered when loading the "devices" that are cont
 Controllers, which are attached to the server, communicate with the server via an interface.
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -38,6 +38,7 @@ class DriverInterfaceInformation:
         self.Host: Optional[str] = None
         self.Port: Optional[int] = None
         self._DriverApi = None  # Serial_driver.Api()
+        self._isLocal = False
         # Type specific information follows
 
 

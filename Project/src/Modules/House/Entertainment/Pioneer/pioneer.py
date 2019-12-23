@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -233,7 +233,7 @@ class LocalConfig:
         l_required = ['Name']
         l_obj = PioneerPluginInformation()
         l_obj._Api = p_api
-        l_old = self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer']
+        l_old = self.m_pyhouse_obj.House.Entertainment['pioneer']
         l_obj._Api = l_old._Api
         l_obj._Module = l_old._Module
         for l_key, l_value in p_config.items():

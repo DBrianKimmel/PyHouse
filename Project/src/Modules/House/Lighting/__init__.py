@@ -17,4 +17,11 @@ __version__ = '.'.join(map(str, __version_info__))
 
 VALID_LIGHTING_TYPE = ['Button', 'Controller', 'Light']
 
+MODULES = [
+    'Buttons',
+    'Controllers',
+    'Lights',
+    'Outlets'
+    ]
+
 # ## END DBK

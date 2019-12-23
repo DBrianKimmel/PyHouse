@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-11-02'
+__updated__ = '2019-12-23'
 
 # Import system type stuff
 
@@ -17,7 +17,7 @@ __updated__ = '2019-11-02'
 from Modules.Core.data_objects import BaseObject
 
 
-class EntertainmentInformation:
+class XXXEntertainmentInformation:
     """
     This is the PyHouse.House.Entertainment node of the master object.
     It is a dynamic structure for the various entertainment devices in a house.

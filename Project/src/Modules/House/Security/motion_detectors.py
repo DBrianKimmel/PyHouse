@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,11 +21,11 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.MotionSensor   ')
 
-CONFIG_NAME = 'motion_sensor'
+CONFIG_NAME = 'motiondetectors'
 
 
-class MotionSensorInformation:
-    """ This is the motion sensor data
+class MotionDetectorInformation:
+    """ This is the motion detector data
 
     ==> PyHouse.House.Security.Motion.xxx as in the def below
     """
@@ -57,7 +57,7 @@ class LocalConfig:
         @param p_config: is the config fragment containing one button's information.
         @return: a ButtonInformation() obj filled in.
         """
-        l_obj = MotionSensorInformation()
+        l_obj = MotionDetectorInformation()
         l_required = ['Name', 'Family']
         l_allowed = ['Room']
         l_groupfields = ['Family', 'Room']
@@ -105,8 +105,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Motion_Detectors:"')
             return None
         l_motion = self._extract_all_motion_sensors(l_yaml)
-        self.m_pyhouse_obj.House.Security.Motion_Detectors = l_motion
-        return l_motion  # for testing purposes
+        return l_motion
 
 
 class Api:
@@ -117,8 +116,14 @@ class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
+
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Security.Motion_Detectors = {}
 
     def LoadConfig(self):
         """
@@ -126,7 +131,6 @@ class Api:
         LOG.info('Load Config')
         self.m_local_config.load_yaml_config()
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
-        return {}
 
     def SaveConfig(self):
         """
@@ -134,6 +138,10 @@ class Api:
         pass
 
     def Start(self):
+        """
+        """
+
+    def Stop(self):
         """
         """
 

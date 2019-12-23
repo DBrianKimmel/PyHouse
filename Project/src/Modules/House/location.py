@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-22'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -172,8 +172,13 @@ class Api:
         """
         LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        p_pyhouse_obj.House.Location = LocationInformation()
+
+    def _add_storage(self):
+        """
+        """
+        self.m_pyhouse_obj.House.Location = LocationInformation()
 
     def LoadConfig(self):
         """ Load the Yaml config file into the system.
