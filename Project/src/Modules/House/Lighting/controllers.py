@@ -194,4 +194,7 @@ class Api:
         """
         """
 
+    def Stop(self):
+        pass  # Nothing needs stoping ATM
+
 #  ## END DBK

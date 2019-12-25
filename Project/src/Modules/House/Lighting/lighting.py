@@ -139,10 +139,6 @@ class Api:
     m_local_config = None
     m_pyhouse_obj = None
     m_modules = None
-    # m_buttons = None
-    # m_controllers = None
-    # m_lights = None
-    # m_outlets = None
 
     def __init__(self, p_pyhouse_obj) -> None:
         LOG.info("Initialing - Version:{}".format(__version__))
@@ -150,49 +146,36 @@ class Api:
         self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_config_tools = configApi(p_pyhouse_obj)
-        #
         l_path = 'Modules.House.Lighting'
         l_modules = self.m_config_tools.find_module_list(MODULES)
         self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
-        #
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def _add_storage(self) -> None:
-        """
-        """
         self.m_pyhouse_obj.House.Lighting = LightingInformation()
 
     def LoadConfig(self):
-        """ Load the Lighting config info.
-        """
         LOG.info('Loading all Lighting config files.')
-        # self.m_local_config.read_config(CONFIG_NAME)
         for l_module in self.m_modules.values():
             l_module.LoadConfig()
         LOG.info('Loaded Lighting config files.')
 
     def Start(self):
-        """ Allow loading of sub modules and drivers.
-        """
+        LOG.info("Starting.")
+        for l_module in self.m_modules.values():
+            l_module.Start()
         LOG.info("Started.")
 
     def SaveConfig(self):
-        """ Save the Lighting section.
-        It will contain several sub-sections
-        """
         LOG.info('SaveConfig')
-        # self.m_local_config.write_config(CONFIG_NAME, self.m_pyhouse_obj.House.Lighting, addnew=True)
-        # self.m_buttons.SaveConfig()
-        # self.m_controllers.SaveConfig()
-        # self.m_lights.SaveConfig()
-        # self.m_outlets.SaveConfig()
+        for l_module in self.m_modules.values():
+            l_module.SaveConfig()
         LOG.info("Saved Lighting Config.")
         return
 
     def Stop(self):
-        """ Allow cleanup of all drivers.
-        """
-        LOG.info("Stopping all lighting families.")
+        for l_module in self.m_modules.values():
+            l_module.Stop()
         LOG.info("Stopped.")
 
     def Control(self, p_device_obj, p_controller_obj, p_control):

@@ -11,7 +11,7 @@
 from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
 from Modules.Core.core import PyHouseApiInformation, ParameterInformation
 
-__updated__ = '2019-12-14'
+__updated__ = '2019-12-23'
 
 #  Import system type stuff
 import os
@@ -24,9 +24,7 @@ from twisted.internet import reactor
 from Modules.Computer.computer import ComputerInformation, ComputerApis
 from Modules.House.house_data import LocationInformation
 from Modules.House.Hvac.hvac import HvacInformation
-from Modules.House.Entertainment.entertainment import \
-    EntertainmentInformation, \
-    EntertainmentPluginInformation
+from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
 from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Config.config_tools import \
@@ -88,8 +86,8 @@ class SetupPyHouseObj:
         return l_ret
 
     def _build_entertainment(self):
-        l_ret = EntertainmentInformation()
-        l_ret.Plugins['test'] = EntertainmentPluginInformation()
+        l_ret = {}
+        l_ret['test'] = EntertainmentPluginInformation()
         return l_ret
 
     def _build_house_data(self):

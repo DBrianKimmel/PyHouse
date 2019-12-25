@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-30'
+__updated__ = '2019-12-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -49,7 +49,7 @@ class SetupMixin(object):
 
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = {}
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
 
 
@@ -148,7 +148,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Set up the general PyHouse object, Entertainment, and panasonic structures
         """
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = {}
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_panasonic = self.m_xml.entertainment_sect.find('PanasonicSection').find('Device')
 
@@ -232,7 +232,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = {}
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_panasonic = self.m_xml.entertainment_sect.find('PanasonicSection').find('Device')
         self.m_panasonic = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)
@@ -297,7 +297,7 @@ class E1_Load(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = {}
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_panasonic = self.m_xml.entertainment_sect.find('PanasonicSection').find('Device')
         self.m_panasonic = panasonicXML.read_panasonic_section_xml(self.m_pyhouse_obj)

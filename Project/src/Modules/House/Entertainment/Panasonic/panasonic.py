@@ -13,7 +13,7 @@ Cannon Trail Blueray Player
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-23'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,7 @@ import xml.etree.ElementTree as ET
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities.xml_tools import XmlConfigTools, PutGetXML
-from Modules.Housing.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentDeviceInformation
+from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentDeviceInformation
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

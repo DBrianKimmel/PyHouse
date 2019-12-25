@@ -11,7 +11,7 @@ Passed all 31 tests - DBK - 2018-11-13
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-12-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -227,7 +227,7 @@ class C1_ReadDevice(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentInformation()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment = {}  # Clear before loading
         self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginInformation()
 
     def test_01_Setup(self):
@@ -289,7 +289,7 @@ class C2_RdService(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_entertainment_obj = EntertainmentInformation()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment = {}  # Clear before loading
         self.m_pyhouse_obj.House.Entertainment.Plugins['pandora'] = EntertainmentPluginInformation()
 
     def test_01_Setup(self):
@@ -328,7 +328,7 @@ class C3_RdSubSect(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentInformation()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment = {}  # Clear before loading
 
     def test_01_Setup(self):
         """
@@ -378,7 +378,7 @@ class C4_ReadAll(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentInformation()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment = {}  # Clear before loading
 
     def test_01_Setup(self):
         """
@@ -544,7 +544,7 @@ class E1_Device(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
         self.m_xml = XmlConfigTools.find_xml_section(self.m_pyhouse_obj, 'HouseDivision/EntertainmentSection')
         self.m_entertainment_obj = EntertainmentInformation()
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()  # Clear before loading
+        self.m_pyhouse_obj.House.Entertainment = {}  # Clear before loading
         self.m_pyhouse_obj.House.Entertainment.Plugins['onkyo'] = EntertainmentPluginInformation()
 
     def test_01_Setup(self):

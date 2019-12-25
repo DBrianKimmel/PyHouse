@@ -100,8 +100,7 @@ class MqttActions:
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def _find_device(self, p_family, p_model):
-        # l_pioneer = self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'].Devices
-        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment[SECTION].Devices
         for l_device in l_devices.values():
             if l_device.Name.lower() == p_model.lower():
                 LOG.info("found model - {} {}".format(p_family, p_model))
@@ -187,7 +186,6 @@ class LocalConfig:
         l_entertain = self.m_pyhouse_obj.House.Entertainment
         l_pioneer = l_entertain.Plugins['pioneer']
         LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
-        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
         LOG.debug(PrettyFormatAny.form(l_pioneer, 'Pioneer'))
         LOG.debug(PrettyFormatAny.form(l_pioneer.Services, 'Pandora'))
         #
@@ -264,8 +262,8 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Pioneer:"')
             return None
         l_pioneer = self._extract_all_pioneer(l_yaml, p_api)
-        self.m_pyhouse_obj.House.Entertainment.Plugins['pioneer'] = l_pioneer
-        return l_pioneer  # for testing purposes
+        self.m_pyhouse_obj.House.Entertainment['pioneer'] = l_pioneer
+        return l_pioneer
 
 
 class PioneerControl:
@@ -523,7 +521,7 @@ class Api(MqttActions, PioneerClient):
         """
         LOG.info('Api Start...')
         l_count = 0
-        l_devices = self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment[SECTION].Devices
         for l_device_obj in l_devices.values():
             # # Read Yaml here
             LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))

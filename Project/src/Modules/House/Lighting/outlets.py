@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-12-22'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 11, 27)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -215,9 +215,15 @@ class Api:
         self.m_pyhouse_obj.House.Lighting.Outlets = self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Outlets.'.format(len(self.m_pyhouse_obj.House.Lighting.Outlets)))
 
+    def Start(self):
+        pass  # Nothing needs starting ATM
+
     def SaveConfig(self):
         """
         """
+
+    def Stop(self):
+        pass  # Nothing needs stoping ATM
 
     def Control(self, p_device_obj, p_controller_obj, p_control):
         """

@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-12-22'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -20,7 +20,6 @@ from datetime import datetime
 import platform
 
 #  Import PyHouse files
-from Modules.Core.Config import config_tools
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools, uuid_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
@@ -134,12 +133,12 @@ class LocalConfig:
     """
     """
 
-    m_config = None
+    m_config_tools = None
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = configApi(p_pyhouse_obj)
+        self.m_config_tools = configApi(p_pyhouse_obj)
         # LOG.debug('Config - Progress')
 
     def _extract_computer_info(self, _p_config):
@@ -158,7 +157,7 @@ class LocalConfig:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         # self.m_pyhouse_obj.Computer = None
-        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        l_yaml = self.m_config_tools.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
@@ -170,7 +169,7 @@ class LocalConfig:
         l_computer = self._extract_computer_info(l_yaml)
         # self.m_pyhouse_obj.Computer = l_computer
         # LOG.debug('Computer.Yaml - {}'.format(l_yaml.Yaml))
-        return l_computer  # for testing purposes
+        return l_computer
 
 
 class Api:
@@ -186,15 +185,15 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         """ Initialize the computer section of PyHouse.
         """
-        LOG.info("Initializing - Version:{}".format(__version__))
+        LOG.info('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         self._add_storage()
-        self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_config_tools = configApi(p_pyhouse_obj)
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
         #
         l_path = 'Modules.Computer.'
-        l_parts = self.m_config_tools.find_module_list(MODULES)
-        self.m_parts = self.m_config_tools.import_module_list(l_parts, l_path)
+        l_modules = self.m_config_tools.find_module_list(MODULES)
+        self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
         #
         LOG.info("Initialized - Version:{}".format(__version__))
 
@@ -213,24 +212,32 @@ class Api:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_local_config.load_yaml_config()
+        for l_module in self.m_modules.values():
+            l_module.LoadConfig()
         LOG.info('Loaded all computer Configs.')
 
     def Start(self):
         """
         Start processing
         """
+        for l_module in self.m_modules.values():
+            l_module.Start()
         LOG.info('Started.')
 
     def SaveConfig(self):
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
+        for l_module in self.m_modules.values():
+            l_module.SaveConfig()
         LOG.info("Saved Computer Config.")
 
     def Stop(self):
         """
         Append the house XML to the passed in xlm tree.
         """
+        for l_module in self.m_modules.values():
+            l_module.Stop()
         LOG.info("Stopped.")
 
 # ## END DBK

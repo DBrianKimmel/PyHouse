@@ -190,6 +190,9 @@ class Api:
         """
         """
 
+    def Start(self):
+        pass  # Nothing needs starting ATM
+
     def Stop(self):
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse')
 

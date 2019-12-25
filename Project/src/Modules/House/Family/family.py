@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-12-22'
+__updated__ = '2019-12-23'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -238,7 +238,7 @@ class Api:
         l_obj.Name = p_name
         l_obj.Module = l_module
         l_obj._Api = self.m_config_tools.import_module_get_api(l_module, l_path)
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj
 
     def LoadConfig(self):

@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.Api
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-24'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -192,6 +192,7 @@ class LocalConfig:
             LOG.warning('The config file does not start with "Entertainment:"')
             return None
         l_entertain = self._extract_all_entertainment(l_yaml)
+        LOG.debug(PrettyFormatAny.form(l_entertain, 'HouseZZZ'))
         return l_entertain
 
 
@@ -228,72 +229,24 @@ class Api:
         @return: the Entertainment object of PyHouse_obj
         """
         LOG.info("Config Loading - Version:{}".format(__version__))
-        self.m_pyhouse_obj.House.Entertainment = self.m_local_config.load_yaml_config()
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'HouseZZZ'))
+        # self.m_pyhouse_obj.House.Entertainment = self.m_local_config.load_yaml_config()
         for l_module in self.m_modules.values():
             l_module.LoadConfig()
 
-    def _service_start(self, p_service):
-        """
-        """
-        LOG.info('Service {}'.format(p_service.Name))
-        # LOG.debug(PrettyFormatAny.form(p_service, 'Service'))
-        _l_topic = 'house/entertainment/{}/status'.format(p_service)
-        # l_obj = PandoraServiceInformation()
-        # l_obj.Model = p_service.Name
-        # l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(_l_topic, l_obj))
-        # p_pyhouse_obj.Core.MqttApi.MqttPublish(_l_topic, l_obj)
-
-    def _device_start(self, p_device):
-        """
-        """
-        LOG.info('Device {}'.format(p_device.Name))
-        # LOG.debug(PrettyFormatAny.form(p_device, 'Device'))
-        _l_topic = 'house/entertainment/{}/status'.format(p_device.Name)
-        l_obj = EntertainmentDeviceControl()
-        l_obj.Model = p_device.Name
-        l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
-
-    def _module_start_loop(self, p_plugin):
-        """
-        """
-        _l_name = p_plugin.Name
-        # Start Plugin
-        # LOG.debug('Starting {}'.format(l_name))
-        # LOG.debug(PrettyFormatAny.form(p_plugin, 'Plugin'))
-        if p_plugin.ServiceCount > 0:
-            for l_service in p_plugin.Services.values():
-                self._service_start(l_service)
-        if p_plugin.DeviceCount > 0:
-            for l_device in p_plugin.Devices.values():
-                self._device_start(l_device)
-
-        # p_plugin._Api.Start()
-        # l_topic = 'house/entertainment/{}/status'.format(p_device.Name)
-        # l_obj = EntertainmentDeviceControl()
-        # l_obj.Model = l_name
-        # l_obj.HostName = self.m_pyhouse_obj.Computer.Name
-        # LOG.debug('Send MQTT message.\n\tTopic:{}\n\tMessage:{}'.format(l_topic, l_obj))
-        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
-
     def Start(self):
         LOG.info("Starting")
-        l_count = 0
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment.Plugins, 'Plugins'))
-        # for l_plugin in self.m_pyhouse_obj.House.Entertainment.Plugins.values():
-        #    # LOG.debug('Starting "{}"'.format(l_plugin.Name))
-        #    self._module_start_loop(l_plugin)
-        #    l_count += 1
-        LOG.info("Started {} plugin(s)- Version:{}".format(l_count, __version__))
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
+        for l_module in self.m_modules.values():
+            l_module.Start()
+        LOG.info('Started.')
 
     def SaveConfig(self):
         """ Stick in the entertainment section
         """
         LOG.info("Saving Config.")
-        # self.m_local_config.save_yaml_config()
+        for l_module in self.m_modules.values():
+            l_module.SaveConfig()
         LOG.info("Saved Config.")
 
     def Stop(self):

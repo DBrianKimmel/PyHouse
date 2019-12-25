@@ -11,7 +11,7 @@ Passed all 15 tests - DBK - 2018-10-17
 
 """
 
-__updated__ = '2019-10-16'
+__updated__ = '2019-12-24'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -150,7 +150,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = {}
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_xml_pioneer = self.m_xml.pioneer_sect.find('Device')
 
@@ -182,7 +182,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj.House.Entertainment = EntertainmentInformation()
+        self.m_pyhouse_obj.House.Entertainment = {}
         self.m_pyhouse_obj.House.Entertainment.Plugins[SECTION] = EntertainmentPluginInformation()
         self.m_section = samsungXml.read_samsung_section_xml(self.m_pyhouse_obj)
         # self.m_pyhouse_obj.House.Entertainment.Pioneer = self.m_section

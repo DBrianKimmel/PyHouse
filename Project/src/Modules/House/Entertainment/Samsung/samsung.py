@@ -312,13 +312,11 @@ class LocalConfig:
     def dump_struct(self):
         """
         """
-        l_entertain = self.m_pyhouse_obj.House.Entertainment
-        l_samsung = l_entertain.Plugins['samsung']
+        l_entertain = self.m_pyhouse_obj.House.Entertainment['samsung']
         LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
-        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
-        LOG.debug(PrettyFormatAny.form(l_samsung, 'samsung'))
-        LOG.debug(PrettyFormatAny.form(l_samsung.Services, 'samsung'))
-        #
+
+        return
+
         for _l_key, l_service in l_samsung.Services.items():
             LOG.debug(PrettyFormatAny.form(l_service, 'Service'))
             if hasattr(l_service, 'Connection'):
@@ -411,7 +409,7 @@ class Api(Connecting):
     def Start(self):
         LOG.info("Starting.")
         l_count = 0
-        for l_samsung_device_obj in self.m_pyhouse_obj.House.Entertainment.Plugins['samsung'].Devices.values():
+        for l_samsung_device_obj in self.m_pyhouse_obj.House.Entertainment['samsung'].Devices.values():
             l_count += 1
             # if not l_samsung_device_obj.Active:
             #    continue

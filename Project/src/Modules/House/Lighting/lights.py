@@ -296,12 +296,18 @@ class Api(MqttActions):
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Lights.'.format(len(self.m_pyhouse_obj.House.Lighting.Lights)))
 
+    def Start(self):
+        pass  # Nothing needs starting ATM
+
     def SaveConfig(self):
         """ Save the Lighting section.
         It will contain several sub-sections
         """
         LOG.info('Save Config')
         self.m_local_config.save_yaml_config()
+
+    def Stop(self):
+        pass  # Nothing needs stoping ATM
 
     def Control(self, p_device_obj, p_controller_obj, p_control):
         """

@@ -786,7 +786,7 @@ class Api(MqttActions):
         self.m_pandora_control_api.issue_pandora_stopped_status()
         LOG.info("Started - Version:{}".format(__version__))
 
-    def SaveConfig(self, _p_xml):
+    def SaveConfig(self):
         """
         """
 

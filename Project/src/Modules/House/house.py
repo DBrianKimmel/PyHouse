@@ -181,7 +181,7 @@ class Api:
         This is part of Core PyHouse - House is the reason we are running!
         Note that the reactor is not yet running.
         """
-        LOG.info('Initializing - Version:{}'.format(__version__))
+        LOG.info('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
         self._add_storage()
         self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
