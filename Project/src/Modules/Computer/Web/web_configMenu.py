@@ -1,18 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_configMenu -*-
-
-@name:      PyHouse/src/Modules/Web/web_configMenu.py
+@name:      Modules/Web/web_configMenu.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 23, 2015
 @Summary:
 
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import os

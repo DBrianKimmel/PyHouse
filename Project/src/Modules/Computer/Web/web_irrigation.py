@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse/src/Modules/Computer/Web/web_irrigation.py -*-
-
 @name:      Modules/Computer/Web/web_irrigation.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2019 by D. Brian Kimmel
+@copyright: (c) 2016-2020 by D. Brian Kimmel
 @note:      Created on Aug 22, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import os

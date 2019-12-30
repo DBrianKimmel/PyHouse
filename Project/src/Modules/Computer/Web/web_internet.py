@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_internet -*-
-
-@name:      PyHouse/src/Modules/Web/web_internet.py
+@name:      Modules/Web/web_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Handle the "Internet" information for a house.
 
 """
 
-__updated__ = '2019-07-05'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 from datetime import datetime

@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-12-14'
+__updated__ = '2019-12-29'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -37,7 +37,7 @@ LIGHTING_MSG = {
     'DateTime': '2019-01-27 17:23:57.988185',
     'DevCat': 288,
     'DeviceFamily': 'Insteon',
-    'DeviceSubType': 2,
+    'DeviceSubType': 'Controller',
     'DeviceType': 'Lighting',
     'DsrDtr': False,
     'EngineVersion': 0,

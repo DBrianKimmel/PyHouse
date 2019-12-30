@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Families.UPB._test.test_UPB_Pim -*-
-
-@name:      PyHouse/src/Modules/Families/UPB/UPB_Pim.py
+@name:      Modules/Families/UPB/UPB_Pim.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 27, 2011
 @summary:   This module is for communicating with UPB controllers.
@@ -13,7 +11,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 try:

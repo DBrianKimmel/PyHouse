@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Drivers/USB._test.test_USB_driver -*-
-
-@name:      PyHouse/src/Modules/Drivers/USB/USB_driver.py
+@name:      Modules/Drivers/USB/USB_driver.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2017 by D. Brian Kimmel
+@copyright: (c) 2011-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 27, 2011
 @summary:   This module is for interfacing to USB devices.
 
 """
 
-__updated__ = '2019-12-04'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import usb  # type: ignore

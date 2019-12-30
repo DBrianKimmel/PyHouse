@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.web._test.test_web_rooms -*-
-
-@name:      PyHouse/Project/src/Modules/Computer/web/web_rooms.py
+@name:      Modules/Computer/web/web_rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to rooms for the selected house.
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import os

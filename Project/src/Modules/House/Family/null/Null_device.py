@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.families.Null._test.test_Null_device -*-
-
-@name:      PyHouse/src/Modules/families/Null/Null_device.py
+@name:      Modules/families/Null/Null_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 6, 2014
 @summary:   Used when no valid family exists
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 

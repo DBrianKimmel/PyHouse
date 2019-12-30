@@ -1,7 +1,5 @@
 """
--*- _test-case-name: PyHouse.src.Modules.web._test.test_web_buttons -*-
-
-@name:      PyHouse/src/Modules/web/web_buttons.py
+@name:      Modules/web/web_buttons.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2017 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-01'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import os

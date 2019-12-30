@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-29'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,7 +34,7 @@ class GarageDoorInformation:
         self.Name = None
         self.Comment = None
         self.DeviceType = 'Security'
-        self.DeviceSubType = 'Garage_Door'
+        self.DeviceSubType = 'GarageDoor'
         self.Family = None  # FamilyInformation()
         self.Room = None  # RoomInformation()
         self.Status = None  # Open | Closed
@@ -78,8 +78,7 @@ class LocalConfig:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
-        # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
+        LOG.info('Extracted Garage Door "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_garage_doors(self, p_config):
@@ -90,8 +89,8 @@ class LocalConfig:
         l_dict = {}
         for l_ix, l_button in enumerate(p_config):
             # print('Light: {}'.format(l_light))
-            l_button_obj = self._extract_one_garage_door(l_button)
-            l_dict[l_ix] = l_button_obj
+            l_gdo_obj = self._extract_one_garage_door(l_button)
+            l_dict[l_ix] = l_gdo_obj
         return l_dict
 
     def load_yaml_config(self):
@@ -132,9 +131,9 @@ class Api:
     def LoadConfig(self):
         """
         """
-        LOG.info('Load Config')
-        self.m_local_config.load_yaml_config()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
+        LOG.info('Loading Config')
+        self.m_pyhouse_obj.House.Security.Garage_Doors = self.m_local_config.load_yaml_config()
+        LOG.info('Loaded {} Garage Door(s).'.format(len(self.m_pyhouse_obj.House.Security.Garage_Doors)))
 
     def Start(self):
         """

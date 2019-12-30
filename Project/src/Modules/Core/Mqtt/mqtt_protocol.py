@@ -12,9 +12,8 @@ The first is a TCP connection to the Mqtt broker.
 The second is a MQTT connection to the broker that uses the first connection as a transport.
 
 """
-import string
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-25'
 __version_info__ = (18, 10, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -695,7 +694,7 @@ class MQTTClient(MQTTProtocol):
     def connackReceived(self, p_status):
         """ Override
         """
-        LOG.debug('Received Connack from MQTT Broker "{}"\n\tAddr: {}\n\tStatus: {}'.format(self.m_broker.Name, self.m_broker.Host.Name, p_status))
+        # LOG.debug('Received Connack from MQTT Broker "{}"\n\tAddr: {}\n\tStatus: {}'.format(self.m_broker.Name, self.m_broker.Host.Name, p_status))
         if p_status == 0:
             self.mqttConnected()
 
@@ -708,7 +707,7 @@ class MQTTClient(MQTTProtocol):
         """ Override
         Subscribe Ack message
         """
-        LOG.debug('Received Suback from MQTT Broker "{}"'.format(self.m_broker.Name))
+        # LOG.debug('Received Suback from MQTT Broker "{}"'.format(self.m_broker.Name))
         # self.m_pyhouse_obj.Core.Mqtt.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):

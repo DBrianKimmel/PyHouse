@@ -2,16 +2,14 @@
 @name:      PyHouse/Project/src/_test/testing_mixin.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 4, 2013
 @summary:   Test handling the information for a house.
 
 """
-from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
-from Modules.Core.core import PyHouseApiInformation, ParameterInformation
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os
@@ -27,21 +25,24 @@ from Modules.House.Hvac.hvac import HvacInformation
 from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
 from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import PyHouseInformation
-from Modules.Core.Config.config_tools import \
-    ConfigInformation, AccessInformation
+from Modules.Core.Config.config_tools import ConfigInformation, AccessInformation
 from Modules.House.Family.family import Api as familyApi
 from Modules.House.house import HouseInformation
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt import MqttInformation
+from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
+from Modules.Core.core import PyHouseApiInformation, ParameterInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #
 l_format = '\n [%(levelname)s] %(name)s: %(funcName)s %(lineno)s:\n\t%(message)s'
+l_level = 'WARNING'  # 'CRITICAL', 'FATAL', 'ERROR', 'WARNING', 'INFO', 'DEBUG', 'NOTSET'
 l_formatter = logging.Formatter(fmt=l_format)
 l_handler = logging.StreamHandler(stream=sys.stderr)
 l_handler.setFormatter(l_formatter)
 LOG = Logger.getLogger('PyHouse')
 LOG.addHandler(l_handler)
+LOG.setLevel(l_level)
 
 TEST_PATH = os.path.split(os.path.dirname(os.path.realpath(__file__)))[0]
 

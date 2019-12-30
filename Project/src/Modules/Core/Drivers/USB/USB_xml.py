@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Drivers.USB._test.test_usb_xml -*-
-
-@name:      PyHouse/src/Modules/Drivers/USB/usb_xml.py
+@name:      Modules/Drivers/USB/usb_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 29, 2014
 @summary:   Read and write USB xml
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

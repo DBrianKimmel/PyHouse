@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-25'
 __version_info__ = (19, 12, 20)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -67,7 +67,7 @@ class MqttActions:
     """
 
     def __init__(self, p_pyhouse_obj):
-        LOG.debug('Init')
+        # LOG.debug('Init')
         self.m_pyhouse_obj = p_pyhouse_obj
 
     def decode(self, p_msg):

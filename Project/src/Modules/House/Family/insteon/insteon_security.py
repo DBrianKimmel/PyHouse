@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-14'
+__updated__ = '2019-12-29'
 
 #  Import system type stuff
 
@@ -56,7 +56,7 @@ class DecodeResponses:
         l_device = SensorMessage(p_device_obj.Name, p_device_obj.RoomName, 'Generic ')
         l_topic = 'houe/security/'
         l_mqtt_msg = 'security '
-        if p_device_obj.DeviceSubType == 'GarageDoorOpener':
+        if p_device_obj.DeviceSubType == 'GarageDoor':
             l_mqtt_msg += 'Garage Door: '
             l_device.Type = 'Garage Door'
             l_topic += 'garage_door'
@@ -88,7 +88,7 @@ class DecodeResponses:
             l_mqtt_msg += 'Request-ID-From:"{}"; '.format(p_device_obj.Name)
 
         elif l_cmd1 == MESSAGE_TYPES['on']:  #  0x11
-            if p_device_obj.DeviceSubType == 'GarageDoorOpener':  # The status turns on when the Garage Door goes closed
+            if p_device_obj.DeviceSubType == 'GarageDoor':  # The status turns on when the Garage Door goes closed
                 l_mqtt_msg += 'Garage Door Closed; '.format(p_device_obj.Name)
                 p_device_obj.Status = 'Close'
                 l_device.Status = 'Garage Door Closed.'
@@ -101,7 +101,7 @@ class DecodeResponses:
                 p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_device)  #  /security
 
         elif l_cmd1 == MESSAGE_TYPES['off']:  #  0x13
-            if p_device_obj.DeviceSubType == 'GarageDoorOpener':
+            if p_device_obj.DeviceSubType == 'GarageDoor':
                 l_mqtt_msg += 'Garage Door Opened; '.format(p_device_obj.Name)
                 p_device_obj.Status = 'Opened'
                 l_device.Status = 'Garage Door Opened.'

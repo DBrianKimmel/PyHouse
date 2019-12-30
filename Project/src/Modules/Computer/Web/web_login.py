@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Core._test.test_data_objects -*-
-
-@name:      PyHouse/Project/src/Modules/Computer/Web/web_login.py
+@name:      Modules/Computer/Web/web_login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @note:      Created on Jul 27, 2013
 @license:   MIT License
 @summary:   Handle the web server login.
@@ -21,7 +19,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os

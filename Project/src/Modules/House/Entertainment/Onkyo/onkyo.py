@@ -267,7 +267,7 @@ class LocalConfig:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warning('Onkyo Yaml is missing an entry for "{}"'.format(l_key))
-        LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
+        # LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
         LOG.info('Extracted device "{}"'.format(l_obj.Name))
         return l_obj
 

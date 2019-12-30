@@ -11,7 +11,7 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2019-12-29'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -24,7 +24,6 @@ from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 TEST_YAML = """\
 Motion_Detectors:
-
    - Name: MotionLiving
      Comment: Living Room
      Family:
@@ -48,6 +47,7 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_motion_detectors')
 
 
@@ -69,8 +69,8 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
         self.assertEqual(l_ret.Name, 'MotionLiving')
         self.assertEqual(l_ret.Comment, 'Living Room')
         self.assertEqual(l_ret.DeviceType, 'Security')
-        self.assertEqual(l_ret.DeviceSubType, 'Motion_Detector')
-        self.assertEqual(l_ret.Family.Name, 'Insteon')
+        self.assertEqual(l_ret.DeviceSubType, 'MotionDetector')
+        self.assertEqual(l_ret.Family.Name, 'insteon')
         self.assertEqual(l_ret.Family.Address, '31.75.85')
 
     def test_03_Detectors(self):

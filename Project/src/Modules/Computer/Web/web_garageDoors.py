@@ -1,18 +1,15 @@
 """
--*- _test-case-name: /home/briank/PyHouse/src/Modules/Computer/Web/web_garageDoors.py -*-
-
-@name:      /home/briank/PyHouse/src/Modules/Computer/Web/web_garageDoors.py
+@name:      Modules/Computer/Web/web_garageDoors.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2020 by D. Brian Kimmel
 @note:      Created on Sep 18, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2017-01-19'
-
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os
@@ -26,7 +23,6 @@ from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Drivers import VALID_INTERFACES
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
-
 
 #  Handy helper for finding external resources nearby.
 webpath = os.path.join(os.path.split(__file__)[0])

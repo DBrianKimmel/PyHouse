@@ -1,17 +1,15 @@
 """
--*- _test-case-name: /home/briank/PyHouse/src/Modules/Computer/Web/web_family.py -*-
-
-@name:      /home/briank/PyHouse/src/Modules/Computer/Web/web_family.py
+@name:      Modules/Computer/Web/web_family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2020 by D. Brian Kimmel
 @note:      Created on Nov 8, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 

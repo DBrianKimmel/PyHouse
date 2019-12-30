@@ -1,10 +1,8 @@
 """
--*- _test-case-name: /home/briank/workspace/PyHouse/src/Modules/Families/Hue/_test/test_Hue_hub.py -*-
-
-@name:      /home/briank/workspace/PyHouse/src/Modules/Families/Hue/_test/test_Hue_hub.py
+@name:      Modules/Families/Hue/_test/test_Hue_hub.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Jan 2, 2018
 @license:   MIT License
 @summary:
@@ -13,7 +11,7 @@ Passed all 11 tests - DBK - 2019-03-16
 
 """
 
-__updated__ = '2019-03-16'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET

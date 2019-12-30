@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_controllers -*-
-
-@name:      PyHouse/src/Modules/Web/web_controllers.py
+@name:      Modules/Web/web_controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Web interface to controllers for the selected house.
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os

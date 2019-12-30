@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.Api
 
 """
 
-__updated__ = '2019-12-24'
+__updated__ = '2019-12-25'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -236,7 +236,7 @@ class Api:
 
     def Start(self):
         LOG.info("Starting")
-        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'Entertainment'))
         for l_module in self.m_modules.values():
             l_module.Start()
         LOG.info('Started.')

@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-29'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -27,14 +27,14 @@ CONFIG_NAME = 'motiondetectors'
 class MotionDetectorInformation:
     """ This is the motion detector data
 
-    ==> PyHouse.House.Security.Motion.xxx as in the def below
+    ==> PyHouse.House.Security.MotionDetector.xxx as in the def below
     """
 
     def __init__(self):
         self.Name = None
         self.Comment = None
         self.DeviceType = 'Security'
-        self.DeviceSubType = 'Motion_Detector'
+        self.DeviceSubType = 'MotionDetector'
         self.Family = None  # FamilyInformation()
         self.Room = None  # RoomInformation()
         self.Motion = None
@@ -52,7 +52,7 @@ class LocalConfig:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
-    def _extract_one_motion_sensor(self, p_config) -> dict:
+    def _extract_one_motion_detector(self, p_config) -> dict:
         """ Extract the config info for one button.
         @param p_config: is the config fragment containing one button's information.
         @return: a ButtonInformation() obj filled in.
@@ -73,18 +73,17 @@ class LocalConfig:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
-        # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
+        LOG.info('Extracted Motion Detector "{}"'.format(l_obj.Name))
         return l_obj
 
-    def _extract_all_motion_sensors(self, p_config):
+    def _extract_all_motion_detectors(self, p_config):
         """ Get all of the button sets configured
         A Button set is a (mini-remote) with 4 or 8 buttons in the set
         The set has one insteon address and each button is in a group
         """
         l_dict = {}
         for l_ix, l_sensor in enumerate(p_config):
-            l_sensor_obj = self._extract_one_motion_sensor(l_sensor)
+            l_sensor_obj = self._extract_one_motion_detector(l_sensor)
             l_dict[l_ix] = l_sensor_obj
         return l_dict
 
@@ -94,7 +93,6 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Security.Motion_Detectors = None
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -104,7 +102,7 @@ class LocalConfig:
         except:
             LOG.warning('The config file does not start with "Motion_Detectors:"')
             return None
-        l_motion = self._extract_all_motion_sensors(l_yaml)
+        l_motion = self._extract_all_motion_detectors(l_yaml)
         return l_motion
 
 
@@ -123,14 +121,13 @@ class Api:
     def _add_storage(self) -> None:
         """
         """
-        self.m_pyhouse_obj.House.Security.Motion_Detectors = {}
+        self.m_pyhouse_obj.House.Security.MotionDetectors = {}
 
     def LoadConfig(self):
         """
         """
         LOG.info('Load Config')
-        self.m_local_config.load_yaml_config()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
+        self.m_pyhouse_obj.House.Security.MotionDetectors = self.m_local_config.load_yaml_config()
 
     def SaveConfig(self):
         """

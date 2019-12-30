@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-25'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -155,16 +155,8 @@ class LocalConfig:
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_config = configApi(p_pyhouse_obj)
 
-    def _extract_one_button_set(self, p_config) -> dict:
-        """ Extract the config info for one button.
-        - Name: Button 1
-          Comment: This is _test button 1
-          Family:
-             Name: Insteon
-             Address: 11.44.33
-          Dimmable: true  # Optional
-          Room:
-             Name: Living Room
+    def _extract_one_camera(self, p_config) -> dict:
+        """
         @param p_config: is the config fragment containing one button's information.
         @return: a ButtonInformation() obj filled in.
         """
@@ -183,8 +175,7 @@ class LocalConfig:
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
                 LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Button'))
-        # LOG.debug(PrettyFormatAny.form(l_obj.Family, 'Button.Family'))
+        LOG.info('Extracted Camera "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_cameras(self, p_config):
@@ -193,8 +184,8 @@ class LocalConfig:
         The set has one insteon address and each button is in a group
         """
         l_dict = {}
-        for l_ix, l_button in enumerate(p_config):
-            l_camera = self._extract_one_button_set(l_button)
+        for l_ix, l_camera in enumerate(p_config):
+            l_camera = self._extract_one_camera(l_camera)
             l_dict[l_ix] = l_camera
         return l_dict
 
@@ -203,7 +194,7 @@ class LocalConfig:
         It must contain 'Lights:'
         All the lights are a list.
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # LOG.info('Loading Config')
         l_yaml = self.m_config.read_config(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
@@ -240,8 +231,9 @@ class Api:
     def LoadConfig(self):
         """
         """
-        LOG.info('Load Config')
-        self.m_local_config.load_yaml_config()
+        LOG.info('Loading Config')
+        self.m_pyhouse_obj.House.Security.Cameras = self.m_local_config.load_yaml_config()
+        LOG.info('Loaded {} Cameras.'.format(len(self.m_pyhouse_obj.House.Security.Cameras)))
 
     def Start(self):
         pass

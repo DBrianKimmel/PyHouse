@@ -1,7 +1,5 @@
 """
--*- _test-case-name: /home/briank/PyHouse/src/Modules/Housing/Entertainment/panasonic.py -*-
-
-@name:      src.Modules.House.Entertainment.Panasonic
+@name:      Modules.House.Entertainment.Panasonic
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel
@@ -13,7 +11,7 @@ Cannon Trail Blueray Player
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-30'
 __version_info__ = (18, 8, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

@@ -1,7 +1,5 @@
 """
--*- _test-case-name: /home/briank/PyHouse/src/Modules/Entertainment/sharp.py -*-
-
-@name:      src.Modules.Entertainment.sharp
+@name:      Modules.Entertainment.sharp
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2016-2017 by D. Brian Kimmel
@@ -16,8 +14,6 @@ poppy
 
 """
 
-__updated__ = '2016-07-12'
-
-
+__updated__ = '2019-12-30'
 
 # ## END DBK

@@ -11,14 +11,15 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2019-09-26'
+__updated__ = '2019-12-29'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-# from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
@@ -33,6 +34,7 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_security')
 
 

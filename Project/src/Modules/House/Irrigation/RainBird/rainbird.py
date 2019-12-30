@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse/src/Modules/Housing/Irrigation/RainBird/test_rainbird.py -*-
-
-@name:      PyHouse/src/Modules/Housing/Irrigation/RainBird/rainbird.py
+@name:      Modules/Housing/Irrigation/RainBird/rainbird.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2019 by D. Brian Kimmel
+@copyright: (c) 2018-2020 by D. Brian Kimmel
 @note:      Created on Feb 19, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-30'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 

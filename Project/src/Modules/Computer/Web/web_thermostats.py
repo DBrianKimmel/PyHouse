@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_thermostats -*-
-
-@name:      PyHouse/src/Modules/Web/web_thermostats.py
+@name:      Modules/Web/web_thermostats.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 1, 2014
 @summary:   Handle the Thermostat information for a house.
 
 """
 
-__updated__ = '2017-01-27'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os

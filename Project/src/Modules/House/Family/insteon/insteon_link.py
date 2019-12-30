@@ -12,9 +12,10 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-12-12'
+__updated__ = '2019-12-26'
 
 #  Import system type stuff
+from typing import Optional
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert
@@ -34,13 +35,16 @@ class LinkData():
     """
 
     def __init__(self) -> None:
-        self.Addess = 123456  #  3 bytes
-        self.Control = 0x0000  #  2 Bytes
-        self.Data = '00.00.00'  #  3 bytes
-        self.Flag = 0xC2
-        self.Group = 0
-        self._IsController = False
-        self._InsteonAddres = '12.34.56'
+        self.Address: int = 123456  #  3 bytes
+        self.Control: int = 0x0000  #  2 Bytes
+        self.Data: str = '00.00.00'  #  3 bytes
+        self.Flag: int = 0xC2
+        self.Group: int = 0
+        self._IsController: bool = False
+        self._InsteonAddress: str = '12.34.56'
+        self._Name: str = ''
+        self._Type: str = 'Unknown'
+        self._SubType: str = 'Unknown'
 
 
 class Commands:
@@ -461,20 +465,29 @@ class DecodeLink:
         l_link_obj = LinkData()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]
+        l_link_obj._InsteonAddress = insteon_utils.extract_address_from_message(l_message, offset=4)
         l_link_obj.Data = l_data = [l_message[7], l_message[8], l_message[9]]
         l_flag_control = l_flags & 0x40
         l_type = 'Responder'
         if l_flag_control != 0:
             l_type = 'Controller'
             l_link_obj._IsController = True
+        l_addr = l_message[4:7]
         try:
-            l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[4:7])
-            l_link_obj.Address = l_obj.Family.Address
+            l_device_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_addr)
+            l_link_obj.Address = l_device_obj.Family.Address
+            l_link_obj._Name = l_device_obj.Name
+            l_link_obj._Type = l_device_obj.DeviceType
+            l_link_obj._SubType = l_device_obj.DeviceSubType
         except:
-            l_link_obj.Address = FormatBytes(l_message[4:7])
-        # p_controller_obj._Links.append(l_link_obj)
-        LOG.info('All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}'.format(l_group, l_obj.Name, l_flags, l_data, l_type))
-        LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+            l_link_obj.Address = FormatBytes(l_addr)
+            # l_key = 'Addr_{:#02X}.{:#02X}.{:#02X}'.format(l_message[4], l_message[5], l_message[6])
+        l_key = len(p_controller_obj.LinkList)
+        p_controller_obj.LinkList[l_key] = l_link_obj
+        LOG.info('All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}'.format(l_group, l_device_obj.Name, l_flags, l_data, l_type))
+        # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
+        for l_link in p_controller_obj.LinkList.values():
+            LOG.debug(PrettyFormatAny.form(l_link, 'Links'))
         # Ask for next record
         SendCmd().queue_0x6A_command(p_controller_obj)
 

@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.Modules.Web._test.test_web_server -*-
-
-@name:      PyHouse/src/Modules/Web/web_server.py
+@name:      Modules/Web/web_server.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: 2012-2019 by D. Brian Kimmel
+@copyright: 2012-2020 by D. Brian Kimmel
 @note:      Created on Apr 3, 2012
 @license:   MIT License
 @summary:   This module provides the web server(s) service of PyHouse.
@@ -29,7 +27,7 @@ On initial startup allow a house to be created
 Do not require reloads, auto change PyHouse on the fly.
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 from twisted.internet import endpoints

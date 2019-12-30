@@ -1,17 +1,15 @@
 """
--*- _test-case-name: /home/briank/workspace/PyHouse/src/Modules/Computer/_test/test_Bridges.py -*-
-
-@name:      /home/briank/workspace/PyHouse/src/Modules/Computer/_test/test_Bridges.py
+@name:      Modules/Computer/_test/test_Bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2018 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Dec 21, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-02-12'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner

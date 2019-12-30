@@ -12,7 +12,7 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2019-12-06'
+__updated__ = '2019-12-26'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -28,6 +28,8 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_device ')
 
 CONFIG_NAME = 'insteon'
+
+SCAN_DELAY = 5 * 60
 
 
 class InsteonInformation:
@@ -143,6 +145,14 @@ class Utility:
             if self._is_valid_controller(l_controller_obj):
                 l_controller_obj._HandlerApi.Stop(l_controller_obj)
 
+    def scan_devices(self):
+        """ Look thru all insteon devices and try to flag (and perhaps remove) dead device information.
+        """
+        l_lights = self.m_pyhouse_obj.House.Lighting.Lights
+        for l_device in l_lights.values():
+            LOG.debug(PrettyFormatAny.form(l_device, 'Light'))
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(24 * 60 * 60, self.scan_devices)
+
 
 class LocalConfig:
     """
@@ -248,6 +258,7 @@ class Api:
         LOG.info('Starting the Insteon Device.')
         self.m_plm_list = self.m_utility.start_all_plms()
         self.m_hub_list = self.m_utility.start_all_hubs()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(SCAN_DELAY, self.m_utility.scan_devices)
         LOG.info('Started {} Insteon Devices.'.format(len(self.m_plm_list)))
 
     def SaveConfig(self):

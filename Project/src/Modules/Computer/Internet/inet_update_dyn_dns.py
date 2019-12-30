@@ -1,7 +1,5 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Computer.Internet._test.test_inet_update_dyn_dns-*-
-
-@Name:      PyHouse/src/Modules/Computer/Internet/inet_update_dyn_dns.py
+@Name:      Modules/Computer/Internet/inet_update_dyn_dns.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2018 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 from twisted.web.client import getPage

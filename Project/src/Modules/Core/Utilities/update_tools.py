@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse/Project/src/Modules/Core/Utilities/update_tools.py -*-
-
-@name:      PyHouse/Project/src/Modules/Core/Utilities/update_tools.py
+@name:      Modules/Core/Utilities/update_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @note:      Created on Jan 11, 2019
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 

@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-12-12'
+__updated__ = '2019-12-29'
 
 #  Import system type stuff
 
@@ -135,8 +135,8 @@ def update_insteon_obj(p_pyhouse_obj, p_insteon_obj):
             p_pyhouse_obj.House.Hvac.Thermostats[l_ix] = p_insteon_obj
         elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'Thermostat':
             p_pyhouse_obj.House.Security.Garage_Doors[l_ix] = p_insteon_obj
-        elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'GarageDoorOpener':
-            p_pyhouse_obj.House.Security.Motion_Detectors[l_ix] = p_insteon_obj
+        elif p_insteon_obj.DeviceType == 'Security' and p_insteon_obj.DeviceSubType == 'GarageDoor':
+            p_pyhouse_obj.House.Security.MotionDetectors[l_ix] = p_insteon_obj
         else:
             LOG.warning('Unknown Insteon device to update: {}-{}'.format(p_insteon_obj.DeviceType, p_insteon_obj.DeviceSubType))
             # print(PrettyFormatAny.form(p_insteon_obj, 'InsteonUtil Unknown'))
@@ -157,6 +157,9 @@ def insert_address_into_message(p_address, p_message, p_offset=2):
 
 def extract_address_from_message(p_message, offset=0):
     """
+    @param p_message: a returned insteon response as a bytearray.
+    @param offset: the offset within p_message where the insteon address starts.
+    @return: an insteon address - looks like '17.C2.02'
     """
     l_ret = '{:02X}.{:02X}.{:02X}'.format(p_message[offset], p_message[offset + 1], p_message[offset + 2])
     return l_ret
@@ -326,16 +329,16 @@ class Decode:
             if hasattr(l_house.Security, 'Garage_Doors'):
                 if l_ret == None and l_house.Security.Garage_Doors != None:
                     l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.Garage_Doors, p_address)
-            if hasattr(l_house.Security, 'Motion_Detectors'):
-                if l_ret == None and l_house.Security.Motion_Detectors != None:
-                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.Motion_Detectors, p_address)
+            if hasattr(l_house.Security, 'MotionDetectors'):
+                if l_ret == None and l_house.Security.MotionDetectors != None:
+                    l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Security.MotionDetectors, p_address)
         #
         #  Add additional insteon classes in here
         #
         if l_ret == None:
             # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
-            LOG.debug(PrettyFormatAny.form(l_house.Security, 'Security'))
-            LOG.debug(PrettyFormatAny.form(l_house.Security.Motion_Detectors, 'Security.M_D'))
+            # LOG.debug(PrettyFormatAny.form(l_house.Security, 'Security'))
+            # LOG.debug(PrettyFormatAny.form(l_house.Security.MotionDetectors, 'Security.M_D'))
             LOG.warning("WARNING - Address {} *NOT* found.".format(p_address))
             l_ret = CoreLightingData()
             stuff_new_attrs(l_ret, InsteonInformation())  #  an empty new object

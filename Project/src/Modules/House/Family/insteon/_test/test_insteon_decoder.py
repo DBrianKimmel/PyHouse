@@ -13,7 +13,7 @@ This _test needs the lighting controller data so it must be loaded,
 also Light data and Thermostat data.
 """
 
-__updated__ = '2019-11-25'
+__updated__ = '2019-12-29'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -42,7 +42,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj._Families = familyApi(self.m_pyhouse_obj).LoadFamilyTesting()
         self.m_pyhouse_obj.House.Lighting = lightingUtility()._read_lighting_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Security.Garage_Doors = securityXML().read_all_GarageDoors_xml(self.m_pyhouse_obj)
-        self.m_pyhouse_obj.House.Security.Motion_Detectors = securityXML().read_all_MotionSensors_xml(self.m_pyhouse_obj)
+        self.m_pyhouse_obj.House.Security.MotionDetectors = securityXML().read_all_MotionSensors_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Hvac = hvacXML.read_hvac_xml(self.m_pyhouse_obj)
 
 
@@ -74,7 +74,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Controllers), 2)
         self.assertEqual(len(self.m_pyhouse_obj.House.Security.Garage_Doors), 1)
         self.assertEqual(len(self.m_pyhouse_obj.House.Lighting.Lights), 2)
-        self.assertEqual(len(self.m_pyhouse_obj.House.Security.Motion_Detectors), 1)
+        self.assertEqual(len(self.m_pyhouse_obj.House.Security.MotionDetectors), 1)
 
     def test_02_House(self):
         #  print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse.House'))

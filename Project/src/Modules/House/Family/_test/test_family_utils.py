@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2019-12-29'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -40,8 +40,8 @@ class SetupMixin(object):
         l_dev_obj.Comment = TESTING_DEVICE_COMMENT_0
         l_dev_obj.BrightnessPct = TESTING_LIGHT_CUR_LEVEL_0
         l_dev_obj.DeviceFamily = TESTING_LIGHT_DEVICE_FAMILY_0
-        l_dev_obj.DeviceType = 1
-        l_dev_obj.DeviceSubType = 3
+        l_dev_obj.DeviceType = 'Lighting'
+        l_dev_obj.DeviceSubType = 'Light'
         l_dev_obj.RoomCoords = TESTING_LIGHT_ROOM_COORDS_0
         l_dev_obj.RoomName = TESTING_LIGHT_ROOM_NAME_0
         l_dev_obj.RoomUID = TESTING_LIGHT_ROOM_UUID_0

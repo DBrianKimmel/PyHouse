@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-25'
 __version_info__ = (19, 12, 23)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -80,8 +80,8 @@ class Api:
         """
         """
         LOG.info('Load Config')
-        self.m_local_config.load_yaml_config()
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Buttons, 'buttons.Api.LoadConfig'))
+        self.m_pyhouse_obj.House.Security.Door_Bells = self.m_local_config.load_yaml_config()
+        LOG.info('Loaded {} Door Bells.'.format(len(self.m_pyhouse_obj.House.Security.Door_Bells)))
 
     def Start(self):
         """

@@ -1,7 +1,5 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Computer.Internet._test.test_inet_find_external_ip -*-
-
-@Name:      PyHouse/src/Modules/Computer/Internet/inet_find_external_ip.py
+@Name:      Modules/Computer/Internet/inet_find_external_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2017 by D. Brian Kimmel
@@ -16,7 +14,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import re

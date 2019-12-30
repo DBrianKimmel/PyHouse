@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.web._test.test_web_lights -*-
-
-@name:      PyHouse/src/Modules/web/web_lights.py
+@name:      Modules/web/web_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Handle all of the lights information for a house.
@@ -12,7 +10,7 @@
 TODO: Change all references to a light if name changes.
 """
 
-__updated__ = '2017-01-19'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os

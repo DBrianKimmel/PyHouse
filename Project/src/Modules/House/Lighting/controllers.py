@@ -14,7 +14,7 @@ Then we have the interface information (Ethernet, USB, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-25'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -43,6 +43,7 @@ class ControllerInformation:
         self.Family = None  # LightFamilyInformation()
         self.Interface = None  # Interface module specific  DriverInterfaceInformation()
         self.Access = None  # Optional ==> AccessInformation()
+        self.LinkList = {}
         #
         self._Message = bytearray()
         self._Queue = None
