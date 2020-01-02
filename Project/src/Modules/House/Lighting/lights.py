@@ -2,7 +2,7 @@
 @name:      Modules/House/Lighting/lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2019 by D. Brian Kimmel
+@copyright: (c) 2011-2020 by D. Brian Kimmel
 @note:      Created on May 1, 2011
 @license:   MIT License
 @summary:   This module handles the lights component of the lighting system.
@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2019-12-30'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -157,7 +157,7 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        l_yaml = self.m_config.read_config(CONFIG_NAME)  # type: ignore
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)  # type: ignore
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None

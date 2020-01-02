@@ -91,7 +91,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
         l_yaml = l_node.Yaml
         l_yamlfloors = l_yaml['Floors']
         print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
@@ -108,7 +108,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_03_ExtractFloor(self):
         """ Extract one room info from the yaml
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
         l_yamlfloors = l_node.Yaml['Floors'][2]
         l_obj = self.m_yaml._extract_one_floor(l_yamlfloors)
         # print(PrettyFormatAny.form(l_yamlfloors, 'C1-03-A'))
@@ -120,7 +120,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_04_AllFloors(self):
         """ build the entire rooms structures
         """
-        _l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
+        _l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
         _l_loc = self.m_yaml._extract_all_floors(self.m_pyhouse_obj, _l_node.Yaml)
         # print(PrettyFormatAny.form(_l_loc, 'C1-04-A - Loc'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Floors, 'C1-04-B - Floors'))

@@ -130,7 +130,7 @@ class LocalConfig:
         self.m_pyhouse_obj.Core.Mqtt = MqttInformation()
         self.m_pyhouse_obj.Core.Mqtt.ClientID = 'PyH-Comp-' + platform.node()
         self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
-        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None

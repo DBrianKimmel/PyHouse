@@ -105,7 +105,7 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the location.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config('location')
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file('location')
         l_config = l_node.Yaml
         # print(PrettyFormatAny.form(l_node, 'C1-02-A'))
         # print(PrettyFormatAny.form(l_config, 'C1-02-B'))
@@ -115,7 +115,7 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_03_extract(self):
         """ Create a JSON object for Location.
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config('location')
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file('location')
         l_obj = self.m_config._extract_location(l_node.Yaml['Location'])
         _l_ret = self.m_pyhouse_obj.House.Location
         # print(PrettyFormatAny.form(l_node, 'C1-03-A'))

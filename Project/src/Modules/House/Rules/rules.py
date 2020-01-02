@@ -90,7 +90,7 @@ class LocalConfig:
 
     def load_yaml_config(self):
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None

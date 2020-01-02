@@ -9,17 +9,18 @@
 
 """
 
-__updated__ = '2019-12-23'
-__version_info__ = (19, 12, 4)
+__updated__ = '2020-01-01'
+__version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import os
 import datetime
 import importlib
-from typing import Optional, Union, List
+from typing import Any, List, Optional, Union
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
+from ruamel.yaml.comments import CommentedMap
 
 #  Import PyMh files
 from Modules.Core.Config.login import LoginInformation
@@ -92,6 +93,8 @@ class MyYAML(YAML):
 
 yaml = MyYAML()  # or typ='safe'/'unsafe' etc
 
+cm = CommentedMap()
+
 
 class Tools:
     """
@@ -116,7 +119,7 @@ class Tools:
         @return: the absolute path of the file or None if not found.
         """
         # LOG.debug('Finding file:"{}" In dir:"{}"'.format(p_name, p_dir))
-        # print('Looking for:{}; in Dir:{}'.format(p_name, p_dir))
+        # print('Looking for:"{}"; in Dir:"{}"'.format(p_name, p_dir))
         for l_root, _l_dirs, l_files in os.walk(p_dir):
             # print('Root:{}; Dirs:{}; Files:{}'.format(l_root, _l_dirs, l_files))
             if p_name in l_files:
@@ -243,6 +246,48 @@ class Tools:
             l_modules[l_part] = l_api
         LOG.info('Loaded Module: {}'.format(l_modules))
         return l_modules
+
+    def yaml_dump_struct(self, p_yaml: Any) -> str:
+        """
+        """
+        l_ret = '-Start- {}\n'.format(type(p_yaml))
+        if isinstance(p_yaml, dict):
+            l_ret += '-Dict- {}\tLen: {}\n'.format(type(p_yaml), len(p_yaml))
+            l_ret += '-Attr- {}\n'.format(dir(p_yaml))
+            if hasattr(p_yaml, 'ca'):
+                l_ret += '-attr:ca- {}\n'.format(p_yaml.ca)
+            elif hasattr(p_yaml, 'fa'):
+                l_ret += '-attr:fa- {}\n'.format(p_yaml.fa)
+            elif hasattr(p_yaml, 'lc'):
+                l_ret += '-attr:lc- {}\n'.format(p_yaml.lc)
+            elif hasattr(p_yaml, 'items'):
+                l_ret += '-attr:items- {}\n'.format(p_yaml.items)
+            elif hasattr(p_yaml, 'anchor'):
+                l_ret += '-attr:anchor- {}\n'.format(p_yaml.anchor)
+            elif hasattr(p_yaml, 'keys'):
+                l_ret += '-attr:keys- {}\n'.format(p_yaml.keys)
+            elif hasattr(p_yaml, 'tag'):
+                l_ret += '-attr:tag- {}\n'.format(p_yaml.tags)
+            elif hasattr(p_yaml, 'values'):
+                l_ret += '-attr:values- {}\n'.format(p_yaml.values)
+            else:
+                l_ret += '-noattr- {}\n'.format(dir(p_yaml))
+            for l_yaml in p_yaml:
+                self.yaml_dump_struct(p_yaml[l_yaml])
+        elif isinstance(p_yaml, list):
+            l_ret += '-List- {}\n'.format(type(p_yaml))
+            if hasattr(p_yaml, 'ca'):
+                l_ret += '-Attr:ca- {}\n'.format(p_yaml.ca)
+                for _idx, l_yaml in enumerate(p_yaml):
+                    self.yaml_dump_struct(l_yaml)
+            else:
+                l_ret += '-4- {}\n'.format(p_yaml)
+                for l_yaml in p_yaml:
+                    self.yaml_dump_struct(p_yaml[l_yaml])
+        else:
+            l_ret += '-Unk-\n'
+            l_ret += '-5- {}\n'.format(p_yaml)
+        return l_ret
 
 
 class SubFields(Tools):
@@ -430,7 +475,33 @@ class YamlCreate:
             # setattr(l_config, l_key, l_val)
 
 
-class Yaml(YamlCreate, Tools):
+class YamlRead:
+    """
+    """
+
+
+class YamlWrite:
+    """
+    """
+
+    def add_updated_comment(self, p_contents):
+        """ Add or modify a comment for when the yaml file was last updated / written.
+
+        Light:  # Updated 2020-01-02
+            - Name: Light-01
+              Room: Kitchen
+
+        @param p_contents: is the formatted yaml contents.
+        @return: the updated contents with the added information
+        """
+        l_ret = p_contents
+        # Find existing comments if any
+        # Insert missing comment
+        # Update the updated comment
+        return l_ret
+
+
+class Yaml(YamlRead, YamlWrite, YamlCreate, Tools):
 
     def __init__(self, p_pyhouse_obj):
         """
@@ -519,7 +590,7 @@ class Api(SubFields, Tools):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_yaml = Yaml(p_pyhouse_obj)
 
-    def read_config(self, p_filename):
+    def read_config_file(self, p_filename):
         """ Main config file read routine
         @param  p_filename: is the name of the config file to read (without .yaml)
         @return: the yaml file string or None if no such config file
@@ -528,7 +599,7 @@ class Api(SubFields, Tools):
         # LOG.debug(PrettyFormatAny.form(l_ret, 'Config'))
         return l_ret
 
-    def write_config(self, p_filename, p_data, addnew=False):
+    def write_config_file(self, p_filename, p_data, addnew=False):
         """ Main config file write routine
         """
         l_ret = self.m_yaml._write_yaml(p_filename, p_data, addnew)

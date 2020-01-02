@@ -95,7 +95,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
         l_yaml = l_node.Yaml
         l_config = l_yaml['Bridges']
         # print(PrettyFormatAny.form(l_node, 'C1-02-A - Node'))
@@ -109,7 +109,7 @@ class C1_YamlRead(SetupMixin, unittest.TestCase):
     def test_03_GetIncludes(self):
         """
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
         l_ret = bridgesConfig(self.m_pyhouse_obj)._extract_all_bridges(l_node)
 
 

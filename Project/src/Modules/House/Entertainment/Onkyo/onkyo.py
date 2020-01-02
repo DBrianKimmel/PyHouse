@@ -244,7 +244,7 @@ class LocalConfig:
         """
         """
         l_filename = 'onkyo_' + p_config
-        l_yaml = self.m_config.read_config(l_filename)
+        l_yaml = self.m_config.read_config_file(l_filename)
         return l_yaml
 
     def _extract_one_device(self, p_config):
@@ -304,7 +304,7 @@ class LocalConfig:
         """ Read the onkyo.yaml file.
         """
         # LOG.info('Loading Config - Version:{}'.format(__version__))
-        l_yaml = self.m_config.read_config(CONFIG_NAME)
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None

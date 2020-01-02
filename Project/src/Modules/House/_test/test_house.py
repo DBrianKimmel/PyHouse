@@ -7,7 +7,7 @@
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
-Passed 3 of 9 tests - DBK - 2019-12-29
+Passed all 11 tests - DBK - 2019-12-30
 
 """
 
@@ -51,11 +51,11 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertNotEqual(self.m_pyhouse_obj, None)
 
     def test_02_House(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
         self.assertNotEqual(self.m_pyhouse_obj.House, None)
 
     def test_03_Location(self):
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-03-A - Location'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-03-A - Location'))
         self.assertNotEqual(self.m_pyhouse_obj.House, None)
 
     def test_09_BuildObjects(self):

@@ -157,7 +157,7 @@ class LocalConfig:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         # self.m_pyhouse_obj.Computer = None
-        l_yaml = self.m_config_tools.read_config(CONFIG_NAME)
+        l_yaml = self.m_config_tools.read_config_file(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None

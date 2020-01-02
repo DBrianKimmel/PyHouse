@@ -2,16 +2,16 @@
 @name:      Modules/House/Lighting/_test/test_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @note:      Created on Apr 9, 2013
 @license:   MIT License
 @summary:   Test the home lighting system automation.
 
-Passed all 4 tests.  DBK 2019-12-16
+Passed all 6 tests.  DBK 2019-12-30
 
 """
 
-__updated__ = '2019-12-16'
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -41,6 +41,24 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
+
+    def test_01_Pyhouse(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        self.assertIsNotNone(self.m_pyhouse_obj)
+
+    def test_02_House(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House)
+
+    def test_03_Lighting(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-03-A - Lighting'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Lighting)
 
 
 class C1_YamlRead(SetupMixin, unittest.TestCase):

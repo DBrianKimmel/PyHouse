@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-12-16'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,7 @@ from ruamel.yaml import YAML
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Lighting.lights import LocalConfig as lightsConfig
+from Modules.House.Lighting.lights import Api as lightsApi, LocalConfig as lightsConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -60,6 +60,7 @@ class SetupMixin(object):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         l_yaml = YAML()
         self.m_test_config = l_yaml.load(TEST_YAML)
+        self.m_config = lightsConfig(self.m_pyhouse_obj)
 
 
 class A0(unittest.TestCase):
@@ -76,13 +77,31 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_api = lightsApi(self.m_pyhouse_obj)
 
-    def test_01_Config(self):
-        """ Be sure that the config contains the right stuff.
+    def test_01_Pyhouse(self):
         """
-        # print(PrettyFormatAny.form(self.m_test_config, 'A1-01-A - Config'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'PyHouse House'))
-        self.assertIsNotNone(self.m_test_config['Lights'])
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        self.assertIsNotNone(self.m_pyhouse_obj)
+
+    def test_02_House(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House)
+
+    def test_03_Lighting(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-03-A - Lighting'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Lighting)
+
+    def test_04_Lights(self):
+        """
+        """
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-04-A - Lights'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Lighting.Lights)
 
 
 class C1_Read(SetupMixin, unittest.TestCase):
@@ -97,23 +116,29 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """ Test reading the device portion of the config.
         """
         l_yaml = self.m_test_config['Lights'][0]
-        # print('C1-01-A - Yaml: ', l_yaml)
-        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        print('C1-01-A - Yaml: ', l_yaml)
+        l_light = self.m_config._extract_one_light(l_yaml)
         # print(PrettyFormatAny.form(l_light, 'C1-01-B - Light'))
+        # print(PrettyFormatAny.form(l_light.Family, 'C1-01-C - Family'))
+        # print(PrettyFormatAny.form(l_light.Room, 'C1-01-D - Room'))
         self.assertEqual(l_light.Name, 'Front Door')
         self.assertEqual(l_light.Comment, None)
         self.assertEqual(l_light.DeviceType, 'Lighting')
         self.assertEqual(l_light.DeviceSubType, 'Light')
         self.assertEqual(l_light.Family.Name, 'insteon')
         self.assertEqual(l_light.Family.Address, '11.11.11')
+        self.assertEqual(l_light.Family.Type, 'Light')
+        self.assertEqual(l_light.Room.Name, 'Outside')
 
     def test_02_Light1(self):
         """ Test reading the device portion of the config.
         """
         l_yaml = self.m_test_config['Lights'][1]
         # print('C1-02-A - Yaml: ', l_yaml)
-        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        l_light = self.m_config._extract_one_light(l_yaml)
         # print(PrettyFormatAny.form(l_light, 'C1-02-B - Light'))
+        # print(PrettyFormatAny.form(l_light.Family, 'C1-02-C - Family'))
+        # print(PrettyFormatAny.form(l_light.Room, 'C1-02-D - Room'))
         self.assertEqual(l_light.Name, 'Garage')
         self.assertEqual(l_light.Comment, None)
         self.assertEqual(l_light.Family.Name, 'insteon')
@@ -124,7 +149,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """
         l_yaml = self.m_test_config['Lights'][2]
         # print('C1-03-A - Yaml: ', l_yaml)
-        l_light = lightsConfig(self.m_pyhouse_obj)._extract_one_light(l_yaml)
+        l_light = self.m_config._extract_one_light(l_yaml)
         # print(PrettyFormatAny.form(l_light, 'C1-03-B - Light'))
         self.assertEqual(l_light.Name, 'Buffet')
         self.assertEqual(l_light.Comment, 'x')
@@ -136,11 +161,12 @@ class C1_Read(SetupMixin, unittest.TestCase):
         """
         l_yaml = self.m_test_config['Lights']
         # print(PrettyFormatAny.form(l_yaml, 'C1-09-A - Yaml'))
-        l_lights = lightsConfig(self.m_pyhouse_obj)._extract_all_lights(l_yaml)
-        print(PrettyFormatAny.form(l_lights, 'C1-09-B - Node'))
+        l_lights = self.m_config._extract_all_lights(l_yaml)
+        # print(PrettyFormatAny.form(l_lights, 'C1-09-B - Node'))
         self.assertEqual(l_lights[0].Name, 'Front Door')
         self.assertEqual(l_lights[1].Name, 'Garage')
         self.assertEqual(l_lights[2].Name, 'Buffet')
+        self.assertEqual(l_lights[3].Name, 'Wet Bar')
 
 
 class C2_Write(SetupMixin, unittest.TestCase):
@@ -151,34 +177,31 @@ class C2_Write(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
         self.m_yaml = self.m_test_config['Lights']
-        self.m_lights = lightsConfig(self.m_pyhouse_obj)._extract_all_lights(self.m_yaml)
+        self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
         self.m_pyhouse_obj.House.Lights = self.m_lights
 
     def test_01_Light0(self):
-        """Test the write for proper XML Base elements
+        """Test the write for proper Base elements
         """
         l_light = self.m_lights[0]
-        print(PrettyFormatAny.form(l_light, 'C2-01-B - Light0'))
-        l_config = lightsConfig(self.m_pyhouse_obj)._save_one_light(l_light)
-        print(PrettyFormatAny.form(l_config, 'C2-01-D - Light'))
+        print(PrettyFormatAny.form(l_light, 'C2-01-A - Light0'))
+        l_config = self.m_config._save_one_light(l_light)
+        print(PrettyFormatAny.form(l_config, 'C2-01-B - Light'))
 
     def test_02_Light1(self):
-        """Test the write for proper XML Base elements
+        """Test the write for proper Base elements
         """
-        l_light = self.m_yaml[1]
+        l_light = self.m_lights[1]
         print(PrettyFormatAny.form(l_light, 'C2-02-A - Light'))
-        l_lights = lightsConfig(self.m_pyhouse_obj)._extract_all_lights(self.m_test_config['Lights'])
-        print(PrettyFormatAny.form(l_lights, 'C2-01-A - Lights'))
-        l_config = lightsConfig(self.m_pyhouse_obj)._save_all_lights()
-        print(PrettyFormatAny.form(l_config, 'C2-01-A - Node'))
+        l_config = self.m_config._save_one_light(l_light)
+        print(PrettyFormatAny.form(l_config, 'C2-02-B - Light'))
 
     def test_09_Lights(self):
-        """Test the write for proper XML Base elements
+        """Test the write for proper Base elements
         """
-        l_lights = lightsConfig(self.m_pyhouse_obj)._extract_all_lights(self.m_test_config['Lights'])
-        print(PrettyFormatAny.form(l_lights, 'C2-01-A - Lights'))
-        l_config = lightsConfig(self.m_pyhouse_obj)._save_all_lights()
-        print(PrettyFormatAny.form(l_config, 'C2-01-A - Node'))
+        print(PrettyFormatAny.form(self.m_lights, 'C2-09-A - Lights'))
+        l_config = self.m_config._save_all_lights()
+        print(PrettyFormatAny.form(l_config, 'C2-09-B - Node'))
 
 
 class Z9_YamlWrite(SetupMixin, unittest.TestCase):

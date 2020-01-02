@@ -2,7 +2,7 @@
 @name:      Modules/House/Lighting/lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2019 by D. Brian Kimmel
+@copyright: (c) 2010-2020 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-12-25'
+__updated__ = '2019-12-30'
 __version_info__ = (19, 12, 20)
 __version__ = '.'.join(map(str, __version_info__))
 

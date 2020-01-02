@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-02'
+__updated__ = '2019-12-30'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,7 +18,6 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 # from Modules.Core.Utilities import extract_tools
 from Modules.House.Irrigation.irrigation_data import IrrigationData
-from Modules.House.Irrigation.irrigation_xml import Xml as irrigationXml
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Irrigation     ')
