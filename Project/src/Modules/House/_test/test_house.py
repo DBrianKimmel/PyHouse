@@ -11,16 +11,14 @@ Passed all 11 tests - DBK - 2019-12-30
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-02'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.house import \
-    Api as houseApi, \
-    HouseInformation
+from Modules.House.house import Api as houseApi, HouseInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 

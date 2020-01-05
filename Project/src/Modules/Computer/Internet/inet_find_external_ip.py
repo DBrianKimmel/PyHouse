@@ -14,7 +14,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-02'
 
 # Import system type stuff
 import re
@@ -117,7 +117,7 @@ class Api(lightingUtilityInt):
         return that address
         return a defered that fires with an external IP address or errors with a none found error
         """
-        l_internet = p_pyhouse_obj.Computer.InternetConnection
+        l_internet = p_pyhouse_obj.Computer.Internet
         l_defer = Deferred()
         for l_test in l_internet.values():
             if l_test.Active:

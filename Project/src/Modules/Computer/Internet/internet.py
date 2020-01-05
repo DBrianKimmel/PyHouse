@@ -19,16 +19,23 @@ It will then take that IP address and update our Dynamic DNS provider(s) so we m
 address from some external device and check on the status of the house.
 """
 
-__updated__ = '2019-10-11'
+__updated__ = '2020-01-03'
+__version_info__ = (20, 1, 3)
+__version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
+from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Computer.Internet.inet_find_external_ip import Api as findApi
 from Modules.Computer.Internet.inet_update_dyn_dns import Api as updateApi
-from Modules.Core import logging_pyh as Logger
+from Modules.Computer.Internet.__init__ import InternetInformation
 
+from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Internet       ')
+
+CONFIG_NAME = 'internet'
+
 INITIAL_DELAY = 5
 REPEAT_DELAY = 2 * 60 * 60
 
@@ -44,14 +51,67 @@ class lightingUtilityInter:
         p_pyhouse_obj._Twisted.Reactor.callLater(REPEAT_DELAY, lightingUtilityInter._internet_loop, p_pyhouse_obj)
 
 
+class LocalConfig:
+    """
+    """
+    m_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+
+    def _extract_internet_info(self, p_config):
+        """
+        """
+        l_required = ['Name']
+        l_obj = InternetInformation()
+        for l_key, l_value in p_config.items():
+            if l_key == 'Modules':
+                pass
+            setattr(l_obj, l_key, l_value)
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warning('internet.yaml is missing an entry for "{}"'.format(l_key))
+        return l_obj
+
+    def load_yaml_config(self):
+        """ Read the house.yaml file.
+         """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
+            return None
+        try:
+            l_yaml = l_yaml['Internet']
+        except:
+            LOG.warning('The config file does not start with "Internet:"')
+            return None
+        l_internet = self._extract_internet_info(l_yaml)
+        return l_internet  # for testing purposes
+
+
 class Api:
     """
     """
 
+    m_local_config = None
+    m_pyhouse_obj = None
+
     def __init__(self, p_pyhouse_obj):
+        LOG.info('Initializing - Version:{}'.format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
+
+    def _add_storage(self):
+        """
+        """
+        self.m_pyhouse_obj.Computer.Internet = InternetInformation()
 
     def LoadConfig(self):
+        self.m_local_config.load_yaml_config()
         LOG.info('Loaded Internet Config')
 
     def Start(self):

@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-04'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -45,11 +45,20 @@ class LightInformation:
 
     def __init__(self, Name=None) -> None:
         self.Name: Optional[str] = Name
-        self.Comment: Optional[str] = None  # Optional
+        self.Comment: Optional[str] = None
         self.DeviceType: str = 'Lighting'
         self.DeviceSubType: str = 'Light'
-        self.Family: Optional[LightFamilyInformation] = None  # LightFamilyInformation()
-        self.Room = None  # LightRoomInformation() Optional
+        self.Family: Optional[LightFamilyInformation] = None
+        self.Room: Optional[LightRoomInformation] = None
+
+    def __repr__(self):
+        """
+        """
+        l_ret = ''
+        l_ret += '{}'.format(self.Name)
+        l_ret += '; {}/{}'.format(str(self.DeviceType), str(self.DeviceSubType))
+        l_ret += '; Family: {}'.format(self.Family.Name)
+        return l_ret
 
 
 class LightFamilyInformation:
@@ -157,7 +166,7 @@ class LocalConfig:
         All the lights are a list.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        l_yaml = self.m_config.read_config_file(CONFIG_NAME)  # type: ignore
+        l_yaml: any = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None

@@ -2,7 +2,7 @@
 @name:      Modules/Computer/computer.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @note:      Created on Jun 24, 2014
 @license:   MIT License
 @summary:   Handle the computer information.
@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-03'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -23,6 +23,7 @@ import platform
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools, uuid_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
+from Modules.Computer.__init__ import MODULES, PARTS
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -30,17 +31,6 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Computer       ')
 
 CONFIG_NAME = 'computer'
-MODULES = [  # All modules for the computer must be listed here.  They will be loaded if configured.
-    'Bridges',
-    'Communication',
-    'Internet',
-    'Nodes',
-    'Pi',
-    # 'Weather',
-    'Web'
-    ]
-PARTS = [
-    ]
 
 
 class ComputerInformation:
@@ -56,7 +46,7 @@ class ComputerInformation:
         self.Priority = 99
         self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridges.py
         self.Communication = {}  # CommunicationInformation()
-        self.InternetConnection = {}  # InternetConnectionInformation()
+        self.Internet = {}  # InternetInformation()
         self.Nodes = {}  # NodeInformation()
         self.Weather = {}  # WeatherInformation()
         self.Web = {}  # WebInformation()

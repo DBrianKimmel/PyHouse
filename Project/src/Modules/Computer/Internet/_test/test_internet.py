@@ -1,41 +1,37 @@
 """
-@name:      PyHouse/src/Computer/Internet/_test/test_internet.py
+@name:      Modules/Computer/Internet/_test/test_internet.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the internet information for a computer.
 
 Passed all 5 tests - DBK - 2015-09-12
 """
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-10-08'
+__updated__ = '2020-01-02'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.data_objects import InternetConnectionInformation
 from Modules.Computer.Internet.internet import Api as internetApi
-from Modules.Core.Utilities import convert
 
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title')  # so it is defined when printing is cleaned up.
         print('Id: test_internet')
 
 
@@ -44,7 +40,7 @@ class C01_Util(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_internet_obj = InternetConnectionInformation()
         self.m_api = internetApi(self.m_pyhouse_obj)
 

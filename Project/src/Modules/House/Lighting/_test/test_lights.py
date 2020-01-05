@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-04'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -100,8 +100,32 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_04_Lights(self):
         """
         """
-        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-04-A - Lights'))
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-04-A - Lights'))
         self.assertIsNotNone(self.m_pyhouse_obj.House.Lighting.Lights)
+
+
+class A2_Repr(SetupMixin, unittest.TestCase):
+    """
+    This section tests the above setup for things we will need further down in the tests.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = lightsApi(self.m_pyhouse_obj)
+        self.m_local_config = lightsConfig(self.m_pyhouse_obj)
+
+    def test_01_Pyhouse(self):
+        """
+        """
+        l_yaml = self.m_test_config['Lights']
+        # print(PrettyFormatAny.form(l_light, 'A2-01-A - Light'))
+        l_lights = self.m_config._extract_all_lights(l_yaml)
+        # print(PrettyFormatAny.form(l_lights, 'A2-01-B - Lights'))
+        l_light = l_lights[0]
+        print(PrettyFormatAny.form(l_light, 'A2-01-C - Lights'))
+        l_repr = repr(l_light)
+        print('A2-01-D {}'.format(l_repr))
+        self.assertIsNotNone(self.m_pyhouse_obj)
 
 
 class C1_Read(SetupMixin, unittest.TestCase):

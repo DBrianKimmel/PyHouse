@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-02'
 
 # Import system type stuff
 from datetime import datetime
@@ -45,21 +45,5 @@ class InternetElement(athena.LiveElement):
     def getInternetData(self):
         l_computer = GetJSONComputerInfo(self.m_pyhouse_obj)
         return l_computer
-
-    @athena.expose
-    def saveInternetData(self, p_json):
-        """Internet data is returned, so update the computer info.
-        """
-        l_json = json_tools.decode_json_unicode(p_json)
-        # l_ix = int(l_json['Key'])
-        try:
-            l_obj = self.m_pyhouse_obj.Computer.InternetConnection
-        except KeyError:
-            l_obj = InternetConnectionInformation()
-        l_obj.LastChanged = datetime.now()
-        l_obj.LocateUrls = l_json['LocateUrls']
-        l_obj.UpdateUrls = l_json['UpdateUrls']
-        l_obj.UpdateInterval = l_json['UpdateInterval']
-        self.m_pyhouse_obj.Computer.InternetConnection = l_obj
 
 # ## END DBK

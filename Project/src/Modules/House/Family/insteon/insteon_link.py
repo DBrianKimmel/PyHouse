@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2019-12-26'
+__updated__ = '2020-01-04'
 
 #  Import system type stuff
 from typing import Optional
@@ -30,13 +30,13 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_link   ')
 
 
-class LinkData():
+class LinkInformation():
     """
     """
 
     def __init__(self) -> None:
-        self.Address: int = 123456  #  3 bytes
-        self.Control: int = 0x0000  #  2 Bytes
+        self.Address: str = '01.01.01'  # 3 bytes
+        self.Control: int = 0x0000  #  2 bytes
         self.Data: str = '00.00.00'  #  3 bytes
         self.Flag: int = 0xC2
         self.Group: int = 0
@@ -45,6 +45,18 @@ class LinkData():
         self._Name: str = ''
         self._Type: str = 'Unknown'
         self._SubType: str = 'Unknown'
+
+    def __repr__(self):
+        """
+        """
+        l_ret = ''
+        l_ret += '{}'.format(self._Name)
+        l_ret += '; {}'.format(self._InsteonAddress)
+        l_ret += '; Group: ' + str(self.Group)
+        l_ret += '; Flag: {:2X}'.format(self.Flag)
+        l_ret += '; {}/{}'.format(str(self._Type), str(self._SubType))
+        l_ret += '; {}'.format(self.Data)
+        return l_ret
 
 
 class Commands:
@@ -462,7 +474,7 @@ class DecodeLink:
         }
         """
         l_message = p_controller_obj._Message[:10]
-        l_link_obj = LinkData()
+        l_link_obj = LinkInformation()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]
         l_link_obj._InsteonAddress = insteon_utils.extract_address_from_message(l_message, offset=4)
@@ -486,8 +498,9 @@ class DecodeLink:
         p_controller_obj.LinkList[l_key] = l_link_obj
         LOG.info('All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}'.format(l_group, l_device_obj.Name, l_flags, l_data, l_type))
         # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-        for l_link in p_controller_obj.LinkList.values():
-            LOG.debug(PrettyFormatAny.form(l_link, 'Links'))
+        for l_ix, l_link in p_controller_obj.LinkList.items():
+            # LOG.debug(PrettyFormatAny.form(l_link, 'Links'))
+            LOG.debug('\n\t{} - {}'.format(l_ix, repr(l_link)))
         # Ask for next record
         SendCmd().queue_0x6A_command(p_controller_obj)
 
