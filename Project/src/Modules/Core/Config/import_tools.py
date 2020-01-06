@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-21'
+__updated__ = '2020-01-06'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -54,13 +54,13 @@ class Tools:
         # LOG.info('Imported "{}" ({})'.format(p_name, l_path))
         return l_ret
 
-    def import_module_get_api(self, p_module, p_path):
+    def XXXimport_module_get_api(self, p_module, p_path):
         """ import a module with a path
         @param p_module: is a module name ("Cameras")
         @param p_path: is the starting point to look for the module to import.
         @return: an initialized Api
         """
-        l_module_name = p_module.lower()
+        l_module_name = p_module
         l_ret = self._do_import(l_module_name, p_path)
         try:
             LOG.debug('Get Api for "{}"'.format(l_module_name))

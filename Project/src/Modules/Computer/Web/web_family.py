@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 
@@ -20,9 +20,9 @@ LOG = Logger.getLogger('PyHouse.webFamily   ')
 
 def _get_insteon_json_data(p_obj, p_json):
     try:
-        p_obj.InsteonAddress = int(p_json['InsteonAddress'])
+        p_obj.Address = int(p_json['InsteonAddress'])
     except:
-        p_obj.InsteonAddress = 17
+        p_obj.Address = 17
     try:
         p_obj.GroupList = p_json['GroupList']
     except:

@@ -22,12 +22,12 @@ The Family specific information is used to control and monitor the different dev
 
 An Insteon_device module is used to read and write information to an Insteon controller connected to the computer.
 
-    PackageName         Will point to the package directory 'Modules.House.Family.insteon'
+    PackageName         Will point to the package directory 'Modules.House.Family.Insteon'
     DeviceName          will contain 'Insteon_device'
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-05'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -82,7 +82,7 @@ class FamilyModuleInformation:
     """ A container for every family that has been defined in modules.
 
     PyHouse_obj.House.Family.()
-    PyHouse_obj.House.Family is a dict indexed by lower() family name.
+    PyHouse_obj.House.Family is a dict indexed by family name.
 
     Each entry is an object of this class.
     """
@@ -91,7 +91,7 @@ class FamilyModuleInformation:
         self.Name = None  # Insteon
         # self.Address = None
         self.DeviceName = None  # insteon_device
-        self.PackageName = None  # Modules.House.Family.insteon
+        self.PackageName = None  # Modules.House.Family.Insteon
         self._Api = None  # insteon_device()
 
 
@@ -182,7 +182,7 @@ class LocalConfig:
         for l_key, l_value in p_config.items():
             print('Family Key {}'.format(l_key))
             if l_key == 'Name':
-                l_value = l_value.lower()
+                l_value = l_value.capitalize()
                 p_pyhouse_obj.House.Family[l_value] = l_module
             setattr(l_module, l_key, l_value)
         # Check for data missing from the config file.
@@ -199,7 +199,7 @@ class LocalConfig:
             LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'House'))
             LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'Family'))
             l_module.Name = l_module.Name
-            p_pyhouse_obj.House.Family[l_module.Name.lower()] = l_module
+            p_pyhouse_obj.House.Family[l_module.Name] = l_module
         return l_module
 
 
@@ -225,7 +225,7 @@ class Api:
 
         For the Insteon family:
             insteon_device                   ==> FamilyDevice_ModuleName
-            Modules.House.Family.insteon         ==> PackageName
+            Modules.House.Family.Insteon         ==> PackageName
 
         @param p_name: a Valid Name such as "Insteon"
         """
@@ -233,7 +233,7 @@ class Api:
         l_path = 'Modules.House.Family'
         l_obj = FamilyInformation()
         l_key = p_name.lower()
-        l_module = l_key + '.' + l_key + '_device'
+        l_module = p_name + '.' + l_key + '_device'
         self.m_pyhouse_obj.House.Family[l_key] = l_obj
         l_obj.Name = p_name
         l_obj.Module = l_module

@@ -12,17 +12,17 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2020-01-04'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 from typing import Optional
 
 #  Import PyMh files
 from Modules.Core.Utilities import convert
-from Modules.House.Family.insteon.insteon_device import InsteonInformation
-from Modules.House.Family.insteon.insteon_constants import ACK
-from Modules.House.Family.insteon import insteon_utils
-from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon.__init__ import InsteonInformation
+from Modules.House.Family.Insteon.insteon_constants import ACK
+from Modules.House.Family.Insteon import insteon_utils
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny, FormatBytes
 
@@ -30,18 +30,17 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_link   ')
 
 
-class LinkInformation():
+class InsteonLinkInformation():
     """
     """
 
     def __init__(self) -> None:
-        self.Address: str = '01.01.01'  # 3 bytes
+        self.Address: str = '00.00.00'  # 3 bytes
         self.Control: int = 0x0000  #  2 bytes
         self.Data: str = '00.00.00'  #  3 bytes
         self.Flag: int = 0xC2
         self.Group: int = 0
         self._IsController: bool = False
-        self._InsteonAddress: str = '12.34.56'
         self._Name: str = ''
         self._Type: str = 'Unknown'
         self._SubType: str = 'Unknown'
@@ -51,7 +50,7 @@ class LinkInformation():
         """
         l_ret = ''
         l_ret += '{}'.format(self._Name)
-        l_ret += '; {}'.format(self._InsteonAddress)
+        l_ret += '; {}'.format(self.Address)
         l_ret += '; Group: ' + str(self.Group)
         l_ret += '; Flag: {:2X}'.format(self.Flag)
         l_ret += '; {}/{}'.format(str(self._Type), str(self._SubType))
@@ -474,10 +473,10 @@ class DecodeLink:
         }
         """
         l_message = p_controller_obj._Message[:10]
-        l_link_obj = LinkInformation()
+        l_link_obj = InsteonLinkInformation()
         l_link_obj.Flag = l_flags = l_message[2]
         l_link_obj.Group = l_group = l_message[3]
-        l_link_obj._InsteonAddress = insteon_utils.extract_address_from_message(l_message, offset=4)
+        l_link_obj.Address = insteon_utils.extract_address_from_message(l_message, offset=4)
         l_link_obj.Data = l_data = [l_message[7], l_message[8], l_message[9]]
         l_flag_control = l_flags & 0x40
         l_type = 'Responder'
@@ -955,12 +954,12 @@ class Api:
     """
     """
 
-    def read_link(self):
+    def XXXread_link(self):
         """
         """
         LOG.info('Reading Link xxx')
 
-    def write_link(self):
+    def XXXwrite_link(self):
         """
         """
         LOG.info('Writing Link xxx')
@@ -970,7 +969,7 @@ class Api:
         """
         #  p_light_obj = LightData()
         p_light_obj = InsteonInformation()
-        p_light_obj.InsteonAddress = convert.dotted_hex2int(p_address)
+        p_light_obj.Address = convert.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group
         #  p_code = 0x00  # Find First
         p_code = 0x00  #  Delete First Found record

@@ -11,14 +11,14 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2019-12-10'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.insteon import insteon_utils
-from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon import insteon_utils
+from Modules.House.Family.Insteon.insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
 
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 

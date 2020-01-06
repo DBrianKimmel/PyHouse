@@ -11,7 +11,7 @@ Passed all 1 tests - DBK - 2015-08-15
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2020-01-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -59,6 +59,6 @@ class A1_SetupL(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Key, 0, 'Bad Key')
         self.assertEqual(l_light.Active, True, 'Bad Active')
         self.assertEqual(l_light.UUID, 'ec9d9930-89c9-11e3-a1ab-082e5f8cdfd2', 'Bad UUID')
-        self.assertEqual(l_light.InsteonAddress, 1122867, 'Bad Address')
+        self.assertEqual(l_light.Address, 1122867, 'Bad Address')
 
 # ## END DBK

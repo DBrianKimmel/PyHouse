@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-03'
+__updated__ = '2020-01-06'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -200,8 +200,8 @@ class Tools:
         @param p_path: is the relative path to the module ('Modules.House.Entertainment')
         @return: a pointer to the module or None
         """
-        l_path = p_path + '.' + p_name
-        # LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
+        l_path = p_path + '.' + p_name.lower()
+        LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
         try:
             l_ret = importlib.import_module(l_path)
         except ImportError as e_err:
@@ -217,8 +217,8 @@ class Tools:
         @param p_path: is the starting point to look for the module to import.
         @return: an initialized Api
         """
-        l_module_name = p_module.lower()
-        LOG.info('Get Module pointer for "{}"'.format(l_module_name))
+        l_module_name = p_module
+        LOG.info('Get Module pointer for "{}" on path "{}"'.format(l_module_name, p_path))
         l_ret = self._do_import(l_module_name, p_path)
         try:
             # LOG.debug(PrettyFormatAny.form(l_ret, 'Module'))
@@ -329,8 +329,8 @@ class SubFields(Tools):
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
         self.extract_fields(l_device_obj, p_config, l_required, l_allowed)
-        l_device_obj.Name = l_device_obj.Name.lower()
-        l_key = l_device_obj.Name.lower()
+        l_device_obj.Name = l_device_obj.Name
+        l_key = l_device_obj.Name
         l_family_obj.Name = l_device_obj.Name
         # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
         # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))

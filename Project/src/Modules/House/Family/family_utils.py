@@ -13,7 +13,7 @@ This is because the things we wish to automate all have some controller that spe
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff.
 
@@ -58,7 +58,7 @@ class FamUtil(object):
             l_msg = 'ERROR - Device "{}" has no Family.Name Attribute - {}'.format(l_dev_name, e_err)
             LOG.error(l_msg)
             l_family = 'Null'
-        return l_family.lower()
+        return l_family
 
     @staticmethod
     def _get_family_device_api(p_pyhouse_obj, p_device_obj):

@@ -12,15 +12,15 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2019-12-29'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities.xml_tools import stuff_new_attrs
-from Modules.House.Family.insteon.insteon_device import InsteonInformation
-from Modules.House.Family.insteon.insteon_constants import \
+from Modules.House.Family.Insteon.__init__ import InsteonInformation
+from Modules.House.Family.Insteon.insteon_constants import \
     MESSAGE_LENGTH, \
     COMMAND_LENGTH, \
     PLM_COMMANDS, \
@@ -173,13 +173,13 @@ class Util:
             p_obj.DevCat = int(p_json['DevCat'])
             p_obj.GroupList = p_json['GroupList']
             p_obj.GroupNumber = p_json['GroupNumber']
-            p_obj.InsteonAddress = int(p_json['InsteonAddress'])
+            p_obj.Address = int(p_json['Address'])
             p_obj.ProductKey = int(p_json['ProductKey'])
         except KeyError:
             p_obj.DevCat = 0
             p_obj.GroupList = 'Bad insteon_utils.get_json_data()'
             p_obj.GroupNumber = 0
-            p_obj.InsteonAddress = 1
+            p_obj.Address = '00.00.00'
             p_obj.ProductKey = 0
         return p_obj
 

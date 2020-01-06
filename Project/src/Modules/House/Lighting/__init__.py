@@ -6,7 +6,6 @@ When adding a family of lighting devices:
     * Create a module in that package named like 'Insteon_device'
     * Create a module in that package named like 'Insteon_xml'
     * Create other modules as needed.
-    * Add family name to VALID_FAMILIES in families.__init__.py
 
 """
 

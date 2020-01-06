@@ -36,7 +36,7 @@ class SetupMixin(object):
         l_family_obj.Name = 'Insteon'
         l_family_obj.Key = 0
         l_family_obj.Active = True
-        l_family_obj.FamilyPackageName = 'Modules.House.Family.insteon'
+        l_family_obj.FamilyPackageName = 'Modules.House.Family.Insteon'
         return l_family_obj
 
 

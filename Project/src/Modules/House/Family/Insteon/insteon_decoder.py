@@ -22,20 +22,20 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2019-12-14'
+__updated__ = '2020-01-05'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.insteon import insteon_utils
-from Modules.House.Family.insteon.insteon_hvac import DecodeResponses as DecodeHvac
-from Modules.House.Family.insteon.insteon_lighting import DecodeResponses as DecodeLighting
-from Modules.House.Family.insteon.insteon_security import DecodeResponses as DecodeSecurity
-from Modules.House.Family.insteon.insteon_link import DecodeLink as linkDecode
-from Modules.House.Family.insteon.insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
-from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon import insteon_utils
+from Modules.House.Family.Insteon.insteon_hvac import DecodeResponses as DecodeHvac
+from Modules.House.Family.Insteon.insteon_lighting import DecodeResponses as DecodeLighting
+from Modules.House.Family.Insteon.insteon_security import DecodeResponses as DecodeSecurity
+from Modules.House.Family.Insteon.insteon_link import DecodeLink as linkDecode
+from Modules.House.Family.Insteon.insteon_constants import ACK, STX, X10_HOUSE, X10_UNIT, X10_COMMAND
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.debug_tools import FormatBytes
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_decode ')

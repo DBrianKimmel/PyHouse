@@ -20,7 +20,7 @@ and others
 
 To add a family named 'NewFamily', do the following:
     * Add a package named 'New_Family'.
-    * Add the family name (Capitalized) to the list VALID_FAMILIES below.
+    * Add the family name (Capitalized) to the list MODULES below.
     * Add a module named <NewFamily>_device.py
     * Add any other modules needed by the Device module.
         <Newfamily>_xml
@@ -49,11 +49,10 @@ Devices to control include Lights, Thermostat, Irrigation valves Pool Equipment 
 
 """
 
-__updated__ = '2019-11-28'
+__updated__ = '2020-01-05'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
-VALID_FAMILIES = ['Null', 'insteon', 'upb', 'x10', 'hue']  # Keep null first
 VALID_DEVICE_TYPES = ['Light', 'Thermostat', 'Irrigation', 'Pool']
 
 CONFIG_NAME = 'families'

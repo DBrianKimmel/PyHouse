@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-08-15
 
 """
 
-__updated__ = '2019-12-29'
+__updated__ = '2020-01-05'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -44,7 +44,7 @@ LIGHTING_MSG = {
     'FirmwareVersion': 0,
     'GroupList': None,
     'GroupNumber': 0,
-    'InsteonAddress': 3757095,
+    'Address': '00.00.00',
     'InterfaceType': 'Serial',
     'Key': 3,
     'LastUpdate': '2019-01-11 16:38:20.788302',

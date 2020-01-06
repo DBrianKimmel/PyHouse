@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2019-12-06'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 import datetime
@@ -24,9 +24,9 @@ import queue as Queue
 
 #  Import PyMh files
 from Modules.Core.Drivers import interface
-from Modules.House.Family.insteon import insteon_decoder, insteon_utils, insteon_link
-from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon import insteon_decoder, insteon_utils, insteon_link
+from Modules.House.Family.Insteon.insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
 # from Modules.House.Family.family_utils import FamUtil
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -40,16 +40,16 @@ SEND_TIMEOUT = 0.8  # Uset to avoid swamping the PLM with commands - Derived emp
 RECEIVE_TIMEOUT = 0.6  #  this is for fetching data in the rx buffer
 
 #  Modes for setting PLM mode
-MODE_DISABLE_DEADMAN = 0x10
-MODE_DISABLE_AUTO_LED = 0x20
+# MODE_DISABLE_DEADMAN = 0x10
+# MODE_DISABLE_AUTO_LED = 0x20
 MODE_MONITOR = 0x40
-MODE_DISABLE_AUTO_LINK = 0x80
+# MODE_DISABLE_AUTO_LINK = 0x80
 
 #  Message flag bits (Page 55 of Developers Manual).
-FLAG_BROADCAST_NAK = 0x80
-FLAG_ALL_LINK = 0x40
-FLAG_ACKNOWLEDGEMENT = 0x20
-FLAG_EXTENDED_CMD = 0x10
+# FLAG_BROADCAST_NAK = 0x80
+# FLAG_ALL_LINK = 0x40
+# FLAG_ACKNOWLEDGEMENT = 0x20
+# FLAG_EXTENDED_CMD = 0x10
 FLAG_HOPS_LEFT = 0x0C
 FLAG_MAX_HOPS = 0x03
 

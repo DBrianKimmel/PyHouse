@@ -63,7 +63,7 @@ class I1_Import(SetupMixin, unittest.TestCase):
         """
         """
         l_module = 'insteon_device'
-        l_path = 'Modules.House.Family.insteon'
+        l_path = 'Modules.House.Family.Insteon'
         l_ret = self.m_import._do_import(l_module, l_path)
         # print(PrettyFormatAny.form(l_ret, 'I1-01-A - path'))
         self.assertIsNotNone(l_ret)
@@ -72,7 +72,7 @@ class I1_Import(SetupMixin, unittest.TestCase):
         """
         """
         l_module = 'insteon_device'
-        l_path = 'Modules.House.Family.insteon'
+        l_path = 'Modules.House.Family.Insteon'
         l_ret = self.m_import.import_module_get_api(l_module, l_path)
         # print(PrettyFormatAny.form(l_ret, 'I1-02-A - path'))
         self.assertIsNotNone(l_ret)

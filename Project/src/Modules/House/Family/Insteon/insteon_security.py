@@ -9,14 +9,14 @@
 
 """
 
-__updated__ = '2019-12-29'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.insteon import insteon_utils
-from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
-from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.Insteon import insteon_utils
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon.insteon_constants import MESSAGE_TYPES
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Insteon_Secure ')

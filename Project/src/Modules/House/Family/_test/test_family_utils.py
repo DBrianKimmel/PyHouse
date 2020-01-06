@@ -11,7 +11,7 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2019-12-29'
+__updated__ = '2020-01-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -408,7 +408,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
         print(PrettyFormatAny.form(l_light, 'C3-01-B - Light'))
         self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.Address, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
     def test_02_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
@@ -433,7 +433,7 @@ class C3_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light, 'C3-03-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.Address, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
         self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 
@@ -499,7 +499,7 @@ class C4_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light, 'C4-05-A - Light'))
         self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.InsteonAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
+        self.assertEqual(l_light.Address, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
         self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 # ## END DBK

@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2019-02-03'
+__updated__ = '2020-01-05'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -23,7 +23,6 @@ from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
 from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web import web_login
-from Modules.Families import VALID_FAMILIES
 from Modules.Computer.Web.test.xml_web import TESTING_LOGIN_NAME_0, TESTING_WEB_PORT
 from Modules.Computer.Web.web import WorkspaceData
 from Modules.Core.Utilities import json_tools
@@ -116,6 +115,6 @@ class C1_Element(SetupMixin, unittest.TestCase):
         l_json = web_login.LoginElement(self.m_worksapce).getValidLists()
         l_test = json_tools.decode_json_unicode(l_json)
         # print(PrettyFormatAny.form(l_test, 'C1-02-A - JSON', 40))
-        self.assertEqual(l_test['Families'], VALID_FAMILIES)
+        self.assertEqual(l_test['Families'], VALID_ FAMILIES)
 
 # ## END DBK

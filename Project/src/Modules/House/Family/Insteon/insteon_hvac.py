@@ -20,13 +20,13 @@ see: 2441xxx pdf guides
 My Device seems to put out codes 6E thru 72
 """
 
-__updated__ = '2019-12-14'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 
 #  Import PyMh files
-from Modules.House.Family.insteon.insteon_constants import MESSAGE_TYPES
-from Modules.House.Family.insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon.insteon_constants import MESSAGE_TYPES
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.InsteonHVAC    ')
 

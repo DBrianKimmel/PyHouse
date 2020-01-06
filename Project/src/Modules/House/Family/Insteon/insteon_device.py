@@ -12,17 +12,17 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2020-01-04'
+__updated__ = '2020-01-05'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from typing import Optional
+# from typing import Optional
 
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
-
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Family.Insteon.__init__ import InsteonInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_device ')
@@ -30,20 +30,6 @@ LOG = Logger.getLogger('PyHouse.insteon_device ')
 CONFIG_NAME = 'insteon'
 
 SCAN_DELAY = 5 * 60
-
-
-class InsteonInformation:
-    """
-    """
-
-    def __init__(self) -> None:
-        self.Family: Optional[str] = None
-        self.Address: Optional[str] = None  # '1A.B2.3C'
-        self._DevCat: int = 0  # Dev-Cat and Sub-Cat (2 bytes)
-        self._EngineVersion: int = 2
-        self._FirmwareVersion: int = 0
-        self._ProductKey: Optional[str] = None  # 3 bytes
-        self._Links = {}
 
 
 class InsteonCommandData:
@@ -80,7 +66,7 @@ class Utility:
         @param p_controller_obj: ==> ControllerInformation(CoreLightingData)
         @return: None if no PLM, Api Pointer if OK
         """
-        from Modules.House.Family.insteon import insteon_plm
+        from Modules.House.Family.Insteon import insteon_plm
         l_plmApi = insteon_plm.Api(self.m_pyhouse_obj, p_controller_obj)
         p_controller_obj._HandlerApi = l_plmApi
         if l_plmApi.Start():

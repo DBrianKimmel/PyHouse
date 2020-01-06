@@ -19,7 +19,7 @@ Get all the VALID stuff to allow checking of browser entered data.
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-05'
 
 #  Import system type stuff
 import os
@@ -33,11 +33,11 @@ from twisted.internet import defer
 from twisted.web.template import Element, XMLString, renderer
 
 #  Import PyMh files and modules.
-from Modules.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
-from Modules.Housing.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
-from Modules.Families import VALID_FAMILIES, VALID_DEVICE_TYPES
-from Modules.Housing.Lighting import VALID_LIGHTING_TYPE
-from Modules.Housing.Schedules import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
+from Modules.Core.Drivers import VALID_INTERFACES, VALID_PROTOCOLS
+from Modules.House.Hvac import VALID_TEMP_SYSTEMS, VALID_THERMOSTAT_MODES
+from Modules.House.Family import VALID_DEVICE_TYPES
+from Modules.House.Lighting import VALID_LIGHTING_TYPE
+from Modules.House.Schedule import VALID_SCHEDULING_TYPES, VALID_SCHEDULE_MODES
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.Web.web_users import VALID_USER_ROLES
@@ -145,7 +145,6 @@ class LoginHelper:
 
         Return via JSON:
             VALID_DEVICE_TYPES
-            VALID_FAMILIES
             VALID_INTERFACES
             VALID_LIGHTING_TYPES
             VALID_PROTOCOLS
@@ -156,7 +155,6 @@ class LoginHelper:
         """
         l_obj = dict(
                      Devices=VALID_DEVICE_TYPES,
-                     Families=VALID_FAMILIES,
                      InterfaceTypes=VALID_INTERFACES,
                      LightTypes=VALID_LIGHTING_TYPE,
                      ProtocolTypes=VALID_PROTOCOLS,
