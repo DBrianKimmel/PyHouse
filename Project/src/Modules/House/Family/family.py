@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-01-07'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,18 +41,6 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Family         ')
 
 CONFIG_NAME = 'families'
-
-MODULES = [
-    'Acurite',
-    'Hue',
-    'Insteon',
-    'Lutron',
-    'Sonoff',
-    'Upb',
-    'X10',
-    'Zwave',
-    'Null'
-    ]
 
 
 class FamilyInformation:
@@ -227,16 +215,15 @@ class Api:
             insteon_device                   ==> FamilyDevice_ModuleName
             Modules.House.Family.Insteon         ==> PackageName
 
-        @param p_name: a Valid Name such as "Insteon"
+        @param p_name: a Valid Family Name such as "Insteon"
         """
-        LOG.info('Building Family "{}"'.format(p_name))
-        l_path = 'Modules.House.Family'
         l_obj = FamilyInformation()
-        l_key = p_name.lower()
-        l_module = p_name + '.' + l_key + '_device'
-        self.m_pyhouse_obj.House.Family[l_key] = l_obj
         l_obj.Name = p_name
+        l_path = 'Modules.House.Family.' + p_name
+        l_key = p_name.lower()
+        l_module = '' + l_key + '_device'
         l_obj.Module = l_module
+        LOG.info('Building Family "{}" on path "{}"'.format(p_name, l_path))
         l_obj._Api = self.m_config_tools.import_module_get_api(l_module, l_path)
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj

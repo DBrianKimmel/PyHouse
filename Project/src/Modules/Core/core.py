@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2020-01-06'
+__updated__ = '2020-01-07'
 __version_info__ = (19, 10, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -112,7 +112,7 @@ class Utility:
         """
         l_module = p_module.lower()
         l_path = 'Modules.Core.' + p_module
-        LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
+        # LOG.debug('Importing: "{}", "{}"'.format(l_module, l_path))
         l_module = self.m_config_tools.import_module_get_api(l_module, l_path)
         # LOG.debug('done')
         return l_module
@@ -152,7 +152,7 @@ class Utility:
 
     def _initialize_one_component(self, p_component):
         l_path = 'Modules.' + p_component
-        LOG.debug('Importing: "{}", "{}"'.format(p_component.lower(), l_path))
+        # LOG.debug('Importing: "{}", "{}"'.format(p_component.lower(), l_path))
         l_component = self.m_config_tools.import_module_get_api(p_component, l_path)
         return l_component
 

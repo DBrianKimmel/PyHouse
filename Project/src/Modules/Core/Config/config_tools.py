@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-06'
+__updated__ = '2020-01-07'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -201,14 +201,14 @@ class Tools:
         @return: a pointer to the module or None
         """
         l_path = p_path + '.' + p_name.lower()
-        LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
+        # LOG.debug('Importing\n\tModule:  {}\n\tPath:    {}'.format(p_name, l_path))
         try:
             l_ret = importlib.import_module(l_path)
         except ImportError as e_err:
             l_msg = 'PROG ERROR importing module: "{}"\n\tErr:{}.'.format(p_name, e_err)
             LOG.error(l_msg)
             l_ret = None
-        # LOG.info('Imported "{}" ({})'.format(p_name, l_path))
+        # LOG.debug('Imported "{}" ({})'.format(p_name, l_path))
         return l_ret
 
     def import_module_get_api(self, p_module, p_path):
@@ -218,7 +218,7 @@ class Tools:
         @return: an initialized Api
         """
         l_module_name = p_module
-        LOG.info('Get Module pointer for "{}" on path "{}"'.format(l_module_name, p_path))
+        LOG.info('Get Module Api pointer for "{}" on path "{}"'.format(l_module_name, p_path))
         l_ret = self._do_import(l_module_name, p_path)
         try:
             # LOG.debug(PrettyFormatAny.form(l_ret, 'Module'))
@@ -244,7 +244,7 @@ class Tools:
             # LOG.debug('Starting import of Part: "{}" at "{}"'.format(l_part, l_path))
             l_api = self.import_module_get_api(l_part, l_path)
             l_modules[l_part] = l_api
-        LOG.info('Loaded Module: {}'.format(l_modules))
+        LOG.info('Loaded Module: {}'.format(l_modules.keys()))
         return l_modules
 
     def yaml_dump_struct(self, p_yaml: Any) -> str:
@@ -329,12 +329,13 @@ class SubFields(Tools):
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
         self.extract_fields(l_device_obj, p_config, l_required, l_allowed)
-        l_device_obj.Name = l_device_obj.Name
-        l_key = l_device_obj.Name
+        l_key = l_device_obj.Name = l_device_obj.Name.capitalize()
         l_family_obj.Name = l_device_obj.Name
         # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
         # LOG.debug(PrettyFormatAny.form(l_family_obj, 'Family'))
-        self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
+        if l_key not in self.m_pyhouse_obj.House.Family:
+            LOG.info('Adding Family: "{}"'.format(l_key))
+            self.m_pyhouse_obj.House.Family[l_key] = l_family_obj
         return l_device_obj
 
     def extract_host_group(self, p_config):

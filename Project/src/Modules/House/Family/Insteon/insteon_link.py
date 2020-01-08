@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-01-07'
 
 #  Import system type stuff
 from typing import Optional
@@ -497,9 +497,9 @@ class DecodeLink:
         p_controller_obj.LinkList[l_key] = l_link_obj
         LOG.info('All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}'.format(l_group, l_device_obj.Name, l_flags, l_data, l_type))
         # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'Controller'))
-        for l_ix, l_link in p_controller_obj.LinkList.items():
+        # for l_ix, l_link in p_controller_obj.LinkList.items():
             # LOG.debug(PrettyFormatAny.form(l_link, 'Links'))
-            LOG.debug('\n\t{} - {}'.format(l_ix, repr(l_link)))
+            # LOG.debug('\n\t{} - {}'.format(l_ix, repr(l_link)))
         # Ask for next record
         SendCmd().queue_0x6A_command(p_controller_obj)
 
@@ -649,8 +649,24 @@ class DecodeLink:
             l_ret = False
         return l_ret
 
-    def decode_0x6f(self):
-        """
+    def decode_0x6F(self, p_controller_obj):
+        """All-Link manage Record Response (12 bytes).
+        See p 252(265) of 2009 developers guide.
+
+        Modify the IM's All-Link Database (ALDB) with the All-Link data you send.
+        Use caution with this command - the IM does not check the validity of the data you send.
+
+        [0] = x02
+        [1] = 0x6F
+        [2] = Control Code
+        [3] = All-Link Record Flag
+        [4] = All Lpink Grou
+        [5-7] = ID
+        [8] = Link Data 1
+        [9] = Link Data 2
+        [10] = Link Data 3
+        [11] = ACK/NAK
+
         elsif ( $record_type eq $prefix{all_link_manage_rec} ) {  # 0x6F
             # Managing the PLM's ALDB
             $self->clear_active_message();
@@ -674,7 +690,57 @@ class DecodeLink:
                 package Insteon_PLM;
             }
             }
-        """
+
+            elsif ( $record_type eq $prefix{all_link_manage_rec} ) {  # 0x6F
+                # parse out the data
+                my $failed_cmd_code = substr( $pending_message->interface_data(), 0, 2 );
+                my $failed_cmd = 'unknown';
+                if ( $failed_cmd_code eq '40' ) {
+                    $failed_cmd = 'update/add controller record';
+                } elsif ( $failed_cmd_code eq '41' ) {
+                    $failed_cmd = 'update/add responder record';
+                } elsif ( $failed_cmd_code eq '80' ) {
+                    $failed_cmd = 'delete record';
+                }
+                my $failed_group    = substr( $pending_message->interface_data(), 4, 2 );
+                my $failed_deviceid = substr( $pending_message->interface_data(), 6, 6 );
+                &::print_log( "[Insteon_PLM] WARN: PLM unable to complete requested "
+                      . "PLM link table update ($failed_cmd) for "
+                      . "group: $failed_group and deviceid: $failed_deviceid" );
+                my $callback;
+                if ( $self->_aldb->{_success_callback} ) {
+                    $callback = $self->_aldb->{_success_callback};
+                    $self->_aldb->{_success_callback} = undef;
+                } elsif ( $$self{_mem_callback} ) {
+                    $callback = $pending_message->callback();    #$$self{_mem_callback};
+                    $$self{_mem_callback} = undef;
+                }
+                if ($callback) {
+                    package main;
+                    eval($callback);
+                    &::print_log( "[Insteon_PLM] WARN1: Error encountered during ack callback: " . $@ )
+                      if $@ and $self->debuglevel( 1, 'insteon' );
+                    package Insteon_PLM;
+                }
+
+         """
+        l_message = p_controller_obj._Message
+        l_code = l_message[2]
+        l_flags = l_message[3]
+        l_flag_control = l_flags & 0x40
+        l_group = l_message[4]
+        l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
+        l_data = [l_message[8], l_message[9], l_message[10]]
+        l_ack = utilDecode.get_ack_nak(l_message[11])
+        l_type = 'Responder'
+        if l_flag_control != 0:
+            l_type = 'Controller'
+        l_message = "Manage All-Link response(6F)"
+        l_message += " Group:{:#02X}, Name:{}, Flags:{:#02X}, Data:{}, CtlCode:{:#02x},".format(l_group, l_obj.Name, l_flags, l_data, l_code)
+        l_message += " Ack:{}, Type:{}".format(l_ack, l_type)
+        LOG.info("{}".format(l_message))
+        p_controller_obj.Ret = True
+        return
 
 
 class InsteonAllLinks:

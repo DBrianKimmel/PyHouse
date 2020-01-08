@@ -24,7 +24,7 @@ House.Entertainment.Plugins{}.Api
 
 """
 
-__updated__ = '2019-12-25'
+__updated__ = '2020-01-07'
 __version_info__ = (19, 9, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -210,6 +210,7 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         """ Create all the empty structures needed to load, run and save the entertainment information.
         """
+        LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
         self._add_storage()
         self.m_config_tools = configApi(p_pyhouse_obj)
@@ -233,6 +234,7 @@ class Api:
         # self.m_pyhouse_obj.House.Entertainment = self.m_local_config.load_yaml_config()
         for l_module in self.m_modules.values():
             l_module.LoadConfig()
+        LOG.info('Loaded.')
 
     def Start(self):
         LOG.info("Starting")

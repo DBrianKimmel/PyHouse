@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-01-07'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -129,7 +129,7 @@ class DecodeResponses:
         elif l_cmd == 0x6A: self.m_link.decode_0x6A(p_controller_obj)
         elif l_cmd == 0x6B: self._decode_0x6B_record(p_controller_obj)
         elif l_cmd == 0x6C: self.m_link.decode_0x6C(p_controller_obj)
-        elif l_cmd == 0x6F: self._decode_0x6F_record(p_controller_obj)
+        elif l_cmd == 0x6F: self.m_link.decode_0x6F(p_controller_obj)
         elif l_cmd == 0x73: self._decode_0x73_record(p_controller_obj)
         else:
             LOG.error("Unknown Insteon message {}, Cmd:{}".format(FormatBytes(p_controller_obj._Message), l_cmd))
@@ -338,42 +338,6 @@ class DecodeResponses:
         else:
             LOG.error("== 6B - NAK/Unknown message type {:#x}".format(l_flag))
             p_controller_obj.Ret = False
-        return
-
-    def _decode_0x6F_record(self, p_controller_obj):
-        """All-Link manage Record Response (12 bytes).
-        See p 252(265) of 2009 developers guide.
-
-        Modify the IM's All-Link Database (ALDB) with the All-Link data you send.
-        Use caution with this command - the IM does not check the validity of the data you send.
-
-        [0] = x02
-        [1] = 0x6F
-        [2] = Control Code
-        [3] = All-Link Record Flag
-        [4] = All Lpink Grou
-        [5-7] = ID
-        [8] = Link Data 1
-        [9] = Link Data 2
-        [10] = Link Data 3
-        [11] = ACK/NAK
-         """
-        l_message = p_controller_obj._Message
-        l_code = l_message[2]
-        l_flags = l_message[3]
-        l_flag_control = l_flags & 0x40
-        l_group = l_message[4]
-        l_obj = utilDecode().get_obj_from_message(self.m_pyhouse_obj, l_message[5:8])
-        l_data = [l_message[8], l_message[9], l_message[10]]
-        l_ack = utilDecode.get_ack_nak(l_message[11])
-        l_type = 'Responder'
-        if l_flag_control != 0:
-            l_type = 'Controller'
-        l_message = "Manage All-Link response(6F)"
-        l_message += " Group:{:#02X}, Name:{}, Flags:{:#02X}, Data:{}, CtlCode:{:#02x},".format(l_group, l_obj.Name, l_flags, l_data, l_code)
-        l_message += " Ack:{}, Type:{}".format(l_ack, l_type)
-        LOG.info("{}".format(l_message))
-        p_controller_obj.Ret = True
         return
 
     def _decode_0x73_record(self, p_controller_obj):

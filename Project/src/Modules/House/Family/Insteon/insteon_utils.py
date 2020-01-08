@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-01-07'
 
 #  Import system type stuff
 
@@ -39,8 +39,11 @@ class InsteonQueueInformation:
         self.Text = None
 
 
-def create_command_message(p_command):
+def create_command_message(p_command: str) -> bytearray:
     """ Create a bytearray of the proper length
+
+    @param p_command: name of the command e.g. 'plm_first_all_link'
+    @return: a bytearray of the proper length for the command
     """
     l_cmd = PLM_COMMANDS[p_command]
     l_command_bytes = bytearray(COMMAND_LENGTH[l_cmd])

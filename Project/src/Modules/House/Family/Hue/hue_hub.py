@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2020-01-06'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -43,7 +43,7 @@ from twisted.web.iweb import IBodyProducer
 from Modules.Core.Utilities.convert import long_to_str
 from Modules.Core.Utilities.json_tools import encode_json
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Family.hue.hue_data import HueLightData
+from Modules.House.Family.Hue.hue_data import HueLightData
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 
 from Modules.Core import logging_pyh as Logger

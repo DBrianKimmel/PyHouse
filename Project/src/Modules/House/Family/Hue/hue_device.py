@@ -10,7 +10,7 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-12-02'
+__updated__ = '2020-01-06'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,7 +18,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 # Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.Family.hue.hue_hub import HueHub
+from Modules.House.Family.Hue.hue_hub import HueHub
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Hue_device     ')
