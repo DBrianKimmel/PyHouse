@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-09'
 __version_info__ = (19, 11, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -26,7 +26,7 @@ from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
-from Modules.Core.Mqtt.mqtt_information import MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation
+from Modules.Core.Mqtt.__init__ import MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -127,7 +127,6 @@ class LocalConfig:
         """ Read the mqtt.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.Core.Mqtt = MqttInformation()
         self.m_pyhouse_obj.Core.Mqtt.ClientID = 'PyH-Comp-' + platform.node()
         self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
         l_yaml = self.m_config.read_config_file(CONFIG_NAME)
@@ -160,6 +159,9 @@ class Api:
 
     def _add_storage(self):
         # LOG.debug('Adding')
+        self.m_pyhouse_obj.Core.Mqtt = MqttInformation()
+        self.m_pyhouse_obj.Core.Mqtt.ClientID = 'PyH-Comp-' + platform.node()
+        self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
         setattr(self.m_pyhouse_obj.Core, 'MqttApi', self)  # Clear before loading
 
     def LoadConfig(self):

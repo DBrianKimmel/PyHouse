@@ -7,4 +7,72 @@
 @license:   MIT License
 """
 
+
+class MqttInformation:
+    """
+
+    ==> PyHouse.Core.Mqtt.xxx as in the def below
+    """
+
+    def __init__(self) -> None:
+        self.Brokers: dict = {}  # MqttBrokerInformation()
+        self.ClientID: str = 'PyH-'
+        self.Prefix: str = ''
+        self._ProtocolApi = None
+
+
+class MqttBrokerInformation:
+    """ 0-N
+
+    ==> PyHouse.Core.Mqtt.Brokers.XXX as in the def below
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Comment = None
+        self.Keepalive = 60  # seconds
+        #
+        self.Access = None  # AccessInformation()
+        self.Host = None  # HostInformation()
+        self.Will = MqttBrokerWillInformation()  # MqttBrokerWillInformation()
+        self.Version = 5  # We can handle versions 3,4,5 currently
+        #
+        self._ClientApi = None
+
+        self._ProtocolApi = None
+        self._isTLS = False
+
+
+class MqttBrokerWillInformation:
+    """
+    ==> PyHouse.Core.Mqtt.Brokers.XXX as in the def below
+    """
+
+    def __init__(self):
+        self.Topic = None
+        self.Message = None
+        self.QoS = 0
+        self.Retain = False
+
+
+class MqttJson:
+    """ This is a couple of pieces of information that get added into every MQTT message
+        sent out of this computer.
+    """
+
+    def __init__(self):
+        self.Sender = ''  # The Mqtt name of the sending device.
+        self.DateTime = None  # The time on the sending device
+
+
+class MqttMessageInformation:
+    """ An easy to pass message structure
+    """
+
+    def __init__(self) -> None:
+        self.Topic: Optional[str] = None
+        self.Payload: Optional[str] = None
+        self.UnprocessedTopic: List[str] = []  # a list of topic parts
+        self.LogMessage: Optional[str] = None
+
 # ## END DBK

@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2020-01-07'
+__updated__ = '2020-01-08'
 
 #  Import system type stuff
 

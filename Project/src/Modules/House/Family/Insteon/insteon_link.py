@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2020-01-07'
+__updated__ = '2020-01-09'
 
 #  Import system type stuff
 from typing import Optional
@@ -49,7 +49,7 @@ class InsteonLinkInformation():
         """
         """
         l_ret = ''
-        l_ret += '{}'.format(self._Name)
+        l_ret += '{:20s}'.format(self._Name)
         l_ret += '; {}'.format(self.Address)
         l_ret += '; Group: ' + str(self.Group)
         l_ret += '; Flag: {:2X}'.format(self.Flag)
@@ -149,7 +149,7 @@ class SendCmd():
         insteon_utils.queue_command(p_controller_obj, l_command, 'Query ALDB')
 
     def XXXqueue_0x67_command(self, p_controller_obj):
-        """Reset the PLM (2 bytes)
+        """ Reset the PLM (2 bytes)
         Puts the IM into the factory reset state which clears the All-Link Database.
         See p 255(268) of 2009 developers guide.
         """
@@ -158,7 +158,7 @@ class SendCmd():
         insteon_utils.queue_command(p_controller_obj, l_command, 'Reset PLM')
 
     def queue_0x69_command(self, p_controller_obj):
-        """Get the first all-link record from the plm (2 bytes).
+        """ Get the first all-link record from the plm (2 bytes).
         See p 248(261) of 2009 developers guide.
         """
         LOG.info("Command to get First all-link record (0x69).")
@@ -166,7 +166,7 @@ class SendCmd():
         insteon_utils.queue_command(p_controller_obj, l_command, 'First All-Link')
 
     def queue_0x6A_command(self, p_controller_obj):
-        """Get the next all-link record from the plm (2 bytes).
+        """ Get the next all-link record from the plm (2 bytes).
         See p 249(262) of 2009 developers guide.
         """
         LOG.info("Command to get the next all-link record (0x6A).")
@@ -174,7 +174,7 @@ class SendCmd():
         insteon_utils.queue_command(p_controller_obj, l_command, 'Next All-Link')
 
     def queue_0x6F_command(self, p_controller_obj, p_light_obj, p_code, p_flag, p_data):
-        """Manage All-Link Record (11 bytes)
+        """ Manage All-Link Record (11 bytes)
          See p 252(265) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x6F
@@ -491,8 +491,9 @@ class DecodeLink:
             l_link_obj._Type = l_device_obj.DeviceType
             l_link_obj._SubType = l_device_obj.DeviceSubType
         except:
-            l_link_obj.Address = FormatBytes(l_addr)
+            # l_link_obj.Address = FormatBytes(l_addr)
             # l_key = 'Addr_{:#02X}.{:#02X}.{:#02X}'.format(l_message[4], l_message[5], l_message[6])
+            pass
         l_key = len(p_controller_obj.LinkList)
         p_controller_obj.LinkList[l_key] = l_link_obj
         LOG.info('All-Link response-0x57 - Group={:#02X}, Name={}, Flags={:#x}, Data={}, {}'.format(l_group, l_device_obj.Name, l_flags, l_data, l_type))
@@ -501,7 +502,7 @@ class DecodeLink:
             # LOG.debug(PrettyFormatAny.form(l_link, 'Links'))
             # LOG.debug('\n\t{} - {}'.format(l_ix, repr(l_link)))
         # Ask for next record
-        SendCmd().queue_0x6A_command(p_controller_obj)
+        # SendCmd().queue_0x6A_command(p_controller_obj)
 
         return
 
@@ -589,48 +590,56 @@ class DecodeLink:
         return False
 
     def decode_0x69(self, p_controller_obj):
-        """Get All-Link First Record response (5 bytes).
+        """ Get All-Link First Record response (3 bytes).
         See p 248(261) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x69
         [2] = ACK/NAK
-
-
-        if (   $record_type eq $prefix{all_link_first_rec}  # 0x69
-            or $record_type eq $prefix{all_link_next_rec} ) {  # 0x6A
-            $$self{_next_link_ok} = 1;
-        }
         """
         l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ack = 'ACK'
-            # SendCmd().queue_0x6A_command(p_controller_obj)
+            # LOG.debug(PrettyFormatAny.form(p_controller_obj, 'PLM'))
+            LOG.info('\n\tStart of All-Link Data Links={}'.format(len(p_controller_obj.LinkList)))
+            SendCmd().queue_0x6A_command(p_controller_obj)
         else:
             LOG.info("All-Link first record - NAK")
             l_ack = 'NAK'
         LOG.info("All-Link first record -{}".format(l_ack))
         return
 
+    def _dump_link(self, p_link, p_ix):
+        """
+        """
+        l_msg = 'Link:{}\n'.format(p_ix)
+        l_msg += '\t"{}"; '.format(p_link._Name)
+        l_msg += 'Addr:"{}"; '.format(p_link.Address)
+        if p_link._IsController:
+            l_msg += 'Controller; '
+        else:
+            l_msg += 'Responder; '
+        l_msg += 'Data: {}; '.format(p_link.Data)
+        l_msg += '\n\t{}'.format(repr(p_link))
+        LOG.info(l_msg)
+
     def decode_0x6A(self, p_controller_obj):
-        """All-Link Next Record response (3 bytes).
+        """ All-Link Next Record response (3 bytes).
         See p 249(262) of 2009 developers guide.
         [0] = 0x02
         [1] = 0x6A
         [2] = ACK/NAK
-
-
-        if (   $record_type eq $prefix{all_link_first_rec}  # 0x69
-            or $record_type eq $prefix{all_link_next_rec} ) {  # 0x6A
-            $$self{_next_link_ok} = 1;
-        }
         """
         l_message = p_controller_obj._Message
         if l_message[2] == ACK:
             l_ack = 'ACK'
-            # SendCmd().queue_0x6A_command(p_controller_obj)
+            LOG.info("All-Link Next record - {}".format(l_ack))
+            SendCmd().queue_0x6A_command(p_controller_obj)
         else:
             l_ack = 'NAK'
-        LOG.info("All-Link Next record - {}".format(l_ack))
+            LOG.debug(PrettyFormatAny.form(p_controller_obj, 'PLM'))
+            # LOG.debug(PrettyFormatAny.form(p_controller_obj.LinkList[0], 'PLM'))
+            for l_ix, l_link in p_controller_obj.LinkList.items():
+                self._dump_link(l_link, l_ix)
         return
 
     def decode_0x6C(self, p_controller_obj):

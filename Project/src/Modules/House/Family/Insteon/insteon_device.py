@@ -12,7 +12,7 @@ It is imported once and instantiates insteon_plm for each local controller and i
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-01-09'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -136,7 +136,7 @@ class Utility:
         """
         l_lights = self.m_pyhouse_obj.House.Lighting.Lights
         for l_device in l_lights.values():
-            LOG.debug(PrettyFormatAny.form(l_device, 'Light'))
+            # LOG.debug(PrettyFormatAny.form(l_device, 'Light'))
             LOG.debug(repr(l_device))
         self.m_pyhouse_obj._Twisted.Reactor.callLater(24 * 60 * 60, self.scan_devices)
 

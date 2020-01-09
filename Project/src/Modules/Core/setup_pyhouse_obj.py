@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2019-12-15'
+__updated__ = '2020-01-09'
 __version_info__ = (19, 10, 10)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,7 +19,7 @@ from twisted.internet import reactor
 
 #  Import PyMh files
 from Modules.Core.data_objects import PyHouseInformation
-from Modules.Core.Mqtt.mqtt import MqttInformation
+from Modules.Core.Mqtt.__init__ import MqttInformation
 # from Modules.Core.Config.config_tools import ConfigInformation
 
 # from Modules.Core.Utilities.debug_tools import PrettyFormatAny
