@@ -2,13 +2,13 @@
 @name:      Modules/House/Lighting/utility.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @note:      Created on Jan 20, 2019
 @license:   MIT License
 @summary:
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2020-01-18'
 
 #  Import system type stuff
 
@@ -87,12 +87,14 @@ class lightingUtility:
         for l_obj in p_objs.values():
             l_family = l_obj.Family.Name.lower()
             if l_family == p_family.lower():
-                LOG.info('Found Controller {}; Local:{}'.format(l_obj.Name, l_obj._isLocal))
+                # LOG.info('Found Controller {}; Local:{}'.format(l_obj.Name, l_obj._isLocal))
                 if l_obj._isLocal:
                     l_ret.append(l_obj)
                 # LOG.debug(PrettyFormatAny.form(l_obj, 'Controller'))
-        if l_ret == []:
+        if len(l_ret) == 0:
             LOG.warning('Controller Lookup failed - arg error Family:{}'.format(p_family))
+        elif len(l_ret) > 1:
+            LOG.warning('Too many Controllers found {}'.format(len(l_ret)))
         else:
             # LOG.debug('Found {} active controller(s) for family {}'.format(len(l_ret), p_family))
             pass

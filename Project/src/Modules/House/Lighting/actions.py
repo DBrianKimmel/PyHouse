@@ -2,7 +2,7 @@
 @name:      Modules/House/Lighting/actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 11, 2014
 @Summary:   Handle lighting scheduled events.
@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2019-12-12'
+__updated__ = '2020-01-18'
 
 #  Import system type stuff
 
@@ -39,7 +39,7 @@ class Api:
         l_light_name = p_schedule_obj.Sched.Name
         l_type = p_schedule_obj.Sched.Type
         l_lighting_objs = p_pyhouse_obj.House.Lighting
-        LOG.debug('Lighting type {}'.format(l_type))
+        # LOG.debug('Lighting type {}'.format(l_type))
         if l_type == 'Light':
             l_obj = l_lighting_objs.Lights
         elif l_type == 'Outlet':

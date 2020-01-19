@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/insteon/insteon_plm.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2019 by D. Brian Kimmel
+@copyright: (c) 2010-2020 by D. Brian Kimmel
 @note:      Created on Feb 18, 2010
 @license:   MIT License
 @summary:   This module is for sending commands to and receiving responses from an Insteon Controller.
@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-01-18'
 
 #  Import system type stuff
 import datetime
@@ -427,7 +427,7 @@ class Api(LightHandlerApi):
         """
         l_level = int(p_control.BrightnessPct)
         l_rate = 0  # The transition time is not implemented currently.
-        LOG.debug("Insteon Device Name:'{}'; to level:'{}'; at rate:'{}'; Using:'{}'".format(p_device_obj.Name, l_level, l_rate, p_controller_obj.Name))
+        # LOG.debug("Insteon Device Name:'{}'; to level:'{}'; at rate:'{}'; Using:'{}'".format(p_device_obj.Name, l_level, l_rate, p_controller_obj.Name))
         if l_level == 0:
             Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['off'], 0, 'Turn OFF')  #  0x13
         elif l_level > 95:

@@ -17,7 +17,7 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2020-01-04'
+__updated__ = '2020-01-18'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -249,10 +249,10 @@ class MqttActions:
         l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'insteon')
         # LOG.debug(PrettyFormatAny.form(l_controller_obj[0], 'Controller'))
         if len(l_controller_obj) > 0:
-            # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
             l_api = l_controller_obj[0]._HandlerApi
             # LOG.debug(PrettyFormatAny.form(l_api, 'API'))
             if l_api == None:
+                LOG.error('No Api for controller')
                 return
             l_api.Control(l_light_obj, l_controller_obj[0], l_control)
 

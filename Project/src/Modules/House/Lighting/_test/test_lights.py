@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2020-01-04'
+__updated__ = '2020-01-18'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -149,7 +149,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_light.Comment, None)
         self.assertEqual(l_light.DeviceType, 'Lighting')
         self.assertEqual(l_light.DeviceSubType, 'Light')
-        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Name, 'Insteon')
         self.assertEqual(l_light.Family.Address, '11.11.11')
         self.assertEqual(l_light.Family.Type, 'Light')
         self.assertEqual(l_light.Room.Name, 'Outside')
@@ -165,7 +165,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light.Room, 'C1-02-D - Room'))
         self.assertEqual(l_light.Name, 'Garage')
         self.assertEqual(l_light.Comment, None)
-        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Name, 'Insteon')
         self.assertEqual(l_light.Family.Address, '22.22.22')
 
     def test_03_Light2(self):
@@ -177,7 +177,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(l_light, 'C1-03-B - Light'))
         self.assertEqual(l_light.Name, 'Buffet')
         self.assertEqual(l_light.Comment, 'x')
-        self.assertEqual(l_light.Family.Name, 'insteon')
+        self.assertEqual(l_light.Family.Name, 'Insteon')
         self.assertEqual(l_light.Family.Address, '33.33.33')
 
     def test_09_Lights(self):
