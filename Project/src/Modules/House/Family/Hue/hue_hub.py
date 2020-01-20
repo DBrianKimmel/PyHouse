@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2020-01-06'
+__updated__ = '2020-01-20'
 
 # Import system type stuff
 from zope.interface import implementer
@@ -246,7 +246,7 @@ def gen_description_xml(addr):
 def generate_light_body_json(p_light_control):
     """ Convert internal data to hue control data and format
 
-    @param p_light_control: ==> LightData() in Housing.Lighting.lighting_lights
+    @param p_light_control: ==> Light Data() in Housing.Lighting.lighting_lights
     @returns: json body to control lights
                 {
                     "on": true,

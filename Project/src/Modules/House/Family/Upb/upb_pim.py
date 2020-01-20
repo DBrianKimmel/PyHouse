@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-19'
 
 # Import system type stuff
 try:
@@ -392,9 +392,6 @@ class UpbPimApi(CreateCommands):
         p_controller_obj._Queue = Queue.Queue(300)
         LOG.info("start:{} - InterfaceType:{}".format(p_controller_obj.Name, p_controller_obj.InterfaceType))
         self.m_pim = UpbPimApi._initilaize_pim(p_controller_obj)
-        # l_driver = FamUtil.get_device_driver_Api(p_pyhouse_obj, p_controller_obj)
-        # p_controller_obj.Interface._DriverApi = l_driver
-        # self.m_pim.Interface._DriverApi = l_driver
         try:
             l_driver.Start(p_pyhouse_obj, p_controller_obj)
             self.set_register_value(p_controller_obj, 0x70, [0x03])

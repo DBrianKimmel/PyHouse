@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-07'
+__updated__ = '2020-01-20'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -392,7 +392,7 @@ class YamlCreate:
     """ For creating and appending to yaml files.
     """
 
-    def _create_yaml(self, p_tag: str):
+    def create_yaml(self, p_tag: str) -> Any:
         """ create a yaml structure with a nested-map.
 
         Yaml = ordereddict([('p_tag', None)])
@@ -437,7 +437,7 @@ class YamlCreate:
             setattr(p_yaml, l_key, l_val)
         return p_yaml
 
-    def XXXadd_list(self, p_yaml, p_key, p_add_obj):
+    def add_list_entry(self, p_yaml, p_key, p_add_obj):
         """
         Insert a list entry into the list fragment that is the surrounding yaml.
 
@@ -579,7 +579,7 @@ class Yaml(YamlRead, YamlWrite, YamlCreate, Tools):
         LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj, 'Dummy'))
 
 
-class Api(SubFields, Tools):
+class Api(SubFields, Yaml):
     """ This is the interface to the config system.
     """
 

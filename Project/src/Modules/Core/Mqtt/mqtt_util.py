@@ -2,14 +2,14 @@
 @name:      Modules/Core/Mqtt/mqtt_util.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2019 by D. Brian Kimmel
+@copyright: (c) 2015-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 13, 2015
 @Summary:
 
 """
 
-__updated__ = '2019-11-26'
+__updated__ = '2020-01-19'
 
 #  Import system type stuff
 

@@ -2,10 +2,17 @@
 @name:      Modules/Core/Mqtt/__init__.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Apr 25, 2017
 @license:   MIT License
 """
+
+__updated__ = '2020-01-19'
+__version_info__ = (20, 1, 19)
+__version__ = '.'.join(map(str, __version_info__))
+
+CLIENT_PREFIX = 'PyH-'
+CONFIG_NAME = 'mqtt'
 
 
 class MqttInformation:
@@ -16,7 +23,7 @@ class MqttInformation:
 
     def __init__(self) -> None:
         self.Brokers: dict = {}  # MqttBrokerInformation()
-        self.ClientID: str = 'PyH-'
+        self.ClientID: str = CLIENT_PREFIX
         self.Prefix: str = ''
         self._ProtocolApi = None
 

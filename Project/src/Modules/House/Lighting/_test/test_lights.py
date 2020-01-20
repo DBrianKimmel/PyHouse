@@ -11,7 +11,7 @@ Passed all 11 tests - DBK - 2019-09-16
 
 """
 
-__updated__ = '2020-01-18'
+__updated__ = '2020-01-20'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -193,7 +193,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_lights[3].Name, 'Wet Bar')
 
 
-class C2_Write(SetupMixin, unittest.TestCase):
+class D1_Write(SetupMixin, unittest.TestCase):
     """
     This section tests the reading and writing of the Yaml config file  used by lighting_lights.
     """
@@ -202,30 +202,43 @@ class C2_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
         self.m_yaml = self.m_test_config['Lights']
         self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
-        self.m_pyhouse_obj.House.Lights = self.m_lights
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
 
-    def test_01_Light0(self):
+    def test_01_base(self):
+        """
+        """
+        l_ret = self.m_config._build_yaml()
+        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - base'))
+        print(l_ret, 'D1-01-A - base')
+        self.assertEqual(l_ret['Lights'], None)
+
+    def test_02_Light0(self):
         """Test the write for proper Base elements
         """
         l_light = self.m_lights[0]
-        print(PrettyFormatAny.form(l_light, 'C2-01-A - Light0'))
+        print(PrettyFormatAny.form(l_light, 'D1-02-A - Light0'))
         l_config = self.m_config._save_one_light(l_light)
-        print(PrettyFormatAny.form(l_config, 'C2-01-B - Light'))
+        print(PrettyFormatAny.form(l_config, 'D1-02-B - Light'))
 
-    def test_02_Light1(self):
+    def test_03_Light1(self):
         """Test the write for proper Base elements
         """
         l_light = self.m_lights[1]
-        print(PrettyFormatAny.form(l_light, 'C2-02-A - Light'))
+        print(PrettyFormatAny.form(l_light, 'D1-03-A - Light'))
         l_config = self.m_config._save_one_light(l_light)
-        print(PrettyFormatAny.form(l_config, 'C2-02-B - Light'))
+        print(PrettyFormatAny.form(l_config, 'D1-03-B - Light'))
+
+    def test_04_AddLight0(self):
+        """Test the write for proper Base elements
+        """
 
     def test_09_Lights(self):
         """Test the write for proper Base elements
         """
-        print(PrettyFormatAny.form(self.m_lights, 'C2-09-A - Lights'))
-        l_config = self.m_config._save_all_lights()
-        print(PrettyFormatAny.form(l_config, 'C2-09-B - Node'))
+        l_ret = self.m_config._build_yaml()
+        print(PrettyFormatAny.form(self.m_lights, 'D1-09-A - Lights'))
+        l_config = self.m_config._save_all_lights(l_ret)
+        print(PrettyFormatAny.form(l_config, 'D1-09-B - Node'))
 
 
 class Z9_YamlWrite(SetupMixin, unittest.TestCase):

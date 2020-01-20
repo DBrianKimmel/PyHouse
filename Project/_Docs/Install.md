@@ -86,9 +86,11 @@ We need a pyhouse user to run the PyHouse software.
 * Add pyhouse to the proper groups.
 * Add the user to sudo authoriation.
    Be sure the following line exists in the file '/etc/sudoers.d/pyhouse'
+
 ```bash
 pyhouse ALL=(ALL) NOPASSWD: ALL
 ```
+
 * Become the user pyhouse
 
 ### Create Virtual environment
@@ -114,15 +116,17 @@ Set up the computer to automatically login the pyhouse user after booting.
 Set up the pyhouse to automatically start the PyHouse software when autologin is setup   
 
 * Be sure the following code is at or near the bottom of the .bashrc file.
+
 ```bash
 #
 # Start pyhouse if we autologin this user
 #
 if [ $(tty) == /dev/tty1 ]; then
-    bin/start_pyhouse
+    bin/start-pyhouse
 fi
 ### END DBK
 ```
+
 * Be sure the pyhouse user has a bin directory
 * Place the following file in 'bin/start_pyhouse' and be sure it is executable.
 ```bash

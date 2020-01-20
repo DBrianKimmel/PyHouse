@@ -17,7 +17,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import LightData
+from Modules.Core.data_objects import LightControlInformation
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
@@ -54,7 +54,7 @@ class ControlLightsElement(athena.LiveElement):
         """
         l_json = json_tools.decode_json_unicode(p_json)
         l_light_ix = int(l_json['Key'])
-        l_light_obj = LightData()
+        l_light_obj = LightControlInformation()
         l_light_obj.Name = l_json['Name']
         l_light_obj.Key = l_light_ix
         l_light_obj.BrightnessPct = l_brightness = l_json['BrightnessPct']

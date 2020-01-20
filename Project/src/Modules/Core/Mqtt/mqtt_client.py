@@ -2,14 +2,14 @@
 @name:      Modules/Core/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2019 by D. Brian Kimmel
+@copyright: (c) 2015-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:   Connect this computer node to the household Mqtt Broker.
 
 """
 
-__updated__ = '2019-10-08'
+__updated__ = '2020-01-19'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -17,11 +17,12 @@ from twisted.internet import defer
 # from twisted.internet.ssl import Certificate, optionsForClientTLS
 
 #  Import PyMh files and modules.
+from Modules.Core.Mqtt import CLIENT_PREFIX
 from Modules.Core.Mqtt.mqtt_protocol import PyHouseMqttFactory
+
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
-CLIENT_PREFIX = 'PyH-Comp-'
 PEM_FILE = '/etc/pyhouse/ca_certs/rootCA.pem'
 
 

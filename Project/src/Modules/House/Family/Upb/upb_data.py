@@ -9,16 +9,15 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-20'
 
 # Import system type stuff
 
 # Import PyMh files
-# from Modules.Core.data_objects import LightData
-from Modules.Housing.Lighting.lighting_lights import LightData
+from Modules.House.Lighting.lights import LightControlInformation
 
 
-class UPBData(LightData):
+class UPBData(LightControlInformation):
     """
     Locally held data about each of the UPB PIM controllers we find.
 

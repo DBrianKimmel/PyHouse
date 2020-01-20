@@ -11,7 +11,7 @@ Passed all 21 tests - DBK - 2019-12-31
 
 """
 
-__updated__ = '2020-01-01'
+__updated__ = '2020-01-20'
 
 # Import system type stuff
 import os
@@ -152,7 +152,7 @@ class B7_YamlCreate(SetupMixin, unittest.TestCase):
         This will create an almost empty yaml config structure
         """
         LIGHTS = 'Lights'
-        l_yaml = self.m_yaml._create_yaml(LIGHTS)
+        l_yaml = self.m_yaml.create_yaml(LIGHTS)
         print('B7-01-A - Yaml: {}'.format(l_yaml))
         l_tag = self.m_yaml.find_first_element(l_yaml)
         # print('B7-01-B - Tag: {}'.format(l_tag))
@@ -171,7 +171,7 @@ class B7_YamlCreate(SetupMixin, unittest.TestCase):
         """
         # print('B1-02-A - Log error')
         LIGHTS = None
-        l_yaml = self.m_yaml._create_yaml(LIGHTS)
+        l_yaml = self.m_yaml.create_yaml(LIGHTS)
         l_tag = self.m_yaml.find_first_element(l_yaml)
         print('B7-02-A - Yaml: {}'.format(l_yaml))
         # self.dump_to_file(l_yaml)

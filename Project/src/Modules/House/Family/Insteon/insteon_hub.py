@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2020-01-20'
 
 #  Import system type stuff
 
@@ -44,7 +44,7 @@ class Api:
         """
         @param p_controller_obj: optional
         @param p_device_obj: the device being controlled
-        @param p_control: the idealized light control params ==> Modules.House.Lighting.lights.LightData()
+        @param p_control: the idealized light control params ==> Modules.House.Lighting.lights.Light Data()
         """
         LOG.info('Controlled.')
 

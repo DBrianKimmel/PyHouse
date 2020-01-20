@@ -1,5 +1,5 @@
 """
-@name:      Modules/families/Null/Null_data.py
+@name:      Modules/House/Family/Null/Null_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2014-2020 by D. Brian Kimmel
@@ -9,15 +9,15 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-20'
 
 # Import system type stuff
 
 # Import PyMh files
-from Modules.Core.data_objects import LightData
+from Modules.Core.data_objects import LightControlInformation
 
 
-class NullData(LightData):
+class NullData(LightControlInformation):
     """
     This is known only within the Null family package.
     """

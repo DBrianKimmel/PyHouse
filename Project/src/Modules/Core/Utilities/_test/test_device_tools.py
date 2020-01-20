@@ -20,7 +20,7 @@ from xml.etree import ElementTree as ET
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import LightData, ButtonData, ControllerInformation
+from Modules.Core.data_objects import LightControlInformation, ButtonData, ControllerInformation
 from Modules.Core.test.xml_device import \
     TESTING_DEVICE_FAMILY_INSTEON, \
     TESTING_DEVICE_ROOM_NAME, \
@@ -65,7 +65,7 @@ class SetupMixin(object):
         self.m_api = deviceXML
         self.m_button_obj = ButtonData()
         self.m_controller_obj = ControllerInformation()
-        self.m_light_obj = LightData()
+        self.m_light_obj = LightControlInformation()
 
 
 class A0(unittest.TestCase):
@@ -128,7 +128,7 @@ class B1_Read(SetupMixin, unittest.TestCase):
     def test_01_BaseLight(self):
         """ Read in the xml file and fill in the device info
         """
-        l_obj = LightData()
+        l_obj = LightControlInformation()
         l_base = self.m_api.read_base_device_object_xml(l_obj, self.m_xml.light)
         # print(PrettyFormatAny.form(l_base, 'B1-01-A - Base'))
         # print(PrettyFormatAny.form(l_base.RoomCoords, 'B1-01-B - Base Coords'))
@@ -183,7 +183,7 @@ class C1_Write(SetupMixin, unittest.TestCase):
     def test_01_BaseLight(self):
         """ Read in the xml file and fill in the lights
         """
-        l_obj = LightData()
+        l_obj = LightControlInformation()
         l_base = self.m_api.read_base_device_object_xml(l_obj, self.m_xml.light)
         l_xml = self.m_api.write_base_device_object_xml('Light', l_base)
         # print(PrettyFormatAny.form(l_xml, 'C1-01-A - Base'))

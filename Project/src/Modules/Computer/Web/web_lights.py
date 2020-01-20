@@ -59,11 +59,11 @@ class LightsElement(athena.LiveElement):
             except AttributeError:
                 LOG.error("web_lights - Failed to delete - JSON: {}".format(l_json))
             return
-        l_obj = lighting_lights.LightData()
+        l_obj = lighting_lights.LightControlInformation()
         try:
             l_obj = self.m_pyhouse_obj.House.Lighting.Lights[l_ix]
         except KeyError:
-            l_obj = lighting_lights.LightData()
+            l_obj = lighting_lights.LightControlInformation()
             LOG.warning('Creating a new light {}'.format(l_ix))
         # LOG.debug(PrettyFormatAny.form(l_json, 'json'))
         web_utils.get_base_info(l_obj, l_json)

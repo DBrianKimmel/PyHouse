@@ -2,15 +2,15 @@
 @name:      Modules/Core/Mqtt/mqtt.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Apr 25, 2017
 @license:   MIT License
 @summary:   This is basically the MQTT Api interface that is used by all of pyhouse.
 
 """
 
-__updated__ = '2020-01-09'
-__version_info__ = (19, 11, 26)
+__updated__ = '2020-01-19'
+__version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -23,17 +23,16 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.data_objects import NodeInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
+from Modules.Core.Mqtt import CLIENT_PREFIX, MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation, CONFIG_NAME
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
 from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
-from Modules.Core.Mqtt.__init__ import MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt           ')
 
-CONFIG_NAME = 'mqtt'
 MAX_PROTOCOL_VERSION = 5  # this is the hignest protocol version this package can do
 
 
@@ -127,7 +126,7 @@ class LocalConfig:
         """ Read the mqtt.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.Core.Mqtt.ClientID = 'PyH-Comp-' + platform.node()
+        self.m_pyhouse_obj.Core.Mqtt.ClientID = CLIENT_PREFIX + platform.node()
         self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
         l_yaml = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
@@ -160,7 +159,7 @@ class Api:
     def _add_storage(self):
         # LOG.debug('Adding')
         self.m_pyhouse_obj.Core.Mqtt = MqttInformation()
-        self.m_pyhouse_obj.Core.Mqtt.ClientID = 'PyH-Comp-' + platform.node()
+        self.m_pyhouse_obj.Core.Mqtt.ClientID = CLIENT_PREFIX + platform.node()
         self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
         setattr(self.m_pyhouse_obj.Core, 'MqttApi', self)  # Clear before loading
 

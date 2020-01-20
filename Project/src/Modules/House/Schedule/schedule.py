@@ -2,7 +2,7 @@
 @name:      Modules/House/Schedule/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Schedule events
@@ -38,8 +38,8 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-12-23'
-__version_info__ = (19, 10, 2)
+__updated__ = '2020-01-19'
+__version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -632,7 +632,7 @@ class LocalConfig:
     def load_yaml_config(self):
         """
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Schedules = None
         l_yaml = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
@@ -674,9 +674,10 @@ class Api:
     def LoadConfig(self):
         """ Load the Schedule from the Config info.
         """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Schedules = {}
         l_schedules = self.m_local_config.load_yaml_config()
-        LOG.info('Loaded {} Schedules.'.format(len(self.m_pyhouse_obj.House.Schedules)))
+        # LOG.info('Loaded {} Schedules.'.format(len(self.m_pyhouse_obj.House.Schedules)))
         return l_schedules  # for testing
 
     def Start(self):

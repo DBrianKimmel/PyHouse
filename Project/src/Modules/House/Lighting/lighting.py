@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-20'
 __version_info__ = (19, 12, 20)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,12 +22,11 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
-
+from Modules.House.Lighting import MODULES
 from Modules.House.Lighting.buttons import MqttActions as buttonMqtt
 from Modules.House.Lighting.controllers import MqttActions as controllerMqtt
 from Modules.House.Lighting.lights import MqttActions as lightMqtt
 from Modules.House.Lighting.outlets import MqttActions as outletMqtt
-from Modules.House.Lighting.__init__ import MODULES
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

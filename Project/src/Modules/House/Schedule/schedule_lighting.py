@@ -17,7 +17,7 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files
 from Modules.House.Lighting.utility import lightingUtility
-from Modules.House.Lighting.lights import LightData
+from Modules.House.Lighting.lights import LightControlInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule_lightn')
@@ -64,7 +64,7 @@ class Api():
         l_light_obj = lightingUtility().get_object_type_by_id(l_lighting_objs.Lights, name=l_light_name)
         #
         l_controller_objs = lightingUtility().get_controller_objs_by_family(l_lighting_objs.Controllers, l_light_obj.Family.Name)
-        l_control = LightData()
+        l_control = LightControlInformation()
         l_control.BrightnessPct = p_schedule_obj.Level
         l_control.TransitionTime = p_schedule_obj.Rate
         if len(l_controller_objs) < 1:

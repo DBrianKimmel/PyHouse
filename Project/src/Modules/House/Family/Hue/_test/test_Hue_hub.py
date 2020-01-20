@@ -23,7 +23,7 @@ from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from Modules.Core.data_objects import HouseInformation
 from Modules.Families.Hue import Hue_hub
 from Modules.Families.Hue.Hue_hub import HueHub
-from Modules.Housing.Lighting.lighting_lights import LightData
+from Modules.Housing.Lighting.lighting_lights import LightControlInformation
 
 from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -36,7 +36,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_device = LightData()
+        self.m_device = LightControlInformation()
         self.m_version = '1.4.0'
         self.m_api = deviceXML
 
@@ -61,35 +61,35 @@ class B1_Body(SetupMixin, unittest.TestCase):
     def test_01_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_ctl = LightData()
-        # print(PrettyFormatAny.form(l_ctl, 'B1-01-A - LightData'))
+        l_ctl = LightControlInformation()
+        # print(PrettyFormatAny.form(l_ctl, 'B1-01-A - LightControlInformation'))
         l_res = Hue_hub.generate_light_body_json(l_ctl)
         print(PrettyFormatAny.form(l_res, 'B1-01-B - Json'))
 
     def test_02_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_ctl = LightData()
+        l_ctl = LightControlInformation()
         l_ctl.BrightnessPct = 50
-        # print(PrettyFormatAny.form(l_ctl, 'B1-02-A - LightData'))
+        # print(PrettyFormatAny.form(l_ctl, 'B1-02-A - LightControlInformation'))
         l_res = Hue_hub.generate_light_body_json(l_ctl)
         print(PrettyFormatAny.form(l_res, 'B1-02-B - Json'))
 
     def test_03_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_ctl = LightData()
+        l_ctl = LightControlInformation()
         l_ctl.BrightnessPct = 99
-        # print(PrettyFormatAny.form(l_ctl, 'B1-03-A - LightData'))
+        # print(PrettyFormatAny.form(l_ctl, 'B1-03-A - LightControlInformation'))
         l_res = Hue_hub.generate_light_body_json(l_ctl)
         print(PrettyFormatAny.form(l_res, 'B1-03-B - Json'))
 
     def test_04_Light(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
-        l_ctl = LightData()
+        l_ctl = LightControlInformation()
         l_ctl.BrightnessPct = 100
-        # print(PrettyFormatAny.form(l_ctl, 'B1-04-A - LightData'))
+        # print(PrettyFormatAny.form(l_ctl, 'B1-04-A - LightControlInformation'))
         l_res = Hue_hub.generate_light_body_json(l_ctl)
         print(PrettyFormatAny.form(l_res, 'B1-04-B - Json'))
 

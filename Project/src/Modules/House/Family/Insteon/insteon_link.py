@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2020-01-15'
+__updated__ = '2020-01-20'
 
 #  Import system type stuff
 from typing import Optional
@@ -1044,7 +1044,6 @@ class Api:
     def delete_link(self, p_controller_obj, p_address, p_group, p_flag):
         """ Delete an all link record.
         """
-        #  p_light_obj = LightData()
         p_light_obj = InsteonInformation()
         p_light_obj.Address = convert.dotted_hex2int(p_address)
         p_light_obj.GroupNumber = p_group

@@ -17,8 +17,8 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2020-01-18'
-__version_info__ = (19, 12, 2)
+__updated__ = '2020-01-20'
+__version_info__ = (20, 1, 20)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -36,6 +36,10 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lights         ')
 
 CONFIG_NAME = 'lights'
+
+TEST_YAML = """\
+Lights:
+"""
 
 
 class LightInformation:
@@ -86,7 +90,7 @@ class LightRoomInformation:
         self.Uuid = None  # Not user entered but maintained
 
 
-class LightData(CoreLightingData):
+class LightControlInformation(CoreLightingData):
     """ This is the idealized light info.
     This class contains all the reportable and controllable information a light might have.
 
@@ -94,7 +98,7 @@ class LightData(CoreLightingData):
     """
 
     def __init__(self):
-        super(LightData, self).__init__()
+        super(LightControlInformation, self).__init__()
         self.BrightnessPct = 0  # 0% to 100%
         self.Hue = 0  # 0 to 65535
         self.Saturation = 0  # 0 to 255
@@ -183,6 +187,7 @@ class LocalConfig:
     def _build_yaml(self):
         """
         """
+        return self.m_config.create_yaml('Lights')
 
     def _save_one_light(self, p_light_obj):
         """ Create a Yaml map of all light attributes to save
@@ -191,7 +196,7 @@ class LocalConfig:
         l_ret = p_light_obj.Name
         return l_ret
 
-    def _save_all_lights(self):
+    def _save_all_lights(self, p_yaml):
         """ Lights are list items
 
         @param p_config: is the yaml['Lights'] structure
@@ -201,7 +206,7 @@ class LocalConfig:
         l_dict = {}
         l_lights = self.m_pyhouse_obj.House.Lighting.Lights
         for l_light_obj in l_lights.values():
-            _l_config = self._save_one_light(l_light_obj)
+            l_config = self._save_one_light(l_light_obj)
             try:
                 LOG.debug('Inserting one light')
                 l_dict[l_light_obj.Name] = l_light_obj
@@ -209,13 +214,15 @@ class LocalConfig:
             except:
                 LOG.debug('Create a list of lights')
             # p_config[-1] = l_config
+        LOG.info('Saved {} Light(s)'.format(len(l_dict)))
         return l_dict
 
     def save_yaml_config(self):
         """ Save all the lights in a separate config file.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        _l_data = self._save_all_lights()
+        l_yaml = self._build_yaml()
+        l_data = self._save_all_lights(l_yaml)
         # self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
         # return l_config
 
@@ -233,7 +240,7 @@ class MqttActions:
         """
         ==> pyhouse/<housename>/house/lighting/light/control
         """
-        l_control = LightData()
+        l_control = LightControlInformation()
         l_control.Name = l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
         l_control.RoomName = extract_tools.get_mqtt_field(p_message, 'RoomName')
         l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
@@ -270,7 +277,7 @@ class MqttActions:
             p_msg.LogMessage += 'Light Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Control'))
             LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
         elif l_topic[0] == 'status':
-            # The status is contained in LightData() above.
+            # The status is contained in LightControlInformation() above.
             # p_msg.LogMessage += 'Light Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Status'))
             p_msg.LogMessage += 'Light Status: {}'.format(p_msg.Payload)
             # LOG.debug('MqttLightingLightsDispatch Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))

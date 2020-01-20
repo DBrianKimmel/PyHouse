@@ -15,10 +15,10 @@ __updated__ = '2019-08-01'
 
 # Import PyMh files
 from Modules.Core.data_objects import DeviceInformation
-from Modules.House.Lighting.lights import LightData
+from Modules.House.Lighting.lights import LightControlInformation
 
 
-class HueLightData(LightData):
+class HueLightData(LightControlInformation):
     """
     This is known only within the Hue family package.
     """

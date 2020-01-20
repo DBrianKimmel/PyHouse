@@ -2,14 +2,14 @@
 @name:      Modules/House/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the rooms information for a house.
 
 """
 
-__updated__ = '2019-12-21'
+__updated__ = '2020-01-19'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -255,7 +255,7 @@ class LocalConfig:
         """ Read the Rooms.Yaml file.
         It contains Rooms data for all rooms in the house.
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
+        # LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Rooms = None
         l_yaml = self.m_config.read_config_file(CONFIG_NAME)
         if l_yaml == None:
@@ -314,7 +314,7 @@ class Api:
         LOG.info('Loading Config - Version:{}'.format(__version__))
         l_rooms = self.m_local_config.load_yaml_config()
         self.m_pyhouse_obj.House.Rooms = l_rooms
-        LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
+        # LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
 
     def Start(self):
         pass

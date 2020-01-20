@@ -26,14 +26,14 @@ from Modules.House.Family.family import Api as familyApi
 from Modules.House.Family import family_utils
 from Modules.House.Family.family_utils import FamUtil
 from Modules.Core.Utilities.device_tools import XML as deviceXML
-from Modules.House.Lighting.lighting_lights import LightData
+from Modules.House.Lighting.lighting_lights import LightControlInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
 class SetupMixin(object):
 
     def createLightData(self):
-        l_dev_obj = LightData()
+        l_dev_obj = LightControlInformation()
         l_dev_obj.Name = TESTING_LIGHT_NAME_0
         l_dev_obj.Key = TESTING_LIGHT_KEY_0
         l_dev_obj.Active = TESTING_LIGHT_ACTIVE_0
