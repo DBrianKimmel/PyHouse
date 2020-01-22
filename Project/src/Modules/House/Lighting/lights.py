@@ -196,7 +196,7 @@ class LocalConfig:
         l_ret = p_light_obj.Name
         return l_ret
 
-    def _save_all_lights(self, p_yaml):
+    def _save_all_lights(self, p_config):
         """ Lights are list items
 
         @param p_config: is the yaml['Lights'] structure
@@ -207,6 +207,7 @@ class LocalConfig:
         l_lights = self.m_pyhouse_obj.House.Lighting.Lights
         for l_light_obj in l_lights.values():
             l_config = self._save_one_light(l_light_obj)
+            self.m_config.add_list_entry(p_config, 'Name', l_config)
             try:
                 LOG.debug('Inserting one light')
                 l_dict[l_light_obj.Name] = l_light_obj

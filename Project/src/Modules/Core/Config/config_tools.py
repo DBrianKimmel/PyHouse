@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-01-22'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -177,7 +177,7 @@ class Tools:
     def find_module_list(self, p_modules: List) -> List:
         """ Find python modules (or packages) that have a config file.
         If it has a config file, it will be imported later, otherwise it is not loaded therefore saving memory.
-        @param p_modules: is a list of Module/Package names to search for config files.
+        @param p_configYamlmodules: is a list of Module/Package names to search for config files.
         """
         l_list = []
         LOG.info('Search for config files for: {}'.format(p_modules))
@@ -390,24 +390,54 @@ class SubFields(Tools):
 
 class YamlCreate:
     """ For creating and appending to yaml files.
+
+Lights:
+    - Name: Front Door
+      Room: Outside
+      Family:
+          Name: Insteon
+          Address: 11.11.11
+    - Name: Garage
+      Room: Outside
+      Dimmable: true
+      Family:
+         Name: Insteon
+         Address: 22.22.22
+
+ordereddict(
+    [
+        (
+            'Lights',
+                [
+                    ordereddict(
+                        [('Name', 'Front Door'), ('Room', 'Outside'), ('Family', ordereddict([('Name', 'Insteon'), ('Address', '11.11.11')]))]),
+                    ordereddict([('Name', 'Garage'), ('Room', 'Outside'), ('Dimmable', True), ('Family', ordereddict([('Name', 'Insteon'), ('Address', '22.22.22')]))]
+                    )
+                ]
+        )
+    ]
+)
+
     """
 
-    def create_yaml(self, p_tag: str) -> Any:
+    def create_yaml(self, p_tag: str, p_value=None) -> Any:
         """ create a yaml structure with a nested-map.
 
-        Yaml = ordereddict([('p_tag', None)])
-        p_tag:
-            <empty position>
+        Yaml = ordereddict([('p_tag', p_value)])
+        p_tag: p_value
 
         @param p_tag: is the top level map string
+        @return: ordereddict([('p_tag', None)])
         """
         if p_tag == None:
             LOG.error('Create requires a concrete tag (not "None") "ERROR_TAG" is used as the tag instead !')
             p_tag = 'ERROR_TAG'
-        YAML_STR = p_tag + ':'
+        l_val = p_tag + ':'
+        if p_value != None:
+            l_val += ' ' + p_value
         l_yaml = MyYAML()
         l_yaml.indent(mapping=2, sequence=4, offset=2)
-        l_data = l_yaml.load(YAML_STR)
+        l_data = l_yaml.load(l_val)
         return l_data
 
     def XXXadd_key_value_to_map(self, p_yaml, p_key, _p_value):
@@ -422,7 +452,7 @@ class YamlCreate:
         p_yaml.append(p_key)
         # print('Yaml: {}'.format(p_yaml))
 
-    def XXXadd_dict(self, p_yaml, _p_key, p_add_dict):
+    def add_dict_entry(self, p_yaml, _p_key, p_add_dict):
         """ Add a key,Value pair to a map
         Test:
            Key: Value
@@ -437,19 +467,16 @@ class YamlCreate:
             setattr(p_yaml, l_key, l_val)
         return p_yaml
 
-    def add_list_entry(self, p_yaml, p_key, p_add_obj):
+    def add_list_entry(self, p_yaml, p_key, p_value=None):
         """
         Insert a list entry into the list fragment that is the surrounding yaml.
 
         @param p_yaml_frag: is the list fragment where the addition is to go.
         @param p_add: is the object to add
         """
-        if p_yaml == None:
-            p_yaml = p_add_obj
-        else:
-            l_ix = len(p_yaml) - 2  # This is the Index where the object object needs to be inserted.
-            p_yaml.insert(l_ix, p_key, p_add_obj)
-            # p_yaml[-1] = p_add_obj
+        l_ix = len(p_yaml) - 2  # This is the Index where the object object needs to be inserted.
+        p_yaml.insert(l_ix, p_key, 'Xyz')
+        p_yaml[p_key] = p_value
         return p_yaml
 
     def XXXadd_obj(self, p_yaml, p_key, _p_tag):

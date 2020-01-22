@@ -9,12 +9,12 @@
 
 First we have the basic information about the controller.
 Then we have the Lighting system information.
-Then we have the information specific to the family of the controller (Insteon, USB, Zigbee, etc.).
-Then we have the interface information (Ethernet, USB, Serial, ...).
+Then we have the information specific to the family of the controller (Insteon, Usb, Zigbee, etc.).
+Then we have the interface information (Ethernet, Usb, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2019-12-25'
+__updated__ = '2020-01-21'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 

@@ -1,14 +1,16 @@
-* Name:      PyHouse/Project/src/Modules/Housing/Lighting/Docs/Design
+* Name:      Modules/House/Lighting/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Copyright: (c) 2018-2020 by D. Brian Kimmel
 * Created:   2018-10-16
-* Updated:   2018-10-16
+* Updated:   2020-02-22
 * License:   MIT License
 * Summary:   This is the design documentation for the Lighting Module of PyHouse.
 
 
 # Lighting
+
+Lighting is an oprional component of "House".
 
 Lighting was the first piece of PyHouse.
 

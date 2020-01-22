@@ -13,7 +13,7 @@ The necessary interfaces are discovered when loading the "devices" that are cont
 Controllers, which are attached to the server, communicate with the server via an interface.
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-21'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -62,8 +62,8 @@ def get_device_driver_Api(p_pyhouse_obj, p_interface_obj):
         l_driver = Ethernet_driver.Api(p_pyhouse_obj)
 
     elif l_type == 'usb':
-        from Modules.Core.Drivers.USB import USB_driver
-        l_driver = USB_driver.Api(p_pyhouse_obj)
+        from Modules.Core.Drivers.Usb import Usb_driver
+        l_driver = Usb_driver.Api(p_pyhouse_obj)
 
     else:
         LOG.error('No driver for device: {} with interface type: {}'.format(

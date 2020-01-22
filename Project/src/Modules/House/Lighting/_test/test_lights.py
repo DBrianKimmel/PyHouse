@@ -43,7 +43,7 @@ Lights:
           Name: Insteon
           Address: 33.33.33
     - Name: Wet Bar
-      Comment: This is the PP Wet bar in the livingroom
+      Comment: This is the Pink Poppy Wet bar light in the living room.
       Family:
           Name: Insteon
           Address: 44.44.44
@@ -239,6 +239,7 @@ class D1_Write(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(self.m_lights, 'D1-09-A - Lights'))
         l_config = self.m_config._save_all_lights(l_ret)
         print(PrettyFormatAny.form(l_config, 'D1-09-B - Node'))
+        print(l_config, 'D1-09-C - Node')
 
 
 class Z9_YamlWrite(SetupMixin, unittest.TestCase):

@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2019-12-14'
+__updated__ = '2020-01-21'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -198,7 +198,7 @@ class USBControllerInformation:
     """
 
     def __init__(self):
-        self.InterfaceType = 'USB'
+        self.InterfaceType = 'Usb'
         self.Product = 0
         self.Vendor = 0
 

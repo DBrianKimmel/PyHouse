@@ -1,14 +1,16 @@
-* Name:      PyHouse/Project/src/Modules/Housing/Docs/Design
+* Name:      Modules/House/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2019 by D. Brian Kimmel
+* Copyright: (c) 2018-2020 by D. Brian Kimmel
 * Created:   2018-09-30
-* Updated:   2019-11-03
+* Updated:   2020-01-22
 * License:   MIT License
 * Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
-
 # House
+
+House is one of three manditory modules of PyHouse.
+The others are Core and Computer.
 
 Under the PyHouse banner, a user has one or more houses to automate/control.
 

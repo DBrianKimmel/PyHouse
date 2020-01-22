@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/src/Modules/Drivers/_test/test_USB.py
+@name:      Modules/Core/Drivers/_test/test_Usb.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -11,13 +11,13 @@ Passed all tests - DBK - 2019-01-10
 
 """
 
-__updated__ = '2019-01-10'
+__updated__ = '2020-01-21'
 
 # Import system type stuff
 from twisted.trial import unittest, reporter, runner
 
 # Import PyMh files and modules.
-from Modules.Drivers.USB import test as I_test
+from Modules.Core.Drivers.Usb import _test as I_test
 
 
 class Z_Suite(unittest.TestCase):

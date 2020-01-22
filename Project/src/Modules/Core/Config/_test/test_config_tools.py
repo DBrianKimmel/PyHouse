@@ -11,7 +11,7 @@ Passed all 21 tests - DBK - 2019-12-31
 
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-01-22'
 
 # Import system type stuff
 import os
@@ -23,7 +23,8 @@ from ruamel.yaml import comments
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Config import config_tools
-from Modules.Core.Config.config_tools import Api as configApi, Yaml as configYaml, Tools as configTools
+from Modules.Core.Config.config_tools import \
+    Api as configApi, Yaml as configYaml, Tools as configTools
 from Modules.House.Lighting.lights import LightInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -47,6 +48,50 @@ ALLOWED_FIELDS = [
     ]
 COMPOUND_FIELDS = [
     ]
+
+TEST_YAML_LIGHTS = """\
+Lights:
+    - Name: Front Door
+      Room: Outside
+      Family:
+          Name: Insteon
+          Address: 11.11.11
+    - Name: Garage
+      Room: Outside
+      Dimmable: true
+      Family:
+         Name: Insteon
+         Address: 22.22.22
+"""
+
+TEST_YAML_CONTROLLERS = """\
+Controllers:
+   # A list of all controllers follows
+
+   - Name: TestPlm
+     Comment: Portable, Goes where I do.
+     Family:
+        Name: insteon
+        Type: Plm
+        Address: 44.FF.11
+     Interface:
+        Type: Serial
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB0
+        Host: Laptop-01
+
+   - Name: LaundryPlm
+     Comment: Laundry Room Computers
+     Family:
+        Name: insteon
+        Type: Plm
+        Address: 44.EE.22
+     Interface:
+        Type: Serial
+        Baud: 19200,8,N,1
+        Port: /dev/ttyUSB0
+        Host: pi-01
+"""
 
 
 class TestInfo:
@@ -102,6 +147,22 @@ class A1_Config(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         l_config = self.m_pyhouse_obj._Config
         print(PrettyFormatAny.form(l_config, 'A1-01-B - _Config'))
+
+
+class A2_Load(SetupMixin, unittest.TestCase):
+    """
+    Be sure the infrastructure for testing is set up properly.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+
+    def test_01_Light(self):
+        """ Be sure pyhouse_obj._Config is properly set up.
+        """
+        l_yaml = YAML()
+        l_config = l_yaml.load(TEST_YAML_LIGHTS)
+        print('A2-01-A => {}'.format(l_config))
 
 
 class B1_Tools(SetupMixin, unittest.TestCase):
@@ -414,7 +475,40 @@ class C5_FindConfig(SetupMixin, unittest.TestCase):
         """
 
 
-class D1_Extract(SetupMixin, unittest.TestCase):
+class D1_Create(SetupMixin, unittest.TestCase):
+    """
+    """
+    test_str = """\
+Host:
+    Name: pandora-ct
+    Port: 12345
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_config = configYaml(self.m_pyhouse_obj)
+        # self.m_node = configYaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
+
+    def test_01_Base(self):
+        """ Test building the base config file data
+        """
+        # print('D1-01')
+        l_ret = self.m_config.create_yaml('Lights')
+        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - base'))
+        print(l_ret, 'D1-01-A - base')
+        self.assertEqual(l_ret['Lights'], None)
+
+    def test_02_Add(self):
+        """ Test the write for proper Base elements
+        """
+        l_ret = self.m_config.create_yaml('Lights')
+        print(PrettyFormatAny.form(l_ret, 'D1-02-A - base'))
+        l_ret = self.m_config.add_list_entry(l_ret, 'Name', 'XYZ-01')
+        print(l_ret, 'D1-02-B - Name')
+        print(PrettyFormatAny.form(l_ret, 'D1-02-C - Name'))
+
+
+class D9_Write(SetupMixin, unittest.TestCase):
     """
     """
     test_str = """\
@@ -426,18 +520,6 @@ Host:
     def setUp(self):
         SetupMixin.setUp(self)
         # self.m_node = configYaml(self.m_pyhouse_obj).read_config_file(self.m_filename)
-
-    def test_01_Host(self):
-        """
-        """
-        # print('D1-01')
-        l_yaml = YAML()
-        l_data = l_yaml.load(self.test_str)
-        # print('D1-01-A - {}'.format(l_data))
-        l_ret = self.m_api.extract_host_group(l_data['Host'])
-        # print(PrettyFormatAny.form(l_ret, 'D1-01-B - Host'))
-        self.assertEqual(l_ret.Name, 'pandora-ct')
-        self.assertEqual(l_ret.Port, 12345)
 
 
 class ClsE1:
@@ -455,7 +537,7 @@ xYz: the End                # for now
 """
 
 
-class E1_Extract(SetupMixin, unittest.TestCase):
+class E11_Extract(SetupMixin, unittest.TestCase):
     """ Text extraction routine
     """
 
@@ -560,6 +642,19 @@ class G1_Updated(SetupMixin, unittest.TestCase):
         # print('G1-02-C - {}'.format(l_ret))
 
     def test_99(self):
+        """
+        """
+
+
+class Z99(SetupMixin, unittest.TestCase):
+    """
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_yaml = YAML(typ='rt')
+
+    def test_Ignore(self):
         """
         """
 

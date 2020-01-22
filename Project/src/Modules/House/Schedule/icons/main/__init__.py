@@ -28,7 +28,7 @@ Each house must be unique and its name is used to qualify lower level rooms
 and devices.
 
 Each house will have a schedule that is only for that house.
-Each house will need at least a small bare bone system to control all the serial, USB,
+Each house will need at least a small bare bone system to control all the Serial, Usb,
 and Ethernet devices used to control the various devices in the house.
 
 The next level is the room.  Rooms may be duplicated between houses but must
