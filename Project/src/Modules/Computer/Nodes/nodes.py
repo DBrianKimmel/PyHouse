@@ -2,7 +2,7 @@
 @name:      Modules/Computer/Nodes/nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2030 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Mar 6, 2014
 @summary:   This module does everything for nodes.
@@ -15,8 +15,8 @@ Finally, the nodes are synced between each other.
 
 """
 
-__updated__ = '2019-12-02'
-__version_info__ = (18, 10, 0)
+__updated__ = '2020-01-25'
+__version_info__ = (20, 1, 24)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -48,27 +48,8 @@ class MqttActions:
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         p_msg.LogMessage += '\tNodes:\n'
         l_topic = l_topic[0].lower()
-        if l_topic == 'browser':
-            p_msg.LogMessage += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
-        #  computer/ip
-        elif l_topic == 'ip':
-            l_ip = extract_tools.get_mqtt_field(p_msg.Payload, 'ExternalIPv4Address')
-            p_msg.LogMessage += '\tIPv4: {}'.format(l_ip)
-        #  computer/startup
-        elif l_topic == 'startup':
-            self._extract_node(p_msg.Payload)
-            p_msg.LogMessage += '\tStartup {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
-            if self.m_myname == self.m_sender:
-                p_msg.LogMessage += '\tMy own startup of PyHouse\n'
-            else:
-                p_msg.LogMessage += '\tAnother computer started up: {}'.format(self.m_sender)
-        #  computer/shutdown
-        elif l_topic == 'shutdown':
-            del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
-            p_msg.LogMessage += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg'))
-        #
-        elif l_topic == 'sync':
-            p_msg.LogMessage += syncApi(self.m_pyhouse_obj).DecodeMqttMessage(p_msg.Topic[1:], p_msg.Payload)
+        if l_topic == 'sync':
+            syncApi(self.m_pyhouse_obj).DecodeMqttMessage(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg'))
             LOG.warning('Unknown Node sub-topic: {}\n\tMsg: {}'.format(l_topic, p_msg.Payload))
@@ -92,10 +73,15 @@ class Api():
     m_pyhouse_obj = None
 
     def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local = localApi(p_pyhouse_obj)
         self.m_sync = syncApi(p_pyhouse_obj)
-        self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info('Initialized - Version:{}'.format(__version__))
+
+    def _add_storage(self):
+        """
+        """
 
     def LoadConfig(self):
         """ Load the Node xml info.

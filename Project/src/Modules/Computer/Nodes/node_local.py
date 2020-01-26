@@ -2,7 +2,7 @@
 @name:      Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019  by D. Brian Kimmel
+@copyright: (c) 2014-2020  by D. Brian Kimmel
 @note:      Created on Apr 2, 2014
 @license:   MIT License
 @summary:   Gather this node's information.
@@ -19,7 +19,7 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2020-01-25'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,8 +33,9 @@ import pyudev
 import subprocess
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
+from Modules.Core.data_objects import NodeInterfaceData
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
+from Modules.Computer.Nodes import NodeInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
@@ -55,14 +56,6 @@ NODE_NOT_UNIX = 0x0020  # Windows - not Linux
 NODE_TUNNEL = 0x0040  # IPv6 Tunnel
 NODE_IR = 0x0080  # Infrared receiver and optional transmitter
 NODE_MQTT_BROKER = 0x0100
-
-
-class InterfaceData():
-    """
-    """
-
-    def __init__(self):
-        self.InterfaceName = None
 
 
 class Devices():
@@ -313,7 +306,7 @@ class HandleNodeType(object):
         pass
 
 
-class Util(object):
+class Util:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -449,7 +442,7 @@ class Api(Util):
         self.m_pyhouse_obj = p_pyhouse_obj
         # LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the Node xml info.
         """
         pass
@@ -461,8 +454,8 @@ class Api(Util):
         LOG.info('Adding node  {} {}'.format(l_local.Name, l_uuid))
         self.init_node_type(self.m_pyhouse_obj)
 
-    def SaveXml(self, p_xml):
-        return p_xml
+    def SaveConfig(self):
+        pass
 
     def Stop(self):
         LOG.info("Stopped.")

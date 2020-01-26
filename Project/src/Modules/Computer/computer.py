@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2020-01-03'
+__updated__ = '2020-01-25'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -47,7 +47,7 @@ class ComputerInformation:
         self.Bridges = {}  # BridgeInformation() in Modules.Computer.Bridges.bridges.py
         self.Communication = {}  # CommunicationInformation()
         self.Internet = {}  # InternetInformation()
-        self.Nodes = {}  # NodeInformation()
+        self.Nodes = {}  # Node Information()
         self.Weather = {}  # WeatherInformation()
         self.Web = {}  # WebInformation()
 
@@ -73,32 +73,14 @@ class MqttActions:
         """ Decode the computer specific portions of the message and append them to the log string.
         @param p_message: is the payload that is JSON
         """
-        l_topic = p_msg.UnprocessedTopic
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         p_msg.LogMessage += '\tComputer:\n'
-        if l_topic[0] == 'browser':
-            p_msg.LogMessage += '\tBrowser: Message {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
-        elif l_topic[0] == 'node' or l_topic[0] == 'nodes':
-            p_msg.LogMessage += nodesMqtt(self.m_pyhouse_obj).decode(l_topic[1:], p_msg.Payload, p_msg.LogMessage)
-        #  computer/ip
-        elif l_topic[1] == 'ip':
-            l_ip = extract_tools.get_mqtt_field(p_msg.Payload, 'ExternalIPv4Address')
-            p_msg.LogMessage += '\tIPv4: {}'.format(l_ip)
-        #  computer/startup
-        elif l_topic[1] == 'startup':
-            self._extract_node(p_msg.Payload)
-            p_msg.LogMessage += '\tStartup {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
-            if self.m_myname == self.m_sender:
-                p_msg.LogMessage += '\tMy own startup of PyHouse\n'
-            else:
-                p_msg.LogMessage += '\tAnother computer started up: {}'.format(self.m_sender)
-        #  computer/shutdown
-        elif l_topic[1] == 'shutdown':
-            del self.m_pyhouse_obj.Computer.Nodes[self.m_name]
-            p_msg.LogMessage += '\tSelf Shutdown {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
-        #  computer/***
+        l_topic = p_msg.UnprocessedTopic[0].lower()
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic == 'node':
+            nodesMqtt(self.m_pyhouse_obj).decode(p_msg)
         else:
-            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg', 160))
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Computer msg'))
+            LOG.error(p_msg.LogMessage)
 
 
 class Utility:
@@ -168,7 +150,7 @@ class Api:
 
     m_config_tools = None
     m_local_config = None
-    m_modules = {}
+    m_found_modules_apis = {}
     m_module_list = None
     m_pyhouse_obj = None
 
@@ -182,8 +164,8 @@ class Api:
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         #
         l_path = 'Modules.Computer.'
-        l_modules = self.m_config_tools.find_module_list(MODULES)
-        self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
+        l_modules_list = self.m_config_tools.find_module_list(MODULES)
+        self.m_found_modules_apis = self.m_config_tools.import_module_list(l_modules_list, l_path)
         #
         LOG.info("Initialized - Version:{}".format(__version__))
 
@@ -202,7 +184,7 @@ class Api:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_local_config.load_yaml_config()
-        for l_module in self.m_modules.values():
+        for l_module in self.m_found_modules_apis.values():
             l_module.LoadConfig()
         LOG.info('Loaded all computer Configs.')
 
@@ -210,7 +192,7 @@ class Api:
         """
         Start processing
         """
-        for l_module in self.m_modules.values():
+        for l_module in self.m_found_modules_apis.values():
             l_module.Start()
         LOG.info('Started.')
 
@@ -218,7 +200,7 @@ class Api:
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        for l_module in self.m_modules.values():
+        for l_module in self.m_found_modules_apis.values():
             l_module.SaveConfig()
         LOG.info("Saved Computer Config.")
 
@@ -226,7 +208,7 @@ class Api:
         """
         Append the house XML to the passed in xlm tree.
         """
-        for l_module in self.m_modules.values():
+        for l_module in self.m_found_modules_apis.values():
             l_module.Stop()
         LOG.info("Stopped.")
 

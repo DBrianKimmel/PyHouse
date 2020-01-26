@@ -1,5 +1,5 @@
 """
-@name:      Modules/Housing/Irrigation/RainBird/rainbird.py
+@name:      Modules/House/Irrigation/RainBird/rainbird.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2020 by D. Brian Kimmel
@@ -9,19 +9,20 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-25'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import math
-import http.client
 import time
+import requests
 from Crypto.Hash import SHA256
 from Crypto.Cipher import AES
 from Crypto import Random
 
 #  Import PyMh files and modules.
+from Modules.Core.Config import config_tools
 from Modules.Core.Utilities import json_tools
 
 from Modules.Core import logging_pyh as Logger
@@ -180,9 +181,9 @@ class RainbirdController:
             "Connection": "keep-alive",
             "Content-Type": "application/octet-stream"}
             resp = None
-            for x in range(0, self.retry):
+            for _x in range(0, self.retry):
                 try:
-                    h = http.client.HTTPConnection(self.rainbirdServer, 80, timeout=20)
+                    h = requests.get(self.rainbirdServer, 80, timeout=20)
                     h.request("POST", "/stick", senddata, head)
                     resp = h.getresponse()
                 except:
@@ -256,48 +257,49 @@ class RainbirdEncryption:
         encrypteddata = eas_encryptor.encrypt(c)
         return b2 + iv + encrypteddata;
 
-"""
-logging.basicConfig(filename='pypython.log',level=logging.DEBUG)
 
-logger = logging.getLogger(__name__)
-
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-logger.addHandler(ch)
-
-controller = RainbirdController()
-controller.setConfig("####IP####","####PASS####")
-controller.startIrrigation(4,5)
-time.sleep(4)
-controller.stopIrrigation()
-
-controller.currentRainSensorState()
-"""
-
-
-class Connect():
+class Connect:
     """
     """
 
 
-class Api():
+class LocalConfig:
     """
     """
+    m_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = config_tools.Api(p_pyhouse_obj)
+
+    def load_yaml_config(self):
+        """ Read the house.yaml file.
+         """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
+
+
+class Api:
+    """
+    controller = RainbirdController()
+    controller.setConfig("####IP####","####PASS####")
+    controller.startIrrigation(4,5)
+    time.sleep(4)
+    controller.stopIrrigation()
+    controller.currentRainSensorState()
+   """
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, _p_pyhouse_obj):
+    def LoadConfig(self):
         LOG.info("Loading XML.")
 
     def Start(self):
         LOG.info("Starting.")
 
-    def SaveXml(self, _p_xml):
+    def SaveConfig(self):
         LOG.info("Saving XML.")
 
     def Stop(self):

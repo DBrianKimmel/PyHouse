@@ -9,18 +9,16 @@
 
 """
 
-__updated__ = '2020-01-19'
+__updated__ = '2020-01-25'
 __version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-import copy
 import datetime
 import platform
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.data_objects import NodeInformation
 from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Mqtt import CLIENT_PREFIX, MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation, CONFIG_NAME
@@ -230,19 +228,18 @@ class Api:
         @return: a message to send to the log detailing the Mqtt message received.
         @attention: Has many side affects
         """
-        l_topic = p_msg.UnprocessedTopic[0]
+        l_topic = p_msg.UnprocessedTopic[0]  # Must start with pyhouse
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         if l_topic != 'pyhouse':
             LOG.error('Invalid topic string: "{}"'.format(p_msg.Topic))
             return
-        #
-        l_topic = p_msg.UnprocessedTopic[0]
+        l_topic = p_msg.UnprocessedTopic[0]  # Next must be this house name
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         if l_topic != self.m_pyhouse_obj.House.Name:
             LOG.error('We got a message for some other house: "{}"'.format(p_msg.UnprocessedTopic[0]))
             return
         #
-        l_topic = p_msg.UnprocessedTopic[0]
+        l_topic = p_msg.UnprocessedTopic[0]  # Next
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         # LOG.debug('Dispatch:\n\tTopic List: {}'.format(p_msg.UnprocessedTopic))
         p_msg.LogMessage = 'Dispatch\n\tTopic: {}'.format(p_msg.UnprocessedTopic)
@@ -255,7 +252,6 @@ class Api:
             l_sender = get_required_mqtt_field(p_msg.Payload, 'Sender')
             p_msg.LogMessage += '\n\tSender: {}\n'.format(l_sender)
         # Branch on the <division> portion of the topic
-        # p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         if l_topic == 'computer':
             computerMqtt(self.m_pyhouse_obj).decode(p_msg)
         elif l_topic == 'house':
@@ -266,16 +262,5 @@ class Api:
                         '\tMessage: {};\n'.format(p_msg.Payload)
             LOG.warning(p_msg.LogMessage)
         # LOG.info(p_msg.LogMessage)
-
-    def doPyHouseLogin(self, p_client, p_pyhouse_obj):
-        """ Login to PyHouse via MQTT
-        """
-        self.m_client = p_client
-        l_name = p_pyhouse_obj.Computer.Name
-        try:
-            l_node = copy.deepcopy(p_pyhouse_obj.Computer.Nodes[l_name])
-        except (KeyError, TypeError):
-            l_node = NodeInformation()
-        l_node.NodeInterfaces = {}
 
 # ## END DBK

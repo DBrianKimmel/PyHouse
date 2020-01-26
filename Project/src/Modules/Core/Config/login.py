@@ -2,7 +2,7 @@
 @name:      Modules/House/Security/login.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @note:      Created on Jul 23, 2019
 @license:   MIT License
 @summary:   Handle logging in.

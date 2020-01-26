@@ -17,12 +17,12 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-01-25'
 __version_info__ = (20, 1, 20)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from typing import Optional, Union
+from typing import Union
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -48,12 +48,12 @@ class LightInformation:
     yaml_tag = u'!light'
 
     def __init__(self, Name=None) -> None:
-        self.Name: Optional[str] = Name
-        self.Comment: Optional[str] = None
+        self.Name: Union[str, None] = Name
+        self.Comment: Union[str, None] = None
         self.DeviceType: str = 'Lighting'
         self.DeviceSubType: str = 'Light'
-        self.Family: Optional[LightFamilyInformation] = None
-        self.Room: Optional[LightRoomInformation] = None
+        self.Family: Union[LightFamilyInformation, None] = None
+        self.Room: Union[LightRoomInformation, None] = None
 
     def __repr__(self):
         """
@@ -174,6 +174,7 @@ class LocalConfig:
         if l_yaml == None:
             LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
+
         try:
             l_yaml = l_yaml['Lights']
         except:
@@ -223,7 +224,7 @@ class LocalConfig:
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
         l_yaml = self._build_yaml()
-        l_data = self._save_all_lights(l_yaml)
+        _l_data = self._save_all_lights(l_yaml)
         # self.m_config.write_config(CONFIG_NAME, l_data, addnew=True)
         # return l_config
 

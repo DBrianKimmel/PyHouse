@@ -7,18 +7,18 @@
 @note:      Created on Jul 15, 2014
 @Summary:
 
-Passed all 21 tests - DBK - 2019-12-31
+Passed all 24 tests - DBK - 2020-01-22
 
 """
 
-__updated__ = '2020-01-22'
+__updated__ = '2020-01-23'
 
 # Import system type stuff
 import os
 from _collections import OrderedDict
 from twisted.trial import unittest
 from ruamel.yaml import YAML
-from ruamel.yaml import comments
+# from ruamel.yaml import comments
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
@@ -71,6 +71,8 @@ Controllers:
    - Name: TestPlm
      Comment: Portable, Goes where I do.
      Family:
+
+
         Name: insteon
         Type: Plm
         Address: 44.FF.11
@@ -146,7 +148,8 @@ class A1_Config(SetupMixin, unittest.TestCase):
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         l_config = self.m_pyhouse_obj._Config
-        print(PrettyFormatAny.form(l_config, 'A1-01-B - _Config'))
+        # print(PrettyFormatAny.form(l_config, 'A1-01-B - _Config'))
+        self.assertIsNone(l_config)
 
 
 class A2_Load(SetupMixin, unittest.TestCase):
@@ -158,34 +161,35 @@ class A2_Load(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_01_Light(self):
-        """ Be sure pyhouse_obj._Config is properly set up.
+        """ Be sure
         """
         l_yaml = YAML()
         l_config = l_yaml.load(TEST_YAML_LIGHTS)
         print('A2-01-A => {}'.format(l_config))
+        self.assertEqual(l_config['Lights'][0]['Name'], 'Front Door')
 
 
-class B1_Tools(SetupMixin, unittest.TestCase):
+class B1_FileLookup(SetupMixin, unittest.TestCase):
     """
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_config = config_tools.Yaml(self.m_pyhouse_obj)
+        self.m_config = config_tools.FileLookup()
 
     def test_01_ConfigDir(self):
         """ Test getting the config directory
         """
-        l_dir = self.m_config._get_config_dir()
+        l_dir = self.m_config._lookup_config_dir()
         # print('B1-01-A - ConfigDir: {}'.format(l_dir))
         self.assertIsNotNone(l_dir)
 
     def test_02_FindFile(self):
         """
         """
-        l_dir = self.m_tools._get_config_dir()
+        l_dir = self.m_config._lookup_config_dir()
         print('B1-02-A - Dir: "{}"'.format(l_dir))
-        l_file = self.m_tools._find_file('house.yaml', l_dir)
+        l_file = self.m_config._search_for_config_file('house.yaml', l_dir)
         print('B1-02-B - Configfile: {}'.format(l_file))
         l_path = os.path.split(l_file)
         print('B1-02-B - Path: {}'.format(l_path))
@@ -194,7 +198,7 @@ class B1_Tools(SetupMixin, unittest.TestCase):
     def Xtest_03_ConfigFile(self):
         """
         """
-        l_dir = self.m_config._get_config_dir()
+        l_dir = self.m_config._lookup_config_dir()
         l_file = self.m_config._find_file('Yaml/test.yaml', l_dir)
         print('B1-03-A - Configfile: {}'.format(l_file))
 
@@ -275,9 +279,9 @@ class B8_YamlLoad(SetupMixin, unittest.TestCase):
         _x = 1
 
 
-class C1_YamlFind(SetupMixin, unittest.TestCase):
+class C1_FileLookup(SetupMixin, unittest.TestCase):
     """
-    This section will _test various Yaml functions
+    This section will _test various FileLookup functions
     """
 
     def setUp(self):
@@ -569,13 +573,6 @@ class F1_Tools(SetupMixin, unittest.TestCase):
         print('F1-00')
         pass
 
-    def test_01_FindFile(self):
-        """
-        """
-        l_ret = self.m_tools._find_file('pyhouse.yaml', '/etc/pyhouse')
-        # print('F1-01-A ', l_ret)
-        self.assertEqual(l_ret, '/etc/pyhouse/pyhouse.yaml')
-
     def test_02_FindConfig(self):
         """
         """
@@ -629,7 +626,7 @@ class G1_Updated(SetupMixin, unittest.TestCase):
         l_contents = self.m_yaml.load(TEST_NO_COMMENT)
         print(PrettyFormatAny.form(l_contents, 'G1-01-A - Yaml'))
         # print('G1-01-Dmp\n{}'.format(self.m_tools.yaml_dump_struct(l_contents)))
-        l_ret = configYaml(self.m_pyhouse_obj).add_updated_comment(l_contents)
+        _l_ret = configYaml(self.m_pyhouse_obj).add_updated_comment(l_contents)
         # print('G1-01-C - {}'.format(l_ret))
 
     def test_02_Chg(self):
@@ -638,7 +635,7 @@ class G1_Updated(SetupMixin, unittest.TestCase):
         l_contents = self.m_yaml.load(TEST_WITH_COMMENTS)
         print(PrettyFormatAny.form(l_contents, 'G1-02-A - Yaml'))
         # print('G1-02-Dmp\n{}'.format(self.m_tools.yaml_dump_struct(l_contents)))
-        l_ret = configYaml(self.m_pyhouse_obj).add_updated_comment(l_contents)
+        _l_ret = configYaml(self.m_pyhouse_obj).add_updated_comment(l_contents)
         # print('G1-02-C - {}'.format(l_ret))
 
     def test_99(self):

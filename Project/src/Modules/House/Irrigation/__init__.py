@@ -14,11 +14,26 @@ System Types:
     Single Zone.  This has a valve to turn the system on or off.
 """
 
-__updated__ = '2018-02-10'
+__updated__ = '2020-01-25'
 
-__version_info__ = (1, 6, 1)
+__version_info__ = (20, 1, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
 VALID_IRRIGATION_TYPE = ['Multi', 'Single']
+
+MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
+    'RainBird'
+    ]
+
+
+class IrrigationInformation:
+    """ Info about any/all irrigation systems for a house.
+
+    ==> PyHouse.House.Irrigation.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.Name = None
+        self.Systems = {}  # IrrigationSystemData()
 
 # ## END DBK

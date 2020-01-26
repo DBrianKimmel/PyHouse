@@ -14,7 +14,7 @@ Specific data may be loaded into some attributes for unit testing.
 
 """
 
-__updated__ = '2020-01-21'
+__updated__ = '2020-01-24'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -341,28 +341,6 @@ class LoginData(BaseUUIDObject):
         self.LoginRole = 'None'
         self.IsLoggedIn = False
         self.ServerState = None
-
-
-class NodeInformation:
-    """ Information about a single node.
-    Name is the Node's HostName
-    The interface info is only for the local node.
-
-    ==> PyHouse.Computer.Nodes[x].xxx - as in the def below.
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None
-        self.ConnectionAddr_IPv4 = None
-        self.ConnectionAddr_IPv6 = None
-        self.ControllerTypes = []  # A list of devce controller types attached to this node
-        self.ControllerCount = 0  # Number of USB devce controllers attached
-        self.Controllers = {}
-        self.MasterNode = None
-        self.NodeId = None
-        self.NodeRole = None
-        self.NodeInterfaces = {}  # NodeInterfaceData()
 
 
 class NodeControllerInformation(BaseUUIDObject):

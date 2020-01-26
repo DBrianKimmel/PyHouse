@@ -2,14 +2,16 @@
 @name:      Modules/Core/Config/config_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jul 15, 2014
 @Summary:   This handles config files.
 
+mypy  Modules/Core/Config/config_tools.py
+
 """
 
-__updated__ = '2020-01-22'
+__updated__ = '2020-01-25'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,7 +19,7 @@ __version__ = '.'.join(map(str, __version_info__))
 import os
 import datetime
 import importlib
-from typing import Any, List, Optional, Union
+from typing import Any, List, Union, Dict
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap
@@ -54,8 +56,8 @@ class ConfigFileInformation:
     """
 
     def __init__(self) -> None:
-        self.Name: Optional[str] = None  # LowerCase filemane without .yaml
-        self.Path: Optional[str] = None  # Full path to file
+        self.Name: Union[str, None] = None  # LowerCase filemane without .yaml
+        self.Path: Union[str, None] = None  # Full path to file
 
 
 class RoomLocationInformation:
@@ -96,23 +98,27 @@ yaml = MyYAML()  # or typ='safe'/'unsafe' etc
 cm = CommentedMap()
 
 
-class Tools:
+class FileLookup:
+    """ Get the absolute path of a config file.
     """
-    """
 
-    m_pyhouse_obj = None
+    def _lookup_config_dir(self) -> str:
+        """ Find the config dir.
 
-    def __init__(self, p_pyhouse_obj) -> None:
-        LOG.debug('Init')
-        self.m_pyhouse_obj = p_pyhouse_obj
+        Future enhancement is to allow a heirarchy of possible config directories.
+        The ultimate top level location is '/etc/pyhouse'.
 
-    def _get_config_dir(self) -> str:
-        """
+        /etc/pyhouse
+        ~/.pyhouse
+        ./.pyhouse
+
+        This is all that is implemented as it is sutible for the Raspberry Pi as we will surely have root access.
+
         @return: The configuration Directory ('/etc/pyhouse' is the default)
         """
         return '/etc/pyhouse'
 
-    def _find_file(self, p_name: str, p_dir: str) -> Union[None, str]:
+    def _search_for_config_file(self, p_name: str, p_dir: str) -> Union[None, str]:
         """
         @param p_name: is the file to find
         @param p_dir: is the dir tree to search for the file
@@ -134,8 +140,20 @@ class Tools:
         """
         # LOG.debug('Finding Config file:"{}"'.format(p_name))
         l_filename = p_name + CONFIG_SUFFIX
-        l_ret = self._find_file(l_filename, self._get_config_dir())
+        l_dir = self._lookup_config_dir()
+        l_ret = self._search_for_config_file(l_filename, l_dir)
         return l_ret
+
+
+class Tools(FileLookup):
+    """
+    """
+
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj) -> None:
+        LOG.debug('Init')
+        self.m_pyhouse_obj = p_pyhouse_obj
 
     def get_modules_api(self, p_module_list, p_path):
         """ import a list of modules all within the same path
@@ -230,13 +248,14 @@ class Tools:
         # LOG.debug('Imported: {}'.format(l_ret))
         return l_api
 
-    def import_module_list(self, p_modules: List, p_module_path: str):
+    def import_module_list(self, p_modules: List, p_module_path: str) -> dict:
         """
         This is seperate from find_module_list because sometimes extra modules have to be imported but have no config file.
 
         @param p_module_path: the place to find the modules - e.g. 'Modules.House'
+        @return: a dict key=module_name, value=pointer to module Api class.
         """
-        l_modules = {}
+        l_modules: dict = {}
         for l_part in p_modules:
             l_path = p_module_path
             if l_path.endswith('.'):
@@ -277,7 +296,7 @@ class Tools:
         elif isinstance(p_yaml, list):
             l_ret += '-List- {}\n'.format(type(p_yaml))
             if hasattr(p_yaml, 'ca'):
-                l_ret += '-Attr:ca- {}\n'.format(p_yaml.ca)
+                l_ret += '-Attr\:ca- {}\n'.format(p_yaml.ca)
                 for _idx, l_yaml in enumerate(p_yaml):
                     self.yaml_dump_struct(l_yaml)
             else:
@@ -543,7 +562,6 @@ class Yaml(YamlRead, YamlWrite, YamlCreate, Tools):
 
         @return: a ConfigFileInformation() filled in.
         """
-        # LOG.debug('Progress')
         l_filename = p_filename.lower()
         l_node = ConfigFileInformation()
         l_node.Name = l_filename
@@ -623,7 +641,7 @@ class Api(SubFields, Yaml):
         @param  p_filename: is the name of the config file to read (without .yaml)
         @return: the yaml file string or None if no such config file
         """
-        l_ret = self.m_yaml._read_yaml(p_filename.lower())
+        l_ret = self.m_yaml._read_yaml(p_filename)
         # LOG.debug(PrettyFormatAny.form(l_ret, 'Config'))
         return l_ret
 

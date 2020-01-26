@@ -2,7 +2,7 @@
 @name:       Modules/Computer/Nodes/_test/test_nodes_sync.py
 @author:     D. Brian Kimmel
 @contact:    d.briankimmel@gmail.com
-@copyright:  2016-2019 by D. Brian Kimmel
+@copyright:  2016-2020 by D. Brian Kimmel
 @date:       Created on Jun 2, 2016
 @licencse:   MIT License
 @summary:
@@ -11,15 +11,15 @@ Passed all 8 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-09-16'
+__updated__ = '2020-01-24'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
+from Modules.Core.data_objects import NodeInterfaceData
+from Modules.Computer.Nodes import NodeInformation
 from Modules.Computer.Nodes.node_sync import Util
 from Modules.Core.Utilities import json_tools
 

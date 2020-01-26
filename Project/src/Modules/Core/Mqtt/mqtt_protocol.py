@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2020-01-19'
+__updated__ = '2020-01-24'
 __version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -708,7 +708,6 @@ class MQTTClient(MQTTProtocol):
         Subscribe Ack message
         """
         # LOG.debug('Received Suback from MQTT Broker "{}"'.format(self.m_broker.Name))
-        # self.m_pyhouse_obj.Core.Mqtt.doPyHouseLogin(self, self.m_pyhouse_obj)
 
     def pingrespReceived(self):
         """ Override

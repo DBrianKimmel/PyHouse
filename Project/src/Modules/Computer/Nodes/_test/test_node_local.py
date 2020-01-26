@@ -2,7 +2,7 @@
 @name:      Modules/Computer/Nodes/_test/test_node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 29, 2014
 @summary:   This module is for testing local node data.
@@ -11,7 +11,7 @@ Passed all 19 tests - DBK - 2019-01-19
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2020-01-24'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,8 @@ from netifaces import *
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
+from Modules.Core.data_objects import NodeInterfaceData
+from Modules.Computer.Nodes import NodeInformation
 from Modules.Computer.Nodes.node_local import \
     Interfaces, \
     Api as localApi, \

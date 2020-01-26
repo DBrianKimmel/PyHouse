@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2020-01-21'
+__updated__ = '2020-01-26'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -219,7 +219,7 @@ class SerialApi:
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
-                    l_port,
+                    l_port,serial
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
             # p_controller_obj.Interface._DriverApi = self

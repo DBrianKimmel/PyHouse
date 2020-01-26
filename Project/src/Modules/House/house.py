@@ -2,7 +2,7 @@
 @name:      Modules/House/house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle all of the information for a house.
@@ -11,12 +11,12 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2019-12-23'
-__version_info__ = (19, 10, 1)
+__updated__ = '2020-01-25'
+__version_info__ = (20, 1, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-from typing import Optional, List
+# from typing import Union
 
 #  Import PyMh files
 from Modules.Core.Config import config_tools
@@ -66,8 +66,8 @@ class HouseInformation:
     """
 
     def __init__(self):
-        self.Name = None
-        self.Comment = None
+        self.Name: Union[str, None] = None
+        self.Comment: str = ''
         self.Module = {}  # {modulename: Api}
 
 
@@ -170,11 +170,12 @@ class LocalConfig:
 class Api:
     """
     """
+
     m_config_tools = None
     m_local_config = None
     m_pyhouse_obj = None
     m_parts = {}
-    m_modules = {}
+    m_modules_apis: dict = {}
 
     def __init__(self, p_pyhouse_obj):
         """ **NoReactor**
@@ -196,7 +197,7 @@ class Api:
         l_path = 'Modules.House.'
         l_modules = self.m_config_tools.find_module_list(MODULES)
         l_modules.append('Family')
-        self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
+        self.m_modules_apis = self.m_config_tools.import_module_list(l_modules, l_path)
         #
         LOG.info("Initialized ")
 
@@ -215,7 +216,7 @@ class Api:
         for l_key, l_value in self.m_parts.items():
             LOG.info('Loading house part "{}"'.format(l_key))
             l_value.LoadConfig()
-        for l_module in self.m_modules.values():
+        for l_module in self.m_modules_apis.values():
             l_module.LoadConfig()
         LOG.info('Loaded Config')
 
@@ -224,7 +225,7 @@ class Api:
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting")
-        for l_module in self.m_modules.values():
+        for l_module in self.m_modules_apis.values():
             l_module.Start()
         LOG.info('Started House "{}"'.format(self.m_pyhouse_obj.House.Name))
 
@@ -235,7 +236,7 @@ class Api:
         LOG.info('Saving Config - Version:{}'.format(__version__))
         for l_module in self.m_parts.values():
             l_module.SaveConfig()
-        for l_module in self.m_modules.values():
+        for l_module in self.m_modules_apis.values():
             l_module.SaveConfig()
         LOG.info("Saved Config.")
 
@@ -243,7 +244,7 @@ class Api:
         """ Stop all house stuff.
         """
         LOG.info("Stopping House.")
-        for l_module in self.m_modules.values():
+        for l_module in self.m_modules_apis.values():
             l_module.Stop()
         LOG.info("Stopped.")
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
