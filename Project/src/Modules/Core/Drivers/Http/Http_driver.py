@@ -32,12 +32,12 @@ class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        LOG.info('Initialize Serial Driver')
+        LOG.info('Initialize Http Driver')
 
     def Start(self):
         """
-        @param p_controller_obj: is the ControllerInformation() object for a serial device to open.
-        @return: a pointer to the serial interface or None
+        @param p_controller_obj: is the ControllerInformation() object for a Http device to open.
+        @return: a pointer to the Http interface or None
         """
 
     def Stop(self):
@@ -45,7 +45,7 @@ class Api:
         """
         self.close_device(self.m_controller_obj)
         _x = PrettyFormatAny.form(0, '')
-        LOG.info('Stopped Sedrial Driver for controller "{}"'.format(self.m_controller_obj.Name))
+        LOG.info('Stopped Http Driver for controller "{}"'.format(self.m_controller_obj.Name))
 
     def Read(self):
         """

@@ -219,7 +219,7 @@ class SerialApi:
         try:
             l_serial = SerialPort(
                     SerialProtocol(p_pyhouse_obj, p_controller_obj),  #  Factory
-                    l_port,serial
+                    l_port,
                     p_pyhouse_obj._Twisted.Reactor,
                     baudrate=l_baud)
             # p_controller_obj.Interface._DriverApi = self
@@ -308,7 +308,7 @@ class Api(SerialApi):
     def Stop(self):
         self.close_device(self.m_controller_obj)
         _x = PrettyFormatAny.form(0, '')
-        LOG.info('Stopped Sedrial Driver for controller "{}"'.format(self.m_controller_obj.Name))
+        LOG.info('Stopped Serial Driver for controller "{}"'.format(self.m_controller_obj.Name))
 
     def Read(self):
         """
