@@ -2,7 +2,7 @@
 @name:      Modules/House/Entertainment/entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Entertainment component access module.
@@ -24,18 +24,16 @@ House.Entertainment.Plugins{}.Api
 
 """
 
-__updated__ = '2020-01-07'
-__version_info__ = (19, 9, 26)
+__updated__ = '2020-01-27'
+__version_info__ = (20, 1, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceControl, EntertainmentPluginInformation
+from Modules.House.Entertainment import MODULES, EntertainmentPluginInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-# from Modules.House.Entertainment.Pandora.pandora import PandoraServiceInformation
-from Modules.House.Entertainment.__init__ import MODULES
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Entertainment  ')
@@ -231,7 +229,6 @@ class Api:
         """
         LOG.info("Config Loading - Version:{}".format(__version__))
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'HouseZZZ'))
-        # self.m_pyhouse_obj.House.Entertainment = self.m_local_config.load_yaml_config()
         for l_module in self.m_modules.values():
             l_module.LoadConfig()
         LOG.info('Loaded.')

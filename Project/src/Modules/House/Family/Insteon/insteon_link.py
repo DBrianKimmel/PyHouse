@@ -12,7 +12,7 @@ This will maintain the all-link database in all Insteon devices.
 Invoked periodically and when any Insteon device changes.
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-01-31'
 
 #  Import system type stuff
 from typing import Optional
@@ -38,7 +38,7 @@ class InsteonLinkInformation():
         self.Address: str = '00.00.00'  # 3 bytes
         self.Control: int = 0x0000  #  2 bytes
         self.Data: str = '00.00.00'  #  3 bytes
-        self.Flag: int = 0xC2
+        self.Flag: int = 0xE2
         self.Group: int = 0
         self._IsController: bool = False
         self._Name: str = ''
@@ -49,12 +49,15 @@ class InsteonLinkInformation():
         """
         """
         l_ret = ''
-        l_ret += '{:20s}'.format(self._Name)
-        l_ret += '; {}'.format(self.Address)
-        l_ret += '; Group: ' + str(self.Group)
+        l_ret += 'Name: {:20s}'.format(self._Name)
+        l_ret += '; Addr: {}'.format(self.Address)
+        l_ret += '; Group: {}'.format(str(self.Group))
+        l_ret += '; Control: {:4X}'.format(self.Control)
         l_ret += '; Flag: {:2X}'.format(self.Flag)
-        l_ret += '; {}/{}'.format(str(self._Type), str(self._SubType))
-        l_ret += '; {}'.format(self.Data)
+        l_ret += '; Type: {}/{}'.format(str(self._Type), str(self._SubType))
+        l_ret += '; Data: {}'.format(self.Data)
+        l_ret += '; Controller: {}'.format(self._IsController)
+        l_ret += ';'
         return l_ret
 
 
@@ -163,7 +166,7 @@ class SendCmd():
         """
         LOG.info("Command to get First all-link record (0x69).")
         l_command = insteon_utils.create_command_message('plm_first_all_link')
-        insteon_utils.queue_command(p_controller_obj, l_command, 'First All-Link')
+        insteon_utils.queue_command(p_controller_obj, l_command, 'Get First All-Link.')
 
     def queue_0x6A_command(self, p_controller_obj):
         """ Get the next all-link record from the plm (2 bytes).
@@ -171,7 +174,7 @@ class SendCmd():
         """
         LOG.info("Command to get the next all-link record (0x6A).")
         l_command = insteon_utils.create_command_message('plm_next_all_link')
-        insteon_utils.queue_command(p_controller_obj, l_command, 'Next All-Link')
+        insteon_utils.queue_command(p_controller_obj, l_command, 'Get Next All-Link.')
 
     def queue_0x6F_command(self, p_controller_obj, p_light_obj, p_code, p_flag, p_data):
         """ Manage All-Link Record (11 bytes)
@@ -611,14 +614,14 @@ class DecodeLink:
     def _dump_link(self, p_link, p_ix):
         """
         """
-        l_msg = 'Link:{}\n'.format(p_ix)
-        l_msg += '\t"{}"; '.format(p_link._Name)
-        l_msg += 'Addr:"{}"; '.format(p_link.Address)
-        if p_link._IsController:
-            l_msg += 'Controller; '
-        else:
-            l_msg += 'Responder; '
-        l_msg += 'Data: {}; '.format(p_link.Data)
+        l_msg = 'Link:{:3d}; '.format(p_ix)
+        # l_msg += '\tName:"{}"; '.format(p_link._Name)
+        # l_msg += 'Addr:"{}"; '.format(p_link.Address)
+        # if p_link._IsController:
+        #    l_msg += 'Controller; '
+        # else:
+        #    l_msg += 'Responder; '
+        # l_msg += 'Data: {}; '.format(p_link.Data)
         l_msg += '\n\t{}'.format(repr(p_link))
         LOG.info(l_msg)
 

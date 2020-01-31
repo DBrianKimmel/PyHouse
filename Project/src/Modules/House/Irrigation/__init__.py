@@ -14,7 +14,7 @@ System Types:
     Single Zone.  This has a valve to turn the system on or off.
 """
 
-__updated__ = '2020-01-25'
+__updated__ = '2020-01-26'
 
 __version_info__ = (20, 1, 25)
 __version__ = '.'.join(map(str, __version_info__))
@@ -22,7 +22,7 @@ __version__ = '.'.join(map(str, __version_info__))
 VALID_IRRIGATION_TYPE = ['Multi', 'Single']
 
 MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
-    'RainBird'
+    'Rainbird'
     ]
 
 

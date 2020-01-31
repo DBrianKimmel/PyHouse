@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Irrigation/RainBird/rainbird.py
+@name:      Modules/House/Irrigation/Rainbird/rainbird.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2020 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-25'
+__updated__ = '2020-01-26'
 __version_info__ = (19, 5, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -26,7 +26,7 @@ from Modules.Core.Config import config_tools
 from Modules.Core.Utilities import json_tools
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Irrg_RainBird  ')
+LOG = Logger.getLogger('PyHouse.Irrig_Rainbird ')
 
 
 class RainbirdController:

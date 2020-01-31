@@ -11,7 +11,7 @@ mypy  Modules/Core/Config/config_tools.py
 
 """
 
-__updated__ = '2020-01-25'
+__updated__ = '2020-01-30'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -187,7 +187,7 @@ class Tools(FileLookup):
                     continue
             else:  # Key is Present
                 # LOG.debug('Key defined: {}; Value: {}'.format(l_key, l_value))
-                if l_key in allowed_list:
+                if l_key not in allowed_list:
                     LOG.warning('Config entry "{}" is not permitted.'.format(l_key))
                     continue
             return p_obj
@@ -650,5 +650,13 @@ class Api(SubFields, Yaml):
         """
         l_ret = self.m_yaml._write_yaml(p_filename, p_data, addnew)
         return l_ret
+
+    def read_device_config(self):
+        """
+        """
+
+    def write_device_config(self):
+        """
+        """
 
 #  ## END DBK

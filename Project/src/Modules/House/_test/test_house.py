@@ -2,30 +2,49 @@
 @name:      Modules/House/_test/test_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
-Passed all 11 tests - DBK - 2019-12-30
+Passed all 11 tests - DBK - 2020-01-27
 
 """
 
-__updated__ = '2020-01-02'
+__updated__ = '2020-01-27'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House.house import Api as houseApi, HouseInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+TEST_YAML = """\
+House:
+   Name: PinkPoppy
+   Modules:  # Uncomment to use module.
+      - Family
+      - Entertainment
+      # - HVAC
+      # - Irrigation
+      - Lighting
+      # - Pool
+      # - Rules
+      - Scheduling
+      # - Security
+      # - Sync
+"""
+
 
 class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
@@ -45,23 +64,17 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
     def test_01_PyHouse(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        self.assertNotEqual(self.m_pyhouse_obj, None)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        self.assertIsNotNone(self.m_pyhouse_obj)
 
     def test_02_House(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
-        self.assertNotEqual(self.m_pyhouse_obj.House, None)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House)
+        self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
 
     def test_03_Location(self):
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-03-A - Location'))
-        self.assertNotEqual(self.m_pyhouse_obj.House, None)
-
-    def test_09_BuildObjects(self):
-        """ Test to be sure the compound object was built correctly.
-        """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
-        self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-03-A - Location'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Location)
 
 
 class C1_Read(SetupMixin, unittest.TestCase):

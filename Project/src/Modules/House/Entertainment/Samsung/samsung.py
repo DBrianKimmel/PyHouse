@@ -2,7 +2,7 @@
 @name:      Modules/House/Entertainment/samsung/samsung.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2019 by D. Brian Kimmel
+@copyright: (c) 2016-2020 by D. Brian Kimmel
 @note:      Created on Jul 11, 2016
 @license:   MIT License
 @summary:
@@ -48,9 +48,11 @@ while True:
     https://github.com/Bntdumas/SamsungIPRemote
     https://github.com/kyleaa/homebridge-samsungtv2016
 
+Factory / Protocol / Transport
+
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-30'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -65,7 +67,7 @@ from twisted.internet import error
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentPluginInformation
+from Modules.House.Entertainment.Samsung import SamsungPluginInformation, SamsungDeviceInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Samsung        ')
@@ -74,37 +76,6 @@ SAMSUNG_ADDRESS = '192.168.1.100'
 SAMSUNG_PORT = 55000
 SAMSUNG_PORT2 = 8001
 CONFIG_NAME = 'samsung'
-
-
-class SamsungPluginInformation(EntertainmentPluginInformation):
-    """
-    """
-
-    def __init__(self):
-        super(SamsungPluginInformation, self).__init__()
-
-
-class SamsungDeviceInformation(EntertainmentDeviceInformation):
-    """ A superet that contains some samsung specific fields
-    """
-
-    def __init__(self):
-        super(SamsungDeviceInformation, self).__init__()
-        self.Room = None
-        self.Type = None
-        self.Volume = None
-
-
-class SamsungDeviceData(EntertainmentDeviceInformation):
-
-    def __init__(self):
-        super(SamsungDeviceData, self).__init__()
-        self.IPv4 = None
-        self.Model = None
-        self.Port = None
-        self.Room = None
-        self.Type = None
-        self.Volume = None
 
 
 class MqttActions:
@@ -262,6 +233,14 @@ class Commands:
 class Connecting:
 
     def connect_samsung(self, p_device_obj):
+        """
+        "tcp:host=www.example.com:port=80"
+        "ssl:web.example.com:443:privateKey=foo.pem:certKey=foo.pem"
+        "tcp:www.example.com:80:bindAddress=192.0.2.100"
+
+        Factory / Protocol / Transport
+
+        """
 
         def cb_connectedNow(SamsungClient):
             LOG.debug('Connected Now')
@@ -273,10 +252,10 @@ class Connecting:
 
         l_reactor = self.m_pyhouse_obj._Twisted.Reactor
         try:
-            # l_host = convert.long_to_str(p_device_obj.IPv4)
-            l_host = 'samsung-tv'
-            l_port = p_device_obj.Port
-            l_endpoint_str = 'tcp:{}:port={}'.format(l_host, l_port)
+            # l_host = p_device_obj.Host.Name
+            l_host = p_device_obj.Host.IPv4
+            l_port = p_device_obj.Host.Port
+            l_endpoint_str = 'tcp:host={}:port={}'.format(l_host, l_port)
             l_endpoint = clientFromString(l_reactor, l_endpoint_str)
             l_factory = Factory.forProtocol(SamsungProtocol)
             l_ReconnectingService = ClientService(l_endpoint, l_factory)
@@ -317,7 +296,7 @@ class LocalConfig:
 
         return
 
-        for _l_key, l_service in l_samsung.Services.items():
+        for _l_key, l_service in l_entertain.Services.items():
             LOG.debug(PrettyFormatAny.form(l_service, 'Service'))
             if hasattr(l_service, 'Connection'):
                 LOG.debug(PrettyFormatAny.form(l_service.Connection, 'Connection'))
@@ -399,11 +378,17 @@ class Api(Connecting):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Initialized - Version:{}".format(__version__))
 
+    def _add_storage(self) -> None:
+        """
+        """
+        self.m_pyhouse_obj.House.Entertainment['Samsung'] = None
+
     def LoadConfig(self):
-        self.m_local_config.load_yaml_config(self)
+        self.m_pyhouse_obj.House.Entertainment['Samsung'] = self.m_local_config.load_yaml_config(self)
         LOG.info('Loaded Config')
 
     def Start(self):

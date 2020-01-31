@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/insteon/insteon_plm.py
+@name:      Modules/House/Family/Insteon/insteon_plm.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2010-2020 by D. Brian Kimmel
@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-01-31'
 
 #  Import system type stuff
 import datetime
@@ -58,7 +58,7 @@ class Commands:
 
     @staticmethod
     def _queue_60_command(p_controller_obj):
-        """Get IM info (2 bytes).
+        """ Get IM info (2 bytes).
         See p 273 of developers guide.
         PLM will respond with a 0x60 response.
         """
@@ -68,7 +68,7 @@ class Commands:
 
     @staticmethod
     def _queue_62_command(p_controller_obj, p_obj, p_cmd1, p_cmd2, p_text='None'):
-        """Send Insteon Standard Length Message (8 bytes) (SD command).
+        """ Send Insteon Standard Length Message (8 bytes) (SD command).
         or Extended length (22 Bytes) (ED command)
         See page 230(243) of 2009 developers guide.
 
@@ -97,7 +97,7 @@ class Commands:
 
     @staticmethod
     def queue_6B_command(p_controller_obj, p_flags):
-        """Set IM configuration flags (3 bytes).
+        """ Set IM configuration flags (3 bytes).
         See page 271  of Insteon Developers Guide.
         """
         LOG.info("Command to set PLM config flag (6B) - to {:#X}".format(p_flags))
@@ -132,7 +132,7 @@ class Commands:
 
     @staticmethod
     def queue_73_command(p_controller_obj):
-        """Send request for PLM configuration (2 bytes).
+        """ Send request for PLM configuration (2 bytes).
         See page 270 of Insteon Developers Guide.
         """
         LOG.info("Command to get PLM config (73).")
@@ -434,6 +434,6 @@ class Api(LightHandlerApi):
             Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], 255, 'Turn ON')  #  0x11
         else:
             l_level = int(l_level * 255 / 100)
-            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level, 'Device level')  #  0x11
+            Commands._queue_62_command(p_controller_obj, p_device_obj, MESSAGE_TYPES['on'], l_level, 'Device level {} pct.'.format(l_level))  #  0x11
 
 #  ## END DBK

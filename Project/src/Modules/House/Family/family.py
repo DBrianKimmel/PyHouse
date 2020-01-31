@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2020-01-07'
+__updated__ = '2020-01-26'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -234,6 +234,7 @@ class Api:
         """
         # LOG.debug('Loading Families')
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Family, 'Families'))
+        LOG.info('Family candidates: {}'.format(self.m_pyhouse_obj.House.Family.keys()))
         l_dict = {}
         for l_key, l_family_obj in self.m_pyhouse_obj.House.Family.items():
             LOG.info('Loading Family "{}"'.format(l_key))

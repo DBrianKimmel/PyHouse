@@ -1,8 +1,8 @@
 """
-@name:      /home/briank/workspace/PyHouse/Project/src/Modules/House/Entertainment/entertainment_util.py
+@name:      Modules/House/Entertainment/entertainment_util.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 23, 2019
 @summary:

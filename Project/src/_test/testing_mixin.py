@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-01-27'
 
 #  Import system type stuff
 import os
@@ -19,10 +19,9 @@ import sys
 from twisted.internet import reactor
 
 #  Import PyMh files and modules.
-from Modules.Computer.computer import ComputerInformation, ComputerApis
+from Modules.Computer.computer import ComputerInformation
 from Modules.House.house_data import LocationInformation
 from Modules.House.Hvac.hvac import HvacInformation
-from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
 from Modules.House.Lighting.lighting import LightingInformation
 from Modules.Core.data_objects import PyHouseInformation
 from Modules.Core.Config.config_tools import ConfigInformation, AccessInformation
@@ -31,7 +30,6 @@ from Modules.House.house import HouseInformation
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt import MqttInformation
 from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
-from Modules.Core.core import PyHouseApiInformation, ParameterInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #
@@ -70,32 +68,16 @@ class SetupPyHouseObj:
         l_ret.ConfigDir = TEST_PATH
         return l_ret
 
-    def build_params(self):
-        l_ret = ParameterInformation()
-        l_ret.Name = 'Test'
-        return l_ret
-
-    def _build_yaml(self, p_root):
-        l_ret = YamlData()
-        l_ret.YamlRoot = p_root
-        l_ret.YamlFileName = 'pyhouse.yaml'
-        return l_ret
-
     def _build_twisted(self):
         l_ret = TwistedInformation()
         l_ret.Reactor = reactor
-        return l_ret
-
-    def _build_entertainment(self):
-        l_ret = {}
-        l_ret['test'] = EntertainmentPluginInformation()
         return l_ret
 
     def _build_house_data(self):
         l_ret = HouseInformation()
         l_ret.Location = LocationInformation()
         l_ret.Family = {}
-        l_ret.Entertainment = self._build_entertainment()
+        l_ret.Entertainment = {}
         l_ret.Lighting = LightingInformation()
         l_ret.Hvac = HvacInformation()
         l_ret.Schedules = {}
@@ -111,11 +93,6 @@ class SetupPyHouseObj:
         l_ret.Mqtt = MqttInformation()
         return l_ret
 
-    def _build_apis(self):
-        l_apis = PyHouseApiInformation()
-        l_apis.Computer = ComputerApis()
-        return l_apis
-
     def _computer_yaml(self, p_yaml):
         pass
 
@@ -129,8 +106,6 @@ class SetupPyHouseObj:
         l_pyhouse_obj.Core = SetupPyHouseObj()._build_core()
         l_pyhouse_obj.Computer = SetupPyHouseObj()._build_computer()
         l_pyhouse_obj.House = SetupPyHouseObj()._build_house_data()
-        #
-        # l_pyhouse_obj._Parameters = self.build_params()
         l_pyhouse_obj._Twisted = self._build_twisted()
         l_pyhouse_obj.Computer.Name = platform.node()
         return l_pyhouse_obj

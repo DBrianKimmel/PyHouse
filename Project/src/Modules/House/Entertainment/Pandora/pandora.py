@@ -2,7 +2,7 @@
 @name:       Modules/House/Entertainment/pandora/pandora.py
 @author:     D. Brian Kimmel
 @contact:    D.BrianKimmel@gmail.com
-@copyright:  (c)2014-2019 by D. Brian Kimmel
+@copyright:  (c)2014-2020 by D. Brian Kimmel
 @note:       Created on Feb 27, 2014
 @license:    MIT License
 @summary:    Controls pandora playback thru pianobar.
@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-30'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -33,108 +33,19 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.extract_tools import extract_quoted
-from Modules.House.Entertainment.entertainment_data import \
-        EntertainmentDeviceControl, \
-        EntertainmentServiceControl, \
-        EntertainmentServiceStatus, \
-        EntertainmentServiceInformation, EntertainmentPluginInformation
+from Modules.House.Entertainment.Pandora import \
+    PandoraPluginInformation, \
+    PandoraServiceInformation, \
+    PandoraDeviceConnectionInformation, \
+    PandoraServiceControlInformation, \
+    PandoraDeviceControl, \
+    PandoraServiceStatus, \
+    MOD_NAME
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Pandora        ')
 
 PIANOBAR_LOCATION = '/usr/bin/pianobar'
-CONFIG_NAME = 'pandora'
-
-
-class PandoraPluginInformation(EntertainmentPluginInformation):
-    """
-    """
-
-    def __init__(self):
-        super(PandoraPluginInformation, self).__init__()
-        self._OpenSessions = 0
-
-
-class PandoraServiceInformation:
-    """ This is a skeleton entry.
-    Other device parameters are placed in here by the specific entertainment device.
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None
-        self.Connection = None  # PandoraServiceConnectionInformation()
-        self.Host = None  # HostInformation()
-        self.Access = None  # AccessInformation()
-        #
-        self._Factory = None  # The factory pointer for this device of an entertainment sub-section
-        self._Transport = None
-        self._Connector = None
-
-
-class PandoraDeviceConnectionInformation:
-    """ This is how the pandora computer connects to the AV system
-
-    Only one connection is allowed
-    """
-
-    def __init__(self):
-        self.Type = None  # Wire, Bluetooth, Optical
-        self.Family = None  # The family of the AV device - Panasonic, Pioneer, Onkyo, etc
-        self.Model = None  # The model of the AV device - FamilyModel must be defined in a Yaml config file
-        self.Input = None  # The name if the input - Must be in the device config file
-
-
-class PandoraServiceData(EntertainmentServiceInformation):
-
-    def __init__(self):
-        super(PandoraServiceData, self).__init__()
-        self._Buffer = bytes(0)
-
-
-class PandoraServiceStatusData(EntertainmentServiceStatus):
-
-    def __init__(self):
-        super(PandoraServiceStatusData, self).__init__()
-        self.Album = ''
-        self.Artist = ''
-        self.Song = ''
-        self.Station = ''
-        self.Status = 'Idle'  # Device if service is in use.
-        #
-        self.DateTimePlayed = None  # Time the latest song started.
-        self.DateTimeStarted = None  # Time service connected to pandora.com
-        self.Error = None  # If some error occurred
-        self.From = None  # This host id to identify the computer node connecting to pandora.
-        self.inUseDevice = None
-        self.Likability = None
-        self.TimeTotal = None
-        self.TimeLeft = None
-
-
-class PandoraServiceControlData(EntertainmentServiceControl):
-    """ Node-red interface allows some control of Pandora and hence the playback.
-    This is it.
-    """
-
-    def __init__(self):
-        super(PandoraServiceControlData, self).__init__()
-        self.Like = None
-        self.Dislike = None
-        self.Skip = None
-
-
-class PandoraDeviceControlData(EntertainmentDeviceControl):
-    """ Pandora needs to control A/V devices.
-    This is it.
-    """
-
-    def __init__(self):
-        super(PandoraDeviceControlData, self).__init__()
-        self.Power = None
-        self.Input = None
-        self.Volume = None
-        self.Zone = None
 
 
 class MqttActions:
@@ -258,7 +169,7 @@ class ExtractPianobar:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
-        self.m_now_playing = PandoraServiceStatusData()
+        self.m_now_playing = PandoraServiceStatus()
 
     def _extract_like(self, p_line):
         """ The like info comes back as a '<' in the now-playing info.
@@ -266,10 +177,10 @@ class ExtractPianobar:
         l_ix = p_line.find(b'<')
         if l_ix > 0:
             l_like = p_line[l_ix + 1:l_ix + 2].decode('utf-8')
-            l_remain = p_line[:l_ix] + p_line[l_ix + 3:]
+            l_remain = p_line[:l_ix] + p_line[l_ix + 3:].strip()
         else:
             l_like = ''
-            l_remain = p_line
+            l_remain = p_line.strip()
         return l_like, l_remain
 
     def _extract_station(self, p_line):
@@ -277,7 +188,7 @@ class ExtractPianobar:
         """
         l_ix = p_line.find(b'@')
         l_sta = p_line[l_ix + 1:].decode('utf-8').strip()
-        l_remain = p_line[:l_ix]
+        l_remain = p_line[:l_ix].strip()
         return l_sta, l_remain
 
     def _extract_nowplaying(self, p_obj, p_line):
@@ -353,7 +264,7 @@ class ExtractPianobar:
         # We gather the play data here
         # We do not send the message yet but will wait for the first time to arrive.
         if p_line.startswith(b'|>'):  # This is a new playing selection line.
-            self.m_now_playing = PandoraServiceStatusData()
+            self.m_now_playing = PandoraServiceStatus()
             LOG.info("Playing: {}".format(p_line))
             self.m_now_playing = self._extract_nowplaying(self.m_now_playing, p_line)
             self.m_now_playing.Error = None
@@ -392,7 +303,7 @@ class PianobarProtocol(protocol.ProcessProtocol):
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
         self.m_buffer = bytes()
-        self.m_hold = PandoraServiceStatusData()  # Clear playing info
+        self.m_hold = PandoraServiceStatus()  # Clear playing info
         self.m_extract = ExtractPianobar(self.m_pyhouse_obj)
 
     def _get_line(self, p_buffer):
@@ -461,12 +372,12 @@ class A_V_Control:
         """ Build the control message for the A/V device.
         Fill in only what is necessary
         """
-        l_pandora_plugin = self.m_pyhouse_obj.House.Entertainment.Plugins[CONFIG_NAME]  # PandoraPluginData()
+        l_pandora_plugin = self.m_pyhouse_obj.House.Entertainment[MOD_NAME]  # PandoraPluginData()
         for l_service in l_pandora_plugin.Services.values():
-            l_service_control_obj = PandoraDeviceControlData()  # Use the base control structure
+            l_service_control_obj = PandoraDeviceControl()  # Use the base control structure
             l_service_control_obj.Family = l_family = l_service.ConnectionFamily
             l_service_control_obj.Model = l_service.ConnectionModel
-            l_service_control_obj.From = CONFIG_NAME
+            l_service_control_obj.From = MOD_NAME
             l_service_control_obj.InputName = p_input
             l_service_control_obj.Power = p_power
             l_service_control_obj.Volume = p_volume
@@ -495,7 +406,7 @@ class PandoraControl(A_V_Control):
         Ensure that only 1 instance is running.
         """
         LOG.info('Start Pianobar.')
-        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[CONFIG_NAME]
+        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment[MOD_NAME]
         if l_pandora_plugin_obj._OpenSessions > 0:
             LOG.warning('multiple pianobar start attempts')
             return
@@ -530,7 +441,7 @@ class PandoraControl(A_V_Control):
         Send message to Node-Red to update the status.
         All the fields used in node-red must be defined.
         """
-        l_msg = PandoraServiceStatusData()
+        l_msg = PandoraServiceStatus()
         l_msg.Likability = ''
         l_msg.TimeLeft = ''
         l_msg.TimeTotal = ''
@@ -564,7 +475,7 @@ class PandoraControl(A_V_Control):
         if not self.is_pianobar_installed(self.m_pyhouse_obj):
             LOG.warning('Pianobar is not installed yet pandora is configured.')
             return
-        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[CONFIG_NAME]
+        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment[MOD_NAME]
         if l_pandora_plugin_obj._OpenSessions > 0:
             LOG.warning('multiple pianobar start attempts')
             return
@@ -577,10 +488,10 @@ class PandoraControl(A_V_Control):
         self.m_transport = self.m_pyhouse_obj._Twisted.Reactor.spawnProcess(self.m_processProtocol, l_executable, l_args, l_env)
         #
         for l_service in l_pandora_plugin_obj.Services.values():
-            l_device_control_obj = EntertainmentDeviceControl()
+            l_device_control_obj = PandoraDeviceControl()
             l_device_control_obj.Family = l_family = l_service.ConnectionFamily
             l_device_control_obj.Model = l_model = l_service.ConnectionModel
-            l_device_control_obj.From = CONFIG_NAME
+            l_device_control_obj.From = MOD_NAME
             l_device_control_obj.Power = "On"
             l_device_control_obj.InputName = l_service.InputName
             l_device_control_obj.Zone = '1'
@@ -591,10 +502,10 @@ class PandoraControl(A_V_Control):
     def build_av_control_msg(self, p_service):
         """
         """
-        l_service_control_obj = PandoraServiceControlData()
+        l_service_control_obj = PandoraServiceControlInformation()
         l_service_control_obj.Family = l_family = p_service.ConnectionFamily
         l_service_control_obj.Device = l_name = p_service.ConnectionModel
-        l_service_control_obj.From = CONFIG_NAME
+        l_service_control_obj.From = MOD_NAME
         l_service_control_obj.Model = p_service.ConnectionModel
         l_service_control_obj.Power = "Off"
         l_service_control_obj.InputName = p_service.InputName
@@ -609,7 +520,7 @@ class PandoraControl(A_V_Control):
         This control message may come from a MQTT message or from a timer.
         """
         LOG.info('Halt Pandora - {}'.format(p_message))
-        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment.Plugins[CONFIG_NAME]
+        l_pandora_plugin_obj = self.m_pyhouse_obj.House.Entertainment[MOD_NAME]
         l_pandora_plugin_obj._OpenSessions -= 1
         try:
             self.m_transport.write(b'q')
@@ -619,10 +530,10 @@ class PandoraControl(A_V_Control):
             pass
         LOG.info('Service Stopped')
         for l_service in l_pandora_plugin_obj.Services.values():
-            l_service_control_obj = PandoraDeviceControlData()
+            l_service_control_obj = PandoraDeviceControl()
             l_service_control_obj.Family = l_family = l_service.Connection.Family
             l_service_control_obj.Device = l_name = l_service.Connection.Model
-            l_service_control_obj.From = CONFIG_NAME
+            l_service_control_obj.From = MOD_NAME
             l_service_control_obj.Model = l_service.Connection.Model
             l_service_control_obj.Power = "Off"
             l_service_control_obj.InputName = l_service.Connection.Input
@@ -653,9 +564,8 @@ class LocalConfig:
         """
         """
         l_entertain = self.m_pyhouse_obj.House.Entertainment
-        l_pandora = l_entertain.Plugins['pandora']
+        l_pandora = l_entertain[MOD_NAME]
         LOG.debug(PrettyFormatAny.form(l_entertain, 'Entertainment'))
-        LOG.debug(PrettyFormatAny.form(l_entertain.Plugins, 'Plugins'))
         LOG.debug(PrettyFormatAny.form(l_pandora, 'Pandora'))
         LOG.debug(PrettyFormatAny.form(l_pandora.Services, 'Pandora'))
         #
@@ -713,13 +623,12 @@ class LocalConfig:
             l_dict[l_ix] = l_service
         return l_dict
 
-    def _extract_all_pandora(self, p_config, p_api):
+    def _extract_all_pandora(self, p_config):
         """
         """
         # self.dump_struct()
         l_required = ['Name']
         l_obj = PandoraPluginInformation()
-        l_obj._Api = p_api
         for l_key, l_value in p_config.items():
             if l_key == 'Service':
                 l_services = self._extract_all_services(l_value)
@@ -733,21 +642,20 @@ class LocalConfig:
                 LOG.warning('Pandora Yaml is missing an entry for "{}"'.format(l_key))
         return l_obj  # For testing.
 
-    def load_yaml_config(self, p_api):
+    def load_yaml_config(self):
         """ Read the pandora.yaml file.
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_pyhouse_obj.House.Entertainment['pandora'] = None
-        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
+        l_yaml = self.m_config.read_config_file(MOD_NAME)
         if l_yaml == None:
-            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
+            LOG.error('{}.yaml is missing.'.format(MOD_NAME))
             return None
         try:
             l_yaml = l_yaml['Pandora']
         except:
             LOG.warning('The config file does not start with "Pandora:"')
             return None
-        l_pandora = self._extract_all_pandora(l_yaml, p_api)
+        l_pandora = self._extract_all_pandora(l_yaml)
         self.m_pyhouse_obj.House.Entertainment['pandora'] = l_pandora
         # self.dump_struct()
         return l_pandora  # for testing purposes
@@ -762,10 +670,14 @@ class Api(MqttActions):
         """ Do the housekeeping for the Pandora plugin.
         """
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_api = self
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info("Api Initialized - Version:{}".format(__version__))
         self.m_pandora_control_api = PandoraControl(p_pyhouse_obj)
+
+    def _add_storage(self):
+        self.m_pyhouse_obj.House.Entertainment['Pandora'] = {}
 
     def LoadConfig(self):
         """ Read the Config for pandora.
@@ -773,7 +685,7 @@ class Api(MqttActions):
         LOG.info("Loading Config - Version:{}".format(__version__))
         if self.m_pandora_control_api.is_pianobar_installed(self.m_pyhouse_obj):
             LOG.info('Pianobar present')
-            self.m_local_config.load_yaml_config(self)
+            self.m_pyhouse_obj.House.Entertainment['Pandora'] = self.m_local_config.load_yaml_config()
         else:
             LOG.warning('Pianobar Missing')
 

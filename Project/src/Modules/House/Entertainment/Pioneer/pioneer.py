@@ -19,7 +19,7 @@ Listen to Mqtt message to control device
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-01-27'
 __version_info__ = (19, 10, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -34,7 +34,7 @@ from queue import Queue
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
 from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceInformation, EntertainmentDeviceStatus
-from Modules.House.Entertainment.entertainment import EntertainmentPluginInformation
+from Modules.House.Entertainment import EntertainmentPluginInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

@@ -2,30 +2,42 @@
 @name:      Modules/House/Entertainment/_test/test_entertainment.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 14, 2013
 @summary:   Test
 
-Passed all 13 tests - DBK - 2019-03-18
+Passed all 6 tests - DBK - 2030-01-27
 
 """
 
-__updated__ = '2019-10-29'
+__updated__ = '2020-01-27'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House.Entertainment.entertainment import Api as entertainmentApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
+TEST_YAML = """\
+Entertainment:
+    Services:
+        - Pandora: !include pandora.yaml
+    Devices:
+        - Onkyo: !include onkyo.yaml
+        - Samsung: !include samsung.yaml
+"""
+
 
 class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
         self.m_api = entertainmentApi(self.m_pyhouse_obj)
 
 
@@ -43,11 +55,23 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
 
-    def test_1_BuildObjects(self):
-        """ Test to be sure the compound object was built correctly - Rooms is an empty dict.
+    def test_01_Pyhouse(self):
         """
-        # print(PrettyFormatAny.form(self.m_xml, 'Tags'))
-        self.assertEqual(self.m_pyhouse_obj.House.Rooms, {})
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        self.assertIsNotNone(self.m_pyhouse_obj)
+
+    def test_02_House(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House)
+
+    def test_03_Entertainment(self):
+        """
+        """
+        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Entertainment, 'A1-03-A - Entertainment'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Entertainment)
 
 
 class C1_Load(SetupMixin, unittest.TestCase):

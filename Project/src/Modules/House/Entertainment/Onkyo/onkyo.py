@@ -2,14 +2,15 @@
 @name:      Modules/House/Entertainment/Onkyo/onkyo.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c)2016-2019 by D. Brian Kimmel
+@copyright: (c)2016-2020 by D. Brian Kimmel
 @note:      Created on Jul 9, 2016
 @license:   MIT License
 @summary:   Connects to and controls Onkyo devices.
 
+Factory / Protocol / Transport
 """
 
-__updated__ = '2019-12-25'
+__updated__ = '2020-01-29'
 __version_info__ = (19, 11, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,56 +19,16 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
-from Modules.House.Entertainment import entertainment_utility as E_U
-from Modules.House.Entertainment.entertainment_data import \
-    EntertainmentDeviceInformation, EntertainmentDeviceControl, EntertainmentDeviceStatus, \
-    EntertainmentPluginInformation
+from Modules.House.Entertainment.Onkyo import \
+    OnkyoDeviceInformation, \
+    OnkyoPluginInformation
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Onkyo          ')
 
 CONFIG_NAME = 'onkyo'
-
-
-class OnkyoPluginInformation(EntertainmentPluginInformation):
-    """
-    """
-
-    def __init__(self):
-        super(OnkyoPluginInformation, self).__init__()
-
-
-class OnkyoDeviceInformation(EntertainmentDeviceInformation):
-    """ A super that contains some onkyo specific fields
-    """
-
-    def __init__(self):
-        super(OnkyoDeviceInformation, self).__init__()
-        self.Commands = None
-        self.Type = None
-        self.Volume = None
-        self.Zone = None
-
-
-class OnkyoDeviceControl(EntertainmentDeviceControl):
-    """ Used to control a device.
-    All defaults are None - Only fill in what you need so inadvertent controls are not done.
-    """
-
-    def __init__(self):
-        super(OnkyoDeviceControl, self).__init__()
-        pass
-
-
-class OnkyoDeviceStatus(EntertainmentDeviceStatus):
-    """
-    The device family is part of the topic.
-    """
-
-    def __init__(self):
-        super(OnkyoDeviceStatus, self).__init__()
-        pass
 
 
 class OnkyoZoneStatus():
@@ -250,17 +211,15 @@ class LocalConfig:
     def _extract_one_device(self, p_config):
         """ Extract one device from the onkyo.yaml file and call the routine to extract the command .yaml file for that device.
         """
-        # self.dump_struct()
-        l_required = ['Name', 'Type', 'Host']
         l_obj = OnkyoDeviceInformation()
-        # LOG.debug(PrettyFormatAny.form(l_obj, 'Obj'))
+        l_required = ['Name', 'Type', 'Host']
         for l_key, l_value in p_config.items():
             if l_key == 'Host':
                 l_obj.Host = self.m_config.extract_host_group(l_value)
             elif l_key == 'Model':
                 setattr(l_obj, l_key, l_value)
-                l_yaml = self._get_model_config(l_value)
-                l_obj.Commands = E_U.extract_device_config_file(l_yaml)
+                # l_yaml = self._get_model_config(l_value)
+                # l_obj.Commands = E_U.extract_device_config_file(l_yaml)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
@@ -280,13 +239,13 @@ class LocalConfig:
             l_dict[l_ix] = l_device
         return l_dict
 
-    def _extract_all_onkyo(self, p_config, p_api):
+    def _extract_all_onkyo(self, p_config):
         """ extract the contents of the onkyo.yaml file.
         """
         # self.dump_struct()
         l_required = ['Name', 'Device']
         l_obj = OnkyoPluginInformation()
-        l_obj._Api = p_api
+        # l_obj._Api = p_api
         for l_key, l_value in p_config.items():
             if l_key == 'Device':
                 l_devices = self._extract_all_devices(l_value)
@@ -313,7 +272,7 @@ class LocalConfig:
         except:
             LOG.warning('The config file does not start with "Onkyo:"')
             return None
-        l_onkyo = self._extract_all_onkyo(l_yaml, p_api)
+        l_onkyo = self._extract_all_onkyo(l_yaml)
         # self.dump_struct()
         return l_onkyo
 
@@ -332,15 +291,14 @@ class Api(MqttActions):
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def _add_storage(self):
-        self.m_pyhouse_obj.House.Entertainment['onkyo'] = {}
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'HouseZZZ'))
+        self.m_pyhouse_obj.House.Entertainment['Onkyo'] = {}
 
     def LoadConfig(self):
         """ Read the Config for all Onkyo devices.
         """
         LOG.info("Loading Config - Version:{}".format(__version__))
         # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'HouseZZZ'))
-        self.m_pyhouse_obj.House.Entertainment['onkyo'] = self.m_local_config.load_yaml_config(self)
+        self.m_pyhouse_obj.House.Entertainment['Onkyo'] = self.m_local_config.load_yaml_config(self)
 
     def Start(self):
         """ Start all the Onkyo factories if we have any Onkyo devices.
@@ -352,7 +310,7 @@ class Api(MqttActions):
 
         """
         LOG.info('Start Onkyo.')
-        l_devices = self.m_pyhouse_obj.House.Entertainment['onkyo'].Devices
+        l_devices = self.m_pyhouse_obj.House.Entertainment['Onkyo'].Devices
         l_count = 0
 
         return

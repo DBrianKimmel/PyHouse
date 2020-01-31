@@ -11,8 +11,8 @@ This interfaces PyHouse to the Insteon family of products.
 This includes light switches, thermostats and a number of other devices.
 """
 
-__updated__ = '2020-01-05'
-__version_info__ = (20, 1, 3)
+__updated__ = '2020-01-31'
+__version_info__ = (20, 1, 31)
 __version__ = '.'.join(map(str, __version_info__))
 
 MODULES = [
