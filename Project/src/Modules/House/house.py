@@ -11,64 +11,21 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2020-01-25'
-__version_info__ = (20, 1, 25)
+__updated__ = '2020-02-17'
+__version_info__ = (20, 2, 12)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
-# from typing import Union
 
 #  Import PyMh files
 from Modules.Core.Config import config_tools
 from Modules.Core.Config.config_tools import Api as configApi
-# Parts
-from Modules.House.floors import MqttActions as floorsMqtt
-from Modules.House.location import MqttActions as locationMqtt
-from Modules.House.rooms import MqttActions as roomsMqtt
-# Modules
-from Modules.House.Entertainment.entertainment import MqttActions as entertainmentMqtt
-from Modules.House.Hvac.hvac import MqttActions as hvacMqtt
-from Modules.House.Irrigation.irrigation import MqttActions as irrigationMqtt
-from Modules.House.Lighting.lighting import MqttActions as lightingMqtt
-from Modules.House.Schedule.schedule import MqttActions as scheduleMqtt
-from Modules.House.Lighting.outlets import MqttActions as outletMqtt
+from Modules.House import HouseInformation, PARTS, MODULES, CONFIG_NAME
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.House          ')
-
-CONFIG_NAME = 'house'
-
-# Note that the following are in the order needed to sequence the startup
-MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
-    'Lighting',
-    'Hvac',
-    'Security',
-    'Irrigation',
-    'Pool',
-    'Rules',
-    'Schedule',
-    'Sync',
-    'Entertainment',
-    'Family'
-    ]
-PARTS = [
-    'Location',
-    'Floors',
-    'Rooms'
-    ]
-
-
-class HouseInformation:
-    """
-    ==> PyHouse_obj.House.xxx
-    """
-
-    def __init__(self):
-        self.Name: Union[str, None] = None
-        self.Comment: str = ''
-        self.Module = {}  # {modulename: Api}
 
 
 class MqttActions:
@@ -77,37 +34,6 @@ class MqttActions:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-
-    def decode(self, p_msg):
-        """
-        ==> pyhouse/<housename>/house/topic03...
-        ==> pyhouse/<housename>/topic
-        """
-        p_msg.LogMessage += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        l_topic = p_msg.UnprocessedTopic[0].lower()
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        if l_topic == 'floor':
-            floorsMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic == 'location':
-            locationMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic == 'room':
-            roomsMqtt(self.m_pyhouse_obj).decode(p_msg)
-
-        elif l_topic == 'entertainment':
-            entertainmentMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic == 'hvac':
-            hvacMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic == 'irrigation':
-            irrigationMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic in ['lighting']:
-            lightingMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic == 'schedule':
-            scheduleMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic == 'outlet':
-            outletMqtt(self.m_pyhouse_obj).decode(p_msg)
-        else:
-            p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
-            LOG.warning('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
 
 
 class LocalConfig:
@@ -174,13 +100,13 @@ class Api:
     m_config_tools = None
     m_local_config = None
     m_pyhouse_obj = None
-    m_parts = {}
-    m_modules_apis: dict = {}
+    m_parts_apis: dict = {}
+    m_module_apis: dict = {}
 
     def __init__(self, p_pyhouse_obj):
         """ **NoReactor**
         This is part of Core PyHouse - House is the reason we are running!
-        Note that the reactor is not yet running.
+        Note that the reactor may not be running yet.
         """
         LOG.info('Initializing')
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -191,13 +117,14 @@ class Api:
         LOG.info('Initializing Parts')
         l_path = 'Modules.House'
         l_parts = self.m_config_tools.find_module_list(PARTS)
-        self.m_parts = self.m_config_tools.import_module_list(l_parts, l_path)
+        self.m_parts_apis = self.m_config_tools.import_module_list(l_parts, l_path)
         #
         LOG.info('Initializing Modules')
         l_path = 'Modules.House.'
         l_modules = self.m_config_tools.find_module_list(MODULES)
         l_modules.append('Family')
-        self.m_modules_apis = self.m_config_tools.import_module_list(l_modules, l_path)
+        self.m_module_apis = self.m_config_tools.import_module_list(l_modules, l_path)
+        p_pyhouse_obj.House._Apis = self.m_module_apis
         #
         LOG.info("Initialized ")
 
@@ -213,10 +140,11 @@ class Api:
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_local_config.load_yaml_config()
         LOG.info('Loading parts config files')
-        for l_key, l_value in self.m_parts.items():
+        for l_key, l_value in self.m_parts_apis.items():
             LOG.info('Loading house part "{}"'.format(l_key))
             l_value.LoadConfig()
-        for l_module in self.m_modules_apis.values():
+        # LOG.debug(PrettyFormatAny.form(self.m_module_apis, 'Apis'))
+        for l_module in self.m_module_apis.values():
             l_module.LoadConfig()
         LOG.info('Loaded Config')
 
@@ -225,7 +153,7 @@ class Api:
         May be stopped and then started anew to force reloading info.
         """
         LOG.info("Starting")
-        for l_module in self.m_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.Start()
         LOG.info('Started House "{}"'.format(self.m_pyhouse_obj.House.Name))
 
@@ -234,9 +162,9 @@ class Api:
         Take a snapshot of the current Configuration/Status and write out the config files.
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        for l_module in self.m_parts.values():
+        for l_module in self.m_parts_apis.values():
             l_module.SaveConfig()
-        for l_module in self.m_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.SaveConfig()
         LOG.info("Saved Config.")
 
@@ -244,9 +172,24 @@ class Api:
         """ Stop all house stuff.
         """
         LOG.info("Stopping House.")
-        for l_module in self.m_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.Stop()
         LOG.info("Stopped.")
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'PyHouse_obj')
+
+    def MqttDispatch(self, p_msg):
+        """
+        """
+        p_msg.LogMessage += '\tHouse: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        l_topic = p_msg.UnprocessedTopic[0].lower()
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic in self.m_parts_apis:
+            self.m_parts_apis[l_topic].MqttDispatch(p_msg)
+        elif l_topic in self.m_module_apis:
+            self.m_module_apis.MqttDispatch(p_msg)
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
+            LOG.warning('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
+        self.m_pyhouse_obj.Core.MqttApi.Dispatch(p_msg)
 
 #  ##  END DBK

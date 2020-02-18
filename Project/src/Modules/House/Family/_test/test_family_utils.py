@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/_test/test_family_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014_2019 by D. Brian Kimmel
+@copyright: (c) 2014_2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Nov 15, 2014
 @Summary:
@@ -11,21 +11,19 @@ Passed all 35 tests.  DBK 2019-02-21
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
+from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities import convert
 from Modules.House.Family import VALID_FAMILIES
 from Modules.House.Family.family import Api as familyApi
 from Modules.House.Family import family_utils
 from Modules.House.Family.family_utils import FamUtil
-from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.House.Lighting.lighting_lights import LightControlInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -410,32 +408,6 @@ class C3_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_device.Name, TESTING_LIGHT_NAME_0)
         self.assertEqual(l_light.Address, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
 
-    def test_02_Light(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
-        l_xml = self.m_xml.light_sect[1]
-        print(PrettyFormatAny.form(l_xml, 'C3-02-A - XML'))
-        l_device = self.m_device_obj
-        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
-        print(PrettyFormatAny.form(l_light, 'C3-02-B - Light'))
-        self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_1)
-        self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_1)
-        self.assertEqual(l_light.UPBAddress, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-
-    def test_03_All(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
-        l_xml = self.m_xml.light
-        l_device = self.m_device_obj
-        #
-        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
-        FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C3-03-A - Light'))
-        self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.Address, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-        self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
-
 
 class C4_Read(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by UPB.
@@ -477,29 +449,5 @@ class C4_Read(SetupMixin, unittest.TestCase):
         l_light = FamUtil.read_family_data(self.m_pyhouse_obj, l_device, l_xml)
         # print(PrettyFormatAny.form(l_light, 'C4-03-A - Light'))
         self.assertEqual(str(l_light.UPBAddress), TESTING_UPB_ADDRESS)
-
-    def test_04_Light(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
-        l_xml = self.m_xml.light
-        l_device = self.m_device_obj
-        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C4-04-A - Light'))
-        self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_device.RoomName, TESTING_LIGHT_ROOM_NAME_0)
-
-    def test_05_All(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
-        l_xml = self.m_xml.light
-        l_device = self.m_device_obj
-        #
-        l_light = deviceXML.read_base_device_object_xml(l_device, l_xml)
-        FamUtil.read_family_data(self.m_pyhouse_obj, l_light, l_xml)
-        # print(PrettyFormatAny.form(l_light, 'C4-05-A - Light'))
-        self.assertEqual(l_light.Name, TESTING_LIGHT_NAME_0)
-        self.assertEqual(l_light.DeviceFamily, TESTING_DEVICE_FAMILY_INSTEON)
-        self.assertEqual(l_light.Address, convert.dotted_hex2int(TESTING_INSTEON_ADDRESS_0))
-        self.assertEqual(convert.int2dotted_hex(l_light.ProductKey, 3), TESTING_INSTEON_PRODUCT_KEY_0)
 
 # ## END DBK

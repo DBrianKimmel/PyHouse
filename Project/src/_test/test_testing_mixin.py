@@ -10,11 +10,11 @@
 Passed all 16 tests - DBK - 2019-06-23
 
 """
-from Modules.Core.data_objects import PyHouseInformation
+from Modules.Core import PyHouseInformation
 from Modules.Computer.computer import ComputerInformation
-from Modules.House.house import HouseInformation
+from Modules.House import HouseInformation
 
-__updated__ = '2019-09-07'
+__updated__ = '2020-02-04'
 
 # Import system type stuff
 from twisted.trial import unittest

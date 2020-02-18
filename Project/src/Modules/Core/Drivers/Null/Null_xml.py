@@ -9,14 +9,13 @@
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import NullControllerInformation
-# from Modules.Core.Utilities.xml_tools import PutGetXML
 
 
 class XML(object):

@@ -11,14 +11,14 @@ Passed all 3 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2019-11-29'
+__updated__ = '2020-02-17'
 
 #  Import system type stuff
 from twisted.trial import unittest
 
 #  Import PyMh files
 from Modules.Core.Utilities.obj_defs import GetPyhouse
-from Modules.House.Lighting.lights import Api as lightsApi
+from Modules.House.Lighting.Lights.lights import Api as lightsApi
 from Modules.House.Family.family import Api as familyApi
 from _test.testing_mixin import SetupPyHouseObj
 

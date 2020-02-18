@@ -10,8 +10,9 @@
 Passed all 11 tests - DBK - 2020-01-27
 
 """
+from Modules.House import HouseInformation
 
-__updated__ = '2020-01-27'
+__updated__ = '2020-02-02'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +20,7 @@ from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.house import Api as houseApi, HouseInformation
+from Modules.House.house import Api as houseApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 TEST_YAML = """\

@@ -2,7 +2,7 @@
 @name:      Modules/House/Schedules/_test/test_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the schedule information for a house.
@@ -13,7 +13,7 @@ There are some tests (starting with 'X') that I do not know how to do in twisted
 
 """
 
-__updated__ = '2019-12-20'
+__updated__ = '2020-02-17'
 
 # Import system type stuff
 import datetime
@@ -23,7 +23,7 @@ import twisted
 from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import RiseSetData
+from Modules.House.Schedule import RiseSetInformation
 from Modules.Core.Utilities import convert
 from Modules.Core.Config import config_tools
 from Modules.House.Schedule.schedule import \
@@ -106,7 +106,7 @@ class Mock(object):
 
     @staticmethod
     def RiseSet():
-        l_ret = RiseSetData()
+        l_ret = RiseSetInformation()
         l_ret.Dawn = 0
         l_ret.SunRise = 0
         l_ret.Noon = 0
@@ -383,7 +383,7 @@ class C8_List(SetupMixin, unittest.TestCase):
         We should end up with 2 schedules in the list.
         """
         l_riseset = Mock.RiseSet()
-        l_delay, l_list = lightingUtility.find_next_scheduled_events()
+        l_delay, l_list = lightingUtility._find_next_scheduled_events()
         l_now_sec = convert.datetime_to_seconds(T_TODAY)
         l_obj = self.m_pyhouse_obj.House.Schedules[0]
         l_sched_sec = TimeField().parse_timefield(l_obj.Time, l_riseset)

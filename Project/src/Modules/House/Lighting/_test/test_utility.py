@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-08'
+__updated__ = '2020-02-17'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -18,8 +18,8 @@ from ruamel.yaml import YAML
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House.Lighting.utility import lightingUtility
-from Modules.House.Lighting.lights import LocalConfig as lightsConfig
-from Modules.House.Lighting.outlets import LocalConfig as outletsConfig
+from Modules.House.Lighting.Lights.lights import LocalConfig as lightsConfig
+from Modules.House.Lighting.Outlets.outlets import LocalConfig as outletsConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

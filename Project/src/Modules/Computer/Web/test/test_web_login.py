@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2017-01-11
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,6 @@ from twisted.trial import unittest
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Nodes.nodes_xml import Xml as nodesXml
-from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Computer.Web import web_login
 from Modules.Computer.Web.test.xml_web import TESTING_LOGIN_NAME_0, TESTING_WEB_PORT
 from Modules.Computer.Web.web import WorkspaceData

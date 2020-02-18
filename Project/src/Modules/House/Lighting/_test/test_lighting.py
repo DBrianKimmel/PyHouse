@@ -11,13 +11,14 @@ Passed all 6 tests.  DBK 2019-12-30
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-02-03'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Lighting.lighting import Api as lightingApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -41,23 +42,24 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_api = lightingApi(self.m_pyhouse_obj)
 
     def test_01_Pyhouse(self):
         """
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
         self.assertIsNotNone(self.m_pyhouse_obj)
 
     def test_02_House(self):
         """
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
         self.assertIsNotNone(self.m_pyhouse_obj.House)
 
     def test_03_Lighting(self):
         """
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-03-A - Lighting'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-03-A - Lighting'))
         self.assertIsNotNone(self.m_pyhouse_obj.House.Lighting)
 
 
@@ -83,5 +85,47 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
     def test_01_lighting(self):
         """Write out the 'LightingSection' which contains the 'LightSection',
         """
+
+
+class M1_Mqtt(SetupMixin, unittest.TestCase):
+    """
+    This section tests the publishing of MQTT messages
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = lightingApi(self.m_pyhouse_obj)  # Must be done to setup module
+        self.m_yaml = self.m_test_config['Lights']
+        self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
+
+    def test_01_base(self):
+        """
+        """
+        l_ret = self.m_config._build_yaml()
+        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - base'))
+        print(l_ret, 'D1-01-A - base')
+        self.assertEqual(l_ret['Lights'], None)
+
+
+class M2_Mqtt(SetupMixin, unittest.TestCase):
+    """
+    This section tests the dispatch of MQTT messages
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = lightingApi(self.m_pyhouse_obj)  # Must be done to setup module
+        self.m_yaml = self.m_test_config['Lights']
+        self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
+
+    def test_01_base(self):
+        """
+        """
+        l_ret = self.m_config._build_yaml()
+        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - base'))
+        print(l_ret, 'D1-01-A - base')
+        self.assertEqual(l_ret['Lights'], None)
 
 # ## END DBK

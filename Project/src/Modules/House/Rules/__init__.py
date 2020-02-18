@@ -9,4 +9,16 @@
 
 """
 
+
+class RulesData:
+    """
+    ==> PyHouse.House.Rules.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.DeviceUUID = None
+        self.Condition = None
+        self.Time = None
+        self.Action = None
+
 # ## END DBK

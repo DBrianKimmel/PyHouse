@@ -27,7 +27,7 @@ An Insteon_device module is used to read and write information to an Insteon con
     _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2020-01-26'
+__updated__ = '2020-02-05'
 __version_info__ = (19, 11, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -146,7 +146,7 @@ class LocalConfig:
         l_obj = DeviceFamilyInformation()
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
-        config_tools.Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, l_required, l_allowed)
+        config_tools.Tools(self.m_pyhouse_obj).extract_fields(l_obj, p_config, required_list=l_required, allowed_list=l_allowed)
         # LOG.debug('Family "{}"'.format(l_obj.Name))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj

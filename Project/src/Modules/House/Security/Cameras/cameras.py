@@ -18,7 +18,7 @@ If motion above a threshold is detected, it will trigger an alert and create a t
 # Sensitivity (how many changed pixels before capturing an image)
 # ForceCapture (whether to force an image to be captured every forceCaptureTime seconds)
 
-__updated__ = '2019-12-25'
+__updated__ = '2020-02-02'
 __version_info__ = (19, 8, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -226,7 +226,9 @@ class Api:
     def _add_storage(self) -> None:
         """
         """
-        self.m_pyhouse_obj.House.Security.Cameras = {}
+        if not hasattr(self.m_pyhouse_obj.House, 'Security'):
+            setattr(self.m_pyhouse_obj.House, 'Security', object())
+        setattr(self.m_pyhouse_obj.House.Security, 'Cameras', {})
 
     def LoadConfig(self):
         """

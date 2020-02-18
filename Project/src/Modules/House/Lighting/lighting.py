@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2020-01-25'
+__updated__ = '2020-02-17'
 __version_info__ = (20, 1, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,72 +22,12 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.Lighting import MODULES
-from Modules.House.Lighting.buttons import MqttActions as buttonMqtt
-from Modules.House.Lighting.controllers import MqttActions as controllerMqtt
-from Modules.House.Lighting.lights import MqttActions as lightMqtt
-from Modules.House.Lighting.outlets import MqttActions as outletMqtt
+from Modules.House.Lighting import MODULES, LightingClass
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Lighting       ')
-
-CONFIG_NAME = 'lighting'
-
-
-class LightingInformation:
-    """
-    ==> PyHouse.House.Lighting.xxx as in the def below
-    """
-
-    def __init__(self):
-        self.Buttons = None  # ==> ButtonInformation()
-        self.Controllers = None  # ==> ControllerInformation()
-        self.Lights = None  # ==> LightInformation()
-        self.Outlets = None  # ==> OutletInformation
-
-
-class ScheduleLightingInformation:
-    """ This is the lighting specific part.
-    """
-
-    def __init__(self):
-        self.Type = 'Light'
-        self.Brightness = 0
-        self.Name = None  # Light name
-        self.Rate = 0
-        self.Duration = None
-        self.Room = None  # Room Name
-
-
-class MqttActions:
-    """
-    """
-
-    def __init__(self, p_pyhouse_obj):
-        # LOG.debug('Init')
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def decode(self, p_msg):
-        """
-        --> pyhouse/<housename>/lighting/<category>/xxx
-        """
-        l_topic = p_msg.UnprocessedTopic
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        p_msg.LogMessage += '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
-        # LOG.debug('MqttLightingDispatch Topic:{}'.format(p_topic))
-        if l_topic[0] == 'button':
-            buttonMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic[0] == 'controller':
-            controllerMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic[0] == 'light':
-            lightMqtt(self.m_pyhouse_obj).decode(p_msg)
-        elif l_topic[0] == 'outlet':
-            outletMqtt(self.m_pyhouse_obj).decode(p_msg)
-        else:
-            p_msg.LogMessage += '\tUnknown Lighting sub-topic {}'.format(p_msg.Payload)
-            LOG.warning('Unknown Lighting Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:
@@ -137,7 +77,7 @@ class Api:
     m_config_tools = None
     m_local_config = None
     m_pyhouse_obj = None
-    m_modules = None
+    m_module_apis = None
 
     def __init__(self, p_pyhouse_obj) -> None:
         LOG.info("Initialing - Version:{}".format(__version__))
@@ -145,35 +85,37 @@ class Api:
         self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_config_tools = configApi(p_pyhouse_obj)
-        l_path = 'Modules.House.Lighting'
+        l_path = 'Modules.House.Lighting.'
         l_modules = self.m_config_tools.find_module_list(MODULES)
-        self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
+        self.m_module_apis = self.m_config_tools.import_module_list(l_modules, l_path)
+        p_pyhouse_obj.House.Lighting._Apis = self.m_module_apis
         LOG.info("Initialized - Version:{}".format(__version__))
 
     def _add_storage(self) -> None:
-        self.m_pyhouse_obj.House.Lighting = LightingInformation()
+        self.m_pyhouse_obj.House.Lighting = LightingClass()
 
     def LoadConfig(self):
         LOG.info('Loading all Lighting config files.')
-        for l_module in self.m_modules.values():
+        LOG.debug(PrettyFormatAny.form(self.m_module_apis, 'Apis'))
+        for l_module in self.m_module_apis.values():
             l_module.LoadConfig()
         LOG.info('Loaded Lighting config files.')
 
     def Start(self):
         LOG.info("Starting.")
-        for l_module in self.m_modules.values():
+        for l_module in self.m_module_apis.values():
             l_module.Start()
         LOG.info("Started.")
 
     def SaveConfig(self):
         LOG.info('SaveConfig')
-        for l_module in self.m_modules.values():
+        for l_module in self.m_module_apis.values():
             l_module.SaveConfig()
         LOG.info("Saved Lighting Config.")
         return
 
     def Stop(self):
-        for l_module in self.m_modules.values():
+        for l_module in self.m_module_apis.values():
             l_module.Stop()
         LOG.info("Stopped.")
 
@@ -191,5 +133,19 @@ class Api:
             return
         # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
         self.m_plm.Control(p_device_obj, p_controller_obj, p_control)
+
+    def MqttDispatch(self, p_msg):
+        """
+        """
+        p_msg.LogMessage += '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        l_topic = p_msg.UnprocessedTopic[0].lower()
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic in self.m_parts_apis:
+            self.m_parts_apis[l_topic].MqttDispatch(p_msg)
+        elif l_topic in self.m_module_apis:
+            self.m_module_apis.MqttDispatch(p_msg)
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
+            LOG.warning('Unknown lighting Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
 
 #  ## END DBK

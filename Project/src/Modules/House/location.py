@@ -12,7 +12,7 @@ This is for calculating the time of sunrise and sunset.
 Additional calculations may be added such things as moon rise, tides, etc.
 """
 
-__updated__ = '2019-12-22'
+__updated__ = '2020-02-17'
 __version_info__ = (19, 10, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,7 +21,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
-from Modules.House.house_data import LocationInformation
+from Modules.House import LocationInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

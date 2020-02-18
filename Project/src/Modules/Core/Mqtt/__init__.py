@@ -7,7 +7,7 @@
 @license:   MIT License
 """
 
-__updated__ = '2020-01-19'
+__updated__ = '2020-02-10'
 __version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -25,6 +25,7 @@ class MqttInformation:
         self.Brokers: dict = {}  # MqttBrokerInformation()
         self.ClientID: str = CLIENT_PREFIX
         self.Prefix: str = ''
+        self._Api = None
         self._ProtocolApi = None
 
 
@@ -40,7 +41,7 @@ class MqttBrokerInformation:
         self.Keepalive = 60  # seconds
         #
         self.Access = None  # AccessInformation()
-        self.Host = None  # HostInformation()
+        self.Host = None
         self.Will = MqttBrokerWillInformation()  # MqttBrokerWillInformation()
         self.Version = 5  # We can handle versions 3,4,5 currently
         #

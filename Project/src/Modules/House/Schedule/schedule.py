@@ -38,14 +38,14 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2020-01-19'
+__updated__ = '2020-02-17'
 __version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import aniso8601
-from typing import Optional
+# from typing import Optional
 
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
@@ -54,7 +54,8 @@ from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
 from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
 from Modules.House.Lighting.actions import Api as lightingActionsApi
 from Modules.House.Lighting.utility import lightingUtility
-from Modules.House.Schedule import sunrisesunset
+from Modules.House.Schedule import ScheduleInformation
+from Modules.House.Schedule.sunrisesunset import Api as sunriseApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -70,19 +71,6 @@ INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
 CONFIG_NAME = 'schedule'
-
-
-class ScheduleInformation:
-    """ This is the basic schedule info
-    """
-
-    def __init__(self) -> None:
-        self.Name: Optional[str] = None
-        self.Comment = None
-        self.DOW: str = 'SMTWTFS'  # DayOfWeek - a dash '-' replaces the day letter if NOT that day
-        self.Occupancy: str = 'Always'  # Always, Home, Away, Vacation, ...
-        self.Time = None
-        self.Sched = None  # One of the schedule detail types below.
 
 
 class ScheduleEntertainmentInformation:
@@ -376,9 +364,9 @@ class ScheduleExecution:
         Send information to one device to execute a schedule.
         @param p_schedule_obj: ==> ScheduleInformation()
         """
-        _l_topic = 'house/schedule/control'
-        _l_obj = p_schedule_obj
-        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
+        l_topic = 'house/schedule/control'
+        l_obj = p_schedule_obj
+        p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
         if p_schedule_obj.Sched.Type in ['Lighting', 'Light', 'Outlet']:
             LOG.info('Execute_one_schedule type = Lighting - "{}"'.format(p_schedule_obj.Sched.Name))
@@ -429,7 +417,7 @@ class lightingUtilitySch:
 
     def _fetch_sunrise_set(self):
         _l_topic = 'house/schedule/sunrise_set'
-        l_riseset = self.m_pyhouse_obj.House.Location._RiseSet  # RiseSetData()
+        l_riseset = self.m_pyhouse_obj.House.Location._RiseSet
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
 
@@ -663,8 +651,9 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_local_config = LocalConfig(p_pyhouse_obj)
-        # LOG.info("Initialized - Version:{}".format(__version__))
+        self.m_sunrise_api = sunriseApi(p_pyhouse_obj)
 
     def _add_storage(self):
         """
@@ -684,7 +673,8 @@ class Api:
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
-        sunrisesunset.Api(self.m_pyhouse_obj).Start()
+        LOG.info("Starting.")
+        self.m_sunrise_api.Start()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtilitySch(self.m_pyhouse_obj).schedule_next_event)
         LOG.info("Started.")
 

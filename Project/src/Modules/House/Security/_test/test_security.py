@@ -11,13 +11,14 @@ Passed all 13 tests - DBK - 2018-02-13
 
 """
 
-__updated__ = '2019-12-29'
+__updated__ = '2020-02-02'
 
 # Import system type stuff
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Security.security import Api as securityApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -38,7 +39,35 @@ class A0(unittest.TestCase):
         print('Id: test_security')
 
 
-class A1(SetupMixin, unittest.TestCase):
+class A1_Setup(SetupMixin, unittest.TestCase):
+    """
+    This section tests the above setup for things we will need further down in the tests.
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = securityApi(self.m_pyhouse_obj)
+
+    def test_01_Pyhouse(self):
+        """
+        """
+        print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
+        self.assertIsNotNone(self.m_pyhouse_obj)
+
+    def test_02_House(self):
+        """
+        """
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House)
+
+    def test_03_Security(self):
+        """
+        """
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Security, 'A1-03-A - Security'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Security)
+
+
+class B1(SetupMixin, unittest.TestCase):
     """ This section tests the reading and writing of XML used by lighting_controllers.
     """
 

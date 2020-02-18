@@ -8,7 +8,7 @@
 @summary:
 """
 
-__updated__ = '2019-12-24'
+__updated__ = '2020-02-17'
 __version_info__ = (19, 12, 2)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -21,7 +21,7 @@ from queue import Queue
 
 #  Import PyMh files and modules.
 from Modules.Core.Utilities import convert
-from Modules.House.Entertainment.entertainment_data import EntertainmentDeviceStatus
+from Modules.House.Entertainment import EntertainmentDeviceStatus
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 

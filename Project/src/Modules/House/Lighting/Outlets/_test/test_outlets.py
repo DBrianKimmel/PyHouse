@@ -2,7 +2,7 @@
 @name:      /home/briank/workspace/PyHouse/Project/src/Modules/House/Lighting/_test/test_outlets.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 7, 2019
 @summary:
@@ -11,7 +11,7 @@ Passed all 8 tests - DBK - 2019-12-08
 
 """
 
-__updated__ = '2019-12-08'
+__updated__ = '2020-02-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,7 @@ from ruamel.yaml import YAML
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Lighting.outlets import LocalConfig as outletsConfig
+from Modules.House.Lighting.Outlets.outlets import LocalConfig as outletsConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -108,7 +108,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_outlet.Comment, 'This is the music room lamp')
         self.assertEqual(l_outlet.DeviceType, 'Lighting')
         self.assertEqual(l_outlet.DeviceSubType, 'Outlet')
-        self.assertEqual(l_outlet.Family.Name, 'insteon')
+        self.assertEqual(l_outlet.Family.Name, 'Insteon')
         self.assertEqual(l_outlet.Family.Address, '11.11.11')
 
     def test_02_Outlet1(self):
@@ -122,7 +122,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_outlet.Comment, '??')
         self.assertEqual(l_outlet.DeviceType, 'Lighting')
         self.assertEqual(l_outlet.DeviceSubType, 'Outlet')
-        self.assertEqual(l_outlet.Family.Name, 'insteon')
+        self.assertEqual(l_outlet.Family.Name, 'Insteon')
         self.assertEqual(l_outlet.Family.Address, '22.22.22')
 
     def test_03_Outlet2(self):
@@ -136,7 +136,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
         self.assertEqual(l_outlet.Comment, 'Fireplace end')
         self.assertEqual(l_outlet.DeviceType, 'Lighting')
         self.assertEqual(l_outlet.DeviceSubType, 'Outlet')
-        self.assertEqual(l_outlet.Family.Name, 'insteon')
+        self.assertEqual(l_outlet.Family.Name, 'Insteon')
         self.assertEqual(l_outlet.Family.Address, '33.33.33')
 
     def test_04_Outlets(self):

@@ -2,7 +2,7 @@
 @name:      PyHouse/src/Modules/Families/Insteon/_test/test_Insteon_HVAC.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2017 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Dec 6, 2014
 @Summary:
@@ -11,27 +11,19 @@ Passed all 2 tests - DBK - 2015-07-29
 
 """
 
-__updated__ = '2019-10-31'
+__updated__ = '2020-02-17'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import HouseInformation, ControllerInformation
-from Modules.Housing.Lighting.lighting_controllers import Api as controllerApi
-from Modules.Housing.Lighting.lighting_lights import Api as lightingApi
-from Modules.Housing.Lighting.test.xml_controllers import \
-    TESTING_CONTROLLER_NAME_0
-from Modules.Housing.Lighting.test.xml_lights import \
-    XML_LIGHT_SECTION, \
-    TESTING_LIGHT_SECTION
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.Lighting.Controllers.controllers import Api as controllerApi
+from Modules.House.Lighting.Lights.lights import Api as lightingApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.Families.Insteon.Insteon_utils import Decode as utilDecode
-from Modules.Families.Insteon import Insteon_decoder
-from Modules.Families.Insteon.Insteon_Light import DecodeResponses as Decode_Light
+from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
+from Modules.House.Family.Insteon import insteon_decoder
+from Modules.House.Family.Insteon.insteon_light import DecodeResponses as Decode_Light
 
 # 16.C9.D0 =
 # 1B.47.81 =
@@ -49,19 +41,17 @@ class SetupMixin(object):
     """
     """
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_xml = SetupPyHouseObj().BuildXml()
         self.m_cntl_api = controllerApi()
         self.m_light_api = lightingApi()
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_Insteon_Light')
 
 
@@ -70,7 +60,7 @@ class A1_Prep(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_device = None
 
     def test_01_PyHouse(self):
@@ -108,29 +98,12 @@ class A1_Prep(SetupMixin, unittest.TestCase):
         """
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
-
-    def test_01_Raw(self):
-        l_raw = XML_LIGHT_SECTION
-        # print(l_raw)
-        self.assertEqual(l_raw[:14], '<' + TESTING_LIGHT_SECTION + '>')
-
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_LIGHT_SECTION)
-        print(PrettyFormatAny.form(l_xml, 'A2-02-A - Parsed'))
-        self.assertEqual(l_xml.tag, TESTING_LIGHT_SECTION)
-
-
 class B1_Util(SetupMixin, unittest.TestCase):
     """This tests the utility section of decoding
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_ctrlr = ControllerInformation()
 
     def test_01_GetObjFromMsg(self):
@@ -163,7 +136,7 @@ class B2_Decode(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_ctrlr = ControllerInformation()
         self.m_decode = Insteon_decoder.DecodeResponses(self.m_pyhouse_obj, self.m_ctrlr)
 
@@ -176,7 +149,7 @@ class B2_Decode(SetupMixin, unittest.TestCase):
 class C1_Light(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_pyhouse_obj.House.Lighting.Controllers = self.m_cntl_api.read_all_controllers_xml(self.m_pyhouse_obj)
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj)
         self.m_ctrlr = self.m_pyhouse_obj.House.Lighting.Controllers[0]

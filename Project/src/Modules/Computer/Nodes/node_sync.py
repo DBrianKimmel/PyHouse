@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-25'
+__updated__ = '2020-02-17'
 __version_info__ = (20, 1, 25)
 __version__ = '.'.join(map(str, __version_info__))
 

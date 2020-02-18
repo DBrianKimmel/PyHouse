@@ -7,7 +7,7 @@
 @note:      Created on Jun 3, 2013
 """
 
-__updated__ = '2020-01-28'
+__updated__ = '2020-02-10'
 __version_info__ = (20, 1, 26)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -67,7 +67,7 @@ class EntertainmentDeviceInformation:
         self._isRunning = False
         #
         self.CommandSet = None  # Command sets change over the years.
-        self.Host = None  # HostInformation()  ## See core.data_objects
+        self.Host = None
         self.Model = None
         self.Room = None  # RoomLoc??
         self.Type = None
@@ -88,7 +88,7 @@ class EntertainmentServiceInformation:
         self._Transport = None
         self._Connector = None
 
-        self.Host = None  # HostInformation()
+        self.Host = None
         self.ConnectionFamily = None  # pioneer, onkyo
         self.ConnectionModel = None  # Model
         self.InputName = None

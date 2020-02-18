@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-19'
+__updated__ = '2020-02-17'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -41,10 +41,10 @@ class RoomInformation:
     def __init__(self):
         self.Name = None
         self.Comment = None
-        self.Corner = None  # CoordinateInformation()
+        self.Corner = None  # Coords
         self.Floor = None  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.RoomType = None
-        self.Size = None  # CoordinateInformation()
+        self.Size = None  # Coords
         self.Trigger = None
 
 
@@ -71,9 +71,6 @@ class MqttActions:
         else:
             p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Rooms msg', 160))
 
-    def dispatch(self, p_topic, p_message):
-        pass
-
     def send_message(self, p_pyhouse_obj, p_topic, p_room_obj):
         """ Messages are:
                 room/add - to add a new room to the database.
@@ -82,7 +79,7 @@ class MqttActions:
                 room/update - to add or modify a room
         """
         l_topic = 'house/room/' + p_topic
-        p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_room_obj)
+        p_pyhouse_obj.Core._MqttApi.MqttPublish(l_topic, p_room_obj)
 
     def send_update(self):
         """ Update rooms to keep the house in sync on all nodes.
@@ -328,10 +325,20 @@ class Api:
     def Stop(self):
         _x = PrettyFormatAny.form('', '')
 
-    def getRoomConfig(self, _p_config):
-        """
-        """
-        # l_rooms = self.m_local_config.extract_rooms_group(p_config)
-        return  # l_rooms
+    def MqttDispatch(self, p_msg):
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tRooms:\n'
+        if l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+
+        elif l_topic[0] == 'delete':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'request':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Rooms msg', 160))
 
 #  ## END DBK

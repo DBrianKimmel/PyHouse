@@ -10,7 +10,7 @@
 Passed all 10 tests - DBK 2019-06-28
 
 """
-__updated__ = '2019-12-15'
+__updated__ = '2020-02-04'
 
 # Import system type stuff
 from twisted.trial import unittest
@@ -20,7 +20,7 @@ from ruamel.yaml import YAML
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.House import floors
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.House.house import HouseInformation
+from Modules.House import HouseInformation
 from Modules.Core.Config import config_tools
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny

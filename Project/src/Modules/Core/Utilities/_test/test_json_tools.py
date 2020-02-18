@@ -12,7 +12,7 @@ Passed all 5 tests - DBK - 2017-01-20
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny, PrettyFormatObject
 
-__updated__ = '2019-06-13'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -64,7 +64,7 @@ class A0(unittest.TestCase):
 
 class A1_Json(SetupMixin, unittest.TestCase):
     """
-    This series tests the complex PutGetXML class methods
+    This series tests
     """
 
     def setUp(self):

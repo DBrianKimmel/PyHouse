@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2020-01-25'
+__updated__ = '2020-02-17'
 __version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -23,7 +23,6 @@ from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Mqtt import CLIENT_PREFIX, MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation, CONFIG_NAME
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
-from Modules.House.house import MqttActions as houseMqtt
 from Modules.Computer.computer import MqttActions as computerMqtt
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -146,6 +145,7 @@ class Api:
     m_actions = None
     m_local_config = None
     m_pyhouse_obj = None
+    m_dispatch_api = {}
 
     def __init__(self, p_pyhouse_obj):
         LOG.info('Intializing - Version:{}'.format(__version__))
@@ -157,6 +157,7 @@ class Api:
     def _add_storage(self):
         # LOG.debug('Adding')
         self.m_pyhouse_obj.Core.Mqtt = MqttInformation()
+        self.m_pyhouse_obj.Core.Mqtt._Api = self
         self.m_pyhouse_obj.Core.Mqtt.ClientID = CLIENT_PREFIX + platform.node()
         self.m_pyhouse_obj.Core.Mqtt.Prefix = 'pyhouse/' + self.m_pyhouse_obj._Parameters.Name + '/'  # we have not configured house at this point
         setattr(self.m_pyhouse_obj.Core, 'MqttApi', self)  # Clear before loading
@@ -190,6 +191,12 @@ class Api:
         _x = PrettyFormatAny.form('', '')
         LOG.info("Stopped.")
 
+    def AddDispatchApi(self, p_entry):
+        """
+        """
+        LOG.debug(PrettyFormatAny.form(p_entry, 'Entry'))
+        self.m_dispatch_api.update(p_entry)
+
 # ## The following are public commands that may be called from everywhere
 
     def MqttPublish(self, p_topic, p_message):
@@ -205,14 +212,16 @@ class Api:
         """
         l_topic = _make_topic(self.m_pyhouse_obj, p_topic)
         l_message = _make_message(self.m_pyhouse_obj, p_message)
+        LOG.debug('"{}"'.format(p_topic))
         for l_broker in self.m_pyhouse_obj.Core.Mqtt.Brokers.values():
             try:
                 l_broker._ProtocolApi.publish(l_topic, l_message)
-                # LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
+                LOG.debug('Mqtt published:\tTopic:{}'.format(p_topic))
             except AttributeError as e_err:
                 LOG.error("Mqtt NOT published.\n\tFor Broker: {}\n\tERROR:{}\n\tTopic:{}\n\tMessage:{}".format(
                     l_broker.Name, e_err, l_topic, l_message))
-                # LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client', 190)))
+                LOG.error("{}".format(PrettyFormatAny.form(l_broker, 'Client')))
+        LOG.debug('Done')
 
     def _decodeLWT(self, p_message):
         l_logmsg = '\tLast Will:\n'
@@ -222,7 +231,7 @@ class Api:
     def MqttDispatch(self, p_msg):
         """ Dispatch a received MQTT message according to the topic.
 
-        --> pyhouse/<HouseName>/<Division>/topic03/topic04/...
+        Topic: --> pyhouse/<HouseName>/<Level 0>/<Level 1>/<Level 2>/...
 
         @param p_msg: MqttMessageInformation()
         @return: a message to send to the log detailing the Mqtt message received.
@@ -231,7 +240,7 @@ class Api:
         l_topic = p_msg.UnprocessedTopic[0]  # Must start with pyhouse
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         if l_topic != 'pyhouse':
-            LOG.error('Invalid topic string: "{}"'.format(p_msg.Topic))
+            LOG.error('Invalid Mqtt topic string: "{}"'.format(p_msg.Topic))
             return
         l_topic = p_msg.UnprocessedTopic[0]  # Next must be this house name
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
@@ -239,7 +248,7 @@ class Api:
             LOG.error('We got a message for some other house: "{}"'.format(p_msg.UnprocessedTopic[0]))
             return
         #
-        l_topic = p_msg.UnprocessedTopic[0]  # Next
+        l_topic = p_msg.UnprocessedTopic[0]  # Next = Level 0
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
         # LOG.debug('Dispatch:\n\tTopic List: {}'.format(p_msg.UnprocessedTopic))
         p_msg.LogMessage = 'Dispatch\n\tTopic: {}'.format(p_msg.UnprocessedTopic)
@@ -251,11 +260,14 @@ class Api:
             # Every other topic will have the following field(s).
             l_sender = get_required_mqtt_field(p_msg.Payload, 'Sender')
             p_msg.LogMessage += '\n\tSender: {}\n'.format(l_sender)
+
         # Branch on the <division> portion of the topic
         if l_topic == 'computer':
             computerMqtt(self.m_pyhouse_obj).decode(p_msg)
+
         elif l_topic == 'house':
-            houseMqtt(self.m_pyhouse_obj).decode(p_msg)
+            ['house'].MqttDispatch(p_msg)
+
         else:
             p_msg.LogMessage += '   OTHER: Unknown topic\n' + \
                         '\tTopic: {};\n'.format(p_msg.UnprocessedTopic[0]) + \

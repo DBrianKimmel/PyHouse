@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2020-01-31'
+__updated__ = '2020-02-17'
 
 #  Import system type stuff
 import datetime
@@ -389,8 +389,8 @@ class Api(LightHandlerApi):
         else:
             LOG.error('Insteon Controller start failed for "{}"'.format(self.m_controller_obj.Name))
             l_ret = False
-        # l_topic = 'house/lighting/controller/status'
-        # p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_controller_obj)
+        l_topic = 'house/lighting/controller/status'
+        self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, self.m_controller_obj)
         return l_ret
 
     def Start(self):
@@ -423,7 +423,7 @@ class Api(LightHandlerApi):
 
         @param p_controller_obj: optional
         @param p_device_obj: the device being controlled
-        @param p_control: the idealized light control params ==> Modules.House.Lighting.lights.Light Data()
+        @param p_control: the idealized light control params ==> Modules.House.Lighting.Lights.lights.Light Data()
         """
         l_level = int(p_control.BrightnessPct)
         l_rate = 0  # The transition time is not implemented currently.

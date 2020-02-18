@@ -2,17 +2,19 @@
 @name:      Modules/House/Family/insteon/insteon_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2019 by D. Brian Kimmel
+@copyright: (c) 2011-2020 by D. Brian Kimmel
 @note:      Created on Apr 3, 2011
 @license:   MIT License
 @summary:   This module is for Insteon
 
 This is the main module for the Insteon family of device controllers.
-It is imported once and instantiates insteon_plm for each local controller and insteon_hub one time for each hub.
+It is imported once and instantiates:
+    insteon_plm for each local controller and
+    insteon_hub one time for each hub.
 
 """
 
-__updated__ = '2020-01-09'
+__updated__ = '2020-02-12'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +24,7 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Family.Insteon.__init__ import InsteonInformation
+from Modules.House.Family.Insteon import InsteonInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.insteon_device ')
@@ -234,7 +236,7 @@ class Api:
         LOG.info('Initialized')
 
     def LoadConfig(self):
-        """
+        """ Load the insteon.yaml config
         """
         self.m_local_config.load_yaml_config()
 
@@ -245,12 +247,14 @@ class Api:
         LOG.info('Starting the Insteon Device.')
         self.m_plm_list = self.m_utility.start_all_plms()
         self.m_hub_list = self.m_utility.start_all_hubs()
+
         self.m_pyhouse_obj._Twisted.Reactor.callLater(SCAN_DELAY, self.m_utility.scan_devices)
         LOG.info('Started {} Insteon Devices.'.format(len(self.m_plm_list)))
 
     def SaveConfig(self):
         """
         """
+        pass
 
     def Stop(self):
         _x = PrettyFormatAny.form(self.m_pyhouse_obj, 'pyhouse')
@@ -260,8 +264,9 @@ class Api:
             LOG.info('Stop Warning - {}'.format(e_err))  #  no controllers for house(House is being added)
 
     def Control(self, _p_pyhouse_obj, p_device_obj, p_controller_obj, p_control):
-        """
-        Insteon specific version of control light
+        """ This will control an Insteon device
+        Either directly (via an attached PLM or remotely via Mqtt and or IP commands.
+        Insteon specific version to control a device.
         All that Insteon can control is Brightness and Fade Rate.
 
         @param p_controller_obj:  ==> ControllerInformation()
@@ -275,5 +280,10 @@ class Api:
         # [l_attr for l_attr in dir(l_obj) if not callable(getattr(l_obj, l_attr)) and not l_attr.startswith('_')]
         for l_ctlr in self.m_plm_list:
             l_ctlr.Control(p_device_obj, p_controller_obj, p_control)
+
+    def Status(self):
+        """ Status of any Insteon device.
+        """
+        pass
 
 #  ## END DBK

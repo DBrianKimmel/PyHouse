@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/insteon/insteon_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2019 by D. Brian Kimmel
+@copyright: (c) 2018-2020 by D. Brian Kimmel
 @note:      Created on Dec 4, 2018
 @license:   MIT License
 @summary:
@@ -11,7 +11,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2020-01-05'
+__updated__ = '2020-02-17'
 
 #  Import system type stuff
 
@@ -120,6 +120,8 @@ class DecodeResponses:
         if l_mqtt_publish:
             l_type = p_device_obj.DeviceSubType.lower()  # Light, Outlet ...
             l_topic = 'house/lighting/{}/status'.format(l_type)
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Core, 'Core'))
             p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)
         return l_debug_msg
 

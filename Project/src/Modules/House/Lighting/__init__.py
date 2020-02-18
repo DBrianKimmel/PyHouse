@@ -8,11 +8,9 @@
 @summary:   This module handles the lights component of the lighting system.
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-02-16'
 __version_info__ = (20, 1, 20)
 __version__ = '.'.join(map(str, __version_info__))
-
-VALID_LIGHTING_TYPE = ['Button', 'Controller', 'Light']
 
 MODULES = [
     'Buttons',
@@ -20,5 +18,28 @@ MODULES = [
     'Lights',
     'Outlets'
     ]
+
+CONFIG_NAME = 'lighting'
+
+
+class LightingInformation:
+    """
+    ==> PyHouse.House.Lighting.xxx as in the def below
+    """
+
+    def __init__(self):
+        self.Buttons = None  # ==> ButtonInformation()
+        self.Controllers = None  # ==> ControllerInformation()
+        self.Lights = None  # ==> LightInformation()
+        self.Outlets = None  # ==> OutletInformation
+        self._Apis = {}
+
+
+class LightingClass:
+    """
+    """
+
+    def __init__(self):
+        pass
 
 # ## END DBK

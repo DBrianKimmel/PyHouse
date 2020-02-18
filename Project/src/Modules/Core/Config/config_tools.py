@@ -11,7 +11,7 @@ mypy  Modules/Core/Config/config_tools.py
 
 """
 
-__updated__ = '2020-01-30'
+__updated__ = '2020-02-17'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,14 +19,14 @@ __version__ = '.'.join(map(str, __version_info__))
 import os
 import datetime
 import importlib
-from typing import Any, List, Union, Dict
+from typing import Any, List, Union
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
 from ruamel.yaml.comments import CommentedMap
 
 #  Import PyMh files
 from Modules.Core.Config.login import LoginInformation
-from Modules.Core.data_objects import HostInformation
+from Modules.Core.Config import HostInformation, AccessInformation, RoomLocationInformation, ConfigFileInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.House.Family.family import DeviceFamilyInformation, FamilyInformation
 
@@ -36,49 +36,6 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.ConfigTools    ')
 
 CONFIG_SUFFIX = '.yaml'
-
-
-class ConfigInformation:
-    """ A collection of Yaml data used for Configuration
-
-    ==> PyHouse._Config.xxx
-    """
-
-    def __init__(self):
-        self.YamlFileName = None
-        # self.YamlTree = {}  # ConfigFileInformation()
-
-
-class ConfigFileInformation:
-    """ ==? pyhouse_obj._Config {}
-
-    Used to record where each confile is located so it can be updated.
-    """
-
-    def __init__(self) -> None:
-        self.Name: Union[str, None] = None  # LowerCase filemane without .yaml
-        self.Path: Union[str, None] = None  # Full path to file
-
-
-class RoomLocationInformation:
-    """
-    """
-
-    def __init__(self):
-        self.Name = None
-
-
-class AccessInformation:
-    """
-    """
-
-    def __init__(self):
-        """
-        """
-        self.Name = None  # Username
-        self.Password = None
-        self.ApiKey = None
-        self.AccessKey = None
 
 
 class MyYAML(YAML):
@@ -161,14 +118,15 @@ class Tools(FileLookup):
         @param p_path: is the starting point to look for rhe module to import.
         """
 
-    def extract_fields(self, p_obj, p_config, required_list=None, allowed_list=None, groupfield_list=[]):
+    def extract_fields(self, p_obj, p_config, required_list=[], allowed_list=[], groupfield_list=[]):
         """
-        @param p_obj: is the python object that will contain the config information
+        @param p_obj: is the python object that will contain the config information. Must have sentinal of None.
         @param p_config: is the yaml(json) fragment that contains the data
         @param required_list: is a list of fields that must be in the config data
         @param allowed_list: additional fields that may be in the config data.
         @param groupfield_list: are fields that have sub-entries
         """
+        # LOG.warning('Extracting fields for obj {}'.format(type(p_obj)))
         for l_key, l_value in p_config.items():
             # LOG.debug('Key: {}; Value: {}'.format(l_key, l_value))
             if l_key in groupfield_list:
@@ -179,7 +137,7 @@ class Tools(FileLookup):
             setattr(p_obj, l_key, l_value)
         #
         for l_key in [l_attr for l_attr in dir(p_obj) if not l_attr.startswith('_') and not callable(getattr(p_obj, l_attr))]:
-            # LOG.debug('Now checking key: {}'.format(l_key))
+            # LOG.debug('Now checking key: {} - {}'.format(l_key, p_config[l_key]))
             if getattr(p_obj, l_key) == None:  # Key is missing
                 # LOG.debug('No key defined: {}'.format(l_key))
                 if l_key in required_list:
@@ -187,8 +145,8 @@ class Tools(FileLookup):
                     continue
             else:  # Key is Present
                 # LOG.debug('Key defined: {}; Value: {}'.format(l_key, l_value))
-                if l_key not in allowed_list:
-                    LOG.warning('Config entry "{}" is not permitted.'.format(l_key))
+                if l_key not in allowed_list + required_list:
+                    LOG.warning('Config entry "{}" is not permitted {}.'.format(l_key, allowed_list))
                     continue
             return p_obj
 
@@ -198,7 +156,7 @@ class Tools(FileLookup):
         @param p_configYamlmodules: is a list of Module/Package names to search for config files.
         """
         l_list = []
-        LOG.info('Search for config files for: {}'.format(p_modules))
+        # LOG.info('Search for config files for: {}'.format(p_modules))
         for l_part in p_modules:
             l_path = self.find_config_file(l_part.lower())
             if l_path != None:
@@ -215,7 +173,7 @@ class Tools(FileLookup):
             It is required
             Configuration calles for it.
         @param p_name: is the name of the module ('pandora')
-        @param p_path: is the relative path to the module ('Modules.House.Entertainment')
+        @param p_path: is the relative path to the module ('Modules.House.Entertainment.Pandora')
         @return: a pointer to the module or None
         """
         l_path = p_path + '.' + p_name.lower()
@@ -223,7 +181,7 @@ class Tools(FileLookup):
         try:
             l_ret = importlib.import_module(l_path)
         except ImportError as e_err:
-            l_msg = 'PROG ERROR importing module: "{}"\n\tErr:{}.'.format(p_name, e_err)
+            l_msg = 'PROG ERROR importing module: "{}", Path: "{}"\n\tErr:{}.'.format(p_name.lower(), l_path, e_err)
             LOG.error(l_msg)
             l_ret = None
         # LOG.debug('Imported "{}" ({})'.format(p_name, l_path))
@@ -233,10 +191,10 @@ class Tools(FileLookup):
         """ import a module with a path
         @param p_module: is a module name ("Cameras")
         @param p_path: is the starting point to look for the module to import.
-        @return: an initialized Api
+        @return: an initialized Api or None
         """
         l_module_name = p_module
-        LOG.info('Get Module Api pointer for "{}" on path "{}"'.format(l_module_name, p_path))
+        # LOG.info('Get Module Api pointer for "{}" on path "{}"'.format(l_module_name, p_path))
         l_ret = self._do_import(l_module_name, p_path)
         try:
             # LOG.debug(PrettyFormatAny.form(l_ret, 'Module'))
@@ -263,7 +221,7 @@ class Tools(FileLookup):
             # LOG.debug('Starting import of Part: "{}" at "{}"'.format(l_part, l_path))
             l_api = self.import_module_get_api(l_part, l_path)
             l_modules[l_part] = l_api
-        LOG.info('Loaded Module: {}'.format(l_modules.keys()))
+        # LOG.info('Loaded Module: {}'.format(l_modules.keys()))
         return l_modules
 
     def yaml_dump_struct(self, p_yaml: Any) -> str:
@@ -316,8 +274,8 @@ class SubFields(Tools):
     def _get_name_password(self, p_config):
         """
         """
-        l_required = ['Name', 'Password']
         l_obj = LoginInformation()
+        l_required = ['Name', 'Password']
         for l_key, l_value in p_config.items():
             setattr(l_obj, l_key, l_value)
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
@@ -328,11 +286,11 @@ class SubFields(Tools):
     def extract_access_group(self, p_config):
         """
         """
-        # LOG.debug('Getting Access')
+        # LOG.warning('Getting Access')
         l_obj = AccessInformation()
         l_required = ['Name', 'Password']
         l_allowed = ['ApiKey', 'AccessKey']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        self.extract_fields(l_obj, p_config, required_list=l_required, allowed_list=l_allowed)
         return l_obj
 
     def extract_family_group(self, p_config):
@@ -342,12 +300,12 @@ class SubFields(Tools):
         @param p_config: is the 'Family' ordereddict
         @return: the device object
         """
-        # LOG.debug('Getting Family')
+        # LOG.warning('Getting device Family')
         l_family_obj = FamilyInformation()
         l_device_obj = DeviceFamilyInformation()
         l_required = ['Name', 'Address']
         l_allowed = ['Type']
-        self.extract_fields(l_device_obj, p_config, l_required, l_allowed)
+        self.extract_fields(l_device_obj, p_config, required_list=l_required, allowed_list=l_allowed)
         l_key = l_device_obj.Name = l_device_obj.Name.capitalize()
         l_family_obj.Name = l_device_obj.Name
         # LOG.debug(PrettyFormatAny.form(l_device_obj, 'Device'))
@@ -361,11 +319,11 @@ class SubFields(Tools):
         """
         @param p_config: is the 'Host' ordereddict
         """
-        # LOG.debug('Getting Host')
+        # LOG.warning('Getting Host')
         l_obj = HostInformation()
         l_required = ['Name', 'Port']
         l_allowed = ['IPv4', 'IPv6']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        self.extract_fields(l_obj, p_config, required_list=l_required, allowed_list=l_allowed)
         return l_obj
 
     def extract_interface_group(self, p_config):
@@ -378,11 +336,11 @@ class SubFields(Tools):
                 Port: /dev/ttyUSB0
                 Host: Laptop-05
         """
-        # LOG.debug('Getting Interface')
+        # LOG.warning('Getting Interface')
         l_obj = DriverInterfaceInformation()
         l_required = ['Type', 'Host', 'Port']
-        l_allowed = ['ApiKey', 'AccessKey']
-        self.extract_fields(l_obj, p_config, l_required, l_allowed)
+        l_allowed = ['ApiKey', 'AccessKey', 'Baud']
+        self.extract_fields(l_obj, p_config, required_list=l_required, allowed_list=l_allowed)
         #
         # LOG.debug('Getting driver Api')
         if l_obj.Host.lower() == self.m_pyhouse_obj.Computer.Name.lower():
@@ -395,7 +353,7 @@ class SubFields(Tools):
     def extract_room_group(self, p_config):
         """
         """
-        # LOG.debug('Getting Room')
+        # LOG.warning('Getting Room')
         l_obj = RoomLocationInformation()
         try:
             for l_key, l_value in p_config.items():
@@ -588,6 +546,9 @@ class Yaml(YamlRead, YamlWrite, YamlCreate, Tools):
             return None
         l_yaml = MyYAML(typ='rt')
         l_yaml.allow_duplicate_keys = True
+        if l_node.Path == None:
+            LOG.warning('Config file "{}" was not found.'.format(p_filename))
+            return None
         try:
             with open(l_node.Path, 'r') as l_file:
                 l_data = l_yaml.load(l_file)

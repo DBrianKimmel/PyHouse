@@ -11,8 +11,8 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2020-01-25'
-__version_info__ = (19, 10, 5)
+__updated__ = '2020-02-12'
+__version_info__ = (20, 2, 12)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -21,7 +21,7 @@ import platform
 
 #  Import PyHouse files
 from Modules.Core.Config.config_tools import Api as configApi
-from Modules.Core.Utilities import extract_tools, uuid_tools
+from Modules.Core.Utilities import uuid_tools
 from Modules.Computer.Nodes.nodes import MqttActions as nodesMqtt
 from Modules.Computer.__init__ import MODULES, PARTS
 

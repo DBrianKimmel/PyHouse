@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/hue/hue_hub.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Dec 19, 2017
 @license:   MIT License
 @summary:
@@ -25,7 +25,7 @@ http://192.168.1.131/debug/clip.html
 
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-02-09'
 
 # Import system type stuff
 from zope.interface import implementer

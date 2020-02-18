@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-02-03'
 __version_info__ = (19, 11, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -19,7 +19,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities.extract_tools import get_mqtt_field
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
-from Modules.House.Security.__init__ import SecurityInformation, MODULES
+from Modules.House.Security import SecurityClass, MODULES
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Security       ')
@@ -75,7 +75,7 @@ class Api:
     m_config_tools = None
     m_local_config = None
     m_pyhouse_obj = None
-    m_modules = {}
+    m_module_apis: dict = {}
 
     def __init__(self, p_pyhouse_obj):
         LOG.info("Initializing - Version:{}".format(__version__))
@@ -84,23 +84,24 @@ class Api:
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         self.m_config_tools = configApi(p_pyhouse_obj)
         #
-        l_path = 'Modules.House.Security'
+        l_path = 'Modules.House.Security.'
         l_modules = self.m_config_tools.find_module_list(MODULES)
-        self.m_modules = self.m_config_tools.import_module_list(l_modules, l_path)
+        self.m_module_apis = self.m_config_tools.import_module_list(l_modules, l_path)
         #
         # l_needed_list = self.m_utility._find_all_configed_modules(MODULES)
         # self.m_modules = self.m_utility._import_all_found_modules(l_needed_list)
         LOG.info('Initialized')
 
     def _add_storage(self):
-        self.m_pyhouse_obj.House.Security = SecurityInformation()
+        self.m_pyhouse_obj.House.Security = SecurityClass()
 
     def LoadConfig(self):
         """ Load the Security Information
         """
         LOG.info('Loading Config')
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Security, 'Security'))
-        for l_module in self.m_modules.values():
+        LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Security, 'Security'))
+        LOG.debug(PrettyFormatAny.form(self.m_module_apis, 'Apis'))
+        for l_module in self.m_module_apis.values():
             # LOG.debug(PrettyFormatAny.form(l_module, 'Module'))
             l_module.LoadConfig()
         LOG.info('Loaded Config')
@@ -115,5 +116,17 @@ class Api:
 
     def Stop(self):
         LOG.info("Stopped.")
+
+    def MqttDispatch(self, p_msg):
+        """
+        """
+        p_msg.LogMessage += '\tSecurity: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        l_topic = p_msg.UnprocessedTopic[0].lower()
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic in self.m_modules_apis:
+            self.m_module_apis.MqttDispatch(p_msg)
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
+            LOG.warning('Unknown Security Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
 
 # ## END DBK

@@ -1,17 +1,17 @@
 """
-@name:      Modules/House/Lighting/_test/test_lights.py
+@name:      Modules/House/Lighting/Lights/_test/test_lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @note:      Created on May 23, 2014
 @license:   MIT License
 @summary:   This module is for testing lighting data.
 
-Passed all 11 tests - DBK - 2019-09-16
+Passed all 14 tests - DBK - 2020-02-09
 
 """
 
-__updated__ = '2020-01-20'
+__updated__ = '2020-02-09'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -19,7 +19,7 @@ from ruamel.yaml import YAML
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Lighting.lights import Api as lightsApi, LocalConfig as lightsConfig
+from Modules.House.Lighting.Lights.lights import Api as lightsApi, LocalConfig as lightsConfig
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -77,7 +77,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = lightsApi(self.m_pyhouse_obj)
+        self.m_api = lightsApi(self.m_pyhouse_obj)  # Must be done to setup module
 
     def test_01_Pyhouse(self):
         """
@@ -100,7 +100,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def test_04_Lights(self):
         """
         """
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting, 'A1-04-A - Lights'))
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights, 'A1-04-A - Lights'))
         self.assertIsNotNone(self.m_pyhouse_obj.House.Lighting.Lights)
 
 
@@ -111,6 +111,7 @@ class A2_Repr(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_api = lightsApi(self.m_pyhouse_obj)  # Must be done to setup module
         self.m_api = lightsApi(self.m_pyhouse_obj)
         self.m_local_config = lightsConfig(self.m_pyhouse_obj)
 
@@ -135,6 +136,7 @@ class C1_Read(SetupMixin, unittest.TestCase):
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_api = lightsApi(self.m_pyhouse_obj)  # Must be done to setup module
 
     def test_01_Light0(self):
         """ Test reading the device portion of the config.
@@ -202,6 +204,57 @@ class D1_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
         self.m_yaml = self.m_test_config['Lights']
         self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
+        self.m_api = lightsApi(self.m_pyhouse_obj)  # Must be done to setup module
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
+
+    def Xtest_01_base(self):
+        """
+        """
+        l_ret = self.m_config._build_yaml()
+        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - base'))
+        print(l_ret, 'D1-01-A - base')
+        self.assertEqual(l_ret['Lights'], None)
+
+    def Xtest_02_Light0(self):
+        """Test the write for proper Base elements
+        """
+        l_light = self.m_lights[0]
+        print(PrettyFormatAny.form(l_light, 'D1-02-A - Light0'))
+        l_config = self.m_config._save_one_light(l_light)
+        print(PrettyFormatAny.form(l_config, 'D1-02-B - Light'))
+
+    def Xtest_03_Light1(self):
+        """Test the write for proper Base elements
+        """
+        l_light = self.m_lights[1]
+        print(PrettyFormatAny.form(l_light, 'D1-03-A - Light'))
+        l_config = self.m_config._save_one_light(l_light)
+        print(PrettyFormatAny.form(l_config, 'D1-03-B - Light'))
+
+    def Xtest_04_AddLight0(self):
+        """Test the write for proper Base elements
+        """
+
+    def Xtest_09_Lights(self):
+        """Test the write for proper Base elements
+        """
+        l_ret = self.m_config._build_yaml()
+        print(PrettyFormatAny.form(self.m_lights, 'D1-09-A - Lights'))
+        l_config = self.m_config._save_all_lights(l_ret)
+        print(PrettyFormatAny.form(l_config, 'D1-09-B - Node'))
+        print(l_config, 'D1-09-C - Node')
+
+
+class M1_Mqtt(SetupMixin, unittest.TestCase):
+    """
+    This section tests the publishing of MQTT messages
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = lightsApi(self.m_pyhouse_obj)  # Must be done to setup module
+        self.m_yaml = self.m_test_config['Lights']
+        self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
 
     def test_01_base(self):
@@ -212,34 +265,26 @@ class D1_Write(SetupMixin, unittest.TestCase):
         print(l_ret, 'D1-01-A - base')
         self.assertEqual(l_ret['Lights'], None)
 
-    def test_02_Light0(self):
-        """Test the write for proper Base elements
-        """
-        l_light = self.m_lights[0]
-        print(PrettyFormatAny.form(l_light, 'D1-02-A - Light0'))
-        l_config = self.m_config._save_one_light(l_light)
-        print(PrettyFormatAny.form(l_config, 'D1-02-B - Light'))
 
-    def test_03_Light1(self):
-        """Test the write for proper Base elements
-        """
-        l_light = self.m_lights[1]
-        print(PrettyFormatAny.form(l_light, 'D1-03-A - Light'))
-        l_config = self.m_config._save_one_light(l_light)
-        print(PrettyFormatAny.form(l_config, 'D1-03-B - Light'))
+class M2_Mqtt(SetupMixin, unittest.TestCase):
+    """
+    This section tests the dispatch of MQTT messages
+    """
 
-    def test_04_AddLight0(self):
-        """Test the write for proper Base elements
-        """
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_api = lightsApi(self.m_pyhouse_obj)  # Must be done to setup module
+        self.m_yaml = self.m_test_config['Lights']
+        self.m_lights = self.m_config._extract_all_lights(self.m_yaml)
+        self.m_pyhouse_obj.House.Lighting.Lights = self.m_lights
 
-    def test_09_Lights(self):
-        """Test the write for proper Base elements
+    def test_01_base(self):
+        """
         """
         l_ret = self.m_config._build_yaml()
-        print(PrettyFormatAny.form(self.m_lights, 'D1-09-A - Lights'))
-        l_config = self.m_config._save_all_lights(l_ret)
-        print(PrettyFormatAny.form(l_config, 'D1-09-B - Node'))
-        print(l_config, 'D1-09-C - Node')
+        # print(PrettyFormatAny.form(l_ret, 'D1-01-A - base'))
+        print(l_ret, 'D1-01-A - base')
+        self.assertEqual(l_ret['Lights'], None)
 
 
 class Z9_YamlWrite(SetupMixin, unittest.TestCase):

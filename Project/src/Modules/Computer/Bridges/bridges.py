@@ -2,7 +2,7 @@
 @name:      Modules/Computer/Bridges/bridges.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Dec 21, 2017
 @license:   MIT License
 @summary:   The entry point for dealing with bridges.
@@ -13,8 +13,8 @@ Locally attached are generally controllers.
 
 """
 
-__updated__ = '2019-11-29'
-__version_info__ = (19, 10, 6)
+__updated__ = '2020-02-10'
+__version_info__ = (20, 2, 6)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -53,7 +53,7 @@ class BridgeInformation:
         self.Type = None  # Insteon, Hue
         self.Access = None  # AccessInformation()
         self.Connection = None  # ???
-        self.Host = None  # HostInformation()
+        self.Host = None
         self.Family = None  # FamilyInformation()
         self._Queue = None
 

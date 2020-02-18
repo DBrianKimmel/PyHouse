@@ -14,10 +14,18 @@ __version__ = '.'.join(map(str, __version_info__))
 
 MODULES = [  # All modules for the House must be listed here.  They will be loaded if configured.
     'Cameras',
-    'Door_Bells',
-    'Garage_Doors',
-    'Motion_Detectors'
+    'Doorbells',
+    'Garagedoors',
+    'Motiondetectors'
     ]
+
+
+class SecurityClass:
+    """
+    """
+
+    def __init__(self):
+        pass
 
 
 class SecurityInformation:
@@ -28,8 +36,8 @@ class SecurityInformation:
 
     def __init__(self):
         self.Cameras = {}
-        self.Door_Bells = {}
-        self.Garage_Doors = {}
-        self.Motion_Detectors = {}
+        self.Doorbells = {}
+        self.Garagedoors = {}
+        self.Motiondetectors = {}
 
 # ## END DBK

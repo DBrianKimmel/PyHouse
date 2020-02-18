@@ -11,7 +11,7 @@ If garage door opens and after sunset and before sunrise, turn on outside garage
 
 """
 
-__updated__ = '2019-12-23'
+__updated__ = '2020-02-04'
 __version_info__ = (19, 12, 20)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -128,17 +128,18 @@ class Api:
     def LoadConfig(self):
         """
         """
-        LOG.info('Loading Config - Version:{}'.format(__version__))
+        LOG.info('Loading Config')
         self.m_pyhouse_obj.House.Rules = self.m_local_config.load_yaml_config()
 
     def Start(self):
         """
         """
+        LOG.info('Starting Rules')
 
     def SaveConfig(self):
         """
         """
-        LOG.info('Saving Config - Version:{}'.format(__version__))
+        LOG.info('Saving Config')
         self.m_local_config.save_yaml_config()
 
     def Stop(self):

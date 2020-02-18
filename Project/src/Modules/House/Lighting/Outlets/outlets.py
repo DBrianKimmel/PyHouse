@@ -2,7 +2,7 @@
 @name:      Modules/House/Lighting/outlets.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @note:      Created on Jul 18, 2019
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -10,8 +10,8 @@
 
 """
 
-__updated__ = '2019-12-23'
-__version_info__ = (19, 11, 27)
+__updated__ = '2020-02-09'
+__version_info__ = (20, 2, 9)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -19,28 +19,15 @@ __version__ = '.'.join(map(str, __version_info__))
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.Utilities import extract_tools
+from Modules.House.Lighting import LightingClass
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
+from Modules.House.Lighting.Outlets import OutletInformation
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Outlets        ')
 
 CONFIG_NAME = 'outlets'
-
-
-class OutletInformation:
-    """ This is the information that the user needs to enter to uniquely define a Outlet.
-    """
-
-    def __init__(self) -> None:
-        self.Name = None
-        self.Comment = None  # Optional
-        self.DeviceType = 'Lighting'
-        self.DeviceSubType = 'Outlet'
-        self.LastUpdate = None  # Not user entered but maintained
-        self.Uuid = None  # Not user entered but maintained
-        self.Family = None  # LightFamilyInformation()
-        self.Room = None  # LightRoomInformation() Optional
 
 
 class OutletControlInformation:
@@ -206,6 +193,8 @@ class Api:
     def _add_storage(self) -> None:
         """
         """
+        if not hasattr(self.m_pyhouse_obj.House, 'Lighting'):
+            self.m_pyhouse_obj.House.Lighting = LightingClass()
         self.m_pyhouse_obj.House.Lighting.Outlets = {}
 
     def LoadConfig(self):

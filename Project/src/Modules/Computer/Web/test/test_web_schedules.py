@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-05-23'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,6 @@ from twisted.web.test.test_web import DummyRequest
 # Import PyMh files and modules.
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
-from Modules.Computer.Web.web_xml import Xml as webXml
 from Modules.Housing.test.xml_housing import \
     TESTING_HOUSE_NAME, \
     TESTING_HOUSE_ACTIVE, \

@@ -8,8 +8,9 @@
 @summary:   Schedule events
 
 """
+from Modules.House.Lighting.Lights.lights import LightControlInformation
 
-__updated__ = '2019-12-11'
+__updated__ = '2020-02-17'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -17,7 +18,6 @@ __version__ = '.'.join(map(str, __version_info__))
 
 #  Import PyMh files
 from Modules.House.Lighting.utility import lightingUtility
-from Modules.House.Lighting.lights import LightControlInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Schedule_lightn')

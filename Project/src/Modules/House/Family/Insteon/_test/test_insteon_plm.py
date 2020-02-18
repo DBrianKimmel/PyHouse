@@ -1,8 +1,8 @@
 """
-@name:      PyHouse/src/Modules/families/Insteon/Insteon_PLM.py
+@name:      Modules/House/Family/Insteon/_test/test_insteon_plm.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2018 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @note:      Created on Apr 8, 2013
 @license:   MIT License
 @summary:   This module is for driving serial devices
@@ -11,17 +11,15 @@ Passed all 8 tests - DBK - 2016-07-17
 
 """
 
-__updated__ = '2019-10-06'
+__updated__ = '2020-02-04'
 
 # Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files
-from test.xml_data import XML_LONG
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import ControllerInformation, HouseInformation
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House import HouseInformation
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 ADR_16C9D0 = '16.C9.D0'
@@ -37,9 +35,9 @@ STX = 0x02
 
 class SetupMixin(object):
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        self.m_xml = SetupPyHouseObj().BuildXml()
 
 
 class A0(unittest.TestCase):
@@ -48,6 +46,7 @@ class A0(unittest.TestCase):
         pass
 
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_Insteon_PLM')
 
 
@@ -56,7 +55,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_House(self):
         l_house = self.m_pyhouse_obj.House
@@ -65,27 +64,10 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         self.assertEqual(l_house.Name, 'Test House')  # Default name
 
 
-class A2_Xml(SetupMixin, unittest.TestCase):
-
-    def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring('<x />'))
-        pass
-
-    def test_01_Raw(self):
-        l_raw = XML_PIONEER_SECTION
-        # print('A2-01-A - Raw\n{}'.format(l_raw))
-        self.assertEqual(l_raw[:16], L_PIONEER_SECTION_START[:16])
-
-    def test_02_Parsed(self):
-        l_xml = ET.fromstring(XML_PIONEER_SECTION)
-        # print('A2-02-A - Parsed\n{}'.format(PrettyFormatAny.form(l_xml, 'Parsed')))
-        self.assertEqual(l_xml.tag, TESTING_PIONEER_SECTION)
-
-
 class C1_Utility(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_02_ExtractAddress(self):
         # self.assertEqual(self.m_api._get_addr_from_message(MSG_50, 2), convert.dotted_hex2int(ADR_16C9D0))
@@ -103,7 +85,7 @@ class C1_Utility(SetupMixin, unittest.TestCase):
 class C02_Cmds(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         # self.m_pyhouse_obj._Families = family.Api(self.m_pyhouse_obj).build_lighting_family_info()
 
     # def test_01_get_message_length(self):
@@ -136,8 +118,7 @@ class C03_Driver(SetupMixin, unittest.TestCase):
 class C04_Thermostat(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_controller_obj = ControllerInformation()
+        SetupMixin.setUp(self)
 
     def test_01_x(self):
         pass

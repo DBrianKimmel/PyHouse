@@ -13,7 +13,7 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2020-01-24'
+__updated__ = '2020-02-11'
 __version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -476,7 +476,7 @@ class MQTTProtocol(Protocol, Packets):
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
 
     def publish(self, p_topic, p_message, qosLevel=0, retain=False, dup=False, messageId=None):
-        LOG.info("Sending publish packet\n\tTopic: {};\n\tHost: {};".format(p_topic, self.m_broker.Host.Name))
+        LOG.info('Sending publish packet\n\tTopic: {};\n\tHost: {};'.format(p_topic, self.m_broker.Host.Name))
         l_varHeader = bytearray()
         l_payload = bytearray()
         #  Type = publish
@@ -490,6 +490,7 @@ class MQTTProtocol(Protocol, Packets):
         # l_payload.extend(p_message)
         l_fixHeader = self._build_fixed_header(0x03, len(l_varHeader) + len(l_payload), dup, qosLevel, retain)
         self._send_transport(l_fixHeader, l_varHeader, l_payload)
+        # LOG.debug('Done publishing')
 
     def puback(self, messageId):
         LOG.warning('Sending puback packet')

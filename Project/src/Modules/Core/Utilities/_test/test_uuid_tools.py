@@ -11,7 +11,7 @@ Passed 8 of 9 tests - DBK - 2019-09-15
 
 """
 
-__updated__ = '2019-09-15'
+__updated__ = '2020-02-14'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -67,7 +67,7 @@ class B1_Defs(SetupMixin, unittest.TestCase):
 
 class B2_UUID(SetupMixin, unittest.TestCase):
     """
-    This series tests the complex PutGetXML class methods
+    This series tests
     """
 
     def setUp(self):

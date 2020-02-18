@@ -3,7 +3,7 @@
 @name:      Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2019 by D. Brian Kimmel
+@copyright: (c) 2010-2020 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -67,8 +67,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-10-31'
-__version_info__ = (19, 10, 17)
+__updated__ = '2020-02-17'
+__version_info__ = (20, 2, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -208,6 +208,7 @@ class Api:
         global g_Api
         g_Api = self
         self.m_core = core.Api()
+        self.m_core._init_core()
         LOG.info('Initialized.\n==================================================================\n')
 
     def LoadConfig(self):

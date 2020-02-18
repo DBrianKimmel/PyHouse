@@ -11,7 +11,7 @@ Passed all 24 tests - DBK - 2020-01-22
 
 """
 
-__updated__ = '2020-01-23'
+__updated__ = '2020-02-17'
 
 # Import system type stuff
 import os
@@ -25,7 +25,7 @@ from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Config import config_tools
 from Modules.Core.Config.config_tools import \
     Api as configApi, Yaml as configYaml, Tools as configTools
-from Modules.House.Lighting.lights import LightInformation
+from Modules.House.Lighting.Lights.lights import LightInformation
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -557,7 +557,7 @@ class E11_Extract(SetupMixin, unittest.TestCase):
         print(l_data)
 
         l_obj = TestInfo()
-        _xx = config_tools.Tools().extract_fields(l_obj, l_data, allowed_list=[])
+        _xx = config_tools.Tools().extract_fields(l_obj, l_data)
         print(PrettyFormatAny.form(_xx, 'E1-01-A - Test'))
 
 

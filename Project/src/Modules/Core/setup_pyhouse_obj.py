@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2020-01-09'
+__updated__ = '2020-02-13'
 __version_info__ = (19, 10, 10)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -18,7 +18,7 @@ __version__ = '.'.join(map(str, __version_info__))
 from twisted.internet import reactor
 
 #  Import PyMh files
-from Modules.Core.data_objects import PyHouseInformation
+from Modules.Core import PyHouseInformation, CoreInformation
 from Modules.Core.Mqtt.__init__ import MqttInformation
 # from Modules.Core.Config.config_tools import ConfigInformation
 
@@ -29,27 +29,6 @@ LOG = Logger.getLogger('PyHouse.SetupPyH_obj   ')
 
 CONFIG_DIR = '/etc/pyhouse/'
 xxxCONFIG_NAME = 'pyhouse'
-
-
-class CoreInformation:
-    """
-    ==> PyHouse.Core.xxx
-
-    """
-
-    def __init__(self):
-        self.Mqtt = None  # MqttInformation()
-        # self.Config = {}
-
-
-class TwistedInformation:
-    """ Twisted info is kept in this class
-    """
-
-    def __init__(self):
-        self.Application = None  # Application('PyHouse')
-        self.Reactor = None  # reactor
-        self.Site = None
 
 
 def setup_Core():
@@ -72,7 +51,7 @@ def setup_Twisted():
 def setup_Parameters():
     """
     """
-    l_obj = None  # ParameterInformation()
+    l_obj = None
     return l_obj
 
 

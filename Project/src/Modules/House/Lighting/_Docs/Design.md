@@ -3,7 +3,7 @@
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2020 by D. Brian Kimmel
 * Created:   2018-10-16
-* Updated:   2020-02-22
+* Updated:   2020-02-02
 * License:   MIT License
 * Summary:   This is the design documentation for the Lighting Module of PyHouse.
 

@@ -8,8 +8,9 @@
 @summary:   Test handling the information for a house.
 
 """
+from Modules.Core.Config import ConfigInformation
 
-__updated__ = '2020-01-27'
+__updated__ = '2020-02-14'
 
 #  Import system type stuff
 import os
@@ -20,16 +21,12 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from Modules.Computer.computer import ComputerInformation
-from Modules.House.house_data import LocationInformation
-from Modules.House.Hvac.hvac import HvacInformation
-from Modules.House.Lighting.lighting import LightingInformation
-from Modules.Core.data_objects import PyHouseInformation
-from Modules.Core.Config.config_tools import ConfigInformation, AccessInformation
+from Modules.House import LocationInformation
+from Modules.Core import PyHouseInformation, CoreInformation, TwistedInformation
 from Modules.House.Family.family import Api as familyApi
-from Modules.House.house import HouseInformation
+from Modules.House import HouseInformation
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Mqtt.mqtt import MqttInformation
-from Modules.Core.setup_pyhouse_obj import CoreInformation, TwistedInformation
 #
 #  Different logging setup to cause testing logs to come out in red on the console.
 #
@@ -77,11 +74,11 @@ class SetupPyHouseObj:
         l_ret = HouseInformation()
         l_ret.Location = LocationInformation()
         l_ret.Family = {}
-        l_ret.Entertainment = {}
-        l_ret.Lighting = LightingInformation()
-        l_ret.Hvac = HvacInformation()
-        l_ret.Schedules = {}
-        l_ret.Security = AccessInformation()
+        # l_ret.Entertainment = {}
+        # l_ret.Lighting = {}  # LightingInformation()
+        # l_ret.Hvac = {}  #  HvacInformation()
+        # l_ret.Schedules = {}
+        # l_ret.Security = {}
         return l_ret
 
     def _build_computer(self):

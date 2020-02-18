@@ -7,7 +7,7 @@
 @license:    MIT License
 """
 
-__updated__ = '2020-01-30'
+__updated__ = '2020-02-10'
 __version_info__ = (20, 1, 28)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -39,7 +39,7 @@ class PandoraServiceInformation:
         self.Name = None
         self.Comment = None
         self.Connection = None  # PandoraServiceConnectionInformation()
-        self.Host = None  # HostInformation()
+        self.Host = None
         self.Access = None  # AccessInformation()
         #
         self._Factory = None  # The factory pointer for this device of an entertainment sub-section

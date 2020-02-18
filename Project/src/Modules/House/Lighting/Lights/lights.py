@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Lighting/lights.py
+@name:      Modules/House/Lighting/Lights/lights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2011-2020 by D. Brian Kimmel
@@ -17,8 +17,8 @@ The real work of controlling the devices is delegated to the modules for that fa
 
 """
 
-__updated__ = '2020-01-25'
-__version_info__ = (20, 1, 20)
+__updated__ = '2020-02-10'
+__version_info__ = (20, 2, 9)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -29,6 +29,8 @@ from Modules.Core.Config.config_tools import Api as configApi
 from Modules.Core.data_objects import CoreLightingData
 from Modules.Core.Utilities import extract_tools
 from Modules.Core.state import State
+from Modules.House.Lighting import LightingClass
+from Modules.House.Lighting.Lights import LightInformation
 from Modules.House.Lighting.utility import lightingUtility as lightingUtility
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -40,54 +42,6 @@ CONFIG_NAME = 'lights'
 TEST_YAML = """\
 Lights:
 """
-
-
-class LightInformation:
-    """ This is the information that the user needs to enter to uniquely define a light.
-    """
-    yaml_tag = u'!light'
-
-    def __init__(self, Name=None) -> None:
-        self.Name: Union[str, None] = Name
-        self.Comment: Union[str, None] = None
-        self.DeviceType: str = 'Lighting'
-        self.DeviceSubType: str = 'Light'
-        self.Family: Union[LightFamilyInformation, None] = None
-        self.Room: Union[LightRoomInformation, None] = None
-
-    def __repr__(self):
-        """
-        """
-        l_ret = ''
-        l_ret += '{}'.format(self.Name)
-        l_ret += '; {}/{}'.format(str(self.DeviceType), str(self.DeviceSubType))
-        l_ret += '; Family: {}'.format(self.Family.Name)
-        return l_ret
-
-
-class LightFamilyInformation:
-    """ This is the family information we need for a light
-
-    Families may stuff other necessary information in here.
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None  # Optional
-        self.Address = None
-
-
-class LightRoomInformation:
-    """ This is the room information we need for a light.
-    This allows duplicate light names such as 'Ceiling' in different rooms.
-    It also allows for group control by room.
-
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None  # Optional
-        self.Uuid = None  # Not user entered but maintained
 
 
 class LightControlInformation(CoreLightingData):
@@ -305,6 +259,8 @@ class Api(MqttActions):
     def _add_storage(self) -> None:
         """
         """
+        if not hasattr(self.m_pyhouse_obj.House, 'Lighting'):
+            self.m_pyhouse_obj.House.Lighting = LightingClass()
         self.m_pyhouse_obj.House.Lighting.Lights = {}
 
     def LoadConfig(self):
@@ -313,6 +269,8 @@ class Api(MqttActions):
         LOG.info('Load Config')
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_local_config.load_yaml_config()
         LOG.info('Loaded {} Lights.'.format(len(self.m_pyhouse_obj.House.Lighting.Lights)))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Lighting.Lights))
 
     def Start(self):
         pass  # Nothing needs starting ATM

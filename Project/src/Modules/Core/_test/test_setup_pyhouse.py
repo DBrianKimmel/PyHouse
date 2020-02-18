@@ -2,7 +2,7 @@
 @name:      PyHouse/Project/src/Modules/Core/_test/test_setup_pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @note:      Created on Mar 2, 2014
 @license:   MIT License
 @summary:   This module sets up the Core part of PyHouse.
@@ -10,7 +10,7 @@
 Passed all 19 tests - DBK - 2019-06-18
 """
 
-__updated__ = '2019-12-14'
+__updated__ = '2020-02-10'
 
 # Import system type stuff
 import os
@@ -21,9 +21,8 @@ from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Computer.computer import ComputerInformation, ComputerApis
-from Modules.House.house import HouseInformation
+from Modules.House import HouseInformation
 from Modules.Core.setup_pyhouse_obj import TwistedInformation
-from Modules.Core.core import PyHouseApiInformation
 
 
 class SetupMixin(object):
@@ -117,7 +116,6 @@ class C1_Structures(SetupMixin, unittest.TestCase):
         """ Test every component of PyHouseInformation()
         """
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'C1-1-A PyHouse obj'))
-        self.assertIsInstance(self.m_pyhouse_obj._Apis, PyHouseApiInformation)
         self.assertIsInstance(self.m_pyhouse_obj.Computer, ComputerInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj._Twisted, TwistedInformation)

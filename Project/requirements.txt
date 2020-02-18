@@ -25,5 +25,7 @@ klein >= 19.6.0
 pyopenssl >= 19.1.0
 wheel >= 0.33.6
 
+onvif_zeep
+
 ### END DBK
                                                                                                                                                                                       

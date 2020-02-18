@@ -13,13 +13,13 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2020-01-18'
+__updated__ = '2020-02-17'
 
 #  Import system type stuff
 
 #  Import PyMh files
 from Modules.House.Lighting.utility import lightingUtility
-from Modules.House.Lighting.lights import LightControlInformation
+from Modules.House.Lighting.Lights.lights import LightControlInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.LightingAction ')

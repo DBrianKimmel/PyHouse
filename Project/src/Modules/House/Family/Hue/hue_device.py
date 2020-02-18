@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/hue/hue_device.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Dec 18, 2017
 @license:   MIT License
 @summary:
@@ -10,8 +10,8 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2020-01-06'
-__version_info__ = (19, 11, 28)
+__updated__ = '2020-02-09'
+__version_info__ = (20, 2, 9)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff

@@ -1,8 +1,8 @@
 """
-@name:      Modules/House/Lighting/controllers.py
+@name:      Modules/House/Lighting/Controllers/controllers.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2019 by D. Brian Kimmel
+@copyright: (c) 2010-2020 by D. Brian Kimmel
 @note:      Created on Apr 2, 2010
 @license:   MIT License
 @summary:   Handle the home lighting system automation.
@@ -14,69 +14,21 @@ Then we have the interface information (Ethernet, Usb, Serial, ...).
 And we also have information about the controller class of devices.
 """
 
-__updated__ = '2020-01-21'
-__version_info__ = (19, 10, 4)
+__updated__ = '2020-02-09'
+__version_info__ = (20, 2, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 
 #  Import PyMh files and modules.
 from Modules.Core.Config.config_tools import Api as configApi
+from Modules.House.Lighting import LightingClass
+from Modules.House.Lighting.Controllers import ControllerInformation, CONFIG_NAME
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Controllers    ')
-
-CONFIG_NAME = 'controllers'
-
-
-class ControllerInformation:
-    """
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None
-        self.DeviceType = 'Lighting'
-        self.DeviceSubType = 'Controller'
-        self.Family = None  # LightFamilyInformation()
-        self.Interface = None  # Interface module specific  DriverInterfaceInformation()
-        self.Access = None  # Optional ==> AccessInformation()
-        self.LinkList = {}
-        #
-        self._Message = bytearray()
-        self._Queue = None
-        self._isLocal = False
-
-
-class MqttActions:
-    """ Mqtt section
-    """
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
-
-    def decode(self, p_msg):
-        """ Decode Mqtt message
-        ==> pyhouse/<house name>/house/lighting/controller/<action>
-
-        @param p_msg.Topic: is the topic after 'controller'
-        @return: a message to be logged as a Mqtt message
-        """
-        l_topic = p_msg.UnprocessedTopic
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        p_msg.LogMessage += '\tLighting/Controllers: {}\n\t'.format(p_msg.Topic)
-        if l_topic[0] == 'control':
-            p_msg.LogMessage += 'Controller Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Control'))
-            LOG.debug('MqttLightingControllersDispatch Control Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
-        elif l_topic[0] == 'status':
-            # The status is contained in LightData() above.
-            p_msg.LogMessage += 'Controller Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
-            LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
-        else:
-            p_msg.LogMessage += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
-            LOG.warning('Unknown Controllers Topic: {}'.format(l_topic[0]))
 
 
 class LocalConfig:
@@ -172,6 +124,8 @@ class Api:
     def _add_storage(self) -> None:
         """
         """
+        if not hasattr(self.m_pyhouse_obj.House, 'Lighting'):
+            self.m_pyhouse_obj.House.Lighting = LightingClass()
         self.m_pyhouse_obj.House.Lighting.Controllers = {}
 
     def LoadConfig(self):
@@ -197,5 +151,26 @@ class Api:
 
     def Stop(self):
         pass  # Nothing needs stoping ATM
+
+    def MqttDispatch(self, p_msg):
+        """ Decode Mqtt message
+        ==> pyhouse/<house name>/house/lighting/controller/<action>
+
+        @param p_msg.Topic: is the topic after 'controller'
+        @return: a message to be logged as a Mqtt message
+        """
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tLighting/Controllers: {}\n\t'.format(p_msg.Topic)
+        if l_topic[0] == 'control':
+            p_msg.LogMessage += 'Controller Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Control'))
+            LOG.debug('MqttLightingControllersDispatch Control Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
+        elif l_topic[0] == 'status':
+            # The status is contained in LightData() above.
+            p_msg.LogMessage += 'Controller Status: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
+            LOG.debug('MqttLightingControllersDispatch Status Topic:{}\n\tMsg: {}'.format(p_msg.Topic, p_msg.Payload))
+        else:
+            p_msg.LogMessage += '\tUnknown Lighting/Controller sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Controller Status'))
+            LOG.warning('Unknown Controllers Topic: {}'.format(l_topic[0]))
 
 #  ## END DBK

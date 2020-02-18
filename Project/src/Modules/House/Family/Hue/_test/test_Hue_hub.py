@@ -1,5 +1,5 @@
 """
-@name:      Modules/Families/Hue/_test/test_Hue_hub.py
+@name:      Modules/House/Family/Hue/_test/test_Hue_hub.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2017-2020 by D. Brian Kimmel
@@ -11,21 +11,17 @@ Passed all 11 tests - DBK - 2019-03-16
 
 """
 
-__updated__ = '2019-12-30'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 # Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG, TESTING_PYHOUSE
-from Modules.Core.data_objects import HouseInformation
-from Modules.Families.Hue import Hue_hub
-from Modules.Families.Hue.Hue_hub import HueHub
-from Modules.Housing.Lighting.lighting_lights import LightControlInformation
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House import HouseInformation
+from Modules.House.Family.Hue.hue_hub import HueHub
 
-from Modules.Core.Utilities.device_tools import XML as deviceXML
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 
@@ -36,9 +32,7 @@ class SetupMixin(object):
     def setUp(self, p_root):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
         self.m_xml = SetupPyHouseObj().BuildXml(p_root)
-        self.m_device = LightControlInformation()
         self.m_version = '1.4.0'
-        self.m_api = deviceXML
 
 
 class A0(unittest.TestCase):
@@ -99,23 +93,13 @@ class B2_Prep(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_device = None
 
     def test_01_PyHouse(self):
         """ Did we get everything set up for the rest of the tests of this class.
         """
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
-
-    def test_02_FindXml(self):
-        """ Did we get everything set up for the rest of the tests of this class.
-        """
-        self.assertEqual(self.m_xml.root.tag, TESTING_PYHOUSE)
-        self.assertEqual(self.m_xml.house_div.tag, 'HouseDivision')
-        self.assertEqual(self.m_xml.lighting_sect.tag, 'LightingSection')
-        self.assertEqual(self.m_xml.light_sect.tag, 'LightSection')
-        self.assertEqual(self.m_xml.button_sect.tag, 'ButtonSection')
-        self.assertEqual(self.m_xml.controller_sect.tag, 'ControllerSection')
 
     def test_03_House(self):
         """ Did we get everything set up for the rest of the tests of this class.

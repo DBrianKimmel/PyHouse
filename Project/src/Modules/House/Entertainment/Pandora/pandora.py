@@ -19,7 +19,7 @@ this module goes back to its initial state ready for another session.
 Now (2018) works with MQTT messages to control Pandora via PioanBar and PatioBar.
 """
 
-__updated__ = '2020-01-30'
+__updated__ = '2020-02-17'
 __version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -497,7 +497,7 @@ class PandoraControl(A_V_Control):
             l_device_control_obj.Zone = '1'
             LOG.info('Sending control-command to {}-{}'.format(l_family, l_model))
             l_topic = 'house/entertainment/{}/control'.format(l_family)
-            self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_device_control_obj)
+            self.m_pyhouse_obj.Core.NqttApi.MqttPublish(l_topic, l_device_control_obj)
 
     def build_av_control_msg(self, p_service):
         """
@@ -513,7 +513,7 @@ class PandoraControl(A_V_Control):
         l_service_control_obj.Zone = '0'
         LOG.info('Sending control-command to {}-{}'.format(l_family, l_name))
         l_topic = 'house/entertainment/{}/control'.format(l_family)
-        self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_service_control_obj)
+        self.m_pyhouse_obj.Core.NqttApi.MqttPublish(l_topic, l_service_control_obj)
 
     def _halt_pandora(self, p_message):
         """ We have received a control message and therefore we stop the pandora player.
