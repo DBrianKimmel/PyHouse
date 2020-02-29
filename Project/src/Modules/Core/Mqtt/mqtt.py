@@ -9,8 +9,8 @@
 
 """
 
-__updated__ = '2020-02-17'
-__version_info__ = (20, 1, 19)
+__updated__ = '2020-02-20'
+__version_info__ = (20, 2, 18)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -23,7 +23,6 @@ from Modules.Core.Utilities import json_tools, xml_tools
 from Modules.Core.Utilities.extract_tools import get_required_mqtt_field
 from Modules.Core.Mqtt import CLIENT_PREFIX, MqttJson, MqttBrokerWillInformation, MqttBrokerInformation, MqttInformation, CONFIG_NAME
 from Modules.Core.Mqtt.mqtt_client import Util as mqttUtil
-from Modules.Computer.computer import MqttActions as computerMqtt
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -228,6 +227,12 @@ class Api:
         l_logmsg += p_message
         return l_logmsg
 
+    def next_topic(self, p_msg):
+        if len(p_msg.UnprocessedTopic) > 0:
+            l_topic = p_msg.UnprocessedTopic[0].lower()  # Must start with pyhouse
+            p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+            return l_topic
+
     def MqttDispatch(self, p_msg):
         """ Dispatch a received MQTT message according to the topic.
 
@@ -237,42 +242,32 @@ class Api:
         @return: a message to send to the log detailing the Mqtt message received.
         @attention: Has many side affects
         """
-        l_topic = p_msg.UnprocessedTopic[0]  # Must start with pyhouse
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        LOG.debug(PrettyFormatAny.form(p_msg, 'Msg'))
+        l_topic = self.next_topic(p_msg)
         if l_topic != 'pyhouse':
             LOG.error('Invalid Mqtt topic string: "{}"'.format(p_msg.Topic))
             return
-        l_topic = p_msg.UnprocessedTopic[0]  # Next must be this house name
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        if l_topic != self.m_pyhouse_obj.House.Name:
+        l_topic = self.next_topic(p_msg)
+        if l_topic != self.m_pyhouse_obj.House.Name.lower():
             LOG.error('We got a message for some other house: "{}"'.format(p_msg.UnprocessedTopic[0]))
             return
         #
-        l_topic = p_msg.UnprocessedTopic[0]  # Next = Level 0
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        l_topic = self.next_topic(p_msg)
         # LOG.debug('Dispatch:\n\tTopic List: {}'.format(p_msg.UnprocessedTopic))
         p_msg.LogMessage = 'Dispatch\n\tTopic: {}'.format(p_msg.UnprocessedTopic)
         # Lwt can be from any device
         if l_topic == 'lwt':
             p_msg.LogMessage += self._decodeLWT(p_msg.Payload)
             LOG.info(p_msg.LogMessage)
-        else:
-            # Every other topic will have the following field(s).
-            l_sender = get_required_mqtt_field(p_msg.Payload, 'Sender')
-            p_msg.LogMessage += '\n\tSender: {}\n'.format(l_sender)
-
-        # Branch on the <division> portion of the topic
-        if l_topic == 'computer':
-            computerMqtt(self.m_pyhouse_obj).decode(p_msg)
-
+        elif l_topic == 'computer':
+            self.m_pyhouse_obj._Apis['computer'].MqttDispatch(p_msg)
         elif l_topic == 'house':
-            ['house'].MqttDispatch(p_msg)
-
+            self.m_pyhouse_obj._Apis['house'].MqttDispatch(p_msg)
         else:
             p_msg.LogMessage += '   OTHER: Unknown topic\n' + \
                         '\tTopic: {};\n'.format(p_msg.UnprocessedTopic[0]) + \
                         '\tMessage: {};\n'.format(p_msg.Payload)
             LOG.warning(p_msg.LogMessage)
-        # LOG.info(p_msg.LogMessage)
+        LOG.info(p_msg.LogMessage)
 
 # ## END DBK

@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/insteon/insteon_utils.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 27, 2013
 @summary:   This module is for Insteon conversion routines.
@@ -12,7 +12,7 @@ Some convert things like addresses '14.22.A5' to a int for ease of handling.
 
 """
 
-__updated__ = '2020-02-09'
+__updated__ = '2020-02-18'
 
 #  Import system type stuff
 
@@ -316,7 +316,7 @@ class Decode:
         l_house = p_pyhouse_obj.House
         # LOG.debug(PrettyFormatAny.form(l_house, 'House'))
         if hasattr(l_house, 'Lighting'):
-            LOG.debug(PrettyFormatAny.form(l_house.Lighting, 'Lighting'))
+            # LOG.debug(PrettyFormatAny.form(l_house.Lighting, 'Lighting'))
             if l_ret == None and l_house.Lighting.Lights != None:
                 l_ret = Decode._find_addr_one_class(p_pyhouse_obj.House.Lighting.Lights, p_address)
             if l_ret == None and l_house.Lighting.Controllers != None:

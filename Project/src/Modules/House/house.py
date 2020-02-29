@@ -11,7 +11,7 @@ This is one of two major functions (the other is computer).
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-19'
 __version_info__ = (20, 2, 12)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -186,10 +186,12 @@ class Api:
         if l_topic in self.m_parts_apis:
             self.m_parts_apis[l_topic].MqttDispatch(p_msg)
         elif l_topic in self.m_module_apis:
-            self.m_module_apis.MqttDispatch(p_msg)
+            self.m_module_apis[l_topic].MqttDispatch(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
             LOG.warning('Unknown House Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
-        self.m_pyhouse_obj.Core.MqttApi.Dispatch(p_msg)
+            LOG.debug(PrettyFormatAny.form(self.m_parts_apis, 'Parts'))
+            LOG.debug(PrettyFormatAny.form(self.m_module_apis, 'Modules'))
+        self.m_pyhouse_obj.Core.MqttApi.MqttDispatch(p_msg)
 
 #  ##  END DBK

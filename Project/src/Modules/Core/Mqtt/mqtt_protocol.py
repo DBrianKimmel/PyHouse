@@ -13,8 +13,8 @@ The second is a MQTT connection to the broker that uses the first connection as 
 
 """
 
-__updated__ = '2020-02-11'
-__version_info__ = (20, 1, 19)
+__updated__ = '2020-02-20'
+__version_info__ = (20, 2, 18)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -721,13 +721,16 @@ class MQTTClient(MQTTProtocol):
         This is where we receive all the pyhouse messages from the broker.
         Call the dispatcher to send them on to the correct place.
         """
-        # LOG.debug('Topic:{};  Msg:{}'.format(p_topic, p_message))
+        # LOG.debug('\n\tTopic: "{}"\n\tMsg:"{}"'.format(p_topic, p_message))
         l_msg = MqttMessageInformation()
         l_msg.Topic = p_topic
         l_msg.Payload = p_message
         l_msg.UnprocessedTopic = p_topic.split('/')
         l_msg.LogMessage = ''
+        LOG.debug(PrettyFormatAny.form(l_msg, 'Msg'))
+        LOG.debug(PrettyFormatAny.form(self.m_broker._ClientApi, 'Client'))
         self.m_broker._ClientApi.MqttDispatch(l_msg)
+        LOG.debug('Done')
 
 ###########################################
 

@@ -8,7 +8,7 @@
 
 """
 
-__updated__ = '2020-02-08'
+__updated__ = '2020-02-18'
 __version_info__ = (20, 2, 8)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -32,6 +32,6 @@ class ControllerInformation:
         self._Message = bytearray()
         self._Queue = None
         self._isLocal = False
-        self.Room = None  # RoomInformation()
+        self.Room = None
 
 # ## END DBK

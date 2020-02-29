@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/insteon/insteon_button.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @note:      Created on Aug 18, 2019
 @license:   MIT License
 @summary:
@@ -11,7 +11,7 @@ We get these .
 
 """
 
-__updated__ = '2019-12-11'
+__updated__ = '2020-02-18'
 
 #  Import system type stuff
 

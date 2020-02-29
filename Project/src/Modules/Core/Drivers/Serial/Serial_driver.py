@@ -23,7 +23,7 @@ The overall logic is that:
 
 """
 
-__updated__ = '2020-01-26'
+__updated__ = '2020-02-18'
 __version_info__ = (19, 9, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -289,7 +289,7 @@ class Api(SerialApi):
 
     def Start(self, p_controller_obj):
         """
-        @param p_controller_obj: is the ControllerInformation() object for a serial device to open.
+        @param p_controller_obj: is the Controller Information object for a serial device to open.
         @return: a pointer to the serial interface or None
         """
         LOG.info('Starting serial driver for Controller "{}"'.format(p_controller_obj.Name))

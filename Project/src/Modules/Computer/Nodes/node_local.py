@@ -19,8 +19,8 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2020-02-17'
-__version_info__ = (19, 5, 1)
+__updated__ = '2020-02-18'
+__version_info__ = (20, 2, 17)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -429,8 +429,8 @@ class Util:
         Devices().find_devices(l_node)
         l_node.NodeRole = Util.find_node_role()
         l_node.LastUpdate = datetime.now()
-        l_topic = 'computer/local'
-        self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_node)
+        # l_topic = 'computer/local'
+        # self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_node)
         return l_node
 
 

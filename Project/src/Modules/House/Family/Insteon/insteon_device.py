@@ -14,7 +14,7 @@ It is imported once and instantiates:
 
 """
 
-__updated__ = '2020-02-12'
+__updated__ = '2020-02-21'
 __version_info__ = (19, 10, 15)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -231,9 +231,17 @@ class Api:
     def __init__(self, p_pyhouse_obj):
         # p_pyhouse_obj.House._Commands['insteon'] = {}
         self.m_pyhouse_obj = p_pyhouse_obj
+        self._add_storage()
         self.m_utility = Utility(p_pyhouse_obj)
         self.m_local_config = LocalConfig(p_pyhouse_obj)
         LOG.info('Initialized')
+
+    def _add_storage(self) -> None:
+        """
+        """
+        if not hasattr(self.m_pyhouse_obj.House, 'Family'):
+            self.m_pyhouse_obj.House.Lighting = LightingClass()
+        self.m_pyhouse_obj.House.Lighting.Lights = {}
 
     def LoadConfig(self):
         """ Load the insteon.yaml config

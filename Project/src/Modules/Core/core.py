@@ -21,7 +21,7 @@ This will set up this node and then find all other nodes in the same domain (Hou
 Then start the House and all the sub systems.
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-18'
 __version_info__ = (20, 2, 17)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -30,13 +30,15 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from Modules.Core import setup_logging  # This must be first as the import causes logging to be initialized
-from Modules.Core import MODULES, CONFIG_NAME, \
+from Modules.Core import \
+    CONFIG_NAME, \
     PyHouseInformation, \
     CoreInformation, \
     CoreComponentInformation, \
     CoreModuleInformation, \
     ParameterInformation, \
-    TwistedInformation, PARTS
+    TwistedInformation, \
+    PARTS, REQUIRED
 from Modules.Core.Config.config_tools import Api as configApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
@@ -66,8 +68,11 @@ class Utility:
 
     def _initialize_one_item(self, p_item, p_path):
         """
+        @param p_item: is a list of required modules.
+        @param p_path: is where the module source resides in dotted notaion.  'Modules.Core.
+        @return: a reference to the Api of the module.
         """
-        # LOG.debug('Importing: "{}", "{}"'.format(p_item, p_path))
+        LOG.debug('Importing: "{}", "{}"'.format(p_item, p_path))
         l_path = p_path + p_item
         l_api = self.m_config_tools.import_module_get_api(p_item.lower(), l_path)
         return l_api
@@ -75,10 +80,12 @@ class Utility:
     def initialize_core_items(self, p_modules, p_path):
         """ set up all the modules we need
         @param p_modules: is a list of required modules.
+        @param p_path: is where the module source resides in dotted notaion.  'Modules.Core.
+        @return: a dict where the key is module name(lower case) and value is the Api pointer to the module
         """
         l_apis = {}
         for l_module in p_modules:
-            # LOG.debug('Initializing module "{}"'.format(l_module))
+            LOG.debug('Initializing module "{}"'.format(l_module))
             l_apis[l_module.lower()] = self._initialize_one_item(l_module, p_path)
         return l_apis
 
@@ -114,7 +121,7 @@ class Utility:
     def load_all_components(self):
         """
         """
-        # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
+        LOG.debug(PrettyFormatAny.form(self.m_component_api, 'ComponentApi'))
         for l_component in self.m_component_api.values():
             LOG.info('Loading core component "{}"'.format(l_component))
             self._load_one_component(l_component)
@@ -127,7 +134,7 @@ class Utility:
     def start_all_components(self):
         """
         """
-        # LOG.debug(PrettyFormatAny.form(p_components, 'Components'))
+        LOG.debug(PrettyFormatAny.form(self.m_component_api, 'Components'))
         for l_component in self.m_component_api.values():
             # LOG.debug('Starting component "{}"'.format(l_component))
             _l_comp = self._start_one_component(l_component)
@@ -144,6 +151,16 @@ class Utility:
     def _config_save_loop(self, p_pyhouse_obj):
         p_pyhouse_obj._Twisted.Reactor.callLater(SAVE_DELAY, self.save_all_components)
         self.save_all_components()
+
+    def start_requirements(self, p_modules, p_path):
+        """ Start the required pieces (Mqtt) that are needed before House and Computer are set up.
+        @param p_modules: is a list of required modules.
+        @param p_path: is where the module source resides in dotted notaion.  'Modules.Core.
+        """
+        l_apis = self.initialize_core_items(p_modules, p_path)
+        for l_api in l_apis.values():
+            l_api.LoadConfig()
+            l_api.Start()
 
 
 class LocalConfig:
@@ -200,7 +217,7 @@ class Api:
     """
     Called from PyHouse.py
     """
-    m_modules_api = None  # Modules actually installed
+    m_modules_api = {}
     m_local_config = None
     m_pyhouse_obj = None
     m_utility = None  # Pointer
@@ -218,13 +235,16 @@ class Api:
     def _init_core(self):
         """ Broken up so we can test parts without the whole of PyHouse being running
         """
+        LOG.debug('Init part 2')
         # Initialize classes
         self.m_utility = Utility(self.m_pyhouse_obj)
         self.m_local_config = LocalConfig(self.m_pyhouse_obj)
         self.m_local_config.load_yaml_config()
-        # First, start the modules that are used by the major parts (House, Computer)
-        self.m_modules_api = self.m_utility.initialize_core_items(MODULES, 'Modules.Core.')
+        # First, start the modules (Mqtt) that are used by the major parts (House, Computer)
+        self.m_utility.start_requirements(REQUIRED, 'Modules.Core.')
+
         self.m_modules_api = self.m_utility.initialize_core_items(PARTS, 'Modules.')
+        self.m_pyhouse_obj._Apis = self.m_modules_api
         #
         self.m_pyhouse_obj._Twisted.Reactor.callWhenRunning(self.LoadConfig)
         LOG.info("\n======================== Initialized ======================== Version: {}\n".format(__version__))
@@ -235,6 +255,7 @@ class Api:
         raise SystemExit("PyHouse says Bye Now.")
 
     def _add_storage(self):
+        # LOG.debug('Add storage')
         self.m_pyhouse_obj.Core = CoreInformation()
         self.m_pyhouse_obj.Core.Components = CoreComponentInformation()
         self.m_pyhouse_obj.Core.Modules = CoreModuleInformation()

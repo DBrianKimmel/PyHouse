@@ -7,8 +7,8 @@
 @license:   MIT License
 """
 
-__updated__ = '2020-02-10'
-__version_info__ = (20, 1, 19)
+__updated__ = '2020-02-18'
+__version_info__ = (20, 2, 18)
 __version__ = '.'.join(map(str, __version_info__))
 
 CLIENT_PREFIX = 'PyH-'

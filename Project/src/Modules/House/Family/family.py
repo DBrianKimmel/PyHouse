@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/family.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @note:      Created on May 17, 2013
 @license:   MIT License
 @summary:   This module is for *BUILDING/loading* device families.
@@ -11,31 +11,17 @@ Families are a way of abstracting the difference between different "Device Famil
 Device families are things such as Insteon, X10, Zigby and many others.
 Each family has a different syntax for communicating with the various devices in that family.
 
-Insteon, for example, has light switches, dimmers, light bulbs, thermostats, cameras to name a few.
-
-So far Insteon and UPB are developed.  Many others may be added.
-
-The goal of this module is to fill in enough info in each family object to allow information that is specific
- to a family to be loaded/saved between a device object and the config file.
-
-The Family specific information is used to control and monitor the different devices within the family.
-
-An Insteon_device module is used to read and write information to an Insteon controller connected to the computer.
-
-    PackageName         Will point to the package directory 'Modules.House.Family.Insteon'
-    DeviceName          will contain 'Insteon_device'
-    _Api                will point to Insteon_device.Api() to allow Api functions to happen.
 """
 
-__updated__ = '2020-02-05'
-__version_info__ = (19, 11, 28)
+__updated__ = '2020-02-21'
+__version_info__ = (20, 2, 21)
 __version__ = '.'.join(map(str, __version_info__))
 
 # Import system type stuff
 
 # Import PyHouse files
 from Modules.Core.Config import config_tools
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from Modules.House.Family import FamilyInformation, DeviceFamilyInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Family         ')
@@ -43,36 +29,8 @@ LOG = Logger.getLogger('PyHouse.Family         ')
 CONFIG_NAME = 'families'
 
 
-class FamilyInformation:
-    """ Info about a family
-    This points to the
-    ==> PyHouse_obj.House.Family[<familyname>]
-    indexed by lowercased family name "insteon"
-    """
-
-    def __init__(self):
-        self.Name = None  # Family Name
-        self.Module = None  # FamilyModuleInformation()
-        self._Api = None  # of the family_device.py file
-
-
-class DeviceFamilyInformation:
-    """ This is used for things like Lights
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Type = None
-        self.Address = None
-
-
 class FamilyModuleInformation:
     """ A container for every family that has been defined in modules.
-
-    PyHouse_obj.House.Family.()
-    PyHouse_obj.House.Family is a dict indexed by family name.
-
-    Each entry is an object of this class.
     """
 
     def __init__(self):
@@ -150,45 +108,6 @@ class LocalConfig:
         # LOG.debug('Family "{}"'.format(l_obj.Name))
         # LOG.debug(PrettyFormatAny.form(l_obj, 'Family'))
         return l_obj
-
-    def XXXload_family_config(self, p_config, p_pyhouse_obj):
-        """ Get the yaml config information.
-
-        This is called from many different modules.
-        It loads the appropriate information for the different families supported by PyHouse
-
-        Family:
-           Name: Insteon
-           Address: 11.44.33
-
-        """
-        l_module = FamilyModuleInformation()
-        l_required = ['Name']
-        #
-        # Load specific family information dispatched from here
-        #
-        for l_key, l_value in p_config.items():
-            print('Family Key {}'.format(l_key))
-            if l_key == 'Name':
-                l_value = l_value.capitalize()
-                p_pyhouse_obj.House.Family[l_value] = l_module
-            setattr(l_module, l_key, l_value)
-        # Check for data missing from the config file.
-        for l_key in [l_attr for l_attr in dir(l_module) if not l_attr.startswith('_') and not callable(getattr(l_module, l_attr))]:
-            if getattr(l_module, l_key) == None and l_key in l_required:
-                LOG.warning('Controller Yaml is missing an entry for "{}"'.format(l_key))
-        # Now build the families actually called for in the config files.
-        # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'House.Family', 190))
-        try:
-            _l_test = p_pyhouse_obj.House.Family[l_module.Name]
-        except Exception as e_err:
-            LOG.debug('Config family "{}" Update family.\n\tError: {}'.format(l_module.Name, e_err))
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House, 'House'))
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.House.Family, 'Family'))
-            l_module.Name = l_module.Name
-            p_pyhouse_obj.House.Family[l_module.Name] = l_module
-        return l_module
 
 
 class Api:

@@ -2,14 +2,14 @@
 @name:      Modules/House/Family/insteon/insteon_security.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2016-2017 by D. Brian Kimmel
+@copyright: (c) 2016-2020 by D. Brian Kimmel
 @note:      Created on Nov 2, 2016
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-18'
 
 #  Import system type stuff
 

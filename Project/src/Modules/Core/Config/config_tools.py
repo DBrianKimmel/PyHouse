@@ -11,7 +11,7 @@ mypy  Modules/Core/Config/config_tools.py
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-19'
 __version_info__ = (20, 1, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -220,7 +220,7 @@ class Tools(FileLookup):
                 l_path = p_module_path + l_part
             # LOG.debug('Starting import of Part: "{}" at "{}"'.format(l_part, l_path))
             l_api = self.import_module_get_api(l_part, l_path)
-            l_modules[l_part] = l_api
+            l_modules[l_part.lower()] = l_api
         # LOG.info('Loaded Module: {}'.format(l_modules.keys()))
         return l_modules
 

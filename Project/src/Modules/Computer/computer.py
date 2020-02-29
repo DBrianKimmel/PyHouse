@@ -11,7 +11,7 @@ This handles the Computer part of the node.  (The other part is "House").
 
 """
 
-__updated__ = '2020-02-12'
+__updated__ = '2020-02-20'
 __version_info__ = (20, 2, 12)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -150,7 +150,7 @@ class Api:
 
     m_config_tools = None
     m_local_config = None
-    m_found_modules_apis = {}
+    m_module_apis = {}
     m_module_list = None
     m_pyhouse_obj = None
 
@@ -165,7 +165,7 @@ class Api:
         #
         l_path = 'Modules.Computer.'
         l_modules_list = self.m_config_tools.find_module_list(MODULES)
-        self.m_found_modules_apis = self.m_config_tools.import_module_list(l_modules_list, l_path)
+        self.m_module_apis = self.m_config_tools.import_module_list(l_modules_list, l_path)
         #
         LOG.info("Initialized - Version:{}".format(__version__))
 
@@ -184,7 +184,7 @@ class Api:
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_local_config.load_yaml_config()
-        for l_module in self.m_found_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.LoadConfig()
         LOG.info('Loaded all computer Configs.')
 
@@ -192,7 +192,7 @@ class Api:
         """
         Start processing
         """
-        for l_module in self.m_found_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.Start()
         LOG.info('Started.')
 
@@ -200,7 +200,7 @@ class Api:
         """
         Take a snapshot of the current Configuration/Status and write out an XML file.
         """
-        for l_module in self.m_found_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.SaveConfig()
         LOG.info("Saved Computer Config.")
 
@@ -208,8 +208,22 @@ class Api:
         """
         Append the house XML to the passed in xlm tree.
         """
-        for l_module in self.m_found_modules_apis.values():
+        for l_module in self.m_module_apis.values():
             l_module.Stop()
         LOG.info("Stopped.")
+
+    def MqttDispatch(self, p_msg):
+        """
+        """
+        p_msg.LogMessage += '\tComputer: {}\n'.format(self.m_pyhouse_obj.House.Name)
+        l_topic = p_msg.UnprocessedTopic[0].lower()
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        if l_topic in self.m_module_apis:
+            self.m_module_apis[l_topic].MqttDispatch(p_msg)
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
+            LOG.warning('Unknown Computer Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
+            LOG.debug(PrettyFormatAny.form(self.m_module_apis, 'Modules'))
+        self.m_pyhouse_obj.Core.MqttApi.MqttDispatch(p_msg)
 
 # ## END DBK

@@ -10,7 +10,7 @@ Core is the main portion of every PyHouse node.
 It is always present.
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-18'
 __version_info__ = (20, 2, 3)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -22,7 +22,7 @@ PARTS = [
     ]
 
 # Modules are subcategories of Core
-MODULES = [
+REQUIRED = [
     'Mqtt'
     ]
 
@@ -43,6 +43,7 @@ class PyHouseInformation:
         self.Computer = None
         self.House = None
 
+        self._Apis = {}
         self._Config = None
         self._Parameters = None
         self._Twisted = None

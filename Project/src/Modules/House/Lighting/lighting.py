@@ -14,7 +14,7 @@ PyHouse.House.Lighting.
                        Outlets
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-21'
 __version_info__ = (20, 1, 25)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -131,21 +131,20 @@ class Api:
         if self.m_plm == None:
             LOG.info('No PLM was defined - Quitting.')
             return
-        # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
         self.m_plm.Control(p_device_obj, p_controller_obj, p_control)
 
     def MqttDispatch(self, p_msg):
         """
         """
+        LOG.debug(PrettyFormatAny.form(p_msg, 'Msg'))
         p_msg.LogMessage += '\tLighting: {}\n'.format(self.m_pyhouse_obj.House.Name)
         l_topic = p_msg.UnprocessedTopic[0].lower()
         p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        if l_topic in self.m_parts_apis:
-            self.m_parts_apis[l_topic].MqttDispatch(p_msg)
-        elif l_topic in self.m_module_apis:
-            self.m_module_apis.MqttDispatch(p_msg)
+        if l_topic in self.m_module_apis:
+            self.m_module_apis[l_topic].MqttDispatch(p_msg)
         else:
             p_msg.LogMessage += '\tUnknown sub-topic: "{}"'.format(l_topic)
             LOG.warning('Unknown lighting Topic: {}\n\tTopic: {}\n\tMessge: {}'.format(l_topic, p_msg.Topic, p_msg.Payload))
+            LOG.debug(PrettyFormatAny.form(self.m_module_apis, 'Modules'))
 
 #  ## END DBK

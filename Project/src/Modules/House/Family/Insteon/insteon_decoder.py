@@ -22,7 +22,7 @@ PLEASE REFACTOR ME!
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-19'
 __version_info__ = (19, 9, 22)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -136,7 +136,7 @@ class DecodeResponses:
         self.check_for_more_decoding(p_controller_obj)
 
     def XXX_publish(self, p_pyhouse_obj, p_device_obj):
-        l_topic = "house/lighting/light/{}/info".format(p_device_obj.Name)
+        l_topic = "house/lighting/lights/{}/info".format(p_device_obj.Name)
         p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)  #  /lighting/{}/info
 
     def _decode_0x50(self, p_controller_obj):

@@ -16,7 +16,7 @@ Note that we only communicate with the local PLM.
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-21'
 
 #  Import system type stuff
 import datetime
@@ -27,7 +27,6 @@ from Modules.Core.Drivers import interface
 from Modules.House.Family.Insteon import insteon_decoder, insteon_utils, insteon_link
 from Modules.House.Family.Insteon.insteon_constants import MESSAGE_TYPES
 from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
-# from Modules.House.Family.family_utils import FamUtil
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 from Modules.Core.Utilities.debug_tools import FormatBytes
@@ -389,7 +388,7 @@ class Api(LightHandlerApi):
         else:
             LOG.error('Insteon Controller start failed for "{}"'.format(self.m_controller_obj.Name))
             l_ret = False
-        l_topic = 'house/lighting/controller/status'
+        l_topic = 'house/lighting/controllers/status'
         self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, self.m_controller_obj)
         return l_ret
 

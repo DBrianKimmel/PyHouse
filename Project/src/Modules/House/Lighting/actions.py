@@ -13,7 +13,7 @@ This is so other modules only need to dispatch to here for any lighting event - 
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-21'
 
 #  Import system type stuff
 
@@ -76,7 +76,6 @@ class Api:
         try:
             LOG.info('Turn Light: "{}" to level: "{}", Family: "{}"; Controller: {}'.format(
                     p_light_obj.Name, p_control.BrightnessPct, p_light_obj.Family.Name, p_controller_obj.Name))
-            # l_family_api = FamUtil._get_family_device_api(p_pyhouse_obj, p_light_obj)
             l_family_api = p_controller_obj._HandlerApi
             # print(PrettyFormatAny.form(l_family_api.Control, 'Family Api'))
             l_family_api.Control(p_light_obj, p_controller_obj, p_control)

@@ -2,7 +2,7 @@
 @name:      Modules/House/Family/insteon/insteon_constants.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 19, 2013
 @summary:   This module is for communicating with Insteon controllers.
@@ -11,7 +11,7 @@ Note! This is designed for: 'from Insteon_constants import *'
 
 """
 
-__updated__ = '2019-09-02'
+__updated__ = '2020-02-18'
 
 STX = 0x02
 ACK = 0x06

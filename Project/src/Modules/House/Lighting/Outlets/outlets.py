@@ -10,7 +10,7 @@
 
 """
 
-__updated__ = '2020-02-09'
+__updated__ = '2020-02-21'
 __version_info__ = (20, 2, 9)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -52,14 +52,15 @@ class MqttActions:
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
 
-    def _decode_control(self, p_message):
+    def _decode_control(self, p_msg):
         """
-        pyhouse/<housename>/house/lighting/outlet/xxx
+        pyhouse/<housename>/house/lighting/outlets/xxx
         """
+        LOG.debug(PrettyFormatAny.form(p_msg, 'Msg'))
         l_control = OutletControlInformation()
-        l_control.Name = l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        l_control.RoomName = extract_tools.get_mqtt_field(p_message, 'RoomName')
-        l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_message, 'Brightness')
+        l_control.Name = l_light_name = extract_tools.get_mqtt_field(p_msg, 'LightName')
+        l_control.RoomName = extract_tools.get_mqtt_field(p_msg, 'RoomName')
+        l_control.BrightnessPct = _l_brightness = extract_tools.get_mqtt_field(p_msg, 'Brightness')
         LOG.info('Mqtt Control "{}"'.format(l_light_name))
         # LOG.debug(PrettyFormatAny.form(l_control, 'Control'))
         #
@@ -72,41 +73,17 @@ class MqttActions:
         l_controller_obj = lightingUtility().get_controller_objs_by_family(self.m_pyhouse_obj.House.Lighting.Controllers, 'insteon')
         # LOG.debug(PrettyFormatAny.form(l_controller_obj[0], 'Controller'))
         if len(l_controller_obj) > 0:
-            # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, l_light_obj)
             l_api = l_controller_obj[0]._HandlerApi
             # LOG.debug(PrettyFormatAny.form(l_api, 'API'))
             if l_api == None:
                 return
             l_api.Control(l_outlet_obj, l_controller_obj[0], l_control)
 
-    def decode(self, p_msg):
+    def _decode_status(self, p_msg):
         """
-        --> pyhouse/<housename>/house/outlet/<name>/...
+        ==> pyhouse/<housename>/house/lighting/lights/control
         """
-        l_topic = p_msg.UnprocessedTopic
-        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
-        # l_light_name = extract_tools.get_mqtt_field(p_msg.Payload, 'LightName')
-        if l_topic[0] == 'STATE':
-            p_msg.LogMessage += '\tState:\n'
-        elif l_topic[0] == 'RESULT':
-            p_msg.LogMessage += '\tResult:\n'
-        elif l_topic[0] == 'POWER':
-            p_msg.LogMessage += '\tResult:\n'
-        elif l_topic[0] == 'LWT':
-            p_msg.LogMessage += '\tResult:\n'
-        #
-        elif l_topic[0] == 'control':
-            self._decode_control(p_msg.Payload)
-            p_msg.LogMessage += 'Outlet Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Outlet Control'))
-            LOG.debug('MqttLightingLightsDispatch Control Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
-        #
-        elif l_topic[0] == 'status':
-            p_msg.LogMessage += 'Outlet Status: {}'.format(p_msg.Payload)
-            LOG.debug('MqttOutletDispatch Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
-        #
-        else:
-            p_msg.LogMessage += '\tUnknown outlet sub-topic: "{}"; - {}'.format(p_msg.Topic, p_msg.Payload)
-            LOG.warning('Unknown "house/outlet" sub-topic: "{}"\n\tTopic: {}\n\tMessge: {}'.format(l_topic[0], p_msg.Topic, p_msg.Payload))
+        LOG.debug(PrettyFormatAny.form(p_msg, 'Msg'))
 
 
 class LocalConfig:
@@ -177,7 +154,7 @@ class LocalConfig:
         return l_outlets
 
 
-class Api:
+class Api(MqttActions):
     """
     """
 
@@ -226,8 +203,29 @@ class Api:
         if self.m_plm == None:
             LOG.info('No PLM was defined - Quitting.')
             return
-        # l_api = FamUtil._get_family_device_api(self.m_pyhouse_obj, p_device_obj)
         l_api = p_controller_obj._HandlerApi  # The family
         l_api.Control(p_device_obj, p_controller_obj, p_control)
+
+    def MqttDispatch(self, p_msg):
+        """ Decode Mqtt message  ==> pyhouse/<house name>/house/lighting/outlets/<action>
+        @param p_topic: is the topic after 'lighting'
+        @return: a message to be logged as a Mqtt message
+        """
+        LOG.debug(PrettyFormatAny.form(p_msg, 'Msg'))
+        l_topic = p_msg.UnprocessedTopic[0].lower()
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tLighting/Outlets: {}\n\t'.format(p_msg.Topic)
+        if l_topic == 'control':
+            self._decode_control(p_msg)
+            p_msg.LogMessage += 'Outlet Control: {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Light Control'))
+            LOG.debug('Outlet Control Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        elif l_topic == 'status':
+            # The status is contained in LightControlInformation() above.
+            self._decode_status(p_msg)
+            p_msg.LogMessage += 'Outlet Status: {}'.format(p_msg.Payload)
+            LOG.debug('Outlet Status Topic:{}\n\t{}'.format(p_msg.Topic, p_msg.Payload))
+        else:
+            p_msg.LogMessage += '\tUnknown Lighting/Outlets sub-topic:{}\n\t{}'.format(p_msg.Topic, PrettyFormatAny.form(p_msg.Payload, 'Light Status'))
+            LOG.warning('Unknown Outlets Topic: {}'.format(l_topic))
 
 # ## END DBK

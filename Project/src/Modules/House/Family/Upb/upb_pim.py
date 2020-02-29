@@ -11,7 +11,7 @@
 
 """
 
-__updated__ = '2020-01-19'
+__updated__ = '2020-02-21'
 
 # Import system type stuff
 try:
@@ -20,7 +20,6 @@ except ImportError:
     import queue as Queue
 
 # Import PyMh files
-from Modules.Families.family_utils import FamUtil
 from Modules.Families.UPB.UPB_data import UPBData
 from Modules.Families.UPB.UPB_constants import pim_commands
 from Modules.Core.Utilities.debug_tools import FormatBytes

@@ -15,7 +15,7 @@ Buttons may be:
 """
 from Modules.House.Lighting import LightingClass
 
-__updated__ = '2020-02-09'
+__updated__ = '2020-02-19'
 __version_info__ = (20, 2, 9)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -168,7 +168,7 @@ class Api:
 
     def MqttDispatch(self, p_msg):
         """ Decode Mqtt message
-        ==> pyhouse/<house name>/house/lighting/controller/<action>
+        ==> pyhouse/<house name>/house/lighting/buttons/<action>
 
         @param p_msg.Topic: is the topic after 'controller'
         @return: a message to be logged as a Mqtt message

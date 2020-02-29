@@ -1,5 +1,5 @@
 """
-@name:      Modules/House/Family/insteon/insteon_lighting.py
+@name:      Modules/House/Family/Insteon/insteon_lighting.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2018-2020 by D. Brian Kimmel
@@ -11,7 +11,7 @@ We get these only if a controller is attached.
 
 """
 
-__updated__ = '2020-02-17'
+__updated__ = '2020-02-19'
 
 #  Import system type stuff
 
@@ -23,7 +23,7 @@ from Modules.House.Family.Insteon.insteon_utils import Decode as utilDecode
 from Modules.Core.Utilities.debug_tools import FormatBytes, PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
-LOG = Logger.getLogger('PyHouse.Insteon_Light  ')
+LOG = Logger.getLogger('PyHouse.InsteonLighting')
 
 
 class InsteonLightStatus:
@@ -119,9 +119,9 @@ class DecodeResponses:
         # LOG.debug(PrettyFormatAny.form(p_device_obj, 'Device'))
         if l_mqtt_publish:
             l_type = p_device_obj.DeviceSubType.lower()  # Light, Outlet ...
-            l_topic = 'house/lighting/{}/status'.format(l_type)
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
-            LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Core, 'Core'))
+            l_topic = 'house/lighting/{}s/status'.format(l_type)
+            # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj, 'PyHouse'))
+            # LOG.debug(PrettyFormatAny.form(p_pyhouse_obj.Core, 'Core'))
             p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, p_device_obj)
         return l_debug_msg
 
