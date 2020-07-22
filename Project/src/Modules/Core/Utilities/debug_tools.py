@@ -9,11 +9,11 @@
 
 """
 
-__updated__ = '2019-08-20'
+__updated__ = '2019-12-04'
 
 #  Import system type stuff
 from xml.etree import ElementTree as ET
-from xml.dom import minidom
+from xml.dom import minidom  # type: ignore
 # import pprint
 
 #  Import PyMh files

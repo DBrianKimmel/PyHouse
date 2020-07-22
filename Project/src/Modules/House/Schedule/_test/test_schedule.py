@@ -1,36 +1,37 @@
 """
-@name:      Modules/Schedules/_test/test_schedule.py
+@name:      Modules/House/Schedules/_test/test_schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the schedule information for a house.
 
-Passed all 49 tests - DBK - 2019-05-12
+Passed all 50 tests - DBK - 2019-10-12
 
 There are some tests (starting with 'X') that I do not know how to do in twisted.
 
 """
 
-__updated__ = '2019-08-14'
+__updated__ = '2020-02-17'
 
 # Import system type stuff
 import datetime
 from twisted.trial import unittest
 import time
 import twisted
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import RiseSetData
-from Modules.Core.Utilities import convert, config_tools
-from Modules.Core.Mqtt.mqtt import API as mqttAPI
+from Modules.House.Schedule import RiseSetInformation
+from Modules.Core.Utilities import convert
+from Modules.Core.Config import config_tools
 from Modules.House.Schedule.schedule import \
-    Config as scheduleConfig, \
-    SchedTime, \
-    API as scheduleAPI, \
-    Utility as scheduleUtility, \
-    TimeField, CONFIG_FILE_NAME
+    Api as scheduleApi, \
+    LocalConfig as scheduleConfig, \
+    lightingUtility, \
+    TimeField, \
+    CONFIG_NAME
 from _test.testing_mixin import SetupPyHouseObj
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -52,6 +53,35 @@ T_SATURDAY = datetime.datetime(2015, 6, 13, 1, 2, 3)
 DayOfWeek_SATURDAY = 32
 
 DOW_ALL = 'SMTWTFS'
+
+TEST_YAML_1 = """\
+Schedules:
+    - Name: Livingroom Ceiling On
+      Comment: Test comment
+      DOW: SMTWTFS
+      Occupancy: Always
+      Time: sunset - 0:15
+      Sched: Lighting
+      Light:
+          Name: LR Ceiling
+          Brightness: 50
+          Room: Living Room
+    - Name: Livingroom Ceiling Off
+      Time: 23:30
+      Light:
+          Name: LR Ceiling
+          Brightness: 0
+    - Name: Musicroom On
+      Time: sunset - 0:08
+      Outlet:
+          Name: Musicroom Lamp
+          Brightness: 100
+    - Name: Musicroom Off
+      Time: 23:15
+      Outlet:
+          Name: Musicroom Lamp
+          Brightness: 0
+"""
 
 
 def get_seconds(p_datetime):
@@ -76,7 +106,7 @@ class Mock(object):
 
     @staticmethod
     def RiseSet():
-        l_ret = RiseSetData()
+        l_ret = RiseSetInformation()
         l_ret.Dawn = 0
         l_ret.SunRise = 0
         l_ret.Noon = 0
@@ -90,8 +120,9 @@ class SetupMixin(object):
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_pyhouse_obj.House.Location._RiseSet = Mock.RiseSet()
-        self.m_api = scheduleAPI(self.m_pyhouse_obj)
-        self.m_filename = 'schedule.yaml'
+        self.m_api = scheduleApi(self.m_pyhouse_obj)
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML_1)
 
 
 class A0(unittest.TestCase):
@@ -101,7 +132,50 @@ class A0(unittest.TestCase):
         print('Id: test_schedule')
 
 
-class B1_Global(SetupMixin, unittest.TestCase):
+class B1_Config(SetupMixin, unittest.TestCase):
+    """ Test converting a datetime to seconds
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_sched_config = self.m_test_config['Schedules']
+
+    def test_01_Name0(self):
+        """ Sched 0 Name extraction
+        """
+        # print('B1-01-A C', self.m_sched_config[0])
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(self.m_sched_config[0])
+        # print(PrettyFormatAny.form(l_ret, 'B1-01-B - Schedule'))
+        self.assertEqual(l_ret.Name, 'Livingroom Ceiling On')
+
+    def test_02_Time0(self):
+        """
+        """
+        _l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(self.m_sched_config[0])
+        # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Schedule'))
+
+    def test_03_Time2(self):
+        """
+        """
+        _l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(self.m_sched_config[2])
+        # print(PrettyFormatAny.form(l_ret, 'B1-02-B - Schedule'))
+
+    def test_04_DOW0(self):
+        """
+        """
+        print('B1-04-A ', self.m_sched_config[0])
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(self.m_sched_config[0])
+        print(PrettyFormatAny.form(l_ret, 'B1-04-B - Schedule'))
+
+    def test_05_DOW3(self):
+        """
+        """
+        print('B1-04-A ', self.m_sched_config[3])
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(self.m_sched_config[3])
+        print(PrettyFormatAny.form(l_ret, 'B1-04-B - Schedule'))
+
+
+class B2_Global(SetupMixin, unittest.TestCase):
     """ Test converting a datetime to seconds
     """
 
@@ -128,85 +202,156 @@ class B1_Global(SetupMixin, unittest.TestCase):
         self.assertEqual(l_seconds, 86399)
 
 
-class B2_DayOfWeek(SetupMixin, unittest.TestCase):
+class B4_DayOfWeek(SetupMixin, unittest.TestCase):
     """ Using the DayOfWeek field, get the number of days until the next schedule occurrence.
     Tests _extract_days.
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
+        self.m_sched_config = self.m_test_config['Schedules']
 
     def test_01_0_Days(self):
         """ Date is within DayOfWeek value
         """
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        self.assertEqual(l_days, 0)
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_WEDNESDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-01-A - Days'))
-        self.assertEqual(l_days, 0)
 
-    def test_02_1_Day(self):
-        """ Date will be tomorrow
+
+class C1_Load(SetupMixin, unittest.TestCase):
+    """Testing class ScheduleExecution
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_test_config = YAML().load(TEST_YAML_1)
+
+    def test_01_DOW(self):
         """
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_THURSDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        self.assertEqual(l_days, 1)
-        self.m_schedule_obj.DayOfWeek = 127 - DayOfWeek_WEDNESDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-02-A - Days'))
-        self.assertEqual(l_days, 1)
-
-    def test_03_2_Days(self):
-        """ Date will be in 2 days
         """
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_FRIDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-03-A - Days'))
-        self.assertEqual(l_days, 2)
+        l_yaml = self.m_test_config['Schedules'][0]['DOW']
+        print('C1-01-A - Yaml: ', l_yaml)
+        l_dow = scheduleConfig(self.m_pyhouse_obj)._extract_DOW_field(l_yaml)
+        # print(PrettyFormatAny.form(l_family, 'C1-01-B - Family'))
+        # self.assertEqual(l_dow, 127)
+        self.assertEqual(l_dow, 'SMTWTFS')
 
-    def test_04_3_Days(self):
-        """ Date will be in 3 days
+
+class C2_Lighting(SetupMixin, unittest.TestCase):
+    """Testing class ScheduleExecution
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_test_config = YAML().load(TEST_YAML_1)
+
+    def test_01_Lighting(self):
         """
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_SATURDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-04-A - Days'))
-        self.assertEqual(l_days, 3)
-
-    def test_05_4_Days(self):
-        """ Date will be in 4 days
         """
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_SUNDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-05-A - Days'))
-        self.assertEqual(l_days, 4)
+        l_yaml = self.m_test_config['Schedules'][0]
+        # print('C2-01-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-01-B - Sched'))
+        # print(PrettyFormatAny.form(l_ret.Sched, 'C2-01-C - Sched'))
+        # self.assertEqual(l_ret.Name, 'Livingroom Ceiling On')
 
-    def test_06_5_Days(self):
-        """ Date will be in 5 days
+    def test_02_Sched0(self):
         """
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_MONDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-06-A - Days'))
-        self.assertEqual(l_days, 5)
-
-    def test_07_6_Days(self):
-        """ Date will be in 6 days
         """
-        self.m_schedule_obj.DayOfWeek = DayOfWeek_TUESDAY
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-07-A - Days'))
-        self.assertEqual(l_days, 6)
+        l_yaml = self.m_test_config['Schedules'][0]
+        # print('C2-02-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-02-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-02-C - Light'))
+        self.assertEqual(l_ret.Name, 'Livingroom Ceiling On')
+        self.assertEqual(l_ret.Sched.Name, 'LR Ceiling')
 
-    def test_08_7_PlusDays(self):
-        """ Date will be Never
+    def test_03_Sched1(self):
         """
-        self.m_schedule_obj.DayOfWeek = 0
-        l_days = SchedTime._extract_days(self.m_schedule_obj, T_WEDNESDAY)
-        # print(PrettyFormatAny.form(l_days, 'B1-08-A - Days'))
-        self.assertEqual(l_days, 10)
+        """
+        l_yaml = self.m_test_config['Schedules'][1]
+        # print('C2-03-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-03-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-03-C - Light'))
+
+    def test_04_Sched2(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][2]
+        # print('C2-04-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-04-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-04-C - Light'))
+
+    def test_05_Sched3(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][3]
+        # print('C2-05-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_one_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-05-B - Sched'))
+        print(PrettyFormatAny.form(l_ret.Sched, 'C2-05-C - Light'))
+
+    def test_06_Scheds(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules']
+        print('C2-06-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_all_schedules(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C2-05-B - Sched'))
 
 
-class C1_Execute(SetupMixin, unittest.TestCase):
+class C3_Hvac(SetupMixin, unittest.TestCase):
+    """Testing class ScheduleExecution
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_test_config = YAML().load(TEST_YAML_1)
+
+    def test_01_Lighting(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][0]
+        print('C3-01-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_lighting_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C3-01-B - Sched'))
+
+
+class C4_Irrigation(SetupMixin, unittest.TestCase):
+    """Testing class ScheduleExecution
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_test_config = YAML().load(TEST_YAML_1)
+
+    def test_01_Lighting(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][0]
+        print('C4-01-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_lighting_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C4-01-B - Sched'))
+
+
+class C5_Entertainment(SetupMixin, unittest.TestCase):
+    """Testing class ScheduleExecution
+    """
+
+    def setUp(self):
+        SetupMixin.setUp(self)
+        self.m_test_config = YAML().load(TEST_YAML_1)
+
+    def test_01_Lighting(self):
+        """
+        """
+        l_yaml = self.m_test_config['Schedules'][0]
+        print('C5-01-A - Yaml: ', l_yaml)
+        l_ret = scheduleConfig(self.m_pyhouse_obj)._extract_lighting_schedule(l_yaml)
+        print(PrettyFormatAny.form(l_ret, 'C5-01-B - Sched'))
+
+
+class C7_Execute(SetupMixin, unittest.TestCase):
     """Testing class ScheduleExecution
     """
 
@@ -224,14 +369,13 @@ class C1_Execute(SetupMixin, unittest.TestCase):
         pass
 
 
-class C2_List(SetupMixin, unittest.TestCase):
+class C8_List(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_pyhouse_obj._APIs.Core.MqttAPI = mqttAPI(self.m_pyhouse_obj)
         twisted.internet.base.DelayedCall.debug = True
 
     def test_01_BuildSched(self):
@@ -239,7 +383,7 @@ class C2_List(SetupMixin, unittest.TestCase):
         We should end up with 2 schedules in the list.
         """
         l_riseset = Mock.RiseSet()
-        l_delay, l_list = scheduleUtility.find_next_scheduled_events(self.m_pyhouse_obj, T_TODAY)
+        l_delay, l_list = lightingUtility._find_next_scheduled_events()
         l_now_sec = convert.datetime_to_seconds(T_TODAY)
         l_obj = self.m_pyhouse_obj.House.Schedules[0]
         l_sched_sec = TimeField().parse_timefield(l_obj.Time, l_riseset)
@@ -266,7 +410,7 @@ class C2_List(SetupMixin, unittest.TestCase):
         print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C2-03-A - PyHouse.House 1'))
         l_delay = 1
         _l_list = [0, 1]
-        _l_id = scheduleUtility.schedule_next_event(self.m_pyhouse_obj, l_delay)
+        _l_id = lightingUtility.schedule_next_event(self.m_pyhouse_obj, l_delay)
         time.sleep(2 * l_delay)
         # l_id.cancel()
 
@@ -284,7 +428,7 @@ class C2_List(SetupMixin, unittest.TestCase):
         pass
 
 
-class C5_Full(SetupMixin, unittest.TestCase):
+class C9_Full(SetupMixin, unittest.TestCase):
     """
     This section tests the Building of a schedule list
     """
@@ -591,15 +735,15 @@ class E1_Find(SetupMixin, unittest.TestCase):
     def test_01_basic(self):
         """
         """
-        l_ret = scheduleUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Lighting')
+        l_ret = lightingUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Lighting')
         # print(PrettyFormatAny.form(l_ret, 'Schedule list', 190))
         self.assertEqual(len(l_ret), 4)
         #
-        l_ret = scheduleUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Irrigation')
+        l_ret = lightingUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Irrigation')
         # print(PrettyFormatAny.form(l_ret, 'Schedule list', 190))
         self.assertEqual(len(l_ret), 1)
         #
-        l_ret = scheduleUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Hvac')
+        l_ret = lightingUtility().find_all_schedule_entries(self.m_pyhouse_obj, p_type='Hvac')
         # print(PrettyFormatAny.form(l_ret, 'Schedule list', 190))
         self.assertEqual(l_ret, None)
 
@@ -623,8 +767,7 @@ class F1_Config_Read(SetupMixin, unittest.TestCase):
     def test_02_ReadFile(self):
         """ Read the rooms.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        l_yaml = l_node.Yaml
+        l_yaml = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(CONFIG_NAME)
         l_yamlsched = l_yaml['Schedules']
         # print(PrettyFormatAny.form(l_node, 'F1-02-A - Node'))
         # print(PrettyFormatAny.form(l_yaml, 'F1-02-B - Yaml'))
@@ -635,9 +778,12 @@ class F1_Config_Read(SetupMixin, unittest.TestCase):
     def test_03_ExtractSched(self):
         """ Extract one room info from the yaml
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        l_yaml = l_node.Yaml
+        l_yaml = config_tools.Yaml(self.m_pyhouse_obj).read_config_file(CONFIG_NAME)
         l_sched = self.m_config._extract_light_schedule(l_yaml['Schedules'][0]['Light'])
         print(PrettyFormatAny.form(l_sched, 'F1-03-A - Sched', 190))
+
+    def test_99(self):
+        print('End')
+        pass
 
 # ## END

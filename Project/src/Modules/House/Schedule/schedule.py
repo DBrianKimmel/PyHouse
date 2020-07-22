@@ -2,7 +2,7 @@
 @name:      Modules/House/Schedule/schedule.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Schedule events
@@ -38,22 +38,24 @@ Operation:
   We only create one timer (ATM) so that we do not have to cancel timers when the schedule is edited.
 """
 
-__updated__ = '2019-09-05'
-__version_info__ = (19, 8, 1)
+__updated__ = '2020-02-17'
+__version_info__ = (20, 1, 19)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 import aniso8601
+# from typing import Optional
 
 #  Import PyMh files
-from Modules.Core.Utilities import convert, extract_tools, config_tools
-from Modules.House.Hvac.hvac_actions import API as hvacActionsAPI
-from Modules.House.Irrigation.irrigation_action import API as irrigationActionsAPI
-from Modules.House.Lighting.lighting import ScheduleLightingInformation
-from Modules.House.Lighting.actions import API as lightActionsAPI
-from Modules.House.Lighting.utility import Utility as lightingUtility
-from Modules.House.Schedule import sunrisesunset
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.Core.Utilities import convert, extract_tools
+from Modules.House.Hvac.hvac_actions import Api as hvacActionsApi
+from Modules.House.Irrigation.irrigation_action import Api as irrigationActionsApi
+from Modules.House.Lighting.actions import Api as lightingActionsApi
+from Modules.House.Lighting.utility import lightingUtility
+from Modules.House.Schedule import ScheduleInformation
+from Modules.House.Schedule.sunrisesunset import Api as sunriseApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
@@ -68,28 +70,28 @@ SECONDS_IN_WEEK = SECONDS_IN_DAY * 7  # 604800
 INITIAL_DELAY = 5  # Must be from 5 to 30 seconds.
 PAUSE_DELAY = 5
 MINIMUM_TIME = 30  # We will not schedule items less than this number of seconds.  Avoid race conditions.
-CONFIG_FILE_NAME = 'schedule.yaml'
+CONFIG_NAME = 'schedule'
 
 
-class ScheduleInformation:
-    """ This is the basic schedule info
-    """
-
-    def __init__(self):
-        self.Name = None
-        self.Comment = None
-        self.DOW = 'SMTWTFS'  # DayOfWeek - a dash '-' replaces the day letter if NOT that day
-        self.Occupancy = 'Always'  # Always, Home, Away, Vacation, ...
-        self.Time = None
-        self.Sched = None  # One of the schedule detail types below.
-
-
-class ScheduleLightInformation:
+class ScheduleEntertainmentInformation:
     """ This is the lighting specific part.
     """
 
     def __init__(self):
-        self.Type = 'Light'
+        self.Type = 'Lighting'
+        self.Brightness = 0
+        self.Name = None  # Light name
+        self.Rate = 0
+        self.Duration = None
+        self.Room = None  # Room Name
+
+
+class ScheduleLightingInformation:
+    """ This is the lighting specific part.
+    """
+
+    def __init__(self):
+        self.Type = 'Lighting'
         self.Brightness = 0
         self.Name = None  # Light name
         self.Rate = 0
@@ -108,7 +110,7 @@ class ScheduleIrrigationInformation:
         self.Duration = None
 
 
-class ScheduleThermostatInformation:
+class ScheduleHvacInformation:
     """ This is the HVAC Thermostat specific part
     """
 
@@ -144,7 +146,7 @@ class MqttActions:
         if l_sender == self.m_pyhouse_obj.Computer.Name:
             return
         l_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        l_light_obj = lightingUtility().get_object_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_name)
+        l_light_obj = lightingUtility().get_object_type_by_id(self.m_pyhouse_obj.House.Lighting.Lights, name=l_name)
         if l_light_obj == None:
             return
         l_key = len(self.m_pyhouse_obj.House.Schedules)
@@ -167,36 +169,41 @@ class MqttActions:
         l_sched.RoomUUID = extract_tools.get_mqtt_field(p_message, 'RoomUUID')
         LOG.debug('Schedule added locally: {}'.format(PrettyFormatAny.form(l_sched, 'Schedule', 190)))
 
-    def decode(self, p_topic, p_message, p_logmsg):
+    def decode(self, p_msg):
         """
         --> pyhouse/<housename>/house/schedule/...
         """
-        p_logmsg += ''
-        l_schedule_type = extract_tools.get_mqtt_field(p_message, 'Sched.Type')
-        l_light_name = extract_tools.get_mqtt_field(p_message, 'LightName')
-        l_light_level = extract_tools.get_mqtt_field(p_message, 'Level')
-        if len(p_topic) > 0:
-            if p_topic[0] == 'control':
-                p_logmsg += '\tExecute:\n'
-                p_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                p_logmsg += '\tLight: {}\n'.format(l_light_name)
-                p_logmsg += '\tLevel: {}'.format(l_light_level)
-                self._add_schedule(p_message)
-            elif p_topic[0] == 'status':
-                p_logmsg += '\tStatus:\n'
-                p_logmsg += '\tType: {}\n'.format(l_schedule_type)
-                p_logmsg += '\tLight: {}\n'.format(l_light_name)
-                p_logmsg += '\tLevel: {}'.format(l_light_level)
-            elif p_topic[0] == 'control':
-                p_logmsg += '\tControl:\n'
-            elif p_topic[0] == 'delete':
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        l_schedule_type = extract_tools.get_mqtt_field(p_msg.Payload, 'Sched.Type')
+        l_light_name = extract_tools.get_mqtt_field(p_msg.Payload, 'LightName')
+        l_light_level = extract_tools.get_mqtt_field(p_msg.Payload, 'Level')
+        if len(p_msg.Topic) > 0:
+            if l_topic[0] == 'control':
+                p_msg.LogMessage += '\tExecute:\n'
+                p_msg.LogMessage += '\tType: {}\n'.format(l_schedule_type)
+                p_msg.LogMessage += '\tLight: {}\n'.format(l_light_name)
+                p_msg.LogMessage += '\tLevel: {}'.format(l_light_level)
+                self._add_schedule(p_msg.Payload)
+            elif l_topic[0] == 'status':
+                p_msg.LogMessage += '\tStatus:\n'
+                p_msg.LogMessage += '\tType: {}\n'.format(l_schedule_type)
+                p_msg.LogMessage += '\tLight: {}\n'.format(l_light_name)
+                p_msg.LogMessage += '\tLevel: {}'.format(l_light_level)
+            elif l_topic[0] == 'control':
+                p_msg.LogMessage += '\tControl:\n'
+            elif l_topic[0] == 'delete':
                 pass
-            elif p_topic[0] == 'update':
+            elif l_topic[0] == 'update':
                 pass
             else:
-                p_logmsg += '\tUnknown sub-topic: {}; - {}'.format(p_topic, p_message)
-                LOG.warn('Unknown Schedule Topic: {}'.format(p_topic[0]))
-        return p_logmsg
+                p_msg.LogMessage += '\tUnknown sub-topic: {}; - {}'.format(p_msg.Topic, p_msg.Payload)
+                LOG.warning('Unknown Schedule Topic: {}'.format(p_msg.Topic[0]))
+
+
+class DOW:
+    """ Day of week.
+    """
 
 
 class TimeField:
@@ -284,26 +291,29 @@ class TimeField:
         return self.m_seconds
 
 
-class SchedTime:
+class TimeCalcs:
     """
-    Get the when scheduled time.  It may be from about a minute to about 1 week.
-    If the schedule is not active return a None
+    Get the when scheduled time.
+    It may be from about a minute to about 1 week.
+    If the schedule is not active return a None.
+
+    The config file caries DOW as a seven charicter string 'SMTWTFS' where the DOW letter is replaced by a dash '-' if inactive.
+    Therefore wednesday only will be represented by '---W---'
     This class deals with extracting information from the time and DayOfWeek fields of a schedule.
 
     DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
-    weekday    mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
+    weekday          mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
     The time field may be:
         HH:MM or HH:MM:SS
         sunrise/sunset/dawn/dusk  +/-  offset HH:MM:SS or HH:MM
     """
 
-    @staticmethod
-    def _extract_days(p_schedule_obj, p_now):
+    def _extract_days(self, p_schedule_obj, p_now):
         """ Get the number of days until the next DayOfWeek in the schedule.
 
         DayOfWeek        mon=1, tue=2, wed=4, thu=8, fri=16, sat=32, sun=64
-        weekday()  mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
+        weekday()        mon=0, tue=1, wed=2, thu=3, fri=4,  sat=5,  sun=6
 
         @param p_schedule_obj: is the schedule object we are working on
         @param p_now: is a datetime.datetime.now()
@@ -328,18 +338,16 @@ class SchedTime:
             l_days += 1
         return 10
 
-    @staticmethod
-    def extract_time_to_go(_p_pyhouse_obj, p_schedule_obj, p_now, p_rise_set):
+    def extract_time_to_go(self, p_schedule_obj, p_now, p_rise_set):
         """ Compute the seconds to go from now to the next scheduled time.
         May be from 30 seconds to a full week.
 
-        @param p_pyhouse_obj: Not used yet
         @param p_schedule_obj: is the schedule object we are working on.
         @param p_now: is the datetime for now.
         @param p_rise_set: is the sunrise/sunset structure.
         @return: The number of seconds from now to the scheduled time.
         """
-        l_dow_seconds = SchedTime._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
+        l_dow_seconds = TimeCalcs()._extract_days(p_schedule_obj, p_now) * 24 * 60 * 60
         l_sched_seconds = TimeField().parse_timefield(p_schedule_obj.Time, p_rise_set)
         l_sched_secs = l_dow_seconds + l_sched_seconds
         l_now_seconds = convert.datetime_to_seconds(p_now)
@@ -354,30 +362,31 @@ class ScheduleExecution:
     def dispatch_one_schedule(self, p_pyhouse_obj, p_schedule_obj):
         """
         Send information to one device to execute a schedule.
+        @param p_schedule_obj: ==> ScheduleInformation()
         """
         l_topic = 'house/schedule/control'
         l_obj = p_schedule_obj
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_obj)
+        p_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_obj)
         #
-        if p_schedule_obj.Sched.Type == 'Lighting':
-            LOG.info('Execute_one_schedule type = Lighting')
-            lightActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+        if p_schedule_obj.Sched.Type in ['Lighting', 'Light', 'Outlet']:
+            LOG.info('Execute_one_schedule type = Lighting - "{}"'.format(p_schedule_obj.Sched.Name))
+            lightingActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'Hvac':
             LOG.info('Execute_one_schedule type = Hvac')
-            hvacActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            hvacActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'Irrigation':
             LOG.info('Execute_one_schedule type = Irrigation')
-            irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            irrigationActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         elif p_schedule_obj.Sched.Type == 'TeStInG14159':  # To allow a path for unit tests
             LOG.info('Execute_one_schedule type = Testing')
-            #  scheduleActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            #  scheduleActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
         #
         else:
             LOG.error('Unknown schedule type: {}'.format(p_schedule_obj.Sched.Type))
-            irrigationActionsAPI().DoSchedule(p_pyhouse_obj, p_schedule_obj)
+            irrigationActionsApi().DoSchedule(p_pyhouse_obj, p_schedule_obj)
 
     @staticmethod
     def execute_schedules_list(p_pyhouse_obj, p_key_list=[]):
@@ -394,62 +403,62 @@ class ScheduleExecution:
         for l_slot in p_key_list:
             l_schedule_obj = p_pyhouse_obj.House.Schedules[l_slot]
             ScheduleExecution().dispatch_one_schedule(p_pyhouse_obj, l_schedule_obj)
-        Utility.schedule_next_event(p_pyhouse_obj)
+        lightingUtilitySch(p_pyhouse_obj).schedule_next_event()
 
 
-class Utility:
+class lightingUtilitySch:
     """
     """
 
-    @staticmethod
-    def XXX_setup_components(p_pyhouse_obj):
-        # p_pyhouse_obj.House.Schedules = {}
-        pass
+    m_pyhouse_obj = None
 
-    @staticmethod
-    def fetch_sunrise_set(p_pyhouse_obj):
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+
+    def _fetch_sunrise_set(self):
         _l_topic = 'house/schedule/sunrise_set'
-        l_riseset = p_pyhouse_obj.House.Location._RiseSet  # RiseSetData()
+        l_riseset = self.m_pyhouse_obj.House.Location._RiseSet
         LOG.info('Got Sunrise: {};   Sunset: {}'.format(l_riseset.SunRise, l_riseset.SunSet))
         return l_riseset
 
-    @staticmethod
-    def find_next_scheduled_events(p_pyhouse_obj, p_now):
+    def _find_next_scheduled_events(self):
         """ Go thru all the schedules and find the next schedule list to run.
         Note that there may be several scheduled events for that time
 
-        @param p_now: is a datetime that we are searching for.
         @return: a delay time to the next event chain, and a list of events in the chain.
         """
+        self.m_pyhouse_obj = self.m_pyhouse_obj
+        l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
         l_schedule_key_list = []
-        l_min_seconds = SECONDS_IN_WEEK
-        l_riseset = Utility.fetch_sunrise_set(p_pyhouse_obj)
+        l_current_delay = SECONDS_IN_WEEK  # Start the search with a very long time to go
+        l_riseset = self._fetch_sunrise_set()
         # Loop through the possible scheduled events.
-        for l_key, l_schedule_obj in p_pyhouse_obj.House.Schedules.items():
-            l_seconds = SchedTime.extract_time_to_go(p_pyhouse_obj, l_schedule_obj, p_now, l_riseset)
+        for l_key, l_schedule_obj in self.m_pyhouse_obj.House.Schedules.items():
+            l_seconds = TimeCalcs().extract_time_to_go(l_schedule_obj, l_now, l_riseset)
+            # Avoid race donditions by having a minimum time.
             if l_seconds < MINIMUM_TIME:
                 continue
-            if l_min_seconds == l_seconds:  # Add to lists for the given time.
+            # If the time is the same as the current list of collected times, add this entry to the list.
+            if l_current_delay == l_seconds:  # Add to lists for the given time.
                 l_schedule_key_list.append(l_key)
-            elif l_seconds < l_min_seconds:  # earlier schedule - start new list
-                l_min_seconds = l_seconds
+            # If we found an earlier time, abandon the old list and start a new list with this time.
+            elif l_seconds < l_current_delay:  # earlier schedule - start new list
+                l_current_delay = l_seconds
                 l_schedule_key_list = []
                 l_schedule_key_list.append(l_key)
-        l_debug_msg = "Delaying {} for list {}".format(l_min_seconds, l_schedule_key_list)
+        l_debug_msg = "Delaying {} for list {}".format(l_current_delay, l_schedule_key_list)
         LOG.info("find next scheduled events complete. {}".format(l_debug_msg))
-        return l_min_seconds, l_schedule_key_list
+        return l_current_delay, l_schedule_key_list
 
-    @staticmethod
-    def run_after_delay(p_pyhouse_obj, p_delay, p_list):
+    def run_after_delay(self, p_delay, p_list):
         """
         """
-        l_runID = p_pyhouse_obj._Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, p_pyhouse_obj, p_list)
+        l_runID = self.m_pyhouse_obj._Twisted.Reactor.callLater(p_delay, ScheduleExecution.execute_schedules_list, self.m_pyhouse_obj, p_list)
         l_datetime = datetime.datetime.fromtimestamp(l_runID.getTime())
         LOG.info('Scheduled {} after delay of {} - Time: {}'.format(p_list, p_delay, l_datetime))
         return l_runID
 
-    @staticmethod
-    def schedule_next_event(p_pyhouse_obj, p_delay=0):
+    def schedule_next_event(self, p_delay=0):
         """ Find the list of schedules to run, call the timer to run at the time in the schedules.
 
         This is the main schedule loop.
@@ -460,16 +469,14 @@ class Utility:
         Puts all the events in a list.
         Schedules an execution event on the list of scheduled events.
 
-        @param p_pyhouse_obj: is the grand repository of information
         @param p_delay: is the (forced) delay time for the timer.
         """
-        l_now = datetime.datetime.now()  # Freeze the current time so it is the same for every event in the list.
-        l_delay, l_list = Utility.find_next_scheduled_events(p_pyhouse_obj, l_now)
+        l_delay, l_list = self._find_next_scheduled_events()
         if p_delay != 0:
             l_delay = p_delay
-        Utility.run_after_delay(p_pyhouse_obj, l_delay, l_list)
+        lightingUtilitySch(self.m_pyhouse_obj).run_after_delay(l_delay, l_list)
 
-    def find_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
+    def XXXfind_all_schedule_entries(self, p_pyhouse_obj, p_type=None):
         """ Find all the schedule entry using any of several criteria.
         Type (required)
         Mode (required)
@@ -486,16 +493,6 @@ class Utility:
         if len(l_sched_list) == 0:
             return None
         return l_sched_list
-
-    def find_schedule_entry(self, _p_pyhouse_obj, p_type=None):
-        """ Find the schedule entry using any of several criteria.
-        Type (required)
-        Mode (required)
-
-        @return: a schedule object, None if error
-        """
-        self.find_all_schedule_entries(p_type)
-        return None
 
 
 class Timers:
@@ -515,19 +512,26 @@ class Timers:
         return l_runID
 
 
-class Config:
-    """Read in and possibly save the scheduling data.
+class LocalConfig:
+    """ This will handle reading and writing of the schedule.yaml config file.
     """
+
+    m_config = None
     m_pyhouse_obj = None
     m_schedule_altered = False
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
         self.m_schedule_altered = False
 
-    def _extract_entertainment_schedule(self):
+    def _extract_entertainment_schedule(self, p_config):
         """
         """
+        l_obj = ScheduleEntertainmentInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        return l_obj
 
     def _extract_irrigation_schedule(self, p_config):
         """
@@ -537,56 +541,70 @@ class Config:
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_light_schedule(self, p_config):
+    def _extract_lighting_schedule(self, p_config, p_key):
         """
         """
         l_obj = ScheduleLightingInformation()
+        l_obj.Type = p_key
         for l_key, l_value in p_config.items():
-            # print('Light Sched Key:{}; Value:{}'.format(l_key, l_value))
+            # LOG.debug('Lighting Key:{}; Value:{}'.format(l_key, l_value))
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_thermostat_schedule(self, p_config):
+    def _extract_outlet_schedule(self, p_config):
         """
         """
-        l_obj = ScheduleThermostatInformation()
+        l_obj = ScheduleLightingInformation()
+        l_obj.Type = 'Outlet'
         for l_key, l_value in p_config.items():
             setattr(l_obj, l_key, l_value)
         return l_obj
 
-    def _extract_DOW_field(self):
+    def _extract_hvac_schedule(self, p_config):
         """
         """
+        l_obj = ScheduleHvacInformation()
+        for l_key, l_value in p_config.items():
+            setattr(l_obj, l_key, l_value)
+        return l_obj
+
+    def _extract_DOW_field(self, p_config):
+        """
+        """
+        l_dow = p_config.upper()
+        _l_ret = 0
+        if len(l_dow) != 7:
+            LOG.error('Day of week must be 7 chars long "--TWT--" was "{}"'.format(l_dow))
+            return 127
+        return l_dow
 
     def _extract_one_schedule(self, p_config):
+        """ Extract a complete schedule configuration entry.
         """
-        """
-        l_required = ['Name', 'Occupancy', 'DOW', 'Time']
+        l_required = ['Name', 'Occupancy', 'DOW', 'Time', 'Sched']
         l_obj = ScheduleInformation()
         for l_key, l_value in p_config.items():
             if l_key == 'Entertainment':
                 pass
             elif l_key == 'Irrigation':
-                l_obj.Type = 'Irrigation'
-                l_ret = self._extract_irrigation_schedule(l_value)
-                l_obj.Sched = l_ret
-            elif l_key == 'Light':
-                l_obj.Type = 'Light'
-                l_ret = self._extract_light_schedule(l_value)
-                l_obj.Sched = l_ret
-            elif l_key == 'Thermostat':
-                l_obj.Type = 'Thermostat'
-                l_ret = self._extract_thermostat_schedule(l_value)
-                l_obj.Sched = l_ret
+                l_obj.Sched = self._extract_irrigation_schedule(l_value)
+            elif l_key in ['Lighting', 'Light', 'Outlet']:
+                l_obj.Sched = self._extract_lighting_schedule(l_value, l_key)
+            elif l_key in ['Hvac', 'Thermostat']:
+                l_obj.Sched = self._extract_hvac_schedule(l_value)
             elif l_key == 'DOW':
+                l_obj.DOW = self._extract_DOW_field(l_value)
+            elif l_key == 'Occupancy':
                 pass
+            elif l_key == 'Room':
+                l_obj.Room = self.m_config.extract_room_group(l_value)
             else:
                 setattr(l_obj, l_key, l_value)
         # Check for data missing from the config file.
         for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
             if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Schedule config file is missing an entry for "{}"'.format(l_key))
-        LOG.info('Loaded Schedule "{}"'.format(l_obj.Name))
+                LOG.warning('Schedule config file is missing an entry for "{}"'.format(l_key))
+        LOG.info('Extracted Schedule "{}"'.format(l_obj.Name))
         return l_obj
 
     def _extract_all_schedules(self, p_config):
@@ -596,24 +614,26 @@ class Config:
         for l_ix, l_value in enumerate(p_config):
             l_obj = self._extract_one_schedule(l_value)
             l_scheds[l_ix] = l_obj
+        LOG.info('Extracted {} Schedules'.format(len(l_scheds)))
         return l_scheds
 
     def load_yaml_config(self):
         """
         """
+        # LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Schedules = None
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        except:
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
             return None
         try:
-            l_yaml = l_node.Yaml['Schedules']
+            l_yaml = l_yaml['Schedules']
         except:
-            LOG.warn('The schedules.yaml file does not start with "Schedules:"')
+            LOG.warning('The config file does not start with "Schedules:"')
             return None
         l_scheds = self._extract_all_schedules(l_yaml)
         self.m_pyhouse_obj.House.Schedules = l_scheds
-        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]', 190))
+        # LOG.debug(PrettyFormatAny.form(self.m_pyhouse_obj.House.Schedules[0], 'Schedule[0]'))
         return l_scheds  # for testing purposes
 
 # ----------
@@ -623,30 +643,39 @@ class Config:
         """
 
 
-class API:
+class Api:
 
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
+        LOG.info("Initializing - Version:{}".format(__version__))
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
-        LOG.info("Initialized - Version:{}".format(__version__))
+        self._add_storage()
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
+        self.m_sunrise_api = sunriseApi(p_pyhouse_obj)
+
+    def _add_storage(self):
+        """
+        """
+        self.m_pyhouse_obj.House.Schedules = {}
 
     def LoadConfig(self):
         """ Load the Schedule from the Config info.
         """
+        LOG.info('Loading Config - Version:{}'.format(__version__))
         self.m_pyhouse_obj.House.Schedules = {}
-        l_schedules = self.m_config.load_yaml_config()
-        LOG.info('Loaded {} Schedules.'.format(len(self.m_pyhouse_obj.House.Schedules)))
+        l_schedules = self.m_local_config.load_yaml_config()
+        # LOG.info('Loaded {} Schedules.'.format(len(self.m_pyhouse_obj.House.Schedules)))
         return l_schedules  # for testing
 
     def Start(self):
         """
         Extracts all from XML so an update will write correct info back out to the XML file.
         """
-        sunrisesunset.API(self.m_pyhouse_obj).Start()
-        self.RestartSchedule()
+        LOG.info("Starting.")
+        self.m_sunrise_api.Start()
+        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, lightingUtilitySch(self.m_pyhouse_obj).schedule_next_event)
         LOG.info("Started.")
 
     def Stop(self):
@@ -657,12 +686,7 @@ class API:
     def SaveConfig(self):
         """
         """
-        self.m_config.save_yaml_config()
+        self.m_local_config.save_yaml_config()
         LOG.info('Saved Schedules Config.')
-
-    def RestartSchedule(self):
-        """ Anything that alters the schedules should call this to cause the new schedules to take effect.
-        """
-        self.m_pyhouse_obj._Twisted.Reactor.callLater(INITIAL_DELAY, Utility.schedule_next_event, self.m_pyhouse_obj)
 
 # ## END DBK

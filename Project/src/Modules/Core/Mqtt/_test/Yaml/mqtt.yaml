@@ -21,8 +21,8 @@ Mqtt:
         Port: 1883
         IPv4: None
         IPv6: None
-      Login:
-        UserName: None
+      Access:
+        Name: None
         Password: None
 
    - Broker:
@@ -35,8 +35,8 @@ Mqtt:
       Host:
         Name: localhost
         Port: 1883
-      Login:
-        UserName: None
+      Access:
+        Name: None
         Password: None
 
 ### END DBK

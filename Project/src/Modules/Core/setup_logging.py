@@ -15,7 +15,7 @@ Log directories must exist and be writable by the PyHouse process as it begins.
 
 """
 
-__updated__ = '2019-09-05'
+__updated__ = '2019-10-05'
 
 #  Import system type stuff
 import logging.config
@@ -138,13 +138,13 @@ LOGGING_DICT = {
 
 logging.getLogger(LOGGER_NAME)
 logging.config.dictConfig(LOGGING_DICT)
-logging.info('PyHouse Logging Starting. (setup_logging.py)\n------------------------- Loggomg --------------------------------\n')
+logging.info('PyHouse Logging Starting. (setup_logging.py)\n------------------------- Logging --------------------------------\n')
 
 l_observer = log.PythonLoggingObserver(loggerName=LOGGER_NAME_TWISTED)
 l_observer.start()
 
 
-class API:  #  To remove eclipse warnings.
+class Api:  #  To remove eclipse warnings.
 
     def __init__(self):
         pass

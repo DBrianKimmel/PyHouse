@@ -11,21 +11,16 @@ Passed all 3 tests - DBK - 2016-11-22
 
 """
 
-__updated__ = '2019-06-24'
+__updated__ = '2020-02-17'
 
 #  Import system type stuff
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
 
 #  Import PyMh files
-from Modules.Core.setup_logging import LOGGING_DICT
 from Modules.Core.Utilities.obj_defs import GetPyhouse
-from Modules.Core.Utilities import tools
-from Modules.Housing.Lighting.lighting_lights import API as lightsAPI
-from Modules.Families.family import API as familyAPI
-from Modules.Core import logging_pyh as Logger
-from test.xml_data import XML_LONG, XML_EMPTY
-from test.testing_mixin import SetupPyHouseObj
+from Modules.House.Lighting.Lights.lights import Api as lightsApi
+from Modules.House.Family.family import Api as familyApi
+from _test.testing_mixin import SetupPyHouseObj
 
 
 class SetupMixin(object):
@@ -50,14 +45,14 @@ class A0(unittest.TestCase):
 class C1_Find(SetupMixin, unittest.TestCase):
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
         self.m_api = GetPyhouse(self.m_pyhouse_obj)
-        self.m_light_api = lightsAPI()
-        self.m_pyhouse_obj._Families = familyAPI(self.m_pyhouse_obj).m_family
+        self.m_light_api = lightsApi()
+        self.m_pyhouse_obj._Families = familyApi(self.m_pyhouse_obj).m_family
         self.m_pyhouse_obj.House.Lighting.Lights = self.m_light_api.read_all_lights_xml(self.m_pyhouse_obj)
 
     def test_01_Setup(self):
-        l_loc = self.m_api.Location().Latitude
+        _l_loc = self.m_api.Location().Latitude
         #  print(l_loc)
 
 #  ## END DBK

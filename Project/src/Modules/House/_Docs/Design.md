@@ -1,21 +1,23 @@
-* Name:      PyHouse/Project/src/Modules/Housing/Docs/Design
+* Name:      Modules/House/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2019 by D. Brian Kimmel
+* Copyright: (c) 2018-2020 by D. Brian Kimmel
 * Created:   2018-09-30
-* Updated:   2019-01-11
+* Updated:   2020-01-22
 * License:   MIT License
 * Summary:   This is the design documentation for the Entertainment Module of PyHouse.
 
+# House
 
-# Housing
+House is one of three manditory modules of PyHouse.
+The others are Core and Computer.
 
 Under the PyHouse banner, a user has one or more houses to automate/control.
 
 Each house has one or more Mqtt brokers running.
-They usually operate ()as a controlling broker with redundant brokers for backup.
+They usually operate as a controlling broker with redundant brokers for backup.
 
-Mqtt came into the picture after PyHous was up and running, so not everything runs reom a message.
+Mqtt came into the picture after PyHouse was up and running, so not everything runs from a message.
 
 ## Mode
 The house has 3 modes: Home, Away and Vacation.
@@ -30,23 +32,16 @@ Nodes are removed if last used > 2 months ago.
 ## Rooms
 
 
+#
 
-```python
-class BaseObject(object):
-        self.Name = 'undefined baseobject'
-        self.Key = 0
-        self.Active = False
-        self.Comment = ''
-        self.LastUpdate = None
-class BaseUUIDObject(BaseObject):
-        self.UUID = None
-class RoomInformation(BaseUUIDObject):
-        self.Corner = ''  # CoordinateInformation()
-        self.Floor = '1st'  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
-        self.Size = ''  # CoordinateInformation()
-        self.RoomType = 'Room'
-        self._AddFlag = False
-        self._DeleteFlag = False
-```
+House is one of the major components of PyHouse and has aits own separate config file.
+It has several parts (Location, Floors and Rooms) that have their own config files.
+
+House also has a number of modules, most of which are optional.
+These modules may have sub-modules and these sub-modules may have sub-modules to any depth.
+
+Many modules are configed and are not loaded at run time unless the config file is present.
+Some modules like Family are not directly configured but spring into being when a family is used in some of the config files.
+
 
 ### END DBK

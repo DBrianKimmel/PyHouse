@@ -1,7 +1,5 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Computer.Internet._test.test_inet_find_external_ip -*-
-
-@Name:      PyHouse/src/Modules/Computer/Internet/inet_find_external_ip.py
+@Name:      Modules/Computer/Internet/inet_find_external_ip.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2012-2017 by D. Brian Kimmel
@@ -16,7 +14,7 @@ This is because most ISP's use NAT to expand the IPv4 address space.
 
 """
 
-__updated__ = '2019-07-30'
+__updated__ = '2020-01-02'
 
 # Import system type stuff
 import re
@@ -56,7 +54,7 @@ class FindExternalIpAddress(object):
         return l_ret
 
 
-class Utility(FindExternalIpAddress):
+class lightingUtilityInt(FindExternalIpAddress):
     """
     """
 
@@ -97,21 +95,21 @@ class Utility(FindExternalIpAddress):
             return l_body_defer
 
         def eb_response(p_reason):
-            LOG.warn(' failed to fetch Url - {}'.format(p_reason))
+            LOG.warning(' failed to fetch Url - {}'.format(p_reason))
 
         l_agent = Agent(p_pyhouse_obj._Twisted.Reactor)
         l_url = self._get_url(p_key)
         l_defer = l_agent.request(
             'GET',
             l_url)
-#            Headers({'User-Agent': ['PyHouse.Computer.Internet.inet_find_external_ip.Utility.get_public_ip']}),
+#            Headers({'User-Agent': ['PyHouse.Computer.Internet.inet_find_external_ip.lightingUtilityInt.get_public_ip']}),
 #            None)
         l_defer.addCallback(cb_response)
         l_defer.addErrback(eb_response)
         return l_defer
 
 
-class API(Utility):
+class Api(lightingUtilityInt):
 
     def FindExternalIP(self, p_pyhouse_obj):
         """
@@ -119,12 +117,12 @@ class API(Utility):
         return that address
         return a defered that fires with an external IP address or errors with a none found error
         """
-        l_internet = p_pyhouse_obj.Computer.InternetConnection
+        l_internet = p_pyhouse_obj.Computer.Internet
         l_defer = Deferred()
         for l_test in l_internet.values():
             if l_test.Active:
                 for l_url in l_test.LocateUrls:
-                    l_ret = Utility.get_public_ip(l_url)
+                    l_ret = self.get_public_ip(l_url)
                     LOG.info('Get ip addr {}'.format(l_ret))
         return l_defer
 

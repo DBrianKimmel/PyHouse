@@ -1,4 +1,4 @@
-* Name:      PyHouse/Project/src/Modules/Housing/Entertainment/Docs/Design
+* Name:      PyHouse/Project/src/Modules/House/Entertainment/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
 * Copyright: (c) 2018-2018 by D. Brian Kimmel

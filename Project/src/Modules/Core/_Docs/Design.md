@@ -1,28 +1,26 @@
-* Name:      PyHouse/Project/src/Modules/Core/Docs/Design
+* Name:      Modules/Core/Xonfig/_Docs/Design.md
 * Author:    D. Brian Kimmel
 * Contact:   D.BrianKimmel@gmail.com
-* Copyright: (c) 2018-2018 by D. Brian Kimmel
+* Copyright: (c) 2018-2020 by D. Brian Kimmel
 * Created:   2018-10-01
-* Updated:   2018-10-01
+* Updated:   2020-01-22
 * License:   MIT License
-* Summary:   This is the design documentation for the Core Module of PyHouse.
+* Summary:   This is the design documentation for the Config Module of PyHouse.
 
 
-# Design
+# Config
 
-## setup_pyhouse.py
+The config package is responsible for configuring the entire system.
 
-The PyHouse.py singleton first calls setup_pyhouse.py to initialize everything.
+Having all the configuration in one config file would be far to complex to maintain so the config
+is broken down into smaller files which are much easier to manage.
 
-## Utilities/config_file.py
+The file suffix is always .yaml for the current implementation.
 
-This is used to read and write the config file.
-The file can be located in several different directories.
+The top level file is pyhouse.yaml.
 
-If the file is missing, a properly formatted empty file is created in the default location.
+The config system is case sensitive.
 
-
-# Logging
 
 
 ### END DBK

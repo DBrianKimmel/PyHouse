@@ -11,7 +11,7 @@ This module automatically updates PyHouse
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2019-10-06'
 __version_info__ = (19, 5, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
@@ -180,7 +180,7 @@ class FindRepositoryVersion(object):
     # d.addBoth(println)
 
 
-class Utility(object):
+class lightingUtility(object):
     """
     """
 
@@ -217,7 +217,7 @@ class EchoClientFactory(ClientFactory):
         self.done.callback(None)
 
 
-class API(Utility):
+class Api(lightingUtility):
     """
     """
 

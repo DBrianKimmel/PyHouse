@@ -1,96 +1,119 @@
 """
-@name:      Modules/scheduling/sunrisesunset.py
+@name:      Modules/House/Schedule/_test/test_sunrisesunset.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2011-2019 by D. Brian Kimmel
+@copyright: (c) 2011-2020 by D. Brian Kimmel
 @note:      Created on Mar 6, 2011
 @license:   MIT License
 @summary:   Calculate the suns location at local noon, then calculate sunrise and sunset for the day.
 
-Passed all 9 tests - DBK - 2019-01-24
+Passed all 10 tests - DBK - 2020-02-04
 
-http://en.wikipedia.org/wiki/Sunrise_equation
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2020-02-04'
 
 # Import system type stuff
 import datetime
-import xml.etree.ElementTree as ET
 from twisted.trial import unittest
-from math import pi
+from ruamel.yaml import YAML
 
 # Import PyMh files
-from Modules.Housing.location import LocationInformation
-from Modules.Housing.Schedules import sunrisesunset
-from Modules.Housing.Schedules.sunrisesunset import Utility as astralUtil
-from test.testing_mixin import SetupPyHouseObj
-from test.xml_data import XML_LONG
-from Modules.Housing.test.xml_housing import TESTING_HOUSE_NAME
-from Modules.Housing.test.xml_location import \
-    TESTING_LOCATION_REGION, \
-    TESTING_LOCATION_LATITUDE, \
-    TESTING_LOCATION_LONGITUDE, \
-    TESTING_LOCATION_TIME_ZONE_NAME, \
-    TESTING_LOCATION_ELEVATION
-from Modules.Housing.Schedules.test.xml_schedule import \
-    TESTING_SCHEDULE_DAWN_0, \
-    TESTING_SCHEDULE_DATE_0, \
-    TESTING_SCHEDULE_SUNRISE_0, \
-    TESTING_SCHEDULE_NOON_0, \
-    TESTING_SCHEDULE_SUNSET_0, \
-    TESTING_SCHEDULE_DUSK_0
-from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.location import LocationInformation
+from Modules.House.Schedule import sunrisesunset
 
-# Conversion constants.
-RAD2DEG = 180.0 / pi
-DEG2RAD = pi / 180.0
+from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 #  http://www.esrl.noaa.gov/gmd/grad/solcalc/sunrise.html
 T_DATE_1 = datetime.date(2014, 4, 22)
-T_SUNRISE_1 = datetime.datetime(2014, 4, 22, 6, 57, 32)
-T_SUNSET_1 = datetime.datetime(2014, 4, 22, 20, 0, 16)
+T_SUNRISE_1 = datetime.datetime(2014, 4, 22, 6, 57, 0)
+T_SUNSET_1 = datetime.datetime(2014, 4, 22, 20, 13, 0)
 
 T_DATE_2 = datetime.date(2015, 7, 23)
-T_SUNRISE_2 = datetime.datetime(2015, 7, 23, 6, 46, 0)
-T_SUNSET_2 = datetime.datetime(2015, 7, 23, 20, 27, 0)
+T_SUNRISE_2 = datetime.datetime(2015, 7, 23, 6, 41, 0)
+T_SUNSET_2 = datetime.datetime(2015, 7, 23, 20, 44, 0)
 
 T_DATE_3 = datetime.date(2016, 10, 24)
-T_SUNRISE_3 = datetime.datetime(2016, 10, 24, 7, 37, 0)
+T_SUNRISE_3 = datetime.datetime(2016, 10, 24, 7, 48, 0)
 T_SUNSET_3 = datetime.datetime(2016, 10, 24, 18, 51, 0)
 
 T_DATE_4 = datetime.date(2017, 12, 22)
-T_SUNRISE_4 = datetime.datetime(2017, 12, 22, 7, 20, 0)
-T_SUNSET_4 = datetime.datetime(2017, 12, 22, 17, 38, 0)
+T_SUNRISE_4 = datetime.datetime(2017, 12, 22, 7, 38, 0)
+T_SUNSET_4 = datetime.datetime(2017, 12, 22, 17, 31, 0)
+
+TEST_YAML = """\
+Location:
+   Street: 123456789 Some Street
+   City: La Angeles
+   State: Ga
+   ZipCode: 99999
+   Country: USA
+   Phone: (800) 555-1212
+   TimeZone: America/New_York
+   Latitude: 34.0
+   Longitude: -84.0
+   Elevation: 345.0
+   Date01: 2014-04-22
+   Date02: 2015-07-23
+   Date03: 2016-10-24
+   Date04: 2017-12-27
+"""
 
 
-class SetupMixin(object):
+class LDI:
+
+    def __init__(self):
+        self.Date_01 = None
+        self.Date_02 = None
+        self.Date_03 = None
+        self.Date_04 = None
+
+
+class SetupMixin:
     """
     """
 
-    def setUp(self, p_root):
-        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj(p_root)
-        self.m_xml = SetupPyHouseObj().BuildXml(p_root)
+    def setUp(self):
+        self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)['Location']
+        self.m_api = sunrisesunset.Api(self.m_pyhouse_obj)
 
-    @staticmethod
-    def load_earth(p_pyhouse_obj):
+    def load_earth(self, p_loc):
         l_loc = LocationInformation()
-        # l_loc.Region = TESTING_LOCATION_REGION
-        l_loc.Latitude = float(TESTING_LOCATION_LATITUDE)
-        l_loc.Longitude = float(TESTING_LOCATION_LONGITUDE)
-        l_loc.TimeZoneName = TESTING_LOCATION_TIME_ZONE_NAME
-        l_loc.Elevation = float(TESTING_LOCATION_ELEVATION)
-        p_pyhouse_obj.House.Location = l_loc
-        p_pyhouse_obj.House.Name = TESTING_HOUSE_NAME
-        return p_pyhouse_obj
+        l_loc.Latitude = p_loc['Latitude']
+        l_loc.Longitude = p_loc['Longitude']
+        l_loc.TimeZone = p_loc['TimeZone']
+        l_loc.Elevation = p_loc['Elevation']
+        l_loc.City = p_loc['City']
+        l_loc.Country = p_loc['Country']
+        l_loc.Phone = p_loc['Phone']
+        l_loc.State = p_loc['State']
+        l_loc.Street = p_loc['Street']
+        l_loc.ZipCode = p_loc['ZipCode']
+        l_dates = LDI()
+        l_dates.Date_01 = p_loc['Date01']
+        l_dates.Date_02 = p_loc['Date02']
+        l_dates.Date_03 = p_loc['Date03']
+        l_dates.Date_04 = p_loc['Date04']
+        return l_loc, l_dates
+
+    def print_hms(self, p_seconds):
+        l_d = int(p_seconds // (24 * 60 * 60))
+        p_seconds %= 24 * 60 * 60
+        l_h = int(p_seconds // (60 * 60))
+        p_seconds %= 60 * 60
+        l_m = int(p_seconds // 60)
+        p_seconds %= 60
+        l_s = int(p_seconds)
+        return '{:d}D:{:02d}H:{:02d}M:{:02d}S'.format(l_d, l_h, l_m, l_s)
 
 
 class A0(unittest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_00_Print(self):
+        _x = PrettyFormatAny.form('_test', 'title', 190)  # so it is defined when printing is cleaned up.
         print('Id: test_sunrisesunset')
 
 
@@ -99,78 +122,69 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
+        SetupMixin.setUp(self)
 
     def test_01_Earth(self):
-        SetupMixin.load_earth(self.m_pyhouse_obj)
-        l_loc = self.m_pyhouse_obj.House.Location
-        # print(PrettyFormatAny.form(l_loc, 'A1-01-A - Loc'))
-        self.assertEqual(l_loc.Latitude, float(TESTING_LOCATION_LATITUDE))
+        # print(PrettyFormatAny.form(self.m_test_config, 'A1-01-A - TestConfig'))
+        l_loc, _l_dates = SetupMixin().load_earth(self.m_test_config)
+        print(PrettyFormatAny.form(l_loc, 'A1-01-B - Loc'))
+        print(PrettyFormatAny.form(_l_dates, 'A1-01-C - Dates'))
+        self.assertEqual(l_loc.Latitude, 34.0)
+        self.assertEqual(l_loc.Longitude, -84.0)
+        self.assertEqual(l_loc.Elevation, 345.0)
+
+    def test_02_Location(self):
+        """ Test loading of location
+        """
 
 
 class B1_Astral(SetupMixin, unittest.TestCase):
+    """ Test Sunrise and Sunset for each season of the year
+    """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj = self.load_earth(self.m_pyhouse_obj)
-        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
-
-    def test_01_Date_0(self):
-        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, TESTING_SCHEDULE_DATE_0)
-        # print('B1-01-A - Dawn', l_ret.Dawn)
-        # print('B1-01-B - Sun Rise', l_ret.SunRise)
-        # print('B1-01-C - Noon', l_ret.Noon)
-        # print('B1-01-D - Sun Set', l_ret.SunSet)
-        # print('B1-01-E - Dusk', l_ret.Dusk)
-        self.assertEqual(l_ret.Dawn.hour, TESTING_SCHEDULE_DAWN_0.hour)
-        self.assertApproximates(l_ret.Dawn.minute, TESTING_SCHEDULE_DAWN_0.minute, 1)
-        self.assertEqual(l_ret.SunRise.hour, TESTING_SCHEDULE_SUNRISE_0.hour)
-        self.assertApproximates(l_ret.SunRise.minute, TESTING_SCHEDULE_SUNRISE_0.minute, 1)
-        self.assertEqual(l_ret.Noon.hour, TESTING_SCHEDULE_NOON_0.hour)
-        self.assertApproximates(l_ret.Noon.minute, TESTING_SCHEDULE_NOON_0.minute, 1)
-        self.assertEqual(l_ret.SunSet.hour, TESTING_SCHEDULE_SUNSET_0.hour)
-        self.assertApproximates(l_ret.SunSet.minute, TESTING_SCHEDULE_SUNSET_0.minute, 1)
-        self.assertEqual(l_ret.Dusk.hour, TESTING_SCHEDULE_DUSK_0.hour)
-        self.assertApproximates(l_ret.Dusk.minute, TESTING_SCHEDULE_DUSK_0.minute, 1)
+        SetupMixin.setUp(self)
+        l_loc, _l_dates = SetupMixin().load_earth(self.m_test_config)
+        self.m_pyhouse_obj.House.Location = l_loc
 
     def test_02_Loc(self):
-        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_1)
+        l_ret = self.m_api._get_solar_times(T_DATE_1)
         # print('B1-02-A - Sun Rise', l_ret.SunRise)
         # print('B1-02-B - Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_1.hour)
-        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_1.minute, 1)
+        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_1.minute, 3)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_1.hour)
-        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_1.minute, 1)
+        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_1.minute, 3)
 
     def test_03_Loc(self):
-        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_2)
+        l_ret = self.m_api._get_solar_times(T_DATE_2)
         # print('B1-03-A - Sun Rise', l_ret.SunRise)
         # print('B1-03-B - Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_2.hour)
-        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_2.minute, 1)
+        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_2.minute, 3)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_2.hour)
-        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_2.minute, 1)
+        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_2.minute, 3)
 
     def test_04_Loc(self):
-        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_3)
+        l_ret = self.m_api._get_solar_times(T_DATE_3)
         # print('B1-04-A - Sun Rise', l_ret.SunRise)
         # print('B1-04-B - Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_3.hour)
-        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_3.minute, 1)
+        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_3.minute, 3)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_3.hour)
-        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_3.minute, 1)
+        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_3.minute, 3)
 
     def test_05_Loc(self):
         """ Nearly the shortest day of the year.
         Also, Standard time.
         """
-        l_ret = astralUtil().calc_solar_times(self.m_pyhouse_obj, T_DATE_4)
+        l_ret = self.m_api._get_solar_times(T_DATE_4)
         # print('Sun Rise', l_ret.SunRise)
         # print('Sun Set', l_ret.SunSet)
         self.assertEqual(l_ret.SunRise.hour, T_SUNRISE_4.hour)
-        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_4.minute, 1)
+        self.assertApproximates(l_ret.SunRise.minute, T_SUNRISE_4.minute, 3)
         self.assertEqual(l_ret.SunSet.hour, T_SUNSET_4.hour)
-        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_4.minute, 1)
+        self.assertApproximates(l_ret.SunSet.minute, T_SUNSET_4.minute, 3)
 
 
 class C1_Delay(SetupMixin, unittest.TestCase):
@@ -178,13 +192,13 @@ class C1_Delay(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj = self.load_earth(self.m_pyhouse_obj)
-        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
+        l_loc, _l_dates = SetupMixin().load_earth(self.m_test_config)
+        self.m_pyhouse_obj.House.Location = l_loc
 
     def test_01_Loc(self):
-        l_delay = astralUtil()._till_next()
-        # print(PrettyFormatAny.form(l_delay, 'Next'))
+        l_delay = self.m_api._get_seconds_to_recalc()
+        print(PrettyFormatAny.form(l_delay, 'Next'))
 
     def test_02(self):
         pass
@@ -195,12 +209,14 @@ class D1_Now(SetupMixin, unittest.TestCase):
     """
 
     def setUp(self):
-        SetupMixin.setUp(self, ET.fromstring(XML_LONG))
-        self.m_pyhouse_obj = self.load_earth(self.m_pyhouse_obj)
-        self.m_api = sunrisesunset.API(self.m_pyhouse_obj)
+        SetupMixin.setUp(self)
+        l_loc, _l_dates = SetupMixin().load_earth(self.m_test_config)
+        self.m_pyhouse_obj.House.Location = l_loc
+        self.m_api = sunrisesunset.Api(self.m_pyhouse_obj)
 
     def test_01_Loc(self):
-        l_now = astralUtil().get_seconds_to_recalc()
-        # print(PrettyFormatAny.form(l_now, 'Next'))
+        l_now = self.m_api._get_seconds_to_recalc()
+        print(PrettyFormatAny.form(l_now, 'Next'))
+        print('D1-01-A - {}'.format(self.print_hms(l_now)))
 
 # ## END DBK

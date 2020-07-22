@@ -1,15 +1,15 @@
 """
-@name:      /home/briank/workspace/PyHouse/src/Modules/Housing/_test/_test-Rules.py
+@name:      Modules/Housing/_test/_test-Rules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2019 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Feb 13, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-07-12'
+__updated__ = '2019-12-30'
 
 from twisted.trial import unittest, reporter, runner
 

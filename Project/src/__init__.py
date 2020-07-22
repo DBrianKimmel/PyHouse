@@ -38,7 +38,7 @@ Requirements:
 
 Overall documentation.
 
-Each module will most likely contain an 'API' class.  The constructor for
+Each module will most likely contain an 'Api' class.  The constructor for
 this class will give a reference address for the module.
 
 The 'Start' method, if any,  will read any XML and set up the data for this
@@ -47,8 +47,8 @@ module.  It will also call any other modules that it will need.
 The 'Stop' method, if any, will write any XML file to update it.  It will also
 close down any thing it no longer needs so they can be cleanly reloaded.
 
-In order to keep the API class clean, modules may have a 'Utilities'
-class.  The API class will inherit from this class so that its
+In order to keep the Api class clean, modules may have a 'Utilities'
+class.  The Api class will inherit from this class so that its
 methods may be accessible by other modules.
 
 The PyHouse module created a data structure that is passed to some
@@ -59,7 +59,7 @@ PyHouse is a Twisted Python Application - See twisted.application
 It runs a number of "services" within that application (e.g. web service)
 """
 
-__version_info__ = (1, 6, 0)
+__version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 # ## END DBK

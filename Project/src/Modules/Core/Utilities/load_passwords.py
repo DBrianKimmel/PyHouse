@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.utils._test.test_load_password -*-
-
-@name:      PyHouse/src/Modules/utils/load_passwords.py
+@name:      Modules/utils/load_passwords.py
 @author:    briank
 @contact:   D.BrianKimmel@gmail.com>
-@copyright: (c) 2014-2017 by briank
+@copyright: (c) 2014-2020 by briank
 @license:   MIT License
 @note:      Created on Jul 5, 2014
 @Summary:
@@ -28,8 +26,7 @@ passlib.hash.sha512_crypt - SHA-512 Crypt � Passlib v1.6.2 Documentation
 http://pythonhosted.org/passlib/lib/passlib.hash.sha512_crypt.html#passlib.hash.sha512_crypt
 """
 
-__updated__ = '2017-01-20'
-
+__updated__ = '2019-12-30'
 
 import passlib.hash
 

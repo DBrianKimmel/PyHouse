@@ -10,7 +10,7 @@
 Passed all 6 tests - DBK 2018-02-13
 """
 
-__updated__ = '2018-02-13'
+__updated__ = '2019-10-08'
 
 # Import system type stuff
 import inspect
@@ -47,7 +47,7 @@ class Test_01(unittest.TestCase):
     def test_0111_Insteon(self):
         l_name = 'Insteon._test'
         # unittest.TestSuite(l_name)
-        # suite = unittest.TestLoader().loadTestsFromTestCase(test_Insteon_device().Test_02_API)
+        # suite = unittest.TestLoader().loadTestsFromTestCase(test_Insteon_device().Test_02_Api)
         pass
 
 

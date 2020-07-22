@@ -8,7 +8,7 @@
 @summary:
 """
 
-__updated__ = '2019-07-10'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 
@@ -18,7 +18,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Weather        ')
 
 
-class API(object):
+class Api:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

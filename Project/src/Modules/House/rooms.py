@@ -2,35 +2,32 @@
 @name:      Modules/House/rooms.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 10, 2013
 @summary:   Handle the rooms information for a house.
 
 """
 
-__updated__ = '2019-09-01'
-__version_info__ = (19, 6, 1)
+__updated__ = '2020-02-17'
+__version_info__ = (19, 10, 5)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
 import datetime
 
 #  Import PyMh files
-from Modules.Core.Utilities import extract_tools, config_tools
+from Modules.Core.Config import config_tools
+from Modules.Core.Config.config_tools import Api as configApi
+from Modules.Core.Utilities import extract_tools
 from Modules.Core.Utilities.coordinate_tools import Coords
-from Modules.Core.Utilities.json_tools import encode_json
-from Modules.Core.Utilities.config_tools import ConfigYamlNodeInformation
-from Modules.House.house_data import \
-    RoomInformation, \
-    RoomsInformationPrivate
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Rooms          ')
 
-CONFIG_FILE_NAME = 'rooms.yaml'
+CONFIG_NAME = 'rooms'
 
 
 class RoomInformation:
@@ -44,119 +41,49 @@ class RoomInformation:
     def __init__(self):
         self.Name = None
         self.Comment = None
-        self.Corner = None  # CoordinateInformation()
+        self.Corner = None  # Coords
         self.Floor = None  # Outside | Basement | 1st | 2nd | 3rd | 4th | Attic | Roof
         self.RoomType = None
-        self.Size = None  # CoordinateInformation()
+        self.Size = None  # Coords
         self.Trigger = None
 
 
-class Config:
-    """ This will handle the rooms.yaml file
+class MqttActions:
+    """
     """
 
-    m_pyhouse_obj = None
-
     def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_pyhouse_obj - p_pyhouse_obj
 
-    def load_room_config(self, p_config):
-        """ Get the room information for some other config
+    def decode(self, p_msg):
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tRooms:\n'
+        if l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+
+        elif l_topic[0] == 'delete':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'request':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Rooms msg', 160))
+
+    def send_message(self, p_pyhouse_obj, p_topic, p_room_obj):
+        """ Messages are:
+                room/add - to add a new room to the database.
+                room/delete - to delete a room from all nodes
+                room/sync - to keep all nodes in sync periodically.
+                room/update - to add or modify a room
         """
-        l_obj = RoomInformation()
-        try:
-            for l_key, l_value in p_config.items():
-                # print('RoomKey:{}; Value:{}'.format(l_key, l_value))
-                setattr(l_obj, l_key, l_value)
-            return l_obj
-        except:
-            l_obj.Name = p_config
+        l_topic = 'house/room/' + p_topic
+        p_pyhouse_obj.Core._MqttApi.MqttPublish(l_topic, p_room_obj)
 
-    def _extract_one_room(self, p_config) -> dict:
-        """ Extract the config info for one room.
-        Warn if there are extra attributes in the config.
-        Warn if there are missing attributes in the config.
-
-        @param p_yaml: is the config fragment containing one room's information.
-        @return: a RoomInformation() obj filled in.
+    def send_update(self):
+        """ Update rooms to keep the house in sync on all nodes.
         """
-        l_required = ['Name']
-        l_obj = RoomInformation()
-        for l_key, l_value in p_config.items():
-            # Check for extra attributes in the config file.
-            try:
-                _l_x = getattr(l_obj, l_key)
-            except AttributeError:
-                LOG.warn('rooms.yaml contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_value))
-                continue
-            setattr(l_obj, l_key, l_value)
-        # Check for data missing from the config file.
-        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
-            if getattr(l_obj, l_key) == None and l_key in l_required:
-                LOG.warn('Location Yaml is missing an entry for "{}"'.format(l_key))
-        return l_obj
-
-    def _extract_all_rooms(self, p_config):
-        """ Copies the data from the yaml config file to the Rooms part of the PyHouse obj.
-        Check for duplicate room names!
-        @param p_pyhouse_obj: is the entire house object
-        @param p_node_yaml: is ConfigYamlNodeInformation filled with room data.
-            {'Rooms': [{'Name': 'Outside', 'Active': 'True', 'Comment': 'Things outsi...
-        """
-        l_rooms = {}
-        for l_ix, l_value in enumerate(p_config):
-            l_obj = self._extract_one_room(l_value)
-            l_rooms.update({l_ix:l_obj})
-        self.m_pyhouse_obj.House.Rooms = l_rooms
-        return l_rooms  # For testing.
-
-    def load_yaml_config(self):
-        """ Read the Rooms.Yaml file.
-        It contains Rooms data for all rooms in the house.
-        """
-        # LOG.info('Loading _Config - Version:{}'.format(__version__))
-        try:
-            l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(CONFIG_FILE_NAME)
-        except:
-            self.m_pyhouse_obj.House.Rooms = None
-            return None
-        try:
-            l_yaml = l_node.Yaml['Rooms']
-        except:
-            LOG.warn('The rooms.yaml file does not start with "Rooms:"')
-            self.m_pyhouse_obj.House.Rooms = None
-            return None
-        l_rooms = self._extract_all_rooms(l_yaml)
-        self.m_pyhouse_obj.House.Rooms = l_rooms
-        return l_rooms  # for testing purposes
-
-# ----------
-
-    def _copy_to_yaml(self, p_pyhouse_obj):
-        """ Update the yaml information.
-        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
-
-        The running info is a dict and the yaml is a list!
-
-        @return: the updated yaml ready information.
-        """
-        l_node = p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME]
-        l_config = l_node.Yaml['Rooms']
-        l_working = p_pyhouse_obj.House.Rooms
-        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
-            l_val = getattr(l_working, l_key)
-            setattr(l_config, l_key, l_val)
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME].Yaml['Rooms'] = l_config
-        l_ret = {'Rooms': l_config}
-        return l_ret
-
-    def save_yaml_config(self):
-        """
-        """
-        LOG.info('Saving Config - Version:{}'.format(__version__))
-        l_config = self._copy_to_yaml(self.m_pyhouse_obj)
-        config_tools.Yaml(self.m_pyhouse_obj).write_yaml(l_config, CONFIG_FILE_NAME, addnew=True)
-        return l_config
 
 
 class Maint:
@@ -231,42 +158,6 @@ class Maint:
         return
 
 
-class Mqtt:
-    """
-    """
-
-    def __init__(self, p_pyhouse_obj):
-        self.m_pyhouse_obj - p_pyhouse_obj
-
-    def _decode_room(self, p_topic, p_message, p_logmsg):
-        p_logmsg += '\tRooms:\n'
-        if p_topic[1] == 'add':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        elif p_topic[1] == 'delete':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        elif p_topic[1] == 'sync':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        elif p_topic[1] == 'update':
-            p_logmsg += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_message, 'Name'))
-        else:
-            p_logmsg += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_message, 'Rooms msg', 160))
-        return p_logmsg
-
-    def dispatch(self, p_topic, p_message):
-        pass
-
-    def send_message(self, p_pyhouse_obj, p_topic, p_room_obj):
-        """ Messages are:
-                room/add - to add a new room to the database.
-                room/delete - to delete a room from all nodes
-                room/sync - to keep all nodes in sync periodically.
-                room/update - to add or modify a room
-        """
-        l_json = encode_json(p_room_obj)
-        l_topic = 'house/room/' + p_topic
-        p_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_json)
-
-
 class Sync:
     """ Used to sync the rooms between all the nodes.
     """
@@ -288,30 +179,166 @@ class Sync:
         return None
 
 
+class Utility:
+    """
+    """
+
+    m_config_tools = None
+    m_module_needed = []
+    m_parts_needed = []
+    m_pyhouse_obj = None
+    m_debugging_skip = []
+
+    def __init__(self, p_pyhouse_obj):
+        """
+        """
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config_tools = config_tools.Yaml(p_pyhouse_obj)
+
+
+class LocalConfig:
+    """ This will handle the rooms.yaml file
+    """
+
+    m_config = None
+    m_pyhouse_obj = None
+
+    def __init__(self, p_pyhouse_obj):
+        self.m_pyhouse_obj = p_pyhouse_obj
+        self.m_config = configApi(p_pyhouse_obj)
+
+    def _extract_one_room(self, p_config) -> dict:
+        """ Extract the config info for one room.
+        Warn if there are extra attributes in the config.
+        Warn if there are missing attributes in the config.
+
+        @param p_yaml: is the config fragment containing one room's information.
+        @return: a RoomInformation() obj filled in.
+        """
+        l_required = ['Name']
+        l_obj = RoomInformation()
+        for l_key, l_value in p_config.items():
+            # Check for extra attributes in the config file.
+            try:
+                _l_x = getattr(l_obj, l_key)
+            except AttributeError:
+                LOG.warning('rooms config file contains a bad room item "{}" = {} - Ignored.'.format(l_key, l_value))
+                continue
+            setattr(l_obj, l_key, l_value)
+        # Check for data missing from the config file.
+        for l_key in [l_attr for l_attr in dir(l_obj) if not l_attr.startswith('_') and not callable(getattr(l_obj, l_attr))]:
+            if getattr(l_obj, l_key) == None and l_key in l_required:
+                LOG.warning('Location Yaml is missing an entry for "{}"'.format(l_key))
+        LOG.info('Extracted room "{}"'.format(l_obj.Name))
+        return l_obj
+
+    def _extract_all_rooms(self, p_config):
+        """ Copies the data from the yaml config file to the Rooms part of the PyHouse obj.
+        Check for duplicate room names!
+        @param p_pyhouse_obj: is the entire house object
+        @param p_node_yaml: is
+            {'Rooms': [{'Name': 'Outside', 'Active': 'True', 'Comment': 'Things outsi...
+        @return: a dict {index: RoomInformation()}
+        """
+        l_rooms = {}
+        for l_ix, l_value in enumerate(p_config):
+            l_obj = self._extract_one_room(l_value)
+            l_rooms.update({l_ix:l_obj})
+        self.m_pyhouse_obj.House.Rooms = l_rooms
+        LOG.info('Extracted {} rooms'.format(len(l_rooms)))
+        return l_rooms  # For testing.
+
+    def load_yaml_config(self):
+        """ Read the Rooms.Yaml file.
+        It contains Rooms data for all rooms in the house.
+        """
+        # LOG.info('Loading Config - Version:{}'.format(__version__))
+        self.m_pyhouse_obj.House.Rooms = None
+        l_yaml = self.m_config.read_config_file(CONFIG_NAME)
+        if l_yaml == None:
+            LOG.error('{}.yaml is missing.'.format(CONFIG_NAME))
+            l_rooms = {}
+        else:
+            try:
+                l_yaml = l_yaml['Rooms']
+                l_rooms = self._extract_all_rooms(l_yaml)
+            except:
+                LOG.warning('The config file does not start with "Rooms:"')
+                l_rooms = {}
+        self.m_pyhouse_obj.House.Rooms = l_rooms
+        return l_rooms
+
+# ----------
+
+    def _copy_to_yaml(self, p_pyhouse_obj):
+        """ Update the yaml information.
+        The information in the YamlTree is updated to be the same as the running pyhouse_obj info.
+
+        The running info is a dict and the yaml is a list!
+
+        @return: the updated yaml ready information.
+        """
+        _l_node = None
+        l_working = p_pyhouse_obj.House.Rooms
+        for l_key in [l_attr for l_attr in dir(l_working) if not l_attr.startswith('_')  and not callable(getattr(l_working, l_attr))]:
+            _l_val = getattr(l_working, l_key)
+
+    def save_yaml_config(self):
+        """
+        """
+        LOG.info('Saving Config - Version:{}'.format(__version__))
+        l_config = self._copy_to_yaml(self.m_pyhouse_obj)
+        # self.m_config.write_config(CONFIG_NAME, l_config, addnew=True)
+        return l_config
+
+
 class Api:
     """
     """
 
     m_pyhouse_obj = None
-    m_config = None
+    m_local_config = None
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
-        self.m_config = Config(p_pyhouse_obj)
-        p_pyhouse_obj.House.Rooms = RoomsInformationPrivate()
-        p_pyhouse_obj._Config.YamlTree[CONFIG_FILE_NAME] = ConfigYamlNodeInformation()
+        self.m_local_config = LocalConfig(p_pyhouse_obj)
+        p_pyhouse_obj.House.Rooms = RoomInformation()
+        LOG.info("Initialized ")
 
     def LoadConfig(self):
         """
         """
         LOG.info('Loading Config - Version:{}'.format(__version__))
-        self.m_config.load_yaml_config()
-        LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
+        l_rooms = self.m_local_config.load_yaml_config()
+        self.m_pyhouse_obj.House.Rooms = l_rooms
+        # LOG.info('Loaded {} Rooms'.format(len(self.m_pyhouse_obj.House.Rooms)))
+
+    def Start(self):
+        pass
 
     def SaveConfig(self):
         """
         """
         LOG.info('Saving Config - Version:{}'.format(__version__))
-        # self.m_config.save_yaml_config()
+        self.m_local_config.save_yaml_config()
+
+    def Stop(self):
+        _x = PrettyFormatAny.form('', '')
+
+    def MqttDispatch(self, p_msg):
+        l_topic = p_msg.UnprocessedTopic
+        p_msg.UnprocessedTopic = p_msg.UnprocessedTopic[1:]
+        p_msg.LogMessage += '\tRooms:\n'
+        if l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+
+        elif l_topic[0] == 'delete':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'update':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        elif l_topic[0] == 'request':
+            p_msg.LogMessage += '\tName: {}\n'.format(extract_tools.get_mqtt_field(p_msg.Payload, 'Name'))
+        else:
+            p_msg.LogMessage += '\tUnknown sub-topic {}'.format(PrettyFormatAny.form(p_msg.Payload, 'Rooms msg', 160))
 
 #  ## END DBK

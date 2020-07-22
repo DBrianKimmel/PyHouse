@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse/Project/src/Modules/Core/Utilities/update_tools.py -*-
-
-@name:      PyHouse/Project/src/Modules/Core/Utilities/update_tools.py
+@name:      Modules/Core/Utilities/update_tools.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2019-2019 by D. Brian Kimmel
+@copyright: (c) 2019-2020 by D. Brian Kimmel
 @note:      Created on Jan 11, 2019
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2019-01-11'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 
@@ -30,7 +28,7 @@ def is_update_needed(p_local_obj, p_remote_obj):
         else:
             return False
     except Exception:
-        LOG.warn('No LastUpdate found.')
+        LOG.warning('No LastUpdate found.')
         return False
 
 # ## END DBK

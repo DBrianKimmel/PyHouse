@@ -17,13 +17,5 @@ There is a trigger event.
 There is a action to be performed item
 There is a delay section.
 
-## Xml
-
-```xml
-
-<Event Name="Outside Lights" Key="0" Active="True">
-    <><>
-</Event>
-```
 
 ### END DBK

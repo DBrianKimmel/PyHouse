@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse.src.Modules.web._test.test_web_controlLights -*-
-
-@name:      PyHouse/src/Modules/web/web_controlLights.py
+@name:      Modules/web/web_controlLights.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to control lights for the selected house.
 
 """
 
-__updated__ = '2019-07-07'
+__updated__ = '2020-02-17'
 
 # Import system type stuff
 import os
@@ -19,7 +17,7 @@ from nevow import athena
 from nevow import loaders
 
 # Import PyMh files and modules.
-from Modules.Core.data_objects import LightData
+from Modules.Core.data_objects import LightControlInformation
 from Modules.Computer.Web.web_utils import GetJSONHouseInfo
 from Modules.Core import logging_pyh as Logger
 from Modules.Core.Utilities import json_tools
@@ -56,14 +54,14 @@ class ControlLightsElement(athena.LiveElement):
         """
         l_json = json_tools.decode_json_unicode(p_json)
         l_light_ix = int(l_json['Key'])
-        l_light_obj = LightData()
+        l_light_obj = LightControlInformation()
         l_light_obj.Name = l_json['Name']
         l_light_obj.Key = l_light_ix
         l_light_obj.BrightnessPct = l_brightness = l_json['BrightnessPct']
         l_light_obj.UUID = l_json['UUID']
         LOG.info('Control Light via Web - Change {} device to Brightness {}'.format(l_light_obj.Name, l_light_obj.BrightnessPct))
         l_topic = 'house/lighting/web/{}/control'.format(l_light_obj.Name)
-        self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
-        self.m_pyhouse_obj._APIs.House.LightingAPI.AbstractControlLight(l_light_obj, 'web', l_brightness)
+        self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_light_obj)  # lighting/web/{}/control
+        self.m_pyhouse_obj.House.LightingApi.Control(l_light_obj, 'web', l_brightness)
 
 # ## END DBK

@@ -3,7 +3,7 @@
 @name:      Pyhouse.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2010-2019 by D. Brian Kimmel
+@copyright: (c) 2010-2020 by D. Brian Kimmel
 @note:      Created on Mar 1, 2014
 @license:   MIT License
 @summary:   This is the core of the PyHouse daemon.
@@ -28,7 +28,6 @@
 
 
 PyHouse.
-        _APIs           Internal
         Computer        Configuration File
         House           Configuration File
         Services        Internal
@@ -41,20 +40,12 @@ see C{Modules.__init__.py} for Core documentation.
 
 During development this is run by hand.
 It is, however, planned to be a daemon that is kicked off on system start-up.
-It is intended to run on everything from a small, low power bare bones system to a server running multiple
- houses in several, widespread locations.
 It now (2013) runs on Raspberry Pi so that is the primary target.
-
-The system is controlled via a browser connecting to a web server that is integrated into PyHouse.
 
 There are two components of this software.
 The first is "computer' and is started first.
 The second is 'house' and is started second.
 See those modules to find out what each does.
-
-@TODO:
-        Find proper ports for controllers
-        set proper permissions on controller devices
 
 Idea Links:
   https://github.com/TheThingSystem/home-controller forked from automategreen/home-controller
@@ -76,8 +67,8 @@ Idea Links:
 
 """
 
-__updated__ = '2019-08-20'
-__version_info__ = (19, 8, 0)
+__updated__ = '2020-02-17'
+__version_info__ = (20, 2, 4)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -96,7 +87,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse                ')
 
 LOCK_PATH = os.path.join(os.path.abspath(os.path.dirname(sys.argv[0])), "lock")
-g_API = None
+g_Api = None
 
 
 class Singleton:
@@ -169,8 +160,8 @@ def SigHupHandler(signum, _stackframe):
     """
     """
     LOG.debug('Hup Signal handler called with signal {}'.format(signum))
-    g_API.Stop()
-    g_API.Start()
+    g_Api.Stop()
+    g_Api.Start()
 
 
 def SigIntHandler(signum, _stackframe):
@@ -179,7 +170,7 @@ def SigIntHandler(signum, _stackframe):
     """
     LOG.debug('SigInt - Signal handler called with signal {}'.format(signum))
     LOG.info("Interrupted.\n\n\n")
-    g_API.Quit()
+    g_Api.Quit()
     exit
 
 
@@ -199,10 +190,11 @@ def SigKillHandler(signum, _stackframe):
     exit
 
 
-class API:
+class Api:
     """
     """
 
+    m_core = None
     m_pyhouse_obj = {}
 
     def __init__(self):
@@ -213,31 +205,32 @@ class API:
         Notice that the reactor starts here as the very last step here and that
         call never returns until the reactor is stopped (permanent stoppage).
         """
-        global g_API
-        g_API = self
-        # self.m_pyhouse_obj
+        global g_Api
+        g_Api = self
+        self.m_core = core.Api()
+        self.m_core._init_core()
         LOG.info('Initialized.\n==================================================================\n')
 
     def LoadConfig(self):
         """ This loads all the configuration.
         """
-        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.LoadConfig()
+        self.m_core.LoadConfig()
         self.m_pyhouse_obj._Twisted.Reactor.callLater(3, self.Start)
         LOG.info("Loaded Config - Version:{}\n======================== Loaded Config Files ========================\n".format(__version__))
         pass
 
     def Start(self):
-        """ This is automatically invoked when the reactor starts from API().
+        """ This is automatically invoked when the reactor starts from Api().
         """
         print('Reactor is now running.')
         LOG.info('Starting - Reactor is now running.')
-        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.Start()
+        self.m_core.Start()
         LOG.info('Everything has been started\n-----------------------------------------\n')
 
     def Stop(self):
         """Stop various modules to prepare for restarting them.
         """
-        self.m_pyhouse_obj._APIs.Core.CoreSetupAPI.Stop()
+        self.m_core.Stop()
         LOG.info("Stopped.\n")
 
     def Quit(self):
@@ -248,7 +241,7 @@ class API:
         self.m_pyhouse_obj._Twisted.Reactor.stop()
 
 
-class BeforeReactor(API):
+class BeforeReactor(Api):
     """ This class is for initialization before the reactor starts.
     It is run right after Singleton protection is invoked.
     """
@@ -262,7 +255,7 @@ class BeforeReactor(API):
         """
         print('PyHouse.BeforeReactor()')  # For development - so we can see when we get to this point...
         CheckInitialSetup()
-        core.API()
+        core.Api()
         #
         #  When the reactor stops we continue here
         #

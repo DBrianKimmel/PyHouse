@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Web._test.test_web_computerMenu -*-
-
-@name:      PyHouse/src/Modules/Web/web_computerMenu.py
+@name:      Modules/Web/web_computerMenu.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2017 by D. Brian Kimmel
+@copyright: (c) 2015-2020y D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 21, 2015
 @Summary:

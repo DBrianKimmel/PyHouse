@@ -1,5 +1,5 @@
 """
-@name:      PyHouse/Project/src/Modules/Housing/Hvac/hvac_actions.py
+@name:      Modules/House/Hvac/hvac_actions.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2015-2019 by D. Brian Kimmel
@@ -9,7 +9,7 @@
 
 """
 
-__updated__ = '2019-06-04'
+__updated__ = '2019-10-11'
 
 # Import system type stuff
 
@@ -19,7 +19,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.HvacAction  ')
 
 
-class API:
+class Api:
     """
     """
 

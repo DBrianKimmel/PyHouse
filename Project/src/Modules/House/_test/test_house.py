@@ -1,35 +1,51 @@
 """
-@name:      Modules/Housing/_test/test_house.py
+@name:      Modules/House/_test/test_house.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2019 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Apr 8, 2013
 @summary:   Test handling the information for a house.
 
-Passed all 16 tests - DBK - 2019-05-11
+Passed all 11 tests - DBK - 2020-01-27
 
 """
+from Modules.House import HouseInformation
 
-__updated__ = '2019-07-28'
+__updated__ = '2020-02-02'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Core.data_objects import HouseInformation, PyHouseInformation
-from Modules.Housing.house import \
-    API as houseAPI, \
-    Config as houseConfig, \
-    Utility as houseUtil
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.House.house import Api as houseApi
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+TEST_YAML = """\
+House:
+   Name: PinkPoppy
+   Modules:  # Uncomment to use module.
+      - Family
+      - Entertainment
+      # - HVAC
+      # - Irrigation
+      - Lighting
+      # - Pool
+      # - Rules
+      - Scheduling
+      # - Security
+      # - Sync
+"""
 
 
 class SetupMixin(object):
 
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
@@ -48,14 +64,18 @@ class A1_Setup(SetupMixin, unittest.TestCase):
     def setUp(self):
         SetupMixin.setUp(self)
 
-    def test_01_BuildObjects(self):
-        """ Test to be sure the compound object was built correctly.
-        """
+    def test_01_PyHouse(self):
         print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - PyHouse'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-01-B - House'))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Rooms, 'A1-01-C - Rooms'))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
+        self.assertIsNotNone(self.m_pyhouse_obj)
+
+    def test_02_House(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-A - House'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
+
+    def test_03_Location(self):
+        print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-03-A - Location'))
+        self.assertIsNotNone(self.m_pyhouse_obj.House.Location)
 
 
 class C1_Read(SetupMixin, unittest.TestCase):
@@ -69,13 +89,6 @@ class C1_Read(SetupMixin, unittest.TestCase):
     def test_01_Load(self):
         """
         """
-        l_node = houseConfig(self.m_pyhouse_obj).load_yaml_config()
-        print('C1-01-A - Load: {}'.format(l_node.Yaml))
-
-    def test_09_API(self):
-        houseUtil._init_component_apis(self.m_pyhouse_obj, self)
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'B1-1-A - XML'))
-        self.assertEqual(self.m_pyhouse_obj._Uuids.All, {})
 
 
 class C2_Write(SetupMixin, unittest.TestCase):
@@ -87,31 +100,34 @@ class C2_Write(SetupMixin, unittest.TestCase):
         SetupMixin.setUp(self)
 
 
-class P1_API(SetupMixin, unittest.TestCase):
-    """ Test the major API functions
+class P1_Api(SetupMixin, unittest.TestCase):
+    """ Test the major Api functions
     """
 
     def setUp(self):
         SetupMixin.setUp(self)
-        self.m_api = houseAPI(self.m_pyhouse_obj)
+        self.m_api = houseApi(self.m_pyhouse_obj)
 
     def test_01_Init(self):
         """ Create a JSON object for Location.
         """
-        # print(PrettyFormatAny.form(self.m_api, 'P1-01-A - API'))
+        # print(PrettyFormatAny.form(self.m_api, 'P1-01-A - Api'))
         pass
 
     def test_02_Load(self):
-        _l_configl = self.m_api.LoadConfig(self.m_pyhouse_obj)
-        # print(PrettyFormatAny.form(l_xml, 'P1-02-A - API'))
+        """
+        """
+        # print(PrettyFormatAny.form(l_xml, 'P1-02-A - Api'))
 
     def test_03_Start(self):
         pass
 
     def test_04_SaveXml(self):
-        self.m_api.LoadConfig(self.m_pyhouse_obj)
+        """
+        """
+        # self.m_api.LoadConfig()
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'P1-04-A - House'))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj._Families, 'P1-04-B - House'))
-        # print(PrettyFormatAny.form(l_xml, 'P1-04-D - API'))
+        # print(PrettyFormatAny.form(l_xml, 'P1-04-D - Api'))
 
 # ## END DBK

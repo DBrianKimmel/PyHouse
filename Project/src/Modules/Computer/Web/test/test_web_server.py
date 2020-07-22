@@ -11,7 +11,7 @@ Passed all 4 tests - DBK - 2019-03-01
 
 """
 
-__updated__ = '2019-03-01'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -21,7 +21,6 @@ from twisted.web import server
 from twisted.web.test.test_web import DummyRequest
 
 # Import PyMh files and modules.
-from Modules.Computer.Web.web_xml import Xml as webXml
 from test.xml_data import XML_LONG, TESTING_PYHOUSE
 from test.testing_mixin import SetupPyHouseObj
 from Modules.Computer.Web.test.xml_web import \

@@ -1,24 +1,21 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Drivers.Null._test.test_Null_xml -*-
-
-@name:      PyHouse/src/Modules/Drivers/Null/Null_xml.py
+@name:      Modules/Drivers/Null/Null_xml.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2018 by D. Brian Kimmel
+@copyright: (c) 2014-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Aug 23, 2014
 @summary:
 
 """
 
-__updated__ = '2019-07-09'
+__updated__ = '2020-02-14'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
 
 # Import PyMh files
 from Modules.Core.data_objects import NullControllerInformation
-# from Modules.Core.Utilities.xml_tools import PutGetXML
 
 
 class XML(object):

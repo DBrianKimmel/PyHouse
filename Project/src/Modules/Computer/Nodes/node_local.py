@@ -2,7 +2,7 @@
 @name:      Modules/Computer/Nodes/node_local.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2014-2019  by D. Brian Kimmel
+@copyright: (c) 2014-2020  by D. Brian Kimmel
 @note:      Created on Apr 2, 2014
 @license:   MIT License
 @summary:   Gather this node's information.
@@ -19,8 +19,8 @@ The discovered services may be fooled by non PyHouse devices plugged into the co
 Once overridden the new role will "stick" by being written into the local XML file.
 """
 
-__updated__ = '2019-08-09'
-__version_info__ = (19, 5, 1)
+__updated__ = '2020-02-18'
+__version_info__ = (20, 2, 17)
 __version__ = '.'.join(map(str, __version_info__))
 
 #  Import system type stuff
@@ -33,9 +33,9 @@ import pyudev
 import subprocess
 
 #  Import PyMh files and modules.
-from Modules.Core.data_objects import NodeInformation, NodeInterfaceData
-# from Modules.Communication import ir_control
+from Modules.Core.data_objects import NodeInterfaceData
 from Modules.Core.Utilities.uuid_tools import Uuid as toolUuid
+from Modules.Computer.Nodes import NodeInformation
 
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NodeLocal      ')
@@ -43,7 +43,7 @@ LOG = Logger.getLogger('PyHouse.NodeLocal      ')
 __all__ = ['NODE_NOTHING', 'NODE_USB_CONTROLLER',
            'NODE_PANDORA', 'NODE_CAMERA',
            'NODE_PIFACECAD', 'NODE_V6ROUTER',
-           'API'
+           'Api'
            ]
 
 NODE_NOTHING = 0x0000  # a basic node with no special functions
@@ -56,14 +56,6 @@ NODE_NOT_UNIX = 0x0020  # Windows - not Linux
 NODE_TUNNEL = 0x0040  # IPv6 Tunnel
 NODE_IR = 0x0080  # Infrared receiver and optional transmitter
 NODE_MQTT_BROKER = 0x0100
-
-
-class InterfaceData():
-    """
-    """
-
-    def __init__(self):
-        self.InterfaceName = None
 
 
 class Devices():
@@ -311,12 +303,10 @@ class HandleNodeType(object):
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
-        # l_ir = ir_control.API()
-        # l_ir.Start(p_pyhouse_obj)
         pass
 
 
-class Util(object):
+class Util:
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj
@@ -408,8 +398,6 @@ class Util(object):
     def _init_ir_control(self, p_pyhouse_obj):
         """This node has an IR receiver so set it up.
         """
-        # l_ir = ir_control.API()
-        # l_ir.Start(p_pyhouse_obj)
         pass
 
     def insert_node(self, p_node, p_pyhouse_obj):
@@ -442,11 +430,11 @@ class Util(object):
         l_node.NodeRole = Util.find_node_role()
         l_node.LastUpdate = datetime.now()
         # l_topic = 'computer/local'
-        # self.m_pyhouse_obj._APIs.Core.MqttAPI.MqttPublish(l_topic, l_node)
+        # self.m_pyhouse_obj.Core.MqttApi.MqttPublish(l_topic, l_node)
         return l_node
 
 
-class API(Util):
+class Api(Util):
 
     m_pyhouse_obj = None
 
@@ -454,7 +442,7 @@ class API(Util):
         self.m_pyhouse_obj = p_pyhouse_obj
         # LOG.info("Initialized - Version:{}".format(__version__))
 
-    def LoadXml(self, p_pyhouse_obj):
+    def LoadConfig(self):
         """ Load the Node xml info.
         """
         pass
@@ -466,8 +454,8 @@ class API(Util):
         LOG.info('Adding node  {} {}'.format(l_local.Name, l_uuid))
         self.init_node_type(self.m_pyhouse_obj)
 
-    def SaveXml(self, p_xml):
-        return p_xml
+    def SaveConfig(self):
+        pass
 
     def Stop(self):
         LOG.info("Stopped.")

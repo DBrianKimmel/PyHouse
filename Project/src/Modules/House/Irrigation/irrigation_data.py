@@ -1,17 +1,15 @@
 """
--*- _test-case-name: PyHouse/src/Modules/Housing/Irrigation/irrigation_data.py -*-
-
-@name:      PyHouse/src/Modules/Housing/Irrigation/irrigation_data.py
+@name:      Modules/Housing/Irrigation/irrigation_data.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2018-2018 by D. Brian Kimmel
+@copyright: (c) 2018-2020 by D. Brian Kimmel
 @note:      Created on Feb 9, 2018
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2018-02-11'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 

@@ -1,10 +1,8 @@
 """
--*- _test-case-name: PyHouse.src.Modules.web._test.test_web_schedules -*-
-
-@name:      PyHouse/src/Modules/web/web_schedules.py
+@name:      Modules/web/web_schedules.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2013-2017 by D. Brian Kimmel
+@copyright: (c) 2013-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 3, 2013
 @summary:   Web interface to schedules for the selected house.
@@ -12,7 +10,7 @@
 """
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
-__updated__ = '2019-06-24'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os
@@ -81,7 +79,7 @@ class SchedulesElement(athena.LiveElement):
         #
         l_obj._DeleteFlag = l_json['Delete']
         self.m_pyhouse_obj.House.Schedules[l_schedule_ix] = l_obj
-        self.m_pyhouse_obj._APIs.House.ScheduleAPI.RestartSchedule()
+        self.m_pyhouse_obj.House.ScheduleApi.RestartSchedule()
 
     def _save_light(self, p_obj, p_json):
         LOG.info(PrettyFormatAny.form(p_json, 'JSON'))

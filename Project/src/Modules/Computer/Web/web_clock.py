@@ -1,7 +1,5 @@
 """
--*- _test-case-name: PyHouse.src.Modules.Computer.Web._test.test_web_clock -*-
-
-@name:      PyHouse/Project/src/Modules/Computer/Web/web_clock.py
+@name:      Modules/Computer/Web/web_clock.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -11,7 +9,7 @@
 
 """
 
-__updated__ = '2019-03-02'
+__updated__ = '2019-12-30'
 
 #  Import system type stuff
 import os

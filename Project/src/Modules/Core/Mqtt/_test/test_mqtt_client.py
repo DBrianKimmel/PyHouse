@@ -10,9 +10,8 @@
 Passed all 7 tests - DBK - 2019-08-15
 
 """
-from Modules.House.Lighting.lighting import ScheduleLightingInformation
 
-__updated__ = '2019-08-15'
+__updated__ = '2019-11-23'
 
 #  Import system type stuff
 from twisted.trial import unittest
@@ -20,10 +19,12 @@ from twisted.internet import reactor
 
 #  Import PyMh files and modules.
 from _test.testing_mixin import SetupPyHouseObj
-from Modules.House.Lighting.controllers import ControllerInformation
-from Modules.House.house_data import LocationInformationPrivate
 from Modules.Core.Utilities import json_tools
 from Modules.Core.Mqtt.mqtt import _make_message, MqttBrokerInformation
+from Modules.House.Lighting.controllers import ControllerInformation
+from Modules.House.house_data import LocationInformation
+from Modules.House.Lighting.lighting import ScheduleLightingInformation
+
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
 
 BROKERv4 = 'iot.eclipse.org'  #  Sandbox Mosquitto broker
@@ -88,8 +89,8 @@ class C2_ConnectTLS(SetupMixin, unittest.TestCase):
         self.m_broker.BrokerAddress = BROKER_TLS
         self.m_broker.Host.Port = PORT_TLS
         self.m_broker.Active = True
-        self.m_broker.UserName = 'pyhouse'
-        self.m_broker.Password = 'ChangeMe'
+        self.m_broker.Access.Name = 'pyhouse'
+        self.m_broker.Access.Password = 'ChangeMe'
         self.m_broker.Name = 'ClientTest'
 
     def test_01_Broker(self):
@@ -109,7 +110,7 @@ class D1_Tools(SetupMixin, unittest.TestCase):
     def test_02_Obj(self):
         """ Be sure that the XML contains the right stuff.
         """
-        l_obj = LocationInformationPrivate()
+        l_obj = LocationInformation()
         l_obj.Street = '123 Test Street'
         l_obj.City = 'Beverly Hills'
         l_obj.State = 'Confusion'

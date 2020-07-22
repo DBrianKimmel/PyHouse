@@ -8,12 +8,12 @@
 @summary:   Sync the house info
 
 Send a Mqtt message asking for all house info
-Try to tell what version is the master (Latest?)
-If multiple house UUISs match - one of them is master and any/all different ones should update to master
+Try to tell what version is the main (Latest?)
+If multiple house UUISs match - one of them is main and any/all different ones should update to main
 
 """
 
-__updated__ = '2019-07-31'
+__updated__ = '2019-10-06'
 
 #  Import system type stuff
 
@@ -22,7 +22,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Sync           ')
 
 
-class API(object):
+class Api(object):
     """This interfaces to all of PyHouse.
     """
 

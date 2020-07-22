@@ -1,5 +1,5 @@
 """
-@name:      Modules/housing/_test/test_location.py
+@name:      Modules/House/_test/test_location.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
 @copyright: (c) 2013-2019 by D. Brian Kimmel
@@ -7,26 +7,41 @@
 @note:      Created on Apr 10, 2013
 @summary:   Test handling the rooms information for a house.
 
-Passed all 13 tests - DBK - 2019-07-29
+Passed all 11 tests - DBK - 2019-09-30
 
 """
 
-__updated__ = '2019-07-29'
+__updated__ = '2020-02-04'
 
 # Import system type stuff
 from twisted.trial import unittest
+from ruamel.yaml import YAML
 
 # Import PyMh files and modules.
-from test.testing_mixin import SetupPyHouseObj
-from Modules.Housing import location
-from Modules.Core.data_objects import PyHouseInformation, HouseInformation
-from Modules.Core.Utilities import config_tools
-from Modules.Housing.location import \
-    LocationInformationPrivate, \
-    Api as locationApi, \
-    Config as locationConfig
+from _test.testing_mixin import SetupPyHouseObj
+from Modules.Core.Config import config_tools
+from Modules.House import HouseInformation
+from Modules.House.location import Api as locationApi
 
 from Modules.Core.Utilities.debug_tools import PrettyFormatAny
+
+TEST_YAML = """\
+Location:
+   Street: 123456789 Some Street
+   City: La Angelos
+   State: Ga
+   ZipCode: 44444
+   Country: USA
+   Phone: (800) 555-1212
+   TimeZone: America/New_York
+   Latitude: 29.12345
+   Longitude: -82.555555
+   Elevation: 345.0
+   Date01: 2014-04-22
+   Date02: 2015-07-23
+   Date03: 2016-10-24
+   Date04: 2017-12-27
+"""
 
 
 class SetupMixin:
@@ -34,7 +49,8 @@ class SetupMixin:
     def setUp(self):
         self.m_pyhouse_obj = SetupPyHouseObj().BuildPyHouseObj()
         self.m_api = locationApi(self.m_pyhouse_obj)
-        self.m_filename = 'location.yaml'
+        l_yaml = YAML()
+        self.m_test_config = l_yaml.load(TEST_YAML)
 
 
 class A0(unittest.TestCase):
@@ -58,9 +74,7 @@ class A1_Setup(SetupMixin, unittest.TestCase):
         # print(PrettyFormatAny.form(self.m_pyhouse_obj, 'A1-01-A - Main', 190))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'A1-02-B - House', 190))
         # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'A1-01-C - Location', 190))
-        self.assertIsInstance(self.m_pyhouse_obj, PyHouseInformation)
         self.assertIsInstance(self.m_pyhouse_obj.House, HouseInformation)
-        self.assertIsInstance(self.m_pyhouse_obj.House.Location, LocationInformationPrivate)
 
 
 class A3_SetupYaml(SetupMixin, unittest.TestCase):
@@ -88,18 +102,10 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
         self.m_config = locationConfig(self.m_pyhouse_obj)
         # print('C1-setup-A')
 
-    def test_01_Node(self):
-        """
-        """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
-        # print(PrettyFormatAny.form(l_node, 'C1-01-A - Node'))
-        self.assertEqual(l_node.FileName, 'location.yaml')
-        self.assertEqual(l_node.YamlPath, '/home/briank/workspace/PyHouse/Project/src/Modules/Housing/_test/Yaml/location.yaml')
-
     def test_02_ReadFile(self):
         """ Read the location.yaml config file
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file('location')
         l_config = l_node.Yaml
         # print(PrettyFormatAny.form(l_node, 'C1-02-A'))
         # print(PrettyFormatAny.form(l_config, 'C1-02-B'))
@@ -109,9 +115,9 @@ class C1_ConfigRead(SetupMixin, unittest.TestCase):
     def test_03_extract(self):
         """ Create a JSON object for Location.
         """
-        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_yaml(self.m_filename)
+        l_node = config_tools.Yaml(self.m_pyhouse_obj).read_config_file('location')
         l_obj = self.m_config._extract_location(l_node.Yaml['Location'])
-        l_ret = self.m_pyhouse_obj.House.Location
+        _l_ret = self.m_pyhouse_obj.House.Location
         # print(PrettyFormatAny.form(l_node, 'C1-03-A'))
         # print(PrettyFormatAny.form(l_obj, 'C1-03-B'))
         # print(PrettyFormatAny.form(l_ret, 'C1-03-C'))
@@ -147,18 +153,6 @@ class C2_YamlWrite(SetupMixin, unittest.TestCase):
         """
         """
         # print('C2-01-A')
-
-    def test_02_Dump(self):
-        """ Create a JSON object for Location.
-        """
-        self.m_location.Street = '_test street'
-        l_ret = self.m_config.save_yaml_config()
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'C2-02-A - Location', 190))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House, 'C2-02-B - House', 190))
-        # print(PrettyFormatAny.form(self.m_pyhouse_obj.House.Location, 'C2-02-C - Location', 190))
-        # print(PrettyFormatAny.form(l_ret, 'C2-02-D - Location', 190))
-        # print('Config: {}'.format(l_ret))
-        self.assertEqual(l_ret['Location']['City'], 'Washington')
 
 
 class S2_PyHouse(SetupMixin, unittest.TestCase):

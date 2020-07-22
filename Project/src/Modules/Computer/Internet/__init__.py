@@ -17,8 +17,14 @@ Since PyHouse is always running (as a daemon) this package will get the IPv4 add
 assigned to our router by the ISP.
 
 """
-__updated__ = '2016-10-22'
-__version_info__ = (1, 7, 4)
+__updated__ = '2020-01-02'
+__version_info__ = (20, 1, 2)
 __version__ = '.'.join(map(str, __version_info__))
+
+
+class InternetInformation:
+
+    def __init__(self):
+        self.Name = None
 
 # ## END DBK

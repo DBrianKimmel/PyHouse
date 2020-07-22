@@ -2,14 +2,14 @@
 @name:      Modules/Core/Mqtt/mqtt_client.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2015-2019 by D. Brian Kimmel
+@copyright: (c) 2015-2020 by D. Brian Kimmel
 @license:   MIT License
 @note:      Created on Jun 5, 2015
 @Summary:   Connect this computer node to the household Mqtt Broker.
 
 """
 
-__updated__ = '2019-08-17'
+__updated__ = '2020-01-19'
 
 #  Import system type stuff
 from twisted.internet import defer
@@ -17,11 +17,12 @@ from twisted.internet import defer
 # from twisted.internet.ssl import Certificate, optionsForClientTLS
 
 #  Import PyMh files and modules.
+from Modules.Core.Mqtt import CLIENT_PREFIX
 from Modules.Core.Mqtt.mqtt_protocol import PyHouseMqttFactory
+
 from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.Mqtt_Client    ')
 
-CLIENT_PREFIX = 'PyH-Comp-'
 PEM_FILE = '/etc/pyhouse/ca_certs/rootCA.pem'
 
 
@@ -53,11 +54,11 @@ class Util(object):
         LOG.info('Start Connecting via TCP to broker: {}'.format(p_broker_obj.Name))
         if p_broker_obj.Host.Name is None or p_broker_obj.Host.Port is None:
             LOG.error('Bad Mqtt broker Address: {}  or Port: {}'.format(p_broker_obj.Host.Name, p_broker_obj.Host.Port))
-            p_broker_obj._ProtocolAPI = None
+            p_broker_obj._ProtocolApi = None
         else:
             l_factory = PyHouseMqttFactory(p_pyhouse_obj, p_broker_obj)
             _l_connector = p_pyhouse_obj._Twisted.Reactor.connectTCP(p_broker_obj.Host.Name, p_broker_obj.Host.Port, l_factory)
-            LOG.info('TCP Connected to:\n\tBroker: {};\n\tHost: {};\n\tPrefix: {};'.format(
+            LOG.info('Mqtt connected via TCP to "{}"\n\tHost: {};\n\tPrefix: {};'.format(
                 p_broker_obj.Name, p_broker_obj.Host.Name, p_pyhouse_obj.Core.Mqtt.Prefix))
 
     @defer.inlineCallbacks

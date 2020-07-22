@@ -12,7 +12,7 @@ from Modules.Core import logging_pyh as Logger
 LOG = Logger.getLogger('PyHouse.NullDriver     ')
 
 
-class API(object):
+class Api(object):
 
     def __init__(self, p_pyhouse_obj):
         self.m_pyhouse_obj = p_pyhouse_obj

@@ -1,18 +1,15 @@
 """
--*- _test-case-name: Pyhouse/src/Modules/Computer/Web/_test/test_web_nodes.py -*-
-
-@name:      Pyhouse/src/Modules/Computer/Web/_test/test_web_nodes.py
+@name:      Modules/Computer/Web/_test/test_web_nodes.py
 @author:    D. Brian Kimmel
 @contact:   D.BrianKimmel@gmail.com
-@copyright: (c) 2017-2017 by D. Brian Kimmel
+@copyright: (c) 2017-2020 by D. Brian Kimmel
 @note:      Created on Jan 9, 2017
 @license:   MIT License
 @summary:
 
 """
 
-__updated__ = '2017-01-11'
-
+__updated__ = '2019-12-30'
 
 # Import system type stuff
 import xml.etree.ElementTree as ET
@@ -32,10 +29,11 @@ class SetupMixin(object):
 
 
 class A0(unittest.TestCase):
+
     def setUp(self):
         pass
+
     def test_00_Print(self):
         print('Id: test_web_nodes')
-
 
 # ## END DBK
